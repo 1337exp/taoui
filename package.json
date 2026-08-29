@@ -1,0 +1,57 @@
+{
+  "name": "@1337exp/taoui",
+  "version": "1.0.1",
+  "description": "Modern UI component library for Nuxt/Vue",
+  "homepage": "https://666.io",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./styles/*": "./src/styles/*",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src/styles"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "type-check": "vue-tsc --noEmit",
+    "prepublishOnly": "npm run type-check && npm run build"
+  },
+  "keywords": [
+    "vue",
+    "nuxt",
+    "ui",
+    "components",
+    "library",
+    "design-tokens"
+  ],
+  "author": "",
+  "license": "MIT",
+  "peerDependencies": {
+    "vue": "^3.4.0",
+    "nuxt": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "nuxt": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "typescript": "^5.3.0",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.7.0",
+    "vue": "^3.4.0",
+    "vue-tsc": "^2.0.0"
+  }
+}
