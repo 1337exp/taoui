@@ -70,7 +70,7 @@ npm install ../path-to-tao-ui
 
 ```typescript
 import { defineNuxtPlugin } from '#app'
-import TaoUI from '@tao/ui'
+import TaoUI from '@1337exp/taoui'
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(TaoUI)
@@ -81,7 +81,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
 ```vue
 <script setup>
-import '@tao/ui/styles.css'
+import '@1337exp/taoui/styles.css'
 </script>
 ```
 
@@ -91,8 +91,8 @@ import '@tao/ui/styles.css'
 // main.js
 import { createApp } from 'vue'
 import App from './App.vue'
-import TaoUI from '@tao/ui'
-import '@tao/ui/styles.css'
+import TaoUI from '@1337exp/taoui'
+import '@1337exp/taoui/styles.css'
 
 const app = createApp(App)
 app.use(TaoUI)
@@ -103,8 +103,8 @@ app.mount('#app')
 
 ```vue
 <script setup>
-import { TaoButton, TaoInput, TaoModal } from '@tao/ui'
-import '@tao/ui/styles.css'
+import { TaoButton, TaoInput, TaoModal } from '@1337exp/taoui'
+import '@1337exp/taoui/styles.css'
 </script>
 
 <template>
@@ -139,7 +139,7 @@ primitives.css   →   semantic.css   →   themes/*.css (опционально
 | `themes/light.css` | Пример альтернативной темы через `[data-tao-theme="light"]` | Да, как образец |
 | `base.css` | Глобальный reset (скроллбар, ссылки, box-sizing) | Редко |
 
-Все четыре подключаются одним файлом `@tao/ui/styles.css`.
+Все четыре подключаются одним файлом `@1337exp/taoui/styles.css`.
 
 ### Как сделать свою тему
 
@@ -193,9 +193,9 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 ### Если нужна тема с нуля, без primitives
 
 ```javascript
-import '@tao/ui/styles/primitives.css' // шкалы можно оставить
-import './my-semantic.css'              // свой семантический слой вместо @tao/ui/styles/semantic.css
-import '@tao/ui/styles/base.css'
+import '@1337exp/taoui/styles/primitives.css' // шкалы можно оставить
+import './my-semantic.css'              // свой семантический слой вместо @1337exp/taoui/styles/semantic.css
+import '@1337exp/taoui/styles/base.css'
 ```
 
 ## Демонстрация
