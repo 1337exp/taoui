@@ -32,6 +32,8 @@ import TaoSwitch from './components/TaoSwitch.vue';
 import TaoRadio from './components/TaoRadio.vue';
 import TaoRadioGroup from './components/TaoRadioGroup.vue';
 import TaoAlert from './components/TaoAlert.vue';
+import TaoTable from './components/TaoTable.vue';
+import TaoPagination from './components/TaoPagination.vue';
 import TaoToastViewport from './components/TaoToastViewport.vue';
 import TaoConfirmHost from './components/TaoConfirmHost.vue';
 import { toast } from './toast';
@@ -77,6 +79,8 @@ const components = [
     TaoRadio,
     TaoRadioGroup,
     TaoAlert,
+    TaoTable,
+    TaoPagination,
     TaoToastViewport,
     TaoConfirmHost,
 ];
@@ -123,6 +127,8 @@ export {
     TaoRadio,
     TaoRadioGroup,
     TaoAlert,
+    TaoTable,
+    TaoPagination,
     TaoToastViewport,
     TaoConfirmHost,
     toast,
@@ -152,5 +158,7 @@ export type {
 export type { TaoSelectOption } from './select';
 export type { TaoRadioValue } from './radio';
 export type { TaoFormFieldContext } from './formField';
+export type { TaoTableAlign, TaoTableColumn, TaoTableSort } from './table';
+export type { TaoPaginationItem } from './pagination';
 
 export default TaoUI;

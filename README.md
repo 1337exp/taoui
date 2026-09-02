@@ -39,6 +39,8 @@
 
 ### Отображение данных
 
+- **TaoTable** — простая таблица: колонки, empty, loading, сортировка через `v-model:sort`. Не datagrid.
+- **TaoPagination** — страницы с многоточием, пара к таблице
 - **TaoTag** — тег/бейдж со статусами (neutral, success, danger)
 - **TaoAlert** — инлайн-баннер страницы или ошибки формы (success / error / warning / info)
 - **TaoProgress** — статичная полоса прогресса, опционально с shimmer-анимацией
@@ -202,6 +204,37 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 ```
 
 `TaoSelect` открывается с клавиатуры (стрелки, Enter, Esc), список переворачивается у края экрана.
+
+## Таблица и пагинация
+
+Таблица рендерит то, что передали: сама данные не режет и не сортирует. Это удобно и для серверной выборки, и для клиентской — страница режется снаружи.
+
+```vue
+<TaoTable
+  :columns="columns"
+  :rows="pageRows"
+  v-model:sort="sort"
+  empty-text="Пока нет записей"
+>
+  <template #cell-status="{ row }">
+    <TaoTag :type="row.status === 'active' ? 'success' : 'neutral'">
+      {{ row.status }}
+    </TaoTag>
+  </template>
+</TaoTable>
+
+<TaoPagination v-model:page="page" :total="rows.length" :page-size="8" />
+```
+
+```javascript
+const columns = [
+  { key: 'name', label: 'Имя', sortable: true },
+  { key: 'city', label: 'Город' },
+  { key: 'status', label: 'Статус' },
+]
+```
+
+Слот `cell-<ключ>` перекрывает ячейку. `loading` показывает оверлей, пустой список — текст или слот `#empty`. Клик по шапке с `sortable` крутит `asc → desc → сброс`.
 
 ## Дизайн-токены и темизация
 

@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 import {
   TaoBlock,
   TaoButton,
@@ -34,6 +34,8 @@ import {
   TaoRadio,
   TaoRadioGroup,
   TaoAlert,
+  TaoTable,
+  TaoPagination,
   toast,
   confirm,
 } from '@tao/ui'
@@ -122,6 +124,62 @@ const notifyEmail = ref(true)
 const plan = ref('pro')
 const showAlert = ref(true)
 
+const tableCities = ['Москва', 'Казань', 'Санкт-Петербург', 'Новосибирск']
+const tableStatuses = ['active', 'paused', 'banned']
+const tableAll = Array.from({ length: 47 }, (_, index) => ({
+  id: index + 1,
+  name: `Пользователь ${String(index + 1).padStart(2, '0')}`,
+  city: tableCities[index % tableCities.length],
+  orders: (index * 7) % 41,
+  status: tableStatuses[index % 3],
+}))
+const tableColumns = [
+  { key: 'name', label: 'Имя', sortable: true },
+  { key: 'city', label: 'Город', sortable: true },
+  { key: 'orders', label: 'Заказы', align: 'right', sortable: true, width: 110 },
+  { key: 'status', label: 'Статус', width: 140 },
+]
+const tablePage = ref(1)
+const tablePageSize = 8
+const tableSort = ref({ key: 'name', dir: 'asc' })
+const tableLoading = ref(false)
+const tableEmpty = ref(false)
+const pagerPage = ref(12)
+
+const tableSorted = computed(() => {
+  const rows = tableAll.slice()
+  const sort = tableSort.value
+  if (!sort) return rows
+  return rows.sort((a, b) => {
+    const left = a[sort.key]
+    const right = b[sort.key]
+    const cmp =
+      typeof left === 'number' && typeof right === 'number'
+        ? left - right
+        : String(left).localeCompare(String(right), 'ru')
+    return sort.dir === 'asc' ? cmp : -cmp
+  })
+})
+
+const tableRows = computed(() => {
+  if (tableEmpty.value) return []
+  const start = (tablePage.value - 1) * tablePageSize
+  return tableSorted.value.slice(start, start + tablePageSize)
+})
+
+const tableTotal = computed(() => (tableEmpty.value ? 0 : tableAll.length))
+
+function onTableSort() {
+  tablePage.value = 1
+}
+
+function flashTableLoading() {
+  tableLoading.value = true
+  window.setTimeout(() => {
+    tableLoading.value = false
+  }, 1100)
+}
+
 function fireToast(kind) {
   if (kind === 'success') {
     toast().success().message('Сохранено')
@@ -168,28 +226,248 @@ async function fireConfirm(kind) {
 
 // TaoImage demo — data URI, чтобы демонстрация не зависела от внешней сети
 const imageSrc = ref('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNjAiIGhlaWdodD0iMTIwIiB2aWV3Qm94PSIwIDAgMTYwIDEyMCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxMjAiIGZpbGw9IiNlNWU1ZTUiLz4KICA8cmVjdCB4PSIxIiB5PSIxIiB3aWR0aD0iMTU4IiBoZWlnaHQ9IjExOCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYmZiZmJmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8dGV4dCB4PSI4MCIgeT0iNjUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNjY2NjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5kZW1vIGltYWdlPC90ZXh0Pgo8L3N2Zz4K')
+
+const navGroups = [
+  {
+    id: 'basics',
+    title: 'Основы',
+    items: [
+      { id: 'block', label: 'TaoBlock' },
+      { id: 'button', label: 'TaoButton' },
+      { id: 'card', label: 'TaoCard' },
+      { id: 'copy', label: 'TaoCopy' },
+    ],
+  },
+  {
+    id: 'forms',
+    title: 'Формы',
+    items: [
+      { id: 'input', label: 'TaoInput' },
+      { id: 'textarea', label: 'TaoTextarea' },
+      { id: 'checkbox', label: 'TaoCheckbox' },
+      { id: 'select', label: 'Select / Switch / Radio' },
+      { id: 'pincode', label: 'TaoPinCode' },
+      { id: 'slider', label: 'Progress / Slider' },
+      { id: 'filedrop', label: 'TaoFileDrop' },
+    ],
+  },
+  {
+    id: 'data',
+    title: 'Данные',
+    items: [
+      { id: 'table', label: 'TaoTable' },
+      { id: 'pagination', label: 'TaoPagination' },
+    ],
+  },
+  {
+    id: 'layout',
+    title: 'Макет',
+    items: [
+      { id: 'container', label: 'TaoContainer' },
+      { id: 'flex', label: 'Flex / Space' },
+      { id: 'divider', label: 'TaoDivider' },
+      { id: 'animated-border', label: 'AnimatedBorder' },
+    ],
+  },
+  {
+    id: 'overlays',
+    title: 'Оверлеи',
+    items: [
+      { id: 'modal', label: 'TaoModal' },
+      { id: 'confirm', label: 'confirm()' },
+      { id: 'tooltip', label: 'TaoTooltip' },
+      { id: 'dropdown', label: 'DropdownMenu' },
+      { id: 'spoiler', label: 'TaoSpoiler' },
+    ],
+  },
+  {
+    id: 'nav',
+    title: 'Навигация',
+    items: [
+      { id: 'tabs', label: 'TaoTabs' },
+      { id: 'link', label: 'TaoLink' },
+    ],
+  },
+  {
+    id: 'feedback',
+    title: 'Обратная связь',
+    items: [
+      { id: 'toast', label: 'toast()' },
+      { id: 'alert', label: 'TaoAlert' },
+      { id: 'tag', label: 'TaoTag' },
+      { id: 'loader', label: 'TaoLoader' },
+    ],
+  },
+  {
+    id: 'media',
+    title: 'Медиа',
+    items: [
+      { id: 'image', label: 'TaoImage' },
+      { id: 'icon', label: 'TaoIcon' },
+    ],
+  },
+]
+
+const activeGroup = ref('all')
+const query = ref('')
+const activeSection = ref('')
+
+const currentGroup = computed(() => {
+  if (query.value.trim()) return null
+  return navGroups.find((group) => group.id === activeGroup.value) ?? null
+})
+
+function sectionVisible(groupId, label) {
+  const needle = query.value.trim().toLowerCase()
+  if (needle) {
+    const group = navGroups.find((item) => item.id === groupId)
+    return (
+      label.toLowerCase().includes(needle) ||
+      groupId.toLowerCase().includes(needle) ||
+      Boolean(group?.title.toLowerCase().includes(needle))
+    )
+  }
+  return activeGroup.value === 'all' || activeGroup.value === groupId
+}
+
+function groupVisibleInNav(group) {
+  const needle = query.value.trim().toLowerCase()
+  if (!needle) return true
+  if (group.title.toLowerCase().includes(needle)) return true
+  return group.items.some((item) => itemMatchesQuery(item, needle))
+}
+
+function itemMatchesQuery(item, needle) {
+  return item.label.toLowerCase().includes(needle) || item.id.toLowerCase().includes(needle)
+}
+
+function itemVisibleInNav(group, item) {
+  const needle = query.value.trim().toLowerCase()
+  if (!needle) return true
+  if (group.title.toLowerCase().includes(needle)) return true
+  return itemMatchesQuery(item, needle)
+}
+
+function goTo(groupId, sectionId) {
+  query.value = ''
+  activeGroup.value = groupId
+  nextTick(() => {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    activeSection.value = sectionId
+  })
+}
+
+function showAll() {
+  query.value = ''
+  activeGroup.value = 'all'
+}
+
+function toggleGroup(groupId) {
+  query.value = ''
+  activeGroup.value = activeGroup.value === groupId ? 'all' : groupId
+}
+
+let sectionObserver = null
+
+onMounted(() => {
+  sectionObserver = new IntersectionObserver(
+    (entries) => {
+      const visible = entries
+        .filter((entry) => entry.isIntersecting)
+        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+      if (visible?.target?.id) {
+        activeSection.value = visible.target.id
+      }
+    },
+    { rootMargin: '-20% 0px -65% 0px', threshold: [0, 0.25, 1] },
+  )
+  document.querySelectorAll('.showcase-section[id]').forEach((el) => sectionObserver.observe(el))
+})
+
+onBeforeUnmount(() => {
+  sectionObserver?.disconnect()
+})
+
 </script>
 
 <template>
   <div class="showcase">
-    <div class="theme-switcher">
-      <span class="theme-switcher__label">Тема:</span>
-      <button
-        v-for="t in ['dark', 'light']"
-        :key="t"
-        class="theme-switcher__btn"
-        :class="{ active: theme === t }"
-        @click="setTheme(t)"
-      >
-        {{ t }}
-      </button>
-    </div>
+    <header class="showcase-top">
+      <div>
+        <h1>Tao UI</h1>
+        <p class="description">Компоненты по темам. Слева — оглавление, сверху можно оставить только одну группу.</p>
+      </div>
+      <div class="theme-switcher">
+        <span class="theme-switcher__label">Тема:</span>
+        <button
+          v-for="t in ['dark', 'light']"
+          :key="t"
+          class="theme-switcher__btn"
+          :class="{ active: theme === t }"
+          @click="setTheme(t)"
+        >
+          {{ t }}
+        </button>
+      </div>
+    </header>
 
-    <h1>Tao UI — Showcase</h1>
-    <p class="description">Демонстрация всех компонентов библиотеки Tao UI. Переключите тему выше — компоненты ниже не содержат ни одной правки под конкретную тему, всё делают CSS-токены.</p>
+    <div class="showcase-body">
+      <nav class="showcase-nav" aria-label="Разделы showcase">
+        <input
+          v-model="query"
+          class="showcase-nav__search"
+          type="search"
+          placeholder="Найти компонент…"
+        />
+
+        <button
+          type="button"
+          class="showcase-nav__all"
+          :class="{ active: activeGroup === 'all' && !query }"
+          @click="showAll"
+        >
+          Все
+        </button>
+
+        <div
+          v-for="group in navGroups"
+          v-show="groupVisibleInNav(group)"
+          :key="group.id"
+          class="showcase-nav__group"
+        >
+          <button
+            type="button"
+            class="showcase-nav__group-title"
+            :class="{ active: activeGroup === group.id }"
+            @click="toggleGroup(group.id)"
+          >
+            {{ group.title }}
+          </button>
+          <a
+            v-for="item in group.items"
+            v-show="itemVisibleInNav(group, item)"
+            :key="item.id"
+            class="showcase-nav__link"
+            :class="{ active: activeSection === item.id }"
+            :href="'#' + item.id"
+            @click.prevent="goTo(group.id, item.id)"
+          >
+            {{ item.label }}
+          </a>
+        </div>
+      </nav>
+
+      <main class="showcase-main">
+        <div v-if="currentGroup" class="showcase-banner">
+          <div>
+            <p class="showcase-banner__kicker">Раздел</p>
+            <h2 class="showcase-banner__title">{{ currentGroup.title }}</h2>
+          </div>
+          <button type="button" class="showcase-banner__reset" @click="showAll">Все компоненты</button>
+        </div>
 
     <!-- TaoBlock -->
-    <section class="showcase-section">
+    <section id="block" class="showcase-section" v-show="sectionVisible('basics', 'TaoBlock')">
       <h2>TaoBlock</h2>
       <p>Базовый контейнер с настраиваемыми отступами и скруглением</p>
       <TaoBlock :padding="24" :radius="12">
@@ -203,7 +481,7 @@ const imageSrc = ref('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53
     </section>
 
     <!-- TaoButton -->
-    <section class="showcase-section">
+    <section id="button" class="showcase-section" v-show="sectionVisible('basics', 'TaoButton')">
       <h2>TaoButton</h2>
       <p>Кнопки различных вариантов и размеров</p>
       
@@ -259,7 +537,7 @@ const imageSrc = ref('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53
     </section>
 
     <!-- TaoCard -->
-    <section class="showcase-section">
+    <section id="card" class="showcase-section" v-show="sectionVisible('basics', 'TaoCard')">
       <h2>TaoCard</h2>
       <p>Карточка с поддержкой слотов для cover, header и footer</p>
       
@@ -296,7 +574,7 @@ const imageSrc = ref('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53
     </section>
 
     <!-- TaoInput -->
-    <section class="showcase-section">
+    <section id="input" class="showcase-section" v-show="sectionVisible('forms', 'TaoInput')">
       <h2>TaoInput</h2>
       <p>Поле ввода с поддержкой v-model, валидации и различных типов</p>
       
@@ -350,7 +628,7 @@ const imageSrc = ref('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53
     </section>
 
     <!-- TaoModal -->
-    <section class="showcase-section">
+    <section id="modal" class="showcase-section" v-show="sectionVisible('overlays', 'TaoModal')">
       <h2>TaoModal</h2>
       <p>Модальное окно с поддержкой слотов и анимацией</p>
       
@@ -383,7 +661,7 @@ const imageSrc = ref('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53
     </section>
 
     <!-- TaoSpoiler -->
-    <section class="showcase-section">
+    <section id="spoiler" class="showcase-section" v-show="sectionVisible('overlays', 'TaoSpoiler')">
       <h2>TaoSpoiler</h2>
       <p>Раскрывающийся блок (аккордеон)</p>
       
@@ -408,7 +686,7 @@ const imageSrc = ref('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53
     </section>
 
     <!-- TaoTabs -->
-    <section class="showcase-section">
+    <section id="tabs" class="showcase-section" v-show="sectionVisible('nav', 'TaoTabs')">
       <h2>TaoTabs</h2>
       <p>Вкладки для переключения между различными секциями контента</p>
       
@@ -435,7 +713,7 @@ const tabs = [
     </section>
 
     <!-- TaoTooltip -->
-    <section class="showcase-section">
+    <section id="tooltip" class="showcase-section" v-show="sectionVisible('overlays', 'TaoTooltip')">
       <h2>TaoTooltip</h2>
       <p>Всплывающая подсказка при наведении</p>
       
@@ -465,7 +743,7 @@ const tabs = [
     </section>
 
     <!-- TaoCopy -->
-    <section class="showcase-section">
+    <section id="copy" class="showcase-section" v-show="sectionVisible('basics', 'TaoCopy')">
       <h2>TaoCopy</h2>
       <p>Кнопка копирования текста в буфер обмена</p>
       
@@ -497,7 +775,7 @@ const tabs = [
     </section>
 
     <!-- TaoContainer -->
-    <section class="showcase-section">
+    <section id="container" class="showcase-section" v-show="sectionVisible('layout', 'TaoContainer')">
       <h2>TaoContainer</h2>
       <p>Ограничение ширины контента с авто-центровкой (wide / slim / ultra-slim)</p>
 
@@ -518,7 +796,7 @@ const tabs = [
     </section>
 
     <!-- TaoFlex / TaoSpace -->
-    <section class="showcase-section">
+    <section id="flex" class="showcase-section" v-show="sectionVisible('layout', 'TaoFlex TaoSpace')">
       <h2>TaoFlex / TaoSpace</h2>
       <p>Обёртка над flexbox и авто-расстановка дочерних элементов с равномерным gap</p>
 
@@ -550,7 +828,7 @@ const tabs = [
     </section>
 
     <!-- TaoDivider -->
-    <section class="showcase-section">
+    <section id="divider" class="showcase-section" v-show="sectionVisible('layout', 'TaoDivider')">
       <h2>TaoDivider</h2>
       <p>Разделитель: линия, линия с текстом, или пустой отступ</p>
 
@@ -568,7 +846,7 @@ const tabs = [
     </section>
 
     <!-- TaoAnimatedBorder -->
-    <section class="showcase-section">
+    <section id="animated-border" class="showcase-section" v-show="sectionVisible('layout', 'TaoAnimatedBorder')">
       <h2>TaoAnimatedBorder</h2>
       <p>Контейнер с анимированной радужной рамкой — декоративный эффект, не завязан на тему</p>
 
@@ -600,7 +878,7 @@ const tabs = [
     </section>
 
     <!-- TaoCheckbox -->
-    <section class="showcase-section">
+    <section id="checkbox" class="showcase-section" v-show="sectionVisible('forms', 'TaoCheckbox')">
       <h2>TaoCheckbox</h2>
       <p>Чекбокс с поддержкой v-model</p>
 
@@ -616,7 +894,7 @@ const tabs = [
     </section>
 
     <!-- TaoSwitch / Radio / Select -->
-    <section class="showcase-section">
+    <section id="select" class="showcase-section" v-show="sectionVisible('forms', 'TaoSwitch TaoRadio TaoSelect TaoFormField')">
       <h2>TaoSwitch / TaoRadio / TaoSelect</h2>
       <p>Форменные контролы, которых не хватало для логина, профиля и настроек. Label, hint и error — через TaoFormField.</p>
 
@@ -654,7 +932,7 @@ const tabs = [
     </section>
 
     <!-- TaoAlert -->
-    <section class="showcase-section">
+    <section id="alert" class="showcase-section" v-show="sectionVisible('feedback', 'TaoAlert')">
       <h2>TaoAlert</h2>
       <p>Инлайн-баннер: ошибка формы, предупреждение на странице. Не тост — живёт в вёрстке.</p>
 
@@ -675,7 +953,7 @@ const tabs = [
     </section>
 
     <!-- TaoTextarea -->
-    <section class="showcase-section">
+    <section id="textarea" class="showcase-section" v-show="sectionVisible('forms', 'TaoTextarea')">
       <h2>TaoTextarea</h2>
       <p>Многострочное поле с авто-высотой</p>
 
@@ -687,7 +965,7 @@ const tabs = [
     </section>
 
     <!-- TaoTag -->
-    <section class="showcase-section">
+    <section id="tag" class="showcase-section" v-show="sectionVisible('feedback', 'TaoTag')">
       <h2>TaoTag</h2>
       <p>Тег / бейдж со статусами</p>
 
@@ -706,7 +984,7 @@ const tabs = [
     </section>
 
     <!-- toast -->
-    <section class="showcase-section">
+    <section id="toast" class="showcase-section" v-show="sectionVisible('feedback', 'toast')">
       <h2>toast()</h2>
       <p>Fluent-уведомления: цепочка в одном тике, setTimeout(0) отправляет показ.</p>
 
@@ -727,7 +1005,7 @@ toast.success('Сохранено')</code></pre>
     </section>
 
     <!-- confirm -->
-    <section class="showcase-section">
+    <section id="confirm" class="showcase-section" v-show="sectionVisible('overlays', 'confirm')">
       <h2>confirm()</h2>
       <p>Вопрос с оверлеем. Не тост: ждёт ответ, Esc и клик по фону = отмена, можно await.</p>
 
@@ -745,7 +1023,7 @@ toast.success('Сохранено')</code></pre>
     </section>
 
     <!-- TaoProgress / TaoSlider -->
-    <section class="showcase-section">
+    <section id="slider" class="showcase-section" v-show="sectionVisible('forms', 'TaoProgress TaoSlider')">
       <h2>TaoProgress / TaoSlider</h2>
       <p>Статичная полоса прогресса и интерактивный слайдер (drag + клик)</p>
 
@@ -763,7 +1041,7 @@ toast.success('Сохранено')</code></pre>
     </section>
 
     <!-- TaoLoader -->
-    <section class="showcase-section">
+    <section id="loader" class="showcase-section" v-show="sectionVisible('feedback', 'TaoLoader')">
       <h2>TaoLoader</h2>
       <p>Анимированный лоадер</p>
 
@@ -781,7 +1059,7 @@ toast.success('Сохранено')</code></pre>
     </section>
 
     <!-- TaoImage -->
-    <section class="showcase-section">
+    <section id="image" class="showcase-section" v-show="sectionVisible('media', 'TaoImage')">
       <h2>TaoImage</h2>
       <p>Обёртка над &lt;img&gt; с плавным fade-in при загрузке и плейсхолдером</p>
 
@@ -795,7 +1073,7 @@ toast.success('Сохранено')</code></pre>
     </section>
 
     <!-- TaoFileDrop -->
-    <section class="showcase-section">
+    <section id="filedrop" class="showcase-section" v-show="sectionVisible('forms', 'TaoFileDrop')">
       <h2>TaoFileDrop</h2>
       <p>Зона загрузки файлов (drag &amp; drop + клик). Компонент управляется через v-model, поэтому очистку можно как выполнять сразу, так и подтверждать через модалку.</p>
 
@@ -832,7 +1110,7 @@ async function onClear() {
     </section>
 
     <!-- TaoPinCode -->
-    <section class="showcase-section">
+    <section id="pincode" class="showcase-section" v-show="sectionVisible('forms', 'TaoPinCode')">
       <h2>TaoPinCode</h2>
       <p>Пин-код из N полей с авто-переходом фокуса между ними. Backspace на пустом поле стирает предыдущее и переходит на него.</p>
 
@@ -853,7 +1131,7 @@ async function onClear() {
     </section>
 
     <!-- TaoDropdownMenu -->
-    <section class="showcase-section">
+    <section id="dropdown" class="showcase-section" v-show="sectionVisible('overlays', 'TaoDropdownMenu')">
       <h2>TaoDropdownMenu</h2>
       <p>Выпадающее меню с авто-позиционированием у края экрана</p>
 
@@ -865,7 +1143,7 @@ async function onClear() {
     </section>
 
     <!-- TaoLink -->
-    <section class="showcase-section">
+    <section id="link" class="showcase-section" v-show="sectionVisible('nav', 'TaoLink')">
       <h2>TaoLink</h2>
       <p>Ссылка, использующая &lt;NuxtLink&gt; в Nuxt-проекте и обычный &lt;a&gt; вне его — без дополнительной настройки</p>
 
@@ -878,7 +1156,7 @@ async function onClear() {
     </section>
 
     <!-- TaoIcon -->
-    <section class="showcase-section">
+    <section id="icon" class="showcase-section" v-show="sectionVisible('media', 'TaoIcon')">
       <h2>TaoIcon</h2>
       <p>Обёртка для icon-шрифта — рендерит класс <code>icon-&lt;name&gt;</code>, сам шрифт нужно подключить в проекте (см. README)</p>
 
@@ -886,6 +1164,69 @@ async function onClear() {
         <pre><code>&lt;TaoIcon name="arrow-up" :size="20" /&gt;</code></pre>
       </div>
     </section>
+
+    <section id="table" class="showcase-section" v-show="sectionVisible('data', 'TaoTable')">
+      <h2>TaoTable</h2>
+      <p>Простая таблица для списков сущностей. Сама не сортирует и не режет страницы — это делает родитель, поэтому тот же компонент работает и с сервером.</p>
+
+      <div class="button-row">
+        <TaoButton size="small" variant="secondary" @click="flashTableLoading">Загрузка</TaoButton>
+        <TaoButton size="small" variant="ghost" @click="tableEmpty = !tableEmpty; tablePage = 1">
+          {{ tableEmpty ? 'Показать строки' : 'Пустая таблица' }}
+        </TaoButton>
+      </div>
+
+      <TaoTable
+        :columns="tableColumns"
+        :rows="tableRows"
+        v-model:sort="tableSort"
+        :loading="tableLoading"
+        striped
+        clickable
+        empty-text="Пока нет записей"
+        @sort="onTableSort"
+        @row-click="(row) => toast().info().message(row.name)"
+      >
+        <template #cell-status="{ row }">
+          <TaoTag :type="row.status === 'active' ? 'success' : row.status === 'banned' ? 'danger' : 'neutral'">
+            {{ row.status }}
+          </TaoTag>
+        </template>
+      </TaoTable>
+
+      <TaoPagination
+        v-model:page="tablePage"
+        :total="tableTotal"
+        :page-size="tablePageSize"
+        style="margin-top: 12px;"
+      />
+
+      <div class="code-block">
+        <pre><code>&lt;TaoTable :columns="columns" :rows="pageRows" v-model:sort="sort"&gt;
+  &lt;template #cell-status="{ row }"&gt;
+    &lt;TaoTag :type="row.status === 'active' ? 'success' : 'neutral'"&gt;
+      &#123;&#123; row.status &#125;&#125;
+    &lt;/TaoTag&gt;
+  &lt;/template&gt;
+&lt;/TaoTable&gt;
+
+&lt;TaoPagination v-model:page="page" :total="rows.length" :page-size="8" /&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="pagination" class="showcase-section" v-show="sectionVisible('data', 'TaoPagination')">
+      <h2>TaoPagination</h2>
+      <p>Страницы с многоточием, счётчик «с–по из N». Текущая страница — через <code>v-model:page</code>.</p>
+
+      <TaoPagination v-model:page="pagerPage" :total="500" :page-size="10" />
+      <TaoPagination v-model:page="pagerPage" :total="500" :page-size="10" size="small" style="margin-top: 12px;" />
+
+      <div class="code-block">
+        <pre><code>&lt;TaoPagination v-model:page="page" :total="500" :page-size="10" /&gt;</code></pre>
+      </div>
+    </section>
+      </main>
+    </div>
 
     <footer class="showcase-footer">
       <p>Tao UI Library © 2024. Создано с любовью ❤️</p>
@@ -898,17 +1239,200 @@ async function onClear() {
 
 <style scoped>
 .showcase {
-  max-width: 900px;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 40px 20px;
+  padding: 32px 20px 40px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+}
+
+.showcase-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.showcase-top .description {
+  margin-bottom: 0;
+}
+
+.showcase-body {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+
+.showcase-nav {
+  position: sticky;
+  top: 16px;
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+  padding: 12px 10px;
+  border: 1px solid var(--tao-color-border);
+  border-radius: var(--tao-radius-panel);
+  background: var(--tao-color-surface);
+}
+
+.showcase-nav__search {
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--tao-color-border-strong);
+  border-radius: var(--tao-radius-control);
+  background: var(--tao-color-surface-sunken);
+  color: var(--tao-color-text);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.showcase-nav__search::placeholder {
+  color: var(--tao-color-text-muted);
+}
+
+.showcase-nav__all,
+.showcase-nav__group-title {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 6px 8px;
+  border: 0;
+  background: transparent;
+  color: var(--tao-color-text);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--tao-radius-control);
+}
+
+.showcase-nav__all {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.showcase-nav__group {
+  margin-top: 10px;
+}
+
+.showcase-nav__group-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--tao-color-text-muted);
+}
+
+.showcase-nav__all:hover,
+.showcase-nav__group-title:hover,
+.showcase-nav__link:hover {
+  background: var(--tao-color-surface-hover);
+}
+
+.showcase-nav__all.active,
+.showcase-nav__group-title.active {
+  background: var(--tao-color-surface-sunken);
+  color: var(--tao-color-accent);
+}
+
+.showcase-nav__link {
+  display: block;
+  padding: 4px 8px 4px 12px;
+  color: var(--tao-color-text);
+  font-size: 13px;
+  line-height: 1.4;
+  text-decoration: none;
+  border-radius: var(--tao-radius-control);
+}
+
+.showcase-nav__link.active {
+  color: var(--tao-color-accent);
+  font-weight: 600;
+}
+
+.showcase-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding: 16px 18px;
+  border: 1px solid var(--tao-color-border);
+  border-radius: var(--tao-radius-panel);
+  background: var(--tao-color-surface-sunken);
+}
+
+.showcase-banner__kicker {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--tao-color-text-muted);
+}
+
+.showcase-banner__title {
+  margin: 2px 0 0;
+  font-size: 22px;
+}
+
+.showcase-banner__reset {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border: 1px solid var(--tao-color-border-strong);
+  border-radius: var(--tao-radius-control);
+  background: var(--tao-color-surface);
+  color: var(--tao-color-text);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.showcase-section {
+  scroll-margin-top: 16px;
+}
+
+@media (max-width: 860px) {
+  .showcase-top {
+    flex-direction: column;
+  }
+
+  .showcase-body {
+    grid-template-columns: 1fr;
+  }
+
+  .showcase-nav {
+    position: static;
+    max-height: none;
+    margin-bottom: 8px;
+  }
+
+  .showcase-nav__group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .showcase-nav__group-title {
+    width: auto;
+    margin-right: 4px;
+  }
+
+  .showcase-nav__link {
+    width: auto;
+    padding: 4px 8px;
+  }
 }
 
 .theme-switcher {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 24px;
+  margin-bottom: 0;
+  flex-shrink: 0;
 }
 
 .theme-switcher__label {
