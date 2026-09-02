@@ -33,6 +33,7 @@ import {
   TaoLink,
   TaoFormField,
   TaoSelect,
+  TaoCombobox,
   TaoDate,
   TaoSwitch,
   TaoRadio,
@@ -238,6 +239,44 @@ const cities = [
 ]
 const notifyEmail = ref(true)
 const plan = ref('pro')
+const comboCity = ref(null)
+const comboTag = ref(null)
+const comboFree = ref(null)
+const comboCities = [
+  { value: 'msk', label: 'Москва' },
+  { value: 'spb', label: 'Санкт-Петербург' },
+  { value: 'kzn', label: 'Казань', disabled: true },
+  { value: 'nsk', label: 'Новосибирск' },
+  { value: 'ekb', label: 'Екатеринбург' },
+  { value: 'nn', label: 'Нижний Новгород' },
+  { value: 'sam', label: 'Самара' },
+  { value: 'oms', label: 'Омск' },
+  { value: 'chel', label: 'Челябинск' },
+  { value: 'rnd', label: 'Ростов-на-Дону' },
+  { value: 'ufa', label: 'Уфа' },
+  { value: 'krsk', label: 'Красноярск' },
+  { value: 'vrn', label: 'Воронеж' },
+  { value: 'perm', label: 'Пермь' },
+  { value: 'vlg', label: 'Волгоград' },
+]
+const comboFreeOptions = [
+  { value: 'vue', label: 'Vue' },
+  { value: 'nuxt', label: 'Nuxt' },
+  { value: 'ts', label: 'TypeScript' },
+]
+const comboTags = ref([
+  { value: 'vue', label: 'Vue' },
+  { value: 'nuxt', label: 'Nuxt' },
+  { value: 'ts', label: 'TypeScript' },
+])
+function onComboTagCreate(text) {
+  const exists = comboTags.value.some(
+    (tag) => tag.value === text || tag.label.toLowerCase() === String(text).toLowerCase(),
+  )
+  if (!exists) {
+    comboTags.value.push({ value: text, label: text })
+  }
+}
 const deliveryDate = ref('2026-09-02')
 const emptyDate = ref(null)
 const errorDate = ref(null)
@@ -362,6 +401,12 @@ async function fireConfirm(kind) {
 
 // TaoImage demo — data URI, чтобы демонстрация не зависела от внешней сети
 const imageSrc = ref('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNjAiIGhlaWdodD0iMTIwIiB2aWV3Qm94PSIwIDAgMTYwIDEyMCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxMjAiIGZpbGw9IiNlNWU1ZTUiLz4KICA8cmVjdCB4PSIxIiB5PSIxIiB3aWR0aD0iMTU4IiBoZWlnaHQ9IjExOCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYmZiZmJmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8dGV4dCB4PSI4MCIgeT0iNjUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNjY2NjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5kZW1vIGltYWdlPC90ZXh0Pgo8L3N2Zz4K')
+function stubPhoto(label) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220"><rect width="220" height="220" fill="#f4f4f4"/><rect x="1" y="1" width="218" height="218" fill="none" stroke="#d4d4d4"/><text x="110" y="118" font-family="sans-serif" font-size="28" fill="#8a8a8a" text-anchor="middle">${label}</text></svg>`
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`
+}
+const cardPhotos = [stubPhoto('1'), stubPhoto('2'), stubPhoto('3')]
+const cardGallery = ref(0)
 
 const navGroups = [
   {
@@ -384,6 +429,7 @@ const navGroups = [
       { id: 'textarea', label: 'TaoTextarea' },
       { id: 'checkbox', label: 'TaoCheckbox' },
       { id: 'select', label: 'Select / Switch / Radio' },
+      { id: 'combobox', label: 'TaoCombobox' },
       { id: 'date', label: 'TaoDate' },
       { id: 'pincode', label: 'TaoPinCode' },
       { id: 'slider', label: 'Progress / Slider' },
@@ -692,7 +738,10 @@ onBeforeUnmount(() => {
     <!-- TaoCard -->
     <section id="card" class="showcase-section" v-show="sectionVisible('basics', 'TaoCard')">
       <h2>TaoCard</h2>
-      <p>Карточка с поддержкой слотов для cover, header и footer</p>
+      <p>
+        Карточка со слотами cover / header / footer. Обложка — любой контент: фото или карусель.
+        Проп <code>hover</code> даёт обводку акцентом при наведении — у товаров ниже он выключен.
+      </p>
       
       <TaoCard :padding="20" :radius="12">
         <template #cover>
@@ -710,17 +759,58 @@ onBeforeUnmount(() => {
         </template>
       </TaoCard>
 
+      <h3>Товар</h3>
+      <p class="carousel-note">
+        Ширина 220px — в витрине, сам Card на 100%. Одно фото — <code>TaoImage</code> в <code>#cover</code>.
+        Несколько — <code>TaoCarousel</code> туда же: без стрелок, точки, свайп.
+      </p>
+      <div class="product-cards">
+        <div class="product-card">
+          <TaoCard :padding="12" :radius="12">
+            <template #cover>
+              <img class="product-card__photo" :src="cardPhotos[0]" alt="Кроссовки Nova" />
+            </template>
+            <template #title>Nova</template>
+            <template #sub>Кроссовки</template>
+            <template #footer>8 990 ₽</template>
+          </TaoCard>
+        </div>
+        <div class="product-card product-card--gallery">
+          <TaoCard :padding="12" :radius="12">
+            <template #cover>
+              <TaoCarousel v-model="cardGallery" :controls="false" dots aria-label="Фото товара">
+                <img
+                  v-for="(src, index) in cardPhotos"
+                  :key="index"
+                  class="product-card__photo"
+                  :src="src"
+                  :alt="'Фото ' + (index + 1)"
+                  draggable="false"
+                />
+              </TaoCarousel>
+            </template>
+            <template #title>Drift</template>
+            <template #sub>3 фото, листайте</template>
+            <template #footer>12 400 ₽</template>
+          </TaoCard>
+        </div>
+      </div>
+
       <div class="code-block">
-        <pre><code>&lt;TaoCard :padding="20" :radius="12"&gt;
+        <pre><code>&lt;TaoCard :padding="12" :radius="12"&gt;
   &lt;template #cover&gt;
-    &lt;div&gt;Обложка&lt;/div&gt;
+    &lt;img src="photo.jpg" alt="Товар" /&gt;
   &lt;/template&gt;
-  &lt;template #header&gt;
-    &lt;h3&gt;Заголовок&lt;/h3&gt;
-  &lt;/template&gt;
-  &lt;p&gt;Содержимое&lt;/p&gt;
-  &lt;template #footer&gt;
-    &lt;TaoButton&gt;Действие&lt;/TaoButton&gt;
+  &lt;template #title&gt;Nova&lt;/template&gt;
+  &lt;template #sub&gt;Кроссовки&lt;/template&gt;
+  &lt;template #footer&gt;8 990 ₽&lt;/template&gt;
+&lt;/TaoCard&gt;
+
+&lt;TaoCard :padding="12" :radius="12"&gt;
+  &lt;template #cover&gt;
+    &lt;TaoCarousel :controls="false" dots&gt;
+      &lt;img v-for="src in photos" :src="src" draggable="false" /&gt;
+    &lt;/TaoCarousel&gt;
   &lt;/template&gt;
 &lt;/TaoCard&gt;</code></pre>
       </div>
@@ -1221,6 +1311,60 @@ const tabs = [
   &lt;TaoRadio value="free" label="Free" /&gt;
   &lt;TaoRadio value="pro" label="Pro" /&gt;
 &lt;/TaoRadioGroup&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="combobox" class="showcase-section" v-show="sectionVisible('forms', 'TaoCombobox')">
+      <h2>TaoCombobox</h2>
+      <p>
+        Select с полем: печатаете — список фильтруется. По умолчанию только из списка:
+        не нашли — ввод откатывается. <code>allow-create</code> оставляет свой текст в
+        <code>v-model</code>; список Combobox сам не трогает. Чтобы новое появилось в
+        <code>options</code>, слушайте <code>@create</code>. Esc и клик снаружи закрывают.
+      </p>
+
+      <div style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+        <TaoFormField
+          label="Город"
+          :hint="comboCity ? `В модели: ${comboCity}` : 'Только из списка. Начните с «мо» или «сан»'"
+        >
+          <TaoCombobox v-model="comboCity" :options="comboCities" placeholder="Начните вводить город" />
+        </TaoFormField>
+
+        <TaoFormField
+          label="Свой запрос"
+          :hint="comboFree ? `В модели: ${comboFree}` : 'Список не меняется. «Vite» уйдёт только в переменную'"
+        >
+          <TaoCombobox
+            v-model="comboFree"
+            :options="comboFreeOptions"
+            allow-create
+            placeholder="Vue, Nuxt или свой"
+          />
+        </TaoFormField>
+
+        <TaoFormField
+          label="Тег в список"
+          :hint="comboTag ? `В модели: ${comboTag}` : '«Vite» попадёт и в модель, и в options через @create'"
+        >
+          <TaoCombobox
+            v-model="comboTag"
+            :options="comboTags"
+            allow-create
+            placeholder="Vue, Nuxt или свой"
+            @create="onComboTagCreate"
+          />
+        </TaoFormField>
+
+        <TaoFormField label="Disabled">
+          <TaoCombobox model-value="msk" :options="comboCities" disabled />
+        </TaoFormField>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoCombobox v-model="city" :options="cities" /&gt;
+&lt;TaoCombobox v-model="query" :options="tags" allow-create /&gt;
+&lt;TaoCombobox v-model="tag" :options="tags" allow-create @create="onCreate" /&gt;</code></pre>
       </div>
     </section>
 
@@ -2105,6 +2249,62 @@ p {
   height: 150px;
   background: linear-gradient(135deg, var(--tao-color-accent) 0%, var(--tao-color-accent-active) 100%);
   border-radius: 12px 12px 0 0;
+}
+
+.product-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.product-card {
+  width: 220px;
+  max-width: 220px;
+  min-width: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.product-card :deep(.tao-card),
+.product-card :deep(.tao-carousel),
+.product-card :deep(.tao-carousel__row),
+.product-card :deep(.tao-carousel__track) {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.product-card :deep(.tao-card__title) {
+  font-size: 16px;
+}
+
+.product-card :deep(.tao-card__footer) {
+  font-weight: 600;
+}
+
+.product-card__photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: #f4f4f4;
+}
+
+.product-card--gallery :deep(.tao-carousel) {
+  position: relative;
+}
+
+.product-card--gallery :deep(.tao-carousel__track) {
+  gap: 0;
+}
+
+.product-card--gallery :deep(.tao-carousel__dots) {
+  position: absolute;
+  right: 0;
+  bottom: 8px;
+  left: 0;
+  z-index: 1;
 }
 
 .copy-preview {

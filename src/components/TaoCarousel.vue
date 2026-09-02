@@ -117,7 +117,7 @@ function goNext() {
     goTo(index.value + step.value);
 }
 
-function goTo(next: number) {
+function goTo(next: number, instant = false) {
     const el = track.value;
     const { width, gap, total } = metrics();
     if (!el || width <= 0 || total <= 0) {
@@ -141,7 +141,7 @@ function goTo(next: number) {
 
     el.scrollTo({
         left: page * (width + gap),
-        behavior: prefersReducedMotion() || dragging.value || wrapping ? 'auto' : 'smooth',
+        behavior: prefersReducedMotion() || dragging.value || wrapping || instant ? 'auto' : 'smooth',
     });
     setIndex(page);
 }
@@ -223,6 +223,42 @@ function onScroll() {
     });
 }
 
+function releaseDragCapture() {
+    const el = track.value;
+    const id = dragPointer;
+    if (!el || id === -1) {
+        return;
+    }
+
+    if (typeof el.hasPointerCapture === 'function' && !el.hasPointerCapture(id)) {
+        return;
+    }
+
+    try {
+        el.releasePointerCapture(id);
+    } catch {
+        /* already released by the browser */
+    }
+}
+
+function endDrag(keepClickGuard = false) {
+    if (!dragging.value) {
+        return;
+    }
+
+    dragging.value = false;
+    releaseDragCapture();
+    dragPointer = -1;
+    if (!keepClickGuard) {
+        dragMoved = 0;
+    }
+
+    if (track.value) {
+        goTo(nearestIndex(), true);
+    }
+    syncAutoplay();
+}
+
 function onPointerDown(event: PointerEvent) {
     if (event.pointerType !== 'mouse' || event.button !== 0 || !track.value) {
         return;
@@ -233,7 +269,11 @@ function onPointerDown(event: PointerEvent) {
     dragStartScroll = track.value.scrollLeft;
     dragMoved = 0;
     dragging.value = true;
-    track.value.setPointerCapture(event.pointerId);
+    try {
+        track.value.setPointerCapture(event.pointerId);
+    } catch {
+        /* untrusted events / capture already gone */
+    }
 }
 
 function onPointerMove(event: PointerEvent) {
@@ -246,14 +286,29 @@ function onPointerMove(event: PointerEvent) {
     track.value.scrollLeft = dragStartScroll - dx;
 }
 
-function onPointerUp(event: PointerEvent) {
-    if (!dragging.value || event.pointerId !== dragPointer) {
+function onPointerEnd(event: PointerEvent) {
+    if (!dragging.value) {
+        return;
+    }
+    if (dragPointer !== -1 && event.pointerId !== dragPointer) {
         return;
     }
 
-    dragging.value = false;
-    dragPointer = -1;
-    goTo(nearestIndex());
+    endDrag(true);
+}
+
+function onLostPointerCapture() {
+    endDrag();
+}
+
+function onWindowBlur() {
+    endDrag();
+}
+
+function onVisibilityChange() {
+    if (document.hidden) {
+        endDrag();
+    }
     syncAutoplay();
 }
 
@@ -298,15 +353,20 @@ onMounted(() => {
         goTo(props.modelValue);
         syncAutoplay();
     });
-    document.addEventListener('visibilitychange', syncAutoplay);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    window.addEventListener('blur', onWindowBlur);
+    window.addEventListener('pagehide', onWindowBlur);
 });
 
 onUpdated(refreshCount);
 
 onBeforeUnmount(() => {
+    endDrag();
     cancelAnimationFrame(scrollFrame);
     stopAutoplay();
-    document.removeEventListener('visibilitychange', syncAutoplay);
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+    window.removeEventListener('blur', onWindowBlur);
+    window.removeEventListener('pagehide', onWindowBlur);
 });
 </script>
 
@@ -353,8 +413,9 @@ onBeforeUnmount(() => {
                 @keydown="onKeydown"
                 @pointerdown="onPointerDown"
                 @pointermove="onPointerMove"
-                @pointerup="onPointerUp"
-                @pointercancel="onPointerUp"
+                @pointerup="onPointerEnd"
+                @pointercancel="onPointerEnd"
+                @lostpointercapture="onLostPointerCapture"
                 @click.capture="onClickCapture"
             >
                 <slot />

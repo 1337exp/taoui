@@ -31,6 +31,7 @@ import TaoPinCode from './components/TaoPinCode.vue';
 import TaoLink from './components/TaoLink.vue';
 import TaoFormField from './components/TaoFormField.vue';
 import TaoSelect from './components/TaoSelect.vue';
+import TaoCombobox from './components/TaoCombobox.vue';
 import TaoDate from './components/TaoDate.vue';
 import TaoSwitch from './components/TaoSwitch.vue';
 import TaoRadio from './components/TaoRadio.vue';
@@ -90,6 +91,7 @@ const components = [
     TaoLink,
     TaoFormField,
     TaoSelect,
+    TaoCombobox,
     TaoDate,
     TaoSwitch,
     TaoRadio,
@@ -150,6 +152,7 @@ export {
     TaoLink,
     TaoFormField,
     TaoSelect,
+    TaoCombobox,
     TaoDate,
     TaoSwitch,
     TaoRadio,

@@ -9,7 +9,7 @@
 
 - **TaoBlock** — базовый контейнер с настраиваемыми отступами и скруглением
 - **TaoButton** — кнопка с вариантами (primary, secondary, ghost, danger), размерами и состояниями
-- **TaoCard** — карточка с поддержкой слотов (cover, headerTitle, header/headerSecondary, title/sub, footer)
+- **TaoCard** — карточка со слотами cover / header / footer. В `#cover` — фото или `TaoCarousel`
 - **TaoCopy** — кнопка копирования текста в буфер обмена
 - **TaoInput** — поле ввода с поддержкой v-model, валидации и слотов `#prefix` / `#suffix` (иконка или текст внутри рамки)
 - **TaoInputGroup** — склейка снаружи: `#before` | поле | `#after` (протокол, единица, кнопка)
@@ -33,6 +33,7 @@
 - **TaoSwitch** — переключатель для булевых настроек (`role="switch"`)
 - **TaoRadio** / **TaoRadioGroup** — взаимоисключающий выбор из 2–5 вариантов
 - **TaoSelect** — выпадающий список с клавиатурой, тот же визуал, что у Input. Сброс — «Очистить» в списке или Delete
+- **TaoCombobox** — Select с полем: фильтр по вводу, `allow-create` пишет своё в `v-model`, `create` — чтобы родитель дополнил список
 - **TaoDate** — один день: `YYYY-MM-DD`, без часов и пояса. Календарь как у Select
 - **TaoFormField** — общие label / hint / error для полей формы
 - **TaoInputNumber** — число с min/max/step и кнопками ± справа. Пустое значение — `null`
@@ -226,6 +227,8 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 ```
 
 `TaoSelect` открывается с клавиатуры (стрелки, Enter, Esc), список переворачивается у края экрана. Delete или «Очистить» внизу списка сбрасывает значение в `null`.
+
+`TaoCombobox` — то же меню, но с полем. Печатаете — варианты режутся. `allow-create` пишет введённое в `v-model`, если точного совпадения нет. Список сам не меняется: слушайте `create` и добавьте option снаружи.
 
 `TaoFormField` также оборачивает `TaoTextarea` и `TaoCheckbox` — id, hint и error прокидываются сами.
 
