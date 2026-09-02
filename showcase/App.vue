@@ -1570,14 +1570,18 @@ toast.success('Сохранено')</code></pre>
     <!-- TaoImage -->
     <section id="image" class="showcase-section" v-show="sectionVisible('media', 'TaoImage')">
       <h2>TaoImage</h2>
-      <p>Обёртка над &lt;img&gt; с плавным fade-in при загрузке и плейсхолдером</p>
+      <p>
+        Обёртка над <code>&lt;img&gt;</code>: fade-in и плейсхолдер. По умолчанию грузится сразу.
+        <code>lazy</code> — браузер сам отложит загрузку, пока картинка не рядом с экраном.
+      </p>
 
       <div style="width: 160px; height: 120px;">
         <TaoImage :src="imageSrc" />
       </div>
 
       <div class="code-block">
-        <pre><code>&lt;TaoImage :src="imageUrl" /&gt;</code></pre>
+        <pre><code>&lt;TaoImage :src="imageUrl" /&gt;
+&lt;TaoImage :src="imageUrl" lazy /&gt;</code></pre>
       </div>
     </section>
 

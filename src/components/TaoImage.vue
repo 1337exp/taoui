@@ -7,12 +7,15 @@ interface Props {
     src: string;
     alt?: string;
     pixelated?: boolean;
+    /** Нативный `loading="lazy"`. По умолчанию выкл — как обычный `<img>`. */
+    lazy?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     src: '',
     alt: '',
     pixelated: false,
+    lazy: false,
 });
 
 const emit = defineEmits(['load', 'error']);
@@ -41,6 +44,8 @@ watch(() => props.src, () => {
                 :class="{ 'tao-image__img--hidden': !isLoaded, 'tao-image__img--pixelated': props.pixelated }"
                 :src="src"
                 :alt="alt"
+                :loading="lazy ? 'lazy' : 'eager'"
+                decoding="async"
                 draggable="false"
                 @load="handleLoad"
                 @error="handleError"
