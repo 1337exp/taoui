@@ -40,7 +40,7 @@ const style = computed(() => ({
     display: inline-block;
     height: auto;
     margin: 0;
-    padding-inline: var(--tao-space-2);
+    padding: 1px var(--tao-space-2);
     white-space: nowrap;
     text-align: start;
     color: var(--tao-color-accent);

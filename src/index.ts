@@ -40,6 +40,8 @@ import TaoDateRange from './components/TaoDateRange.vue';
 import TaoSwitch from './components/TaoSwitch.vue';
 import TaoRadio from './components/TaoRadio.vue';
 import TaoRadioGroup from './components/TaoRadioGroup.vue';
+import TaoSegmented from './components/TaoSegmented.vue';
+import TaoSegmentedOption from './components/TaoSegmentedOption.vue';
 import TaoAlert from './components/TaoAlert.vue';
 import TaoTable from './components/TaoTable.vue';
 import TaoPagination from './components/TaoPagination.vue';
@@ -104,6 +106,8 @@ const components = [
     TaoSwitch,
     TaoRadio,
     TaoRadioGroup,
+    TaoSegmented,
+    TaoSegmentedOption,
     TaoAlert,
     TaoTable,
     TaoPagination,
@@ -169,6 +173,8 @@ export {
     TaoSwitch,
     TaoRadio,
     TaoRadioGroup,
+    TaoSegmented,
+    TaoSegmentedOption,
     TaoAlert,
     TaoTable,
     TaoPagination,
@@ -217,6 +223,7 @@ export {
 export type { TaoSelectOption } from './select';
 export type { TaoDateCell, TaoDateParts, TaoDateRangeValue } from './date';
 export type { TaoRadioValue } from './radio';
+export type { TaoSegmentedSize } from './segmented';
 export type { TaoSpoilerName } from './spoiler';
 export type { TaoFormFieldContext } from './formField';
 export type { TaoTableAlign, TaoTableColumn, TaoTableSort } from './table';

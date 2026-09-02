@@ -42,6 +42,8 @@ import {
   TaoSwitch,
   TaoRadio,
   TaoRadioGroup,
+  TaoSegmented,
+  TaoSegmentedOption,
   TaoAlert,
   TaoTable,
   TaoPagination,
@@ -248,6 +250,9 @@ const cities = [
 ]
 const notifyEmail = ref(true)
 const plan = ref('pro')
+const period = ref('month')
+const layoutView = ref('list')
+const inboxFilter = ref('all')
 const comboCity = ref(null)
 const comboTag = ref(null)
 const comboFree = ref(null)
@@ -445,6 +450,7 @@ const navGroups = [
       { id: 'textarea', label: 'TaoTextarea' },
       { id: 'checkbox', label: 'TaoCheckbox' },
       { id: 'select', label: 'Select / Switch / Radio', aliases: ['TaoSelect', 'TaoSwitch', 'TaoRadio', 'TaoFormField', 'FormField'] },
+      { id: 'segmented', label: 'TaoSegmented', aliases: ['TaoSegmentedOption', 'Segmented'] },
       { id: 'combobox', label: 'TaoCombobox' },
       { id: 'date', label: 'TaoDate / Range', aliases: ['TaoDate', 'TaoDateRange', 'DateRange'] },
       { id: 'pincode', label: 'TaoPinCode' },
@@ -1104,6 +1110,84 @@ onBeforeUnmount(() => {
   &lt;TaoRadio value="free" label="Free" /&gt;
   &lt;TaoRadio value="pro" label="Pro" /&gt;
 &lt;/TaoRadioGroup&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="segmented" class="showcase-section" v-show="sectionVisible('forms', 'segmented')">
+      <h2>TaoSegmented</h2>
+      <p>
+        Компактный выбор из 2–5 коротких вариантов: период, режим, вид списка.
+        Это значение формы, не навигация — для секций страницы есть <code>TaoTabs</code>.
+        Длинные подписи — <code>TaoRadioGroup</code>.
+      </p>
+
+      <h3>Период</h3>
+      <div class="button-row">
+        <TaoSegmented v-model="period" legend="Период">
+          <TaoSegmentedOption value="week">Неделя</TaoSegmentedOption>
+          <TaoSegmentedOption value="month">Месяц</TaoSegmentedOption>
+          <TaoSegmentedOption value="year">Год</TaoSegmentedOption>
+        </TaoSegmented>
+      </div>
+
+      <h3>Размеры</h3>
+      <div class="demo-stack">
+        <TaoSegmented v-model="period" size="small">
+          <TaoSegmentedOption value="week">Неделя</TaoSegmentedOption>
+          <TaoSegmentedOption value="month">Месяц</TaoSegmentedOption>
+          <TaoSegmentedOption value="year">Год</TaoSegmentedOption>
+        </TaoSegmented>
+        <TaoSegmented v-model="period" size="medium">
+          <TaoSegmentedOption value="week">Неделя</TaoSegmentedOption>
+          <TaoSegmentedOption value="month">Месяц</TaoSegmentedOption>
+          <TaoSegmentedOption value="year">Год</TaoSegmentedOption>
+        </TaoSegmented>
+        <TaoSegmented v-model="period" size="large">
+          <TaoSegmentedOption value="week">Неделя</TaoSegmentedOption>
+          <TaoSegmentedOption value="month">Месяц</TaoSegmentedOption>
+          <TaoSegmentedOption value="year">Год</TaoSegmentedOption>
+        </TaoSegmented>
+      </div>
+
+      <h3>На всю ширину, счётчик, только иконка</h3>
+      <div class="demo-stack">
+        <TaoSegmented v-model="inboxFilter" block>
+          <TaoSegmentedOption value="all" count="12">Все</TaoSegmentedOption>
+          <TaoSegmentedOption value="unread" count="3">Новые</TaoSegmentedOption>
+          <TaoSegmentedOption value="done" disabled>Готово</TaoSegmentedOption>
+        </TaoSegmented>
+
+        <TaoSegmented v-model="layoutView" legend="Вид">
+          <TaoSegmentedOption value="list" icon="☰" aria-label="Список" />
+          <TaoSegmentedOption value="grid" icon="▦" aria-label="Сетка" />
+        </TaoSegmented>
+
+        <TaoFormField label="Сортировка" hint="Не вкладки: выбранное значение уходит в форму">
+          <TaoSegmented v-model="period" block>
+            <TaoSegmentedOption value="week">Неделя</TaoSegmentedOption>
+            <TaoSegmentedOption value="month">Месяц</TaoSegmentedOption>
+            <TaoSegmentedOption value="year">Год</TaoSegmentedOption>
+          </TaoSegmented>
+        </TaoFormField>
+
+        <TaoSegmented v-model="period" disabled>
+          <TaoSegmentedOption value="week">Неделя</TaoSegmentedOption>
+          <TaoSegmentedOption value="month">Месяц</TaoSegmentedOption>
+          <TaoSegmentedOption value="year">Год</TaoSegmentedOption>
+        </TaoSegmented>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoSegmented v-model="period" legend="Период"&gt;
+  &lt;TaoSegmentedOption value="week"&gt;Неделя&lt;/TaoSegmentedOption&gt;
+  &lt;TaoSegmentedOption value="month"&gt;Месяц&lt;/TaoSegmentedOption&gt;
+  &lt;TaoSegmentedOption value="year"&gt;Год&lt;/TaoSegmentedOption&gt;
+&lt;/TaoSegmented&gt;
+
+&lt;TaoSegmented v-model="inbox" block&gt;
+  &lt;TaoSegmentedOption value="all" count="12"&gt;Все&lt;/TaoSegmentedOption&gt;
+  &lt;TaoSegmentedOption value="unread" count="3"&gt;Новые&lt;/TaoSegmentedOption&gt;
+&lt;/TaoSegmented&gt;</code></pre>
       </div>
     </section>
 

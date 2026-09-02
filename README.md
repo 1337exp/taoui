@@ -36,7 +36,8 @@ change a handful of CSS variables and the whole kit follows.
 
 - **TaoCheckbox** — checkbox with v-model, pre/post slots, and `indeterminate`
 - **TaoSwitch** — boolean toggle (`role="switch"`)
-- **TaoRadio** / **TaoRadioGroup** — exclusive choice among 2–5 options
+- **TaoRadio** / **TaoRadioGroup** — classic radios: longer labels, can stack vertically
+- **TaoSegmented** / **TaoSegmentedOption** — compact exclusive choice among 2–5 short options. Not tabs
 - **TaoSelect** — dropdown with keyboard, same chrome as Input. Clear via “Clear” in the list or Delete
 - **TaoCombobox** — Select with a field: type to filter, `allow-create` writes a custom value into `v-model`, `create` lets the parent append the list
 - **TaoDate** — a single day: `YYYY-MM-DD`, no time, no timezone. Calendar popup like Select
@@ -232,8 +233,16 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
   <TaoRadio value="pro" label="Pro" />
 </TaoRadioGroup>
 
+<TaoSegmented v-model="period" legend="Period">
+  <TaoSegmentedOption value="week">Week</TaoSegmentedOption>
+  <TaoSegmentedOption value="month">Month</TaoSegmentedOption>
+  <TaoSegmentedOption value="year">Year</TaoSegmentedOption>
+</TaoSegmented>
+
 <TaoAlert type="warning" title="Draft">Save before you leave.</TaoAlert>
 ```
+
+`TaoSegmented` is a short exclusive choice with every option visible. It is not page navigation — that is `TaoTabs`. Longer labels or more than 5–6 items belong in `TaoRadioGroup` or `TaoSelect`.
 
 `TaoSelect` opens from the keyboard (arrows, Enter, Esc); the list flips at the viewport edge. Delete or “Clear” at the bottom of the list resets the value to `null`.
 
