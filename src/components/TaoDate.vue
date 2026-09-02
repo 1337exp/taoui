@@ -298,19 +298,23 @@ onBeforeUnmount(() => {
             @keydown="onTriggerKeydown"
         >
             <span class="tao-date__value">{{ displayLabel || placeholder }}</span>
-            <svg class="tao-date__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
-                <rect
-                    x="2"
-                    y="3"
-                    width="12"
-                    height="11"
-                    rx="1.5"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.4"
-                />
-                <path d="M5 1.5v3M11 1.5v3M2 6.5h12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
-            </svg>
+            <span class="tao-date__icon" aria-hidden="true">
+                <slot name="icon">
+                    <svg viewBox="0 0 16 16" width="16" height="16" focusable="false">
+                        <rect
+                            x="2"
+                            y="3"
+                            width="12"
+                            height="11"
+                            rx="1.5"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.4"
+                        />
+                        <path d="M5 1.5v3M11 1.5v3M2 6.5h12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+                    </svg>
+                </slot>
+            </span>
         </button>
 
         <Teleport to="body">
@@ -327,29 +331,37 @@ onBeforeUnmount(() => {
             >
                 <div class="tao-date__header">
                     <button type="button" class="tao-date__nav" :aria-label="prevMonthLabel" @click="goMonth(-1)">
-                        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
-                            <path
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2.2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M14.5 5 8 12l6.5 7"
-                            />
-                        </svg>
+                        <span aria-hidden="true">
+                            <slot name="prev-icon">
+                                <svg viewBox="0 0 24 24" width="14" height="14" focusable="false">
+                                    <path
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2.2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M14.5 5 8 12l6.5 7"
+                                    />
+                                </svg>
+                            </slot>
+                        </span>
                     </button>
                     <p class="tao-date__month">{{ monthLabel }}</p>
                     <button type="button" class="tao-date__nav" :aria-label="nextMonthLabel" @click="goMonth(1)">
-                        <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
-                            <path
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="2.2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M9.5 5 16 12l-6.5 7"
-                            />
-                        </svg>
+                        <span aria-hidden="true">
+                            <slot name="next-icon">
+                                <svg viewBox="0 0 24 24" width="14" height="14" focusable="false">
+                                    <path
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="2.2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        d="M9.5 5 16 12l-6.5 7"
+                                    />
+                                </svg>
+                            </slot>
+                        </span>
                     </button>
                 </div>
 
@@ -449,7 +461,9 @@ onBeforeUnmount(() => {
 }
 
 .tao-date__icon {
+    display: inline-flex;
     flex-shrink: 0;
+    align-items: center;
     opacity: 0.7;
 }
 </style>

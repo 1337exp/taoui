@@ -157,7 +157,9 @@ onBeforeUnmount(() => stopFocusLoss?.());
                 :aria-label="clearLabel"
                 @click="requestClear"
             >
-                ✕
+                <span aria-hidden="true">
+                    <slot name="clear-icon">✕</slot>
+                </span>
             </button>
 
             <label
@@ -191,7 +193,9 @@ onBeforeUnmount(() => stopFocusLoss?.());
                     :aria-label="removeLabel.replace('{name}', file.name)"
                     @click="removeAt(index)"
                 >
-                    ✕
+                    <span aria-hidden="true">
+                        <slot name="remove-icon">✕</slot>
+                    </span>
                 </button>
             </li>
         </ul>

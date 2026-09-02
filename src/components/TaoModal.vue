@@ -122,7 +122,9 @@ onBeforeUnmount(() => {
                             :aria-label="closeLabel"
                             @click="close"
                         >
-                            &times;
+                            <span aria-hidden="true">
+                                <slot name="close-icon">&times;</slot>
+                            </span>
                         </button>
                     </div>
                     <div class="tao-modal__content">

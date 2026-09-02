@@ -493,7 +493,13 @@ onBeforeUnmount(() => {
                 @blur="onBlur"
                 @keydown="onInputKeydown"
             />
-            <span class="tao-combobox__chevron" aria-hidden="true"></span>
+            <span
+                class="tao-combobox__chevron"
+                :class="{ 'tao-combobox__chevron--custom': $slots.chevron }"
+                aria-hidden="true"
+            >
+                <slot name="chevron" />
+            </span>
         </div>
 
         <Teleport to="body">
@@ -686,5 +692,12 @@ onBeforeUnmount(() => {
 
 .tao-combobox--open .tao-combobox__chevron {
     transform: rotate(180deg);
+}
+
+.tao-combobox__chevron--custom {
+    display: inline-flex;
+    width: auto;
+    height: auto;
+    border: none;
 }
 </style>

@@ -47,6 +47,8 @@ defineSlots<{
     default(): unknown;
     prev(props: { disabled: boolean; go: () => void }): unknown;
     next(props: { disabled: boolean; go: () => void }): unknown;
+    'prev-icon'(): unknown;
+    'next-icon'(): unknown;
     dots(props: { index: number; count: number; go: (next: number) => void }): unknown;
     dot(props: { active: boolean; index: number; go: () => void }): unknown;
 }>();
@@ -401,16 +403,20 @@ onBeforeUnmount(() => {
                     :disabled="atStart"
                     @click="goPrev"
                 >
-                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
-                        <path
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M14.5 5 8 12l6.5 7"
-                        />
-                    </svg>
+                    <span aria-hidden="true">
+                        <slot name="prev-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" focusable="false">
+                                <path
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M14.5 5 8 12l6.5 7"
+                                />
+                            </svg>
+                        </slot>
+                    </span>
                 </button>
             </slot>
 
@@ -442,16 +448,20 @@ onBeforeUnmount(() => {
                     :disabled="atEnd"
                     @click="goNext"
                 >
-                    <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
-                        <path
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="2.2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M9.5 5 16 12l-6.5 7"
-                        />
-                    </svg>
+                    <span aria-hidden="true">
+                        <slot name="next-icon">
+                            <svg viewBox="0 0 24 24" width="16" height="16" focusable="false">
+                                <path
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2.2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M9.5 5 16 12l-6.5 7"
+                                />
+                            </svg>
+                        </slot>
+                    </span>
                 </button>
             </slot>
         </div>

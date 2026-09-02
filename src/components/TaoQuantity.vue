@@ -175,7 +175,9 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? props.remo
             :disabled="minusDisabled"
             @click="onDec"
         >
-            −
+            <span aria-hidden="true">
+                <slot name="decrement-icon">−</slot>
+            </span>
         </button>
         <input
             :id="controlId"
@@ -204,7 +206,9 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? props.remo
             :disabled="plusDisabled"
             @click="onInc"
         >
-            +
+            <span aria-hidden="true">
+                <slot name="increment-icon">+</slot>
+            </span>
         </button>
     </div>
 </template>

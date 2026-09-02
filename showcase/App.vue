@@ -122,7 +122,9 @@ const carouselExample = `<TaoCarousel :autoplay="4000" loop dots>
   </article>
 </TaoCarousel>
 
-<TaoCarousel prev-label="Previous" next-label="Next" dots-label="Slides" slide-label="Slide {n} of {count}">
+<TaoCarousel prev-label="Previous" next-label="Next">
+  <template #prev-icon><TaoIcon name="arrow-left" /></template>
+  <template #next-icon><TaoIcon name="arrow-right" /></template>
   …
 </TaoCarousel>
 
@@ -1065,7 +1067,10 @@ onBeforeUnmount(() => {
   &lt;TaoInputNumber v-model="qty" :min="1" :max="99" /&gt;
 &lt;/TaoFormField&gt;
 
-&lt;TaoInputNumber v-model="qty" increment-label="Increase" decrement-label="Decrease" /&gt;</code></pre>
+&lt;TaoInputNumber v-model="qty" increment-label="Increase" decrement-label="Decrease"&gt;
+  &lt;template #increment-icon&gt;&lt;TaoIcon name="plus" /&gt;&lt;/template&gt;
+  &lt;template #decrement-icon&gt;&lt;TaoIcon name="minus" /&gt;&lt;/template&gt;
+&lt;/TaoInputNumber&gt;</code></pre>
       </div>
     </section>
 
@@ -1100,7 +1105,10 @@ onBeforeUnmount(() => {
   decrement-label="Decrease"
   remove-label="Remove"
   @dec="onDec"
-/&gt;</code></pre>
+&gt;
+  &lt;template #decrement-icon&gt;&lt;TaoIcon name="minus" /&gt;&lt;/template&gt;
+  &lt;template #increment-icon&gt;&lt;TaoIcon name="plus" /&gt;&lt;/template&gt;
+&lt;/TaoQuantity&gt;</code></pre>
       </div>
     </section>
 
@@ -1182,7 +1190,9 @@ onBeforeUnmount(() => {
   &lt;TaoSelect v-model="city" :options="cities" /&gt;
 &lt;/TaoFormField&gt;
 
-&lt;TaoSelect v-model="city" :options="cities" placeholder="Select a city" clear-text="Clear" /&gt;
+&lt;TaoSelect v-model="city" :options="cities" placeholder="Select a city" clear-text="Clear"&gt;
+  &lt;template #chevron&gt;&lt;TaoIcon name="chevron-down" /&gt;&lt;/template&gt;
+&lt;/TaoSelect&gt;
 
 &lt;TaoSwitch v-model="on" label="Тёмная тема" /&gt;
 
@@ -1334,6 +1344,7 @@ onBeforeUnmount(() => {
   clear-text="Clear"
 &gt;
   &lt;template #create="{ text }"&gt;Add “&#123;&#123; text &#125;&#125;”&lt;/template&gt;
+  &lt;template #chevron&gt;&lt;TaoIcon name="chevron-down" /&gt;&lt;/template&gt;
 &lt;/TaoCombobox&gt;</code></pre>
       </div>
     </section>
@@ -1413,7 +1424,11 @@ onBeforeUnmount(() => {
   placeholder="Date"
   today-text="Today"
   clear-text="Clear"
-/&gt;</code></pre>
+&gt;
+  &lt;template #icon&gt;&lt;TaoIcon name="calendar" /&gt;&lt;/template&gt;
+  &lt;template #prev-icon&gt;&lt;TaoIcon name="arrow-left" /&gt;&lt;/template&gt;
+  &lt;template #next-icon&gt;&lt;TaoIcon name="arrow-right" /&gt;&lt;/template&gt;
+&lt;/TaoDate&gt;</code></pre>
       </div>
 
       <h2>TaoDateRange</h2>
@@ -1456,7 +1471,11 @@ onBeforeUnmount(() => {
   placeholder="Range"
   today-text="Today"
   clear-text="Clear"
-/&gt;</code></pre>
+&gt;
+  &lt;template #icon&gt;&lt;TaoIcon name="calendar" /&gt;&lt;/template&gt;
+  &lt;template #prev-icon&gt;&lt;TaoIcon name="arrow-left" /&gt;&lt;/template&gt;
+  &lt;template #next-icon&gt;&lt;TaoIcon name="arrow-right" /&gt;&lt;/template&gt;
+&lt;/TaoDateRange&gt;</code></pre>
       </div>
     </section>
 
@@ -1587,6 +1606,8 @@ onBeforeUnmount(() => {
   @clear-request="onClear"
 &gt;
   Drop a file here or click to browse
+  &lt;template #clear-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
+  &lt;template #remove-icon&gt;&lt;TaoIcon name="trash" /&gt;&lt;/template&gt;
 &lt;/TaoFileDrop&gt;</code></pre>
       </div>
     </section>
@@ -1667,6 +1688,8 @@ onBeforeUnmount(() => {
   page-label="Page {page}"
 &gt;
   &lt;template #total="{ from, to, total }"&gt;&#123;&#123; from &#125;&#125;–&#123;&#123; to &#125;&#125; of &#123;&#123; total &#125;&#125;&lt;/template&gt;
+  &lt;template #prev-icon&gt;&lt;TaoIcon name="arrow-left" /&gt;&lt;/template&gt;
+  &lt;template #next-icon&gt;&lt;TaoIcon name="arrow-right" /&gt;&lt;/template&gt;
 &lt;/TaoPagination&gt;</code></pre>
       </div>
     </section>
@@ -2194,7 +2217,7 @@ onBeforeUnmount(() => {
 &lt;/TaoModal&gt;
 
 &lt;TaoModal v-model="isOpen" title="Title" close-label="Close"&gt;
-  …
+  &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
 &lt;/TaoModal&gt;</code></pre>
       </div>
     </section>
@@ -2217,7 +2240,9 @@ onBeforeUnmount(() => {
   ...
 &lt;/TaoDrawer&gt;
 
-&lt;TaoDrawer v-model="open" title="Filters" close-label="Close" /&gt;</code></pre>
+&lt;TaoDrawer v-model="open" title="Filters" close-label="Close"&gt;
+  &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
+&lt;/TaoDrawer&gt;</code></pre>
       </div>
     </section>
 
@@ -2320,7 +2345,11 @@ confirm.defaults({ ok: 'OK', cancel: 'Cancel' })</code></pre>
       <TaoDropdownMenu :actions="dropdownActions" @selected="(id) => console.log('selected:', id)" />
 
       <div class="code-block">
-        <pre><code>&lt;TaoDropdownMenu :actions="actions" @selected="onSelected" /&gt;</code></pre>
+        <pre><code>&lt;TaoDropdownMenu :actions="actions" @selected="onSelected" /&gt;
+
+&lt;TaoDropdownMenu :actions="actions" menu-label="Menu"&gt;
+  &lt;template #icon&gt;&lt;TaoIcon name="more" /&gt;&lt;/template&gt;
+&lt;/TaoDropdownMenu&gt;</code></pre>
       </div>
     </section>
 
@@ -2485,6 +2514,7 @@ toast.defaults({ closeLabel: 'Dismiss notification' })</code></pre>
 &lt;/TaoAlert&gt;
 
 &lt;TaoAlert type="warning" title="Draft" closable close-label="Dismiss" @close="hide"&gt;
+  &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
   Save before you leave.
 &lt;/TaoAlert&gt;</code></pre>
       </div>
@@ -2551,6 +2581,7 @@ toast.defaults({ closeLabel: 'Dismiss notification' })</code></pre>
 &lt;TaoTag type="success" flat&gt;Активен&lt;/TaoTag&gt;
 
 &lt;TaoTag type="neutral" closable close-label="Remove" @close="remove"&gt;
+  &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
   Москва
 &lt;/TaoTag&gt;
 

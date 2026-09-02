@@ -43,7 +43,9 @@ const live = computed(() => (tone.value === 'error' || tone.value === 'warning' 
             :aria-label="closeLabel"
             @click="emit('close')"
         >
-            &times;
+            <span aria-hidden="true">
+                <slot name="close-icon">&times;</slot>
+            </span>
         </button>
     </div>
 </template>

@@ -191,7 +191,9 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
                 :disabled="disabled || atMax"
                 @click="bump(1)"
             >
-                +
+                <span aria-hidden="true">
+                    <slot name="increment-icon">+</slot>
+                </span>
             </button>
             <button
                 type="button"
@@ -201,7 +203,9 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
                 :disabled="disabled || atMin"
                 @click="bump(-1)"
             >
-                −
+                <span aria-hidden="true">
+                    <slot name="decrement-icon">−</slot>
+                </span>
             </button>
         </div>
     </div>

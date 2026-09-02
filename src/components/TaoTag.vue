@@ -65,7 +65,9 @@ function onClose(event: MouseEvent) {
             :aria-label="closeLabel"
             @click.stop="onClose"
         >
-            ✕
+            <span aria-hidden="true">
+                <slot name="close-icon">✕</slot>
+            </span>
         </button>
     </span>
 </template>

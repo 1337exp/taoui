@@ -262,7 +262,13 @@ onBeforeUnmount(() => {
             @keydown="onTriggerKeydown"
         >
             <span class="tao-select__value">{{ selected?.label ?? placeholder }}</span>
-            <span class="tao-select__chevron" aria-hidden="true"></span>
+            <span
+                class="tao-select__chevron"
+                :class="{ 'tao-select__chevron--custom': $slots.chevron }"
+                aria-hidden="true"
+            >
+                <slot name="chevron" />
+            </span>
         </button>
 
         <Teleport to="body">
@@ -450,5 +456,12 @@ onBeforeUnmount(() => {
 
 .tao-select--open .tao-select__chevron {
     transform: rotate(180deg);
+}
+
+.tao-select__chevron--custom {
+    display: inline-flex;
+    width: auto;
+    height: auto;
+    border: none;
 }
 </style>

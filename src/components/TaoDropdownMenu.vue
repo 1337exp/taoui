@@ -149,7 +149,11 @@ onBeforeUnmount(() => {
             @click="toggleMenu"
         >
             <slot v-if="$slots.button" name="button" />
-            <span v-else :aria-label="menuLabel">⋮</span>
+            <span v-else :aria-label="menuLabel">
+                <span aria-hidden="true">
+                    <slot name="icon">⋮</slot>
+                </span>
+            </span>
         </button>
 
         <Teleport to="body">

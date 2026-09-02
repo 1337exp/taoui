@@ -92,7 +92,9 @@ function goTo(next: number) {
                 :disabled="disabled || current <= 1"
                 @click="goTo(current - 1)"
             >
-                ‹
+                <span aria-hidden="true">
+                    <slot name="prev-icon">‹</slot>
+                </span>
             </button>
 
             <template v-for="item in items" :key="item.type === 'page' ? item.page : item.id">
@@ -128,7 +130,9 @@ function goTo(next: number) {
                 :disabled="disabled || current >= pageCount"
                 @click="goTo(current + 1)"
             >
-                ›
+                <span aria-hidden="true">
+                    <slot name="next-icon">›</slot>
+                </span>
             </button>
         </div>
     </nav>

@@ -47,6 +47,12 @@
     display: block;
 }
 
+.tao-date__nav span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .tao-date__nav:hover {
     background: var(--tao-color-surface-hover);
 }
