@@ -29,6 +29,7 @@
 - **TaoFlex** — обёртка над flexbox с пропами justify/align/direction/wrap/gap
 - **TaoSpace** — авто-расстановка дочерних элементов с равномерным gap
 - **TaoDivider** — разделитель: line (тонкая линия), text (линия с текстом), gap (пустой отступ, size: small/medium/large)
+- **TaoSplit** — две панели и полоса. `row` / `column` как у Flex. `v-model` — размер start в `%` или `px`; `resizable="false"` фиксирует полосу. Не Divider.
 - **TaoFieldset** — рамка-группа: `legend` сидит на верхней границе, `align` — start / center / end
 - **TaoAnimatedBorder** — контейнер с анимированной радужной рамкой (декоративный, не завязан на тему)
 
@@ -161,6 +162,23 @@ import '@1337exp/taoui/styles.css'
     Содержимое модального окна
   </TaoModal>
 </template>
+```
+
+## Split
+
+`TaoSplit` — две панели и полоса между ними. Это не `TaoDivider` (там только линия) и не раскладка на N панелей: три колонки — два вложенных сплита.
+
+`direction` как у Flex: `row` (start | end) или `column` (start над end). Слоты `#start` / `#end`.
+
+`v-model` — размер панели start. `unit` — `%` (по умолчанию, доля живёт при ресайзе контейнера) или `px` (сайдбар; вторая панель забирает остаток). Для `px` размер нужно задать явно: дефолт `50` — это 50px. `min` / `max` ограничивают start, `min-end` — минимум второй панели, все в той же единице. `resizable="false"` оставляет полосу, но без перетаскивания.
+
+Сплит заполняет родителя (`width` / `height: 100%`). Родитель должен ограничить размер по оси сплита: у `column` без высоты не из чего считать `%`. Панели с `min-width` / `min-height: 0` и `overflow: hidden`, чтобы контент не мешал сжатию. Скролл — на внутренней обёртке (`overflow: auto; height: 100%; min-height: 0`). Вложенный `TaoSplit` прямым ребёнком панели растягивается сам.
+
+```vue
+<TaoSplit v-model="side" unit="px" :min="160" :max="480" :min-end="240">
+  <template #start>Навигация</template>
+  <template #end>Основное</template>
+</TaoSplit>
 ```
 
 ## Toast
