@@ -67,7 +67,8 @@ function setTheme(value) {
 }
 
 // TaoButton demos
-const buttonVariants = ['primary', 'secondary', 'ghost', 'danger']
+const buttonVariants = ['primary', 'secondary', 'ghost', 'text', 'danger']
+const buttonTones = ['danger', 'success', 'warning', 'info']
 const buttonSizes = ['small', 'medium', 'large']
 
 // TaoInput demo
@@ -449,7 +450,7 @@ const navGroups = [
     title: 'Основы',
     items: [
       { id: 'block', label: 'TaoBlock' },
-      { id: 'button', label: 'TaoButton' },
+      { id: 'button', label: 'TaoButton', aliases: ['text', 'tone'] },
       { id: 'card', label: 'TaoCard' },
       { id: 'copy', label: 'TaoCopy' },
     ],
@@ -723,7 +724,11 @@ onBeforeUnmount(() => {
     <!-- TaoButton -->
     <section id="button" class="showcase-section" v-show="sectionVisible('basics', 'button')">
       <h2>TaoButton</h2>
-      <p>Варианты, размеры и состояния. Тон кнопки — <code>danger</code>, не <code>error</code>.</p>
+      <p>
+        Форма — <code>variant</code>, цвет — <code>tone</code>.
+        Красная текстовая кнопка: <code>variant="text" tone="danger"</code>, не <code>:deep</code>.
+        Залитый красный — по-прежнему <code>variant="danger"</code>.
+      </p>
       
       <h3>Варианты (variant)</h3>
       <div class="button-row">
@@ -748,6 +753,20 @@ onBeforeUnmount(() => {
         </TaoButton>
       </div>
 
+      <h3>Текст и тон</h3>
+      <div class="button-row" style="align-items: center;">
+        <TaoButton variant="text">Отмена</TaoButton>
+        <TaoButton
+          v-for="tone in buttonTones"
+          :key="tone"
+          variant="text"
+          :tone="tone"
+        >
+          {{ tone }}
+        </TaoButton>
+        <TaoButton variant="ghost" tone="danger">Удалить</TaoButton>
+      </div>
+
       <h3>Состояния</h3>
       <div class="button-row">
         <TaoButton variant="primary" loading>Loading</TaoButton>
@@ -768,6 +787,10 @@ onBeforeUnmount(() => {
 
 &lt;TaoButton variant="secondary" loading&gt;
   Загрузка...
+&lt;/TaoButton&gt;
+
+&lt;TaoButton variant="text" tone="danger"&gt;
+  Удалить
 &lt;/TaoButton&gt;
 
 &lt;TaoButton variant="primary" icon="★"&gt;

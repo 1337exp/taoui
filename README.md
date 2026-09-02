@@ -10,7 +10,7 @@ change a handful of CSS variables and the whole kit follows.
 ### Basics
 
 - **TaoBlock** — container with padding and radius
-- **TaoButton** — `primary` / `secondary` / `ghost` / `danger`, sizes and states
+- **TaoButton** — `primary` / `secondary` / `ghost` / `text` / `danger`. `tone` tints ghost and text (danger, success, warning, info)
 - **TaoCard** — card with cover / header / footer slots. `#cover` can be a photo or `TaoCarousel`
 - **TaoCopy** — clipboard icon. After a click, a “Copied” tooltip; if the trigger is gone, the tooltip is too
 - **TaoInput** — text field with v-model, validation, and `#prefix` / `#suffix` slots (icon or text inside the frame)

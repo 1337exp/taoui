@@ -4,7 +4,9 @@ defineOptions({ name: 'TaoButton' });
 interface Props {
     type?: 'button' | 'submit' | 'reset';
     size?: 'small' | 'medium' | 'large';
-    variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+    variant?: 'primary' | 'secondary' | 'ghost' | 'text' | 'danger';
+    /** Красит кнопку: danger / success / warning / info. Не вместо variant. */
+    tone?: 'danger' | 'success' | 'warning' | 'info' | '';
     disabled?: boolean;
     loading?: boolean;
     block?: boolean;
@@ -15,6 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
     type: 'button',
     size: 'medium',
     variant: 'primary',
+    tone: '',
     disabled: false,
     loading: false,
     block: false,
@@ -41,6 +44,7 @@ function handleClick(event: MouseEvent) {
                 'tao-button--loading': loading,
                 'tao-button--block': block,
                 'tao-button--icon': !!icon,
+                [`tao-button--tone-${tone}`]: !!tone,
             },
         ]"
         :type="type"
@@ -69,7 +73,7 @@ function handleClick(event: MouseEvent) {
     position: relative;
 }
 
-.tao-button:active {
+.tao-button:active:not(.tao-button--text) {
     transform: translateY(1px);
 }
 
@@ -125,12 +129,96 @@ function handleClick(event: MouseEvent) {
     background-color: var(--tao-color-accent-subtle-hover);
 }
 
+.tao-button--text {
+    height: auto;
+    padding: 2px 4px;
+    background: transparent;
+    color: var(--tao-color-accent);
+}
+
+.tao-button--text.tao-button--small,
+.tao-button--text.tao-button--medium,
+.tao-button--text.tao-button--large {
+    height: auto;
+    padding: 2px 4px;
+}
+
+.tao-button--text:hover:not(.tao-button--disabled) {
+    color: var(--tao-color-accent-hover);
+    background-color: var(--tao-color-accent-subtle-hover);
+}
+
 .tao-button--danger {
     background-color: var(--tao-color-danger);
     color: var(--tao-color-text-strong);
 }
 
 .tao-button--danger:hover:not(.tao-button--disabled) {
+    background-color: var(--tao-color-danger-hover);
+}
+
+.tao-button--ghost.tao-button--tone-danger,
+.tao-button--text.tao-button--tone-danger {
+    color: var(--tao-color-danger);
+}
+
+.tao-button--ghost.tao-button--tone-danger:hover:not(.tao-button--disabled),
+.tao-button--text.tao-button--tone-danger:hover:not(.tao-button--disabled) {
+    color: var(--tao-color-danger-hover);
+    background-color: var(--tao-color-danger-subtle);
+}
+
+.tao-button--ghost.tao-button--tone-success,
+.tao-button--text.tao-button--tone-success {
+    color: var(--tao-color-success);
+}
+
+.tao-button--ghost.tao-button--tone-success:hover:not(.tao-button--disabled),
+.tao-button--text.tao-button--tone-success:hover:not(.tao-button--disabled) {
+    color: var(--tao-color-success-hover);
+    background-color: var(--tao-color-success-subtle);
+}
+
+.tao-button--ghost.tao-button--tone-warning,
+.tao-button--text.tao-button--tone-warning {
+    color: var(--tao-color-warning);
+}
+
+.tao-button--ghost.tao-button--tone-warning:hover:not(.tao-button--disabled),
+.tao-button--text.tao-button--tone-warning:hover:not(.tao-button--disabled) {
+    color: var(--tao-color-warning-hover);
+    background-color: var(--tao-color-warning-subtle);
+}
+
+.tao-button--ghost.tao-button--tone-info,
+.tao-button--text.tao-button--tone-info {
+    color: var(--tao-color-info);
+}
+
+.tao-button--ghost.tao-button--tone-info:hover:not(.tao-button--disabled),
+.tao-button--text.tao-button--tone-info:hover:not(.tao-button--disabled) {
+    color: var(--tao-color-info-hover);
+    background-color: var(--tao-color-info-subtle);
+}
+
+.tao-button--secondary.tao-button--tone-danger {
+    color: var(--tao-color-danger);
+    border-color: color-mix(in srgb, var(--tao-color-danger) 40%, transparent);
+}
+
+.tao-button--secondary.tao-button--tone-danger:hover:not(.tao-button--disabled) {
+    color: var(--tao-color-danger-hover);
+    background-color: var(--tao-color-danger-subtle);
+}
+
+.tao-button--primary.tao-button--tone-danger,
+.tao-button--danger.tao-button--tone-danger {
+    background-color: var(--tao-color-danger);
+    color: var(--tao-color-text-strong);
+}
+
+.tao-button--primary.tao-button--tone-danger:hover:not(.tao-button--disabled),
+.tao-button--danger.tao-button--tone-danger:hover:not(.tao-button--disabled) {
     background-color: var(--tao-color-danger-hover);
 }
 
