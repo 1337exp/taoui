@@ -26,6 +26,10 @@ withDefaults(defineProps<Props>(), {
     margin: 0 auto;
 }
 
+.tao-container--wide {
+    max-width: 1120px;
+}
+
 .tao-container--slim {
     max-width: 500px;
 }

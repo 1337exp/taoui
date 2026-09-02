@@ -36,6 +36,11 @@ import {
   TaoAlert,
   TaoTable,
   TaoPagination,
+  TaoEmpty,
+  TaoSkeleton,
+  TaoDrawer,
+  TaoAvatar,
+  TaoBreadcrumb,
   toast,
   confirm,
 } from '@tao/ui'
@@ -56,6 +61,7 @@ const inputValue = ref('')
 
 // TaoModal demo
 const isModalOpen = ref(false)
+const isDrawerOpen = ref(false)
 
 // TaoTabs demo
 const activeTab = ref('tab1')
@@ -145,6 +151,11 @@ const tableSort = ref({ key: 'name', dir: 'asc' })
 const tableLoading = ref(false)
 const tableEmpty = ref(false)
 const pagerPage = ref(12)
+const breadcrumbItems = [
+  { label: 'Главная', to: '/' },
+  { label: 'Пользователи', to: '/users' },
+  { label: 'Профиль' },
+]
 
 const tableSorted = computed(() => {
   const rows = tableAll.slice()
@@ -257,6 +268,8 @@ const navGroups = [
     items: [
       { id: 'table', label: 'TaoTable' },
       { id: 'pagination', label: 'TaoPagination' },
+      { id: 'empty', label: 'TaoEmpty' },
+      { id: 'skeleton', label: 'TaoSkeleton' },
     ],
   },
   {
@@ -274,6 +287,7 @@ const navGroups = [
     title: 'Оверлеи',
     items: [
       { id: 'modal', label: 'TaoModal' },
+      { id: 'drawer', label: 'TaoDrawer' },
       { id: 'confirm', label: 'confirm()' },
       { id: 'tooltip', label: 'TaoTooltip' },
       { id: 'dropdown', label: 'DropdownMenu' },
@@ -285,6 +299,7 @@ const navGroups = [
     title: 'Навигация',
     items: [
       { id: 'tabs', label: 'TaoTabs' },
+      { id: 'breadcrumb', label: 'TaoBreadcrumb' },
       { id: 'link', label: 'TaoLink' },
     ],
   },
@@ -303,6 +318,7 @@ const navGroups = [
     title: 'Медиа',
     items: [
       { id: 'image', label: 'TaoImage' },
+      { id: 'avatar', label: 'TaoAvatar' },
       { id: 'icon', label: 'TaoIcon' },
     ],
   },
@@ -362,6 +378,12 @@ function showAll() {
   activeGroup.value = 'all'
 }
 
+function preventShowcaseNav(event) {
+  if (event.target instanceof Element && event.target.closest('a')) {
+    event.preventDefault()
+  }
+}
+
 function toggleGroup(groupId) {
   query.value = ''
   activeGroup.value = activeGroup.value === groupId ? 'all' : groupId
@@ -395,7 +417,6 @@ onBeforeUnmount(() => {
     <header class="showcase-top">
       <div>
         <h1>Tao UI</h1>
-        <p class="description">Компоненты по темам. Слева — оглавление, сверху можно оставить только одну группу.</p>
       </div>
       <div class="theme-switcher">
         <span class="theme-switcher__label">Тема:</span>
@@ -630,7 +651,7 @@ onBeforeUnmount(() => {
     <!-- TaoModal -->
     <section id="modal" class="showcase-section" v-show="sectionVisible('overlays', 'TaoModal')">
       <h2>TaoModal</h2>
-      <p>Модальное окно с поддержкой слотов и анимацией</p>
+      <p>Модальное окно: слоты, клик по фону, Esc, ловушка фокуса. Закрывается и по крестику.</p>
       
       <TaoButton @click="isModalOpen = true" variant="primary">
         Открыть модальное окно
@@ -638,7 +659,7 @@ onBeforeUnmount(() => {
 
       <TaoModal v-model="isModalOpen" title="Заголовок модального окна">
         <p>Это содержимое модального окна. Здесь можно разместить форму, текст, изображения или любые другие компоненты.</p>
-        <p>Модальное окно закрывается по клику на крестик, по кнопке "Закрыть" или по клику вне области окна.</p>
+        <p>Закрывается по Esc, по крестику, по кнопке внизу или по клику вне окна.</p>
         
         <template #footer>
           <TaoButton variant="secondary" @click="isModalOpen = false">Отмена</TaoButton>
@@ -657,6 +678,26 @@ onBeforeUnmount(() => {
     &lt;TaoButton @click="isOpen = false"&gt;Закрыть&lt;/TaoButton&gt;
   &lt;/template&gt;
 &lt;/TaoModal&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="drawer" class="showcase-section" v-show="sectionVisible('overlays', 'TaoDrawer')">
+      <h2>TaoDrawer</h2>
+      <p>Боковая панель: фильтры, корзина, настройки. Esc и клик по фону закрывают, фокус не уезжает на страницу.</p>
+
+      <TaoButton variant="secondary" @click="isDrawerOpen = true">Открыть справа</TaoButton>
+      <TaoDrawer v-model="isDrawerOpen" title="Фильтры">
+        <p>Здесь могут быть поля формы. На узком экране это удобнее модалки по центру.</p>
+        <template #footer>
+          <TaoButton variant="secondary" @click="isDrawerOpen = false">Сбросить</TaoButton>
+          <TaoButton @click="isDrawerOpen = false">Применить</TaoButton>
+        </template>
+      </TaoDrawer>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoDrawer v-model="open" title="Фильтры"&gt;
+  ...
+&lt;/TaoDrawer&gt;</code></pre>
       </div>
     </section>
 
@@ -688,7 +729,7 @@ onBeforeUnmount(() => {
     <!-- TaoTabs -->
     <section id="tabs" class="showcase-section" v-show="sectionVisible('nav', 'TaoTabs')">
       <h2>TaoTabs</h2>
-      <p>Вкладки для переключения между различными секциями контента</p>
+      <p>Вкладки — примитив, не карточка страницы. Стрелки листают, Home/End — к краям.</p>
       
       <TaoTabs v-model="activeTab" :tabs="tabs">
         <template #default="{ activeTab }">
@@ -699,7 +740,7 @@ onBeforeUnmount(() => {
       <div class="code-block">
         <pre><code>&lt;TaoTabs v-model="activeTab" :tabs="tabs"&gt;
   &lt;template #default="{ activeTab }"&gt;
-    &lt;p&gt;{{ tabContents[activeTab] }}&lt;/p&gt;
+    &lt;p&gt;&#123;&#123; tabContents[activeTab] &#125;&#125;&lt;/p&gt;
   &lt;/template&gt;
 &lt;/TaoTabs&gt;
 
@@ -715,7 +756,7 @@ const tabs = [
     <!-- TaoTooltip -->
     <section id="tooltip" class="showcase-section" v-show="sectionVisible('overlays', 'TaoTooltip')">
       <h2>TaoTooltip</h2>
-      <p>Всплывающая подсказка при наведении</p>
+      <p>Всплывающая подсказка при наведении и при фокусе с клавиатуры</p>
       
       <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
         <TaoTooltip content="Подсказка сверху" position="top">
@@ -974,6 +1015,8 @@ const tabs = [
         <TaoTag type="neutral">neutral</TaoTag>
         <TaoTag type="success">success</TaoTag>
         <TaoTag type="danger">danger</TaoTag>
+        <TaoTag type="warning">warning</TaoTag>
+        <TaoTag type="info">info</TaoTag>
         <TaoTag pointer>кликабельный</TaoTag>
       </div>
 
@@ -1072,6 +1115,23 @@ toast.success('Сохранено')</code></pre>
       </div>
     </section>
 
+    <section id="avatar" class="showcase-section" v-show="sectionVisible('media', 'TaoAvatar')">
+      <h2>TaoAvatar</h2>
+      <p>Фото или инициалы из имени. Для шапки, комментариев, строки таблицы.</p>
+
+      <div class="button-row" style="align-items: center;">
+        <TaoAvatar name="Анна Козлова" size="s" />
+        <TaoAvatar name="Анна Козлова" />
+        <TaoAvatar name="Борис" size="l" />
+        <TaoAvatar :src="imageSrc" name="Демо" size="l" />
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoAvatar name="Анна Козлова" /&gt;
+&lt;TaoAvatar :src="url" name="Анна" size="l" /&gt;</code></pre>
+      </div>
+    </section>
+
     <!-- TaoFileDrop -->
     <section id="filedrop" class="showcase-section" v-show="sectionVisible('forms', 'TaoFileDrop')">
       <h2>TaoFileDrop</h2>
@@ -1155,6 +1215,26 @@ async function onClear() {
       </div>
     </section>
 
+    <section id="breadcrumb" class="showcase-section" v-show="sectionVisible('nav', 'TaoBreadcrumb')">
+      <h2>TaoBreadcrumb</h2>
+      <p>
+        <code>to</code> — путь страницы. В приложении с роутером «Пользователи» откроет <code>/users</code>.
+        Последний пункт без ссылки: вы уже там. Здесь клик не уводит со страницы, чтобы не сломать демо.
+      </p>
+
+      <div @click.capture="preventShowcaseNav">
+        <TaoBreadcrumb :items="breadcrumbItems" />
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoBreadcrumb :items="[
+  { label: 'Главная', to: '/' },
+  { label: 'Пользователи', to: '/users' },
+  { label: 'Профиль' },
+]" /&gt;</code></pre>
+      </div>
+    </section>
+
     <!-- TaoIcon -->
     <section id="icon" class="showcase-section" v-show="sectionVisible('media', 'TaoIcon')">
       <h2>TaoIcon</h2>
@@ -1187,6 +1267,9 @@ async function onClear() {
         @sort="onTableSort"
         @row-click="(row) => toast().info().message(row.name)"
       >
+        <template #empty>
+          <TaoEmpty title="Пока нет записей">Список пуст — нажмите «Показать строки».</TaoEmpty>
+        </template>
         <template #cell-status="{ row }">
           <TaoTag :type="row.status === 'active' ? 'success' : row.status === 'banned' ? 'danger' : 'neutral'">
             {{ row.status }}
@@ -1225,6 +1308,45 @@ async function onClear() {
         <pre><code>&lt;TaoPagination v-model:page="page" :total="500" :page-size="10" /&gt;</code></pre>
       </div>
     </section>
+
+    <section id="empty" class="showcase-section" v-show="sectionVisible('data', 'TaoEmpty')">
+      <h2>TaoEmpty</h2>
+      <p>Пустой список, нет поиска, нет прав — одна заготовка вместо самодельной вёрстки.</p>
+
+      <TaoEmpty title="Ничего не нашлось">
+        Измените фильтр или сбросьте поиск.
+        <template #action>
+          <TaoButton size="small" variant="secondary">Сбросить</TaoButton>
+        </template>
+      </TaoEmpty>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoEmpty title="Ничего не нашлось"&gt;
+  Измените фильтр.
+&lt;/TaoEmpty&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="skeleton" class="showcase-section" v-show="sectionVisible('data', 'TaoSkeleton')">
+      <h2>TaoSkeleton</h2>
+      <p>Плейсхолдер, пока данные едут. Не путать с лоадером — это форма контента, а не спиннер.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 16px; max-width: 360px;">
+        <TaoSkeleton variant="title" />
+        <TaoSkeleton :lines="3" />
+        <div style="display: flex; gap: 12px; align-items: center;">
+          <TaoSkeleton variant="circle" />
+          <TaoSkeleton :lines="2" />
+        </div>
+        <TaoSkeleton variant="rect" height="72px" />
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoSkeleton variant="title" /&gt;
+&lt;TaoSkeleton :lines="3" /&gt;
+&lt;TaoSkeleton variant="circle" /&gt;</code></pre>
+      </div>
+    </section>
       </main>
     </div>
 
@@ -1247,14 +1369,10 @@ async function onClear() {
 
 .showcase-top {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 24px;
   margin-bottom: 28px;
-}
-
-.showcase-top .description {
-  margin-bottom: 0;
 }
 
 .showcase-body {
@@ -1466,13 +1584,7 @@ h1 {
   font-size: 36px;
   font-weight: 700;
   color: var(--tao-color-text-strong);
-  margin-bottom: 8px;
-}
-
-.description {
-  color: var(--tao-color-text-muted);
-  margin-bottom: 40px;
-  font-size: 16px;
+  margin: 0;
 }
 
 .showcase-section {

@@ -18,10 +18,12 @@ const showTooltip = ref(false);
         class="tao-tooltip-wrapper"
         @mouseenter="showTooltip = true"
         @mouseleave="showTooltip = false"
+        @focusin="showTooltip = true"
+        @focusout="showTooltip = false"
     >
         <slot />
         <Transition name="tao-tooltip-fade">
-            <div v-if="showTooltip" class="tao-tooltip" :class="[`tao-tooltip--${position}`]">
+            <div v-if="showTooltip" class="tao-tooltip" :class="[`tao-tooltip--${position}`]" role="tooltip">
                 {{ content }}
             </div>
         </Transition>

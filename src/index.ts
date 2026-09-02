@@ -34,6 +34,11 @@ import TaoRadioGroup from './components/TaoRadioGroup.vue';
 import TaoAlert from './components/TaoAlert.vue';
 import TaoTable from './components/TaoTable.vue';
 import TaoPagination from './components/TaoPagination.vue';
+import TaoEmpty from './components/TaoEmpty.vue';
+import TaoSkeleton from './components/TaoSkeleton.vue';
+import TaoDrawer from './components/TaoDrawer.vue';
+import TaoAvatar from './components/TaoAvatar.vue';
+import TaoBreadcrumb from './components/TaoBreadcrumb.vue';
 import TaoToastViewport from './components/TaoToastViewport.vue';
 import TaoConfirmHost from './components/TaoConfirmHost.vue';
 import { toast } from './toast';
@@ -81,6 +86,11 @@ const components = [
     TaoAlert,
     TaoTable,
     TaoPagination,
+    TaoEmpty,
+    TaoSkeleton,
+    TaoDrawer,
+    TaoAvatar,
+    TaoBreadcrumb,
     TaoToastViewport,
     TaoConfirmHost,
 ];
@@ -129,6 +139,11 @@ export {
     TaoAlert,
     TaoTable,
     TaoPagination,
+    TaoEmpty,
+    TaoSkeleton,
+    TaoDrawer,
+    TaoAvatar,
+    TaoBreadcrumb,
     TaoToastViewport,
     TaoConfirmHost,
     toast,
@@ -160,5 +175,6 @@ export type { TaoRadioValue } from './radio';
 export type { TaoFormFieldContext } from './formField';
 export type { TaoTableAlign, TaoTableColumn, TaoTableSort } from './table';
 export type { TaoPaginationItem } from './pagination';
+export type { TaoBreadcrumbItem } from './breadcrumb';
 
 export default TaoUI;

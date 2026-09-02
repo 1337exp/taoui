@@ -46,7 +46,7 @@ function onInputChange(event: Event) {
         <slot name="pre" :text="props.label" />
 
         <input
-            class="tao-checkbox__input"
+            class="tao-checkbox__input tao-sr-only"
             type="checkbox"
             :checked="isChecked"
             :disabled="props.disabled"
@@ -72,10 +72,6 @@ function onInputChange(event: Event) {
     color: var(--tao-color-text);
 }
 
-.tao-checkbox__input {
-    display: none;
-}
-
 .tao-checkbox__box {
     position: relative;
     display: flex;
@@ -83,6 +79,7 @@ function onInputChange(event: Event) {
     justify-content: center;
     width: 18px;
     height: 18px;
+    pointer-events: none;
     background-color: var(--tao-color-surface-raised);
     border: 2px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-sm);

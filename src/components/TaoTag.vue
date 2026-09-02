@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 
 interface Props {
-    type?: 'neutral' | 'success' | 'danger' | '';
+    type?: 'neutral' | 'success' | 'danger' | 'warning' | 'info' | '';
     color?: string;
     background?: string;
     borderColor?: string;
@@ -68,5 +68,17 @@ const style = computed(() => ({
     color: var(--tao-color-danger);
     background: var(--tao-color-danger-subtle);
     border-color: color-mix(in srgb, var(--tao-color-danger) 30%, transparent);
+}
+
+.tao-tag--warning {
+    color: var(--tao-color-warning);
+    background: var(--tao-color-warning-subtle);
+    border-color: color-mix(in srgb, var(--tao-color-warning) 30%, transparent);
+}
+
+.tao-tag--info {
+    color: var(--tao-color-info);
+    background: var(--tao-color-info-subtle);
+    border-color: color-mix(in srgb, var(--tao-color-info) 30%, transparent);
 }
 </style>

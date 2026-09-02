@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+defineOptions({ name: 'TaoButton' });
+
 interface Props {
     type?: 'button' | 'submit' | 'reset';
     size?: 'small' | 'medium' | 'large';
@@ -69,6 +71,11 @@ function handleClick(event: MouseEvent) {
 
 .tao-button:active {
     transform: translateY(1px);
+}
+
+.tao-button:focus-visible {
+    outline: 2px solid var(--tao-color-accent);
+    outline-offset: 2px;
 }
 
 .tao-button--small {
