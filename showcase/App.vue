@@ -33,6 +33,7 @@ import {
   TaoLink,
   TaoFormField,
   TaoSelect,
+  TaoDate,
   TaoSwitch,
   TaoRadio,
   TaoRadioGroup,
@@ -46,6 +47,7 @@ import {
   TaoBreadcrumb,
   TaoCounter,
   TaoCarousel,
+  TaoStages,
   toast,
   confirm,
 } from '@tao/ui'
@@ -214,6 +216,21 @@ const cities = [
 ]
 const notifyEmail = ref(true)
 const plan = ref('pro')
+const deliveryDate = ref('2026-09-02')
+const emptyDate = ref(null)
+const errorDate = ref(null)
+const orderStages = [
+  { key: 'pay', label: 'Оплата', status: 'ok' },
+  { key: 'pack', label: 'Сборка', status: 'work' },
+  { key: 'ship', label: 'Доставка', status: 'wait' },
+  { key: 'done', label: 'Получено', status: 'wait' },
+]
+const importStages = [
+  { key: 'file', label: 'Файл', status: 'ok' },
+  { key: 'parse', label: 'Разбор', status: 'ok' },
+  { key: 'match', label: 'Сопоставление', status: 'bad' },
+  { key: 'save', label: 'Запись', status: 'wait' },
+]
 const showAlert = ref(true)
 
 const tableCities = ['Москва', 'Казань', 'Санкт-Петербург', 'Новосибирск']
@@ -345,6 +362,7 @@ const navGroups = [
       { id: 'textarea', label: 'TaoTextarea' },
       { id: 'checkbox', label: 'TaoCheckbox' },
       { id: 'select', label: 'Select / Switch / Radio' },
+      { id: 'date', label: 'TaoDate' },
       { id: 'pincode', label: 'TaoPinCode' },
       { id: 'slider', label: 'Progress / Slider' },
       { id: 'filedrop', label: 'TaoFileDrop' },
@@ -357,6 +375,7 @@ const navGroups = [
       { id: 'table', label: 'TaoTable' },
       { id: 'pagination', label: 'TaoPagination' },
       { id: 'empty', label: 'TaoEmpty' },
+      { id: 'stages', label: 'TaoStages' },
       { id: 'skeleton', label: 'TaoSkeleton' },
       { id: 'counter', label: 'TaoCounter' },
       { id: 'carousel', label: 'TaoCarousel' },
@@ -1165,7 +1184,43 @@ const tabs = [
       </div>
     </section>
 
-    <!-- TaoAlert -->
+    <section id="date" class="showcase-section" v-show="sectionVisible('forms', 'TaoDate')">
+      <h2>TaoDate</h2>
+      <p>
+        Один день, не дата-время. В <code>v-model</code> всегда <code>YYYY-MM-DD</code>,
+        без часов и пояса. Попап как у Select: Esc, клик снаружи, стрелки по дням.
+      </p>
+
+      <div style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+        <TaoFormField label="День доставки" :hint="'В модели: ' + (deliveryDate || 'null')">
+          <TaoDate v-model="deliveryDate" min="2026-09-01" max="2026-09-30" />
+        </TaoFormField>
+
+        <TaoFormField label="Пустое поле" hint="Очистить — внизу календаря">
+          <TaoDate v-model="emptyDate" placeholder="Выберите день" />
+        </TaoFormField>
+      </div>
+
+      <h3>Состояния</h3>
+      <p class="carousel-note">
+        Красная рамка — не поломка календаря, а <code>error</code> у <code>TaoFormField</code>, как у Select.
+      </p>
+      <div style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+        <TaoFormField label="Не указали день" error="Укажите дату">
+          <TaoDate v-model="errorDate" />
+        </TaoFormField>
+
+        <TaoFormField label="Disabled">
+          <TaoDate model-value="2026-09-02" disabled />
+        </TaoFormField>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoFormField label="День доставки"&gt;
+  &lt;TaoDate v-model="day" min="2026-09-01" max="2026-09-30" /&gt;
+&lt;/TaoFormField&gt;</code></pre>
+      </div>
+    </section>
     <section id="alert" class="showcase-section" v-show="sectionVisible('feedback', 'TaoAlert')">
       <h2>TaoAlert</h2>
       <p>Инлайн-баннер: ошибка формы, предупреждение на странице. Не тост — живёт в вёрстке.</p>
@@ -1522,6 +1577,36 @@ async function onClear() {
         <pre><code>&lt;TaoEmpty title="Ничего не нашлось"&gt;
   Измените фильтр.
 &lt;/TaoEmpty&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="stages" class="showcase-section" v-show="sectionVisible('data', 'TaoStages')">
+      <h2>TaoStages</h2>
+      <p>
+        Список независимых стадий, не степпер «ты на шаге 3».
+        Статусы: <code>ok</code>, <code>work</code>, <code>wait</code>, <code>bad</code>.
+      </p>
+
+      <div style="display: flex; flex-wrap: wrap; gap: 40px;">
+        <div>
+          <h3>Заказ</h3>
+          <TaoStages :items="orderStages" />
+        </div>
+        <div>
+          <h3>Импорт</h3>
+          <TaoStages :items="importStages" />
+        </div>
+      </div>
+
+      <h3>В строку</h3>
+      <TaoStages :items="orderStages" :vertical="false" />
+
+      <div class="code-block">
+        <pre><code>&lt;TaoStages :items="[
+  { key: 'pay', label: 'Оплата', status: 'ok' },
+  { key: 'pack', label: 'Сборка', status: 'work' },
+  { key: 'ship', label: 'Доставка', status: 'wait' },
+]" /&gt;</code></pre>
       </div>
     </section>
 

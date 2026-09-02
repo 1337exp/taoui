@@ -33,6 +33,7 @@
 - **TaoSwitch** — переключатель для булевых настроек (`role="switch"`)
 - **TaoRadio** / **TaoRadioGroup** — взаимоисключающий выбор из 2–5 вариантов
 - **TaoSelect** — выпадающий список с клавиатурой, тот же визуал, что у Input
+- **TaoDate** — один день: `YYYY-MM-DD`, без часов и пояса. Календарь как у Select
 - **TaoFormField** — общие label / hint / error для полей формы
 - **TaoInputNumber** — число с min/max/step и кнопками ± справа. Пустое значение — `null`
 - **TaoQuantity** — количество в корзине: `− | поле | +`, целые штуки, сток, минус на минимуме может убрать строку
@@ -46,6 +47,7 @@
 - **TaoTable** — простая таблица: колонки, empty, loading, сортировка через `v-model:sort`. Не datagrid.
 - **TaoPagination** — страницы с многоточием. Клик по «…» прыгает на `jump` страниц (5 по умолчанию)
 - **TaoEmpty** — пустой список, нет результатов, нет прав
+- **TaoStages** — список стадий: `wait` / `work` / `ok` / `bad`. Не линейный степпер
 - **TaoSkeleton** — плейсхолдер загрузки (text / title / circle / rect)
 - **TaoCounter** — витрина числа с переворотом цифр (не инпут)
 - **TaoCarousel** — лента: целый слайд с `autoplay`, карточка с `peek`, полоса с `per-view`. Стрелки через `controls` или `#prev` / `#next`, точки — `dots`
@@ -259,6 +261,12 @@ const columns = [
 <TaoSkeleton variant="title" />
 <TaoSkeleton :lines="3" />
 <TaoSkeleton variant="circle" />
+
+<TaoStages :items="[
+  { key: 'pay', label: 'Оплата', status: 'ok' },
+  { key: 'pack', label: 'Сборка', status: 'work' },
+  { key: 'ship', label: 'Доставка', status: 'wait' },
+]" />
 ```
 
 ```vue
@@ -286,6 +294,10 @@ const columns = [
 </TaoFormField>
 
 <TaoQuantity v-model="qty" :max="12" @dec="onDec" />
+
+<TaoFormField label="День доставки" hint="В модели всегда YYYY-MM-DD">
+  <TaoDate v-model="day" min="2026-09-01" max="2026-09-30" />
+</TaoFormField>
 
 <TaoCounter :value="score" :max-digits="6" />
 

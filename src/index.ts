@@ -31,6 +31,7 @@ import TaoPinCode from './components/TaoPinCode.vue';
 import TaoLink from './components/TaoLink.vue';
 import TaoFormField from './components/TaoFormField.vue';
 import TaoSelect from './components/TaoSelect.vue';
+import TaoDate from './components/TaoDate.vue';
 import TaoSwitch from './components/TaoSwitch.vue';
 import TaoRadio from './components/TaoRadio.vue';
 import TaoRadioGroup from './components/TaoRadioGroup.vue';
@@ -44,6 +45,7 @@ import TaoAvatar from './components/TaoAvatar.vue';
 import TaoBreadcrumb from './components/TaoBreadcrumb.vue';
 import TaoCounter from './components/TaoCounter.vue';
 import TaoCarousel from './components/TaoCarousel.vue';
+import TaoStages from './components/TaoStages.vue';
 import TaoToastViewport from './components/TaoToastViewport.vue';
 import TaoConfirmHost from './components/TaoConfirmHost.vue';
 import { toast } from './toast';
@@ -88,6 +90,7 @@ const components = [
     TaoLink,
     TaoFormField,
     TaoSelect,
+    TaoDate,
     TaoSwitch,
     TaoRadio,
     TaoRadioGroup,
@@ -101,6 +104,7 @@ const components = [
     TaoBreadcrumb,
     TaoCounter,
     TaoCarousel,
+    TaoStages,
     TaoToastViewport,
     TaoConfirmHost,
 ];
@@ -146,6 +150,7 @@ export {
     TaoLink,
     TaoFormField,
     TaoSelect,
+    TaoDate,
     TaoSwitch,
     TaoRadio,
     TaoRadioGroup,
@@ -159,6 +164,7 @@ export {
     TaoBreadcrumb,
     TaoCounter,
     TaoCarousel,
+    TaoStages,
     TaoToastViewport,
     TaoConfirmHost,
     toast,
@@ -185,12 +191,15 @@ export type {
     TaoConfirmShortcutOptions,
 } from './confirm';
 
+export { parseTaoDate, formatTaoDateIso, todayTaoDate, formatTaoDateLabel } from './date';
 export type { TaoSelectOption } from './select';
+export type { TaoDateCell, TaoDateParts } from './date';
 export type { TaoRadioValue } from './radio';
 export type { TaoFormFieldContext } from './formField';
 export type { TaoTableAlign, TaoTableColumn, TaoTableSort } from './table';
 export type { TaoPaginationItem } from './pagination';
 export type { TaoBreadcrumbItem } from './breadcrumb';
 export type { TaoQuantityChangeSource } from './quantity';
+export type { TaoStageItem, TaoStageStatus } from './stage';
 
 export default TaoUI;
