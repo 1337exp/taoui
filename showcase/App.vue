@@ -45,6 +45,7 @@ import {
   TaoAvatar,
   TaoBreadcrumb,
   TaoCounter,
+  TaoCarousel,
   toast,
   confirm,
 } from '@tao/ui'
@@ -65,6 +66,17 @@ const inputValue = ref('')
 const searchQuery = ref('')
 const amountText = ref('1490')
 const siteHost = ref('taoui.dev')
+const formEmail = ref('')
+const formPassword = ref('')
+const formSaving = ref(false)
+
+function onDemoSubmit() {
+  formSaving.value = true
+  window.setTimeout(() => {
+    formSaving.value = false
+    toast().success().message('Сохранено')
+  }, 700)
+}
 const qty = ref(2)
 const price = ref(1490)
 const cartQty = ref(1)
@@ -85,6 +97,53 @@ function onStockInc(value) {
   }
 }
 const counterValue = ref(1284)
+const carouselHero = ref(0)
+const carouselPeek = ref(0)
+const carouselStrip = ref(0)
+const carouselBare = ref(0)
+const carouselCustom = ref(0)
+const carouselExample = `<TaoCarousel :autoplay="4000" loop dots>
+  <article v-for="item in banners" :key="item.id" class="hero">
+    <strong>{{ item.title }}</strong>
+    <span>{{ item.text }}</span>
+  </article>
+</TaoCarousel>
+
+/* вид слайда — ваш article, не карусель */
+.hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  min-height: 180px;
+  padding: 20px;
+  border-radius: var(--tao-radius-panel);
+  background: linear-gradient(135deg, var(--tao-color-accent-subtle), var(--tao-color-surface-sunken));
+}`
+const carouselBanners = [
+  { id: 1, title: 'Осенняя коллекция', text: 'Новые фактуры и спокойные цвета' },
+  { id: 2, title: 'Скидка 20%', text: 'На вторую пару обуви' },
+  { id: 3, title: 'Только что поступило', text: 'Куртки Drift и рюкзаки Field' },
+  { id: 4, title: 'Бесплатная доставка', text: 'От 5 000 ₽ по городу' },
+]
+const carouselProducts = [
+  { id: 1, name: 'Nova', price: '8 990 ₽' },
+  { id: 2, name: 'Drift', price: '12 400 ₽' },
+  { id: 3, name: 'Field', price: '4 350 ₽' },
+  { id: 4, name: 'Arc', price: '15 200 ₽' },
+  { id: 5, name: 'Halo', price: '3 190 ₽' },
+  { id: 6, name: 'Pike', price: '6 750 ₽' },
+  { id: 7, name: 'Moss', price: '9 100 ₽' },
+  { id: 8, name: 'Volt', price: '2 490 ₽' },
+  { id: 9, name: 'Dune', price: '11 300 ₽' },
+  { id: 10, name: 'Flint', price: '5 620 ₽' },
+  { id: 11, name: 'Reef', price: '7 840 ₽' },
+  { id: 12, name: 'Ash', price: '13 050 ₽' },
+  { id: 13, name: 'Glow', price: '1 990 ₽' },
+  { id: 14, name: 'Nori', price: '4 880 ₽' },
+  { id: 15, name: 'Bolt', price: '10 200 ₽' },
+  { id: 16, name: 'Yarn', price: '3 640 ₽' },
+]
 
 // TaoModal demo
 const isModalOpen = ref(false)
@@ -300,6 +359,7 @@ const navGroups = [
       { id: 'empty', label: 'TaoEmpty' },
       { id: 'skeleton', label: 'TaoSkeleton' },
       { id: 'counter', label: 'TaoCounter' },
+      { id: 'carousel', label: 'TaoCarousel' },
     ],
   },
   {
@@ -692,6 +752,18 @@ onBeforeUnmount(() => {
         </TaoFormField>
       </div>
 
+      <h3 style="margin: 28px 0 8px; font-size: 16px;">Форма и submit</h3>
+      <p style="margin: 0 0 12px;">Отдельного TaoForm нет: обычный <code>&lt;form&gt;</code>, Enter в поле отправляет, кнопка с <code>type="submit"</code>. В SPA — <code>@submit.prevent</code>.</p>
+      <form style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;" @submit.prevent="onDemoSubmit">
+        <TaoFormField label="Email">
+          <TaoInput v-model="formEmail" type="email" placeholder="you@mail.com" />
+        </TaoFormField>
+        <TaoFormField label="Пароль">
+          <TaoInput v-model="formPassword" type="password" placeholder="••••••••" />
+        </TaoFormField>
+        <TaoButton type="submit" :loading="formSaving">Войти</TaoButton>
+      </form>
+
       <div class="code-block">
         <pre><code>&lt;TaoInput v-model="q" placeholder="Найти…"&gt;
   &lt;template #prefix&gt;…&lt;/template&gt;
@@ -704,7 +776,14 @@ onBeforeUnmount(() => {
   &lt;template #after&gt;
     &lt;TaoButton&gt;Проверить&lt;/TaoButton&gt;
   &lt;/template&gt;
-&lt;/TaoInputGroup&gt;</code></pre>
+&lt;/TaoInputGroup&gt;
+
+&lt;form @submit.prevent="onSave"&gt;
+  &lt;TaoFormField label="Email"&gt;
+    &lt;TaoInput v-model="email" type="email" /&gt;
+  &lt;/TaoFormField&gt;
+  &lt;TaoButton type="submit"&gt;Сохранить&lt;/TaoButton&gt;
+&lt;/form&gt;</code></pre>
       </div>
     </section>
 
@@ -1413,13 +1492,18 @@ async function onClear() {
 
     <section id="pagination" class="showcase-section" v-show="sectionVisible('data', 'TaoPagination')">
       <h2>TaoPagination</h2>
-      <p>Страницы с многоточием, счётчик «с–по из N». Текущая страница — через <code>v-model:page</code>.</p>
+      <p>
+        Страницы с многоточием, счётчик «с–по из N». Текущая страница — через <code>v-model:page</code>.
+        Клик по «…» прыгает на <code>jump</code> страниц (по умолчанию 5) — как в Ant, только без подписей «-3 / +5».
+        <code>:jump="0"</code> оставляет многоточие декоративным.
+      </p>
 
       <TaoPagination v-model:page="pagerPage" :total="500" :page-size="10" />
-      <TaoPagination v-model:page="pagerPage" :total="500" :page-size="10" size="small" style="margin-top: 12px;" />
+      <TaoPagination v-model:page="pagerPage" :total="500" :page-size="10" :jump="3" size="small" style="margin-top: 12px;" />
 
       <div class="code-block">
-        <pre><code>&lt;TaoPagination v-model:page="page" :total="500" :page-size="10" /&gt;</code></pre>
+        <pre><code>&lt;TaoPagination v-model:page="page" :total="500" :page-size="10" /&gt;
+&lt;TaoPagination v-model:page="page" :total="500" :page-size="10" :jump="3" /&gt;</code></pre>
       </div>
     </section>
 
@@ -1476,6 +1560,78 @@ async function onClear() {
 
       <div class="code-block">
         <pre><code>&lt;TaoCounter :value="score" :max-digits="6" /&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="carousel" class="showcase-section" v-show="sectionVisible('data', 'TaoCarousel')">
+      <h2>TaoCarousel</h2>
+      <p>
+        Три режима одной ленты: целый слайд с автопрокруткой, карточка с краешком следующей,
+        полоса из пяти квадратов. Стрелки и точки можно спрятать или подменить слотами.
+      </p>
+
+      <h3 class="carousel-heading">Целый слайд</h3>
+      <p class="carousel-note">Каждые 4 секунды вперёд. Наведи курсор или сфокусируй — пауза. <code>loop</code> крутит по кругу. <code>dots</code> — сколько слайдов и где вы.</p>
+      <TaoCarousel v-model="carouselHero" :autoplay="4000" loop dots aria-label="Баннеры">
+        <article v-for="item in carouselBanners" :key="item.id" class="carousel-hero">
+          <strong>{{ item.title }}</strong>
+          <span>{{ item.text }}</span>
+        </article>
+      </TaoCarousel>
+
+      <h3 class="carousel-heading">Одна карточка + краешек</h3>
+      <p class="carousel-note"><code>per-view="1"</code> и <code>peek</code> — видно, что справа ещё есть товар.</p>
+      <TaoCarousel v-model="carouselPeek" :peek="72" aria-label="Карточка с краем">
+        <article v-for="item in carouselProducts.slice(0, 8)" :key="item.id" class="carousel-card">
+          <div class="carousel-card__cover">{{ item.id }}</div>
+          <strong>{{ item.name }}</strong>
+          <span>{{ item.price }}</span>
+        </article>
+      </TaoCarousel>
+
+      <h3 class="carousel-heading">Полоса из пяти</h3>
+      <p class="carousel-note">Палец пролистывает пачку. Стрелки тоже прыгают на пять.</p>
+      <TaoCarousel v-model="carouselStrip" :per-view="5" :peek="28" aria-label="Товары">
+        <article v-for="item in carouselProducts" :key="item.id" class="carousel-card">
+          <div class="carousel-card__cover">{{ item.id }}</div>
+          <strong>{{ item.name }}</strong>
+          <span>{{ item.price }}</span>
+        </article>
+      </TaoCarousel>
+
+      <h3 class="carousel-heading">Без стрелок</h3>
+      <p class="carousel-note">
+        <code>:controls="false"</code> прячет обе. Пустой <code>#prev</code> или <code>#next</code> — только одну сторону.
+        Здесь вместо стрелок — <code>dots</code>.
+      </p>
+      <TaoCarousel v-model="carouselBare" :peek="72" :controls="false" dots aria-label="Без стрелок">
+        <article v-for="item in carouselProducts.slice(0, 8)" :key="item.id" class="carousel-card">
+          <div class="carousel-card__cover">{{ item.id }}</div>
+          <strong>{{ item.name }}</strong>
+          <span>{{ item.price }}</span>
+        </article>
+      </TaoCarousel>
+
+      <h3 class="carousel-heading">Свои стрелки</h3>
+      <p class="carousel-note">
+        Слоты <code>#prev</code> / <code>#next</code> подменяют кнопки целиком. В слот приходят <code>go</code> и <code>disabled</code>.
+      </p>
+      <TaoCarousel v-model="carouselCustom" :peek="72" aria-label="Свои стрелки">
+        <template #prev="{ go, disabled }">
+          <button type="button" class="carousel-nav" :disabled="disabled" @click="go">назад</button>
+        </template>
+        <template #next="{ go, disabled }">
+          <button type="button" class="carousel-nav" :disabled="disabled" @click="go">вперёд</button>
+        </template>
+        <article v-for="item in carouselProducts.slice(0, 8)" :key="'custom-' + item.id" class="carousel-card">
+          <div class="carousel-card__cover">{{ item.id }}</div>
+          <strong>{{ item.name }}</strong>
+          <span>{{ item.price }}</span>
+        </article>
+      </TaoCarousel>
+
+      <div class="code-block">
+        <pre><code>{{ carouselExample }}</code></pre>
       </div>
     </section>
       </main>
@@ -1765,6 +1921,73 @@ p {
   padding: 12px;
   background: var(--tao-color-surface-sunken);
   border-radius: var(--tao-radius-panel);
+}
+
+.carousel-heading {
+  margin: 28px 0 4px;
+  font-size: 16px;
+}
+
+.carousel-note {
+  margin: 0 0 12px;
+  color: var(--tao-color-text-muted);
+  font-size: 13px;
+}
+
+.carousel-hero {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  min-height: 180px;
+  padding: 20px;
+  border-radius: var(--tao-radius-panel);
+  background: linear-gradient(135deg, var(--tao-color-accent-subtle) 0%, var(--tao-color-surface-sunken) 100%);
+}
+
+.carousel-hero span {
+  color: var(--tao-color-text-muted);
+  font-size: 14px;
+}
+
+.carousel-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.carousel-card__cover {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border-radius: var(--tao-radius-control);
+  background: linear-gradient(135deg, var(--tao-color-accent-subtle) 0%, var(--tao-color-surface-sunken) 100%);
+  color: var(--tao-color-text-muted);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.carousel-card span {
+  color: var(--tao-color-text-muted);
+  font-size: 13px;
+}
+
+.carousel-nav {
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--tao-color-border-strong);
+  border-radius: var(--tao-radius-control);
+  background: var(--tao-color-surface-sunken);
+  color: var(--tao-color-text);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.carousel-nav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .code-block {

@@ -44,10 +44,11 @@
 ### Отображение данных
 
 - **TaoTable** — простая таблица: колонки, empty, loading, сортировка через `v-model:sort`. Не datagrid.
-- **TaoPagination** — страницы с многоточием, пара к таблице
+- **TaoPagination** — страницы с многоточием. Клик по «…» прыгает на `jump` страниц (5 по умолчанию)
 - **TaoEmpty** — пустой список, нет результатов, нет прав
 - **TaoSkeleton** — плейсхолдер загрузки (text / title / circle / rect)
 - **TaoCounter** — витрина числа с переворотом цифр (не инпут)
+- **TaoCarousel** — лента: целый слайд с `autoplay`, карточка с `peek`, полоса с `per-view`. Стрелки через `controls` или `#prev` / `#next`, точки — `dots`
 - **TaoAvatar** — фото или инициалы
 - **TaoTag** — тег/бейдж со статусами (neutral, success, danger, warning, info)
 - **TaoAlert** — инлайн-баннер страницы или ошибки формы (success / error / warning / info)
@@ -273,6 +274,13 @@ const columns = [
   </template>
 </TaoInputGroup>
 
+<form @submit.prevent="onSave">
+  <TaoFormField label="Email">
+    <TaoInput v-model="email" type="email" />
+  </TaoFormField>
+  <TaoButton type="submit">Сохранить</TaoButton>
+</form>
+
 <TaoFormField label="Количество">
   <TaoInputNumber v-model="qty" :min="1" :max="99" />
 </TaoFormField>
@@ -280,6 +288,21 @@ const columns = [
 <TaoQuantity v-model="qty" :max="12" @dec="onDec" />
 
 <TaoCounter :value="score" :max-digits="6" />
+
+<TaoCarousel :autoplay="4000" loop dots>
+  <article v-for="item in banners" :key="item.id" class="hero">
+    <strong>{{ item.title }}</strong>
+    <span>{{ item.text }}</span>
+  </article>
+</TaoCarousel>
+<TaoCarousel :peek="72" :controls="false" dots>…</TaoCarousel>
+<TaoCarousel v-model="slide" :per-view="5" :peek="28">
+  <template #prev></template>
+  <template #next="{ go, disabled }">
+    <button type="button" :disabled="disabled" @click="go">вперёд</button>
+  </template>
+  <article v-for="item in products" :key="item.id">…</article>
+</TaoCarousel>
 ```
 
 `TaoDrawer` — лист сбоку, не модалка по центру:

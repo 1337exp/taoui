@@ -43,6 +43,7 @@ import TaoDrawer from './components/TaoDrawer.vue';
 import TaoAvatar from './components/TaoAvatar.vue';
 import TaoBreadcrumb from './components/TaoBreadcrumb.vue';
 import TaoCounter from './components/TaoCounter.vue';
+import TaoCarousel from './components/TaoCarousel.vue';
 import TaoToastViewport from './components/TaoToastViewport.vue';
 import TaoConfirmHost from './components/TaoConfirmHost.vue';
 import { toast } from './toast';
@@ -99,6 +100,7 @@ const components = [
     TaoAvatar,
     TaoBreadcrumb,
     TaoCounter,
+    TaoCarousel,
     TaoToastViewport,
     TaoConfirmHost,
 ];
@@ -156,6 +158,7 @@ export {
     TaoAvatar,
     TaoBreadcrumb,
     TaoCounter,
+    TaoCarousel,
     TaoToastViewport,
     TaoConfirmHost,
     toast,

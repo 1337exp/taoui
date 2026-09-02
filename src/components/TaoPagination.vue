@@ -13,6 +13,8 @@ const props = withDefaults(
         disabled?: boolean;
         showTotal?: boolean;
         size?: 'small' | 'medium';
+        /** Click ellipsis to skip this many pages. 0 keeps … decorative. */
+        jump?: number;
         ariaLabel?: string;
     }>(),
     {
@@ -23,6 +25,7 @@ const props = withDefaults(
         disabled: false,
         showTotal: true,
         size: 'medium',
+        jump: 5,
         ariaLabel: 'Пагинация',
     },
 );
@@ -79,7 +82,17 @@ function goTo(next: number) {
             </button>
 
             <template v-for="item in items" :key="item.type === 'page' ? item.page : item.id">
-                <span v-if="item.type === 'ellipsis'" class="tao-pagination__ellipsis" aria-hidden="true">…</span>
+                <button
+                    v-if="item.type === 'ellipsis' && jump > 0"
+                    type="button"
+                    class="tao-pagination__btn tao-pagination__btn--jump"
+                    :aria-label="item.id === 'left' ? `Назад на ${jump} страниц` : `Вперёд на ${jump} страниц`"
+                    :disabled="disabled"
+                    @click="goTo(item.id === 'left' ? current - jump : current + jump)"
+                >
+                    …
+                </button>
+                <span v-else-if="item.type === 'ellipsis'" class="tao-pagination__ellipsis" aria-hidden="true">…</span>
                 <button
                     v-else
                     type="button"
@@ -174,6 +187,10 @@ function goTo(next: number) {
 .tao-pagination__btn--current:hover:not(:disabled) {
     background: var(--tao-color-accent-hover);
     color: var(--tao-color-on-accent);
+}
+
+.tao-pagination__btn--jump {
+    color: var(--tao-color-text-muted);
 }
 
 .tao-pagination__btn:disabled {
