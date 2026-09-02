@@ -8,11 +8,13 @@ const props = withDefaults(
         items?: TaoStageItem[];
         vertical?: boolean;
         ariaLabel?: string;
+        statusLabels?: Partial<Record<TaoStageStatus, string>>;
     }>(),
     {
         items: () => [],
         vertical: true,
         ariaLabel: 'Стадии',
+        statusLabels: () => ({}),
     },
 );
 
@@ -21,7 +23,7 @@ defineSlots<{
     icon(props: { item: TaoStageItem; index: number; status: TaoStageStatus }): unknown;
 }>();
 
-const statusText: Record<TaoStageStatus, string> = {
+const fallbackStatusText: Record<TaoStageStatus, string> = {
     wait: 'ожидание',
     work: 'в работе',
     ok: 'готово',
@@ -36,7 +38,8 @@ function statusOf(item: TaoStageItem): TaoStageStatus {
 }
 
 function itemLabel(item: TaoStageItem): string {
-    return `${item.label ?? item.key}, ${statusText[statusOf(item)]}`;
+    const status = statusOf(item);
+    return `${item.label ?? item.key}, ${props.statusLabels[status] ?? fallbackStatusText[status]}`;
 }
 </script>
 

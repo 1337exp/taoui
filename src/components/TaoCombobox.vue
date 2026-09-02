@@ -13,6 +13,8 @@ const props = withDefaults(
         placeholder?: string;
         disabled?: boolean;
         error?: boolean;
+        emptyText?: string;
+        clearText?: string;
         /** Можно оставить то, чего нет в списке. */
         allowCreate?: boolean;
     }>(),
@@ -22,6 +24,8 @@ const props = withDefaults(
         placeholder: 'Начните вводить',
         disabled: false,
         error: false,
+        emptyText: 'Ничего не найдено',
+        clearText: 'Очистить',
         allowCreate: false,
     },
 );
@@ -495,7 +499,9 @@ onBeforeUnmount(() => {
         <Teleport to="body">
             <div v-if="open" ref="panelRef" class="tao-combobox__panel" :style="listStyle">
                 <ul :id="listId" ref="listRef" class="tao-combobox__list" role="listbox">
-                    <li v-if="!rows.length" class="tao-combobox__empty">Ничего не найдено</li>
+                    <li v-if="!rows.length" class="tao-combobox__empty">
+                        <slot name="empty">{{ emptyText }}</slot>
+                    </li>
                     <li
                         v-for="(row, index) in rows"
                         :id="`${listId}-row-${index}`"
@@ -516,7 +522,9 @@ onBeforeUnmount(() => {
                         @click="activateRow(row)"
                         @mouseenter="!(row.kind === 'option' && row.option.disabled) && (activeIndex = index)"
                     >
-                        <template v-if="row.kind === 'create'">Добавить «{{ row.text }}»</template>
+                        <template v-if="row.kind === 'create'">
+                            <slot name="create" :text="row.text">Добавить «{{ row.text }}»</slot>
+                        </template>
                         <template v-else>{{ row.option.label }}</template>
                     </li>
                 </ul>
@@ -526,7 +534,7 @@ onBeforeUnmount(() => {
                     class="tao-combobox__clear"
                     @mousedown.prevent="markPicking"
                 >
-                    Очистить
+                    <slot name="clear">{{ clearText }}</slot>
                 </button>
             </div>
         </Teleport>

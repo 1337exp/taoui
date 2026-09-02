@@ -15,6 +15,10 @@ const props = withDefaults(
         dot?: boolean | TaoAvatarDot;
         /** Счётчик в углу. 0 и пустое не рисуются, больше 99 — «99+». */
         count?: number | string;
+        fallbackLabel?: string;
+        /** `{count}` — число в бейдже. */
+        notificationsLabel?: string;
+        dotLabels?: Partial<Record<Exclude<TaoAvatarDot, 'error'>, string>>;
     }>(),
     {
         src: '',
@@ -23,6 +27,9 @@ const props = withDefaults(
         size: 'medium',
         dot: false,
         count: undefined,
+        fallbackLabel: 'Аватар',
+        notificationsLabel: '{count} уведомлений',
+        dotLabels: () => ({}),
     },
 );
 
@@ -71,7 +78,7 @@ const badge = computed(() => {
     return String(props.count);
 });
 
-const dotLabel: Record<Exclude<TaoAvatarDot, 'error'>, string> = {
+const defaultDotLabel: Record<Exclude<TaoAvatarDot, 'error'>, string> = {
     success: 'в сети',
     danger: 'занят',
     warning: 'отошёл',
@@ -80,13 +87,13 @@ const dotLabel: Record<Exclude<TaoAvatarDot, 'error'>, string> = {
 };
 
 const label = computed(() => {
-    const base = props.alt || props.name || 'Аватар';
+    const base = props.alt || props.name || props.fallbackLabel;
     const extra: string[] = [];
     if (dotTone.value) {
-        extra.push(dotLabel[dotTone.value]);
+        extra.push(props.dotLabels[dotTone.value] ?? defaultDotLabel[dotTone.value]);
     }
     if (badge.value) {
-        extra.push(`${badge.value} уведомлений`);
+        extra.push(props.notificationsLabel.replace('{count}', badge.value));
     }
     return extra.length ? `${base}, ${extra.join(', ')}` : base;
 });

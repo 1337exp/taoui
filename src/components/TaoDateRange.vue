@@ -31,6 +31,10 @@ const props = withDefaults(
         min?: string;
         max?: string;
         locale?: string;
+        todayText?: string;
+        clearText?: string;
+        prevMonthLabel?: string;
+        nextMonthLabel?: string;
     }>(),
     {
         modelValue: null,
@@ -40,6 +44,10 @@ const props = withDefaults(
         min: undefined,
         max: undefined,
         locale: 'ru-RU',
+        todayText: 'Сегодня',
+        clearText: 'Очистить',
+        prevMonthLabel: 'Предыдущий месяц',
+        nextMonthLabel: 'Следующий месяц',
     },
 );
 
@@ -387,7 +395,7 @@ onBeforeUnmount(() => {
                 @keydown="onPanelKeydown"
             >
                 <div class="tao-date__header">
-                    <button type="button" class="tao-date__nav" aria-label="Предыдущий месяц" @click="goMonth(-1)">
+                    <button type="button" class="tao-date__nav" :aria-label="prevMonthLabel" @click="goMonth(-1)">
                         <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
                             <path
                                 fill="none"
@@ -400,7 +408,7 @@ onBeforeUnmount(() => {
                         </svg>
                     </button>
                     <p class="tao-date__month">{{ monthLabel }}</p>
-                    <button type="button" class="tao-date__nav" aria-label="Следующий месяц" @click="goMonth(1)">
+                    <button type="button" class="tao-date__nav" :aria-label="nextMonthLabel" @click="goMonth(1)">
                         <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" focusable="false">
                             <path
                                 fill="none"
@@ -448,9 +456,11 @@ onBeforeUnmount(() => {
 
                 <div class="tao-date__footer">
                     <button type="button" class="tao-date__link" :disabled="!todayEnabled" @click="selectToday">
-                        Сегодня
+                        <slot name="today">{{ todayText }}</slot>
                     </button>
-                    <button v-if="committed" type="button" class="tao-date__link" @click="clear">Очистить</button>
+                    <button v-if="committed" type="button" class="tao-date__link" @click="clear">
+                        <slot name="clear">{{ clearText }}</slot>
+                    </button>
                 </div>
             </div>
         </Teleport>

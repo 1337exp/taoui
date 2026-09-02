@@ -11,6 +11,7 @@ interface Props {
     boundary?: number;
     hasOutline?: boolean;
     tabindex?: number;
+    ariaLabel?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -21,6 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
     boundary: 300,
     hasOutline: true,
     tabindex: 0,
+    ariaLabel: 'Наверх',
 });
 
 const RIPPLE_DURATION = 750;
@@ -123,7 +125,7 @@ onBeforeUnmount(() => {
             :tabindex="props.tabindex"
             class="tao-scroll-top"
             :class="{ 'tao-scroll-top--no-outline': !props.hasOutline }"
-            aria-label="Наверх"
+            :aria-label="props.ariaLabel"
             @click.prevent="onClick"
         >
             <div class="tao-scroll-top__content">

@@ -16,6 +16,13 @@ const props = withDefaults(
         /** Click ellipsis to skip this many pages. 0 keeps … decorative. */
         jump?: number;
         ariaLabel?: string;
+        prevLabel?: string;
+        nextLabel?: string;
+        /** `{page}` — номер страницы. */
+        pageLabel?: string;
+        /** `{n}` — сколько страниц перескакивает «…». */
+        jumpPrevLabel?: string;
+        jumpNextLabel?: string;
     }>(),
     {
         page: 1,
@@ -27,6 +34,11 @@ const props = withDefaults(
         size: 'medium',
         jump: 5,
         ariaLabel: 'Пагинация',
+        prevLabel: 'Назад',
+        nextLabel: 'Вперёд',
+        pageLabel: 'Страница {page}',
+        jumpPrevLabel: 'Назад на {n} страниц',
+        jumpNextLabel: 'Вперёд на {n} страниц',
     },
 );
 
@@ -66,15 +78,17 @@ function goTo(next: number) {
 <template>
     <nav class="tao-pagination" :class="`tao-pagination--${size}`" :aria-label="ariaLabel">
         <p v-if="showTotal" class="tao-pagination__total">
-            <template v-if="total === 0">0 из 0</template>
-            <template v-else>{{ from }}–{{ to }} из {{ total }}</template>
+            <slot name="total" :from="from" :to="to" :total="total">
+                <template v-if="total === 0">0 из 0</template>
+                <template v-else>{{ from }}–{{ to }} из {{ total }}</template>
+            </slot>
         </p>
 
         <div class="tao-pagination__pages">
             <button
                 type="button"
                 class="tao-pagination__btn"
-                aria-label="Назад"
+                :aria-label="prevLabel"
                 :disabled="disabled || current <= 1"
                 @click="goTo(current - 1)"
             >
@@ -86,7 +100,7 @@ function goTo(next: number) {
                     v-if="item.type === 'ellipsis' && jump > 0"
                     type="button"
                     class="tao-pagination__btn tao-pagination__btn--jump"
-                    :aria-label="item.id === 'left' ? `Назад на ${jump} страниц` : `Вперёд на ${jump} страниц`"
+                    :aria-label="item.id === 'left' ? jumpPrevLabel.replace('{n}', String(jump)) : jumpNextLabel.replace('{n}', String(jump))"
                     :disabled="disabled"
                     @click="goTo(item.id === 'left' ? current - jump : current + jump)"
                 >
@@ -99,7 +113,7 @@ function goTo(next: number) {
                     class="tao-pagination__btn"
                     :class="{ 'tao-pagination__btn--current': item.page === current }"
                     :aria-current="item.page === current ? 'page' : undefined"
-                    :aria-label="`Страница ${item.page}`"
+                    :aria-label="pageLabel.replace('{page}', String(item.page))"
                     :disabled="disabled"
                     @click="goTo(item.page)"
                 >
@@ -110,7 +124,7 @@ function goTo(next: number) {
             <button
                 type="button"
                 class="tao-pagination__btn"
-                aria-label="Вперёд"
+                :aria-label="nextLabel"
                 :disabled="disabled || current >= pageCount"
                 @click="goTo(current + 1)"
             >

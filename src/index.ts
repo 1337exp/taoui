@@ -16,6 +16,7 @@ import TaoCopy from './components/TaoCopy.vue';
 import TaoContainer from './components/TaoContainer.vue';
 import TaoFlex from './components/TaoFlex.vue';
 import TaoSpace from './components/TaoSpace.vue';
+import TaoSplit from './components/TaoSplit.vue';
 import TaoIcon from './components/TaoIcon.vue';
 import TaoLoader from './components/TaoLoader.vue';
 import TaoImage from './components/TaoImage.vue';
@@ -82,6 +83,7 @@ const components = [
     TaoContainer,
     TaoFlex,
     TaoSpace,
+    TaoSplit,
     TaoIcon,
     TaoLoader,
     TaoImage,
@@ -149,6 +151,7 @@ export {
     TaoContainer,
     TaoFlex,
     TaoSpace,
+    TaoSplit,
     TaoIcon,
     TaoLoader,
     TaoImage,
@@ -232,5 +235,6 @@ export type { TaoBreadcrumbItem } from './breadcrumb';
 export type { TaoDropdownAction } from './dropdown';
 export type { TaoQuantityChangeSource } from './quantity';
 export type { TaoStageItem, TaoStageStatus } from './stage';
+export type { TaoSplitDirection, TaoSplitUnit } from './split';
 
 export default TaoUI;

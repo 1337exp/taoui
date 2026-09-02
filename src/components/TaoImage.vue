@@ -9,6 +9,7 @@ interface Props {
     pixelated?: boolean;
     /** Нативный `loading="lazy"`. По умолчанию выкл — как обычный `<img>`. */
     lazy?: boolean;
+    placeholderText?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -16,6 +17,7 @@ const props = withDefaults(defineProps<Props>(), {
     alt: '',
     pixelated: false,
     lazy: false,
+    placeholderText: 'No image available',
 });
 
 const emit = defineEmits(['load', 'error']);
@@ -53,7 +55,7 @@ watch(() => props.src, () => {
         </template>
         <template v-else>
             <slot>
-                <div class="tao-image__placeholder">No image available</div>
+                <div class="tao-image__placeholder">{{ placeholderText }}</div>
             </slot>
         </template>
     </div>

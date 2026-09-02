@@ -12,6 +12,7 @@ const props = withDefaults(
         placeholder?: string;
         disabled?: boolean;
         error?: boolean;
+        clearText?: string;
     }>(),
     {
         modelValue: null,
@@ -19,6 +20,7 @@ const props = withDefaults(
         placeholder: 'Выберите',
         disabled: false,
         error: false,
+        clearText: 'Очистить',
     },
 );
 
@@ -307,7 +309,7 @@ onBeforeUnmount(() => {
                     @mousedown.prevent
                     @click="clear"
                 >
-                    Очистить
+                    <slot name="clear">{{ clearText }}</slot>
                 </button>
             </div>
         </Teleport>

@@ -16,6 +16,7 @@ export const toastDefaults: TaoToastDefaults = {
     timeout: 3000,
     closable: true,
     progress: true,
+    closeLabel: 'Закрыть уведомление',
 };
 
 export const toasts = ref<TaoToastRecord[]>([]);

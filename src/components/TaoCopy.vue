@@ -7,11 +7,13 @@ const props = withDefaults(
     defineProps<{
         text: string;
         successMessage?: string;
+        copyLabel?: string;
         /** Показать подсказку над кнопкой после копирования. */
         tip?: boolean;
     }>(),
     {
         successMessage: 'Скопировано!',
+        copyLabel: 'Копировать',
         tip: true,
     },
 );
@@ -123,7 +125,7 @@ onBeforeUnmount(() => {
                 type="button"
                 class="tao-copy__button"
                 :class="{ 'tao-copy__button--copied': copied }"
-                :aria-label="copied ? successMessage : 'Копировать'"
+                :aria-label="copied ? successMessage : copyLabel"
                 @click="copy"
             >
                 <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">

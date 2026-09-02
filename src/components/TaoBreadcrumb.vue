@@ -4,13 +4,19 @@ import type { TaoBreadcrumbItem } from '../breadcrumb';
 
 defineOptions({ name: 'TaoBreadcrumb' });
 
-defineProps<{
-    items: TaoBreadcrumbItem[];
-}>();
+withDefaults(
+    defineProps<{
+        items: TaoBreadcrumbItem[];
+        ariaLabel?: string;
+    }>(),
+    {
+        ariaLabel: 'Хлебные крошки',
+    },
+);
 </script>
 
 <template>
-    <nav class="tao-breadcrumb" aria-label="Хлебные крошки">
+    <nav class="tao-breadcrumb" :aria-label="ariaLabel">
         <ol class="tao-breadcrumb__list">
             <li v-for="(item, index) in items" :key="`${item.label}-${index}`" class="tao-breadcrumb__item">
                 <span v-if="index > 0" class="tao-breadcrumb__sep" aria-hidden="true">/</span>

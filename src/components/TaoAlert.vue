@@ -7,11 +7,13 @@ const props = withDefaults(
         type?: 'success' | 'error' | 'danger' | 'warning' | 'info' | 'neutral';
         title?: string;
         closable?: boolean;
+        closeLabel?: string;
     }>(),
     {
         type: 'info',
         title: '',
         closable: false,
+        closeLabel: 'Закрыть',
     },
 );
 
@@ -38,7 +40,7 @@ const live = computed(() => (tone.value === 'error' || tone.value === 'warning' 
             v-if="closable"
             type="button"
             class="tao-alert__close"
-            aria-label="Закрыть"
+            :aria-label="closeLabel"
             @click="emit('close')"
         >
             &times;

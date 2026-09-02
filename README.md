@@ -29,6 +29,7 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoFlex** — flexbox wrapper: justify / align / direction / wrap / gap
 - **TaoSpace** — even gap between children
 - **TaoDivider** — `line` (hairline), `text` (line with a label), `gap` (empty space, size: small / medium / large)
+- **TaoSplit** — two panes and a gutter. `row` / `column` like Flex. `v-model` is the start size in `%` or `px`; `resizable="false"` locks the gutter. Not Divider.
 - **TaoFieldset** — grouped frame: `legend` sits on the top border, `align` is start / center / end
 - **TaoAnimatedBorder** — rainbow border wrapper (decorative, not tied to the theme)
 
@@ -160,6 +161,23 @@ import '@1337exp/taoui/styles.css'
     Modal body
   </TaoModal>
 </template>
+```
+
+## Split
+
+`TaoSplit` is two panes and a gutter. It is not `TaoDivider` (a line) and not an n-pane layout: three columns are two nested splits.
+
+`direction` matches Flex: `row` (start | end) or `column` (start above end). Slots are `#start` / `#end`.
+
+`v-model` is the start pane size. `unit` is `%` (default — the ratio survives a container resize) or `px` (a sidebar; the end pane takes the rest). With `px`, pass an explicit size — the default `50` is 50px. `min` / `max` apply to start; `min-end` is the other pane's floor; all three use the same unit. `resizable="false"` keeps the gutter but locks it.
+
+The split fills the parent (`width` / `height: 100%`). Give the parent a bounded size on the split axis — a `column` split without a height has no `%` to compute. Panes use `min-width` / `min-height: 0` and `overflow: hidden`, so content cannot block shrinking. Scroll belongs on an inner wrapper (`overflow: auto; height: 100%; min-height: 0`). A nested `TaoSplit` as a direct child of a pane stretches on its own.
+
+```vue
+<TaoSplit v-model="side" unit="px" :min="160" :max="480" :min-end="240">
+  <template #start>Nav</template>
+  <template #end>Main</template>
+</TaoSplit>
 ```
 
 ## Toast

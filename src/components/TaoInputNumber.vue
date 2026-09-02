@@ -14,6 +14,8 @@ const props = withDefaults(
         disabled?: boolean;
         placeholder?: string;
         controls?: boolean;
+        incrementLabel?: string;
+        decrementLabel?: string;
     }>(),
     {
         modelValue: null,
@@ -21,6 +23,8 @@ const props = withDefaults(
         disabled: false,
         placeholder: '',
         controls: true,
+        incrementLabel: 'Увеличить',
+        decrementLabel: 'Уменьшить',
     },
 );
 
@@ -182,7 +186,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
             <button
                 type="button"
                 class="tao-input-number__step"
-                aria-label="Увеличить"
+                :aria-label="incrementLabel"
                 tabindex="-1"
                 :disabled="disabled || atMax"
                 @click="bump(1)"
@@ -192,7 +196,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
             <button
                 type="button"
                 class="tao-input-number__step"
-                aria-label="Уменьшить"
+                :aria-label="decrementLabel"
                 tabindex="-1"
                 :disabled="disabled || atMin"
                 @click="bump(-1)"

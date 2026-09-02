@@ -16,6 +16,11 @@ const props = withDefaults(
         /** Pips under the track: one per snap. Inactive are dots, the current one stretches into a pill. */
         dots?: boolean;
         ariaLabel?: string;
+        prevLabel?: string;
+        nextLabel?: string;
+        dotsLabel?: string;
+        /** `{n}` и `{count}` — текущий слайд и всего. */
+        slideLabel?: string;
     }>(),
     {
         modelValue: 0,
@@ -26,6 +31,10 @@ const props = withDefaults(
         loop: false,
         dots: false,
         ariaLabel: 'Лента',
+        prevLabel: 'Назад',
+        nextLabel: 'Вперёд',
+        dotsLabel: 'Слайды',
+        slideLabel: 'Слайд {n} из {count}',
     },
 );
 
@@ -388,7 +397,7 @@ onBeforeUnmount(() => {
                     v-if="showControls"
                     type="button"
                     class="tao-carousel__nav"
-                    aria-label="Назад"
+                    :aria-label="prevLabel"
                     :disabled="atStart"
                     @click="goPrev"
                 >
@@ -429,7 +438,7 @@ onBeforeUnmount(() => {
                     v-if="showControls"
                     type="button"
                     class="tao-carousel__nav"
-                    aria-label="Вперёд"
+                    :aria-label="nextLabel"
                     :disabled="atEnd"
                     @click="goNext"
                 >
@@ -448,14 +457,14 @@ onBeforeUnmount(() => {
         </div>
 
         <slot name="dots" :index="index" :count="snapCount" :go="goTo">
-            <div v-if="showDots" class="tao-carousel__dots" role="group" aria-label="Слайды">
+            <div v-if="showDots" class="tao-carousel__dots" role="group" :aria-label="dotsLabel">
                 <button
                     v-for="n in snapCount"
                     :key="n"
                     type="button"
                     class="tao-carousel__dot"
                     :class="{ 'tao-carousel__dot--active': n - 1 === index }"
-                    :aria-label="`Слайд ${n} из ${snapCount}`"
+                    :aria-label="slideLabel.replace('{n}', String(n)).replace('{count}', String(snapCount))"
                     :aria-current="n - 1 === index ? 'true' : undefined"
                     @click="goTo(n - 1)"
                 >

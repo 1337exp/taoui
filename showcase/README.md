@@ -21,3 +21,4 @@ npm run dev
 - `index.html` — HTML-шаблон
 - `vite.config.js` — Vite, алиас `@tao/ui` → `../src/index.ts`
 - `package.json` — зависимости и скрипты
+- `TypeaheadPlayground.vue`, `GridPlayground.vue` — черновики только для витрины, в npm-пакет не попадают. Их можно копировать в свой проект.

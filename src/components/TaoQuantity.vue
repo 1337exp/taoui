@@ -15,6 +15,9 @@ const props = withDefaults(
         allowRemove?: boolean;
         /** Clamp to max on blur and when the incoming value is above stock. */
         forceMaxLimit?: boolean;
+        decrementLabel?: string;
+        removeLabel?: string;
+        incrementLabel?: string;
     }>(),
     {
         modelValue: 1,
@@ -22,6 +25,9 @@ const props = withDefaults(
         disabled: false,
         allowRemove: true,
         forceMaxLimit: true,
+        decrementLabel: 'Уменьшить',
+        removeLabel: 'Убрать',
+        incrementLabel: 'Увеличить',
     },
 );
 
@@ -150,7 +156,7 @@ const atMin = computed(() => props.modelValue <= props.min);
 const atMax = computed(() => props.modelValue >= ceiling.value);
 const minusDisabled = computed(() => props.disabled || (!props.allowRemove && atMin.value));
 const plusDisabled = computed(() => props.disabled || atMax.value);
-const minusLabel = computed(() => (atMin.value && props.allowRemove ? 'Убрать' : 'Уменьшить'));
+const minusLabel = computed(() => (atMin.value && props.allowRemove ? props.removeLabel : props.decrementLabel));
 </script>
 
 <template>
@@ -194,7 +200,7 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? 'Убра�
         <button
             type="button"
             class="tao-quantity__btn tao-quantity__btn--inc"
-            aria-label="Увеличить"
+            :aria-label="incrementLabel"
             :disabled="plusDisabled"
             @click="onInc"
         >

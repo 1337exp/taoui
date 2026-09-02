@@ -10,11 +10,13 @@ const props = withDefaults(
         title?: string;
         side?: 'left' | 'right';
         closable?: boolean;
+        closeLabel?: string;
     }>(),
     {
         title: '',
         side: 'right',
         closable: true,
+        closeLabel: 'Закрыть',
     },
 );
 
@@ -118,7 +120,7 @@ onBeforeUnmount(() => {
                             v-if="closable"
                             type="button"
                             class="tao-drawer__close"
-                            aria-label="Закрыть"
+                            :aria-label="closeLabel"
                             @click="close"
                         >
                             &times;

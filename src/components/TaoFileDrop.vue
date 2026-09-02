@@ -14,6 +14,10 @@ interface Props {
     accept?: string;
     multiple?: boolean;
     showClear?: boolean;
+    clearLabel?: string;
+    /** Шаблон aria для крестика файла. `{name}` — имя файла. */
+    removeLabel?: string;
+    formatSize?: (bytes: number) => string;
     /** Имена выбранных файлов под зоной. Снять файл — сразу в `v-model`. */
     list?: boolean;
 }
@@ -24,6 +28,8 @@ const props = withDefaults(defineProps<Props>(), {
     accept: '*',
     multiple: false,
     showClear: false,
+    clearLabel: 'Очистить файлы',
+    removeLabel: 'Убрать «{name}»',
     list: true,
 });
 
@@ -109,7 +115,7 @@ function processFiles(fileList: FileList) {
     }
 }
 
-function formatSize(bytes: number) {
+function defaultFormatSize(bytes: number) {
     if (bytes < 1024) {
         return `${bytes} Б`;
     }
@@ -121,6 +127,10 @@ function formatSize(bytes: number) {
     const mb = kb / 1024;
     const value = mb < 10 ? mb.toFixed(1) : String(Math.round(mb));
     return `${value.replace('.', ',')} МБ`;
+}
+
+function sizeLabel(bytes: number) {
+    return props.formatSize ? props.formatSize(bytes) : defaultFormatSize(bytes);
 }
 
 function fileKey(file: File, index: number) {
@@ -144,7 +154,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
                 v-if="showClear && modelValue.length"
                 type="button"
                 class="tao-file-drop__clear"
-                aria-label="Очистить файлы"
+                :aria-label="clearLabel"
                 @click="requestClear"
             >
                 ✕
@@ -174,11 +184,11 @@ onBeforeUnmount(() => stopFocusLoss?.());
         <ul v-if="list && modelValue.length" class="tao-file-drop__list">
             <li v-for="(file, index) in modelValue" :key="fileKey(file, index)" class="tao-file-drop__file">
                 <span class="tao-file-drop__name">{{ file.name }}</span>
-                <span class="tao-file-drop__meta">{{ formatSize(file.size) }}</span>
+                <span class="tao-file-drop__meta">{{ sizeLabel(file.size) }}</span>
                 <button
                     type="button"
                     class="tao-file-drop__remove"
-                    :aria-label="`Убрать «${file.name}»`"
+                    :aria-label="removeLabel.replace('{name}', file.name)"
                     @click="removeAt(index)"
                 >
                     ✕

@@ -7,9 +7,11 @@ defineOptions({ name: 'TaoDropdownMenu' });
 const props = withDefaults(
     defineProps<{
         actions?: TaoDropdownAction[];
+        menuLabel?: string;
     }>(),
     {
         actions: () => [],
+        menuLabel: 'Меню',
     },
 );
 
@@ -147,7 +149,7 @@ onBeforeUnmount(() => {
             @click="toggleMenu"
         >
             <slot v-if="$slots.button" name="button" />
-            <span v-else aria-label="Меню">⋮</span>
+            <span v-else :aria-label="menuLabel">⋮</span>
         </button>
 
         <Teleport to="body">

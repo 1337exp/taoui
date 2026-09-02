@@ -37,6 +37,7 @@ export interface TaoToastDefaults {
     timeout: number;
     closable: boolean;
     progress: boolean;
+    closeLabel: string;
 }
 
 export interface TaoToastShortcutOptions {

@@ -18,6 +18,7 @@ import {
   TaoContainer,
   TaoFlex,
   TaoSpace,
+  TaoSplit,
   TaoIcon,
   TaoLoader,
   TaoImage,
@@ -58,6 +59,8 @@ import {
   toast,
   confirm,
 } from '@tao/ui'
+import TypeaheadPlayground from './TypeaheadPlayground.vue'
+import GridPlayground from './GridPlayground.vue'
 
 // Theme switcher demo
 const theme = ref('dark')
@@ -117,6 +120,10 @@ const carouselExample = `<TaoCarousel :autoplay="4000" loop dots>
     <strong>{{ item.title }}</strong>
     <span>{{ item.text }}</span>
   </article>
+</TaoCarousel>
+
+<TaoCarousel prev-label="Previous" next-label="Next" dots-label="Slides" slide-label="Slide {n} of {count}">
+  …
 </TaoCarousel>
 
 /* вид слайда — ваш article, не карусель */
@@ -253,6 +260,11 @@ const notifyEmail = ref(true)
 const plan = ref('pro')
 const period = ref('month')
 const layoutView = ref('list')
+const splitPercent = ref(50)
+const splitSidebar = ref(220)
+const splitColumn = ref(40)
+const splitNested = ref(34)
+const splitNestedInner = ref(55)
 const inboxFilter = ref('all')
 const tagPeople = ref([
   { name: 'Анна Козлова' },
@@ -269,6 +281,7 @@ function removeTagFilter(index) {
   tagFilters.value.splice(index, 1)
 }
 const comboCity = ref(null)
+const typeaheadPerson = ref(null)
 const comboTag = ref(null)
 const comboFree = ref(null)
 const comboCities = [
@@ -443,6 +456,26 @@ function stubPhoto(label) {
 }
 const cardPhotos = [stubPhoto('1'), stubPhoto('2'), stubPhoto('3')]
 const cardGallery = ref(0)
+const gridProducts = [
+  { id: '1', title: 'Gel Shine', sub: 'Топ 15 мл', price: '490 ₽' },
+  { id: '2', title: 'Rose Quartz', sub: 'Гель-лак', price: '320 ₽' },
+  { id: '3', title: 'Noir', sub: 'База', price: '410 ₽' },
+  { id: '4', title: 'Milk Foam', sub: 'Камуфляж', price: '380 ₽' },
+  { id: '5', title: 'Citrus', sub: 'Гель-лак', price: '320 ₽' },
+  { id: '6', title: 'Soft File', sub: 'Пилка 180/240', price: '90 ₽' },
+  { id: '7', title: 'Brush Duo', sub: 'Кисти', price: '540 ₽' },
+  { id: '8', title: 'Matte Coat', sub: 'Топ матовый', price: '490 ₽' },
+]
+const gridNotes = [
+  { id: 'a', title: 'Коротко', text: 'Одна строка.' },
+  {
+    id: 'b',
+    title: 'Длиннее',
+    text: 'Несколько предложений, чтобы было видно: в сетке ряд выравнивается по самой высокой карточке. Это не masonry — дырки не заполняются.',
+  },
+  { id: 'c', title: 'Средне', text: 'Две-три строки текста в теле карточки.' },
+  { id: 'd', title: 'Ещё одна', text: 'Четвёртая уезжает на следующий ряд.' },
+]
 
 const navGroups = [
   {
@@ -467,6 +500,7 @@ const navGroups = [
       { id: 'select', label: 'Select / Switch / Radio', aliases: ['TaoSelect', 'TaoSwitch', 'TaoRadio', 'TaoFormField', 'FormField'] },
       { id: 'segmented', label: 'TaoSegmented', aliases: ['TaoSegmentedOption', 'Segmented'] },
       { id: 'combobox', label: 'TaoCombobox' },
+      { id: 'typeahead', label: 'Typeahead (demo)', aliases: ['autocomplete', 'remote', 'поиск'] },
       { id: 'date', label: 'TaoDate / Range', aliases: ['TaoDate', 'TaoDateRange', 'DateRange'] },
       { id: 'pincode', label: 'TaoPinCode' },
       { id: 'slider', label: 'Progress / Slider', aliases: ['TaoProgress', 'TaoSlider'] },
@@ -492,7 +526,9 @@ const navGroups = [
     items: [
       { id: 'container', label: 'TaoContainer' },
       { id: 'flex', label: 'Flex / Space', aliases: ['TaoFlex', 'TaoSpace'] },
+      { id: 'grid', label: 'Grid (demo)', aliases: ['masonry', 'плитки', 'каталог', 'сетка', 'GridPlayground'] },
       { id: 'divider', label: 'TaoDivider' },
+      { id: 'split', label: 'TaoSplit' },
       { id: 'fieldset', label: 'TaoFieldset' },
       { id: 'animated-border', label: 'TaoAnimatedBorder' },
     ],
@@ -895,6 +931,7 @@ onBeforeUnmount(() => {
 
       <div class="code-block">
         <pre><code>&lt;TaoCopy :text="value" /&gt;
+&lt;TaoCopy :text="value" copy-label="Copy" success-message="Copied!" /&gt;
 
 &lt;TaoCopy :text="value"&gt;
   &lt;template #default="{ copy, copied }"&gt;
@@ -1026,7 +1063,9 @@ onBeforeUnmount(() => {
       <div class="code-block">
         <pre><code>&lt;TaoFormField label="Количество"&gt;
   &lt;TaoInputNumber v-model="qty" :min="1" :max="99" /&gt;
-&lt;/TaoFormField&gt;</code></pre>
+&lt;/TaoFormField&gt;
+
+&lt;TaoInputNumber v-model="qty" increment-label="Increase" decrement-label="Decrease" /&gt;</code></pre>
       </div>
     </section>
 
@@ -1057,8 +1096,10 @@ onBeforeUnmount(() => {
 &lt;TaoQuantity
   v-model="qty"
   :max="stock"
+  increment-label="Increase"
+  decrement-label="Decrease"
+  remove-label="Remove"
   @dec="onDec"
-  @change="onChange"
 /&gt;</code></pre>
       </div>
     </section>
@@ -1140,6 +1181,8 @@ onBeforeUnmount(() => {
         <pre><code>&lt;TaoFormField label="Город" hint="Необязательно"&gt;
   &lt;TaoSelect v-model="city" :options="cities" /&gt;
 &lt;/TaoFormField&gt;
+
+&lt;TaoSelect v-model="city" :options="cities" placeholder="Select a city" clear-text="Clear" /&gt;
 
 &lt;TaoSwitch v-model="on" label="Тёмная тема" /&gt;
 
@@ -1232,7 +1275,10 @@ onBeforeUnmount(() => {
       <h2>TaoCombobox</h2>
       <p>
         Select с полем: печатаете — список фильтруется. По умолчанию только из списка:
-        не нашли — ввод откатывается. <code>allow-create</code> оставляет свой текст в
+        не нашли — ввод откатывается. Пустой список, «Очистить» и «Добавить» — слоты
+        <code>#empty</code> / <code>#clear</code> / <code>#create</code> (или пропы
+        <code>empty-text</code> / <code>clear-text</code>). <code>allow-create</code>
+        оставляет свой текст в
         <code>v-model</code>; список Combobox сам не трогает. Чтобы новое появилось в
         <code>options</code>, слушайте <code>@create</code>. Esc и клик снаружи закрывают.
       </p>
@@ -1278,7 +1324,50 @@ onBeforeUnmount(() => {
       <div class="code-block">
         <pre><code>&lt;TaoCombobox v-model="city" :options="cities" /&gt;
 &lt;TaoCombobox v-model="query" :options="tags" allow-create /&gt;
-&lt;TaoCombobox v-model="tag" :options="tags" allow-create @create="onCreate" /&gt;</code></pre>
+&lt;TaoCombobox v-model="tag" :options="tags" allow-create @create="onCreate" /&gt;
+
+&lt;TaoCombobox
+  v-model="city"
+  :options="cities"
+  placeholder="Start typing"
+  empty-text="Nothing found"
+  clear-text="Clear"
+&gt;
+  &lt;template #create="{ text }"&gt;Add “&#123;&#123; text &#125;&#125;”&lt;/template&gt;
+&lt;/TaoCombobox&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="typeahead" class="showcase-section" v-show="sectionVisible('forms', 'typeahead')">
+      <h2>Typeahead (демо, не в пакете)</h2>
+      <p>
+        Черновик только для showcase: печатаете — после паузы уходит «запрос», предыдущий
+        отменяется, список под полем рисует ответ. Fetch, debounce и abort здесь нарочно,
+        в kit так класть не надо. Файл можно скопировать в проект; в kit это не едет.
+      </p>
+
+      <div class="demo-stack">
+        <TaoFormField
+          label="Человек"
+          :hint="typeaheadPerson ? `${typeaheadPerson.name} · ${typeaheadPerson.city}` : 'Наберите «ан», «ива» или «моск». Быстрый ввод отменяет старый запрос'"
+        >
+          <TypeaheadPlayground v-model="typeaheadPerson">
+            <template #empty>Никого нет. Попробуйте «ан» или «моск».</template>
+          </TypeaheadPlayground>
+        </TaoFormField>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TypeaheadPlayground v-model="person"&gt;
+  &lt;template #empty&gt;Никого нет. Попробуйте «ан» или «моск».&lt;/template&gt;
+&lt;/TypeaheadPlayground&gt;
+
+&lt;TypeaheadPlayground v-model="person"&gt;
+  &lt;template #item="{ hit }"&gt;
+    &lt;span&gt;&#123;&#123; hit.name &#125;&#125;&lt;/span&gt;
+    &lt;span&gt;&#123;&#123; hit.city &#125;&#125; · &#123;&#123; hit.role &#125;&#125;&lt;/span&gt;
+  &lt;/template&gt;
+&lt;/TypeaheadPlayground&gt;</code></pre>
       </div>
     </section>
 
@@ -1316,7 +1405,15 @@ onBeforeUnmount(() => {
       <div class="code-block">
         <pre><code>&lt;TaoFormField label="День доставки"&gt;
   &lt;TaoDate v-model="day" min="2026-09-01" max="2026-09-30" /&gt;
-&lt;/TaoFormField&gt;</code></pre>
+&lt;/TaoFormField&gt;
+
+&lt;TaoDate
+  v-model="day"
+  locale="en-US"
+  placeholder="Date"
+  today-text="Today"
+  clear-text="Clear"
+/&gt;</code></pre>
       </div>
 
       <h2>TaoDateRange</h2>
@@ -1351,7 +1448,15 @@ onBeforeUnmount(() => {
       <div class="code-block">
         <pre><code>&lt;TaoFormField label="Даты поездки"&gt;
   &lt;TaoDateRange v-model="stay" min="2026-09-01" max="2026-09-30" /&gt;
-&lt;/TaoFormField&gt;</code></pre>
+&lt;/TaoFormField&gt;
+
+&lt;TaoDateRange
+  v-model="stay"
+  locale="en-US"
+  placeholder="Range"
+  today-text="Today"
+  clear-text="Clear"
+/&gt;</code></pre>
       </div>
     </section>
 
@@ -1474,8 +1579,14 @@ onBeforeUnmount(() => {
       <div class="code-block">
         <pre><code>&lt;TaoFileDrop v-model="files" multiple show-clear @clear-request="files = []" /&gt;
 
-&lt;TaoFileDrop v-model="files" show-clear :list="false" @clear-request="onClear"&gt;
-  Перетащите накладную или выберите с диска
+&lt;TaoFileDrop
+  v-model="files"
+  show-clear
+  clear-label="Clear files"
+  remove-label="Remove “{name}”"
+  @clear-request="onClear"
+&gt;
+  Drop a file here or click to browse
 &lt;/TaoFileDrop&gt;</code></pre>
       </div>
     </section>
@@ -1520,7 +1631,7 @@ onBeforeUnmount(() => {
       />
 
       <div class="code-block">
-        <pre><code>&lt;TaoTable :columns="columns" :rows="pageRows" v-model:sort="sort"&gt;
+        <pre><code>&lt;TaoTable :columns="columns" :rows="pageRows" v-model:sort="sort" empty-text="No records yet"&gt;
   &lt;template #cell-status="{ row }"&gt;
     &lt;TaoTag :type="row.status === 'active' ? 'success' : 'neutral'"&gt;
       &#123;&#123; row.status &#125;&#125;
@@ -1545,7 +1656,18 @@ onBeforeUnmount(() => {
 
       <div class="code-block">
         <pre><code>&lt;TaoPagination v-model:page="page" :total="500" :page-size="10" /&gt;
-&lt;TaoPagination v-model:page="page" :total="500" :page-size="10" :jump="3" /&gt;</code></pre>
+&lt;TaoPagination v-model:page="page" :total="500" :page-size="10" :jump="3" /&gt;
+
+&lt;TaoPagination
+  v-model:page="page"
+  :total="500"
+  :page-size="10"
+  prev-label="Previous"
+  next-label="Next"
+  page-label="Page {page}"
+&gt;
+  &lt;template #total="{ from, to, total }"&gt;&#123;&#123; from &#125;&#125;–&#123;&#123; to &#125;&#125; of &#123;&#123; total &#125;&#125;&lt;/template&gt;
+&lt;/TaoPagination&gt;</code></pre>
       </div>
     </section>
 
@@ -1563,6 +1685,10 @@ onBeforeUnmount(() => {
       <div class="code-block">
         <pre><code>&lt;TaoEmpty title="Ничего не нашлось"&gt;
   Измените фильтр.
+&lt;/TaoEmpty&gt;
+
+&lt;TaoEmpty title="Nothing found"&gt;
+  Change the filter or reset search.
 &lt;/TaoEmpty&gt;</code></pre>
       </div>
     </section>
@@ -1593,7 +1719,12 @@ onBeforeUnmount(() => {
   { key: 'pay', label: 'Оплата', status: 'ok' },
   { key: 'pack', label: 'Сборка', status: 'work' },
   { key: 'ship', label: 'Доставка', status: 'wait' },
-]" /&gt;</code></pre>
+]" /&gt;
+
+&lt;TaoStages
+  :items="items"
+  :status-labels="{ wait: 'pending', work: 'in progress', ok: 'done', bad: 'failed' }"
+/&gt;</code></pre>
       </div>
     </section>
 
@@ -1760,6 +1891,52 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
+    <section id="grid" class="showcase-section" v-show="sectionVisible('layout', 'grid')">
+      <h2>Grid (демо, не в пакете)</h2>
+      <p>
+        Черновик только для showcase: сетка карточек на CSS Grid, без JS и без masonry.
+        <code>min</code> — сколько колонок влезет (как <code>auto-fill</code> / старый
+        <code>wrapByWidth</code>). <code>cols</code> — фиксированное число колонок.
+        Файл можно скопировать в проект; в kit это не едет.
+      </p>
+
+      <h3>Каталог, min="220px"</h3>
+      <p class="carousel-note">Сузь окно — колонок станет меньше. Карточки тянутся на ширину ячейки.</p>
+      <GridPlayground min="220px">
+        <TaoCard v-for="item in gridProducts" :key="item.id" :padding="12" :radius="12">
+          <template #cover>
+            <img class="product-card__photo" :src="stubPhoto(item.id)" :alt="item.title" />
+          </template>
+          <template #title>{{ item.title }}</template>
+          <template #sub>{{ item.sub }}</template>
+          <template #footer>{{ item.price }}</template>
+        </TaoCard>
+      </GridPlayground>
+
+      <h3>cols="3" — ряд по самой высокой</h3>
+      <p class="carousel-note">
+        Разный объём текста не даёт «водопад»: сосед в ряду тянется. Настоящий masonry сюда не кладём.
+      </p>
+      <GridPlayground :cols="3">
+        <TaoCard v-for="note in gridNotes" :key="note.id" :padding="12" :radius="12">
+          <template #title>{{ note.title }}</template>
+          <p>{{ note.text }}</p>
+        </TaoCard>
+      </GridPlayground>
+
+      <div class="code-block">
+        <pre><code>&lt;GridPlayground min="220px"&gt;
+  &lt;TaoCard v-for="item in products" :key="item.id" :padding="12" :radius="12"&gt;
+    &lt;template #cover&gt;&lt;img :src="item.photo" alt="" /&gt;&lt;/template&gt;
+    &lt;template #title&gt;Gel Shine&lt;/template&gt;
+    &lt;template #footer&gt;490 ₽&lt;/template&gt;
+  &lt;/TaoCard&gt;
+&lt;/GridPlayground&gt;
+
+&lt;GridPlayground :cols="3"&gt;…&lt;/GridPlayground&gt;</code></pre>
+      </div>
+    </section>
+
     <!-- TaoDivider -->
     <section id="divider" class="showcase-section" v-show="sectionVisible('layout', 'divider')">
       <h2>TaoDivider</h2>
@@ -1775,6 +1952,151 @@ onBeforeUnmount(() => {
         <pre><code>&lt;TaoDivider variant="line" /&gt;
 &lt;TaoDivider variant="text"&gt;или&lt;/TaoDivider&gt;
 &lt;TaoDivider variant="gap" size="small" /&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="split" class="showcase-section" v-show="sectionVisible('layout', 'split')">
+      <h2>TaoSplit</h2>
+      <p>
+        Две панели и полоса между ними. Не Divider и не раскладка на N панелей: три колонки — два вложенных сплита.
+        <code>direction</code> как у Flex: <code>row</code> / <code>column</code>.
+        Родитель задаёт высоту; скролл — внутри панели, не на самом сплите.
+      </p>
+
+      <h3>row, 50/50, скролл внутри</h3>
+      <p class="split-note">start: {{ splitPercent }}%</p>
+      <div class="split-demo">
+        <TaoSplit v-model="splitPercent" :min="20" :min-end="20">
+          <template #start>
+            <div class="split-pane-box split-pane-box--sunken">
+              <strong>Start</strong>
+              <p v-for="n in 12" :key="n">
+                Длинный текст в панели: скролл на внутренней обёртке, сплит сам не растёт. Строка {{ n }}.
+              </p>
+            </div>
+          </template>
+          <template #end>
+            <div class="split-pane-box">
+              <strong>End</strong>
+              <p>Потяни полосу. Стрелки, Home/End — когда полоса в фокусе.</p>
+            </div>
+          </template>
+        </TaoSplit>
+      </div>
+
+      <h3>unit="px" — сайдбар с min/max</h3>
+      <p class="split-note">start: {{ splitSidebar }}px · min 160 · max 360 · min-end 200</p>
+      <div class="split-demo">
+        <TaoSplit v-model="splitSidebar" unit="px" :min="160" :max="360" :min-end="200">
+          <template #start>
+            <div class="split-pane-box split-pane-box--sunken">
+              <strong>Сайдбар</strong>
+              <p>Фиксированные пиксели. Вторая панель забирает остаток.</p>
+            </div>
+          </template>
+          <template #end>
+            <div class="split-pane-box">
+              <strong>Контент</strong>
+              <p>Сузь окно — сайдбар упрётся в min и min-end.</p>
+            </div>
+          </template>
+        </TaoSplit>
+      </div>
+
+      <h3>column</h3>
+      <p class="split-note">start: {{ splitColumn }}%</p>
+      <div class="split-demo">
+        <TaoSplit v-model="splitColumn" direction="column" :min="20" :min-end="20">
+          <template #start>
+            <div class="split-pane-box split-pane-box--sunken">
+              <strong>Верх</strong>
+              <p>Вертикальный сплит. Родителю нужна высота, иначе проценты не из чего считать.</p>
+            </div>
+          </template>
+          <template #end>
+            <div class="split-pane-box">
+              <strong>Низ</strong>
+            </div>
+          </template>
+        </TaoSplit>
+      </div>
+
+      <h3>Вложенный row + column</h3>
+      <div class="split-demo split-demo--tall">
+        <TaoSplit v-model="splitNested" :min="20" :min-end="30">
+          <template #start>
+            <div class="split-pane-box split-pane-box--sunken">
+              <strong>Слева</strong>
+              <p>{{ splitNested }}%</p>
+            </div>
+          </template>
+          <template #end>
+            <TaoSplit v-model="splitNestedInner" direction="column" :min="20" :min-end="20">
+              <template #start>
+                <div class="split-pane-box">
+                  <strong>Справа сверху</strong>
+                </div>
+              </template>
+              <template #end>
+                <div class="split-pane-box split-pane-box--sunken">
+                  <strong>Справа снизу</strong>
+                </div>
+              </template>
+            </TaoSplit>
+          </template>
+        </TaoSplit>
+      </div>
+
+      <h3>resizable="false"</h3>
+      <div class="split-demo split-demo--short">
+        <TaoSplit :model-value="40" :resizable="false">
+          <template #start>
+            <div class="split-pane-box split-pane-box--sunken">Фиксировано</div>
+          </template>
+          <template #end>
+            <div class="split-pane-box">Полоса есть, тянуть нельзя</div>
+          </template>
+        </TaoSplit>
+      </div>
+
+      <h3>Overflow: таблица и nowrap</h3>
+      <p class="split-note">Панель сжимается, контент скроллится внутри. Ручка доезжает до min.</p>
+      <div class="split-demo">
+        <TaoSplit :model-value="45" :min="15" :min-end="20">
+          <template #start>
+            <div class="split-pane-box split-pane-box--sunken">
+              <p class="split-nowrap">verylongunbreakabletokenwithoutspacesthatwouldblowflexminwidth</p>
+              <table class="split-table">
+                <thead>
+                  <tr>
+                    <th>Колонка</th>
+                    <th>Ещё колонка</th>
+                    <th>И ещё</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="n in 6" :key="n">
+                    <td>ячейка-{{ n }}-длинная</td>
+                    <td>значение {{ n * 10 }}</td>
+                    <td>nowrap-{{ n }}-{{ n }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </template>
+          <template #end>
+            <div class="split-pane-box">
+              Сожми левую панель — таблица не раздувает layout.
+            </div>
+          </template>
+        </TaoSplit>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoSplit v-model="side" unit="px" :min="160" :max="480" :min-end="240"&gt;
+  &lt;template #start&gt;Навигация&lt;/template&gt;
+  &lt;template #end&gt;Основное&lt;/template&gt;
+&lt;/TaoSplit&gt;</code></pre>
       </div>
     </section>
 
@@ -1864,15 +2186,15 @@ onBeforeUnmount(() => {
       </TaoModal>
 
       <div class="code-block">
-        <pre><code>&lt;TaoButton @click="isOpen = true"&gt;
-  Открыть
-&lt;/TaoButton&gt;
-
-&lt;TaoModal v-model="isOpen" title="Заголовок"&gt;
+        <pre><code>&lt;TaoModal v-model="isOpen" title="Заголовок"&gt;
   &lt;p&gt;Содержимое&lt;/p&gt;
   &lt;template #footer&gt;
     &lt;TaoButton @click="isOpen = false"&gt;Закрыть&lt;/TaoButton&gt;
   &lt;/template&gt;
+&lt;/TaoModal&gt;
+
+&lt;TaoModal v-model="isOpen" title="Title" close-label="Close"&gt;
+  …
 &lt;/TaoModal&gt;</code></pre>
       </div>
     </section>
@@ -1893,7 +2215,9 @@ onBeforeUnmount(() => {
       <div class="code-block">
         <pre><code>&lt;TaoDrawer v-model="open" title="Фильтры"&gt;
   ...
-&lt;/TaoDrawer&gt;</code></pre>
+&lt;/TaoDrawer&gt;
+
+&lt;TaoDrawer v-model="open" title="Filters" close-label="Close" /&gt;</code></pre>
       </div>
     </section>
 
@@ -1911,7 +2235,9 @@ onBeforeUnmount(() => {
       <div class="code-block">
         <pre><code>if (await confirm().title('Удалить файл?').danger()) {
   remove()
-}</code></pre>
+}
+
+confirm.defaults({ ok: 'OK', cancel: 'Cancel' })</code></pre>
       </div>
     </section>
 
@@ -2084,7 +2410,9 @@ const tabs = [
   { label: 'Главная', to: '/' },
   { label: 'Пользователи', to: '/users' },
   { label: 'Профиль' },
-]" /&gt;</code></pre>
+]" /&gt;
+
+&lt;TaoBreadcrumb aria-label="Breadcrumb" :items="items" /&gt;</code></pre>
       </div>
     </section>
 
@@ -2111,7 +2439,7 @@ const tabs = [
 
       <div class="code-block">
         <pre><code>&lt;TaoScrollTop :boundary="200" /&gt;
-&lt;TaoScrollTop :size="48" :right="16" :bottom="16" /&gt;</code></pre>
+&lt;TaoScrollTop :size="48" :right="16" :bottom="16" aria-label="Back to top" /&gt;</code></pre>
       </div>
     </section>
 
@@ -2132,7 +2460,9 @@ const tabs = [
       <div class="code-block">
         <pre><code>toast().success().message('Сохранено')
 toast().error().title('Сеть').message('Нет соединения')
-toast.success('Сохранено')</code></pre>
+toast.success('Сохранено')
+
+toast.defaults({ closeLabel: 'Dismiss notification' })</code></pre>
       </div>
     </section>
 
@@ -2152,6 +2482,10 @@ toast.success('Сохранено')</code></pre>
       <div class="code-block">
         <pre><code>&lt;TaoAlert type="warning" title="Черновик" closable @close="hide"&gt;
   Сохраните, прежде чем уйти.
+&lt;/TaoAlert&gt;
+
+&lt;TaoAlert type="warning" title="Draft" closable close-label="Dismiss" @close="hide"&gt;
+  Save before you leave.
 &lt;/TaoAlert&gt;</code></pre>
       </div>
     </section>
@@ -2216,7 +2550,7 @@ toast.success('Сохранено')</code></pre>
         <pre><code>&lt;TaoTag type="success"&gt;Активен&lt;/TaoTag&gt;
 &lt;TaoTag type="success" flat&gt;Активен&lt;/TaoTag&gt;
 
-&lt;TaoTag type="neutral" closable @close="remove"&gt;
+&lt;TaoTag type="neutral" closable close-label="Remove" @close="remove"&gt;
   Москва
 &lt;/TaoTag&gt;
 
@@ -2261,7 +2595,8 @@ toast.success('Сохранено')</code></pre>
 
       <div class="code-block">
         <pre><code>&lt;TaoImage :src="imageUrl" /&gt;
-&lt;TaoImage :src="imageUrl" lazy /&gt;</code></pre>
+&lt;TaoImage :src="imageUrl" lazy /&gt;
+&lt;TaoImage placeholder-text="No image available" /&gt;</code></pre>
       </div>
     </section>
 
@@ -2291,7 +2626,14 @@ toast.success('Сохранено')</code></pre>
         <pre><code>&lt;TaoAvatar name="Анна Козлова" /&gt;
 &lt;TaoAvatar name="Анна" dot /&gt;
 &lt;TaoAvatar name="Борис" :count="3" /&gt;
-&lt;TaoAvatar :src="url" name="Анна" size="large" dot :count="2" /&gt;</code></pre>
+&lt;TaoAvatar :src="url" name="Анна" size="large" dot :count="2" /&gt;
+
+&lt;TaoAvatar
+  name="Ann"
+  fallback-label="Avatar"
+  notifications-label="{count} notifications"
+  :dot-labels="{ success: 'online', danger: 'busy', warning: 'away', info: 'status', neutral: 'offline' }"
+/&gt;</code></pre>
       </div>
     </section>
 
@@ -2562,6 +2904,56 @@ h1 {
   max-width: 280px;
 }
 
+.split-demo {
+  height: 280px;
+  border: 1px solid var(--tao-color-border);
+  border-radius: var(--tao-radius-panel);
+  overflow: hidden;
+}
+
+.split-demo--tall {
+  height: 360px;
+}
+
+.split-demo--short {
+  height: 160px;
+}
+
+.split-note {
+  margin: 0 0 8px;
+  color: var(--tao-color-text-muted);
+  font-size: 13px;
+}
+
+.split-pane-box {
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 0;
+  padding: 12px;
+  overflow: auto;
+}
+
+.split-pane-box--sunken {
+  background: var(--tao-color-surface-sunken);
+}
+
+.split-nowrap {
+  margin: 0 0 12px;
+  white-space: nowrap;
+}
+
+.split-table {
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+.split-table th,
+.split-table td {
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--tao-color-border);
+  text-align: left;
+}
+
 .demo-wide {
   max-width: 400px;
 }
@@ -2646,6 +3038,14 @@ p {
   aspect-ratio: 1;
   object-fit: cover;
   background: var(--tao-color-surface-sunken);
+}
+
+#grid :deep(.tao-card__title) {
+  font-size: 16px;
+}
+
+#grid :deep(.tao-card__footer) {
+  font-weight: 600;
 }
 
 .product-card--gallery :deep(.tao-carousel) {

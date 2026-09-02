@@ -8,11 +8,13 @@ interface Props {
     modelValue: boolean;
     title?: string;
     closable?: boolean;
+    closeLabel?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     title: '',
     closable: true,
+    closeLabel: 'Закрыть',
 });
 
 const emit = defineEmits(['update:modelValue', 'close']);
@@ -117,7 +119,7 @@ onBeforeUnmount(() => {
                             v-if="closable"
                             type="button"
                             class="tao-modal__close"
-                            aria-label="Закрыть"
+                            :aria-label="closeLabel"
                             @click="close"
                         >
                             &times;

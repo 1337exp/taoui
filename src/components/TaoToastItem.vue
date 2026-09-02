@@ -3,7 +3,7 @@ import { onBeforeUnmount, onMounted, ref } from 'vue';
 import TaoButton from './TaoButton.vue';
 import TaoIcon from './TaoIcon.vue';
 import { listenFocusLoss } from '../focusLoss';
-import { removeToast } from '../toast/store';
+import { removeToast, toastDefaults } from '../toast/store';
 import type { TaoToastRecord } from '../toast/types';
 
 defineOptions({ name: 'TaoToastItem' });
@@ -129,7 +129,7 @@ onBeforeUnmount(() => {
             v-if="toast.closable"
             type="button"
             class="tao-toast__close"
-            aria-label="Закрыть уведомление"
+            :aria-label="toastDefaults.closeLabel"
             @click="close"
         >
             &times;
