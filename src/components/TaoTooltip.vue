@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { listenFocusLoss } from '../focusLoss';
 
 defineOptions({ name: 'TaoTooltip' });
 
@@ -13,6 +14,16 @@ withDefaults(defineProps<Props>(), {
 });
 
 const showTooltip = ref(false);
+
+function hide() {
+    showTooltip.value = false;
+}
+
+let stopFocusLoss: (() => void) | undefined;
+onMounted(() => {
+    stopFocusLoss = listenFocusLoss(hide);
+});
+onBeforeUnmount(() => stopFocusLoss?.());
 </script>
 
 <template>

@@ -303,11 +303,14 @@ function onLostPointerCapture() {
 
 function onWindowBlur() {
     endDrag();
+    hoverPaused.value = false;
+    syncAutoplay();
 }
 
 function onVisibilityChange() {
     if (document.hidden) {
         endDrag();
+        hoverPaused.value = false;
     }
     syncAutoplay();
 }

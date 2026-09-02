@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { computed, inject, nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
+import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
+import { listenFocusLoss } from '../focusLoss';
 import {
     buildTaoDateGrid,
     formatTaoDateLabel,
@@ -324,7 +325,15 @@ watch(open, (isOpen) => {
     window.removeEventListener('scroll', onViewportChange, true);
 });
 
+let stopFocusLoss: (() => void) | undefined;
+onMounted(() => {
+    stopFocusLoss = listenFocusLoss(() => {
+        hoverIso.value = null;
+    });
+});
+
 onBeforeUnmount(() => {
+    stopFocusLoss?.();
     document.removeEventListener('pointerdown', onDocumentPointer);
     window.removeEventListener('resize', onViewportChange);
     window.removeEventListener('scroll', onViewportChange, true);

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { listenFocusLoss } from '../focusLoss';
 
 defineOptions({ name: 'TaoFileDrop' });
 
@@ -125,6 +126,15 @@ function formatSize(bytes: number) {
 function fileKey(file: File, index: number) {
     return `${file.name}-${file.size}-${file.lastModified}-${index}`;
 }
+
+let stopFocusLoss: (() => void) | undefined;
+onMounted(() => {
+    stopFocusLoss = listenFocusLoss(() => {
+        isDragging.value = false;
+    });
+});
+onBeforeUnmount(() => stopFocusLoss?.());
+
 </script>
 
 <template>

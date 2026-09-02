@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, inject, onBeforeUnmount, onMounted, ref, useId } from 'vue';
 import { formFieldKey } from '../formField';
+import { listenFocusLoss } from '../focusLoss';
 
 defineOptions({ name: 'TaoSlider' });
 
@@ -47,6 +48,7 @@ const current = computed(() => unpackModelValue());
 
 const trackRef = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
+let dragPointer = -1;
 
 const shadowInputRef = ref<HTMLInputElement | null>(null);
 const shadowModel = ref('0');
@@ -68,54 +70,79 @@ function commit(value: number) {
     emit('update:modelValue', packModelValue(clampValue(value)));
 }
 
-function calculateValue(event: MouseEvent | TouchEvent): number {
+function calculateValue(event: PointerEvent): number {
     if (!trackRef.value) {
         return props.min;
     }
 
     const rect = trackRef.value.getBoundingClientRect();
-    const clientX = 'touches' in event ? event.touches[0]!.clientX : event.clientX;
-    const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
+    const x = Math.min(Math.max(event.clientX - rect.left, 0), rect.width);
     const ratio = rect.width ? x / rect.width : 0;
 
     const v = props.min + ratio * (props.max - props.min);
     return clampValue(Math.round((v - props.min) / props.step) * props.step + props.min);
 }
 
-function handleMove(event: MouseEvent | TouchEvent) {
-    if (props.disabled) {
+function releaseDragCapture() {
+    const el = trackRef.value;
+    const id = dragPointer;
+    if (!el || id === -1) {
+        return;
+    }
+    if (typeof el.hasPointerCapture === 'function' && !el.hasPointerCapture(id)) {
+        return;
+    }
+    try {
+        el.releasePointerCapture(id);
+    } catch {
+        /* already released by the browser */
+    }
+}
+
+function endDrag() {
+    if (!isDragging.value) {
+        return;
+    }
+    isDragging.value = false;
+    releaseDragCapture();
+    dragPointer = -1;
+}
+
+function onPointerDown(event: PointerEvent) {
+    if (props.disabled || showShadowModel.value || event.button !== 0 || !trackRef.value) {
+        return;
+    }
+
+    dragPointer = event.pointerId;
+    isDragging.value = true;
+    commit(calculateValue(event));
+    event.preventDefault();
+    try {
+        trackRef.value.setPointerCapture(event.pointerId);
+    } catch {
+        /* untrusted events / capture already gone */
+    }
+}
+
+function onPointerMove(event: PointerEvent) {
+    if (!isDragging.value || event.pointerId !== dragPointer) {
         return;
     }
     commit(calculateValue(event));
 }
 
-function onMouseUp(event: MouseEvent | TouchEvent) {
-    const evBtn = 'touches' in event ? undefined : event.button;
-    if ((typeof evBtn !== 'undefined' && evBtn !== 0) || showShadowModel.value) {
-        return;
-    }
-    isDragging.value = false;
-}
-
-function onMouseDown(event: MouseEvent | TouchEvent) {
-    if (props.disabled) {
-        return;
-    }
-    const evBtn = 'touches' in event ? undefined : event.button;
-    if ((typeof evBtn !== 'undefined' && evBtn !== 0) || showShadowModel.value) {
-        return;
-    }
-
-    isDragging.value = true;
-    handleMove(event);
-    event.preventDefault();
-}
-
-function onMouseMove(event: MouseEvent | TouchEvent) {
+function onPointerEnd(event: PointerEvent) {
     if (!isDragging.value) {
         return;
     }
-    handleMove(event);
+    if (dragPointer !== -1 && event.pointerId !== dragPointer) {
+        return;
+    }
+    endDrag();
+}
+
+function onLostPointerCapture() {
+    endDrag();
 }
 
 function onKeydown(event: KeyboardEvent) {
@@ -174,20 +201,15 @@ function onContextMenu() {
     requestAnimationFrame(() => shadowInputRef.value?.focus());
 }
 
+let stopFocusLoss: (() => void) | undefined;
+
 onMounted(() => {
-    window.addEventListener('mouseleave', onMouseUp);
-    window.addEventListener('mouseup', onMouseUp);
-    window.addEventListener('mousemove', onMouseMove);
-    window.addEventListener('touchend', onMouseUp);
-    window.addEventListener('touchmove', onMouseMove);
+    stopFocusLoss = listenFocusLoss(endDrag);
 });
 
 onBeforeUnmount(() => {
-    window.removeEventListener('mouseleave', onMouseUp);
-    window.removeEventListener('mouseup', onMouseUp);
-    window.removeEventListener('mousemove', onMouseMove);
-    window.removeEventListener('touchend', onMouseUp);
-    window.removeEventListener('touchmove', onMouseMove);
+    endDrag();
+    stopFocusLoss?.();
 });
 </script>
 
@@ -208,8 +230,11 @@ onBeforeUnmount(() => {
         :aria-disabled="disabled || undefined"
         :aria-describedby="describedBy"
         @contextmenu.prevent="onContextMenu"
-        @mousedown="onMouseDown"
-        @touchstart="onMouseDown"
+        @pointerdown="onPointerDown"
+        @pointermove="onPointerMove"
+        @pointerup="onPointerEnd"
+        @pointercancel="onPointerEnd"
+        @lostpointercapture="onLostPointerCapture"
         @keydown="onKeydown"
     >
         <div class="tao-slider__track"></div>
@@ -226,7 +251,7 @@ onBeforeUnmount(() => {
             class="tao-slider__shadow-input"
             @blur="onBlurShadowModel"
             @keydown="onShadowKeydown"
-            @mousedown.stop
+            @pointerdown.stop
         />
         <div v-else-if="showValue" class="tao-slider__value">
             <slot name="pre-value" />{{ modelValue }}<slot name="post-value" />
@@ -245,6 +270,7 @@ onBeforeUnmount(() => {
     height: var(--tao-slider-hit);
     cursor: pointer;
     user-select: none;
+    touch-action: none;
 }
 
 .tao-slider:focus {

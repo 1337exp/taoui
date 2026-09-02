@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { onBeforeUnmount, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import TaoButton from './TaoButton.vue';
 import TaoIcon from './TaoIcon.vue';
+import { listenFocusLoss } from '../focusLoss';
 import { removeToast } from '../toast/store';
 import type { TaoToastRecord } from '../toast/types';
 
@@ -64,7 +65,13 @@ function runAction(onClick: () => void) {
 
 startTimer();
 
+let stopFocusLoss: (() => void) | undefined;
+onMounted(() => {
+    stopFocusLoss = listenFocusLoss(resume);
+});
+
 onBeforeUnmount(() => {
+    stopFocusLoss?.();
     clearTimer();
 });
 </script>
