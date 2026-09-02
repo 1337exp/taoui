@@ -13,6 +13,7 @@ const props = defineProps<{
 const id = useId();
 const hintId = `${id}-hint`;
 const errorId = `${id}-error`;
+const labelId = `${id}-label`;
 const invalid = computed(() => Boolean(props.error));
 const describedBy = computed(() => {
     if (props.error) {
@@ -31,11 +32,30 @@ provide(formFieldKey, {
     invalid,
     describedBy,
 });
+
+function onLabelClick() {
+    const target = document.getElementById(id);
+    if (
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLButtonElement ||
+        target instanceof HTMLSelectElement ||
+        target instanceof HTMLTextAreaElement
+    ) {
+        return;
+    }
+
+    const scope = target ?? document.getElementById(labelId)?.parentElement;
+    scope
+        ?.querySelector<HTMLElement>(
+            'input:not([disabled]), button:not([disabled]), textarea:not([disabled]), select:not([disabled])',
+        )
+        ?.focus();
+}
 </script>
 
 <template>
     <div class="tao-form-field" :class="{ 'tao-form-field--invalid': invalid }">
-        <label v-if="label" class="tao-form-field__label" :for="id">{{ label }}</label>
+        <label v-if="label" :id="labelId" class="tao-form-field__label" :for="id" @click="onLabelClick">{{ label }}</label>
         <slot />
         <p v-if="error" :id="errorId" class="tao-form-field__error">{{ error }}</p>
         <p v-else-if="hint" :id="hintId" class="tao-form-field__hint">{{ hint }}</p>

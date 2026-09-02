@@ -141,6 +141,8 @@ onBeforeUnmount(() => {
         :disabled="disabled"
         :aria-describedby="describedBy"
         :aria-invalid="invalid || undefined"
+        :aria-labelledby="legend ? undefined : (field ? `${field.id}-label` : undefined)"
+        :id="field?.id"
     >
         <legend v-if="legend" class="tao-segmented__legend">{{ legend }}</legend>
         <div ref="trackRef" class="tao-segmented__track">

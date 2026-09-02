@@ -10,6 +10,7 @@ import {
     parseTaoDate,
     shiftTaoDate,
     shiftTaoMonth,
+    clampTaoDateCursor,
     taoDateWeekdayIndex,
     taoWeekdayLabels,
     todayTaoDate,
@@ -120,7 +121,7 @@ async function setOpen(next: boolean) {
         return;
     }
 
-    syncViewFrom(valueIso.value ?? todayIso.value);
+    syncViewFrom(clampTaoDateCursor(valueIso.value ?? todayIso.value, props.min, props.max));
     await nextTick();
     updatePosition();
     panelRef.value?.focus();
@@ -153,20 +154,16 @@ function clear() {
 }
 
 function goMonth(delta: number) {
-    const next = shiftTaoMonth(`${viewYear.value}-${String(viewMonth.value).padStart(2, '0')}-01`, delta);
-    const parts = parseTaoDate(next);
-    if (!parts) {
-        return;
-    }
-
-    viewYear.value = parts.y;
-    viewMonth.value = parts.m;
-    cursorIso.value = shiftTaoMonth(cursorIso.value, delta);
+    cursorIso.value = clampTaoDateCursor(shiftTaoMonth(cursorIso.value, delta), props.min, props.max);
+    syncViewFrom(cursorIso.value);
     void nextTick(updatePosition);
 }
 
 function moveCursor(days: number) {
-    cursorIso.value = shiftTaoDate(cursorIso.value, days);
+    const next = shiftTaoDate(cursorIso.value, days);
+    cursorIso.value = isTaoDateInRange(next, props.min, props.max)
+        ? next
+        : clampTaoDateCursor(next, props.min, props.max);
     syncViewFrom(cursorIso.value);
     void nextTick(updatePosition);
 }

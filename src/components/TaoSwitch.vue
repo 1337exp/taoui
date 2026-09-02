@@ -25,6 +25,8 @@ const emit = defineEmits<{
 const field = inject(formFieldKey, null);
 const localId = useId();
 const controlId = computed(() => field?.id ?? localId);
+const invalid = computed(() => Boolean(field?.invalid.value));
+const describedBy = computed(() => field?.describedBy.value);
 
 function toggle() {
     if (props.disabled) {
@@ -38,7 +40,7 @@ function toggle() {
 </script>
 
 <template>
-    <label class="tao-switch" :class="{ 'tao-switch--disabled': disabled, 'tao-switch--on': modelValue }" :for="controlId">
+    <label class="tao-switch" :class="{ 'tao-switch--disabled': disabled, 'tao-switch--on': modelValue, 'tao-switch--invalid': invalid }" :for="controlId">
         <input
             :id="controlId"
             class="tao-switch__input"
@@ -47,6 +49,8 @@ function toggle() {
             :checked="modelValue"
             :disabled="disabled"
             :aria-checked="modelValue"
+            :aria-invalid="invalid || undefined"
+            :aria-describedby="describedBy"
             @change="toggle"
         />
         <span class="tao-switch__track" aria-hidden="true">
@@ -126,5 +130,9 @@ function toggle() {
 .tao-switch--disabled {
     cursor: not-allowed;
     opacity: 0.6;
+}
+
+.tao-switch--invalid .tao-switch__track {
+    border-color: var(--tao-color-danger);
 }
 </style>

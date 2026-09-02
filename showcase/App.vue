@@ -1175,14 +1175,22 @@ onBeforeUnmount(() => {
           <TaoSelect v-model="cityError" :options="cities" />
         </TaoFormField>
 
-        <TaoSwitch v-model="notifyEmail" label="Письма об обновлениях" />
+        <TaoFormField
+          label="Уведомления"
+          hint="Письма на почту"
+          :error="notifyEmail ? undefined : 'Включите, чтобы не пропустить обновления'"
+        >
+          <TaoSwitch v-model="notifyEmail" />
+        </TaoFormField>
         <TaoSwitch :model-value="true" label="Disabled" disabled />
 
-        <TaoRadioGroup v-model="plan" legend="Тариф">
-          <TaoRadio value="free" label="Free" />
-          <TaoRadio value="pro" label="Pro" />
-          <TaoRadio value="team" label="Team" disabled />
-        </TaoRadioGroup>
+        <TaoFormField label="Тариф" hint="Team пока недоступен">
+          <TaoRadioGroup v-model="plan">
+            <TaoRadio value="free" label="Free" />
+            <TaoRadio value="pro" label="Pro" />
+            <TaoRadio value="team" label="Team" disabled />
+          </TaoRadioGroup>
+        </TaoFormField>
       </div>
 
       <div class="code-block">
@@ -1194,12 +1202,16 @@ onBeforeUnmount(() => {
   &lt;template #chevron&gt;&lt;TaoIcon name="chevron-down" /&gt;&lt;/template&gt;
 &lt;/TaoSelect&gt;
 
-&lt;TaoSwitch v-model="on" label="Тёмная тема" /&gt;
+&lt;TaoFormField label="Уведомления" hint="Письма на почту"&gt;
+  &lt;TaoSwitch v-model="on" /&gt;
+&lt;/TaoFormField&gt;
 
-&lt;TaoRadioGroup v-model="plan" legend="Тариф"&gt;
-  &lt;TaoRadio value="free" label="Free" /&gt;
-  &lt;TaoRadio value="pro" label="Pro" /&gt;
-&lt;/TaoRadioGroup&gt;</code></pre>
+&lt;TaoFormField label="Тариф"&gt;
+  &lt;TaoRadioGroup v-model="plan"&gt;
+    &lt;TaoRadio value="free" label="Free" /&gt;
+    &lt;TaoRadio value="pro" label="Pro" /&gt;
+  &lt;/TaoRadioGroup&gt;
+&lt;/TaoFormField&gt;</code></pre>
       </div>
     </section>
 

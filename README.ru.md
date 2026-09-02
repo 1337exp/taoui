@@ -267,7 +267,7 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 
 `TaoCombobox` — то же меню, но с полем. Печатаете — варианты режутся. `allow-create` пишет введённое в `v-model`, если точного совпадения нет. Список сам не меняется: слушайте `create` и добавьте option снаружи.
 
-`TaoFormField` также оборачивает `TaoTextarea` и `TaoCheckbox` — id, hint и error прокидываются сами.
+`TaoFormField` также оборачивает `TaoTextarea`, `TaoCheckbox`, `TaoSwitch`, `TaoRadioGroup` и `TaoSegmented` — id, hint и error прокидываются сами.
 
 `TaoTag` может быть чипом: `#prefix` слева (обычно `TaoAvatar`), `closable` рисует крестик и эмитит `close`. Клик по крестику наружу не всплывает. `flat` снимает рамку, заливка остаётся.
 

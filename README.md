@@ -266,7 +266,7 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 
 `TaoCombobox` is the same menu with a field. Typing filters options. `allow-create` writes the typed string into `v-model` when there is no exact match. The list does not mutate itself: listen to `create` and append an option from the parent.
 
-`TaoFormField` also wraps `TaoTextarea` and `TaoCheckbox` — id, hint, and error are forwarded for you.
+`TaoFormField` also wraps `TaoTextarea`, `TaoCheckbox`, `TaoSwitch`, `TaoRadioGroup`, and `TaoSegmented` — id, hint, and error are forwarded for you.
 
 `TaoTag` can be a chip: `#prefix` on the left (usually `TaoAvatar`), `closable` draws a cross and emits `close`. The close click does not bubble. `flat` drops the border and keeps the fill.
 

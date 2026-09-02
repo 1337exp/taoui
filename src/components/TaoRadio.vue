@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, inject, useId } from 'vue';
+import { formFieldKey } from '../formField';
 import { radioGroupKey, type TaoRadioValue } from '../radio';
 
 defineOptions({ name: 'TaoRadio' });
@@ -24,7 +25,11 @@ const emit = defineEmits<{
 }>();
 
 const group = inject(radioGroupKey, null);
+const field = inject(formFieldKey, null);
 const localId = useId();
+const controlId = computed(() => (group ? localId : (field?.id ?? localId)));
+const invalid = computed(() => Boolean(field?.invalid.value));
+const describedBy = computed(() => (group ? undefined : field?.describedBy.value));
 
 const isDisabled = computed(() => props.disabled || Boolean(group?.disabled.value));
 const inputName = computed(() => group?.name.value ?? props.name);
@@ -49,15 +54,17 @@ function onChange() {
 </script>
 
 <template>
-    <label class="tao-radio" :class="{ 'tao-radio--disabled': isDisabled }" :for="localId">
+    <label class="tao-radio" :class="{ 'tao-radio--disabled': isDisabled, 'tao-radio--invalid': invalid && !group }" :for="controlId">
         <input
-            :id="localId"
+            :id="controlId"
             class="tao-radio__input"
             type="radio"
             :name="inputName"
             :value="String(value)"
             :checked="isChecked"
             :disabled="isDisabled"
+            :aria-invalid="(!group && invalid) || undefined"
+            :aria-describedby="describedBy"
             @change="onChange"
         />
         <span class="tao-radio__dot" aria-hidden="true"></span>
@@ -135,5 +142,9 @@ function onChange() {
 .tao-radio--disabled {
     cursor: not-allowed;
     opacity: 0.6;
+}
+
+.tao-radio--invalid .tao-radio__dot {
+    border-color: var(--tao-color-danger);
 }
 </style>

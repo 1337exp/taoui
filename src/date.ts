@@ -64,8 +64,27 @@ export function shiftTaoMonth(iso: string, months: number): string {
         return iso;
     }
 
-    const date = new Date(parts.y, parts.m - 1 + months, parts.d);
-    return formatTaoDateIso({ y: date.getFullYear(), m: date.getMonth() + 1, d: date.getDate() });
+    const monthStart = new Date(parts.y, parts.m - 1 + months, 1);
+    const y = monthStart.getFullYear();
+    const m = monthStart.getMonth() + 1;
+    const lastDay = new Date(y, m, 0).getDate();
+    return formatTaoDateIso({ y, m, d: Math.min(parts.d, lastDay) });
+}
+
+export function clampTaoDateCursor(iso: string, min?: string, max?: string): string {
+    if (isTaoDateInRange(iso, min, max)) {
+        return iso;
+    }
+
+    if (min && parseTaoDate(min) && iso < min) {
+        return min;
+    }
+
+    if (max && parseTaoDate(max) && iso > max) {
+        return max;
+    }
+
+    return iso;
 }
 
 export function isTaoDateInRange(iso: string, min?: string, max?: string): boolean {

@@ -116,13 +116,17 @@ function updatePosition() {
 
     const rect = trigger.getBoundingClientRect();
     const panelHeight = panel.offsetHeight;
+    const panelWidth = panel.offsetWidth || rect.width;
     const gap = 4;
+    const pad = 8;
     const spaceBelow = window.innerHeight - rect.bottom - gap;
     const openUp = spaceBelow < panelHeight && rect.top > spaceBelow;
+    const maxLeft = Math.max(pad, window.innerWidth - panelWidth - pad);
+    const left = Math.min(Math.max(rect.left, pad), maxLeft);
 
     listStyle.value = {
         top: `${openUp ? rect.top - panelHeight - gap : rect.bottom + gap}px`,
-        left: `${rect.left}px`,
+        left: `${left}px`,
         width: `${rect.width}px`,
     };
 }

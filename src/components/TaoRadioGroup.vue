@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { computed, provide, useId } from 'vue';
+import { computed, inject, provide, useId } from 'vue';
+import { formFieldKey } from '../formField';
 import { radioGroupKey, type TaoRadioValue } from '../radio';
 
 defineOptions({ name: 'TaoRadioGroup' });
@@ -23,10 +24,14 @@ const emit = defineEmits<{
     change: [value: TaoRadioValue];
 }>();
 
+const field = inject(formFieldKey, null);
 const autoName = useId();
 const groupName = computed(() => props.name || autoName);
 const model = computed(() => props.modelValue);
 const groupDisabled = computed(() => props.disabled);
+const invalid = computed(() => Boolean(field?.invalid.value));
+const describedBy = computed(() => field?.describedBy.value);
+const labelledBy = computed(() => (props.legend || !field ? undefined : `${field.id}-label`));
 
 function setValue(value: TaoRadioValue) {
     emit('update:modelValue', value);
@@ -42,7 +47,15 @@ provide(radioGroupKey, {
 </script>
 
 <template>
-    <fieldset class="tao-radio-group" :class="`tao-radio-group--${direction}`" :disabled="disabled">
+    <fieldset
+        :id="field?.id"
+        class="tao-radio-group"
+        :class="[`tao-radio-group--${direction}`, { 'tao-radio-group--invalid': invalid }]"
+        :disabled="disabled"
+        :aria-describedby="describedBy"
+        :aria-invalid="invalid || undefined"
+        :aria-labelledby="labelledBy"
+    >
         <legend v-if="legend" class="tao-radio-group__legend">{{ legend }}</legend>
         <slot />
     </fieldset>
@@ -70,5 +83,9 @@ provide(radioGroupKey, {
     font-size: var(--tao-font-size-sm);
     font-weight: 500;
     color: var(--tao-color-text);
+}
+
+.tao-radio-group--invalid :deep(.tao-radio__dot) {
+    border-color: var(--tao-color-danger);
 }
 </style>
