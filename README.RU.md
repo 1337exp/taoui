@@ -20,7 +20,7 @@
 - **TaoSpoiler** — раскрывающийся блок. `v-model` и `aria-expanded`. Несколько подряд сами друг друга не закрывают
 - **TaoSpoilerGroup** — аккордеон: `v-model` — ключ открытой панели (`null` — все закрыты), у спойлера `name`
 - **TaoTabs** — вкладки для переключения между секциями контента
-- **TaoTooltip** — всплывающая подсказка при наведении
+- **TaoTooltip** — всплывающая подсказка при наведении. `top` / `bottom` / `left` / `right`, у края экрана переворачивается
 - **TaoPopover** — панель по клику: слот с любым контентом, Esc и клик снаружи. Не тултип и не меню действий
 
 ### Layout
@@ -60,7 +60,7 @@
 - **TaoCounter** — витрина числа с переворотом цифр (не инпут)
 - **TaoCarousel** — лента: целый слайд с `autoplay`, карточка с `peek`, полоса с `per-view`. Стрелки через `controls` или `#prev` / `#next`, точки — `dots`
 - **TaoAvatar** — фото или инициалы, размеры `small` / `medium` / `large`. Точка `dot` и счётчик `count`
-- **TaoTag** — тег/бейдж со статусами (neutral, success, danger, warning, info)
+- **TaoTag** — тег/бейдж со статусами. `#prefix` (аватар), `closable` убирает чип, `flat` — без рамки
 - **TaoAlert** — инлайн-баннер страницы или ошибки формы (success / error / warning / info)
 - **TaoProgress** — статичная полоса (`progress` в %). Проценты сверху по центру или `showPercentage="right"` справа; слоты `#left` / `#right` — подписи, тогда процент справа в скобках. `false` прячет. Ширина — `minWidth` / `maxWidth`, не диапазон значения
 - **TaoLoader** — анимированный лоадер (четыре точки)
@@ -250,6 +250,17 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 `TaoCombobox` — то же меню, но с полем. Печатаете — варианты режутся. `allow-create` пишет введённое в `v-model`, если точного совпадения нет. Список сам не меняется: слушайте `create` и добавьте option снаружи.
 
 `TaoFormField` также оборачивает `TaoTextarea` и `TaoCheckbox` — id, hint и error прокидываются сами.
+
+`TaoTag` может быть чипом: `#prefix` слева (обычно `TaoAvatar`), `closable` рисует крестик и эмитит `close`. Клик по крестику наружу не всплывает. `flat` снимает рамку, заливка остаётся.
+
+```vue
+<TaoTag type="neutral" closable @close="remove">
+  <template #prefix>
+    <TaoAvatar name="Анна Козлова" size="small" />
+  </template>
+  Анна Козлова
+</TaoTag>
+```
 
 ## Таблица и пагинация
 

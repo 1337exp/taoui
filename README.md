@@ -20,7 +20,7 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoSpoiler** — disclosure. `v-model` and `aria-expanded`. Neighbours do not close each other
 - **TaoSpoilerGroup** — accordion: `v-model` is the open panel key (`null` = all closed); spoilers take `name`
 - **TaoTabs** — tabbed sections
-- **TaoTooltip** — hover hint
+- **TaoTooltip** — hover hint. `top` / `bottom` / `left` / `right`, flips at the viewport edge
 - **TaoPopover** — click panel with any slot content, Esc and outside click. Not a tooltip, not an action menu
 
 ### Layout
@@ -60,7 +60,7 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoCounter** — flipping digits (not an input)
 - **TaoCarousel** — strip: full slide with `autoplay`, card with `peek`, row with `per-view`. Arrows via `controls` or `#prev` / `#next`, dots via `dots`
 - **TaoAvatar** — photo or initials, sizes `small` / `medium` / `large`. Status `dot` and `count`
-- **TaoTag** — badge with tones. `#prefix` (avatar), `closable` dismisses the chip
+- **TaoTag** — badge with tones. `#prefix` (avatar), `closable` dismisses the chip, `flat` drops the border
 - **TaoAlert** — inline page/form banner (success / error / warning / info)
 - **TaoProgress** — static bar (`progress` in %). Percent centered on top, or `showPercentage="right"`; `#left` / `#right` slots are captions, then the percent sits in parentheses on the right. `false` hides it. Width is `minWidth` / `maxWidth`, not the value domain
 - **TaoLoader** — four-dot spinner
@@ -250,7 +250,7 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 
 `TaoFormField` also wraps `TaoTextarea` and `TaoCheckbox` — id, hint, and error are forwarded for you.
 
-`TaoTag` can be a chip: `#prefix` on the left (usually `TaoAvatar`), `closable` draws a cross and emits `close`. The close click does not bubble.
+`TaoTag` can be a chip: `#prefix` on the left (usually `TaoAvatar`), `closable` draws a cross and emits `close`. The close click does not bubble. `flat` drops the border and keeps the fill.
 
 ```vue
 <TaoTag type="neutral" closable @close="remove">

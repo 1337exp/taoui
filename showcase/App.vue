@@ -525,7 +525,7 @@ const navGroups = [
     items: [
       { id: 'toast', label: 'toast()' },
       { id: 'alert', label: 'TaoAlert' },
-      { id: 'tag', label: 'TaoTag', aliases: ['closable', 'chip'] },
+      { id: 'tag', label: 'TaoTag', aliases: ['closable', 'chip', 'flat'] },
       { id: 'loader', label: 'TaoLoader' },
     ],
   },
@@ -1895,7 +1895,10 @@ onBeforeUnmount(() => {
     <!-- TaoTooltip -->
     <section id="tooltip" class="showcase-section" v-show="sectionVisible('overlays', 'tooltip')">
       <h2>TaoTooltip</h2>
-      <p>Всплывающая подсказка при наведении и при фокусе с клавиатуры</p>
+      <p>
+        Подсказка при наведении и фокусе. Сторона — <code>top</code> / <code>bottom</code> /
+        <code>left</code> / <code>right</code>. Если не влезает, переворачивается и прижимается к краю экрана.
+      </p>
       
       <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
         <TaoTooltip content="Подсказка сверху" position="top">
@@ -1912,6 +1915,15 @@ onBeforeUnmount(() => {
 
         <TaoTooltip content="Подсказка справа" position="right">
           <TaoButton variant="secondary">Right</TaoButton>
+        </TaoTooltip>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; margin-top: 16px;">
+        <TaoTooltip content="Слева некуда — откроется справа" position="left">
+          <TaoButton variant="secondary" size="small">У левого края</TaoButton>
+        </TaoTooltip>
+        <TaoTooltip content="Справа некуда — откроется слева" position="right">
+          <TaoButton variant="secondary" size="small">У правого края</TaoButton>
         </TaoTooltip>
       </div>
 
@@ -2126,7 +2138,7 @@ toast.success('Сохранено')</code></pre>
       <h2>TaoTag</h2>
       <p>
         Тег / бейдж. <code>#prefix</code> — аватар или иконка слева, <code>closable</code> — крестик.
-        Крестик не всплывает наружу: клик по чипу и снятие — разные жесты.
+        <code>flat</code> снимает рамку, заливка остаётся. Крестик не всплывает наружу.
       </p>
 
       <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -2137,6 +2149,16 @@ toast.success('Сохранено')</code></pre>
         <TaoTag type="warning">warning</TaoTag>
         <TaoTag type="info">info</TaoTag>
         <TaoTag pointer>кликабельный</TaoTag>
+      </div>
+
+      <h3>Flat</h3>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <TaoTag flat>default</TaoTag>
+        <TaoTag type="neutral" flat>neutral</TaoTag>
+        <TaoTag type="success" flat>success</TaoTag>
+        <TaoTag type="danger" flat>danger</TaoTag>
+        <TaoTag type="warning" flat>warning</TaoTag>
+        <TaoTag type="info" flat>info</TaoTag>
       </div>
 
       <h3>Закрытие и люди</h3>
@@ -2169,6 +2191,7 @@ toast.success('Сохранено')</code></pre>
 
       <div class="code-block">
         <pre><code>&lt;TaoTag type="success"&gt;Активен&lt;/TaoTag&gt;
+&lt;TaoTag type="success" flat&gt;Активен&lt;/TaoTag&gt;
 
 &lt;TaoTag type="neutral" closable @close="remove"&gt;
   Москва

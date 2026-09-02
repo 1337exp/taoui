@@ -11,6 +11,8 @@ interface Props {
     pointer?: boolean;
     closable?: boolean;
     closeLabel?: string;
+    /** Без рамки, заливка остаётся. Высота как у обычного тега. */
+    flat?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -18,6 +20,7 @@ const props = withDefaults(defineProps<Props>(), {
     pointer: false,
     closable: false,
     closeLabel: 'Убрать',
+    flat: false,
 });
 
 const emit = defineEmits<{
@@ -29,7 +32,7 @@ const tone = computed(() => (props.type === 'error' ? 'danger' : props.type));
 const style = computed(() => ({
     color: props.color || '',
     background: props.background || '',
-    'border-color': props.borderColor || '',
+    'border-color': props.flat ? 'transparent' : props.borderColor || '',
 }));
 
 function onClose(event: MouseEvent) {
@@ -46,6 +49,7 @@ function onClose(event: MouseEvent) {
                 'tao-tag--pointer': pointer,
                 'tao-tag--closable': closable,
                 'tao-tag--prefix': Boolean(slots.prefix),
+                'tao-tag--flat': flat,
             },
         ]"
         :style="style"
@@ -177,5 +181,15 @@ function onClose(event: MouseEvent) {
     color: var(--tao-color-info);
     background: var(--tao-color-info-subtle);
     border-color: color-mix(in srgb, var(--tao-color-info) 30%, transparent);
+}
+
+.tao-tag--flat,
+.tao-tag--flat.tao-tag--neutral,
+.tao-tag--flat.tao-tag--success,
+.tao-tag--flat.tao-tag--danger,
+.tao-tag--flat.tao-tag--error,
+.tao-tag--flat.tao-tag--warning,
+.tao-tag--flat.tao-tag--info {
+    border-color: transparent;
 }
 </style>
