@@ -1,32 +1,46 @@
 <script lang="ts" setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { computed, inject, onBeforeUnmount, onMounted, ref, useId } from 'vue';
+import { formFieldKey } from '../formField';
 
-interface Props {
-    min?: number;
-    max?: number;
-    step?: number;
-    showValue?: boolean;
-    placeholder?: string;
-    modelValue: number | string;
-}
+defineOptions({ name: 'TaoSlider' });
 
-const props = withDefaults(defineProps<Props>(), {
-    min: 0,
-    max: 100,
-    step: 1,
-    showValue: false,
-    placeholder: '',
-});
+const props = withDefaults(
+    defineProps<{
+        min?: number;
+        max?: number;
+        step?: number;
+        showValue?: boolean;
+        placeholder?: string;
+        modelValue: number | string;
+        disabled?: boolean;
+    }>(),
+    {
+        min: 0,
+        max: 100,
+        step: 1,
+        showValue: false,
+        placeholder: '',
+        disabled: false,
+    },
+);
 
 const emit = defineEmits(['update:modelValue']);
+
+const field = inject(formFieldKey, null);
+const localId = useId();
+const controlId = computed(() => field?.id ?? localId);
+const describedBy = computed(() => field?.describedBy.value);
 
 function packModelValue(value: number): string | number {
     return typeof props.modelValue === 'string' ? `${value}` : value;
 }
 
 function unpackModelValue(): number {
-    return typeof props.modelValue === 'string' ? parseFloat(props.modelValue) : props.modelValue;
+    const raw = typeof props.modelValue === 'string' ? parseFloat(props.modelValue) : props.modelValue;
+    return Number.isFinite(raw) ? raw : props.min;
 }
+
+const current = computed(() => unpackModelValue());
 
 const trackRef = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
@@ -37,11 +51,18 @@ const showShadowModel = ref(false);
 
 const progressPercent = computed(() => {
     const range = props.max - props.min;
-    return ((unpackModelValue() - props.min) / range) * 100;
+    if (range <= 0) {
+        return 0;
+    }
+    return ((current.value - props.min) / range) * 100;
 });
 
 function clampValue(v: number) {
     return Math.min(Math.max(v, props.min), props.max);
+}
+
+function commit(value: number) {
+    emit('update:modelValue', packModelValue(clampValue(value)));
 }
 
 function calculateValue(event: MouseEvent | TouchEvent): number {
@@ -52,14 +73,17 @@ function calculateValue(event: MouseEvent | TouchEvent): number {
     const rect = trackRef.value.getBoundingClientRect();
     const clientX = 'touches' in event ? event.touches[0]!.clientX : event.clientX;
     const x = Math.min(Math.max(clientX - rect.left, 0), rect.width);
-    const ratio = x / rect.width;
+    const ratio = rect.width ? x / rect.width : 0;
 
-    const v = Math.round(props.min + ratio * (props.max - props.min));
+    const v = props.min + ratio * (props.max - props.min);
     return clampValue(Math.round((v - props.min) / props.step) * props.step + props.min);
 }
 
 function handleMove(event: MouseEvent | TouchEvent) {
-    emit('update:modelValue', packModelValue(calculateValue(event)));
+    if (props.disabled) {
+        return;
+    }
+    commit(calculateValue(event));
 }
 
 function onMouseUp(event: MouseEvent | TouchEvent) {
@@ -71,6 +95,9 @@ function onMouseUp(event: MouseEvent | TouchEvent) {
 }
 
 function onMouseDown(event: MouseEvent | TouchEvent) {
+    if (props.disabled) {
+        return;
+    }
     const evBtn = 'touches' in event ? undefined : event.button;
     if ((typeof evBtn !== 'undefined' && evBtn !== 0) || showShadowModel.value) {
         return;
@@ -86,6 +113,38 @@ function onMouseMove(event: MouseEvent | TouchEvent) {
         return;
     }
     handleMove(event);
+}
+
+function onKeydown(event: KeyboardEvent) {
+    if (props.disabled || showShadowModel.value) {
+        return;
+    }
+
+    const keys: Record<string, number> = {
+        ArrowLeft: -props.step,
+        ArrowDown: -props.step,
+        ArrowRight: props.step,
+        ArrowUp: props.step,
+        PageDown: -props.step * 10,
+        PageUp: props.step * 10,
+    };
+
+    if (event.key in keys) {
+        event.preventDefault();
+        commit(current.value + keys[event.key]!);
+        return;
+    }
+
+    if (event.key === 'Home') {
+        event.preventDefault();
+        commit(props.min);
+        return;
+    }
+
+    if (event.key === 'End') {
+        event.preventDefault();
+        commit(props.max);
+    }
 }
 
 function onBlurShadowModel() {
@@ -104,12 +163,12 @@ function onShadowKeydown(event: KeyboardEvent) {
 }
 
 function onContextMenu() {
-    if (props.showValue) {
-        shadowModel.value = `${props.modelValue}`;
-        showShadowModel.value = true;
-        // ждём рендера инпута перед фокусом
-        requestAnimationFrame(() => shadowInputRef.value?.focus());
+    if (props.disabled || !props.showValue) {
+        return;
     }
+    shadowModel.value = `${props.modelValue}`;
+    showShadowModel.value = true;
+    requestAnimationFrame(() => shadowInputRef.value?.focus());
 }
 
 onMounted(() => {
@@ -131,12 +190,21 @@ onBeforeUnmount(() => {
 
 <template>
     <div
+        :id="controlId"
         ref="trackRef"
         class="tao-slider"
-        :class="{ 'tao-slider--show-value': showValue }"
+        :class="{ 'tao-slider--show-value': showValue, 'tao-slider--disabled': disabled }"
+        role="slider"
+        :tabindex="disabled ? -1 : 0"
+        :aria-valuemin="min"
+        :aria-valuemax="max"
+        :aria-valuenow="current"
+        :aria-disabled="disabled || undefined"
+        :aria-describedby="describedBy"
         @contextmenu.prevent="onContextMenu"
         @mousedown="onMouseDown"
         @touchstart="onMouseDown"
+        @keydown="onKeydown"
     >
         <div class="tao-slider__track"></div>
         <div class="tao-slider__fill" :style="{ width: `${progressPercent}%` }"></div>
@@ -169,8 +237,27 @@ onBeforeUnmount(() => {
     user-select: none;
 }
 
+.tao-slider:focus {
+    outline: none;
+}
+
+.tao-slider:focus-visible {
+    outline: 2px solid var(--tao-color-accent);
+    outline-offset: 4px;
+    border-radius: var(--tao-radius-sm);
+}
+
 .tao-slider--show-value {
     height: 20px;
+}
+
+.tao-slider--disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.tao-slider--disabled .tao-slider__thumb {
+    cursor: not-allowed;
 }
 
 .tao-slider__track {

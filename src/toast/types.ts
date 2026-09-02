@@ -1,4 +1,4 @@
-export type TaoToastType = 'success' | 'error' | 'warning' | 'info' | 'neutral';
+export type TaoToastType = 'success' | 'error' | 'danger' | 'warning' | 'info' | 'neutral';
 
 export type TaoToastPosition =
     | 'topRight'

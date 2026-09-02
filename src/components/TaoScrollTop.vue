@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref, reactive, onBeforeMount, onBeforeUnmount } from 'vue';
 
+defineOptions({ name: 'TaoScrollTop' });
+
 interface Props {
     size?: number;
     right?: string | number;
@@ -116,11 +118,12 @@ onBeforeUnmount(() => {
     <Transition name="tao-scroll-top-fade">
         <button
             v-if="isActive"
+            type="button"
             :style="mainStyle"
             :tabindex="props.tabindex"
             class="tao-scroll-top"
             :class="{ 'tao-scroll-top--no-outline': !props.hasOutline }"
-            aria-label="Scroll to top"
+            aria-label="Наверх"
             @click.prevent="onClick"
         >
             <div class="tao-scroll-top__content">

@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+defineOptions({ name: 'TaoIcon' });
+
 interface Props {
     name: string;
     margin?: string;

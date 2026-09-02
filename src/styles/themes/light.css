@@ -16,6 +16,8 @@
     --tao-color-accent-subtle: color-mix(in srgb, var(--tao-color-accent) 10%, transparent);
     --tao-color-accent-subtle-hover: color-mix(in srgb, var(--tao-color-accent) 16%, transparent);
     --tao-color-on-accent: var(--tao-gray-0);
+    --tao-color-selection: var(--tao-color-accent);
+    --tao-color-selection-text: var(--tao-color-on-accent);
 
     --tao-color-bg: var(--tao-gray-0);
     --tao-color-surface: var(--tao-gray-0);
@@ -29,7 +31,7 @@
     --tao-color-text: var(--tao-gray-700);
     --tao-color-text-strong: var(--tao-gray-950);
     --tao-color-text-muted: var(--tao-gray-400);
-    --tao-color-text-on-accent: var(--tao-gray-0);
+    --tao-color-text-on-accent: var(--tao-color-on-accent);
     --tao-color-text-disabled: var(--tao-gray-300);
 
     --tao-color-link: var(--tao-orange-600);

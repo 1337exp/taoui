@@ -21,6 +21,16 @@ body {
     color: var(--tao-color-text);
 }
 
+::selection {
+    color: var(--tao-color-selection-text);
+    background-color: var(--tao-color-selection);
+}
+
+::-moz-selection {
+    color: var(--tao-color-selection-text);
+    background-color: var(--tao-color-selection);
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
     max-width: 5px;

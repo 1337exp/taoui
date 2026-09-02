@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+defineOptions({ name: 'TaoFlex' });
+
 interface Props {
     tag?: string;
     justify?: 'flex-start' | 'flex-end' | 'center' | 'normal' | 'space-between' | 'space-around' | 'space-evenly';

@@ -1,17 +1,12 @@
 <script lang="ts" setup>
 import { nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
+import type { TaoDropdownAction } from '../dropdown';
 
 defineOptions({ name: 'TaoDropdownMenu' });
 
-interface Action {
-    id: string;
-    name: string;
-    ico?: string;
-}
-
 const props = withDefaults(
     defineProps<{
-        actions?: Action[];
+        actions?: TaoDropdownAction[];
     }>(),
     {
         actions: () => [],

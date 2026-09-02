@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+defineOptions({ name: 'TaoContainer' });
+
 interface Props {
     size?: 'wide' | 'slim' | 'ultra-slim';
     /** "свободно" болтается в разметке, без авто-центровки по горизонтали */

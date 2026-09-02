@@ -53,7 +53,7 @@ import { confirm } from './confirm';
 
 // Импорт нужен только для того, чтобы Vite подхватил CSS в сборку
 // styles.css. Сам JS-бандл эти стили в рантайме НЕ применяет —
-// подключи '@tao/ui/styles.css' самостоятельно (см. README), чтобы
+// подключи '@1337exp/taoui/styles.css' самостоятельно (см. README), чтобы
 // иметь явный контроль над темизацией.
 import './styles/index.css';
 
@@ -199,6 +199,7 @@ export type { TaoFormFieldContext } from './formField';
 export type { TaoTableAlign, TaoTableColumn, TaoTableSort } from './table';
 export type { TaoPaginationItem } from './pagination';
 export type { TaoBreadcrumbItem } from './breadcrumb';
+export type { TaoDropdownAction } from './dropdown';
 export type { TaoQuantityChangeSource } from './quantity';
 export type { TaoStageItem, TaoStageStatus } from './stage';
 

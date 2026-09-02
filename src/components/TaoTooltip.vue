@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
+defineOptions({ name: 'TaoTooltip' });
+
 interface Props {
     content: string;
     position?: 'top' | 'bottom' | 'left' | 'right';

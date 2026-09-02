@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref, watch } from 'vue';
 
+defineOptions({ name: 'TaoImage' });
+
 interface Props {
     src: string;
     alt?: string;

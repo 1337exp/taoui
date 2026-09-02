@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 
+defineOptions({ name: 'TaoTag' });
+
 interface Props {
-    type?: 'neutral' | 'success' | 'danger' | 'warning' | 'info' | '';
+    type?: 'neutral' | 'success' | 'danger' | 'error' | 'warning' | 'info' | '';
     color?: string;
     background?: string;
     borderColor?: string;
@@ -14,6 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
     pointer: false,
 });
 
+const tone = computed(() => (props.type === 'error' ? 'danger' : props.type));
 const style = computed(() => ({
     color: props.color || '',
     background: props.background || '',
@@ -24,7 +27,7 @@ const style = computed(() => ({
 <template>
     <div
         class="tao-tag"
-        :class="[props.pointer && 'tao-tag--pointer', props.type ? `tao-tag--${props.type}` : '']"
+        :class="[props.pointer && 'tao-tag--pointer', tone ? `tao-tag--${tone}` : '']"
         :style="style"
     >
         <slot />
@@ -64,7 +67,8 @@ const style = computed(() => ({
     border-color: color-mix(in srgb, var(--tao-color-success) 30%, transparent);
 }
 
-.tao-tag--danger {
+.tao-tag--danger,
+.tao-tag--error {
     color: var(--tao-color-danger);
     background: var(--tao-color-danger-subtle);
     border-color: color-mix(in srgb, var(--tao-color-danger) 30%, transparent);

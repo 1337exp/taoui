@@ -4,7 +4,7 @@ defineOptions({ name: 'TaoAlert' });
 
 const props = withDefaults(
     defineProps<{
-        type?: 'success' | 'error' | 'warning' | 'info' | 'neutral';
+        type?: 'success' | 'error' | 'danger' | 'warning' | 'info' | 'neutral';
         title?: string;
         closable?: boolean;
     }>(),
@@ -19,14 +19,15 @@ const emit = defineEmits<{
     close: [];
 }>();
 
-const live = computed(() => (props.type === 'error' || props.type === 'warning' ? 'assertive' : 'polite'));
+const tone = computed(() => (props.type === 'danger' ? 'error' : props.type));
+const live = computed(() => (tone.value === 'error' || tone.value === 'warning' ? 'assertive' : 'polite'));
 </script>
 
 <template>
     <div
         class="tao-alert"
-        :class="`tao-alert--${type}`"
-        :role="type === 'error' ? 'alert' : 'status'"
+        :class="`tao-alert--${tone}`"
+        :role="tone === 'error' ? 'alert' : 'status'"
         :aria-live="live"
     >
         <div class="tao-alert__body">
@@ -64,7 +65,8 @@ const live = computed(() => (props.type === 'error' || props.type === 'warning' 
     --tao-alert-tone: var(--tao-color-success);
 }
 
-.tao-alert--error {
+.tao-alert--error,
+.tao-alert--danger {
     --tao-alert-tone: var(--tao-color-danger);
 }
 

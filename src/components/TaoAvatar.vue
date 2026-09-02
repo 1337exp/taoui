@@ -8,15 +8,25 @@ const props = withDefaults(
         src?: string;
         name?: string;
         alt?: string;
-        size?: 's' | 'm' | 'l';
+        size?: 'small' | 'medium' | 'large' | 's' | 'm' | 'l';
     }>(),
     {
         src: '',
         name: '',
         alt: '',
-        size: 'm',
+        size: 'medium',
     },
 );
+
+const sizeClass = computed(() => {
+    if (props.size === 'small' || props.size === 's') {
+        return 's';
+    }
+    if (props.size === 'large' || props.size === 'l') {
+        return 'l';
+    }
+    return 'm';
+});
 
 const initials = computed(() => {
     const parts = props.name.trim().split(/\s+/).filter(Boolean);
@@ -33,7 +43,7 @@ const label = computed(() => props.alt || props.name || 'Аватар');
 </script>
 
 <template>
-    <span class="tao-avatar" :class="`tao-avatar--${size}`" :title="name || undefined">
+    <span class="tao-avatar" :class="`tao-avatar--${sizeClass}`" :title="name || undefined">
         <img v-if="src" class="tao-avatar__img" :src="src" :alt="label" />
         <span v-else class="tao-avatar__fallback" :aria-label="label">{{ initials || '?' }}</span>
     </span>

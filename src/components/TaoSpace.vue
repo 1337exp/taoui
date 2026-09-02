@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+defineOptions({ name: 'TaoSpace' });
+
 interface Props {
     block?: boolean;
     expand?: boolean;

@@ -490,7 +490,7 @@ onBeforeUnmount(() => {
 
 .tao-date__day--selected {
     background: var(--tao-color-accent);
-    color: var(--tao-color-text-on-accent);
+    color: var(--tao-color-on-accent);
     opacity: 1;
 }
 

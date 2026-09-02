@@ -1,34 +1,47 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, inject, useId } from 'vue';
+import { formFieldKey } from '../formField';
 
-interface Props {
-    value?: boolean;
-    modelValue?: boolean;
-    label?: string;
-    disabled?: boolean;
-}
+defineOptions({ name: 'TaoCheckbox' });
 
-const props = withDefaults(defineProps<Props>(), {
-    value: undefined,
-    modelValue: undefined,
-    label: '',
-    disabled: false,
-});
+const props = withDefaults(
+    defineProps<{
+        value?: boolean;
+        modelValue?: boolean;
+        label?: string;
+        disabled?: boolean;
+        error?: boolean;
+    }>(),
+    {
+        value: undefined,
+        modelValue: undefined,
+        label: '',
+        disabled: false,
+        error: false,
+    },
+);
 
-const emit = defineEmits(['update:modelValue', 'change']);
+const emit = defineEmits<{
+    'update:modelValue': [value: boolean];
+    change: [value: boolean];
+}>();
+
+const field = inject(formFieldKey, null);
+const localId = useId();
+const controlId = computed(() => field?.id ?? localId);
+const invalid = computed(() => props.error || Boolean(field?.invalid.value));
+const describedBy = computed(() => field?.describedBy.value);
 
 const isChecked = computed({
     get: () => {
         if (props.modelValue !== undefined) {
             return props.modelValue;
         }
-        return props.value;
+        return Boolean(props.value);
     },
-    set: (value) => {
-        if (props.modelValue !== undefined) {
-            emit('update:modelValue', value);
-        }
-        emit('change', value);
+    set: (next) => {
+        emit('update:modelValue', next);
+        emit('change', next);
     },
 });
 
@@ -42,22 +55,25 @@ function onInputChange(event: Event) {
 </script>
 
 <template>
-    <label class="tao-checkbox" :class="{ 'tao-checkbox--disabled': props.disabled }">
-        <slot name="pre" :text="props.label" />
+    <label class="tao-checkbox" :class="{ 'tao-checkbox--disabled': disabled }" :for="controlId">
+        <slot name="pre" :text="label" />
 
         <input
+            :id="controlId"
             class="tao-checkbox__input tao-sr-only"
             type="checkbox"
             :checked="isChecked"
-            :disabled="props.disabled"
+            :disabled="disabled"
+            :aria-invalid="invalid || undefined"
+            :aria-describedby="describedBy"
             @change="onInputChange"
         />
 
         <span class="tao-checkbox__box"></span>
-        <span v-if="props.label" class="tao-checkbox__label">{{ props.label }}</span>
+        <span v-if="label" class="tao-checkbox__label">{{ label }}</span>
         <span v-else class="tao-checkbox__label"><slot /></span>
 
-        <slot name="post" :text="props.label" />
+        <slot name="post" :text="label" />
     </label>
 </template>
 
@@ -121,5 +137,9 @@ function onInputChange(event: Event) {
 .tao-checkbox__input:focus-visible + .tao-checkbox__box {
     outline: 2px solid var(--tao-color-accent);
     outline-offset: 1px;
+}
+
+.tao-checkbox__input[aria-invalid='true'] + .tao-checkbox__box {
+    border-color: var(--tao-color-danger);
 }
 </style>

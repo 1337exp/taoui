@@ -108,9 +108,10 @@ onBeforeUnmount(() => {
                     :aria-labelledby="title ? titleId : undefined"
                     tabindex="-1"
                 >
-                    <div v-if="title || $slots.header" class="tao-modal__header">
+                    <div v-if="title || $slots.header || closable" class="tao-modal__header">
                         <slot name="header">
-                            <h2 :id="titleId" class="tao-modal__title">{{ title }}</h2>
+                            <h2 v-if="title" :id="titleId" class="tao-modal__title">{{ title }}</h2>
+                            <span v-else></span>
                         </slot>
                         <button
                             v-if="closable"

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
+defineOptions({ name: 'TaoCopy' });
+
 interface Props {
     text: string;
     successMessage?: string;
@@ -31,7 +33,7 @@ async function copy() {
 <template>
     <div class="tao-copy">
         <slot :copy="copy" :copied="copied">
-            <button class="tao-copy__button" @click="copy" :class="{ 'tao-copy__button--copied': copied }">
+            <button type="button" class="tao-copy__button" @click="copy" :class="{ 'tao-copy__button--copied': copied }">
                 {{ copied ? successMessage : 'Копировать' }}
             </button>
         </slot>

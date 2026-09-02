@@ -29,6 +29,9 @@ const statusText: Record<TaoStageStatus, string> = {
 };
 
 function statusOf(item: TaoStageItem): TaoStageStatus {
+    if (item.status === 'danger') {
+        return 'bad';
+    }
     return item.status ?? 'wait';
 }
 

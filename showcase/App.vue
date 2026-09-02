@@ -205,6 +205,12 @@ const dropdownActions = [
 // TaoPinCode demo
 const pinValue = ref('')
 const pinValueNumeric = ref('')
+const pinValueReplace = ref('')
+const pinCompleteNote = ref('')
+
+function onPinComplete(value) {
+  pinCompleteNote.value = 'Готово: ' + value
+}
 
 const city = ref('')
 const cityError = ref('')
@@ -410,6 +416,7 @@ const navGroups = [
       { id: 'tabs', label: 'TaoTabs' },
       { id: 'breadcrumb', label: 'TaoBreadcrumb' },
       { id: 'link', label: 'TaoLink' },
+      { id: 'scrolltop', label: 'TaoScrollTop' },
     ],
   },
   {
@@ -916,9 +923,9 @@ onBeforeUnmount(() => {
     <!-- TaoSpoiler -->
     <section id="spoiler" class="showcase-section" v-show="sectionVisible('overlays', 'TaoSpoiler')">
       <h2>TaoSpoiler</h2>
-      <p>Раскрывающийся блок (аккордеон)</p>
+      <p>Раскрывающийся блок. <code>v-model</code> держит открытость, несколько подряд не закрывают друг друга.</p>
       
-      <TaoSpoiler title="Нажмите, чтобы раскрыть">
+      <TaoSpoiler v-model="spoilerOpen" title="Нажмите, чтобы раскрыть">
         <p>Это скрытое содержимое спойлера. Здесь можно разместить подробную информацию, дополнительные настройки или любой другой контент, который нужно показывать по требованию.</p>
         <ul>
           <li>Пункт списка 1</li>
@@ -932,7 +939,7 @@ onBeforeUnmount(() => {
       </TaoSpoiler>
 
       <div class="code-block">
-        <pre><code>&lt;TaoSpoiler title="Заголовок"&gt;
+        <pre><code>&lt;TaoSpoiler v-model="open" title="Заголовок"&gt;
   &lt;p&gt;Скрытое содержимое&lt;/p&gt;
 &lt;/TaoSpoiler&gt;</code></pre>
       </div>
@@ -1133,12 +1140,17 @@ const tabs = [
     <!-- TaoCheckbox -->
     <section id="checkbox" class="showcase-section" v-show="sectionVisible('forms', 'TaoCheckbox')">
       <h2>TaoCheckbox</h2>
-      <p>Чекбокс с поддержкой v-model</p>
+      <p>Чекбокс с v-model. Hint и error — через TaoFormField, как у остальных полей.</p>
 
-      <div style="display: flex; gap: 20px;">
-        <TaoCheckbox v-model="checkedA" label="Не отмечен" />
-        <TaoCheckbox v-model="checkedB" label="Отмечен" />
-        <TaoCheckbox :model-value="false" label="Disabled" disabled />
+      <div style="display: flex; flex-direction: column; gap: 12px; max-width: 400px;">
+        <div style="display: flex; gap: 20px;">
+          <TaoCheckbox v-model="checkedA" label="Не отмечен" />
+          <TaoCheckbox v-model="checkedB" label="Отмечен" />
+          <TaoCheckbox :model-value="false" label="Disabled" disabled />
+        </div>
+        <TaoFormField error="Нужно согласие">
+          <TaoCheckbox v-model="checkedA" label="Принимаю условия" />
+        </TaoFormField>
       </div>
 
       <div class="code-block">
@@ -1149,7 +1161,7 @@ const tabs = [
     <!-- TaoSwitch / Radio / Select -->
     <section id="select" class="showcase-section" v-show="sectionVisible('forms', 'TaoSwitch TaoRadio TaoSelect TaoFormField')">
       <h2>TaoSwitch / TaoRadio / TaoSelect</h2>
-      <p>Форменные контролы, которых не хватало для логина, профиля и настроек. Label, hint и error — через TaoFormField.</p>
+      <p>Форменные контролы. Label, hint и error — через TaoFormField. Select сбрасывается в <code>null</code> кнопкой «Очистить» или Delete.</p>
 
       <div style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
         <TaoFormField label="Город" hint="Казань пока недоступна">
@@ -1244,9 +1256,13 @@ const tabs = [
     <!-- TaoTextarea -->
     <section id="textarea" class="showcase-section" v-show="sectionVisible('forms', 'TaoTextarea')">
       <h2>TaoTextarea</h2>
-      <p>Многострочное поле с авто-высотой</p>
+      <p>Многострочное поле с авто-высотой. В форме — через TaoFormField.</p>
 
-      <TaoTextarea v-model="textareaValue" placeholder="Печатайте..." style="max-width: 400px;" />
+      <div style="max-width: 400px;">
+        <TaoFormField label="Комментарий" hint="Необязательно">
+          <TaoTextarea v-model="textareaValue" placeholder="Печатайте..." />
+        </TaoFormField>
+      </div>
 
       <div class="code-block">
         <pre><code>&lt;TaoTextarea v-model="text" placeholder="Печатайте..." /&gt;</code></pre>
@@ -1316,17 +1332,17 @@ toast.success('Сохранено')</code></pre>
     <!-- TaoProgress / TaoSlider -->
     <section id="slider" class="showcase-section" v-show="sectionVisible('forms', 'TaoProgress TaoSlider')">
       <h2>TaoProgress / TaoSlider</h2>
-      <p>Статичная полоса прогресса и интерактивный слайдер (drag + клик)</p>
+      <p>Статичная полоса прогресса и слайдер. Слайдер слушает стрелки, Home/End и PageUp/Down.</p>
 
       <h3>TaoProgress</h3>
-      <TaoProgress :progress="65" show-percentage style="max-width: 400px;" />
+      <TaoProgress :progress="65" show-percentage :min-width="200" :max-width="400" />
 
       <h3>TaoSlider</h3>
       <TaoSlider v-model="sliderValue" show-value style="max-width: 400px;" />
       <p style="margin-top: 4px; font-size: 13px;">Значение: {{ sliderValue }} — <em>ПКМ по слайдеру открывает точный ввод числа</em></p>
 
       <div class="code-block">
-        <pre><code>&lt;TaoProgress :progress="65" show-percentage /&gt;
+        <pre><code>&lt;TaoProgress :progress="65" show-percentage :min-width="200" :max-width="400" /&gt;
 &lt;TaoSlider v-model="value" show-value /&gt;</code></pre>
       </div>
     </section>
@@ -1368,15 +1384,15 @@ toast.success('Сохранено')</code></pre>
       <p>Фото или инициалы из имени. Для шапки, комментариев, строки таблицы.</p>
 
       <div class="button-row" style="align-items: center;">
-        <TaoAvatar name="Анна Козлова" size="s" />
+        <TaoAvatar name="Анна Козлова" size="small" />
         <TaoAvatar name="Анна Козлова" />
-        <TaoAvatar name="Борис" size="l" />
-        <TaoAvatar :src="imageSrc" name="Демо" size="l" />
+        <TaoAvatar name="Борис" size="large" />
+        <TaoAvatar :src="imageSrc" name="Демо" size="large" />
       </div>
 
       <div class="code-block">
         <pre><code>&lt;TaoAvatar name="Анна Козлова" /&gt;
-&lt;TaoAvatar :src="url" name="Анна" size="l" /&gt;</code></pre>
+&lt;TaoAvatar :src="url" name="Анна" size="large" /&gt;</code></pre>
       </div>
     </section>
 
@@ -1415,21 +1431,31 @@ toast.success('Сохранено')</code></pre>
     <!-- TaoPinCode -->
     <section id="pincode" class="showcase-section" v-show="sectionVisible('forms', 'TaoPinCode')">
       <h2>TaoPinCode</h2>
-      <p>Пин-код из N полей с авто-переходом фокуса между ними. Backspace на пустом поле стирает предыдущее и переходит на него.</p>
+      <p>
+        По умолчанию клик стирает ячейку и все справа — неверный код можно набрать заново с этого места.
+        <code>clear-on="input"</code> оставляет цифру, пока не введут новую.
+        Последняя ячейка снимает фокус и шлёт <code>complete</code>.
+      </p>
 
-      <h3>Обычный (буквы и цифры)</h3>
-      <TaoPinCode v-model="pinValue" :length="4" />
+      <h3>Стереть при фокусе</h3>
+      <TaoPinCode v-model="pinValue" :length="4" @complete="onPinComplete" />
       <p style="margin-top: 8px; font-size: 13px;">Значение: {{ pinValue }}</p>
+      <p v-if="pinCompleteNote" style="margin-top: 4px; font-size: 13px; color: var(--tao-color-success);">{{ pinCompleteNote }}</p>
 
       <h3>Только цифры</h3>
       <TaoPinCode v-model="pinValueNumeric" :length="4" numbers-only />
       <p style="margin-top: 8px; font-size: 13px;">Значение: {{ pinValueNumeric }}</p>
 
-      <div class="code-block">
-        <pre><code>&lt;TaoPinCode v-model="pin" :length="4" /&gt;
+      <h3>Стереть при вводе</h3>
+      <TaoPinCode v-model="pinValueReplace" :length="4" numbers-only clear-on="input" />
+      <p style="margin-top: 8px; font-size: 13px;">Значение: {{ pinValueReplace }}</p>
 
-&lt;!-- запрещает ввод всего, кроме 0-9 --&gt;
-&lt;TaoPinCode v-model="pin" :length="4" numbers-only /&gt;</code></pre>
+      <div class="code-block">
+        <pre><code>&lt;TaoPinCode v-model="pin" :length="4" @complete="onDone" /&gt;
+
+&lt;TaoPinCode v-model="pin" :length="4" numbers-only /&gt;
+
+&lt;TaoPinCode v-model="pin" :length="4" clear-on="input" /&gt;</code></pre>
       </div>
     </section>
 
@@ -1713,6 +1739,15 @@ toast.success('Сохранено')</code></pre>
       <div class="code-block">
         <pre><code>{{ carouselExample }}</code></pre>
       </div>
+    </section>
+
+    <section id="scrolltop" class="showcase-section" v-show="sectionVisible('nav', 'TaoScrollTop')">
+      <h2>TaoScrollTop</h2>
+      <p>
+        Плавающая кнопка «наверх». Появляется при обратном скролле после порога
+        <code>boundary</code>. Сама кнопка — в правом нижнем углу страницы.
+      </p>
+      <p class="carousel-note">Прокрутите витрину вниз и чуть вверх — кнопка всплывёт справа внизу.</p>
     </section>
       </main>
     </div>

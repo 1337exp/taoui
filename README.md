@@ -15,7 +15,7 @@
 - **TaoInputGroup** — склейка снаружи: `#before` | поле | `#after` (протокол, единица, кнопка)
 - **TaoModal** — модальное окно с анимацией и слотами
 - **TaoDrawer** — боковая панель (фильтры, настройки). Esc, клик по фону, ловушка фокуса — как у модалки
-- **TaoSpoiler** — раскрывающийся блок (аккордеон)
+- **TaoSpoiler** — раскрывающийся блок. `v-model` и `aria-expanded`; несколько подряд — не exclusive-аккордеон
 - **TaoTabs** — вкладки для переключения между секциями контента
 - **TaoTooltip** — всплывающая подсказка при наведении
 
@@ -24,7 +24,7 @@
 - **TaoContainer** — контейнер с ограничением ширины (wide/slim/ultra-slim) и авто-центровкой
 - **TaoFlex** — обёртка над flexbox с пропами justify/align/direction/wrap/gap
 - **TaoSpace** — авто-расстановка дочерних элементов с равномерным gap
-- **TaoDivider** — разделитель: line (тонкая линия), text (линия с текстом), gap (пустой отступ)
+- **TaoDivider** — разделитель: line (тонкая линия), text (линия с текстом), gap (пустой отступ, size: small/medium/large)
 - **TaoAnimatedBorder** — контейнер с анимированной радужной рамкой (декоративный, не завязан на тему)
 
 ### Формы и ввод
@@ -32,14 +32,14 @@
 - **TaoCheckbox** — чекбокс с поддержкой v-model и слотов pre/post
 - **TaoSwitch** — переключатель для булевых настроек (`role="switch"`)
 - **TaoRadio** / **TaoRadioGroup** — взаимоисключающий выбор из 2–5 вариантов
-- **TaoSelect** — выпадающий список с клавиатурой, тот же визуал, что у Input
+- **TaoSelect** — выпадающий список с клавиатурой, тот же визуал, что у Input. Сброс — «Очистить» в списке или Delete
 - **TaoDate** — один день: `YYYY-MM-DD`, без часов и пояса. Календарь как у Select
 - **TaoFormField** — общие label / hint / error для полей формы
 - **TaoInputNumber** — число с min/max/step и кнопками ± справа. Пустое значение — `null`
 - **TaoQuantity** — количество в корзине: `− | поле | +`, целые штуки, сток, минус на минимуме может убрать строку
 - **TaoTextarea** — многострочное поле с авто-высотой и модификаторами (noBorder, noBackground, textCenter, submitOnEnter)
-- **TaoPinCode** — пин-код из N полей с авто-переходом фокуса между ними
-- **TaoSlider** — интерактивный слайдер (drag + клик), с опциональным точным вводом значения по правому клику
+- **TaoPinCode** — пин-код из N полей. По умолчанию клик стирает ячейку и все справа (`clear-on="focus"`); `clear-on="input"` заменяет цифру только при вводе. Последняя ячейка снимает фокус и эмитит `complete`
+- **TaoSlider** — слайдер: мышь, тач и стрелки. Опциональный точный ввод по правому клику
 - **TaoFileDrop** — зона загрузки файлов (drag & drop + клик). Текст внутри — слот
 
 ### Отображение данных
@@ -51,10 +51,10 @@
 - **TaoSkeleton** — плейсхолдер загрузки (text / title / circle / rect)
 - **TaoCounter** — витрина числа с переворотом цифр (не инпут)
 - **TaoCarousel** — лента: целый слайд с `autoplay`, карточка с `peek`, полоса с `per-view`. Стрелки через `controls` или `#prev` / `#next`, точки — `dots`
-- **TaoAvatar** — фото или инициалы
+- **TaoAvatar** — фото или инициалы, размеры `small` / `medium` / `large`
 - **TaoTag** — тег/бейдж со статусами (neutral, success, danger, warning, info)
 - **TaoAlert** — инлайн-баннер страницы или ошибки формы (success / error / warning / info)
-- **TaoProgress** — статичная полоса прогресса, опционально с shimmer-анимацией
+- **TaoProgress** — статичная полоса прогресса (`progress` в %). Ширина — `minWidth` / `maxWidth`, не путать с диапазоном значения
 - **TaoLoader** — анимированный лоадер (четыре точки)
 - **TaoImage** — обёртка над `<img>` с плавным fade-in при загрузке и плейсхолдером
 - **TaoIcon** — обёртка для icon-шрифта (см. раздел «Иконки» ниже)
@@ -71,6 +71,16 @@
 - **toast()** — fluent-уведомления: `toast().success().message('Сохранено')`
 - **confirm()** — вопрос с оверлеем: тот же fluent + `await`. Не тост — ждёт ответ, не исчезает сам.
 - **TaoToastViewport** / **TaoConfirmHost** — контейнеры; если их нет в разметке, первый вызов сам монтирует их в `body`
+
+## Соглашения
+
+Тоны визуала: `success` | `danger` | `warning` | `info` | `neutral`.
+`error` у Alert, Tag и `toast()` — синоним `danger`. Button уже `danger`.
+Stages — это процесс, не тон: `wait` / `work` / `ok` / `bad` (`danger` принимается как `bad`).
+
+Размеры контролов: `small` | `medium` | `large`.
+Avatar понимает и короткие `s` / `m` / `l`. Divider `gap` раньше называл крупный размер `big` — это алиас `large`.
+Container живёт на другой оси: `wide` / `slim` / `ultra-slim`.
 
 ## Иконки
 
@@ -215,7 +225,9 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 <TaoAlert type="warning" title="Черновик">Сохраните, прежде чем уйти.</TaoAlert>
 ```
 
-`TaoSelect` открывается с клавиатуры (стрелки, Enter, Esc), список переворачивается у края экрана.
+`TaoSelect` открывается с клавиатуры (стрелки, Enter, Esc), список переворачивается у края экрана. Delete или «Очистить» внизу списка сбрасывает значение в `null`.
+
+`TaoFormField` также оборачивает `TaoTextarea` и `TaoCheckbox` — id, hint и error прокидываются сами.
 
 ## Таблица и пагинация
 
@@ -388,6 +400,8 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 ### Ключевые группы токенов
 
 - `--tao-color-accent*` — акцентный/брендовый цвет (кнопки primary, активные вкладки, ссылки)
+- `--tao-color-on-accent` — текст на акцентном фоне (`--tao-color-text-on-accent` — алиас)
+- `--tao-color-selection`, `--tao-color-selection-text` — выделение текста (`::selection`)
 - `--tao-color-surface*` — фоны контейнеров (обычный / приподнятый / утопленный / hover)
 - `--tao-color-border*` — границы
 - `--tao-color-text*` — текст (обычный / усиленный / приглушённый / disabled)

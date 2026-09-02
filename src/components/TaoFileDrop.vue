@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
+defineOptions({ name: 'TaoFileDrop' });
+
 interface Props {
     /** Текущий список файлов — компонент сам не хранит состояние
      * количества файлов, оно всегда отражает то, что передал родитель.
@@ -63,10 +65,6 @@ function requestClear() {
     emit('clear-request');
 }
 
-function triggerFileInput() {
-    fileInput.value?.click();
-}
-
 function processFiles(fileList: FileList) {
     const files = Array.from(fileList);
     const result = !props.multiple && files.length > 1 ? [files[0]!] : files;
@@ -89,30 +87,31 @@ function processFiles(fileList: FileList) {
             v-if="showClear && modelValue.length"
             type="button"
             class="tao-file-drop__clear"
+            aria-label="Очистить файлы"
             @click="requestClear"
         >
             ✕
         </button>
 
-        <div
+        <label
             class="tao-file-drop__zone"
             :class="[`tao-file-drop__zone--${size}`, { 'tao-file-drop__zone--dragging': isDragging }]"
             @dragover="handleDragOver"
             @dragleave="handleDragLeave"
             @drop="handleDrop"
-            @click="triggerFileInput"
         >
             <slot>Перетащите файл сюда или нажмите, чтобы выбрать</slot>
 
             <input
                 ref="fileInput"
+                class="tao-sr-only"
                 type="file"
-                hidden
                 :accept="accept"
                 :multiple="multiple"
                 @change="handleFileSelect"
+                @click.stop
             />
-        </div>
+        </label>
     </div>
 </template>
 
@@ -155,7 +154,8 @@ function processFiles(fileList: FileList) {
     transition: var(--tao-transition-base);
 }
 
-.tao-file-drop__zone:hover {
+.tao-file-drop__zone:hover,
+.tao-file-drop__zone:focus-within {
     background-color: var(--tao-color-accent-subtle);
     border-color: var(--tao-color-accent);
 }

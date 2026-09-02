@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { computed, resolveComponent } from 'vue';
 
+defineOptions({ name: 'TaoLink' });
+
 interface Props {
     to?: string | Record<string, unknown>;
     asNewTab?: boolean;

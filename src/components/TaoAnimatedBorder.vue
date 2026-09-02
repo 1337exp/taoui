@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+defineOptions({ name: 'TaoAnimatedBorder' });
+
 interface Props {
     borderWidth?: number;
     speed?: number;

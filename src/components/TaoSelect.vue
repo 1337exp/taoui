@@ -23,8 +23,8 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    'update:modelValue': [value: string | number];
-    change: [value: string | number];
+    'update:modelValue': [value: string | number | null];
+    change: [value: string | number | null];
 }>();
 
 const field = inject(formFieldKey, null);
@@ -37,6 +37,7 @@ const describedBy = computed(() => field?.describedBy.value);
 const open = ref(false);
 const activeIndex = ref(-1);
 const triggerRef = ref<HTMLButtonElement | null>(null);
+const panelRef = ref<HTMLElement | null>(null);
 const listRef = ref<HTMLElement | null>(null);
 const listStyle = ref({ top: '0px', left: '0px', width: '0px' });
 
@@ -47,20 +48,20 @@ const enabledIndexes = computed(() =>
 
 function updatePosition() {
     const trigger = triggerRef.value;
-    const list = listRef.value;
+    const panel = panelRef.value;
 
-    if (!trigger || !list) {
+    if (!trigger || !panel) {
         return;
     }
 
     const rect = trigger.getBoundingClientRect();
-    const listHeight = list.offsetHeight;
+    const panelHeight = panel.offsetHeight;
     const gap = 4;
     const spaceBelow = window.innerHeight - rect.bottom - gap;
-    const openUp = spaceBelow < listHeight && rect.top > spaceBelow;
+    const openUp = spaceBelow < panelHeight && rect.top > spaceBelow;
 
     listStyle.value = {
-        top: `${openUp ? rect.top - listHeight - gap : rect.bottom + gap}px`,
+        top: `${openUp ? rect.top - panelHeight - gap : rect.bottom + gap}px`,
         left: `${rect.left}px`,
         width: `${rect.width}px`,
     };
@@ -104,6 +105,13 @@ function selectOption(option: TaoSelectOption) {
     triggerRef.value?.focus();
 }
 
+function clear() {
+    emit('update:modelValue', null);
+    emit('change', null);
+    close();
+    triggerRef.value?.focus();
+}
+
 function moveActive(delta: number) {
     const enabled = enabledIndexes.value;
 
@@ -130,6 +138,12 @@ function scrollActiveIntoView() {
 
 function onTriggerKeydown(event: KeyboardEvent) {
     if (props.disabled) {
+        return;
+    }
+
+    if ((event.key === 'Backspace' || event.key === 'Delete') && selected.value) {
+        event.preventDefault();
+        clear();
         return;
     }
 
@@ -173,6 +187,14 @@ function onListKeydown(event: KeyboardEvent) {
         return;
     }
 
+    if (event.key === 'Backspace' || event.key === 'Delete') {
+        if (selected.value) {
+            event.preventDefault();
+            clear();
+        }
+        return;
+    }
+
     if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         const option = props.options[activeIndex.value];
@@ -186,7 +208,7 @@ function onListKeydown(event: KeyboardEvent) {
 function onDocumentPointer(event: PointerEvent) {
     const target = event.target as Node;
 
-    if (triggerRef.value?.contains(target) || listRef.value?.contains(target)) {
+    if (triggerRef.value?.contains(target) || panelRef.value?.contains(target)) {
         return;
     }
 
@@ -242,56 +264,98 @@ onBeforeUnmount(() => {
         </button>
 
         <Teleport to="body">
-            <ul
+            <div
                 v-if="open"
-                :id="listId"
-                ref="listRef"
-                class="tao-select__list"
-                role="listbox"
-                tabindex="-1"
-                :aria-activedescendant="activeIndex >= 0 ? `${listId}-opt-${activeIndex}` : undefined"
+                ref="panelRef"
+                class="tao-select__panel"
                 :style="listStyle"
-                @keydown="onListKeydown"
             >
-                <li
-                    v-for="(option, index) in options"
-                    :id="`${listId}-opt-${index}`"
-                    :key="String(option.value)"
-                    class="tao-select__option"
-                    :class="{
-                        'tao-select__option--active': index === activeIndex,
-                        'tao-select__option--selected': option.value === modelValue,
-                        'tao-select__option--disabled': option.disabled,
-                    }"
-                    role="option"
-                    :aria-selected="option.value === modelValue"
-                    :aria-disabled="option.disabled || undefined"
-                    :data-tao-select-index="index"
-                    @mousedown.prevent
-                    @click="selectOption(option)"
-                    @mouseenter="!option.disabled && (activeIndex = index)"
+                <ul
+                    :id="listId"
+                    ref="listRef"
+                    class="tao-select__list"
+                    role="listbox"
+                    tabindex="-1"
+                    :aria-activedescendant="activeIndex >= 0 ? `${listId}-opt-${activeIndex}` : undefined"
+                    @keydown="onListKeydown"
                 >
-                    {{ option.label }}
-                </li>
-            </ul>
+                    <li
+                        v-for="(option, index) in options"
+                        :id="`${listId}-opt-${index}`"
+                        :key="String(option.value)"
+                        class="tao-select__option"
+                        :class="{
+                            'tao-select__option--active': index === activeIndex,
+                            'tao-select__option--selected': option.value === modelValue,
+                            'tao-select__option--disabled': option.disabled,
+                        }"
+                        role="option"
+                        :aria-selected="option.value === modelValue"
+                        :aria-disabled="option.disabled || undefined"
+                        :data-tao-select-index="index"
+                        @mousedown.prevent
+                        @click="selectOption(option)"
+                        @mouseenter="!option.disabled && (activeIndex = index)"
+                    >
+                        {{ option.label }}
+                    </li>
+                </ul>
+                <button
+                    v-if="selected"
+                    type="button"
+                    class="tao-select__clear"
+                    @mousedown.prevent
+                    @click="clear"
+                >
+                    Очистить
+                </button>
+            </div>
         </Teleport>
     </div>
 </template>
 
 <style>
-.tao-select__list {
+.tao-select__panel {
     z-index: 1050;
     position: fixed;
-    margin: 0;
-    padding: var(--tao-space-1);
-    max-height: 240px;
-    overflow: auto;
-    list-style: none;
+    overflow: hidden;
     background: var(--tao-color-surface-raised);
     color: var(--tao-color-text);
     border: 1px solid var(--tao-color-border);
     border-radius: var(--tao-radius-control);
     box-shadow: var(--tao-shadow-overlay);
+}
+
+.tao-select__list {
+    margin: 0;
+    padding: var(--tao-space-1);
+    max-height: 240px;
+    overflow: auto;
+    list-style: none;
+}
+
+.tao-select__list:focus {
+    outline: none;
+}
+
+.tao-select__clear {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: var(--tao-space-2) var(--tao-space-3);
+    border: none;
+    border-top: 1px solid var(--tao-color-border);
+    background: none;
+    color: var(--tao-color-text-muted);
+    font: inherit;
+    font-size: var(--tao-font-size-sm);
+    text-align: left;
+    cursor: pointer;
+}
+
+.tao-select__clear:hover {
+    color: var(--tao-color-accent);
+    background: var(--tao-color-surface-hover);
 }
 
 .tao-select__option {

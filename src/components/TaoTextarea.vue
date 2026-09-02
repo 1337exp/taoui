@@ -1,50 +1,60 @@
 <script lang="ts" setup>
-import { ref, watch, nextTick, onMounted } from 'vue';
+import { computed, inject, nextTick, onMounted, ref, useId, watch } from 'vue';
+import { formFieldKey } from '../formField';
 
-interface Props {
-    placeholder?: string;
-    spellcheck?: boolean;
-    autocomplete?: string;
-    minlength?: number;
-    maxlength?: number;
-    disabled?: boolean;
-    noSpace?: boolean;
-    dummy?: boolean;
-    rows?: number;
-    resize?: boolean;
+defineOptions({ name: 'TaoTextarea' });
 
-    modelValue?: string;
-
-    noBorder?: boolean;
-    noBackground?: boolean;
-    autoFocus?: boolean;
-    borderInverse?: boolean;
-    textCenter?: boolean;
-    submitOnEnter?: boolean;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-    placeholder: '',
-    spellcheck: true,
-    autocomplete: '',
-    minlength: 0,
-    maxlength: undefined,
-    disabled: false,
-    noSpace: false,
-    dummy: false,
-    rows: 3,
-    resize: true,
-    modelValue: '',
-
-    noBorder: false,
-    noBackground: false,
-    autoFocus: false,
-    borderInverse: false,
-    textCenter: false,
-    submitOnEnter: false,
-});
+const props = withDefaults(
+    defineProps<{
+        placeholder?: string;
+        spellcheck?: boolean;
+        autocomplete?: string;
+        minlength?: number;
+        maxlength?: number;
+        disabled?: boolean;
+        noSpace?: boolean;
+        dummy?: boolean;
+        rows?: number;
+        resize?: boolean;
+        modelValue?: string;
+        noBorder?: boolean;
+        noBackground?: boolean;
+        autoFocus?: boolean;
+        borderInverse?: boolean;
+        textCenter?: boolean;
+        submitOnEnter?: boolean;
+        error?: boolean;
+        id?: string;
+    }>(),
+    {
+        placeholder: '',
+        spellcheck: true,
+        autocomplete: '',
+        minlength: 0,
+        maxlength: undefined,
+        disabled: false,
+        noSpace: false,
+        dummy: false,
+        rows: 3,
+        resize: true,
+        modelValue: '',
+        noBorder: false,
+        noBackground: false,
+        autoFocus: false,
+        borderInverse: false,
+        textCenter: false,
+        submitOnEnter: false,
+        error: false,
+    },
+);
 
 const emit = defineEmits(['update:modelValue', 'change', 'focus', 'blur', 'keydown']);
+
+const field = inject(formFieldKey, null);
+const localId = useId();
+const controlId = computed(() => props.id || field?.id || localId);
+const invalid = computed(() => props.error || Boolean(field?.invalid.value));
+const describedBy = computed(() => field?.describedBy.value);
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
@@ -80,7 +90,6 @@ function onKeydown(event: KeyboardEvent) {
     }
 }
 
-// Автоматическая подгонка высоты под содержимое
 function autoResize() {
     const textarea = textareaRef.value;
     if (!textarea) {
@@ -91,9 +100,12 @@ function autoResize() {
     textarea.style.height = `${Math.min(textarea.scrollHeight, 500)}px`;
 }
 
-watch(() => props.modelValue, () => {
-    nextTick(autoResize);
-});
+watch(
+    () => props.modelValue,
+    () => {
+        nextTick(autoResize);
+    },
+);
 
 onMounted(() => {
     if (props.autoFocus) {
@@ -104,26 +116,30 @@ onMounted(() => {
 </script>
 
 <template>
-    <span v-if="props.dummy" class="tao-textarea tao-textarea--dummy">{{ props.modelValue }}</span>
+    <span v-if="dummy" class="tao-textarea tao-textarea--dummy">{{ modelValue }}</span>
     <textarea
         v-else
+        :id="controlId"
         ref="textareaRef"
         class="tao-textarea"
         :class="{
-            'tao-textarea--inverse': props.borderInverse,
-            'tao-textarea--center': props.textCenter,
-            'tao-textarea--no-border': props.noBorder,
-            'tao-textarea--no-background': props.noBackground,
-            'tao-textarea--no-resize': !props.resize,
+            'tao-textarea--inverse': borderInverse,
+            'tao-textarea--center': textCenter,
+            'tao-textarea--no-border': noBorder,
+            'tao-textarea--no-background': noBackground,
+            'tao-textarea--no-resize': !resize,
+            'tao-textarea--invalid': invalid,
         }"
-        :placeholder="props.placeholder"
-        :spellcheck="props.spellcheck"
-        :autocomplete="props.autocomplete"
-        :minlength="props.minlength"
-        :maxlength="props.maxlength"
-        :disabled="props.disabled"
-        :rows="props.rows"
-        :value="props.modelValue"
+        :placeholder="placeholder"
+        :spellcheck="spellcheck"
+        :autocomplete="autocomplete"
+        :minlength="minlength"
+        :maxlength="maxlength"
+        :disabled="disabled"
+        :rows="rows"
+        :value="modelValue"
+        :aria-invalid="invalid || undefined"
+        :aria-describedby="describedBy"
         draggable="false"
         @input="onInput"
         @change="onChange"
@@ -159,6 +175,10 @@ onMounted(() => {
 
 .tao-textarea:focus {
     border-color: var(--tao-color-accent);
+}
+
+.tao-textarea--invalid {
+    border-color: var(--tao-color-danger);
 }
 
 .tao-textarea--inverse {

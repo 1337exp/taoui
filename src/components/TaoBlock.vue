@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 
+defineOptions({ name: 'TaoBlock' });
+
 interface Props {
     padding?: number | number[];
     radius?: number;

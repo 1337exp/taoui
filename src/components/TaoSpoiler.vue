@@ -1,25 +1,38 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, ref, useId } from 'vue';
 
-interface Props {
-    title?: string;
-    defaultOpen?: boolean;
-}
+defineOptions({ name: 'TaoSpoiler' });
 
-const props = withDefaults(defineProps<Props>(), {
-    title: '',
-    defaultOpen: false,
-});
+const props = withDefaults(
+    defineProps<{
+        title?: string;
+        defaultOpen?: boolean;
+        modelValue?: boolean;
+    }>(),
+    {
+        title: '',
+        defaultOpen: false,
+        modelValue: undefined,
+    },
+);
 
-const isOpen = ref(props.defaultOpen);
+const emit = defineEmits<{
+    'update:modelValue': [value: boolean];
+}>();
+
+const panelId = useId();
+const internal = ref(props.defaultOpen);
+const isControlled = computed(() => props.modelValue !== undefined);
+const isOpen = computed(() => (isControlled.value ? Boolean(props.modelValue) : internal.value));
 
 function toggle() {
-    isOpen.value = !isOpen.value;
+    const next = !isOpen.value;
+    if (!isControlled.value) {
+        internal.value = next;
+    }
+    emit('update:modelValue', next);
 }
-// Анимируем реальную высоту через scrollHeight (а не угаданный
-// max-height), но overflow/padding держим на статичном внутреннем
-// блоке — так browser не пересчитывает text-layout на каждый кадр
-// перехода, и сворачивание не "зависает" перед последним рывком.
+
 function onBeforeEnter(el: Element) {
     (el as HTMLElement).style.height = '0';
 }
@@ -46,7 +59,13 @@ function onLeave(el: Element) {
 
 <template>
     <div class="tao-spoiler">
-        <button class="tao-spoiler__header" @click="toggle">
+        <button
+            type="button"
+            class="tao-spoiler__header"
+            :aria-expanded="isOpen"
+            :aria-controls="panelId"
+            @click="toggle"
+        >
             <span class="tao-spoiler__icon" :class="{ 'tao-spoiler__icon--open': isOpen }">▶</span>
             <span v-if="title || $slots.title" class="tao-spoiler__title">
                 <slot name="title">{{ title }}</slot>
@@ -59,7 +78,7 @@ function onLeave(el: Element) {
             @after-enter="onAfterEnter"
             @leave="onLeave"
         >
-            <div v-if="isOpen" class="tao-spoiler__content">
+            <div v-if="isOpen" :id="panelId" class="tao-spoiler__content">
                 <div class="tao-spoiler__content-inner">
                     <slot />
                 </div>

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 
+defineOptions({ name: 'TaoLoader' });
+
 interface Props {
     color?: string;
     size?: number | string;

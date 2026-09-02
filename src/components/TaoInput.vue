@@ -52,7 +52,7 @@ function handleFocus(event: FocusEvent) {
 
 <template>
     <div class="tao-input-wrapper">
-        <label v-if="label" class="tao-input__label" :for="controlId">{{ label }}</label>
+        <label v-if="label && !field" class="tao-input__label" :for="controlId">{{ label }}</label>
         <div
             class="tao-input-shell"
             :class="{

@@ -1,26 +1,40 @@
 <script lang="ts" setup>
-interface Props {
-    min?: number;
-    max?: number;
-    progress?: number;
-    height?: number;
-    showPercentage?: boolean;
-    animated?: boolean;
-}
+import { computed } from 'vue';
 
-withDefaults(defineProps<Props>(), {
-    min: 200,
-    max: 400,
-    progress: 0,
-    height: 8,
-    showPercentage: false,
-    animated: true,
-});
+defineOptions({ name: 'TaoProgress' });
+
+const props = withDefaults(
+    defineProps<{
+        minWidth?: number;
+        maxWidth?: number;
+        /** @deprecated используйте minWidth */
+        min?: number;
+        /** @deprecated используйте maxWidth */
+        max?: number;
+        progress?: number;
+        height?: number;
+        showPercentage?: boolean;
+        animated?: boolean;
+    }>(),
+    {
+        minWidth: undefined,
+        maxWidth: undefined,
+        min: undefined,
+        max: undefined,
+        progress: 0,
+        height: 8,
+        showPercentage: false,
+        animated: true,
+    },
+);
+
+const minW = computed(() => props.minWidth ?? props.min ?? 200);
+const maxW = computed(() => props.maxWidth ?? props.max ?? 400);
 </script>
 
 <template>
     <div class="tao-progress">
-        <div class="tao-progress__container" :style="{ minWidth: `${min}px`, maxWidth: `${max}px` }">
+        <div class="tao-progress__container" :style="{ minWidth: `${minW}px`, maxWidth: `${maxW}px` }">
             <div v-if="$slots.left" class="tao-progress__side">
                 <slot name="left" />
             </div>

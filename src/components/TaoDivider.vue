@@ -1,17 +1,24 @@
 <script lang="ts" setup>
-interface Props {
-    variant?: 'gap' | 'line' | 'text';
-    size?: 'small' | 'medium' | 'big';
-}
+import { computed } from 'vue';
 
-withDefaults(defineProps<Props>(), {
-    variant: 'line',
-    size: 'medium',
-});
+defineOptions({ name: 'TaoDivider' });
+
+const props = withDefaults(
+    defineProps<{
+        variant?: 'gap' | 'line' | 'text';
+        size?: 'small' | 'medium' | 'large' | 'big';
+    }>(),
+    {
+        variant: 'line',
+        size: 'medium',
+    },
+);
+
+const gapSize = computed(() => (props.size === 'big' ? 'large' : props.size));
 </script>
 
 <template>
-    <div v-if="variant === 'gap'" class="tao-divider-gap" :class="`tao-divider-gap--${size}`"></div>
+    <div v-if="variant === 'gap'" class="tao-divider-gap" :class="`tao-divider-gap--${gapSize}`"></div>
 
     <div v-else-if="variant === 'text'" class="tao-divider-text">
         <span class="tao-divider-text__line tao-divider-text__line--left"></span>
@@ -32,6 +39,7 @@ withDefaults(defineProps<Props>(), {
     height: 20px;
 }
 
+.tao-divider-gap--large,
 .tao-divider-gap--big {
     height: 60px;
 }
