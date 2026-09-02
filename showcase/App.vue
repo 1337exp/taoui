@@ -1161,33 +1161,25 @@ const tabs = [
       </div>
     </section>
 
-    <!-- TaoCopy -->
     <section id="copy" class="showcase-section" v-show="sectionVisible('basics', 'TaoCopy')">
       <h2>TaoCopy</h2>
-      <p>Кнопка копирования текста в буфер обмена</p>
-      
-      <TaoCopy :text="copyText" success-message="Скопировано! ✓">
-        <template #default="{ copy, copied }">
-          <TaoButton 
-            :variant="copied ? 'primary' : 'secondary'" 
-            @click="copy"
-          >
-            {{ copied ? '✓ Скопировано' : '📋 Копировать текст' }}
-          </TaoButton>
-        </template>
-      </TaoCopy>
+      <p>
+        По умолчанию — иконка листов. Клик копирует, сверху на пару секунд тултип.
+        Если кнопку скрыли или размонтировали, подсказка уходит вместе с ней.
+        Свой вид — слот <code>{ copy, copied }</code>.
+      </p>
 
       <div class="copy-preview">
-        <strong>Текст для копирования:</strong>
-        <p style="margin: 8px 0 0; font-family: monospace;">{{ copyText }}</p>
+        <code>{{ copyText }}</code>
+        <TaoCopy :text="copyText" />
       </div>
 
       <div class="code-block">
-        <pre><code>&lt;TaoCopy text="Текст для копирования"&gt;
+        <pre><code>&lt;TaoCopy :text="value" /&gt;
+
+&lt;TaoCopy :text="value"&gt;
   &lt;template #default="{ copy, copied }"&gt;
-    &lt;TaoButton @click="copy"&gt;
-      {{ copied ? '✓ Скопировано' : '📋 Копировать' }}
-    &lt;/TaoButton&gt;
+    &lt;TaoButton @click="copy"&gt;{{ copied ? 'Готово' : 'Копировать' }}&lt;/TaoButton&gt;
   &lt;/template&gt;
 &lt;/TaoCopy&gt;</code></pre>
       </div>
@@ -2374,10 +2366,21 @@ p {
 }
 
 .copy-preview {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   margin-top: 12px;
   padding: 12px;
   background: var(--tao-color-surface-sunken);
   border-radius: var(--tao-radius-panel);
+}
+
+.copy-preview code {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .carousel-heading {
