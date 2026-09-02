@@ -43,8 +43,8 @@ defineOptions({ name: 'DemoTooltip' })
     
           <div class="code-block">
             <pre><code>&lt;TaoTooltip content="Текст подсказки" position="top"&gt;
-      &lt;TaoButton&gt;Наведи на меня&lt;/TaoButton&gt;
-    &lt;/TaoTooltip&gt;</code></pre>
+  &lt;TaoButton&gt;Наведи на меня&lt;/TaoButton&gt;
+&lt;/TaoTooltip&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

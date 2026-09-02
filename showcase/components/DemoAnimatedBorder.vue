@@ -29,12 +29,12 @@ defineOptions({ name: 'DemoAnimatedBorder' })
     
           <div class="code-block">
             <pre><code>&lt;TaoAnimatedBorder&gt;
-      Только переливающийся контур
-    &lt;/TaoAnimatedBorder&gt;
-    
-    &lt;TaoAnimatedBorder light&gt;
-      Контур + мягкое свечение вокруг
-    &lt;/TaoAnimatedBorder&gt;</code></pre>
+  Только переливающийся контур
+&lt;/TaoAnimatedBorder&gt;
+
+&lt;TaoAnimatedBorder light&gt;
+  Контур + мягкое свечение вокруг
+&lt;/TaoAnimatedBorder&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

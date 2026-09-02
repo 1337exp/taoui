@@ -27,14 +27,14 @@ defineOptions({ name: 'DemoFlex' })
     
           <div class="code-block">
             <pre><code>&lt;TaoFlex justify="space-between"&gt;
-      &lt;span&gt;Слева&lt;/span&gt;
-      &lt;span&gt;Справа&lt;/span&gt;
-    &lt;/TaoFlex&gt;
-    
-    &lt;TaoSpace&gt;
-      &lt;TaoButton&gt;Один&lt;/TaoButton&gt;
-      &lt;TaoButton&gt;Два&lt;/TaoButton&gt;
-    &lt;/TaoSpace&gt;</code></pre>
+  &lt;span&gt;Слева&lt;/span&gt;
+  &lt;span&gt;Справа&lt;/span&gt;
+&lt;/TaoFlex&gt;
+
+&lt;TaoSpace&gt;
+  &lt;TaoButton&gt;Один&lt;/TaoButton&gt;
+  &lt;TaoButton&gt;Два&lt;/TaoButton&gt;
+&lt;/TaoSpace&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

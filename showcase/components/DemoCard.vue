@@ -74,21 +74,21 @@ const cardGallery = ref(0)
     
           <div class="code-block">
             <pre><code>&lt;TaoCard :padding="12" :radius="12"&gt;
-      &lt;template #cover&gt;
-        &lt;img src="photo.jpg" alt="Товар" /&gt;
-      &lt;/template&gt;
-      &lt;template #title&gt;Nova&lt;/template&gt;
-      &lt;template #sub&gt;Кроссовки&lt;/template&gt;
-      &lt;template #footer&gt;8 990 ₽&lt;/template&gt;
-    &lt;/TaoCard&gt;
-    
-    &lt;TaoCard :padding="12" :radius="12"&gt;
-      &lt;template #cover&gt;
-        &lt;TaoCarousel :controls="false" dots&gt;
-          &lt;img v-for="src in photos" :src="src" draggable="false" /&gt;
-        &lt;/TaoCarousel&gt;
-      &lt;/template&gt;
-    &lt;/TaoCard&gt;</code></pre>
+  &lt;template #cover&gt;
+    &lt;img src="photo.jpg" alt="Товар" /&gt;
+  &lt;/template&gt;
+  &lt;template #title&gt;Nova&lt;/template&gt;
+  &lt;template #sub&gt;Кроссовки&lt;/template&gt;
+  &lt;template #footer&gt;8 990 ₽&lt;/template&gt;
+&lt;/TaoCard&gt;
+
+&lt;TaoCard :padding="12" :radius="12"&gt;
+  &lt;template #cover&gt;
+    &lt;TaoCarousel :controls="false" dots&gt;
+      &lt;img v-for="src in photos" :src="src" draggable="false" /&gt;
+    &lt;/TaoCarousel&gt;
+  &lt;/template&gt;
+&lt;/TaoCard&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

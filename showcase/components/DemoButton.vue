@@ -71,20 +71,20 @@ const buttonSizes = ['small', 'medium', 'large']
     
           <div class="code-block">
             <pre><code>&lt;TaoButton variant="primary" size="medium"&gt;
-      Кнопка
-    &lt;/TaoButton&gt;
-    
-    &lt;TaoButton variant="secondary" loading&gt;
-      Загрузка...
-    &lt;/TaoButton&gt;
-    
-    &lt;TaoButton variant="text" tone="danger"&gt;
-      Удалить
-    &lt;/TaoButton&gt;
-    
-    &lt;TaoButton variant="primary" icon="★"&gt;
-      С иконкой
-    &lt;/TaoButton&gt;</code></pre>
+  Кнопка
+&lt;/TaoButton&gt;
+
+&lt;TaoButton variant="secondary" loading&gt;
+  Загрузка...
+&lt;/TaoButton&gt;
+
+&lt;TaoButton variant="text" tone="danger"&gt;
+  Удалить
+&lt;/TaoButton&gt;
+
+&lt;TaoButton variant="primary" icon="★"&gt;
+  С иконкой
+&lt;/TaoButton&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

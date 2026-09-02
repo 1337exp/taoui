@@ -22,8 +22,8 @@ defineOptions({ name: 'DemoContainer' })
     
           <div class="code-block">
             <pre><code>&lt;TaoContainer size="slim"&gt;
-      Контент ограниченной ширины
-    &lt;/TaoContainer&gt;</code></pre>
+  Контент ограниченной ширины
+&lt;/TaoContainer&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

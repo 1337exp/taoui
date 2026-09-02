@@ -21,10 +21,10 @@ const dropdownActions = [
     
           <div class="code-block">
             <pre><code>&lt;TaoDropdownMenu :actions="actions" @selected="onSelected" /&gt;
-    
-    &lt;TaoDropdownMenu :actions="actions" menu-label="Menu"&gt;
-      &lt;template #icon&gt;&lt;TaoIcon name="more" /&gt;&lt;/template&gt;
-    &lt;/TaoDropdownMenu&gt;</code></pre>
+
+&lt;TaoDropdownMenu :actions="actions" menu-label="Menu"&gt;
+  &lt;template #icon&gt;&lt;TaoIcon name="more" /&gt;&lt;/template&gt;
+&lt;/TaoDropdownMenu&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

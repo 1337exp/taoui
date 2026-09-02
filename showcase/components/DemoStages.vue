@@ -43,15 +43,15 @@ const importStages = [
     
           <div class="code-block">
             <pre><code>&lt;TaoStages :items="[
-      { key: 'pay', label: 'Оплата', status: 'ok' },
-      { key: 'pack', label: 'Сборка', status: 'work' },
-      { key: 'ship', label: 'Доставка', status: 'wait' },
-    ]" /&gt;
-    
-    &lt;TaoStages
-      :items="items"
-      :status-labels="{ wait: 'pending', work: 'in progress', ok: 'done', bad: 'failed' }"
-    /&gt;</code></pre>
+  { key: 'pay', label: 'Оплата', status: 'ok' },
+  { key: 'pack', label: 'Сборка', status: 'work' },
+  { key: 'ship', label: 'Доставка', status: 'wait' },
+]" /&gt;
+
+&lt;TaoStages
+  :items="items"
+  :status-labels="{ wait: 'pending', work: 'in progress', ok: 'done', bad: 'failed' }"
+/&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

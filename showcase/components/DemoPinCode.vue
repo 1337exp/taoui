@@ -40,10 +40,10 @@ function onPinComplete(value) {
     
           <div class="code-block">
             <pre><code>&lt;TaoPinCode v-model="pin" :length="4" @complete="onDone" /&gt;
-    
-    &lt;TaoPinCode v-model="pin" :length="4" numbers-only /&gt;
-    
-    &lt;TaoPinCode v-model="pin" :length="4" clear-on="input" /&gt;</code></pre>
+
+&lt;TaoPinCode v-model="pin" :length="4" numbers-only /&gt;
+
+&lt;TaoPinCode v-model="pin" :length="4" clear-on="input" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

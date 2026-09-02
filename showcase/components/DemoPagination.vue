@@ -23,20 +23,20 @@ const pagerPage = ref(12)
     
           <div class="code-block">
             <pre><code>&lt;TaoPagination v-model:page="page" :total="500" :page-size="10" /&gt;
-    &lt;TaoPagination v-model:page="page" :total="500" :page-size="10" :jump="3" /&gt;
-    
-    &lt;TaoPagination
-      v-model:page="page"
-      :total="500"
-      :page-size="10"
-      prev-label="Previous"
-      next-label="Next"
-      page-label="Page {page}"
-    &gt;
-      &lt;template #total="{ from, to, total }"&gt;&#123;&#123; from &#125;&#125;–&#123;&#123; to &#125;&#125; of &#123;&#123; total &#125;&#125;&lt;/template&gt;
-      &lt;template #prev-icon&gt;&lt;TaoIcon name="arrow-left" /&gt;&lt;/template&gt;
-      &lt;template #next-icon&gt;&lt;TaoIcon name="arrow-right" /&gt;&lt;/template&gt;
-    &lt;/TaoPagination&gt;</code></pre>
+&lt;TaoPagination v-model:page="page" :total="500" :page-size="10" :jump="3" /&gt;
+
+&lt;TaoPagination
+  v-model:page="page"
+  :total="500"
+  :page-size="10"
+  prev-label="Previous"
+  next-label="Next"
+  page-label="Page {page}"
+&gt;
+  &lt;template #total="{ from, to, total }"&gt;&#123;&#123; from &#125;&#125;–&#123;&#123; to &#125;&#125; of &#123;&#123; total &#125;&#125;&lt;/template&gt;
+  &lt;template #prev-icon&gt;&lt;TaoIcon name="arrow-left" /&gt;&lt;/template&gt;
+  &lt;template #next-icon&gt;&lt;TaoIcon name="arrow-right" /&gt;&lt;/template&gt;
+&lt;/TaoPagination&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

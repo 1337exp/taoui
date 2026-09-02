@@ -55,13 +55,13 @@ const spoilerFaq = ref('ship')
     
           <div class="code-block">
             <pre><code>&lt;TaoSpoiler v-model="open" title="Заголовок"&gt;
-      &lt;p&gt;Скрытое содержимое&lt;/p&gt;
-    &lt;/TaoSpoiler&gt;
-    
-    &lt;TaoSpoilerGroup v-model="faq"&gt;
-      &lt;TaoSpoiler name="pay" title="Оплата"&gt;…&lt;/TaoSpoiler&gt;
-      &lt;TaoSpoiler name="ship" title="Доставка"&gt;…&lt;/TaoSpoiler&gt;
-    &lt;/TaoSpoilerGroup&gt;</code></pre>
+  &lt;p&gt;Скрытое содержимое&lt;/p&gt;
+&lt;/TaoSpoiler&gt;
+
+&lt;TaoSpoilerGroup v-model="faq"&gt;
+  &lt;TaoSpoiler name="pay" title="Оплата"&gt;…&lt;/TaoSpoiler&gt;
+  &lt;TaoSpoiler name="ship" title="Доставка"&gt;…&lt;/TaoSpoiler&gt;
+&lt;/TaoSpoilerGroup&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

@@ -65,14 +65,14 @@ const gridNotes = [
     
           <div class="code-block">
             <pre><code>&lt;GridPlayground min="220px"&gt;
-      &lt;TaoCard v-for="item in products" :key="item.id" :padding="12" :radius="12"&gt;
-        &lt;template #cover&gt;&lt;img :src="item.photo" alt="" /&gt;&lt;/template&gt;
-        &lt;template #title&gt;Gel Shine&lt;/template&gt;
-        &lt;template #footer&gt;490 ₽&lt;/template&gt;
-      &lt;/TaoCard&gt;
-    &lt;/GridPlayground&gt;
-    
-    &lt;GridPlayground :cols="3"&gt;…&lt;/GridPlayground&gt;</code></pre>
+  &lt;TaoCard v-for="item in products" :key="item.id" :padding="12" :radius="12"&gt;
+    &lt;template #cover&gt;&lt;img :src="item.photo" alt="" /&gt;&lt;/template&gt;
+    &lt;template #title&gt;Gel Shine&lt;/template&gt;
+    &lt;template #footer&gt;490 ₽&lt;/template&gt;
+  &lt;/TaoCard&gt;
+&lt;/GridPlayground&gt;
+
+&lt;GridPlayground :cols="3"&gt;…&lt;/GridPlayground&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

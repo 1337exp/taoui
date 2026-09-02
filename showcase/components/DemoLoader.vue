@@ -19,8 +19,8 @@ defineOptions({ name: 'DemoLoader' })
     
           <div class="code-block">
             <pre><code>&lt;TaoLoader :size="40" /&gt;
-    &lt;TaoLoader :size="24" inline /&gt;
-    &lt;TaoLoader :size="40" color="var(--tao-color-danger)" /&gt;</code></pre>
+&lt;TaoLoader :size="24" inline /&gt;
+&lt;TaoLoader :size="40" color="var(--tao-color-danger)" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

@@ -105,24 +105,24 @@ function onDemoSubmit() {
     
           <div class="code-block">
             <pre><code>&lt;TaoInput v-model="q" placeholder="Найти…"&gt;
-      &lt;template #prefix&gt;…&lt;/template&gt;
-      &lt;template #suffix&gt;₽&lt;/template&gt;
-    &lt;/TaoInput&gt;
-    
-    &lt;TaoInputGroup&gt;
-      &lt;template #before&gt;https://&lt;/template&gt;
-      &lt;TaoInput v-model="host" /&gt;
-      &lt;template #after&gt;
-        &lt;TaoButton&gt;Проверить&lt;/TaoButton&gt;
-      &lt;/template&gt;
-    &lt;/TaoInputGroup&gt;
-    
-    &lt;form @submit.prevent="onSave"&gt;
-      &lt;TaoFormField label="Email"&gt;
-        &lt;TaoInput v-model="email" type="email" /&gt;
-      &lt;/TaoFormField&gt;
-      &lt;TaoButton type="submit"&gt;Сохранить&lt;/TaoButton&gt;
-    &lt;/form&gt;</code></pre>
+  &lt;template #prefix&gt;…&lt;/template&gt;
+  &lt;template #suffix&gt;₽&lt;/template&gt;
+&lt;/TaoInput&gt;
+
+&lt;TaoInputGroup&gt;
+  &lt;template #before&gt;https://&lt;/template&gt;
+  &lt;TaoInput v-model="host" /&gt;
+  &lt;template #after&gt;
+    &lt;TaoButton&gt;Проверить&lt;/TaoButton&gt;
+  &lt;/template&gt;
+&lt;/TaoInputGroup&gt;
+
+&lt;form @submit.prevent="onSave"&gt;
+  &lt;TaoFormField label="Email"&gt;
+    &lt;TaoInput v-model="email" type="email" /&gt;
+  &lt;/TaoFormField&gt;
+  &lt;TaoButton type="submit"&gt;Сохранить&lt;/TaoButton&gt;
+&lt;/form&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

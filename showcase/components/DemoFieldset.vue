@@ -36,12 +36,12 @@ const fieldsetAddress = ref('')
     
           <div class="code-block">
             <pre><code>&lt;TaoFieldset legend="Доставка"&gt;
-      &lt;TaoFormField label="Адрес"&gt;
-        &lt;TaoInput v-model="address" /&gt;
-      &lt;/TaoFormField&gt;
-    &lt;/TaoFieldset&gt;
-    
-    &lt;TaoFieldset legend="Оплата" align="center"&gt;…&lt;/TaoFieldset&gt;</code></pre>
+  &lt;TaoFormField label="Адрес"&gt;
+    &lt;TaoInput v-model="address" /&gt;
+  &lt;/TaoFormField&gt;
+&lt;/TaoFieldset&gt;
+
+&lt;TaoFieldset legend="Оплата" align="center"&gt;…&lt;/TaoFieldset&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

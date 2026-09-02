@@ -30,15 +30,15 @@ const isModalOpen = ref(false)
     
           <div class="code-block">
             <pre><code>&lt;TaoModal v-model="isOpen" title="Заголовок"&gt;
-      &lt;p&gt;Содержимое&lt;/p&gt;
-      &lt;template #footer&gt;
-        &lt;TaoButton @click="isOpen = false"&gt;Закрыть&lt;/TaoButton&gt;
-      &lt;/template&gt;
-    &lt;/TaoModal&gt;
-    
-    &lt;TaoModal v-model="isOpen" title="Title" close-label="Close"&gt;
-      &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
-    &lt;/TaoModal&gt;</code></pre>
+  &lt;p&gt;Содержимое&lt;/p&gt;
+  &lt;template #footer&gt;
+    &lt;TaoButton @click="isOpen = false"&gt;Закрыть&lt;/TaoButton&gt;
+  &lt;/template&gt;
+&lt;/TaoModal&gt;
+
+&lt;TaoModal v-model="isOpen" title="Title" close-label="Close"&gt;
+  &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
+&lt;/TaoModal&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

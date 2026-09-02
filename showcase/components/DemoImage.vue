@@ -26,8 +26,8 @@ const imageSrc = ref('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53
     
           <div class="code-block">
             <pre><code>&lt;TaoImage :src="imageUrl" /&gt;
-    &lt;TaoImage :src="imageUrl" lazy /&gt;
-    &lt;TaoImage placeholder-text="No image available" /&gt;</code></pre>
+&lt;TaoImage :src="imageUrl" lazy /&gt;
+&lt;TaoImage placeholder-text="No image available" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

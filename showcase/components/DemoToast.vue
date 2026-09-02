@@ -50,10 +50,10 @@ function fireToast(kind) {
     
           <div class="code-block">
             <pre><code>toast().success().message('Сохранено')
-    toast().error().title('Сеть').message('Нет соединения')
-    toast.success('Сохранено')
-    
-    toast.defaults({ closeLabel: 'Dismiss notification' })</code></pre>
+toast().error().title('Сеть').message('Нет соединения')
+toast.success('Сохранено')
+
+toast.defaults({ closeLabel: 'Dismiss notification' })</code></pre>
           </div>
   </ShowcaseSection>
 </template>

@@ -52,20 +52,20 @@ function rangeModelHint(value) {
     
           <div class="code-block">
             <pre><code>&lt;TaoFormField label="День доставки"&gt;
-      &lt;TaoDate v-model="day" min="2026-09-01" max="2026-09-30" /&gt;
-    &lt;/TaoFormField&gt;
-    
-    &lt;TaoDate
-      v-model="day"
-      locale="en-US"
-      placeholder="Date"
-      today-text="Today"
-      clear-text="Clear"
-    &gt;
-      &lt;template #icon&gt;&lt;TaoIcon name="calendar" /&gt;&lt;/template&gt;
-      &lt;template #prev-icon&gt;&lt;TaoIcon name="arrow-left" /&gt;&lt;/template&gt;
-      &lt;template #next-icon&gt;&lt;TaoIcon name="arrow-right" /&gt;&lt;/template&gt;
-    &lt;/TaoDate&gt;</code></pre>
+  &lt;TaoDate v-model="day" min="2026-09-01" max="2026-09-30" /&gt;
+&lt;/TaoFormField&gt;
+
+&lt;TaoDate
+  v-model="day"
+  locale="en-US"
+  placeholder="Date"
+  today-text="Today"
+  clear-text="Clear"
+&gt;
+  &lt;template #icon&gt;&lt;TaoIcon name="calendar" /&gt;&lt;/template&gt;
+  &lt;template #prev-icon&gt;&lt;TaoIcon name="arrow-left" /&gt;&lt;/template&gt;
+  &lt;template #next-icon&gt;&lt;TaoIcon name="arrow-right" /&gt;&lt;/template&gt;
+&lt;/TaoDate&gt;</code></pre>
           </div>
     
           <h2>TaoDateRange</h2>
@@ -99,20 +99,20 @@ function rangeModelHint(value) {
     
           <div class="code-block">
             <pre><code>&lt;TaoFormField label="Даты поездки"&gt;
-      &lt;TaoDateRange v-model="stay" min="2026-09-01" max="2026-09-30" /&gt;
-    &lt;/TaoFormField&gt;
-    
-    &lt;TaoDateRange
-      v-model="stay"
-      locale="en-US"
-      placeholder="Range"
-      today-text="Today"
-      clear-text="Clear"
-    &gt;
-      &lt;template #icon&gt;&lt;TaoIcon name="calendar" /&gt;&lt;/template&gt;
-      &lt;template #prev-icon&gt;&lt;TaoIcon name="arrow-left" /&gt;&lt;/template&gt;
-      &lt;template #next-icon&gt;&lt;TaoIcon name="arrow-right" /&gt;&lt;/template&gt;
-    &lt;/TaoDateRange&gt;</code></pre>
+  &lt;TaoDateRange v-model="stay" min="2026-09-01" max="2026-09-30" /&gt;
+&lt;/TaoFormField&gt;
+
+&lt;TaoDateRange
+  v-model="stay"
+  locale="en-US"
+  placeholder="Range"
+  today-text="Today"
+  clear-text="Clear"
+&gt;
+  &lt;template #icon&gt;&lt;TaoIcon name="calendar" /&gt;&lt;/template&gt;
+  &lt;template #prev-icon&gt;&lt;TaoIcon name="arrow-left" /&gt;&lt;/template&gt;
+  &lt;template #next-icon&gt;&lt;TaoIcon name="arrow-right" /&gt;&lt;/template&gt;
+&lt;/TaoDateRange&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

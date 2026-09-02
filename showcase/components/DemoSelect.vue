@@ -52,23 +52,23 @@ const plan = ref('pro')
     
           <div class="code-block">
             <pre><code>&lt;TaoFormField label="Город" hint="Необязательно"&gt;
-      &lt;TaoSelect v-model="city" :options="cities" /&gt;
-    &lt;/TaoFormField&gt;
-    
-    &lt;TaoSelect v-model="city" :options="cities" placeholder="Select a city" clear-text="Clear"&gt;
-      &lt;template #chevron&gt;&lt;TaoIcon name="chevron-down" /&gt;&lt;/template&gt;
-    &lt;/TaoSelect&gt;
-    
-    &lt;TaoFormField label="Уведомления" hint="Письма на почту"&gt;
-      &lt;TaoSwitch v-model="on" /&gt;
-    &lt;/TaoFormField&gt;
-    
-    &lt;TaoFormField label="Тариф"&gt;
-      &lt;TaoRadioGroup v-model="plan"&gt;
-        &lt;TaoRadio value="free" label="Free" /&gt;
-        &lt;TaoRadio value="pro" label="Pro" /&gt;
-      &lt;/TaoRadioGroup&gt;
-    &lt;/TaoFormField&gt;</code></pre>
+  &lt;TaoSelect v-model="city" :options="cities" /&gt;
+&lt;/TaoFormField&gt;
+
+&lt;TaoSelect v-model="city" :options="cities" placeholder="Select a city" clear-text="Clear"&gt;
+  &lt;template #chevron&gt;&lt;TaoIcon name="chevron-down" /&gt;&lt;/template&gt;
+&lt;/TaoSelect&gt;
+
+&lt;TaoFormField label="Уведомления" hint="Письма на почту"&gt;
+  &lt;TaoSwitch v-model="on" /&gt;
+&lt;/TaoFormField&gt;
+
+&lt;TaoFormField label="Тариф"&gt;
+  &lt;TaoRadioGroup v-model="plan"&gt;
+    &lt;TaoRadio value="free" label="Free" /&gt;
+    &lt;TaoRadio value="pro" label="Pro" /&gt;
+  &lt;/TaoRadioGroup&gt;
+&lt;/TaoFormField&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

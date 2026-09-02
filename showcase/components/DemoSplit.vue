@@ -153,9 +153,9 @@ const splitNestedInner = ref(55)
     
           <div class="code-block">
             <pre><code>&lt;TaoSplit v-model="side" unit="px" :min="160" :max="480" :min-end="240"&gt;
-      &lt;template #start&gt;Навигация&lt;/template&gt;
-      &lt;template #end&gt;Основное&lt;/template&gt;
-    &lt;/TaoSplit&gt;</code></pre>
+  &lt;template #start&gt;Навигация&lt;/template&gt;
+  &lt;template #end&gt;Основное&lt;/template&gt;
+&lt;/TaoSplit&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

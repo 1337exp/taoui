@@ -16,7 +16,7 @@ defineOptions({ name: 'DemoScrollTop' })
     
           <div class="code-block">
             <pre><code>&lt;TaoScrollTop :boundary="200" /&gt;
-    &lt;TaoScrollTop :size="48" :right="16" :bottom="16" aria-label="Back to top" /&gt;</code></pre>
+&lt;TaoScrollTop :size="48" :right="16" :bottom="16" aria-label="Back to top" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

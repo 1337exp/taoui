@@ -25,13 +25,13 @@ const showAlert = ref(true)
     
           <div class="code-block">
             <pre><code>&lt;TaoAlert type="warning" title="Черновик" closable @close="hide"&gt;
-      Сохраните, прежде чем уйти.
-    &lt;/TaoAlert&gt;
-    
-    &lt;TaoAlert type="warning" title="Draft" closable close-label="Dismiss" @close="hide"&gt;
-      &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
-      Save before you leave.
-    &lt;/TaoAlert&gt;</code></pre>
+  Сохраните, прежде чем уйти.
+&lt;/TaoAlert&gt;
+
+&lt;TaoAlert type="warning" title="Draft" closable close-label="Dismiss" @close="hide"&gt;
+  &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
+  Save before you leave.
+&lt;/TaoAlert&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

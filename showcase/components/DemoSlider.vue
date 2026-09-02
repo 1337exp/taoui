@@ -42,24 +42,24 @@ const sliderVolume = ref(70)
     
           <div class="code-block">
             <pre><code>&lt;TaoProgress :progress="65" /&gt;
-    
-    &lt;TaoProgress :progress="50"&gt;
-      &lt;template #left&gt;0кб&lt;/template&gt;
-      &lt;template #right&gt;50кб&lt;/template&gt;
-    &lt;/TaoProgress&gt;
-    
-    &lt;TaoProgress :progress="50" show-percentage="right"&gt;
-      &lt;template #left&gt;0кб&lt;/template&gt;
-      &lt;template #right&gt;50кб&lt;/template&gt;
-    &lt;/TaoProgress&gt;
-    
-    &lt;TaoProgress :progress="50" :show-percentage="false"&gt;
-      &lt;template #left&gt;0кб&lt;/template&gt;
-      &lt;template #right&gt;50кб&lt;/template&gt;
-    &lt;/TaoProgress&gt;
-    
-    &lt;TaoSlider v-model="value" show-value /&gt;
-    &lt;TaoSlider v-model="volume" size="small" /&gt;</code></pre>
+
+&lt;TaoProgress :progress="50"&gt;
+  &lt;template #left&gt;0кб&lt;/template&gt;
+  &lt;template #right&gt;50кб&lt;/template&gt;
+&lt;/TaoProgress&gt;
+
+&lt;TaoProgress :progress="50" show-percentage="right"&gt;
+  &lt;template #left&gt;0кб&lt;/template&gt;
+  &lt;template #right&gt;50кб&lt;/template&gt;
+&lt;/TaoProgress&gt;
+
+&lt;TaoProgress :progress="50" :show-percentage="false"&gt;
+  &lt;template #left&gt;0кб&lt;/template&gt;
+  &lt;template #right&gt;50кб&lt;/template&gt;
+&lt;/TaoProgress&gt;
+
+&lt;TaoSlider v-model="value" show-value /&gt;
+&lt;TaoSlider v-model="volume" size="small" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

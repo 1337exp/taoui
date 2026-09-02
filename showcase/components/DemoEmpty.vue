@@ -20,12 +20,12 @@ defineOptions({ name: 'DemoEmpty' })
     
           <div class="code-block">
             <pre><code>&lt;TaoEmpty title="Ничего не нашлось"&gt;
-      Измените фильтр.
-    &lt;/TaoEmpty&gt;
-    
-    &lt;TaoEmpty title="Nothing found"&gt;
-      Change the filter or reset search.
-    &lt;/TaoEmpty&gt;</code></pre>
+  Измените фильтр.
+&lt;/TaoEmpty&gt;
+
+&lt;TaoEmpty title="Nothing found"&gt;
+  Change the filter or reset search.
+&lt;/TaoEmpty&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

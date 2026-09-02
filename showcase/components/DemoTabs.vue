@@ -32,17 +32,17 @@ const tabContents = {
     
           <div class="code-block">
             <pre><code>&lt;TaoTabs v-model="activeTab" :tabs="tabs"&gt;
-      &lt;template #default="{ activeTab }"&gt;
-        &lt;p&gt;&#123;&#123; tabContents[activeTab] &#125;&#125;&lt;/p&gt;
-      &lt;/template&gt;
-    &lt;/TaoTabs&gt;
-    
-    &lt;script setup&gt;
-    const tabs = [
-      { key: 'tab1', label: 'Вкладка 1' },
-      { key: 'tab2', label: 'Вкладка 2' }
-    ]
-    &lt;/script&gt;</code></pre>
+  &lt;template #default="{ activeTab }"&gt;
+    &lt;p&gt;&#123;&#123; tabContents[activeTab] &#125;&#125;&lt;/p&gt;
+  &lt;/template&gt;
+&lt;/TaoTabs&gt;
+
+&lt;script setup&gt;
+const tabs = [
+  { key: 'tab1', label: 'Вкладка 1' },
+  { key: 'tab2', label: 'Вкладка 2' }
+]
+&lt;/script&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

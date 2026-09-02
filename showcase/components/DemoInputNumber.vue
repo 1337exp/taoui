@@ -29,13 +29,13 @@ const price = ref(1490)
     
           <div class="code-block">
             <pre><code>&lt;TaoFormField label="Количество"&gt;
-      &lt;TaoInputNumber v-model="qty" :min="1" :max="99" /&gt;
-    &lt;/TaoFormField&gt;
-    
-    &lt;TaoInputNumber v-model="qty" increment-label="Increase" decrement-label="Decrease"&gt;
-      &lt;template #increment-icon&gt;&lt;TaoIcon name="plus" /&gt;&lt;/template&gt;
-      &lt;template #decrement-icon&gt;&lt;TaoIcon name="minus" /&gt;&lt;/template&gt;
-    &lt;/TaoInputNumber&gt;</code></pre>
+  &lt;TaoInputNumber v-model="qty" :min="1" :max="99" /&gt;
+&lt;/TaoFormField&gt;
+
+&lt;TaoInputNumber v-model="qty" increment-label="Increase" decrement-label="Decrease"&gt;
+  &lt;template #increment-icon&gt;&lt;TaoIcon name="plus" /&gt;&lt;/template&gt;
+  &lt;template #decrement-icon&gt;&lt;TaoIcon name="minus" /&gt;&lt;/template&gt;
+&lt;/TaoInputNumber&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

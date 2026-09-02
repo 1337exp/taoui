@@ -25,12 +25,12 @@ const isDrawerOpen = ref(false)
     
           <div class="code-block">
             <pre><code>&lt;TaoDrawer v-model="open" title="Фильтры"&gt;
-      ...
-    &lt;/TaoDrawer&gt;
-    
-    &lt;TaoDrawer v-model="open" title="Filters" close-label="Close"&gt;
-      &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
-    &lt;/TaoDrawer&gt;</code></pre>
+  ...
+&lt;/TaoDrawer&gt;
+
+&lt;TaoDrawer v-model="open" title="Filters" close-label="Close"&gt;
+  &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
+&lt;/TaoDrawer&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

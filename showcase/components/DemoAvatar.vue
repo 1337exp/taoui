@@ -32,16 +32,16 @@ defineOptions({ name: 'DemoAvatar' })
     
           <div class="code-block">
             <pre><code>&lt;TaoAvatar name="Анна Козлова" /&gt;
-    &lt;TaoAvatar name="Анна" dot /&gt;
-    &lt;TaoAvatar name="Борис" :count="3" /&gt;
-    &lt;TaoAvatar :src="url" name="Анна" size="large" dot :count="2" /&gt;
-    
-    &lt;TaoAvatar
-      name="Ann"
-      fallback-label="Avatar"
-      notifications-label="{count} notifications"
-      :dot-labels="{ success: 'online', danger: 'busy', warning: 'away', info: 'status', neutral: 'offline' }"
-    /&gt;</code></pre>
+&lt;TaoAvatar name="Анна" dot /&gt;
+&lt;TaoAvatar name="Борис" :count="3" /&gt;
+&lt;TaoAvatar :src="url" name="Анна" size="large" dot :count="2" /&gt;
+
+&lt;TaoAvatar
+  name="Ann"
+  fallback-label="Avatar"
+  notifications-label="{count} notifications"
+  :dot-labels="{ success: 'online', danger: 'busy', warning: 'away', info: 'status', neutral: 'offline' }"
+/&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

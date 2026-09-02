@@ -104,14 +104,14 @@ function flashTableLoading() {
     
           <div class="code-block">
             <pre><code>&lt;TaoTable :columns="columns" :rows="pageRows" v-model:sort="sort" empty-text="No records yet"&gt;
-      &lt;template #cell-status="{ row }"&gt;
-        &lt;TaoTag :type="row.status === 'active' ? 'success' : 'neutral'"&gt;
-          &#123;&#123; row.status &#125;&#125;
-        &lt;/TaoTag&gt;
-      &lt;/template&gt;
-    &lt;/TaoTable&gt;
-    
-    &lt;TaoPagination v-model:page="page" :total="rows.length" :page-size="8" /&gt;</code></pre>
+  &lt;template #cell-status="{ row }"&gt;
+    &lt;TaoTag :type="row.status === 'active' ? 'success' : 'neutral'"&gt;
+      &#123;&#123; row.status &#125;&#125;
+    &lt;/TaoTag&gt;
+  &lt;/template&gt;
+&lt;/TaoTable&gt;
+
+&lt;TaoPagination v-model:page="page" :total="rows.length" :page-size="8" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

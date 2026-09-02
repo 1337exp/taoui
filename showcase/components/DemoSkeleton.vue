@@ -23,8 +23,8 @@ defineOptions({ name: 'DemoSkeleton' })
     
           <div class="code-block">
             <pre><code>&lt;TaoSkeleton variant="title" /&gt;
-    &lt;TaoSkeleton :lines="3" /&gt;
-    &lt;TaoSkeleton variant="circle" /&gt;</code></pre>
+&lt;TaoSkeleton :lines="3" /&gt;
+&lt;TaoSkeleton variant="circle" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

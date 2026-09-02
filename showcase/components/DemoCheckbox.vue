@@ -55,7 +55,7 @@ const fruitsMixed = computed(
     
           <div class="code-block">
             <pre><code>&lt;TaoCheckbox v-model="checked" label="Согласен с условиями" /&gt;
-    &lt;TaoCheckbox v-model="all" :indeterminate="some" label="Все" /&gt;</code></pre>
+&lt;TaoCheckbox v-model="all" :indeterminate="some" label="Все" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

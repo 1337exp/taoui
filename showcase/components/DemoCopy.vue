@@ -24,13 +24,13 @@ const copyText = 'Этот текст будет скопирован в буф�
     
           <div class="code-block">
             <pre><code>&lt;TaoCopy :text="value" /&gt;
-    &lt;TaoCopy :text="value" copy-label="Copy" success-message="Copied!" /&gt;
-    
-    &lt;TaoCopy :text="value"&gt;
-      &lt;template #default="{ copy, copied }"&gt;
-        &lt;TaoButton @click="copy"&gt;{{ copied ? 'Готово' : 'Копировать' }}&lt;/TaoButton&gt;
-      &lt;/template&gt;
-    &lt;/TaoCopy&gt;</code></pre>
+&lt;TaoCopy :text="value" copy-label="Copy" success-message="Copied!" /&gt;
+
+&lt;TaoCopy :text="value"&gt;
+  &lt;template #default="{ copy, copied }"&gt;
+    &lt;TaoButton @click="copy"&gt;{{ copied ? 'Готово' : 'Копировать' }}&lt;/TaoButton&gt;
+  &lt;/template&gt;
+&lt;/TaoCopy&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

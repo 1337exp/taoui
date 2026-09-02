@@ -32,11 +32,11 @@ const popoverStock = ref(true)
     
           <div class="code-block">
             <pre><code>&lt;TaoPopover v-model="open"&gt;
-      &lt;template #trigger&gt;
-        &lt;TaoButton variant="secondary"&gt;Фильтры&lt;/TaoButton&gt;
-      &lt;/template&gt;
-      &lt;TaoCheckbox v-model="inStock" label="Только в наличии" /&gt;
-    &lt;/TaoPopover&gt;</code></pre>
+  &lt;template #trigger&gt;
+    &lt;TaoButton variant="secondary"&gt;Фильтры&lt;/TaoButton&gt;
+  &lt;/template&gt;
+  &lt;TaoCheckbox v-model="inStock" label="Только в наличии" /&gt;
+&lt;/TaoPopover&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

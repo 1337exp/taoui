@@ -80,19 +80,19 @@ function removeTagFilter(index) {
     
           <div class="code-block">
             <pre><code>&lt;TaoTag type="success"&gt;Активен&lt;/TaoTag&gt;
-    &lt;TaoTag type="success" flat&gt;Активен&lt;/TaoTag&gt;
-    
-    &lt;TaoTag type="neutral" closable close-label="Remove" @close="remove"&gt;
-      &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
-      Москва
-    &lt;/TaoTag&gt;
-    
-    &lt;TaoTag type="neutral" closable @close="remove"&gt;
-      &lt;template #prefix&gt;
-        &lt;TaoAvatar name="Анна Козлова" size="small" /&gt;
-      &lt;/template&gt;
-      Анна Козлова
-    &lt;/TaoTag&gt;</code></pre>
+&lt;TaoTag type="success" flat&gt;Активен&lt;/TaoTag&gt;
+
+&lt;TaoTag type="neutral" closable close-label="Remove" @close="remove"&gt;
+  &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
+  Москва
+&lt;/TaoTag&gt;
+
+&lt;TaoTag type="neutral" closable @close="remove"&gt;
+  &lt;template #prefix&gt;
+    &lt;TaoAvatar name="Анна Козлова" size="small" /&gt;
+  &lt;/template&gt;
+  Анна Козлова
+&lt;/TaoTag&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

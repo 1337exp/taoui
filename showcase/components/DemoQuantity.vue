@@ -49,18 +49,18 @@ function onStockInc(value) {
     
           <div class="code-block">
             <pre><code>&lt;TaoQuantity v-model="qty" :max="12" :allow-remove="false" /&gt;
-    
-    &lt;TaoQuantity
-      v-model="qty"
-      :max="stock"
-      increment-label="Increase"
-      decrement-label="Decrease"
-      remove-label="Remove"
-      @dec="onDec"
-    &gt;
-      &lt;template #decrement-icon&gt;&lt;TaoIcon name="minus" /&gt;&lt;/template&gt;
-      &lt;template #increment-icon&gt;&lt;TaoIcon name="plus" /&gt;&lt;/template&gt;
-    &lt;/TaoQuantity&gt;</code></pre>
+
+&lt;TaoQuantity
+  v-model="qty"
+  :max="stock"
+  increment-label="Increase"
+  decrement-label="Decrease"
+  remove-label="Remove"
+  @dec="onDec"
+&gt;
+  &lt;template #decrement-icon&gt;&lt;TaoIcon name="minus" /&gt;&lt;/template&gt;
+  &lt;template #increment-icon&gt;&lt;TaoIcon name="plus" /&gt;&lt;/template&gt;
+&lt;/TaoQuantity&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

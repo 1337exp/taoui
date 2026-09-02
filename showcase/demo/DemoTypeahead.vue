@@ -32,15 +32,15 @@ const typeaheadPerson = ref(null)
     
           <div class="code-block">
             <pre><code>&lt;TypeaheadPlayground v-model="person"&gt;
-      &lt;template #empty&gt;Никого нет. Попробуйте «ан» или «моск».&lt;/template&gt;
-    &lt;/TypeaheadPlayground&gt;
-    
-    &lt;TypeaheadPlayground v-model="person"&gt;
-      &lt;template #item="{ hit }"&gt;
-        &lt;span&gt;&#123;&#123; hit.name &#125;&#125;&lt;/span&gt;
-        &lt;span&gt;&#123;&#123; hit.city &#125;&#125; · &#123;&#123; hit.role &#125;&#125;&lt;/span&gt;
-      &lt;/template&gt;
-    &lt;/TypeaheadPlayground&gt;</code></pre>
+  &lt;template #empty&gt;Никого нет. Попробуйте «ан» или «моск».&lt;/template&gt;
+&lt;/TypeaheadPlayground&gt;
+
+&lt;TypeaheadPlayground v-model="person"&gt;
+  &lt;template #item="{ hit }"&gt;
+    &lt;span&gt;&#123;&#123; hit.name &#125;&#125;&lt;/span&gt;
+    &lt;span&gt;&#123;&#123; hit.city &#125;&#125; · &#123;&#123; hit.role &#125;&#125;&lt;/span&gt;
+  &lt;/template&gt;
+&lt;/TypeaheadPlayground&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

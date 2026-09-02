@@ -19,8 +19,8 @@ defineOptions({ name: 'DemoDivider' })
     
           <div class="code-block">
             <pre><code>&lt;TaoDivider variant="line" /&gt;
-    &lt;TaoDivider variant="text"&gt;или&lt;/TaoDivider&gt;
-    &lt;TaoDivider variant="gap" size="small" /&gt;</code></pre>
+&lt;TaoDivider variant="text"&gt;или&lt;/TaoDivider&gt;
+&lt;TaoDivider variant="gap" size="small" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

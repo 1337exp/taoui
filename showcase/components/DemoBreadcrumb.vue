@@ -32,12 +32,12 @@ function preventShowcaseNav(event) {
     
           <div class="code-block">
             <pre><code>&lt;TaoBreadcrumb :items="[
-      { label: 'Главная', to: '/' },
-      { label: 'Пользователи', to: '/users' },
-      { label: 'Профиль' },
-    ]" /&gt;
-    
-    &lt;TaoBreadcrumb aria-label="Breadcrumb" :items="items" /&gt;</code></pre>
+  { label: 'Главная', to: '/' },
+  { label: 'Пользователи', to: '/users' },
+  { label: 'Профиль' },
+]" /&gt;
+
+&lt;TaoBreadcrumb aria-label="Breadcrumb" :items="items" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

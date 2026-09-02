@@ -54,18 +54,18 @@ async function requestClearConfirm() {
     
           <div class="code-block">
             <pre><code>&lt;TaoFileDrop v-model="files" multiple show-clear @clear-request="files = []" /&gt;
-    
-    &lt;TaoFileDrop
-      v-model="files"
-      show-clear
-      clear-label="Clear files"
-      remove-label="Remove “{name}”"
-      @clear-request="onClear"
-    &gt;
-      Drop a file here or click to browse
-      &lt;template #clear-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
-      &lt;template #remove-icon&gt;&lt;TaoIcon name="trash" /&gt;&lt;/template&gt;
-    &lt;/TaoFileDrop&gt;</code></pre>
+
+&lt;TaoFileDrop
+  v-model="files"
+  show-clear
+  clear-label="Clear files"
+  remove-label="Remove “{name}”"
+  @clear-request="onClear"
+&gt;
+  Drop a file here or click to browse
+  &lt;template #clear-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
+  &lt;template #remove-icon&gt;&lt;TaoIcon name="trash" /&gt;&lt;/template&gt;
+&lt;/TaoFileDrop&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

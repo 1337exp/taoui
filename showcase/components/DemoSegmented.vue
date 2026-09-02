@@ -78,15 +78,15 @@ const inboxFilter = ref('all')
     
           <div class="code-block">
             <pre><code>&lt;TaoSegmented v-model="period" legend="Период"&gt;
-      &lt;TaoSegmentedOption value="week"&gt;Неделя&lt;/TaoSegmentedOption&gt;
-      &lt;TaoSegmentedOption value="month"&gt;Месяц&lt;/TaoSegmentedOption&gt;
-      &lt;TaoSegmentedOption value="year"&gt;Год&lt;/TaoSegmentedOption&gt;
-    &lt;/TaoSegmented&gt;
-    
-    &lt;TaoSegmented v-model="inbox" block&gt;
-      &lt;TaoSegmentedOption value="all" count="12"&gt;Все&lt;/TaoSegmentedOption&gt;
-      &lt;TaoSegmentedOption value="unread" count="3"&gt;Новые&lt;/TaoSegmentedOption&gt;
-    &lt;/TaoSegmented&gt;</code></pre>
+  &lt;TaoSegmentedOption value="week"&gt;Неделя&lt;/TaoSegmentedOption&gt;
+  &lt;TaoSegmentedOption value="month"&gt;Месяц&lt;/TaoSegmentedOption&gt;
+  &lt;TaoSegmentedOption value="year"&gt;Год&lt;/TaoSegmentedOption&gt;
+&lt;/TaoSegmented&gt;
+
+&lt;TaoSegmented v-model="inbox" block&gt;
+  &lt;TaoSegmentedOption value="all" count="12"&gt;Все&lt;/TaoSegmentedOption&gt;
+  &lt;TaoSegmentedOption value="unread" count="3"&gt;Новые&lt;/TaoSegmentedOption&gt;
+&lt;/TaoSegmented&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

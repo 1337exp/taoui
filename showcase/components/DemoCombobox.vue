@@ -99,19 +99,19 @@ function onComboTagCreate(text) {
     
           <div class="code-block">
             <pre><code>&lt;TaoCombobox v-model="city" :options="cities" /&gt;
-    &lt;TaoCombobox v-model="query" :options="tags" allow-create /&gt;
-    &lt;TaoCombobox v-model="tag" :options="tags" allow-create @create="onCreate" /&gt;
-    
-    &lt;TaoCombobox
-      v-model="city"
-      :options="cities"
-      placeholder="Start typing"
-      empty-text="Nothing found"
-      clear-text="Clear"
-    &gt;
-      &lt;template #create="{ text }"&gt;Add “&#123;&#123; text &#125;&#125;”&lt;/template&gt;
-      &lt;template #chevron&gt;&lt;TaoIcon name="chevron-down" /&gt;&lt;/template&gt;
-    &lt;/TaoCombobox&gt;</code></pre>
+&lt;TaoCombobox v-model="query" :options="tags" allow-create /&gt;
+&lt;TaoCombobox v-model="tag" :options="tags" allow-create @create="onCreate" /&gt;
+
+&lt;TaoCombobox
+  v-model="city"
+  :options="cities"
+  placeholder="Start typing"
+  empty-text="Nothing found"
+  clear-text="Clear"
+&gt;
+  &lt;template #create="{ text }"&gt;Add “&#123;&#123; text &#125;&#125;”&lt;/template&gt;
+  &lt;template #chevron&gt;&lt;TaoIcon name="chevron-down" /&gt;&lt;/template&gt;
+&lt;/TaoCombobox&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

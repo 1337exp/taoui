@@ -36,10 +36,10 @@ async function fireConfirm(kind) {
     
           <div class="code-block">
             <pre><code>if (await confirm().title('Удалить файл?').danger()) {
-      remove()
-    }
-    
-    confirm.defaults({ ok: 'OK', cancel: 'Cancel' })</code></pre>
+  remove()
+}
+
+confirm.defaults({ ok: 'OK', cancel: 'Cancel' })</code></pre>
           </div>
   </ShowcaseSection>
 </template>

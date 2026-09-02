@@ -15,8 +15,8 @@ defineOptions({ name: 'DemoBlock' })
           </TaoBlock>
           <div class="code-block">
             <pre><code>&lt;TaoBlock :padding="24" :radius="12"&gt;
-      &lt;p&gt;Контент&lt;/p&gt;
-    &lt;/TaoBlock&gt;</code></pre>
+  &lt;p&gt;Контент&lt;/p&gt;
+&lt;/TaoBlock&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

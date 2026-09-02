@@ -15,7 +15,7 @@ defineOptions({ name: 'DemoLink' })
     
           <div class="code-block">
             <pre><code>&lt;TaoLink to="/profile"&gt;Профиль&lt;/TaoLink&gt;
-    &lt;TaoLink to="https://example.com" as-new-tab&gt;Внешняя ссылка&lt;/TaoLink&gt;</code></pre>
+&lt;TaoLink to="https://example.com" as-new-tab&gt;Внешняя ссылка&lt;/TaoLink&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>
