@@ -1,6 +1,6 @@
 # Tao UI
 
-**English** · [Русский](README.RU.md)
+**English** · [Русский](README.ru.md)
 
 A Vue 3 component library for Nuxt/Vue apps, driven by design tokens:
 change a handful of CSS variables and the whole kit follows.
