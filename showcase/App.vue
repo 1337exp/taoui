@@ -6,6 +6,7 @@ import {
   TaoCard,
   TaoCopy,
   TaoInput,
+  TaoInputNumber,
   TaoModal,
   TaoSpoiler,
   TaoTabs,
@@ -41,6 +42,7 @@ import {
   TaoDrawer,
   TaoAvatar,
   TaoBreadcrumb,
+  TaoCounter,
   toast,
   confirm,
 } from '@tao/ui'
@@ -58,6 +60,9 @@ const buttonSizes = ['small', 'medium', 'large']
 
 // TaoInput demo
 const inputValue = ref('')
+const qty = ref(2)
+const price = ref(1490)
+const counterValue = ref(1284)
 
 // TaoModal demo
 const isModalOpen = ref(false)
@@ -254,6 +259,7 @@ const navGroups = [
     title: 'Формы',
     items: [
       { id: 'input', label: 'TaoInput' },
+      { id: 'input-number', label: 'TaoInputNumber' },
       { id: 'textarea', label: 'TaoTextarea' },
       { id: 'checkbox', label: 'TaoCheckbox' },
       { id: 'select', label: 'Select / Switch / Radio' },
@@ -270,6 +276,7 @@ const navGroups = [
       { id: 'pagination', label: 'TaoPagination' },
       { id: 'empty', label: 'TaoEmpty' },
       { id: 'skeleton', label: 'TaoSkeleton' },
+      { id: 'counter', label: 'TaoCounter' },
     ],
   },
   {
@@ -645,6 +652,29 @@ onBeforeUnmount(() => {
   error 
   error-message="Некорректный email"
 /&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="input-number" class="showcase-section" v-show="sectionVisible('forms', 'TaoInputNumber')">
+      <h2>TaoInputNumber</h2>
+      <p>Число, не текст: стрелки, кнопки ±, min/max/step. Пустое поле — <code>null</code>.</p>
+
+      <div style="max-width: 280px; display: flex; flex-direction: column; gap: 16px;">
+        <TaoFormField label="Количество" hint="Стрелки вверх/вниз тоже меняют шаг">
+          <TaoInputNumber v-model="qty" :min="1" :max="99" />
+        </TaoFormField>
+        <TaoFormField label="Цена">
+          <TaoInputNumber v-model="price" :min="0" :step="10" />
+        </TaoFormField>
+        <TaoFormField label="Без кнопок" hint="Только клавиатура и ввод">
+          <TaoInputNumber v-model="price" :min="0" :step="10" :controls="false" />
+        </TaoFormField>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoFormField label="Количество"&gt;
+  &lt;TaoInputNumber v-model="qty" :min="1" :max="99" /&gt;
+&lt;/TaoFormField&gt;</code></pre>
       </div>
     </section>
 
@@ -1345,6 +1375,23 @@ async function onClear() {
         <pre><code>&lt;TaoSkeleton variant="title" /&gt;
 &lt;TaoSkeleton :lines="3" /&gt;
 &lt;TaoSkeleton variant="circle" /&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="counter" class="showcase-section" v-show="sectionVisible('data', 'TaoCounter')">
+      <h2>TaoCounter</h2>
+      <p>Витрина числа, не поле ввода. Цифры переворачиваются при смене значения. Для баланса, счёта, онлайна.</p>
+
+      <TaoCounter :value="counterValue" :max-digits="6" />
+      <div class="button-row" style="margin-top: 12px;">
+        <TaoButton size="small" variant="secondary" @click="counterValue = Math.max(0, counterValue - 1)">−1</TaoButton>
+        <TaoButton size="small" @click="counterValue += 1">+1</TaoButton>
+        <TaoButton size="small" variant="ghost" @click="counterValue += 100">+100</TaoButton>
+      </div>
+      <p style="margin-top: 8px; font-size: 13px;">Значение: {{ counterValue }}</p>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoCounter :value="score" :max-digits="6" /&gt;</code></pre>
       </div>
     </section>
       </main>

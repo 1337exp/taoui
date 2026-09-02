@@ -2,6 +2,7 @@ import type { Plugin } from 'vue';
 import TaoButton from './components/TaoButton.vue';
 import TaoBlock from './components/TaoBlock.vue';
 import TaoInput from './components/TaoInput.vue';
+import TaoInputNumber from './components/TaoInputNumber.vue';
 import TaoCard from './components/TaoCard.vue';
 import TaoModal from './components/TaoModal.vue';
 import TaoTabs from './components/TaoTabs.vue';
@@ -39,6 +40,7 @@ import TaoSkeleton from './components/TaoSkeleton.vue';
 import TaoDrawer from './components/TaoDrawer.vue';
 import TaoAvatar from './components/TaoAvatar.vue';
 import TaoBreadcrumb from './components/TaoBreadcrumb.vue';
+import TaoCounter from './components/TaoCounter.vue';
 import TaoToastViewport from './components/TaoToastViewport.vue';
 import TaoConfirmHost from './components/TaoConfirmHost.vue';
 import { toast } from './toast';
@@ -54,6 +56,7 @@ const components = [
     TaoButton,
     TaoBlock,
     TaoInput,
+    TaoInputNumber,
     TaoCard,
     TaoModal,
     TaoTabs,
@@ -91,6 +94,7 @@ const components = [
     TaoDrawer,
     TaoAvatar,
     TaoBreadcrumb,
+    TaoCounter,
     TaoToastViewport,
     TaoConfirmHost,
 ];
@@ -107,6 +111,7 @@ export {
     TaoButton,
     TaoBlock,
     TaoInput,
+    TaoInputNumber,
     TaoCard,
     TaoModal,
     TaoTabs,
@@ -144,6 +149,7 @@ export {
     TaoDrawer,
     TaoAvatar,
     TaoBreadcrumb,
+    TaoCounter,
     TaoToastViewport,
     TaoConfirmHost,
     toast,

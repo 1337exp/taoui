@@ -33,6 +33,7 @@
 - **TaoRadio** / **TaoRadioGroup** — взаимоисключающий выбор из 2–5 вариантов
 - **TaoSelect** — выпадающий список с клавиатурой, тот же визуал, что у Input
 - **TaoFormField** — общие label / hint / error для полей формы
+- **TaoInputNumber** — число с min/max/step и кнопками ±. Пустое значение — `null`
 - **TaoTextarea** — многострочное поле с авто-высотой и модификаторами (noBorder, noBackground, textCenter, submitOnEnter)
 - **TaoPinCode** — пин-код из N полей с авто-переходом фокуса между ними
 - **TaoSlider** — интерактивный слайдер (drag + клик), с опциональным точным вводом значения по правому клику
@@ -44,6 +45,7 @@
 - **TaoPagination** — страницы с многоточием, пара к таблице
 - **TaoEmpty** — пустой список, нет результатов, нет прав
 - **TaoSkeleton** — плейсхолдер загрузки (text / title / circle / rect)
+- **TaoCounter** — витрина числа с переворотом цифр (не инпут)
 - **TaoAvatar** — фото или инициалы
 - **TaoTag** — тег/бейдж со статусами (neutral, success, danger, warning, info)
 - **TaoAlert** — инлайн-баннер страницы или ошибки формы (success / error / warning / info)
@@ -256,6 +258,14 @@ const columns = [
 <TaoSkeleton variant="circle" />
 ```
 
+```vue
+<TaoFormField label="Количество">
+  <TaoInputNumber v-model="qty" :min="1" :max="99" />
+</TaoFormField>
+
+<TaoCounter :value="score" :max-digits="6" />
+```
+
 `TaoDrawer` — лист сбоку, не модалка по центру:
 
 ```vue
@@ -358,6 +368,10 @@ npm run dev
 
 В showcase есть переключатель темы (dark / light) в шапке — так виден
 эффект переопределения токенов без правок кода компонентов.
+
+Showcase смотрит прямо в `src/`, поэтому правки компонентов видны без
+`npm run build`. Сборка `dist/` нужна для публикации и для чужих проектов,
+которые ставят пакет.
 
 ## Разработка
 
