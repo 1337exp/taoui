@@ -22,6 +22,7 @@ import TaoImage from './components/TaoImage.vue';
 import TaoCheckbox from './components/TaoCheckbox.vue';
 import TaoTag from './components/TaoTag.vue';
 import TaoDivider from './components/TaoDivider.vue';
+import TaoFieldset from './components/TaoFieldset.vue';
 import TaoAnimatedBorder from './components/TaoAnimatedBorder.vue';
 import TaoTextarea from './components/TaoTextarea.vue';
 import TaoScrollTop from './components/TaoScrollTop.vue';
@@ -84,6 +85,7 @@ const components = [
     TaoCheckbox,
     TaoTag,
     TaoDivider,
+    TaoFieldset,
     TaoAnimatedBorder,
     TaoTextarea,
     TaoScrollTop,
@@ -147,6 +149,7 @@ export {
     TaoCheckbox,
     TaoTag,
     TaoDivider,
+    TaoFieldset,
     TaoAnimatedBorder,
     TaoTextarea,
     TaoScrollTop,

@@ -27,6 +27,7 @@
 - **TaoFlex** — обёртка над flexbox с пропами justify/align/direction/wrap/gap
 - **TaoSpace** — авто-расстановка дочерних элементов с равномерным gap
 - **TaoDivider** — разделитель: line (тонкая линия), text (линия с текстом), gap (пустой отступ, size: small/medium/large)
+- **TaoFieldset** — рамка-группа: `legend` сидит на верхней границе, `align` — start / center / end
 - **TaoAnimatedBorder** — контейнер с анимированной радужной рамкой (декоративный, не завязан на тему)
 
 ### Формы и ввод

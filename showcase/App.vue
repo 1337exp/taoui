@@ -24,6 +24,7 @@ import {
   TaoCheckbox,
   TaoTag,
   TaoDivider,
+  TaoFieldset,
   TaoAnimatedBorder,
   TaoTextarea,
   TaoScrollTop,
@@ -176,6 +177,7 @@ const popoverStock = ref(true)
 
 // TaoCopy demo
 const copyText = 'Этот текст будет скопирован в буфер обмена!'
+const fieldsetAddress = ref('')
 
 // TaoCheckbox demo
 const checkedA = ref(false)
@@ -461,6 +463,7 @@ const navGroups = [
       { id: 'container', label: 'TaoContainer' },
       { id: 'flex', label: 'Flex / Space' },
       { id: 'divider', label: 'TaoDivider' },
+      { id: 'fieldset', label: 'TaoFieldset' },
       { id: 'animated-border', label: 'AnimatedBorder' },
     ],
   },
@@ -1253,6 +1256,41 @@ const tabs = [
         <pre><code>&lt;TaoDivider variant="line" /&gt;
 &lt;TaoDivider variant="text"&gt;или&lt;/TaoDivider&gt;
 &lt;TaoDivider variant="gap" size="small" /&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="fieldset" class="showcase-section" v-show="sectionVisible('layout', 'TaoFieldset')">
+      <h2>TaoFieldset</h2>
+      <p>
+        Группа связанных полей: рамка, подпись на верхней границе.
+        Это <code>fieldset</code> + <code>legend</code>, не карточка и не Divider.
+        <code>align</code> — <code>start</code>, <code>center</code> или <code>end</code>.
+      </p>
+
+      <div style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+        <TaoFieldset legend="Доставка">
+          <TaoFormField label="Адрес">
+            <TaoInput v-model="fieldsetAddress" placeholder="Улица, дом" />
+          </TaoFormField>
+        </TaoFieldset>
+
+        <TaoFieldset legend="Оплата" align="center">
+          <p style="margin: 0; font-size: 13px;">Счёт придёт на почту после подтверждения.</p>
+        </TaoFieldset>
+
+        <TaoFieldset legend="Возврат" align="end">
+          <p style="margin: 0; font-size: 13px;">14 дней, если сохранён товарный вид.</p>
+        </TaoFieldset>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoFieldset legend="Доставка"&gt;
+  &lt;TaoFormField label="Адрес"&gt;
+    &lt;TaoInput v-model="address" /&gt;
+  &lt;/TaoFormField&gt;
+&lt;/TaoFieldset&gt;
+
+&lt;TaoFieldset legend="Оплата" align="center"&gt;…&lt;/TaoFieldset&gt;</code></pre>
       </div>
     </section>
 
