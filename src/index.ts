@@ -26,6 +26,12 @@ import TaoFileDrop from './components/TaoFileDrop.vue';
 import TaoDropdownMenu from './components/TaoDropdownMenu.vue';
 import TaoPinCode from './components/TaoPinCode.vue';
 import TaoLink from './components/TaoLink.vue';
+import TaoFormField from './components/TaoFormField.vue';
+import TaoSelect from './components/TaoSelect.vue';
+import TaoSwitch from './components/TaoSwitch.vue';
+import TaoRadio from './components/TaoRadio.vue';
+import TaoRadioGroup from './components/TaoRadioGroup.vue';
+import TaoAlert from './components/TaoAlert.vue';
 import TaoToastViewport from './components/TaoToastViewport.vue';
 import TaoConfirmHost from './components/TaoConfirmHost.vue';
 import { toast } from './toast';
@@ -65,6 +71,12 @@ const components = [
     TaoDropdownMenu,
     TaoPinCode,
     TaoLink,
+    TaoFormField,
+    TaoSelect,
+    TaoSwitch,
+    TaoRadio,
+    TaoRadioGroup,
+    TaoAlert,
     TaoToastViewport,
     TaoConfirmHost,
 ];
@@ -105,6 +117,12 @@ export {
     TaoDropdownMenu,
     TaoPinCode,
     TaoLink,
+    TaoFormField,
+    TaoSelect,
+    TaoSwitch,
+    TaoRadio,
+    TaoRadioGroup,
+    TaoAlert,
     TaoToastViewport,
     TaoConfirmHost,
     toast,
@@ -130,5 +148,9 @@ export type {
     TaoConfirmRecord,
     TaoConfirmShortcutOptions,
 } from './confirm';
+
+export type { TaoSelectOption } from './select';
+export type { TaoRadioValue } from './radio';
+export type { TaoFormFieldContext } from './formField';
 
 export default TaoUI;

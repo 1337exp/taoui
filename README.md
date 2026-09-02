@@ -28,6 +28,10 @@
 ### Формы и ввод
 
 - **TaoCheckbox** — чекбокс с поддержкой v-model и слотов pre/post
+- **TaoSwitch** — переключатель для булевых настроек (`role="switch"`)
+- **TaoRadio** / **TaoRadioGroup** — взаимоисключающий выбор из 2–5 вариантов
+- **TaoSelect** — выпадающий список с клавиатурой, тот же визуал, что у Input
+- **TaoFormField** — общие label / hint / error для полей формы
 - **TaoTextarea** — многострочное поле с авто-высотой и модификаторами (noBorder, noBackground, textCenter, submitOnEnter)
 - **TaoPinCode** — пин-код из N полей с авто-переходом фокуса между ними
 - **TaoSlider** — интерактивный слайдер (drag + клик), с опциональным точным вводом значения по правому клику
@@ -36,6 +40,7 @@
 ### Отображение данных
 
 - **TaoTag** — тег/бейдж со статусами (neutral, success, danger)
+- **TaoAlert** — инлайн-баннер страницы или ошибки формы (success / error / warning / info)
 - **TaoProgress** — статичная полоса прогресса, опционально с shimmer-анимацией
 - **TaoLoader** — анимированный лоадер (четыре точки)
 - **TaoImage** — обёртка над `<img>` с плавным fade-in при загрузке и плейсхолдером
@@ -49,7 +54,7 @@
 
 ### Обратная связь
 
-- **toast()** — fluent-уведомления в духе `woop`: `toast().success().message('Сохранено')`. Рендер на токенах Tao, без iziToast.
+- **toast()** — fluent-уведомления: `toast().success().message('Сохранено')`
 - **confirm()** — вопрос с оверлеем: тот же fluent + `await`. Не тост — ждёт ответ, не исчезает сам.
 - **TaoToastViewport** / **TaoConfirmHost** — контейнеры; если их нет в разметке, первый вызов сам монтирует их в `body`
 
@@ -124,7 +129,7 @@ import '@1337exp/taoui/styles.css'
 
 ## Toast
 
-Вызов — как в `@daeren/woop`: цепочка в одном тике, `setTimeout(0)` отправляет уведомление. Рендер — Vue и токены темы, не iziToast.
+Вызов — цепочка в одном тике, `setTimeout(0)` отправляет уведомление.
 
 ```javascript
 import { toast } from '@1337exp/taoui'
@@ -156,7 +161,7 @@ Viewport можно не вставлять: первый вызов сам со
 
 ## Confirm
 
-То же, что `woop().question()` с оверлеем: всплывает по центру и спрашивает. Это не toast — нет прогресс-бара и автозакрытия, есть `await`, Esc и клик по оверлею = отмена.
+Вопрос с оверлеем: всплывает по центру и спрашивает. Это не toast — нет прогресс-бара и автозакрытия, есть `await`, Esc и клик по оверлею = отмена.
 
 ```javascript
 import { confirm } from '@1337exp/taoui'
@@ -176,6 +181,27 @@ const ok = await confirm('Выйти без сохранения?', {
 ```javascript
 confirm.defaults({ ok: 'Yes', cancel: 'No' })
 ```
+
+## Формы
+
+`TaoFormField` вешает общий label / hint / error и прокидывает `id` во вложенный контрол.
+
+```vue
+<TaoFormField label="Город" hint="Необязательно">
+  <TaoSelect v-model="city" :options="cities" />
+</TaoFormField>
+
+<TaoSwitch v-model="dark" label="Тёмная тема" />
+
+<TaoRadioGroup v-model="plan" legend="Тариф">
+  <TaoRadio value="free" label="Free" />
+  <TaoRadio value="pro" label="Pro" />
+</TaoRadioGroup>
+
+<TaoAlert type="warning" title="Черновик">Сохраните, прежде чем уйти.</TaoAlert>
+```
+
+`TaoSelect` открывается с клавиатуры (стрелки, Enter, Esc), список переворачивается у края экрана.
 
 ## Дизайн-токены и темизация
 

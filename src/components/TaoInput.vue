@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { computed, inject, useId } from 'vue';
+import { formFieldKey } from '../formField';
+
 interface Props {
     modelValue: string | number;
     type?: 'text' | 'password' | 'email' | 'number' | 'tel';
@@ -7,9 +10,10 @@ interface Props {
     error?: boolean;
     errorMessage?: string;
     label?: string;
+    id?: string;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
     type: 'text',
     placeholder: '',
     disabled: false,
@@ -17,6 +21,12 @@ withDefaults(defineProps<Props>(), {
     errorMessage: '',
     label: '',
 });
+
+const field = inject(formFieldKey, null);
+const localId = useId();
+const controlId = computed(() => props.id || field?.id || localId);
+const invalid = computed(() => props.error || Boolean(field?.invalid.value));
+const describedBy = computed(() => field?.describedBy.value);
 
 const emit = defineEmits(['update:modelValue', 'blur', 'focus']);
 
@@ -36,14 +46,17 @@ function handleFocus(event: FocusEvent) {
 
 <template>
     <div class="tao-input-wrapper">
-        <label v-if="label" class="tao-input__label">{{ label }}</label>
+        <label v-if="label" class="tao-input__label" :for="controlId">{{ label }}</label>
         <input
+            :id="controlId"
             class="tao-input"
-            :class="{ 'tao-input--error': error }"
+            :class="{ 'tao-input--error': invalid }"
             :type="type"
             :value="modelValue"
             :placeholder="placeholder"
             :disabled="disabled"
+            :aria-invalid="invalid || undefined"
+            :aria-describedby="describedBy"
             @input="handleInput"
             @blur="handleBlur"
             @focus="handleFocus"

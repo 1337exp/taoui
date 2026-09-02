@@ -28,6 +28,12 @@ import {
   TaoDropdownMenu,
   TaoPinCode,
   TaoLink,
+  TaoFormField,
+  TaoSelect,
+  TaoSwitch,
+  TaoRadio,
+  TaoRadioGroup,
+  TaoAlert,
   toast,
   confirm,
 } from '@tao/ui'
@@ -103,6 +109,18 @@ const dropdownActions = [
 // TaoPinCode demo
 const pinValue = ref('')
 const pinValueNumeric = ref('')
+
+const city = ref('')
+const cityError = ref('')
+const cities = [
+  { value: 'msk', label: 'Москва' },
+  { value: 'spb', label: 'Санкт-Петербург' },
+  { value: 'kzn', label: 'Казань', disabled: true },
+  { value: 'nsk', label: 'Новосибирск' },
+]
+const notifyEmail = ref(true)
+const plan = ref('pro')
+const showAlert = ref(true)
 
 function fireToast(kind) {
   if (kind === 'success') {
@@ -597,6 +615,65 @@ const tabs = [
       </div>
     </section>
 
+    <!-- TaoSwitch / Radio / Select -->
+    <section class="showcase-section">
+      <h2>TaoSwitch / TaoRadio / TaoSelect</h2>
+      <p>Форменные контролы, которых не хватало для логина, профиля и настроек. Label, hint и error — через TaoFormField.</p>
+
+      <div style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+        <TaoFormField label="Город" hint="Казань пока недоступна">
+          <TaoSelect v-model="city" :options="cities" placeholder="Выберите город" />
+        </TaoFormField>
+
+        <TaoFormField label="С ошибкой" error="Выберите город">
+          <TaoSelect v-model="cityError" :options="cities" />
+        </TaoFormField>
+
+        <TaoSwitch v-model="notifyEmail" label="Письма об обновлениях" />
+        <TaoSwitch :model-value="true" label="Disabled" disabled />
+
+        <TaoRadioGroup v-model="plan" legend="Тариф">
+          <TaoRadio value="free" label="Free" />
+          <TaoRadio value="pro" label="Pro" />
+          <TaoRadio value="team" label="Team" disabled />
+        </TaoRadioGroup>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoFormField label="Город" hint="Необязательно"&gt;
+  &lt;TaoSelect v-model="city" :options="cities" /&gt;
+&lt;/TaoFormField&gt;
+
+&lt;TaoSwitch v-model="on" label="Тёмная тема" /&gt;
+
+&lt;TaoRadioGroup v-model="plan" legend="Тариф"&gt;
+  &lt;TaoRadio value="free" label="Free" /&gt;
+  &lt;TaoRadio value="pro" label="Pro" /&gt;
+&lt;/TaoRadioGroup&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- TaoAlert -->
+    <section class="showcase-section">
+      <h2>TaoAlert</h2>
+      <p>Инлайн-баннер: ошибка формы, предупреждение на странице. Не тост — живёт в вёрстке.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; max-width: 520px;">
+        <TaoAlert type="success" title="Сохранено">Профиль обновлён.</TaoAlert>
+        <TaoAlert type="error" title="Ошибка">Не удалось связаться с сервером.</TaoAlert>
+        <TaoAlert v-if="showAlert" type="warning" title="Черновик" closable @close="showAlert = false">
+          Сохраните, прежде чем уйти.
+        </TaoAlert>
+        <TaoAlert type="info">Можно вызвать и без заголовка.</TaoAlert>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoAlert type="warning" title="Черновик" closable @close="hide"&gt;
+  Сохраните, прежде чем уйти.
+&lt;/TaoAlert&gt;</code></pre>
+      </div>
+    </section>
+
     <!-- TaoTextarea -->
     <section class="showcase-section">
       <h2>TaoTextarea</h2>
@@ -631,7 +708,7 @@ const tabs = [
     <!-- toast -->
     <section class="showcase-section">
       <h2>toast()</h2>
-      <p>Fluent-уведомления: цепочка в одном тике, setTimeout(0) отправляет показ. Стили — токены темы, не iziToast.</p>
+      <p>Fluent-уведомления: цепочка в одном тике, setTimeout(0) отправляет показ.</p>
 
       <div class="button-row">
         <TaoButton variant="primary" @click="fireToast('success')">success</TaoButton>
@@ -652,7 +729,7 @@ toast.success('Сохранено')</code></pre>
     <!-- confirm -->
     <section class="showcase-section">
       <h2>confirm()</h2>
-      <p>Вопрос с оверлеем — то, что в woop было question(). Не тост: ждёт ответ, Esc и клик по фону = отмена, можно await.</p>
+      <p>Вопрос с оверлеем. Не тост: ждёт ответ, Esc и клик по фону = отмена, можно await.</p>
 
       <div class="button-row">
         <TaoButton variant="primary" @click="fireConfirm('save')">обычный</TaoButton>
