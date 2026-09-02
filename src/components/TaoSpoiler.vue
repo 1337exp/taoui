@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { computed, ref, useId } from 'vue';
+import { computed, inject, ref, useId } from 'vue';
+import { spoilerGroupKey } from '../spoiler';
 
 defineOptions({ name: 'TaoSpoiler' });
 
@@ -8,11 +9,14 @@ const props = withDefaults(
         title?: string;
         defaultOpen?: boolean;
         modelValue?: boolean;
+        /** Ключ панели в `TaoSpoilerGroup`. Без группы не используется. */
+        name?: string | number;
     }>(),
     {
         title: '',
         defaultOpen: false,
         modelValue: undefined,
+        name: undefined,
     },
 );
 
@@ -22,10 +26,22 @@ const emit = defineEmits<{
 
 const panelId = useId();
 const internal = ref(props.defaultOpen);
+const group = inject(spoilerGroupKey, null);
+const inGroup = computed(() => group !== null && props.name !== undefined && props.name !== '');
 const isControlled = computed(() => props.modelValue !== undefined);
-const isOpen = computed(() => (isControlled.value ? Boolean(props.modelValue) : internal.value));
+const isOpen = computed(() => {
+    if (inGroup.value) {
+        return group!.model.value === props.name;
+    }
+    return isControlled.value ? Boolean(props.modelValue) : internal.value;
+});
 
 function toggle() {
+    if (inGroup.value) {
+        group!.setOpen(isOpen.value ? null : (props.name as string | number));
+        return;
+    }
+
     const next = !isOpen.value;
     if (!isControlled.value) {
         internal.value = next;

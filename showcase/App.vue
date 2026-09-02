@@ -11,6 +11,7 @@ import {
   TaoQuantity,
   TaoModal,
   TaoSpoiler,
+  TaoSpoilerGroup,
   TaoTabs,
   TaoTooltip,
   TaoContainer,
@@ -168,6 +169,7 @@ const tabContents = {
 
 // TaoSpoiler demo
 const spoilerOpen = ref(false)
+const spoilerFaq = ref('ship')
 
 // TaoCopy demo
 const copyText = 'Этот текст будет скопирован в буфер обмена!'
@@ -468,7 +470,7 @@ const navGroups = [
       { id: 'confirm', label: 'confirm()' },
       { id: 'tooltip', label: 'TaoTooltip' },
       { id: 'dropdown', label: 'DropdownMenu' },
-      { id: 'spoiler', label: 'TaoSpoiler' },
+      { id: 'spoiler', label: 'Spoiler / Group' },
     ],
   },
   {
@@ -1026,11 +1028,14 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <!-- TaoSpoiler -->
-    <section id="spoiler" class="showcase-section" v-show="sectionVisible('overlays', 'TaoSpoiler')">
+    <section id="spoiler" class="showcase-section" v-show="sectionVisible('overlays', 'TaoSpoiler TaoSpoilerGroup')">
       <h2>TaoSpoiler</h2>
-      <p>Раскрывающийся блок. <code>v-model</code> держит открытость, несколько подряд не закрывают друг друга.</p>
-      
+      <p>
+        Раскрывающийся блок. <code>v-model</code> держит открытость.
+        Несколько подряд сами друг друга не закрывают — для аккордеона оберните в
+        <code>TaoSpoilerGroup</code>: в модели ключ панели или <code>null</code>.
+      </p>
+
       <TaoSpoiler v-model="spoilerOpen" title="Нажмите, чтобы раскрыть">
         <p>Это скрытое содержимое спойлера. Здесь можно разместить подробную информацию, дополнительные настройки или любой другой контент, который нужно показывать по требованию.</p>
         <ul>
@@ -1040,14 +1045,29 @@ onBeforeUnmount(() => {
         </ul>
       </TaoSpoiler>
 
-      <TaoSpoiler title="Ещё один спойлер" style="margin-top: 12px;">
-        <p>Можно создавать несколько спойлеров подряд для организации контента в виде аккордеона.</p>
-      </TaoSpoiler>
+      <h3 style="margin: 24px 0 12px;">Группа</h3>
+      <p class="carousel-note">Открыли одну — другая закрылась. Повторный клик по открытой сворачивает все.</p>
+      <TaoSpoilerGroup v-model="spoilerFaq">
+        <TaoSpoiler name="pay" title="Оплата">
+          <p>Счёт и чек приходят на почту после подтверждения.</p>
+        </TaoSpoiler>
+        <TaoSpoiler name="ship" title="Доставка">
+          <p>Срок 2–5 дней, трек-номер в личном кабинете.</p>
+        </TaoSpoiler>
+        <TaoSpoiler name="return" title="Возврат">
+          <p>14 дней, если сохранён товарный вид.</p>
+        </TaoSpoiler>
+      </TaoSpoilerGroup>
 
       <div class="code-block">
         <pre><code>&lt;TaoSpoiler v-model="open" title="Заголовок"&gt;
   &lt;p&gt;Скрытое содержимое&lt;/p&gt;
-&lt;/TaoSpoiler&gt;</code></pre>
+&lt;/TaoSpoiler&gt;
+
+&lt;TaoSpoilerGroup v-model="faq"&gt;
+  &lt;TaoSpoiler name="pay" title="Оплата"&gt;…&lt;/TaoSpoiler&gt;
+  &lt;TaoSpoiler name="ship" title="Доставка"&gt;…&lt;/TaoSpoiler&gt;
+&lt;/TaoSpoilerGroup&gt;</code></pre>
       </div>
     </section>
 

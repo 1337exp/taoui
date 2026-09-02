@@ -10,6 +10,7 @@ import TaoModal from './components/TaoModal.vue';
 import TaoTabs from './components/TaoTabs.vue';
 import TaoTooltip from './components/TaoTooltip.vue';
 import TaoSpoiler from './components/TaoSpoiler.vue';
+import TaoSpoilerGroup from './components/TaoSpoilerGroup.vue';
 import TaoCopy from './components/TaoCopy.vue';
 import TaoContainer from './components/TaoContainer.vue';
 import TaoFlex from './components/TaoFlex.vue';
@@ -70,6 +71,7 @@ const components = [
     TaoTabs,
     TaoTooltip,
     TaoSpoiler,
+    TaoSpoilerGroup,
     TaoCopy,
     TaoContainer,
     TaoFlex,
@@ -131,6 +133,7 @@ export {
     TaoTabs,
     TaoTooltip,
     TaoSpoiler,
+    TaoSpoilerGroup,
     TaoCopy,
     TaoContainer,
     TaoFlex,
@@ -198,6 +201,7 @@ export { parseTaoDate, formatTaoDateIso, todayTaoDate, formatTaoDateLabel } from
 export type { TaoSelectOption } from './select';
 export type { TaoDateCell, TaoDateParts } from './date';
 export type { TaoRadioValue } from './radio';
+export type { TaoSpoilerName } from './spoiler';
 export type { TaoFormFieldContext } from './formField';
 export type { TaoTableAlign, TaoTableColumn, TaoTableSort } from './table';
 export type { TaoPaginationItem } from './pagination';
