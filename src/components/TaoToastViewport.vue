@@ -37,7 +37,11 @@ function enterName(position: TaoToastPosition) {
             data-tao-toast-viewport
         >
             <TransitionGroup :name="enterName(position)" tag="div" class="tao-toast-viewport__stack">
-                <TaoToastItem v-for="item in toastsByPosition[position]" :key="item.id" :toast="item" />
+                <div v-for="item in toastsByPosition[position]" :key="item.id" class="tao-toast-slot">
+                    <div class="tao-toast-slot__inner">
+                        <TaoToastItem :toast="item" />
+                    </div>
+                </div>
             </TransitionGroup>
         </div>
     </Teleport>
@@ -57,6 +61,16 @@ function enterName(position: TaoToastPosition) {
     flex-direction: column;
     gap: var(--tao-space-2);
     width: 100%;
+}
+
+.tao-toast-slot {
+    display: grid;
+    grid-template-rows: 1fr;
+}
+
+.tao-toast-slot__inner {
+    min-height: 0;
+    overflow: hidden;
 }
 
 .tao-toast-viewport--topRight {
@@ -118,13 +132,30 @@ function enterName(position: TaoToastPosition) {
 .tao-toast-top-leave-active,
 .tao-toast-bottom-leave-active,
 .tao-toast-center-leave-active {
-    animation: tao-toast-fade-out var(--tao-duration-base) var(--tao-ease-base);
+    pointer-events: none;
+    overflow: hidden;
+    transition: grid-template-rows var(--tao-duration-slow) var(--tao-ease-base);
 }
 
-.tao-toast-top-move,
-.tao-toast-bottom-move,
-.tao-toast-center-move {
-    transition: transform var(--tao-duration-base) var(--tao-ease-base);
+.tao-toast-top-leave-from,
+.tao-toast-bottom-leave-from,
+.tao-toast-center-leave-from {
+    grid-template-rows: 1fr;
+}
+
+.tao-toast-top-leave-to,
+.tao-toast-bottom-leave-to,
+.tao-toast-center-leave-to {
+    grid-template-rows: 0fr;
+}
+
+.tao-toast-top-leave-active .tao-toast-slot__inner,
+.tao-toast-center-leave-active .tao-toast-slot__inner {
+    animation: tao-toast-fade-out-up var(--tao-duration-slow) var(--tao-ease-base);
+}
+
+.tao-toast-bottom-leave-active .tao-toast-slot__inner {
+    animation: tao-toast-fade-out-down var(--tao-duration-slow) var(--tao-ease-base);
 }
 
 @keyframes tao-toast-bounce-in {
@@ -142,10 +173,17 @@ function enterName(position: TaoToastPosition) {
     }
 }
 
-@keyframes tao-toast-fade-out {
+@keyframes tao-toast-fade-out-up {
     to {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(-8px) scale(0.98);
+    }
+}
+
+@keyframes tao-toast-fade-out-down {
+    to {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
     }
 }
 </style>
