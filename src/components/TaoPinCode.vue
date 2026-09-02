@@ -82,11 +82,47 @@ function isFilled(): boolean {
     return numbers.value.length === props.length && numbers.value.every((cell) => cell !== '');
 }
 
-function mutation(v: string, index: number) {
-    const char = v.length > 1 ? (v[v.length - 1] ?? '') : v;
-    const next = acceptChar(char);
+function applyChars(index: number, raw: string) {
+    const chars = [...raw].map((ch) => acceptChar(ch)).filter(Boolean);
+    if (!chars.length) {
+        return;
+    }
 
-    if (props.numbersOnly && char && !next) {
+    numbers.value = [...numbers.value];
+    let cursor = index;
+    for (const ch of chars) {
+        if (cursor >= props.length) {
+            break;
+        }
+        numbers.value[cursor] = ch;
+        cursor += 1;
+    }
+    emitChange();
+
+    if (isFilled()) {
+        inputRefs.value[index]?.blur();
+        emit('complete', serialize());
+        return;
+    }
+
+    if (cursor < props.length) {
+        focusCell(cursor);
+    }
+}
+
+function mutation(v: string, index: number) {
+    if (v.length > 1) {
+        applyChars(index, v);
+        return;
+    }
+
+    const next = acceptChar(v);
+
+    if (props.numbersOnly && v && !next) {
+        const el = inputRefs.value[index];
+        if (el) {
+            el.value = numbers.value[index] ?? '';
+        }
         return;
     }
 
@@ -109,6 +145,16 @@ function mutation(v: string, index: number) {
     if (target < props.length) {
         focusCell(target);
     }
+}
+
+function onPaste(event: ClipboardEvent, index: number) {
+    const text = event.clipboardData?.getData('text') ?? '';
+    if (!text) {
+        return;
+    }
+
+    event.preventDefault();
+    applyChars(index, text);
 }
 
 function onFocus(index: number) {
@@ -199,8 +245,9 @@ watch(
             :inputmode="numbersOnly ? 'numeric' : 'text'"
             :pattern="numbersOnly ? '[0-9]' : undefined"
             autocomplete="one-time-code"
-            maxlength="1"
+            :maxlength="index === 0 ? length : 1"
             @input="onChange($event, index)"
+            @paste="onPaste($event, index)"
             @keydown="onKeydown($event, index)"
             @focus="onFocus(index)"
             @blur="onBlur"

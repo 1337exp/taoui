@@ -50,15 +50,30 @@ function close() {
     void applyOpen(false);
 }
 
-async function applyOpen(next: boolean) {
-    setOpen(next);
-    if (!next) {
+function bindDismiss() {
+    if (typeof document === 'undefined') {
         return;
     }
 
-    await nextTick();
-    updatePosition();
-    panelRef.value?.focus();
+    document.addEventListener('pointerdown', onDocumentPointer);
+    document.addEventListener('keydown', onDocumentKey);
+    window.addEventListener('resize', onViewportChange);
+    window.addEventListener('scroll', onViewportChange, true);
+}
+
+function unbindDismiss() {
+    if (typeof document === 'undefined') {
+        return;
+    }
+
+    document.removeEventListener('pointerdown', onDocumentPointer);
+    document.removeEventListener('keydown', onDocumentKey);
+    window.removeEventListener('resize', onViewportChange);
+    window.removeEventListener('scroll', onViewportChange, true);
+}
+
+function applyOpen(next: boolean) {
+    setOpen(next);
 }
 
 function focusTrigger() {
@@ -72,7 +87,7 @@ function focusTrigger() {
 function updatePosition() {
     const trigger = triggerRef.value;
     const panel = panelRef.value;
-    if (!trigger || !panel) {
+    if (typeof window === 'undefined' || !trigger || !panel) {
         return;
     }
 
@@ -165,26 +180,25 @@ function onViewportChange() {
     }
 }
 
-watch(open, (isOpen) => {
-    if (isOpen) {
-        document.addEventListener('pointerdown', onDocumentPointer);
-        document.addEventListener('keydown', onDocumentKey);
-        window.addEventListener('resize', onViewportChange);
-        window.addEventListener('scroll', onViewportChange, true);
-        return;
-    }
+watch(
+    open,
+    (isOpen) => {
+        if (isOpen) {
+            bindDismiss();
+            void nextTick(() => {
+                updatePosition();
+                panelRef.value?.focus();
+            });
+            return;
+        }
 
-    document.removeEventListener('pointerdown', onDocumentPointer);
-    document.removeEventListener('keydown', onDocumentKey);
-    window.removeEventListener('resize', onViewportChange);
-    window.removeEventListener('scroll', onViewportChange, true);
-});
+        unbindDismiss();
+    },
+    { immediate: true },
+);
 
 onBeforeUnmount(() => {
-    document.removeEventListener('pointerdown', onDocumentPointer);
-    document.removeEventListener('keydown', onDocumentKey);
-    window.removeEventListener('resize', onViewportChange);
-    window.removeEventListener('scroll', onViewportChange, true);
+    unbindDismiss();
 });
 </script>
 

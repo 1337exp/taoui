@@ -539,6 +539,7 @@ onBeforeUnmount(() => {
                     type="button"
                     class="tao-combobox__clear"
                     @mousedown.prevent="markPicking"
+                    @click="clear"
                 >
                     <slot name="clear">{{ clearText }}</slot>
                 </button>

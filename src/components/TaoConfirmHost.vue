@@ -2,6 +2,7 @@
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import TaoButton from './TaoButton.vue';
 import { currentConfirm, registerConfirmHost, resolveConfirm, unregisterConfirmHost } from '../confirm/store';
+import { trapTab } from '../focusTrap';
 
 defineOptions({ name: 'TaoConfirmHost' });
 
@@ -79,22 +80,8 @@ function onKeydown(event: KeyboardEvent) {
         return;
     }
 
-    if (event.key !== 'Tab') {
-        return;
-    }
-
-    const first = queryButton(currentConfirm.value?.danger ? 'cancel' : 'ok');
-    const last = queryButton(currentConfirm.value?.danger ? 'ok' : 'cancel');
-    if (!first || !last) {
-        return;
-    }
-
-    if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
+    if (panelRef.value) {
+        trapTab(event, panelRef.value);
     }
 }
 </script>

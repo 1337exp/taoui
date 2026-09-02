@@ -103,7 +103,8 @@ function nearestIndex(scrollLeft?: number) {
     }
 
     const left = scrollLeft ?? track.value?.scrollLeft ?? 0;
-    return Math.min(Math.max(Math.round(left / (width + gap)), 0), total - 1);
+    const last = Math.max(total - step.value, 0);
+    return Math.min(Math.max(Math.round(left / (width + gap)), 0), last);
 }
 
 function setIndex(next: number) {
@@ -171,16 +172,13 @@ function canAutoplay() {
         !dragging.value &&
         typeof document !== 'undefined' &&
         !document.hidden &&
-        !prefersReducedMotion()
+        !prefersReducedMotion() &&
+        (props.loop || index.value < lastIndex.value)
     );
 }
 
 function tickAutoplay() {
     if (!canAutoplay()) {
-        return;
-    }
-
-    if (!props.loop && index.value >= lastIndex.value) {
         stopAutoplay();
         return;
     }
@@ -230,7 +228,14 @@ function onScroll() {
 
     cancelAnimationFrame(scrollFrame);
     scrollFrame = requestAnimationFrame(() => {
-        setIndex(nearestIndex());
+        const next = nearestIndex();
+        const { width, gap } = metrics();
+        const el = track.value;
+        if (el && width > 0 && el.scrollLeft - next * (width + gap) > (width + gap) / 2) {
+            goTo(next, true);
+            return;
+        }
+        setIndex(next);
     });
 }
 
@@ -357,7 +362,7 @@ watch(
 );
 
 watch(
-    () => [props.autoplay, props.loop, count.value, dragging.value] as const,
+    () => [props.autoplay, props.loop, count.value, dragging.value, index.value] as const,
     () => syncAutoplay(),
 );
 

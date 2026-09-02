@@ -49,6 +49,35 @@ function sameFile(a: File, b: File) {
     return a.name === b.name && a.size === b.size && a.lastModified === b.lastModified;
 }
 
+function acceptTokens(accept: string) {
+    return accept
+        .split(',')
+        .map((token) => token.trim().toLowerCase())
+        .filter(Boolean);
+}
+
+function fileMatchesAccept(file: File, accept: string) {
+    const tokens = acceptTokens(accept);
+    if (!tokens.length || tokens.includes('*') || tokens.includes('*/*')) {
+        return true;
+    }
+
+    const name = file.name.toLowerCase();
+    const mime = (file.type || '').toLowerCase();
+    const dot = name.lastIndexOf('.');
+    const ext = dot >= 0 ? name.slice(dot) : '';
+
+    return tokens.some((token) => {
+        if (token.startsWith('.')) {
+            return ext === token;
+        }
+        if (token.endsWith('/*')) {
+            return mime.startsWith(token.slice(0, -1));
+        }
+        return mime === token;
+    });
+}
+
 function commit(files: File[]) {
     emit('update:modelValue', files);
     emit('files', files);
@@ -88,9 +117,18 @@ function removeAt(index: number) {
     commit(props.modelValue.filter((_, item) => item !== index));
 }
 
+function resetInput() {
+    const el = fileInput.value;
+    if (el) {
+        el.type = 'text';
+        el.type = 'file';
+    }
+}
+
 function processFiles(fileList: FileList) {
-    const incoming = Array.from(fileList);
+    const incoming = Array.from(fileList).filter((file) => fileMatchesAccept(file, props.accept));
     if (!incoming.length) {
+        resetInput();
         return;
     }
 
@@ -107,12 +145,7 @@ function processFiles(fileList: FileList) {
     }
 
     commit(result);
-
-    const el = fileInput.value;
-    if (el) {
-        el.type = 'text';
-        el.type = 'file';
-    }
+    resetInput();
 }
 
 function defaultFormatSize(bytes: number) {
