@@ -14,6 +14,7 @@ import {
   TaoSpoilerGroup,
   TaoTabs,
   TaoTooltip,
+  TaoPopover,
   TaoContainer,
   TaoFlex,
   TaoSpace,
@@ -170,6 +171,8 @@ const tabContents = {
 // TaoSpoiler demo
 const spoilerOpen = ref(false)
 const spoilerFaq = ref('ship')
+const popoverOpen = ref(false)
+const popoverStock = ref(true)
 
 // TaoCopy demo
 const copyText = 'Этот текст будет скопирован в буфер обмена!'
@@ -469,6 +472,7 @@ const navGroups = [
       { id: 'drawer', label: 'TaoDrawer' },
       { id: 'confirm', label: 'confirm()' },
       { id: 'tooltip', label: 'TaoTooltip' },
+      { id: 'popover', label: 'TaoPopover' },
       { id: 'dropdown', label: 'DropdownMenu' },
       { id: 'spoiler', label: 'Spoiler / Group' },
     ],
@@ -1128,6 +1132,35 @@ const tabs = [
       </div>
     </section>
 
+    <section id="popover" class="showcase-section" v-show="sectionVisible('overlays', 'TaoPopover')">
+      <h2>TaoPopover</h2>
+      <p>
+        Панель по клику: внутри любой контент. <code>v-model</code> — открытость.
+        Esc и клик снаружи закрывают, у края экрана панель переворачивается.
+        Это не Tooltip (там текст и hover) и не DropdownMenu (там список действий).
+      </p>
+
+      <TaoPopover v-model="popoverOpen">
+        <template #trigger>
+          <TaoButton variant="secondary">Фильтры</TaoButton>
+        </template>
+        <TaoCheckbox v-model="popoverStock" label="Только в наличии" />
+        <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+          <TaoButton size="small" @click="popoverOpen = false">Готово</TaoButton>
+        </div>
+      </TaoPopover>
+      <p style="margin-top: 8px; font-size: 13px;">{{ popoverStock ? 'В наличии' : 'Все товары' }}</p>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoPopover v-model="open"&gt;
+  &lt;template #trigger&gt;
+    &lt;TaoButton variant="secondary"&gt;Фильтры&lt;/TaoButton&gt;
+  &lt;/template&gt;
+  &lt;TaoCheckbox v-model="inStock" label="Только в наличии" /&gt;
+&lt;/TaoPopover&gt;</code></pre>
+      </div>
+    </section>
+
     <!-- TaoCopy -->
     <section id="copy" class="showcase-section" v-show="sectionVisible('basics', 'TaoCopy')">
       <h2>TaoCopy</h2>
@@ -1638,22 +1671,29 @@ toast.success('Сохранено')</code></pre>
     <!-- TaoFileDrop -->
     <section id="filedrop" class="showcase-section" v-show="sectionVisible('forms', 'TaoFileDrop')">
       <h2>TaoFileDrop</h2>
-      <p>Зона загрузки файлов (drag &amp; drop + клик). Текст внутри — слот, по умолчанию по-русски. Очистку можно сразу или через модалку: компонент сам список не трогает.</p>
+      <p>
+        Зона загрузки (drag &amp; drop + клик). Текст внутри — слот, по умолчанию по-русски.
+        Имена выбранных файлов — список под зоной; крестик в строке сразу пишет в
+        <code>v-model</code>. Стереть всё — <code>show-clear</code> и <code>clear-request</code>:
+        компонент сам массив не трогает. <code>multiple</code> дописывает файлы, а не заменяет.
+        <code>:list="false"</code> прячет список.
+      </p>
 
       <h3>Мгновенная очистка</h3>
       <TaoFileDrop
         v-model="filesInstant"
         style="max-width: 400px;"
+        multiple
         show-clear
         @clear-request="filesInstant = []"
       />
-      <p style="margin-top: 4px; font-size: 13px;">Файлов: {{ filesInstant.length }}</p>
 
       <h3>Очистка через подтверждение</h3>
       <TaoFileDrop
         v-model="filesConfirm"
         style="max-width: 400px;"
         show-clear
+        :list="false"
         @clear-request="requestClearConfirm"
       >
         Перетащите накладную или выберите с диска
@@ -1661,7 +1701,9 @@ toast.success('Сохранено')</code></pre>
       <p style="margin-top: 4px; font-size: 13px;">Файлов: {{ filesConfirm.length }}</p>
 
       <div class="code-block">
-        <pre><code>&lt;TaoFileDrop v-model="files" show-clear @clear-request="files = []"&gt;
+        <pre><code>&lt;TaoFileDrop v-model="files" multiple show-clear @clear-request="files = []" /&gt;
+
+&lt;TaoFileDrop v-model="files" show-clear :list="false" @clear-request="onClear"&gt;
   Перетащите накладную или выберите с диска
 &lt;/TaoFileDrop&gt;</code></pre>
       </div>

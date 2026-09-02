@@ -9,6 +9,7 @@ import TaoCard from './components/TaoCard.vue';
 import TaoModal from './components/TaoModal.vue';
 import TaoTabs from './components/TaoTabs.vue';
 import TaoTooltip from './components/TaoTooltip.vue';
+import TaoPopover from './components/TaoPopover.vue';
 import TaoSpoiler from './components/TaoSpoiler.vue';
 import TaoSpoilerGroup from './components/TaoSpoilerGroup.vue';
 import TaoCopy from './components/TaoCopy.vue';
@@ -70,6 +71,7 @@ const components = [
     TaoModal,
     TaoTabs,
     TaoTooltip,
+    TaoPopover,
     TaoSpoiler,
     TaoSpoilerGroup,
     TaoCopy,
@@ -132,6 +134,7 @@ export {
     TaoModal,
     TaoTabs,
     TaoTooltip,
+    TaoPopover,
     TaoSpoiler,
     TaoSpoilerGroup,
     TaoCopy,
