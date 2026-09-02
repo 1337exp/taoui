@@ -36,7 +36,8 @@
 
 - **TaoCheckbox** — чекбокс с v-model, слотами pre/post и `indeterminate` (частично выбран)
 - **TaoSwitch** — переключатель для булевых настроек (`role="switch"`)
-- **TaoRadio** / **TaoRadioGroup** — взаимоисключающий выбор из 2–5 вариантов
+- **TaoRadio** / **TaoRadioGroup** — классические радиокнопки: длинные подписи, можно столбиком
+- **TaoSegmented** / **TaoSegmentedOption** — компактный выбор из 2–5 коротких вариантов. Не вкладки
 - **TaoSelect** — выпадающий список с клавиатурой, тот же визуал, что у Input. Сброс — «Очистить» в списке или Delete
 - **TaoCombobox** — Select с полем: фильтр по вводу, `allow-create` пишет своё в `v-model`, `create` — чтобы родитель дополнил список
 - **TaoDate** — один день: `YYYY-MM-DD`, без часов и пояса. Календарь как у Select
@@ -233,8 +234,16 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
   <TaoRadio value="pro" label="Pro" />
 </TaoRadioGroup>
 
+<TaoSegmented v-model="period" legend="Период">
+  <TaoSegmentedOption value="week">Неделя</TaoSegmentedOption>
+  <TaoSegmentedOption value="month">Месяц</TaoSegmentedOption>
+  <TaoSegmentedOption value="year">Год</TaoSegmentedOption>
+</TaoSegmented>
+
 <TaoAlert type="warning" title="Черновик">Сохраните, прежде чем уйти.</TaoAlert>
 ```
+
+`TaoSegmented` — короткий взаимоисключающий выбор, все варианты видны сразу. Не для навигации по страницам: это `TaoTabs`. Длинные подписи или больше 5–6 пунктов — `TaoRadioGroup` или `TaoSelect`.
 
 `TaoSelect` открывается с клавиатуры (стрелки, Enter, Esc), список переворачивается у края экрана. Delete или «Очистить» внизу списка сбрасывает значение в `null`.
 
