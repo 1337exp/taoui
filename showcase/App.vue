@@ -1383,7 +1383,7 @@ toast.success('Сохранено')</code></pre>
     <!-- TaoFileDrop -->
     <section id="filedrop" class="showcase-section" v-show="sectionVisible('forms', 'TaoFileDrop')">
       <h2>TaoFileDrop</h2>
-      <p>Зона загрузки файлов (drag &amp; drop + клик). Компонент управляется через v-model, поэтому очистку можно как выполнять сразу, так и подтверждать через модалку.</p>
+      <p>Зона загрузки файлов (drag &amp; drop + клик). Текст внутри — слот, по умолчанию по-русски. Очистку можно сразу или через модалку: компонент сам список не трогает.</p>
 
       <h3>Мгновенная очистка</h3>
       <TaoFileDrop
@@ -1400,20 +1400,15 @@ toast.success('Сохранено')</code></pre>
         style="max-width: 400px;"
         show-clear
         @clear-request="requestClearConfirm"
-      />
+      >
+        Перетащите накладную или выберите с диска
+      </TaoFileDrop>
       <p style="margin-top: 4px; font-size: 13px;">Файлов: {{ filesConfirm.length }}</p>
 
       <div class="code-block">
-        <pre><code>&lt;TaoFileDrop v-model="files" show-clear @clear-request="files = []" /&gt;
-
-&lt;!-- или с подтверждением --&gt;
-&lt;TaoFileDrop v-model="files" show-clear @clear-request="onClear" /&gt;
-
-async function onClear() {
-  if (await confirm().title('Удалить файлы?').danger()) {
-    files = []
-  }
-}</code></pre>
+        <pre><code>&lt;TaoFileDrop v-model="files" show-clear @clear-request="files = []"&gt;
+  Перетащите накладную или выберите с диска
+&lt;/TaoFileDrop&gt;</code></pre>
       </div>
     </section>
 

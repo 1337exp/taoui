@@ -102,7 +102,7 @@ function processFiles(fileList: FileList) {
             @drop="handleDrop"
             @click="triggerFileInput"
         >
-            <slot>Drag &amp; drop your file(s) here or click to select</slot>
+            <slot>Перетащите файл сюда или нажмите, чтобы выбрать</slot>
 
             <input
                 ref="fileInput"
