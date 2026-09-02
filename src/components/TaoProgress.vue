@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, useSlots } from 'vue';
 
 defineOptions({ name: 'TaoProgress' });
 
@@ -13,7 +13,8 @@ const props = withDefaults(
         max?: number;
         progress?: number;
         height?: number;
-        showPercentage?: boolean;
+        /** `true` / `top` — по центру над полосой, `right` — справа. Если есть `#right`, процент справа в скобках. `false` — скрыть. */
+        showPercentage?: boolean | 'top' | 'right';
         animated?: boolean;
     }>(),
     {
@@ -23,33 +24,53 @@ const props = withDefaults(
         max: undefined,
         progress: 0,
         height: 8,
-        showPercentage: false,
+        showPercentage: true,
         animated: true,
     },
 );
 
+const slots = useSlots();
 const minW = computed(() => props.minWidth ?? props.min ?? 200);
 const maxW = computed(() => props.maxWidth ?? props.max ?? 400);
+const hasRight = computed(() => Boolean(slots.right));
+const percentPlace = computed((): 'top' | 'right' | null => {
+    if (!props.showPercentage) {
+        return null;
+    }
+    return props.showPercentage === 'right' ? 'right' : 'top';
+});
+const showOverPercent = computed(() => percentPlace.value === 'top');
+const showEndPercent = computed(() => percentPlace.value === 'right');
+const endPercentLabel = computed(() =>
+    hasRight.value ? `(${props.progress}%)` : `${props.progress}%`,
+);
 </script>
 
 <template>
     <div class="tao-progress">
-        <div class="tao-progress__container" :style="{ minWidth: `${minW}px`, maxWidth: `${maxW}px` }">
+        <div
+            class="tao-progress__container"
+            :class="{ 'tao-progress__container--over': showOverPercent }"
+            :style="{ minWidth: `${minW}px`, maxWidth: `${maxW}px` }"
+        >
             <div v-if="$slots.left" class="tao-progress__side">
                 <slot name="left" />
             </div>
 
-            <div class="tao-progress__track" :style="{ height: `${height}px` }">
-                <div
-                    class="tao-progress__fill"
-                    :class="{ 'tao-progress__fill--animated': animated }"
-                    :style="{ width: `${progress}%` }"
-                ></div>
+            <div class="tao-progress__main">
+                <span v-if="showOverPercent" class="tao-progress__percentage">{{ progress }}%</span>
+                <div class="tao-progress__track" :style="{ height: `${height}px` }">
+                    <div
+                        class="tao-progress__fill"
+                        :class="{ 'tao-progress__fill--animated': animated }"
+                        :style="{ width: `${progress}%` }"
+                    ></div>
+                </div>
             </div>
 
-            <div class="tao-progress__side">
-                <span v-if="showPercentage" class="tao-progress__percentage">{{ progress }}%</span>
+            <div v-if="$slots.right || showEndPercent" class="tao-progress__side">
                 <slot name="right" />
+                <span v-if="showEndPercent" class="tao-progress__percentage">{{ endPercentLabel }}</span>
             </div>
         </div>
     </div>
@@ -57,22 +78,30 @@ const maxW = computed(() => props.maxWidth ?? props.max ?? 400);
 
 <style scoped>
 .tao-progress {
-    display: flex;
-    justify-content: center;
-    align-items: center;
     width: 100%;
 }
 
 .tao-progress__container {
-    position: relative;
     display: flex;
     align-items: center;
     gap: var(--tao-space-3);
     width: 100%;
 }
 
-.tao-progress__track {
+.tao-progress__container--over {
+    align-items: flex-end;
+}
+
+.tao-progress__main {
     flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--tao-space-1);
+}
+
+.tao-progress__track {
+    width: 100%;
     border: 1px solid var(--tao-color-border);
     border-radius: var(--tao-radius-sm);
     background-color: var(--tao-color-surface-sunken);
@@ -88,20 +117,28 @@ const maxW = computed(() => props.maxWidth ?? props.max ?? 400);
 }
 
 .tao-progress__side {
-    min-width: 40px;
-    font-family: 'Monaco', 'Consolas', monospace;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: baseline;
+    gap: var(--tao-space-1);
     font-size: var(--tao-font-size-xs);
-    font-weight: bold;
-    text-align: center;
-    color: var(--tao-color-text);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--tao-color-text-muted);
 }
 
 .tao-progress__percentage {
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    font-size: var(--tao-font-size-xs);
+    line-height: 1;
     color: var(--tao-color-text-muted);
+}
+
+.tao-progress__main > .tao-progress__percentage {
+    width: 100%;
+    text-align: center;
 }
 
 .tao-progress__fill--animated {

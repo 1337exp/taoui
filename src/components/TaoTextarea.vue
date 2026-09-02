@@ -25,6 +25,8 @@ const props = withDefaults(
         submitOnEnter?: boolean;
         error?: boolean;
         id?: string;
+        /** Показать «введено / максимум» под полем. Имеет смысл вместе с `maxlength`. */
+        count?: boolean;
     }>(),
     {
         placeholder: '',
@@ -45,6 +47,7 @@ const props = withDefaults(
         textCenter: false,
         submitOnEnter: false,
         error: false,
+        count: false,
     },
 );
 
@@ -54,7 +57,22 @@ const field = inject(formFieldKey, null);
 const localId = useId();
 const controlId = computed(() => props.id || field?.id || localId);
 const invalid = computed(() => props.error || Boolean(field?.invalid.value));
-const describedBy = computed(() => field?.describedBy.value);
+const counterId = computed(() => `${controlId.value}-count`);
+const describedBy = computed(() => {
+    const ids = [field?.describedBy.value, props.count ? counterId.value : undefined].filter(Boolean);
+    return ids.length ? ids.join(' ') : undefined;
+});
+
+const currentLength = computed(() => String(props.modelValue ?? '').length);
+const countLabel = computed(() => {
+    if (props.maxlength != null && props.maxlength > 0) {
+        return `${currentLength.value} / ${props.maxlength}`;
+    }
+    return String(currentLength.value);
+});
+const atLimit = computed(
+    () => props.maxlength != null && props.maxlength > 0 && currentLength.value >= props.maxlength,
+);
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
@@ -117,39 +135,53 @@ onMounted(() => {
 
 <template>
     <span v-if="dummy" class="tao-textarea tao-textarea--dummy">{{ modelValue }}</span>
-    <textarea
-        v-else
-        :id="controlId"
-        ref="textareaRef"
-        class="tao-textarea"
-        :class="{
-            'tao-textarea--inverse': borderInverse,
-            'tao-textarea--center': textCenter,
-            'tao-textarea--no-border': noBorder,
-            'tao-textarea--no-background': noBackground,
-            'tao-textarea--no-resize': !resize,
-            'tao-textarea--invalid': invalid,
-        }"
-        :placeholder="placeholder"
-        :spellcheck="spellcheck"
-        :autocomplete="autocomplete"
-        :minlength="minlength"
-        :maxlength="maxlength"
-        :disabled="disabled"
-        :rows="rows"
-        :value="modelValue"
-        :aria-invalid="invalid || undefined"
-        :aria-describedby="describedBy"
-        draggable="false"
-        @input="onInput"
-        @change="onChange"
-        @focus="onFocus"
-        @blur="onBlur"
-        @keydown="onKeydown"
-    ></textarea>
+    <div v-else class="tao-textarea-wrap">
+        <textarea
+            :id="controlId"
+            ref="textareaRef"
+            class="tao-textarea"
+            :class="{
+                'tao-textarea--inverse': borderInverse,
+                'tao-textarea--center': textCenter,
+                'tao-textarea--no-border': noBorder,
+                'tao-textarea--no-background': noBackground,
+                'tao-textarea--no-resize': !resize,
+                'tao-textarea--invalid': invalid,
+            }"
+            :placeholder="placeholder"
+            :spellcheck="spellcheck"
+            :autocomplete="autocomplete"
+            :minlength="minlength"
+            :maxlength="maxlength"
+            :disabled="disabled"
+            :rows="rows"
+            :value="modelValue"
+            :aria-invalid="invalid || undefined"
+            :aria-describedby="describedBy"
+            draggable="false"
+            @input="onInput"
+            @change="onChange"
+            @focus="onFocus"
+            @blur="onBlur"
+            @keydown="onKeydown"
+        ></textarea>
+        <span
+            v-if="count"
+            :id="counterId"
+            class="tao-textarea__count"
+            :class="{ 'tao-textarea__count--limit': atLimit }"
+        >{{ countLabel }}</span>
+    </div>
 </template>
 
 <style scoped>
+.tao-textarea-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--tao-space-1);
+    width: 100%;
+}
+
 .tao-textarea {
     width: 100%;
     min-height: 31px;
@@ -209,5 +241,18 @@ onMounted(() => {
     border-color: var(--tao-color-danger);
     white-space: pre-wrap;
     overflow-wrap: anywhere;
+}
+
+.tao-textarea__count {
+    align-self: flex-end;
+    font-size: var(--tao-font-size-xs);
+    line-height: 1;
+    color: var(--tao-color-text-muted);
+    font-variant-numeric: tabular-nums;
+    user-select: none;
+}
+
+.tao-textarea__count--limit {
+    color: var(--tao-color-danger);
 }
 </style>

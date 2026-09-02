@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, inject, useId } from 'vue';
+import { computed, inject, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
 
 defineOptions({ name: 'TaoCheckbox' });
@@ -11,6 +11,8 @@ const props = withDefaults(
         label?: string;
         disabled?: boolean;
         error?: boolean;
+        /** Частично выбран: черта вместо квадрата. Клик ставит checked — indeterminate снимает родитель. */
+        indeterminate?: boolean;
     }>(),
     {
         value: undefined,
@@ -18,6 +20,7 @@ const props = withDefaults(
         label: '',
         disabled: false,
         error: false,
+        indeterminate: false,
     },
 );
 
@@ -52,6 +55,21 @@ function onInputChange(event: Event) {
     const target = event.target as HTMLInputElement;
     isChecked.value = target.checked;
 }
+
+const inputRef = ref<HTMLInputElement | null>(null);
+
+watch(
+    [inputRef, isChecked, () => props.indeterminate],
+    () => {
+        const el = inputRef.value;
+        if (!el) {
+            return;
+        }
+        el.checked = isChecked.value;
+        el.indeterminate = Boolean(props.indeterminate);
+    },
+    { flush: 'post' },
+);
 </script>
 
 <template>
@@ -60,10 +78,12 @@ function onInputChange(event: Event) {
 
         <input
             :id="controlId"
+            ref="inputRef"
             class="tao-checkbox__input tao-sr-only"
             type="checkbox"
             :checked="isChecked"
             :disabled="disabled"
+            :aria-checked="indeterminate ? 'mixed' : undefined"
             :aria-invalid="invalid || undefined"
             :aria-describedby="describedBy"
             @change="onInputChange"
@@ -124,12 +144,21 @@ function onInputChange(event: Event) {
     opacity: 0.6;
 }
 
-.tao-checkbox__input:checked + .tao-checkbox__box {
+.tao-checkbox__input:checked + .tao-checkbox__box,
+.tao-checkbox__input:indeterminate + .tao-checkbox__box {
     border-color: var(--tao-color-accent);
     background-color: var(--tao-color-accent);
 }
 
 .tao-checkbox__input:checked + .tao-checkbox__box::after {
+    background-color: var(--tao-color-on-accent);
+    transform: scale(1);
+}
+
+.tao-checkbox__input:indeterminate + .tao-checkbox__box::after {
+    width: 10px;
+    height: 2px;
+    border-radius: 1px;
     background-color: var(--tao-color-on-accent);
     transform: scale(1);
 }

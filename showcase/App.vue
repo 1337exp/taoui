@@ -174,6 +174,22 @@ const copyText = 'Этот текст будет скопирован в буф�
 // TaoCheckbox demo
 const checkedA = ref(false)
 const checkedB = ref(true)
+const fruitChecks = ref([
+  { label: 'Яблоки', checked: true },
+  { label: 'Груши', checked: false },
+  { label: 'Сливы', checked: true },
+])
+const allFruitsChecked = computed({
+  get: () => fruitChecks.value.every((item) => item.checked),
+  set: (next) => {
+    fruitChecks.value.forEach((item) => {
+      item.checked = next
+    })
+  },
+})
+const fruitsMixed = computed(
+  () => fruitChecks.value.some((item) => item.checked) && !allFruitsChecked.value,
+)
 
 // TaoTextarea demo
 const textareaValue = ref('')
@@ -1140,7 +1156,7 @@ const tabs = [
     <!-- TaoCheckbox -->
     <section id="checkbox" class="showcase-section" v-show="sectionVisible('forms', 'TaoCheckbox')">
       <h2>TaoCheckbox</h2>
-      <p>Чекбокс с v-model. Hint и error — через TaoFormField, как у остальных полей.</p>
+      <p>Чекбокс с v-model. Hint и error — через TaoFormField. <code>indeterminate</code> — частично выбран: черта, клик ставит галочку, смешанное считает родитель.</p>
 
       <div style="display: flex; flex-direction: column; gap: 12px; max-width: 400px;">
         <div style="display: flex; gap: 20px;">
@@ -1151,10 +1167,22 @@ const tabs = [
         <TaoFormField error="Нужно согласие">
           <TaoCheckbox v-model="checkedA" label="Принимаю условия" />
         </TaoFormField>
+
+        <h3>Неопределённый</h3>
+        <TaoCheckbox v-model="allFruitsChecked" :indeterminate="fruitsMixed" label="Все фрукты" />
+        <div style="display: flex; flex-direction: column; gap: 8px; padding-left: 24px;">
+          <TaoCheckbox
+            v-for="item in fruitChecks"
+            :key="item.label"
+            v-model="item.checked"
+            :label="item.label"
+          />
+        </div>
       </div>
 
       <div class="code-block">
-        <pre><code>&lt;TaoCheckbox v-model="checked" label="Согласен с условиями" /&gt;</code></pre>
+        <pre><code>&lt;TaoCheckbox v-model="checked" label="Согласен с условиями" /&gt;
+&lt;TaoCheckbox v-model="all" :indeterminate="some" label="Все" /&gt;</code></pre>
       </div>
     </section>
 
@@ -1256,16 +1284,16 @@ const tabs = [
     <!-- TaoTextarea -->
     <section id="textarea" class="showcase-section" v-show="sectionVisible('forms', 'TaoTextarea')">
       <h2>TaoTextarea</h2>
-      <p>Многострочное поле с авто-высотой. В форме — через TaoFormField.</p>
+      <p>Многострочное поле с авто-высотой. <code>maxlength</code> режет ввод, <code>count</code> показывает «введено / максимум».</p>
 
       <div style="max-width: 400px;">
         <TaoFormField label="Комментарий" hint="Необязательно">
-          <TaoTextarea v-model="textareaValue" placeholder="Печатайте..." />
+          <TaoTextarea v-model="textareaValue" placeholder="Печатайте..." :maxlength="140" count />
         </TaoFormField>
       </div>
 
       <div class="code-block">
-        <pre><code>&lt;TaoTextarea v-model="text" placeholder="Печатайте..." /&gt;</code></pre>
+        <pre><code>&lt;TaoTextarea v-model="text" placeholder="Печатайте..." :maxlength="140" count /&gt;</code></pre>
       </div>
     </section>
 
@@ -1332,17 +1360,47 @@ toast.success('Сохранено')</code></pre>
     <!-- TaoProgress / TaoSlider -->
     <section id="slider" class="showcase-section" v-show="sectionVisible('forms', 'TaoProgress TaoSlider')">
       <h2>TaoProgress / TaoSlider</h2>
-      <p>Статичная полоса прогресса и слайдер. Слайдер слушает стрелки, Home/End и PageUp/Down.</p>
+      <p>Статичная полоса и слайдер. Проценты сверху по центру или <code>show-percentage="right"</code> справа; если есть <code>#right</code>, процент справа в скобках. <code>:show-percentage="false"</code> прячет. Слайдер слушает стрелки, Home/End и PageUp/Down.</p>
 
       <h3>TaoProgress</h3>
-      <TaoProgress :progress="65" show-percentage :min-width="200" :max-width="400" />
+      <div style="display: flex; flex-direction: column; gap: 20px; max-width: 400px;">
+        <TaoProgress :progress="65" />
+        <TaoProgress :progress="50">
+          <template #left>0кб</template>
+          <template #right>50кб</template>
+        </TaoProgress>
+        <TaoProgress :progress="50" show-percentage="right">
+          <template #left>0кб</template>
+          <template #right>50кб</template>
+        </TaoProgress>
+        <TaoProgress :progress="50" :show-percentage="false">
+          <template #left>0кб</template>
+          <template #right>50кб</template>
+        </TaoProgress>
+      </div>
 
       <h3>TaoSlider</h3>
       <TaoSlider v-model="sliderValue" show-value style="max-width: 400px;" />
       <p style="margin-top: 4px; font-size: 13px;">Значение: {{ sliderValue }} — <em>ПКМ по слайдеру открывает точный ввод числа</em></p>
 
       <div class="code-block">
-        <pre><code>&lt;TaoProgress :progress="65" show-percentage :min-width="200" :max-width="400" /&gt;
+        <pre><code>&lt;TaoProgress :progress="65" /&gt;
+
+&lt;TaoProgress :progress="50"&gt;
+  &lt;template #left&gt;0кб&lt;/template&gt;
+  &lt;template #right&gt;50кб&lt;/template&gt;
+&lt;/TaoProgress&gt;
+
+&lt;TaoProgress :progress="50" show-percentage="right"&gt;
+  &lt;template #left&gt;0кб&lt;/template&gt;
+  &lt;template #right&gt;50кб&lt;/template&gt;
+&lt;/TaoProgress&gt;
+
+&lt;TaoProgress :progress="50" :show-percentage="false"&gt;
+  &lt;template #left&gt;0кб&lt;/template&gt;
+  &lt;template #right&gt;50кб&lt;/template&gt;
+&lt;/TaoProgress&gt;
+
 &lt;TaoSlider v-model="value" show-value /&gt;</code></pre>
       </div>
     </section>
@@ -1381,7 +1439,7 @@ toast.success('Сохранено')</code></pre>
 
     <section id="avatar" class="showcase-section" v-show="sectionVisible('media', 'TaoAvatar')">
       <h2>TaoAvatar</h2>
-      <p>Фото или инициалы из имени. Для шапки, комментариев, строки таблицы.</p>
+      <p>Фото или инициалы. Точка статуса и счётчик — по желанию, можно вместе.</p>
 
       <div class="button-row" style="align-items: center;">
         <TaoAvatar name="Анна Козлова" size="small" />
@@ -1390,9 +1448,22 @@ toast.success('Сохранено')</code></pre>
         <TaoAvatar :src="imageSrc" name="Демо" size="large" />
       </div>
 
+      <h3>Индикатор</h3>
+      <div class="button-row" style="align-items: center;">
+        <TaoAvatar name="Анна Козлова" dot />
+        <TaoAvatar name="Борис" size="large" dot="danger" />
+        <TaoAvatar name="Кира" size="large" dot="warning" />
+        <TaoAvatar name="Олег" dot="neutral" />
+        <TaoAvatar name="Анна Козлова" :count="3" />
+        <TaoAvatar name="Борис" size="large" :count="128" />
+        <TaoAvatar :src="imageSrc" name="Демо" size="large" dot :count="2" />
+      </div>
+
       <div class="code-block">
         <pre><code>&lt;TaoAvatar name="Анна Козлова" /&gt;
-&lt;TaoAvatar :src="url" name="Анна" size="large" /&gt;</code></pre>
+&lt;TaoAvatar name="Анна" dot /&gt;
+&lt;TaoAvatar name="Борис" :count="3" /&gt;
+&lt;TaoAvatar :src="url" name="Анна" size="large" dot :count="2" /&gt;</code></pre>
       </div>
     </section>
 
@@ -1748,6 +1819,11 @@ toast.success('Сохранено')</code></pre>
         <code>boundary</code>. Сама кнопка — в правом нижнем углу страницы.
       </p>
       <p class="carousel-note">Прокрутите витрину вниз и чуть вверх — кнопка всплывёт справа внизу.</p>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoScrollTop :boundary="200" /&gt;
+&lt;TaoScrollTop :size="48" :right="16" :bottom="16" /&gt;</code></pre>
+      </div>
     </section>
       </main>
     </div>
