@@ -2,7 +2,9 @@ import type { Plugin } from 'vue';
 import TaoButton from './components/TaoButton.vue';
 import TaoBlock from './components/TaoBlock.vue';
 import TaoInput from './components/TaoInput.vue';
+import TaoInputGroup from './components/TaoInputGroup.vue';
 import TaoInputNumber from './components/TaoInputNumber.vue';
+import TaoQuantity from './components/TaoQuantity.vue';
 import TaoCard from './components/TaoCard.vue';
 import TaoModal from './components/TaoModal.vue';
 import TaoTabs from './components/TaoTabs.vue';
@@ -56,7 +58,9 @@ const components = [
     TaoButton,
     TaoBlock,
     TaoInput,
+    TaoInputGroup,
     TaoInputNumber,
+    TaoQuantity,
     TaoCard,
     TaoModal,
     TaoTabs,
@@ -111,7 +115,9 @@ export {
     TaoButton,
     TaoBlock,
     TaoInput,
+    TaoInputGroup,
     TaoInputNumber,
+    TaoQuantity,
     TaoCard,
     TaoModal,
     TaoTabs,
@@ -182,5 +188,6 @@ export type { TaoFormFieldContext } from './formField';
 export type { TaoTableAlign, TaoTableColumn, TaoTableSort } from './table';
 export type { TaoPaginationItem } from './pagination';
 export type { TaoBreadcrumbItem } from './breadcrumb';
+export type { TaoQuantityChangeSource } from './quantity';
 
 export default TaoUI;

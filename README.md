@@ -11,7 +11,8 @@
 - **TaoButton** — кнопка с вариантами (primary, secondary, ghost, danger), размерами и состояниями
 - **TaoCard** — карточка с поддержкой слотов (cover, headerTitle, header/headerSecondary, title/sub, footer)
 - **TaoCopy** — кнопка копирования текста в буфер обмена
-- **TaoInput** — поле ввода с поддержкой v-model, валидации и различных типов
+- **TaoInput** — поле ввода с поддержкой v-model, валидации и слотов `#prefix` / `#suffix` (иконка или текст внутри рамки)
+- **TaoInputGroup** — склейка снаружи: `#before` | поле | `#after` (протокол, единица, кнопка)
 - **TaoModal** — модальное окно с анимацией и слотами
 - **TaoDrawer** — боковая панель (фильтры, настройки). Esc, клик по фону, ловушка фокуса — как у модалки
 - **TaoSpoiler** — раскрывающийся блок (аккордеон)
@@ -33,7 +34,8 @@
 - **TaoRadio** / **TaoRadioGroup** — взаимоисключающий выбор из 2–5 вариантов
 - **TaoSelect** — выпадающий список с клавиатурой, тот же визуал, что у Input
 - **TaoFormField** — общие label / hint / error для полей формы
-- **TaoInputNumber** — число с min/max/step и кнопками ±. Пустое значение — `null`
+- **TaoInputNumber** — число с min/max/step и кнопками ± справа. Пустое значение — `null`
+- **TaoQuantity** — количество в корзине: `− | поле | +`, целые штуки, сток, минус на минимуме может убрать строку
 - **TaoTextarea** — многострочное поле с авто-высотой и модификаторами (noBorder, noBackground, textCenter, submitOnEnter)
 - **TaoPinCode** — пин-код из N полей с авто-переходом фокуса между ними
 - **TaoSlider** — интерактивный слайдер (drag + клик), с опциональным точным вводом значения по правому клику
@@ -259,9 +261,23 @@ const columns = [
 ```
 
 ```vue
+<TaoInput v-model="q" placeholder="Найти…">
+  <template #prefix>⌕</template>
+</TaoInput>
+
+<TaoInputGroup>
+  <template #before>https://</template>
+  <TaoInput v-model="host" placeholder="example.com" />
+  <template #after>
+    <TaoButton>Проверить</TaoButton>
+  </template>
+</TaoInputGroup>
+
 <TaoFormField label="Количество">
   <TaoInputNumber v-model="qty" :min="1" :max="99" />
 </TaoFormField>
+
+<TaoQuantity v-model="qty" :max="12" @dec="onDec" />
 
 <TaoCounter :value="score" :max-digits="6" />
 ```

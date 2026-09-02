@@ -6,7 +6,9 @@ import {
   TaoCard,
   TaoCopy,
   TaoInput,
+  TaoInputGroup,
   TaoInputNumber,
+  TaoQuantity,
   TaoModal,
   TaoSpoiler,
   TaoTabs,
@@ -60,8 +62,28 @@ const buttonSizes = ['small', 'medium', 'large']
 
 // TaoInput demo
 const inputValue = ref('')
+const searchQuery = ref('')
+const amountText = ref('1490')
+const siteHost = ref('taoui.dev')
 const qty = ref(2)
 const price = ref(1490)
+const cartQty = ref(1)
+const shelfQty = ref(1)
+const stockQty = ref(3)
+const quantityNote = ref('')
+
+function onShelfDec(value) {
+  if (value <= 1) {
+    quantityNote.value = 'Минус на 1: родитель может убрать строку'
+    toast().info().message('Убрать из корзины')
+  }
+}
+
+function onStockInc(value) {
+  if (value >= 5) {
+    quantityNote.value = 'Сток кончился — плюс больше не двигает число'
+  }
+}
 const counterValue = ref(1284)
 
 // TaoModal demo
@@ -258,8 +280,9 @@ const navGroups = [
     id: 'forms',
     title: 'Формы',
     items: [
-      { id: 'input', label: 'TaoInput' },
+      { id: 'input', label: 'TaoInput / Group' },
       { id: 'input-number', label: 'TaoInputNumber' },
+      { id: 'quantity', label: 'TaoQuantity' },
       { id: 'textarea', label: 'TaoTextarea' },
       { id: 'checkbox', label: 'TaoCheckbox' },
       { id: 'select', label: 'Select / Switch / Radio' },
@@ -602,9 +625,9 @@ onBeforeUnmount(() => {
     </section>
 
     <!-- TaoInput -->
-    <section id="input" class="showcase-section" v-show="sectionVisible('forms', 'TaoInput')">
+    <section id="input" class="showcase-section" v-show="sectionVisible('forms', 'TaoInput TaoInputGroup')">
       <h2>TaoInput</h2>
-      <p>Поле ввода с поддержкой v-model, валидации и различных типов</p>
+      <p>Поле ввода с v-model. Иконка или единица — слоты <code>#prefix</code> / <code>#suffix</code> внутри рамки. Склейка снаружи — <code>TaoInputGroup</code>.</p>
       
       <div style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
         <TaoInput 
@@ -637,27 +660,57 @@ onBeforeUnmount(() => {
           disabled 
           model-value="Нельзя редактировать"
         />
+
+        <TaoFormField label="Поиск" hint="Иконка и крестик живут внутри поля">
+          <TaoInput v-model="searchQuery" placeholder="Найти…">
+            <template #prefix>
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5" />
+                <path d="M10.5 10.5 14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+              </svg>
+            </template>
+            <template #suffix>
+              <button v-if="searchQuery" type="button" aria-label="Очистить" @click="searchQuery = ''">×</button>
+            </template>
+          </TaoInput>
+        </TaoFormField>
+
+        <TaoFormField label="Сумма">
+          <TaoInput v-model="amountText" placeholder="0">
+            <template #suffix>₽</template>
+          </TaoInput>
+        </TaoFormField>
+
+        <TaoFormField label="Сайт" hint="https:// и кнопка — снаружи, это уже группа">
+          <TaoInputGroup>
+            <template #before>https://</template>
+            <TaoInput v-model="siteHost" placeholder="example.com" />
+            <template #after>
+              <TaoButton @click="toast().info().message('Проверяем ' + siteHost)">Проверить</TaoButton>
+            </template>
+          </TaoInputGroup>
+        </TaoFormField>
       </div>
 
       <div class="code-block">
-        <pre><code>&lt;TaoInput 
-  v-model="value" 
-  label="Название" 
-  placeholder="Введите значение" 
-/&gt;
+        <pre><code>&lt;TaoInput v-model="q" placeholder="Найти…"&gt;
+  &lt;template #prefix&gt;…&lt;/template&gt;
+  &lt;template #suffix&gt;₽&lt;/template&gt;
+&lt;/TaoInput&gt;
 
-&lt;TaoInput 
-  type="email" 
-  label="Email" 
-  error 
-  error-message="Некорректный email"
-/&gt;</code></pre>
+&lt;TaoInputGroup&gt;
+  &lt;template #before&gt;https://&lt;/template&gt;
+  &lt;TaoInput v-model="host" /&gt;
+  &lt;template #after&gt;
+    &lt;TaoButton&gt;Проверить&lt;/TaoButton&gt;
+  &lt;/template&gt;
+&lt;/TaoInputGroup&gt;</code></pre>
       </div>
     </section>
 
     <section id="input-number" class="showcase-section" v-show="sectionVisible('forms', 'TaoInputNumber')">
       <h2>TaoInputNumber</h2>
-      <p>Число, не текст: стрелки, кнопки ±, min/max/step. Пустое поле — <code>null</code>.</p>
+      <p>Число, не текст: стрелки, кнопки ± справа, min/max/step. Пустое поле — <code>null</code>. Для корзины — <code>TaoQuantity</code>.</p>
 
       <div style="max-width: 280px; display: flex; flex-direction: column; gap: 16px;">
         <TaoFormField label="Количество" hint="Стрелки вверх/вниз тоже меняют шаг">
@@ -678,7 +731,38 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <!-- TaoModal -->
+    <section id="quantity" class="showcase-section" v-show="sectionVisible('forms', 'TaoQuantity')">
+      <h2>TaoQuantity</h2>
+      <p>
+        Количество в магазине: кнопки по бокам, только целые штуки, не пустое поле.
+        <code>allow-remove</code> — минус на минимуме остаётся живым и шлёт <code>dec</code> (убрать строку).
+        Без него минус на 1 выключен. <code>force-max-limit</code> прижимает ввод к стоку.
+      </p>
+
+      <div style="max-width: 280px; display: flex; flex-direction: column; gap: 16px;">
+        <TaoFormField label="В корзине" hint="Минус на 1 выключен — удаление отдельной кнопкой">
+          <TaoQuantity v-model="cartQty" :max="12" :allow-remove="false" />
+        </TaoFormField>
+        <TaoFormField label="С витрины" hint="Минус на 1 шлёт dec — можно убрать карточку">
+          <TaoQuantity v-model="shelfQty" :max="8" @dec="onShelfDec" />
+        </TaoFormField>
+        <TaoFormField label="Сток 5 шт." hint="Плюс стопорится на максимуме, лишнее в поле схлопывается">
+          <TaoQuantity v-model="stockQty" :max="5" @inc="onStockInc" />
+        </TaoFormField>
+        <p v-if="quantityNote" style="margin: 0; color: var(--tao-color-text-muted); font-size: 13px;">{{ quantityNote }}</p>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoQuantity v-model="qty" :max="12" :allow-remove="false" /&gt;
+
+&lt;TaoQuantity
+  v-model="qty"
+  :max="stock"
+  @dec="onDec"
+  @change="onChange"
+/&gt;</code></pre>
+      </div>
+    </section>
     <section id="modal" class="showcase-section" v-show="sectionVisible('overlays', 'TaoModal')">
       <h2>TaoModal</h2>
       <p>Модальное окно: слоты, клик по фону, Esc, ловушка фокуса. Закрывается и по крестику.</p>
