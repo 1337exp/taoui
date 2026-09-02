@@ -10,6 +10,11 @@ export interface TaoDateCell {
     currentMonth: boolean;
 }
 
+export interface TaoDateRangeValue {
+    start: string;
+    end: string;
+}
+
 const ISO_DATE = /^(\d{4})-(\d{2})-(\d{2})$/;
 
 export function formatTaoDateIso(parts: TaoDateParts): string {
@@ -90,6 +95,44 @@ export function formatTaoDateLabel(iso: string, locale = 'ru-RU'): string {
         month: 'long',
         year: 'numeric',
     });
+}
+
+export function sortTaoDateRange(a: string, b: string): TaoDateRangeValue {
+    return a <= b ? { start: a, end: b } : { start: b, end: a };
+}
+
+export function parseTaoDateRange(value: TaoDateRangeValue | null | undefined): TaoDateRangeValue | null {
+    if (!value) {
+        return null;
+    }
+
+    const start = parseTaoDate(value.start);
+    const end = parseTaoDate(value.end);
+    if (!start || !end) {
+        return null;
+    }
+
+    return sortTaoDateRange(formatTaoDateIso(start), formatTaoDateIso(end));
+}
+
+export function formatTaoDateRangeLabel(start: string, end: string, locale = 'ru-RU'): string {
+    const fromParts = parseTaoDate(start);
+    const toParts = parseTaoDate(end);
+    if (!fromParts || !toParts) {
+        return '';
+    }
+
+    if (start === end) {
+        return formatTaoDateLabel(start, locale);
+    }
+
+    const from = new Date(fromParts.y, fromParts.m - 1, fromParts.d).toLocaleDateString(locale, {
+        day: 'numeric',
+        month: 'long',
+        ...(fromParts.y === toParts.y ? {} : { year: 'numeric' }),
+    });
+
+    return `${from} — ${formatTaoDateLabel(end, locale)}`;
 }
 
 export function formatTaoMonthLabel(year: number, month: number, locale = 'ru-RU'): string {

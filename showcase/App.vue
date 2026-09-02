@@ -38,6 +38,7 @@ import {
   TaoSelect,
   TaoCombobox,
   TaoDate,
+  TaoDateRange,
   TaoSwitch,
   TaoRadio,
   TaoRadioGroup,
@@ -287,6 +288,13 @@ function onComboTagCreate(text) {
 const deliveryDate = ref('2026-09-02')
 const emptyDate = ref(null)
 const errorDate = ref(null)
+const stayRange = ref({ start: '2026-09-02', end: '2026-09-10' })
+const emptyRange = ref(null)
+const errorRange = ref(null)
+
+function rangeModelHint(value) {
+  return value ? `${value.start} … ${value.end}` : 'null'
+}
 const orderStages = [
   { key: 'pay', label: 'Оплата', status: 'ok' },
   { key: 'pack', label: 'Сборка', status: 'work' },
@@ -430,16 +438,16 @@ const navGroups = [
     id: 'forms',
     title: 'Формы',
     items: [
-      { id: 'input', label: 'TaoInput / Group' },
+      { id: 'input', label: 'TaoInput / Group', aliases: ['TaoInput', 'TaoInputGroup'] },
       { id: 'input-number', label: 'TaoInputNumber' },
       { id: 'quantity', label: 'TaoQuantity' },
       { id: 'textarea', label: 'TaoTextarea' },
       { id: 'checkbox', label: 'TaoCheckbox' },
-      { id: 'select', label: 'Select / Switch / Radio' },
+      { id: 'select', label: 'Select / Switch / Radio', aliases: ['TaoSelect', 'TaoSwitch', 'TaoRadio', 'TaoFormField', 'FormField'] },
       { id: 'combobox', label: 'TaoCombobox' },
-      { id: 'date', label: 'TaoDate' },
+      { id: 'date', label: 'TaoDate / Range', aliases: ['TaoDate', 'TaoDateRange', 'DateRange'] },
       { id: 'pincode', label: 'TaoPinCode' },
-      { id: 'slider', label: 'Progress / Slider' },
+      { id: 'slider', label: 'Progress / Slider', aliases: ['TaoProgress', 'TaoSlider'] },
       { id: 'filedrop', label: 'TaoFileDrop' },
     ],
   },
@@ -461,10 +469,10 @@ const navGroups = [
     title: 'Макет',
     items: [
       { id: 'container', label: 'TaoContainer' },
-      { id: 'flex', label: 'Flex / Space' },
+      { id: 'flex', label: 'Flex / Space', aliases: ['TaoFlex', 'TaoSpace'] },
       { id: 'divider', label: 'TaoDivider' },
       { id: 'fieldset', label: 'TaoFieldset' },
-      { id: 'animated-border', label: 'AnimatedBorder' },
+      { id: 'animated-border', label: 'TaoAnimatedBorder' },
     ],
   },
   {
@@ -476,8 +484,8 @@ const navGroups = [
       { id: 'confirm', label: 'confirm()' },
       { id: 'tooltip', label: 'TaoTooltip' },
       { id: 'popover', label: 'TaoPopover' },
-      { id: 'dropdown', label: 'DropdownMenu' },
-      { id: 'spoiler', label: 'Spoiler / Group' },
+      { id: 'dropdown', label: 'TaoDropdownMenu' },
+      { id: 'spoiler', label: 'Spoiler / Group', aliases: ['TaoSpoiler', 'TaoSpoilerGroup'] },
     ],
   },
   {
@@ -520,15 +528,15 @@ const currentGroup = computed(() => {
   return navGroups.find((group) => group.id === activeGroup.value) ?? null
 })
 
-function sectionVisible(groupId, label) {
+function sectionVisible(groupId, sectionId) {
   const needle = query.value.trim().toLowerCase()
   if (needle) {
     const group = navGroups.find((item) => item.id === groupId)
-    return (
-      label.toLowerCase().includes(needle) ||
-      groupId.toLowerCase().includes(needle) ||
-      Boolean(group?.title.toLowerCase().includes(needle))
-    )
+    const item = group?.items.find((entry) => entry.id === sectionId)
+    const hay = [groupId, group?.title, item?.id, item?.label, ...(item?.aliases ?? [])]
+      .join(' ')
+      .toLowerCase()
+    return hay.includes(needle)
   }
   return activeGroup.value === 'all' || activeGroup.value === groupId
 }
@@ -541,7 +549,8 @@ function groupVisibleInNav(group) {
 }
 
 function itemMatchesQuery(item, needle) {
-  return item.label.toLowerCase().includes(needle) || item.id.toLowerCase().includes(needle)
+  const hay = [item.id, item.label, ...(item.aliases ?? [])].join(' ').toLowerCase()
+  return hay.includes(needle)
 }
 
 function itemVisibleInNav(group, item) {
@@ -604,12 +613,14 @@ onBeforeUnmount(() => {
     <header class="showcase-top">
       <div>
         <h1>Tao UI</h1>
+        <p class="showcase-lead">Vue 3 kit на дизайн-токенах. Поменял переменные — поменялась тема.</p>
       </div>
       <div class="theme-switcher">
         <span class="theme-switcher__label">Тема:</span>
         <button
           v-for="t in ['dark', 'light']"
           :key="t"
+          type="button"
           class="theme-switcher__btn"
           :class="{ active: theme === t }"
           @click="setTheme(t)"
@@ -675,9 +686,9 @@ onBeforeUnmount(() => {
         </div>
 
     <!-- TaoBlock -->
-    <section id="block" class="showcase-section" v-show="sectionVisible('basics', 'TaoBlock')">
+    <section id="block" class="showcase-section" v-show="sectionVisible('basics', 'block')">
       <h2>TaoBlock</h2>
-      <p>Базовый контейнер с настраиваемыми отступами и скруглением</p>
+      <p>Контейнер с padding, radius и тенью. Не страница и не карточка.</p>
       <TaoBlock :padding="24" :radius="12">
         <p>Это контент внутри TaoBlock. Можно задавать padding, radius, shadow и hover эффекты.</p>
       </TaoBlock>
@@ -689,9 +700,9 @@ onBeforeUnmount(() => {
     </section>
 
     <!-- TaoButton -->
-    <section id="button" class="showcase-section" v-show="sectionVisible('basics', 'TaoButton')">
+    <section id="button" class="showcase-section" v-show="sectionVisible('basics', 'button')">
       <h2>TaoButton</h2>
-      <p>Кнопки различных вариантов и размеров</p>
+      <p>Варианты, размеры и состояния. Тон кнопки — <code>danger</code>, не <code>error</code>.</p>
       
       <h3>Варианты (variant)</h3>
       <div class="button-row">
@@ -745,7 +756,7 @@ onBeforeUnmount(() => {
     </section>
 
     <!-- TaoCard -->
-    <section id="card" class="showcase-section" v-show="sectionVisible('basics', 'TaoCard')">
+    <section id="card" class="showcase-section" v-show="sectionVisible('basics', 'card')">
       <h2>TaoCard</h2>
       <p>
         Карточка со слотами cover / header / footer. Обложка — любой контент: фото или карусель.
@@ -825,12 +836,36 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
+    <section id="copy" class="showcase-section" v-show="sectionVisible('basics', 'copy')">
+      <h2>TaoCopy</h2>
+      <p>
+        По умолчанию — иконка листов. Клик копирует, сверху на пару секунд тултип.
+        Если кнопку скрыли или размонтировали, подсказка уходит вместе с ней.
+        Свой вид — слот <code>{ copy, copied }</code>.
+      </p>
+
+      <div class="copy-preview">
+        <code>{{ copyText }}</code>
+        <TaoCopy :text="copyText" />
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoCopy :text="value" /&gt;
+
+&lt;TaoCopy :text="value"&gt;
+  &lt;template #default="{ copy, copied }"&gt;
+    &lt;TaoButton @click="copy"&gt;{{ copied ? 'Готово' : 'Копировать' }}&lt;/TaoButton&gt;
+  &lt;/template&gt;
+&lt;/TaoCopy&gt;</code></pre>
+      </div>
+    </section>
+
     <!-- TaoInput -->
-    <section id="input" class="showcase-section" v-show="sectionVisible('forms', 'TaoInput TaoInputGroup')">
+    <section id="input" class="showcase-section" v-show="sectionVisible('forms', 'input')">
       <h2>TaoInput</h2>
       <p>Поле ввода с v-model. Иконка или единица — слоты <code>#prefix</code> / <code>#suffix</code> внутри рамки. Склейка снаружи — <code>TaoInputGroup</code>.</p>
       
-      <div style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+      <div class="demo-stack">
         <TaoInput 
           v-model="inputValue" 
           label="Текстовое поле" 
@@ -893,9 +928,9 @@ onBeforeUnmount(() => {
         </TaoFormField>
       </div>
 
-      <h3 style="margin: 28px 0 8px; font-size: 16px;">Форма и submit</h3>
-      <p style="margin: 0 0 12px;">Отдельного TaoForm нет: обычный <code>&lt;form&gt;</code>, Enter в поле отправляет, кнопка с <code>type="submit"</code>. В SPA — <code>@submit.prevent</code>.</p>
-      <form style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;" @submit.prevent="onDemoSubmit">
+      <h3 class="carousel-heading">Форма и submit</h3>
+      <p class="carousel-note">Отдельного TaoForm нет: обычный <code>&lt;form&gt;</code>, Enter в поле отправляет, кнопка с <code>type="submit"</code>. В SPA — <code>@submit.prevent</code>.</p>
+      <form class="demo-stack" @submit.prevent="onDemoSubmit">
         <TaoFormField label="Email">
           <TaoInput v-model="formEmail" type="email" placeholder="you@mail.com" />
         </TaoFormField>
@@ -928,11 +963,11 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <section id="input-number" class="showcase-section" v-show="sectionVisible('forms', 'TaoInputNumber')">
+    <section id="input-number" class="showcase-section" v-show="sectionVisible('forms', 'input-number')">
       <h2>TaoInputNumber</h2>
       <p>Число, не текст: стрелки, кнопки ± справа, min/max/step. Пустое поле — <code>null</code>. Для корзины — <code>TaoQuantity</code>.</p>
 
-      <div style="max-width: 280px; display: flex; flex-direction: column; gap: 16px;">
+      <div class="demo-stack demo-stack--narrow">
         <TaoFormField label="Количество" hint="Стрелки вверх/вниз тоже меняют шаг">
           <TaoInputNumber v-model="qty" :min="1" :max="99" />
         </TaoFormField>
@@ -951,7 +986,7 @@ onBeforeUnmount(() => {
       </div>
     </section>
 
-    <section id="quantity" class="showcase-section" v-show="sectionVisible('forms', 'TaoQuantity')">
+    <section id="quantity" class="showcase-section" v-show="sectionVisible('forms', 'quantity')">
       <h2>TaoQuantity</h2>
       <p>
         Количество в магазине: кнопки по бокам, только целые штуки, не пустое поле.
@@ -959,7 +994,7 @@ onBeforeUnmount(() => {
         Без него минус на 1 выключен. <code>force-max-limit</code> прижимает ввод к стоку.
       </p>
 
-      <div style="max-width: 280px; display: flex; flex-direction: column; gap: 16px;">
+      <div class="demo-stack demo-stack--narrow">
         <TaoFormField label="В корзине" hint="Минус на 1 выключен — удаление отдельной кнопкой">
           <TaoQuantity v-model="cartQty" :max="12" :allow-remove="false" />
         </TaoFormField>
@@ -983,351 +1018,25 @@ onBeforeUnmount(() => {
 /&gt;</code></pre>
       </div>
     </section>
-    <section id="modal" class="showcase-section" v-show="sectionVisible('overlays', 'TaoModal')">
-      <h2>TaoModal</h2>
-      <p>Модальное окно: слоты, клик по фону, Esc, ловушка фокуса. Закрывается и по крестику.</p>
-      
-      <TaoButton @click="isModalOpen = true" variant="primary">
-        Открыть модальное окно
-      </TaoButton>
 
-      <TaoModal v-model="isModalOpen" title="Заголовок модального окна">
-        <p>Это содержимое модального окна. Здесь можно разместить форму, текст, изображения или любые другие компоненты.</p>
-        <p>Закрывается по Esc, по крестику, по кнопке внизу или по клику вне окна.</p>
-        
-        <template #footer>
-          <TaoButton variant="secondary" @click="isModalOpen = false">Отмена</TaoButton>
-          <TaoButton variant="primary" @click="isModalOpen = false">Подтвердить</TaoButton>
-        </template>
-      </TaoModal>
+    <!-- TaoTextarea -->
+    <section id="textarea" class="showcase-section" v-show="sectionVisible('forms', 'textarea')">
+      <h2>TaoTextarea</h2>
+      <p>Многострочное поле с авто-высотой. <code>maxlength</code> режет ввод, <code>count</code> показывает «введено / максимум».</p>
 
-      <div class="code-block">
-        <pre><code>&lt;TaoButton @click="isOpen = true"&gt;
-  Открыть
-&lt;/TaoButton&gt;
-
-&lt;TaoModal v-model="isOpen" title="Заголовок"&gt;
-  &lt;p&gt;Содержимое&lt;/p&gt;
-  &lt;template #footer&gt;
-    &lt;TaoButton @click="isOpen = false"&gt;Закрыть&lt;/TaoButton&gt;
-  &lt;/template&gt;
-&lt;/TaoModal&gt;</code></pre>
-      </div>
-    </section>
-
-    <section id="drawer" class="showcase-section" v-show="sectionVisible('overlays', 'TaoDrawer')">
-      <h2>TaoDrawer</h2>
-      <p>Боковая панель: фильтры, корзина, настройки. Esc и клик по фону закрывают, фокус не уезжает на страницу.</p>
-
-      <TaoButton variant="secondary" @click="isDrawerOpen = true">Открыть справа</TaoButton>
-      <TaoDrawer v-model="isDrawerOpen" title="Фильтры">
-        <p>Здесь могут быть поля формы. На узком экране это удобнее модалки по центру.</p>
-        <template #footer>
-          <TaoButton variant="secondary" @click="isDrawerOpen = false">Сбросить</TaoButton>
-          <TaoButton @click="isDrawerOpen = false">Применить</TaoButton>
-        </template>
-      </TaoDrawer>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoDrawer v-model="open" title="Фильтры"&gt;
-  ...
-&lt;/TaoDrawer&gt;</code></pre>
-      </div>
-    </section>
-
-    <section id="spoiler" class="showcase-section" v-show="sectionVisible('overlays', 'TaoSpoiler TaoSpoilerGroup')">
-      <h2>TaoSpoiler</h2>
-      <p>
-        Раскрывающийся блок. <code>v-model</code> держит открытость.
-        Несколько подряд сами друг друга не закрывают — для аккордеона оберните в
-        <code>TaoSpoilerGroup</code>: в модели ключ панели или <code>null</code>.
-      </p>
-
-      <TaoSpoiler v-model="spoilerOpen" title="Нажмите, чтобы раскрыть">
-        <p>Это скрытое содержимое спойлера. Здесь можно разместить подробную информацию, дополнительные настройки или любой другой контент, который нужно показывать по требованию.</p>
-        <ul>
-          <li>Пункт списка 1</li>
-          <li>Пункт списка 2</li>
-          <li>Пункт списка 3</li>
-        </ul>
-      </TaoSpoiler>
-
-      <h3 style="margin: 24px 0 12px;">Группа</h3>
-      <p class="carousel-note">Открыли одну — другая закрылась. Повторный клик по открытой сворачивает все.</p>
-      <TaoSpoilerGroup v-model="spoilerFaq">
-        <TaoSpoiler name="pay" title="Оплата">
-          <p>Счёт и чек приходят на почту после подтверждения.</p>
-        </TaoSpoiler>
-        <TaoSpoiler name="ship" title="Доставка">
-          <p>Срок 2–5 дней, трек-номер в личном кабинете.</p>
-        </TaoSpoiler>
-        <TaoSpoiler name="return" title="Возврат">
-          <p>14 дней, если сохранён товарный вид.</p>
-        </TaoSpoiler>
-      </TaoSpoilerGroup>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoSpoiler v-model="open" title="Заголовок"&gt;
-  &lt;p&gt;Скрытое содержимое&lt;/p&gt;
-&lt;/TaoSpoiler&gt;
-
-&lt;TaoSpoilerGroup v-model="faq"&gt;
-  &lt;TaoSpoiler name="pay" title="Оплата"&gt;…&lt;/TaoSpoiler&gt;
-  &lt;TaoSpoiler name="ship" title="Доставка"&gt;…&lt;/TaoSpoiler&gt;
-&lt;/TaoSpoilerGroup&gt;</code></pre>
-      </div>
-    </section>
-
-    <!-- TaoTabs -->
-    <section id="tabs" class="showcase-section" v-show="sectionVisible('nav', 'TaoTabs')">
-      <h2>TaoTabs</h2>
-      <p>Вкладки — примитив, не карточка страницы. Стрелки листают, Home/End — к краям.</p>
-      
-      <TaoTabs v-model="activeTab" :tabs="tabs">
-        <template #default="{ activeTab }">
-          <p>{{ tabContents[activeTab] }}</p>
-        </template>
-      </TaoTabs>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoTabs v-model="activeTab" :tabs="tabs"&gt;
-  &lt;template #default="{ activeTab }"&gt;
-    &lt;p&gt;&#123;&#123; tabContents[activeTab] &#125;&#125;&lt;/p&gt;
-  &lt;/template&gt;
-&lt;/TaoTabs&gt;
-
-&lt;script setup&gt;
-const tabs = [
-  { key: 'tab1', label: 'Вкладка 1' },
-  { key: 'tab2', label: 'Вкладка 2' }
-]
-&lt;/script&gt;</code></pre>
-      </div>
-    </section>
-
-    <!-- TaoTooltip -->
-    <section id="tooltip" class="showcase-section" v-show="sectionVisible('overlays', 'TaoTooltip')">
-      <h2>TaoTooltip</h2>
-      <p>Всплывающая подсказка при наведении и при фокусе с клавиатуры</p>
-      
-      <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
-        <TaoTooltip content="Подсказка сверху" position="top">
-          <TaoButton variant="secondary">Top</TaoButton>
-        </TaoTooltip>
-
-        <TaoTooltip content="Подсказка снизу" position="bottom">
-          <TaoButton variant="secondary">Bottom</TaoButton>
-        </TaoTooltip>
-
-        <TaoTooltip content="Подсказка слева" position="left">
-          <TaoButton variant="secondary">Left</TaoButton>
-        </TaoTooltip>
-
-        <TaoTooltip content="Подсказка справа" position="right">
-          <TaoButton variant="secondary">Right</TaoButton>
-        </TaoTooltip>
+      <div class="demo-stack">
+        <TaoFormField label="Комментарий" hint="Необязательно">
+          <TaoTextarea v-model="textareaValue" placeholder="Печатайте..." :maxlength="140" count />
+        </TaoFormField>
       </div>
 
       <div class="code-block">
-        <pre><code>&lt;TaoTooltip content="Текст подсказки" position="top"&gt;
-  &lt;TaoButton&gt;Наведи на меня&lt;/TaoButton&gt;
-&lt;/TaoTooltip&gt;</code></pre>
-      </div>
-    </section>
-
-    <section id="popover" class="showcase-section" v-show="sectionVisible('overlays', 'TaoPopover')">
-      <h2>TaoPopover</h2>
-      <p>
-        Панель по клику: внутри любой контент. <code>v-model</code> — открытость.
-        Esc и клик снаружи закрывают, у края экрана панель переворачивается.
-        Это не Tooltip (там текст и hover) и не DropdownMenu (там список действий).
-      </p>
-
-      <TaoPopover v-model="popoverOpen">
-        <template #trigger>
-          <TaoButton variant="secondary">Фильтры</TaoButton>
-        </template>
-        <TaoCheckbox v-model="popoverStock" label="Только в наличии" />
-        <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
-          <TaoButton size="small" @click="popoverOpen = false">Готово</TaoButton>
-        </div>
-      </TaoPopover>
-      <p style="margin-top: 8px; font-size: 13px;">{{ popoverStock ? 'В наличии' : 'Все товары' }}</p>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoPopover v-model="open"&gt;
-  &lt;template #trigger&gt;
-    &lt;TaoButton variant="secondary"&gt;Фильтры&lt;/TaoButton&gt;
-  &lt;/template&gt;
-  &lt;TaoCheckbox v-model="inStock" label="Только в наличии" /&gt;
-&lt;/TaoPopover&gt;</code></pre>
-      </div>
-    </section>
-
-    <section id="copy" class="showcase-section" v-show="sectionVisible('basics', 'TaoCopy')">
-      <h2>TaoCopy</h2>
-      <p>
-        По умолчанию — иконка листов. Клик копирует, сверху на пару секунд тултип.
-        Если кнопку скрыли или размонтировали, подсказка уходит вместе с ней.
-        Свой вид — слот <code>{ copy, copied }</code>.
-      </p>
-
-      <div class="copy-preview">
-        <code>{{ copyText }}</code>
-        <TaoCopy :text="copyText" />
-      </div>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoCopy :text="value" /&gt;
-
-&lt;TaoCopy :text="value"&gt;
-  &lt;template #default="{ copy, copied }"&gt;
-    &lt;TaoButton @click="copy"&gt;{{ copied ? 'Готово' : 'Копировать' }}&lt;/TaoButton&gt;
-  &lt;/template&gt;
-&lt;/TaoCopy&gt;</code></pre>
-      </div>
-    </section>
-
-    <!-- TaoContainer -->
-    <section id="container" class="showcase-section" v-show="sectionVisible('layout', 'TaoContainer')">
-      <h2>TaoContainer</h2>
-      <p>Ограничение ширины контента с авто-центровкой (wide / slim / ultra-slim)</p>
-
-      <div style="display: flex; flex-direction: column; gap: 12px;">
-        <TaoContainer size="ultra-slim" style="background: var(--tao-color-surface-sunken); padding: 8px; border-radius: 6px;">
-          ultra-slim (max-width: 400px)
-        </TaoContainer>
-        <TaoContainer size="slim" style="background: var(--tao-color-surface-sunken); padding: 8px; border-radius: 6px;">
-          slim (max-width: 500px)
-        </TaoContainer>
-      </div>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoContainer size="slim"&gt;
-  Контент ограниченной ширины
-&lt;/TaoContainer&gt;</code></pre>
-      </div>
-    </section>
-
-    <!-- TaoFlex / TaoSpace -->
-    <section id="flex" class="showcase-section" v-show="sectionVisible('layout', 'TaoFlex TaoSpace')">
-      <h2>TaoFlex / TaoSpace</h2>
-      <p>Обёртка над flexbox и авто-расстановка дочерних элементов с равномерным gap</p>
-
-      <h3>TaoFlex</h3>
-      <TaoFlex justify="space-between" style="background: var(--tao-color-surface-sunken); padding: 12px; border-radius: 6px;">
-        <span>Слева</span>
-        <span>По центру</span>
-        <span>Справа</span>
-      </TaoFlex>
-
-      <h3>TaoSpace</h3>
-      <TaoSpace>
-        <TaoButton size="small" variant="secondary">Один</TaoButton>
-        <TaoButton size="small" variant="secondary">Два</TaoButton>
-        <TaoButton size="small" variant="secondary">Три</TaoButton>
-      </TaoSpace>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoFlex justify="space-between"&gt;
-  &lt;span&gt;Слева&lt;/span&gt;
-  &lt;span&gt;Справа&lt;/span&gt;
-&lt;/TaoFlex&gt;
-
-&lt;TaoSpace&gt;
-  &lt;TaoButton&gt;Один&lt;/TaoButton&gt;
-  &lt;TaoButton&gt;Два&lt;/TaoButton&gt;
-&lt;/TaoSpace&gt;</code></pre>
-      </div>
-    </section>
-
-    <!-- TaoDivider -->
-    <section id="divider" class="showcase-section" v-show="sectionVisible('layout', 'TaoDivider')">
-      <h2>TaoDivider</h2>
-      <p>Разделитель: линия, линия с текстом, или пустой отступ</p>
-
-      <p style="margin-bottom: 4px;">variant="line" (по умолчанию):</p>
-      <TaoDivider variant="line" />
-
-      <p style="margin-bottom: 4px;">variant="text":</p>
-      <TaoDivider variant="text">или</TaoDivider>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoDivider variant="line" /&gt;
-&lt;TaoDivider variant="text"&gt;или&lt;/TaoDivider&gt;
-&lt;TaoDivider variant="gap" size="small" /&gt;</code></pre>
-      </div>
-    </section>
-
-    <section id="fieldset" class="showcase-section" v-show="sectionVisible('layout', 'TaoFieldset')">
-      <h2>TaoFieldset</h2>
-      <p>
-        Группа связанных полей: рамка, подпись на верхней границе.
-        Это <code>fieldset</code> + <code>legend</code>, не карточка и не Divider.
-        <code>align</code> — <code>start</code>, <code>center</code> или <code>end</code>.
-      </p>
-
-      <div style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
-        <TaoFieldset legend="Доставка">
-          <TaoFormField label="Адрес">
-            <TaoInput v-model="fieldsetAddress" placeholder="Улица, дом" />
-          </TaoFormField>
-        </TaoFieldset>
-
-        <TaoFieldset legend="Оплата" align="center">
-          <p style="margin: 0; font-size: 13px;">Счёт придёт на почту после подтверждения.</p>
-        </TaoFieldset>
-
-        <TaoFieldset legend="Возврат" align="end">
-          <p style="margin: 0; font-size: 13px;">14 дней, если сохранён товарный вид.</p>
-        </TaoFieldset>
-      </div>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoFieldset legend="Доставка"&gt;
-  &lt;TaoFormField label="Адрес"&gt;
-    &lt;TaoInput v-model="address" /&gt;
-  &lt;/TaoFormField&gt;
-&lt;/TaoFieldset&gt;
-
-&lt;TaoFieldset legend="Оплата" align="center"&gt;…&lt;/TaoFieldset&gt;</code></pre>
-      </div>
-    </section>
-
-    <!-- TaoAnimatedBorder -->
-    <section id="animated-border" class="showcase-section" v-show="sectionVisible('layout', 'TaoAnimatedBorder')">
-      <h2>TaoAnimatedBorder</h2>
-      <p>Контейнер с анимированной радужной рамкой — декоративный эффект, не завязан на тему</p>
-
-      <div style="display: flex; gap: 24px; flex-wrap: wrap;">
-        <div>
-          <p style="margin-bottom: 8px; font-size: 13px;">По умолчанию — только контур</p>
-          <TaoAnimatedBorder style="padding: 20px; display: inline-block;">
-            Только рамка
-          </TaoAnimatedBorder>
-        </div>
-
-        <div>
-          <p style="margin-bottom: 8px; font-size: 13px;">light — рамка + мягкое свечение</p>
-          <TaoAnimatedBorder light style="padding: 20px; display: inline-block;">
-            Рамка со свечением
-          </TaoAnimatedBorder>
-        </div>
-      </div>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoAnimatedBorder&gt;
-  Только переливающийся контур
-&lt;/TaoAnimatedBorder&gt;
-
-&lt;TaoAnimatedBorder light&gt;
-  Контур + мягкое свечение вокруг
-&lt;/TaoAnimatedBorder&gt;</code></pre>
+        <pre><code>&lt;TaoTextarea v-model="text" placeholder="Печатайте..." :maxlength="140" count /&gt;</code></pre>
       </div>
     </section>
 
     <!-- TaoCheckbox -->
-    <section id="checkbox" class="showcase-section" v-show="sectionVisible('forms', 'TaoCheckbox')">
+    <section id="checkbox" class="showcase-section" v-show="sectionVisible('forms', 'checkbox')">
       <h2>TaoCheckbox</h2>
       <p>Чекбокс с v-model. Hint и error — через TaoFormField. <code>indeterminate</code> — частично выбран: черта, клик ставит галочку, смешанное считает родитель.</p>
 
@@ -1360,11 +1069,11 @@ const tabs = [
     </section>
 
     <!-- TaoSwitch / Radio / Select -->
-    <section id="select" class="showcase-section" v-show="sectionVisible('forms', 'TaoSwitch TaoRadio TaoSelect TaoFormField')">
+    <section id="select" class="showcase-section" v-show="sectionVisible('forms', 'select')">
       <h2>TaoSwitch / TaoRadio / TaoSelect</h2>
       <p>Форменные контролы. Label, hint и error — через TaoFormField. Select сбрасывается в <code>null</code> кнопкой «Очистить» или Delete.</p>
 
-      <div style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+      <div class="demo-stack">
         <TaoFormField label="Город" hint="Казань пока недоступна">
           <TaoSelect v-model="city" :options="cities" placeholder="Выберите город" />
         </TaoFormField>
@@ -1397,7 +1106,7 @@ const tabs = [
       </div>
     </section>
 
-    <section id="combobox" class="showcase-section" v-show="sectionVisible('forms', 'TaoCombobox')">
+    <section id="combobox" class="showcase-section" v-show="sectionVisible('forms', 'combobox')">
       <h2>TaoCombobox</h2>
       <p>
         Select с полем: печатаете — список фильтруется. По умолчанию только из списка:
@@ -1406,7 +1115,7 @@ const tabs = [
         <code>options</code>, слушайте <code>@create</code>. Esc и клик снаружи закрывают.
       </p>
 
-      <div style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+      <div class="demo-stack">
         <TaoFormField
           label="Город"
           :hint="comboCity ? `В модели: ${comboCity}` : 'Только из списка. Начните с «мо» или «сан»'"
@@ -1451,14 +1160,14 @@ const tabs = [
       </div>
     </section>
 
-    <section id="date" class="showcase-section" v-show="sectionVisible('forms', 'TaoDate')">
+    <section id="date" class="showcase-section" v-show="sectionVisible('forms', 'date')">
       <h2>TaoDate</h2>
       <p>
         Один день, не дата-время. В <code>v-model</code> всегда <code>YYYY-MM-DD</code>,
         без часов и пояса. Попап как у Select: Esc, клик снаружи, стрелки по дням.
       </p>
 
-      <div style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+      <div class="demo-stack">
         <TaoFormField label="День доставки" :hint="'В модели: ' + (deliveryDate || 'null')">
           <TaoDate v-model="deliveryDate" min="2026-09-01" max="2026-09-30" />
         </TaoFormField>
@@ -1472,7 +1181,7 @@ const tabs = [
       <p class="carousel-note">
         Красная рамка — не поломка календаря, а <code>error</code> у <code>TaoFormField</code>, как у Select.
       </p>
-      <div style="max-width: 400px; display: flex; flex-direction: column; gap: 16px;">
+      <div class="demo-stack">
         <TaoFormField label="Не указали день" error="Укажите дату">
           <TaoDate v-model="errorDate" />
         </TaoFormField>
@@ -1487,260 +1196,45 @@ const tabs = [
   &lt;TaoDate v-model="day" min="2026-09-01" max="2026-09-30" /&gt;
 &lt;/TaoFormField&gt;</code></pre>
       </div>
-    </section>
-    <section id="alert" class="showcase-section" v-show="sectionVisible('feedback', 'TaoAlert')">
-      <h2>TaoAlert</h2>
-      <p>Инлайн-баннер: ошибка формы, предупреждение на странице. Не тост — живёт в вёрстке.</p>
 
-      <div style="display: flex; flex-direction: column; gap: 12px; max-width: 520px;">
-        <TaoAlert type="success" title="Сохранено">Профиль обновлён.</TaoAlert>
-        <TaoAlert type="error" title="Ошибка">Не удалось связаться с сервером.</TaoAlert>
-        <TaoAlert v-if="showAlert" type="warning" title="Черновик" closable @close="showAlert = false">
-          Сохраните, прежде чем уйти.
-        </TaoAlert>
-        <TaoAlert type="info">Можно вызвать и без заголовка.</TaoAlert>
+      <h2>TaoDateRange</h2>
+      <p>
+        Период, не два отдельных Date. В <code>v-model</code> — <code>{ start, end }</code> или
+        <code>null</code>, обе даты <code>YYYY-MM-DD</code>. Первый клик — начало, второй — конец;
+        если конец раньше начала, меняются местами. Один день можно: кликните ту же дату дважды.
+        Неполный выбор в модель не пишется — Esc или клик снаружи откатывает черновик.
+      </p>
+
+      <div class="demo-stack">
+        <TaoFormField label="Даты поездки" :hint="'В модели: ' + rangeModelHint(stayRange)">
+          <TaoDateRange v-model="stayRange" min="2026-09-01" max="2026-09-30" />
+        </TaoFormField>
+
+        <TaoFormField label="Пустой период" hint="Сегодня — один день, Очистить — null">
+          <TaoDateRange v-model="emptyRange" placeholder="Выберите период" />
+        </TaoFormField>
       </div>
 
-      <div class="code-block">
-        <pre><code>&lt;TaoAlert type="warning" title="Черновик" closable @close="hide"&gt;
-  Сохраните, прежде чем уйти.
-&lt;/TaoAlert&gt;</code></pre>
-      </div>
-    </section>
+      <h3>Состояния</h3>
+      <div class="demo-stack">
+        <TaoFormField label="Не указали период" error="Укажите даты">
+          <TaoDateRange v-model="errorRange" />
+        </TaoFormField>
 
-    <!-- TaoTextarea -->
-    <section id="textarea" class="showcase-section" v-show="sectionVisible('forms', 'TaoTextarea')">
-      <h2>TaoTextarea</h2>
-      <p>Многострочное поле с авто-высотой. <code>maxlength</code> режет ввод, <code>count</code> показывает «введено / максимум».</p>
-
-      <div style="max-width: 400px;">
-        <TaoFormField label="Комментарий" hint="Необязательно">
-          <TaoTextarea v-model="textareaValue" placeholder="Печатайте..." :maxlength="140" count />
+        <TaoFormField label="Disabled">
+          <TaoDateRange :model-value="{ start: '2026-09-02', end: '2026-09-10' }" disabled />
         </TaoFormField>
       </div>
 
       <div class="code-block">
-        <pre><code>&lt;TaoTextarea v-model="text" placeholder="Печатайте..." :maxlength="140" count /&gt;</code></pre>
-      </div>
-    </section>
-
-    <!-- TaoTag -->
-    <section id="tag" class="showcase-section" v-show="sectionVisible('feedback', 'TaoTag')">
-      <h2>TaoTag</h2>
-      <p>Тег / бейдж со статусами</p>
-
-      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-        <TaoTag>default</TaoTag>
-        <TaoTag type="neutral">neutral</TaoTag>
-        <TaoTag type="success">success</TaoTag>
-        <TaoTag type="danger">danger</TaoTag>
-        <TaoTag type="warning">warning</TaoTag>
-        <TaoTag type="info">info</TaoTag>
-        <TaoTag pointer>кликабельный</TaoTag>
-      </div>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoTag type="success"&gt;Активен&lt;/TaoTag&gt;
-&lt;TaoTag type="danger"&gt;Ошибка&lt;/TaoTag&gt;</code></pre>
-      </div>
-    </section>
-
-    <!-- toast -->
-    <section id="toast" class="showcase-section" v-show="sectionVisible('feedback', 'toast')">
-      <h2>toast()</h2>
-      <p>Fluent-уведомления: цепочка в одном тике, setTimeout(0) отправляет показ.</p>
-
-      <div class="button-row">
-        <TaoButton variant="primary" @click="fireToast('success')">success</TaoButton>
-        <TaoButton variant="danger" @click="fireToast('error')">error</TaoButton>
-        <TaoButton variant="secondary" @click="fireToast('warning')">warning</TaoButton>
-        <TaoButton variant="ghost" @click="fireToast('info')">info</TaoButton>
-        <TaoButton variant="secondary" @click="fireToast('action')">с кнопкой</TaoButton>
-        <TaoButton variant="secondary" @click="fireToast('corner')">bottomRight</TaoButton>
-      </div>
-
-      <div class="code-block">
-        <pre><code>toast().success().message('Сохранено')
-toast().error().title('Сеть').message('Нет соединения')
-toast.success('Сохранено')</code></pre>
-      </div>
-    </section>
-
-    <!-- confirm -->
-    <section id="confirm" class="showcase-section" v-show="sectionVisible('overlays', 'confirm')">
-      <h2>confirm()</h2>
-      <p>Вопрос с оверлеем. Не тост: ждёт ответ, Esc и клик по фону = отмена, можно await.</p>
-
-      <div class="button-row">
-        <TaoButton variant="primary" @click="fireConfirm('save')">обычный</TaoButton>
-        <TaoButton variant="danger" @click="fireConfirm('danger')">опасный</TaoButton>
-      </div>
-      <p v-if="confirmResult" style="margin-top: 8px; font-size: 13px;">Ответ: {{ confirmResult }}</p>
-
-      <div class="code-block">
-        <pre><code>if (await confirm().title('Удалить файл?').danger()) {
-  remove()
-}</code></pre>
-      </div>
-    </section>
-
-    <!-- TaoProgress / TaoSlider -->
-    <section id="slider" class="showcase-section" v-show="sectionVisible('forms', 'TaoProgress TaoSlider')">
-      <h2>TaoProgress / TaoSlider</h2>
-      <p>Статичная полоса и слайдер. Проценты сверху по центру или <code>show-percentage="right"</code> справа; если есть <code>#right</code>, процент справа в скобках. <code>:show-percentage="false"</code> прячет. Слайдер слушает стрелки, Home/End и PageUp/Down.</p>
-
-      <h3>TaoProgress</h3>
-      <div style="display: flex; flex-direction: column; gap: 20px; max-width: 400px;">
-        <TaoProgress :progress="65" />
-        <TaoProgress :progress="50">
-          <template #left>0кб</template>
-          <template #right>50кб</template>
-        </TaoProgress>
-        <TaoProgress :progress="50" show-percentage="right">
-          <template #left>0кб</template>
-          <template #right>50кб</template>
-        </TaoProgress>
-        <TaoProgress :progress="50" :show-percentage="false">
-          <template #left>0кб</template>
-          <template #right>50кб</template>
-        </TaoProgress>
-      </div>
-
-      <h3>TaoSlider</h3>
-      <TaoSlider v-model="sliderValue" show-value style="max-width: 400px;" />
-      <p style="margin-top: 4px; font-size: 13px;">Значение: {{ sliderValue }} — <em>ПКМ по слайдеру открывает точный ввод числа</em></p>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoProgress :progress="65" /&gt;
-
-&lt;TaoProgress :progress="50"&gt;
-  &lt;template #left&gt;0кб&lt;/template&gt;
-  &lt;template #right&gt;50кб&lt;/template&gt;
-&lt;/TaoProgress&gt;
-
-&lt;TaoProgress :progress="50" show-percentage="right"&gt;
-  &lt;template #left&gt;0кб&lt;/template&gt;
-  &lt;template #right&gt;50кб&lt;/template&gt;
-&lt;/TaoProgress&gt;
-
-&lt;TaoProgress :progress="50" :show-percentage="false"&gt;
-  &lt;template #left&gt;0кб&lt;/template&gt;
-  &lt;template #right&gt;50кб&lt;/template&gt;
-&lt;/TaoProgress&gt;
-
-&lt;TaoSlider v-model="value" show-value /&gt;</code></pre>
-      </div>
-    </section>
-
-    <!-- TaoLoader -->
-    <section id="loader" class="showcase-section" v-show="sectionVisible('feedback', 'TaoLoader')">
-      <h2>TaoLoader</h2>
-      <p>Анимированный лоадер</p>
-
-      <div style="display: flex; gap: 24px; align-items: center;">
-        <TaoLoader :size="40" />
-        <TaoLoader :size="24" inline />
-        <TaoLoader :size="40" color="var(--tao-color-danger)" />
-      </div>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoLoader :size="40" /&gt;
-&lt;TaoLoader :size="24" inline /&gt;
-&lt;TaoLoader :size="40" color="var(--tao-color-danger)" /&gt;</code></pre>
-      </div>
-    </section>
-
-    <!-- TaoImage -->
-    <section id="image" class="showcase-section" v-show="sectionVisible('media', 'TaoImage')">
-      <h2>TaoImage</h2>
-      <p>
-        Обёртка над <code>&lt;img&gt;</code>: fade-in и плейсхолдер. По умолчанию грузится сразу.
-        <code>lazy</code> — браузер сам отложит загрузку, пока картинка не рядом с экраном.
-      </p>
-
-      <div style="width: 160px; height: 120px;">
-        <TaoImage :src="imageSrc" />
-      </div>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoImage :src="imageUrl" /&gt;
-&lt;TaoImage :src="imageUrl" lazy /&gt;</code></pre>
-      </div>
-    </section>
-
-    <section id="avatar" class="showcase-section" v-show="sectionVisible('media', 'TaoAvatar')">
-      <h2>TaoAvatar</h2>
-      <p>Фото или инициалы. Точка статуса и счётчик — по желанию, можно вместе.</p>
-
-      <div class="button-row" style="align-items: center;">
-        <TaoAvatar name="Анна Козлова" size="small" />
-        <TaoAvatar name="Анна Козлова" />
-        <TaoAvatar name="Борис" size="large" />
-        <TaoAvatar :src="imageSrc" name="Демо" size="large" />
-      </div>
-
-      <h3>Индикатор</h3>
-      <div class="button-row" style="align-items: center;">
-        <TaoAvatar name="Анна Козлова" dot />
-        <TaoAvatar name="Борис" size="large" dot="danger" />
-        <TaoAvatar name="Кира" size="large" dot="warning" />
-        <TaoAvatar name="Олег" dot="neutral" />
-        <TaoAvatar name="Анна Козлова" :count="3" />
-        <TaoAvatar name="Борис" size="large" :count="128" />
-        <TaoAvatar :src="imageSrc" name="Демо" size="large" dot :count="2" />
-      </div>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoAvatar name="Анна Козлова" /&gt;
-&lt;TaoAvatar name="Анна" dot /&gt;
-&lt;TaoAvatar name="Борис" :count="3" /&gt;
-&lt;TaoAvatar :src="url" name="Анна" size="large" dot :count="2" /&gt;</code></pre>
-      </div>
-    </section>
-
-    <!-- TaoFileDrop -->
-    <section id="filedrop" class="showcase-section" v-show="sectionVisible('forms', 'TaoFileDrop')">
-      <h2>TaoFileDrop</h2>
-      <p>
-        Зона загрузки (drag &amp; drop + клик). Текст внутри — слот, по умолчанию по-русски.
-        Имена выбранных файлов — список под зоной; крестик в строке сразу пишет в
-        <code>v-model</code>. Стереть всё — <code>show-clear</code> и <code>clear-request</code>:
-        компонент сам массив не трогает. <code>multiple</code> дописывает файлы, а не заменяет.
-        <code>:list="false"</code> прячет список.
-      </p>
-
-      <h3>Мгновенная очистка</h3>
-      <TaoFileDrop
-        v-model="filesInstant"
-        style="max-width: 400px;"
-        multiple
-        show-clear
-        @clear-request="filesInstant = []"
-      />
-
-      <h3>Очистка через подтверждение</h3>
-      <TaoFileDrop
-        v-model="filesConfirm"
-        style="max-width: 400px;"
-        show-clear
-        :list="false"
-        @clear-request="requestClearConfirm"
-      >
-        Перетащите накладную или выберите с диска
-      </TaoFileDrop>
-      <p style="margin-top: 4px; font-size: 13px;">Файлов: {{ filesConfirm.length }}</p>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoFileDrop v-model="files" multiple show-clear @clear-request="files = []" /&gt;
-
-&lt;TaoFileDrop v-model="files" show-clear :list="false" @clear-request="onClear"&gt;
-  Перетащите накладную или выберите с диска
-&lt;/TaoFileDrop&gt;</code></pre>
+        <pre><code>&lt;TaoFormField label="Даты поездки"&gt;
+  &lt;TaoDateRange v-model="stay" min="2026-09-01" max="2026-09-30" /&gt;
+&lt;/TaoFormField&gt;</code></pre>
       </div>
     </section>
 
     <!-- TaoPinCode -->
-    <section id="pincode" class="showcase-section" v-show="sectionVisible('forms', 'TaoPinCode')">
+    <section id="pincode" class="showcase-section" v-show="sectionVisible('forms', 'pincode')">
       <h2>TaoPinCode</h2>
       <p>
         По умолчанию клик стирает ячейку и все справа — неверный код можно набрать заново с этого места.
@@ -1770,62 +1264,96 @@ toast.success('Сохранено')</code></pre>
       </div>
     </section>
 
-    <!-- TaoDropdownMenu -->
-    <section id="dropdown" class="showcase-section" v-show="sectionVisible('overlays', 'TaoDropdownMenu')">
-      <h2>TaoDropdownMenu</h2>
-      <p>Выпадающее меню с авто-позиционированием у края экрана</p>
+    <!-- TaoProgress / TaoSlider -->
+    <section id="slider" class="showcase-section" v-show="sectionVisible('forms', 'slider')">
+      <h2>TaoProgress / TaoSlider</h2>
+      <p>Статичная полоса и слайдер. Проценты сверху по центру или <code>show-percentage="right"</code> справа; если есть <code>#right</code>, процент справа в скобках. <code>:show-percentage="false"</code> прячет. Слайдер слушает стрелки, Home/End и PageUp/Down.</p>
 
-      <TaoDropdownMenu :actions="dropdownActions" @selected="(id) => console.log('selected:', id)" />
+      <h3>TaoProgress</h3>
+      <div class="demo-stack">
+        <TaoProgress :progress="65" />
+        <TaoProgress :progress="50">
+          <template #left>0кб</template>
+          <template #right>50кб</template>
+        </TaoProgress>
+        <TaoProgress :progress="50" show-percentage="right">
+          <template #left>0кб</template>
+          <template #right>50кб</template>
+        </TaoProgress>
+        <TaoProgress :progress="50" :show-percentage="false">
+          <template #left>0кб</template>
+          <template #right>50кб</template>
+        </TaoProgress>
+      </div>
+
+      <h3>TaoSlider</h3>
+      <TaoSlider v-model="sliderValue" show-value class="demo-wide" />
+      <p style="margin-top: 4px; font-size: 13px;">Значение: {{ sliderValue }} — <em>ПКМ по слайдеру открывает точный ввод числа</em></p>
 
       <div class="code-block">
-        <pre><code>&lt;TaoDropdownMenu :actions="actions" @selected="onSelected" /&gt;</code></pre>
+        <pre><code>&lt;TaoProgress :progress="65" /&gt;
+
+&lt;TaoProgress :progress="50"&gt;
+  &lt;template #left&gt;0кб&lt;/template&gt;
+  &lt;template #right&gt;50кб&lt;/template&gt;
+&lt;/TaoProgress&gt;
+
+&lt;TaoProgress :progress="50" show-percentage="right"&gt;
+  &lt;template #left&gt;0кб&lt;/template&gt;
+  &lt;template #right&gt;50кб&lt;/template&gt;
+&lt;/TaoProgress&gt;
+
+&lt;TaoProgress :progress="50" :show-percentage="false"&gt;
+  &lt;template #left&gt;0кб&lt;/template&gt;
+  &lt;template #right&gt;50кб&lt;/template&gt;
+&lt;/TaoProgress&gt;
+
+&lt;TaoSlider v-model="value" show-value /&gt;</code></pre>
       </div>
     </section>
 
-    <!-- TaoLink -->
-    <section id="link" class="showcase-section" v-show="sectionVisible('nav', 'TaoLink')">
-      <h2>TaoLink</h2>
-      <p>Ссылка, использующая &lt;NuxtLink&gt; в Nuxt-проекте и обычный &lt;a&gt; вне его — без дополнительной настройки</p>
-
-      <TaoLink to="https://github.com" as-new-tab>Открыть в новой вкладке →</TaoLink>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoLink to="/profile"&gt;Профиль&lt;/TaoLink&gt;
-&lt;TaoLink to="https://example.com" as-new-tab&gt;Внешняя ссылка&lt;/TaoLink&gt;</code></pre>
-      </div>
-    </section>
-
-    <section id="breadcrumb" class="showcase-section" v-show="sectionVisible('nav', 'TaoBreadcrumb')">
-      <h2>TaoBreadcrumb</h2>
+    <!-- TaoFileDrop -->
+    <section id="filedrop" class="showcase-section" v-show="sectionVisible('forms', 'filedrop')">
+      <h2>TaoFileDrop</h2>
       <p>
-        <code>to</code> — путь страницы. В приложении с роутером «Пользователи» откроет <code>/users</code>.
-        Последний пункт без ссылки: вы уже там. Здесь клик не уводит со страницы, чтобы не сломать демо.
+        Зона загрузки (drag &amp; drop + клик). Текст внутри — слот, по умолчанию по-русски.
+        Имена выбранных файлов — список под зоной; крестик в строке сразу пишет в
+        <code>v-model</code>. Стереть всё — <code>show-clear</code> и <code>clear-request</code>:
+        компонент сам массив не трогает. <code>multiple</code> дописывает файлы, а не заменяет.
+        <code>:list="false"</code> прячет список.
       </p>
 
-      <div @click.capture="preventShowcaseNav">
-        <TaoBreadcrumb :items="breadcrumbItems" />
-      </div>
+      <h3>Мгновенная очистка</h3>
+      <TaoFileDrop
+        v-model="filesInstant"
+        class="demo-wide"
+        multiple
+        show-clear
+        @clear-request="filesInstant = []"
+      />
+
+      <h3>Очистка через подтверждение</h3>
+      <TaoFileDrop
+        v-model="filesConfirm"
+        class="demo-wide"
+        show-clear
+        :list="false"
+        @clear-request="requestClearConfirm"
+      >
+        Перетащите накладную или выберите с диска
+      </TaoFileDrop>
+      <p style="margin-top: 4px; font-size: 13px;">Файлов: {{ filesConfirm.length }}</p>
 
       <div class="code-block">
-        <pre><code>&lt;TaoBreadcrumb :items="[
-  { label: 'Главная', to: '/' },
-  { label: 'Пользователи', to: '/users' },
-  { label: 'Профиль' },
-]" /&gt;</code></pre>
+        <pre><code>&lt;TaoFileDrop v-model="files" multiple show-clear @clear-request="files = []" /&gt;
+
+&lt;TaoFileDrop v-model="files" show-clear :list="false" @clear-request="onClear"&gt;
+  Перетащите накладную или выберите с диска
+&lt;/TaoFileDrop&gt;</code></pre>
       </div>
     </section>
 
-    <!-- TaoIcon -->
-    <section id="icon" class="showcase-section" v-show="sectionVisible('media', 'TaoIcon')">
-      <h2>TaoIcon</h2>
-      <p>Обёртка для icon-шрифта — рендерит класс <code>icon-&lt;name&gt;</code>, сам шрифт нужно подключить в проекте (см. README)</p>
-
-      <div class="code-block">
-        <pre><code>&lt;TaoIcon name="arrow-up" :size="20" /&gt;</code></pre>
-      </div>
-    </section>
-
-    <section id="table" class="showcase-section" v-show="sectionVisible('data', 'TaoTable')">
+    <section id="table" class="showcase-section" v-show="sectionVisible('data', 'table')">
       <h2>TaoTable</h2>
       <p>Простая таблица для списков сущностей. Сама не сортирует и не режет страницы — это делает родитель, поэтому тот же компонент работает и с сервером.</p>
 
@@ -1877,7 +1405,7 @@ toast.success('Сохранено')</code></pre>
       </div>
     </section>
 
-    <section id="pagination" class="showcase-section" v-show="sectionVisible('data', 'TaoPagination')">
+    <section id="pagination" class="showcase-section" v-show="sectionVisible('data', 'pagination')">
       <h2>TaoPagination</h2>
       <p>
         Страницы с многоточием, счётчик «с–по из N». Текущая страница — через <code>v-model:page</code>.
@@ -1894,7 +1422,7 @@ toast.success('Сохранено')</code></pre>
       </div>
     </section>
 
-    <section id="empty" class="showcase-section" v-show="sectionVisible('data', 'TaoEmpty')">
+    <section id="empty" class="showcase-section" v-show="sectionVisible('data', 'empty')">
       <h2>TaoEmpty</h2>
       <p>Пустой список, нет поиска, нет прав — одна заготовка вместо самодельной вёрстки.</p>
 
@@ -1912,7 +1440,7 @@ toast.success('Сохранено')</code></pre>
       </div>
     </section>
 
-    <section id="stages" class="showcase-section" v-show="sectionVisible('data', 'TaoStages')">
+    <section id="stages" class="showcase-section" v-show="sectionVisible('data', 'stages')">
       <h2>TaoStages</h2>
       <p>
         Список независимых стадий, не степпер «ты на шаге 3».
@@ -1942,7 +1470,7 @@ toast.success('Сохранено')</code></pre>
       </div>
     </section>
 
-    <section id="skeleton" class="showcase-section" v-show="sectionVisible('data', 'TaoSkeleton')">
+    <section id="skeleton" class="showcase-section" v-show="sectionVisible('data', 'skeleton')">
       <h2>TaoSkeleton</h2>
       <p>Плейсхолдер, пока данные едут. Не путать с лоадером — это форма контента, а не спиннер.</p>
 
@@ -1963,7 +1491,7 @@ toast.success('Сохранено')</code></pre>
       </div>
     </section>
 
-    <section id="counter" class="showcase-section" v-show="sectionVisible('data', 'TaoCounter')">
+    <section id="counter" class="showcase-section" v-show="sectionVisible('data', 'counter')">
       <h2>TaoCounter</h2>
       <p>Витрина числа, не поле ввода. Цифры переворачиваются при смене значения. Для баланса, счёта, онлайна.</p>
 
@@ -1980,7 +1508,7 @@ toast.success('Сохранено')</code></pre>
       </div>
     </section>
 
-    <section id="carousel" class="showcase-section" v-show="sectionVisible('data', 'TaoCarousel')">
+    <section id="carousel" class="showcase-section" v-show="sectionVisible('data', 'carousel')">
       <h2>TaoCarousel</h2>
       <p>
         Три режима одной ленты: целый слайд с автопрокруткой, карточка с краешком следующей,
@@ -2052,7 +1580,389 @@ toast.success('Сохранено')</code></pre>
       </div>
     </section>
 
-    <section id="scrolltop" class="showcase-section" v-show="sectionVisible('nav', 'TaoScrollTop')">
+    <!-- TaoContainer -->
+    <section id="container" class="showcase-section" v-show="sectionVisible('layout', 'container')">
+      <h2>TaoContainer</h2>
+      <p>Ограничение ширины контента с авто-центровкой (wide / slim / ultra-slim)</p>
+
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <TaoContainer size="ultra-slim" style="background: var(--tao-color-surface-sunken); padding: 8px; border-radius: 6px;">
+          ultra-slim (max-width: 400px)
+        </TaoContainer>
+        <TaoContainer size="slim" style="background: var(--tao-color-surface-sunken); padding: 8px; border-radius: 6px;">
+          slim (max-width: 500px)
+        </TaoContainer>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoContainer size="slim"&gt;
+  Контент ограниченной ширины
+&lt;/TaoContainer&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- TaoFlex / TaoSpace -->
+    <section id="flex" class="showcase-section" v-show="sectionVisible('layout', 'flex')">
+      <h2>TaoFlex / TaoSpace</h2>
+      <p>Обёртка над flexbox и авто-расстановка дочерних элементов с равномерным gap</p>
+
+      <h3>TaoFlex</h3>
+      <TaoFlex justify="space-between" style="background: var(--tao-color-surface-sunken); padding: 12px; border-radius: 6px;">
+        <span>Слева</span>
+        <span>По центру</span>
+        <span>Справа</span>
+      </TaoFlex>
+
+      <h3>TaoSpace</h3>
+      <TaoSpace>
+        <TaoButton size="small" variant="secondary">Один</TaoButton>
+        <TaoButton size="small" variant="secondary">Два</TaoButton>
+        <TaoButton size="small" variant="secondary">Три</TaoButton>
+      </TaoSpace>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoFlex justify="space-between"&gt;
+  &lt;span&gt;Слева&lt;/span&gt;
+  &lt;span&gt;Справа&lt;/span&gt;
+&lt;/TaoFlex&gt;
+
+&lt;TaoSpace&gt;
+  &lt;TaoButton&gt;Один&lt;/TaoButton&gt;
+  &lt;TaoButton&gt;Два&lt;/TaoButton&gt;
+&lt;/TaoSpace&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- TaoDivider -->
+    <section id="divider" class="showcase-section" v-show="sectionVisible('layout', 'divider')">
+      <h2>TaoDivider</h2>
+      <p>Разделитель: линия, линия с текстом, или пустой отступ</p>
+
+      <p style="margin-bottom: 4px;">variant="line" (по умолчанию):</p>
+      <TaoDivider variant="line" />
+
+      <p style="margin-bottom: 4px;">variant="text":</p>
+      <TaoDivider variant="text">или</TaoDivider>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoDivider variant="line" /&gt;
+&lt;TaoDivider variant="text"&gt;или&lt;/TaoDivider&gt;
+&lt;TaoDivider variant="gap" size="small" /&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="fieldset" class="showcase-section" v-show="sectionVisible('layout', 'fieldset')">
+      <h2>TaoFieldset</h2>
+      <p>
+        Группа связанных полей: рамка, подпись на верхней границе.
+        Это <code>fieldset</code> + <code>legend</code>, не карточка и не Divider.
+        <code>align</code> — <code>start</code>, <code>center</code> или <code>end</code>.
+      </p>
+
+      <div class="demo-stack">
+        <TaoFieldset legend="Доставка">
+          <TaoFormField label="Адрес">
+            <TaoInput v-model="fieldsetAddress" placeholder="Улица, дом" />
+          </TaoFormField>
+        </TaoFieldset>
+
+        <TaoFieldset legend="Оплата" align="center">
+          <p style="margin: 0; font-size: 13px;">Счёт придёт на почту после подтверждения.</p>
+        </TaoFieldset>
+
+        <TaoFieldset legend="Возврат" align="end">
+          <p style="margin: 0; font-size: 13px;">14 дней, если сохранён товарный вид.</p>
+        </TaoFieldset>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoFieldset legend="Доставка"&gt;
+  &lt;TaoFormField label="Адрес"&gt;
+    &lt;TaoInput v-model="address" /&gt;
+  &lt;/TaoFormField&gt;
+&lt;/TaoFieldset&gt;
+
+&lt;TaoFieldset legend="Оплата" align="center"&gt;…&lt;/TaoFieldset&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- TaoAnimatedBorder -->
+    <section id="animated-border" class="showcase-section" v-show="sectionVisible('layout', 'animated-border')">
+      <h2>TaoAnimatedBorder</h2>
+      <p>Контейнер с анимированной радужной рамкой — декоративный эффект, не завязан на тему</p>
+
+      <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+        <div>
+          <p style="margin-bottom: 8px; font-size: 13px;">По умолчанию — только контур</p>
+          <TaoAnimatedBorder style="padding: 20px; display: inline-block;">
+            Только рамка
+          </TaoAnimatedBorder>
+        </div>
+
+        <div>
+          <p style="margin-bottom: 8px; font-size: 13px;">light — рамка + мягкое свечение</p>
+          <TaoAnimatedBorder light style="padding: 20px; display: inline-block;">
+            Рамка со свечением
+          </TaoAnimatedBorder>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoAnimatedBorder&gt;
+  Только переливающийся контур
+&lt;/TaoAnimatedBorder&gt;
+
+&lt;TaoAnimatedBorder light&gt;
+  Контур + мягкое свечение вокруг
+&lt;/TaoAnimatedBorder&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="modal" class="showcase-section" v-show="sectionVisible('overlays', 'modal')">
+      <h2>TaoModal</h2>
+      <p>Модальное окно: слоты, клик по фону, Esc, ловушка фокуса. Закрывается и по крестику.</p>
+      
+      <TaoButton @click="isModalOpen = true" variant="primary">
+        Открыть модальное окно
+      </TaoButton>
+
+      <TaoModal v-model="isModalOpen" title="Заголовок модального окна">
+        <p>Это содержимое модального окна. Здесь можно разместить форму, текст, изображения или любые другие компоненты.</p>
+        <p>Закрывается по Esc, по крестику, по кнопке внизу или по клику вне окна.</p>
+        
+        <template #footer>
+          <TaoButton variant="secondary" @click="isModalOpen = false">Отмена</TaoButton>
+          <TaoButton variant="primary" @click="isModalOpen = false">Подтвердить</TaoButton>
+        </template>
+      </TaoModal>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoButton @click="isOpen = true"&gt;
+  Открыть
+&lt;/TaoButton&gt;
+
+&lt;TaoModal v-model="isOpen" title="Заголовок"&gt;
+  &lt;p&gt;Содержимое&lt;/p&gt;
+  &lt;template #footer&gt;
+    &lt;TaoButton @click="isOpen = false"&gt;Закрыть&lt;/TaoButton&gt;
+  &lt;/template&gt;
+&lt;/TaoModal&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="drawer" class="showcase-section" v-show="sectionVisible('overlays', 'drawer')">
+      <h2>TaoDrawer</h2>
+      <p>Боковая панель: фильтры, корзина, настройки. Esc и клик по фону закрывают, фокус не уезжает на страницу.</p>
+
+      <TaoButton variant="secondary" @click="isDrawerOpen = true">Открыть справа</TaoButton>
+      <TaoDrawer v-model="isDrawerOpen" title="Фильтры">
+        <p>Здесь могут быть поля формы. На узком экране это удобнее модалки по центру.</p>
+        <template #footer>
+          <TaoButton variant="secondary" @click="isDrawerOpen = false">Сбросить</TaoButton>
+          <TaoButton @click="isDrawerOpen = false">Применить</TaoButton>
+        </template>
+      </TaoDrawer>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoDrawer v-model="open" title="Фильтры"&gt;
+  ...
+&lt;/TaoDrawer&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- confirm -->
+    <section id="confirm" class="showcase-section" v-show="sectionVisible('overlays', 'confirm')">
+      <h2>confirm()</h2>
+      <p>Вопрос с оверлеем. Не тост: ждёт ответ, Esc и клик по фону = отмена, можно await.</p>
+
+      <div class="button-row">
+        <TaoButton variant="primary" @click="fireConfirm('save')">обычный</TaoButton>
+        <TaoButton variant="danger" @click="fireConfirm('danger')">опасный</TaoButton>
+      </div>
+      <p v-if="confirmResult" style="margin-top: 8px; font-size: 13px;">Ответ: {{ confirmResult }}</p>
+
+      <div class="code-block">
+        <pre><code>if (await confirm().title('Удалить файл?').danger()) {
+  remove()
+}</code></pre>
+      </div>
+    </section>
+
+    <!-- TaoTooltip -->
+    <section id="tooltip" class="showcase-section" v-show="sectionVisible('overlays', 'tooltip')">
+      <h2>TaoTooltip</h2>
+      <p>Всплывающая подсказка при наведении и при фокусе с клавиатуры</p>
+      
+      <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
+        <TaoTooltip content="Подсказка сверху" position="top">
+          <TaoButton variant="secondary">Top</TaoButton>
+        </TaoTooltip>
+
+        <TaoTooltip content="Подсказка снизу" position="bottom">
+          <TaoButton variant="secondary">Bottom</TaoButton>
+        </TaoTooltip>
+
+        <TaoTooltip content="Подсказка слева" position="left">
+          <TaoButton variant="secondary">Left</TaoButton>
+        </TaoTooltip>
+
+        <TaoTooltip content="Подсказка справа" position="right">
+          <TaoButton variant="secondary">Right</TaoButton>
+        </TaoTooltip>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoTooltip content="Текст подсказки" position="top"&gt;
+  &lt;TaoButton&gt;Наведи на меня&lt;/TaoButton&gt;
+&lt;/TaoTooltip&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="popover" class="showcase-section" v-show="sectionVisible('overlays', 'popover')">
+      <h2>TaoPopover</h2>
+      <p>
+        Панель по клику: внутри любой контент. <code>v-model</code> — открытость.
+        Esc и клик снаружи закрывают, у края экрана панель переворачивается.
+        Это не Tooltip (там текст и hover) и не DropdownMenu (там список действий).
+      </p>
+
+      <TaoPopover v-model="popoverOpen">
+        <template #trigger>
+          <TaoButton variant="secondary">Фильтры</TaoButton>
+        </template>
+        <TaoCheckbox v-model="popoverStock" label="Только в наличии" />
+        <div style="margin-top: 12px; display: flex; justify-content: flex-end;">
+          <TaoButton size="small" @click="popoverOpen = false">Готово</TaoButton>
+        </div>
+      </TaoPopover>
+      <p style="margin-top: 8px; font-size: 13px;">{{ popoverStock ? 'В наличии' : 'Все товары' }}</p>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoPopover v-model="open"&gt;
+  &lt;template #trigger&gt;
+    &lt;TaoButton variant="secondary"&gt;Фильтры&lt;/TaoButton&gt;
+  &lt;/template&gt;
+  &lt;TaoCheckbox v-model="inStock" label="Только в наличии" /&gt;
+&lt;/TaoPopover&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- TaoDropdownMenu -->
+    <section id="dropdown" class="showcase-section" v-show="sectionVisible('overlays', 'dropdown')">
+      <h2>TaoDropdownMenu</h2>
+      <p>Выпадающее меню с авто-позиционированием у края экрана</p>
+
+      <TaoDropdownMenu :actions="dropdownActions" @selected="(id) => console.log('selected:', id)" />
+
+      <div class="code-block">
+        <pre><code>&lt;TaoDropdownMenu :actions="actions" @selected="onSelected" /&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="spoiler" class="showcase-section" v-show="sectionVisible('overlays', 'spoiler')">
+      <h2>TaoSpoiler</h2>
+      <p>
+        Раскрывающийся блок. <code>v-model</code> держит открытость.
+        Несколько подряд сами друг друга не закрывают — для аккордеона оберните в
+        <code>TaoSpoilerGroup</code>: в модели ключ панели или <code>null</code>.
+      </p>
+
+      <TaoSpoiler v-model="spoilerOpen" title="Нажмите, чтобы раскрыть">
+        <p>Это скрытое содержимое спойлера. Здесь можно разместить подробную информацию, дополнительные настройки или любой другой контент, который нужно показывать по требованию.</p>
+        <ul>
+          <li>Пункт списка 1</li>
+          <li>Пункт списка 2</li>
+          <li>Пункт списка 3</li>
+        </ul>
+      </TaoSpoiler>
+
+      <h3 style="margin: 24px 0 12px;">Группа</h3>
+      <p class="carousel-note">Открыли одну — другая закрылась. Повторный клик по открытой сворачивает все.</p>
+      <TaoSpoilerGroup v-model="spoilerFaq">
+        <TaoSpoiler name="pay" title="Оплата">
+          <p>Счёт и чек приходят на почту после подтверждения.</p>
+        </TaoSpoiler>
+        <TaoSpoiler name="ship" title="Доставка">
+          <p>Срок 2–5 дней, трек-номер в личном кабинете.</p>
+        </TaoSpoiler>
+        <TaoSpoiler name="return" title="Возврат">
+          <p>14 дней, если сохранён товарный вид.</p>
+        </TaoSpoiler>
+      </TaoSpoilerGroup>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoSpoiler v-model="open" title="Заголовок"&gt;
+  &lt;p&gt;Скрытое содержимое&lt;/p&gt;
+&lt;/TaoSpoiler&gt;
+
+&lt;TaoSpoilerGroup v-model="faq"&gt;
+  &lt;TaoSpoiler name="pay" title="Оплата"&gt;…&lt;/TaoSpoiler&gt;
+  &lt;TaoSpoiler name="ship" title="Доставка"&gt;…&lt;/TaoSpoiler&gt;
+&lt;/TaoSpoilerGroup&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- TaoTabs -->
+    <section id="tabs" class="showcase-section" v-show="sectionVisible('nav', 'tabs')">
+      <h2>TaoTabs</h2>
+      <p>Вкладки — примитив, не карточка страницы. Стрелки листают, Home/End — к краям.</p>
+      
+      <TaoTabs v-model="activeTab" :tabs="tabs">
+        <template #default="{ activeTab }">
+          <p>{{ tabContents[activeTab] }}</p>
+        </template>
+      </TaoTabs>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoTabs v-model="activeTab" :tabs="tabs"&gt;
+  &lt;template #default="{ activeTab }"&gt;
+    &lt;p&gt;&#123;&#123; tabContents[activeTab] &#125;&#125;&lt;/p&gt;
+  &lt;/template&gt;
+&lt;/TaoTabs&gt;
+
+&lt;script setup&gt;
+const tabs = [
+  { key: 'tab1', label: 'Вкладка 1' },
+  { key: 'tab2', label: 'Вкладка 2' }
+]
+&lt;/script&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="breadcrumb" class="showcase-section" v-show="sectionVisible('nav', 'breadcrumb')">
+      <h2>TaoBreadcrumb</h2>
+      <p>
+        <code>to</code> — путь страницы. В приложении с роутером «Пользователи» откроет <code>/users</code>.
+        Последний пункт без ссылки: вы уже там. Здесь клик не уводит со страницы, чтобы не сломать демо.
+      </p>
+
+      <div @click.capture="preventShowcaseNav">
+        <TaoBreadcrumb :items="breadcrumbItems" />
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoBreadcrumb :items="[
+  { label: 'Главная', to: '/' },
+  { label: 'Пользователи', to: '/users' },
+  { label: 'Профиль' },
+]" /&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- TaoLink -->
+    <section id="link" class="showcase-section" v-show="sectionVisible('nav', 'link')">
+      <h2>TaoLink</h2>
+      <p>Ссылка, использующая &lt;NuxtLink&gt; в Nuxt-проекте и обычный &lt;a&gt; вне его — без дополнительной настройки</p>
+
+      <TaoLink to="https://github.com" as-new-tab>Открыть в новой вкладке →</TaoLink>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoLink to="/profile"&gt;Профиль&lt;/TaoLink&gt;
+&lt;TaoLink to="https://example.com" as-new-tab&gt;Внешняя ссылка&lt;/TaoLink&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="scrolltop" class="showcase-section" v-show="sectionVisible('nav', 'scrolltop')">
       <h2>TaoScrollTop</h2>
       <p>
         Плавающая кнопка «наверх». Появляется при обратном скролле после порога
@@ -2065,12 +1975,150 @@ toast.success('Сохранено')</code></pre>
 &lt;TaoScrollTop :size="48" :right="16" :bottom="16" /&gt;</code></pre>
       </div>
     </section>
+
+    <!-- toast -->
+    <section id="toast" class="showcase-section" v-show="sectionVisible('feedback', 'toast')">
+      <h2>toast()</h2>
+      <p>Fluent-уведомления: цепочка в одном тике, setTimeout(0) отправляет показ.</p>
+
+      <div class="button-row">
+        <TaoButton variant="primary" @click="fireToast('success')">success</TaoButton>
+        <TaoButton variant="danger" @click="fireToast('error')">error</TaoButton>
+        <TaoButton variant="secondary" @click="fireToast('warning')">warning</TaoButton>
+        <TaoButton variant="ghost" @click="fireToast('info')">info</TaoButton>
+        <TaoButton variant="secondary" @click="fireToast('action')">с кнопкой</TaoButton>
+        <TaoButton variant="secondary" @click="fireToast('corner')">bottomRight</TaoButton>
+      </div>
+
+      <div class="code-block">
+        <pre><code>toast().success().message('Сохранено')
+toast().error().title('Сеть').message('Нет соединения')
+toast.success('Сохранено')</code></pre>
+      </div>
+    </section>
+
+    <section id="alert" class="showcase-section" v-show="sectionVisible('feedback', 'alert')">
+      <h2>TaoAlert</h2>
+      <p>Инлайн-баннер: ошибка формы, предупреждение на странице. Не тост — живёт в вёрстке.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 12px; max-width: 520px;">
+        <TaoAlert type="success" title="Сохранено">Профиль обновлён.</TaoAlert>
+        <TaoAlert type="error" title="Ошибка">Не удалось связаться с сервером.</TaoAlert>
+        <TaoAlert v-if="showAlert" type="warning" title="Черновик" closable @close="showAlert = false">
+          Сохраните, прежде чем уйти.
+        </TaoAlert>
+        <TaoAlert type="info">Можно вызвать и без заголовка.</TaoAlert>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoAlert type="warning" title="Черновик" closable @close="hide"&gt;
+  Сохраните, прежде чем уйти.
+&lt;/TaoAlert&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- TaoTag -->
+    <section id="tag" class="showcase-section" v-show="sectionVisible('feedback', 'tag')">
+      <h2>TaoTag</h2>
+      <p>Тег / бейдж со статусами</p>
+
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <TaoTag>default</TaoTag>
+        <TaoTag type="neutral">neutral</TaoTag>
+        <TaoTag type="success">success</TaoTag>
+        <TaoTag type="danger">danger</TaoTag>
+        <TaoTag type="warning">warning</TaoTag>
+        <TaoTag type="info">info</TaoTag>
+        <TaoTag pointer>кликабельный</TaoTag>
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoTag type="success"&gt;Активен&lt;/TaoTag&gt;
+&lt;TaoTag type="danger"&gt;Ошибка&lt;/TaoTag&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- TaoLoader -->
+    <section id="loader" class="showcase-section" v-show="sectionVisible('feedback', 'loader')">
+      <h2>TaoLoader</h2>
+      <p>Анимированный лоадер</p>
+
+      <div style="display: flex; gap: 24px; align-items: center;">
+        <TaoLoader :size="40" />
+        <TaoLoader :size="24" inline />
+        <TaoLoader :size="40" color="var(--tao-color-danger)" />
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoLoader :size="40" /&gt;
+&lt;TaoLoader :size="24" inline /&gt;
+&lt;TaoLoader :size="40" color="var(--tao-color-danger)" /&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- TaoImage -->
+    <section id="image" class="showcase-section" v-show="sectionVisible('media', 'image')">
+      <h2>TaoImage</h2>
+      <p>
+        Обёртка над <code>&lt;img&gt;</code>: fade-in и плейсхолдер. По умолчанию грузится сразу.
+        <code>lazy</code> — браузер сам отложит загрузку, пока картинка не рядом с экраном.
+      </p>
+
+      <div style="width: 160px; height: 120px;">
+        <TaoImage :src="imageSrc" />
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoImage :src="imageUrl" /&gt;
+&lt;TaoImage :src="imageUrl" lazy /&gt;</code></pre>
+      </div>
+    </section>
+
+    <section id="avatar" class="showcase-section" v-show="sectionVisible('media', 'avatar')">
+      <h2>TaoAvatar</h2>
+      <p>Фото или инициалы. Точка статуса и счётчик — по желанию, можно вместе.</p>
+
+      <div class="button-row" style="align-items: center;">
+        <TaoAvatar name="Анна Козлова" size="small" />
+        <TaoAvatar name="Анна Козлова" />
+        <TaoAvatar name="Борис" size="large" />
+        <TaoAvatar :src="imageSrc" name="Демо" size="large" />
+      </div>
+
+      <h3>Индикатор</h3>
+      <div class="button-row" style="align-items: center;">
+        <TaoAvatar name="Анна Козлова" dot />
+        <TaoAvatar name="Борис" size="large" dot="danger" />
+        <TaoAvatar name="Кира" size="large" dot="warning" />
+        <TaoAvatar name="Олег" dot="neutral" />
+        <TaoAvatar name="Анна Козлова" :count="3" />
+        <TaoAvatar name="Борис" size="large" :count="128" />
+        <TaoAvatar :src="imageSrc" name="Демо" size="large" dot :count="2" />
+      </div>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoAvatar name="Анна Козлова" /&gt;
+&lt;TaoAvatar name="Анна" dot /&gt;
+&lt;TaoAvatar name="Борис" :count="3" /&gt;
+&lt;TaoAvatar :src="url" name="Анна" size="large" dot :count="2" /&gt;</code></pre>
+      </div>
+    </section>
+
+    <!-- TaoIcon -->
+    <section id="icon" class="showcase-section" v-show="sectionVisible('media', 'icon')">
+      <h2>TaoIcon</h2>
+      <p>Обёртка для icon-шрифта — рендерит класс <code>icon-&lt;name&gt;</code>, сам шрифт нужно подключить в проекте (см. README)</p>
+
+      <div class="code-block">
+        <pre><code>&lt;TaoIcon name="arrow-up" :size="20" /&gt;</code></pre>
+      </div>
+    </section>
+
       </main>
     </div>
 
     <footer class="showcase-footer">
-      <p>Tao UI Library © 2024. Создано с любовью ❤️</p>
-      <p style="font-size: 12px; margin-top: 8px;">Прокрутите вниз и обратно вверх, чтобы увидеть TaoScrollTop в правом нижнем углу.</p>
+      <p>Tao UI · MIT · 2026</p>
     </footer>
 
     <TaoScrollTop :boundary="200" />
@@ -2305,6 +2353,28 @@ h1 {
   margin: 0;
 }
 
+.showcase-lead {
+  margin: 6px 0 0;
+  color: var(--tao-color-text-muted);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.demo-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+}
+
+.demo-stack--narrow {
+  max-width: 280px;
+}
+
+.demo-wide {
+  max-width: 400px;
+}
+
 .showcase-section {
   margin-bottom: 48px;
   padding-bottom: 32px;
@@ -2384,7 +2454,7 @@ p {
   width: 100%;
   aspect-ratio: 1;
   object-fit: cover;
-  background: #f4f4f4;
+  background: var(--tao-color-surface-sunken);
 }
 
 .product-card--gallery :deep(.tao-carousel) {

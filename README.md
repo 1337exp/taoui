@@ -1,111 +1,117 @@
 # Tao UI
 
-Библиотека Vue 3 компонентов для Nuxt/Vue проектов с системой дизайн-токенов:
-поменял несколько CSS-переменных — поменялась тема всего набора компонентов.
+**English** · [Русский](README.RU.md)
 
-## Компоненты
+A Vue 3 component library for Nuxt/Vue apps, driven by design tokens:
+change a handful of CSS variables and the whole kit follows.
 
-### Базовые
+## Components
 
-- **TaoBlock** — базовый контейнер с настраиваемыми отступами и скруглением
-- **TaoButton** — кнопка с вариантами (primary, secondary, ghost, danger), размерами и состояниями
-- **TaoCard** — карточка со слотами cover / header / footer. В `#cover` — фото или `TaoCarousel`
-- **TaoCopy** — иконка копирования в буфер. После клика сверху тултип «Скопировано»; если кнопку убрали — тултип тоже
-- **TaoInput** — поле ввода с поддержкой v-model, валидации и слотов `#prefix` / `#suffix` (иконка или текст внутри рамки)
-- **TaoInputGroup** — склейка снаружи: `#before` | поле | `#after` (протокол, единица, кнопка)
-- **TaoModal** — модальное окно с анимацией и слотами
-- **TaoDrawer** — боковая панель (фильтры, настройки). Esc, клик по фону, ловушка фокуса — как у модалки
-- **TaoSpoiler** — раскрывающийся блок. `v-model` и `aria-expanded`. Несколько подряд сами друг друга не закрывают
-- **TaoSpoilerGroup** — аккордеон: `v-model` — ключ открытой панели (`null` — все закрыты), у спойлера `name`
-- **TaoTabs** — вкладки для переключения между секциями контента
-- **TaoTooltip** — всплывающая подсказка при наведении
-- **TaoPopover** — панель по клику: слот с любым контентом, Esc и клик снаружи. Не тултип и не меню действий
+### Basics
+
+- **TaoBlock** — container with padding and radius
+- **TaoButton** — `primary` / `secondary` / `ghost` / `danger`, sizes and states
+- **TaoCard** — card with cover / header / footer slots. `#cover` can be a photo or `TaoCarousel`
+- **TaoCopy** — clipboard icon. After a click, a “Copied” tooltip; if the trigger is gone, the tooltip is too
+- **TaoInput** — text field with v-model, validation, and `#prefix` / `#suffix` slots (icon or text inside the frame)
+- **TaoInputGroup** — outer glue: `#before` | field | `#after` (protocol, unit, button)
+- **TaoModal** — modal with animation and slots
+- **TaoDrawer** — side panel (filters, settings). Esc, backdrop click, focus trap — same as the modal
+- **TaoSpoiler** — disclosure. `v-model` and `aria-expanded`. Neighbours do not close each other
+- **TaoSpoilerGroup** — accordion: `v-model` is the open panel key (`null` = all closed); spoilers take `name`
+- **TaoTabs** — tabbed sections
+- **TaoTooltip** — hover hint
+- **TaoPopover** — click panel with any slot content, Esc and outside click. Not a tooltip, not an action menu
 
 ### Layout
 
-- **TaoContainer** — контейнер с ограничением ширины (wide/slim/ultra-slim) и авто-центровкой
-- **TaoFlex** — обёртка над flexbox с пропами justify/align/direction/wrap/gap
-- **TaoSpace** — авто-расстановка дочерних элементов с равномерным gap
-- **TaoDivider** — разделитель: line (тонкая линия), text (линия с текстом), gap (пустой отступ, size: small/medium/large)
-- **TaoFieldset** — рамка-группа: `legend` сидит на верхней границе, `align` — start / center / end
-- **TaoAnimatedBorder** — контейнер с анимированной радужной рамкой (декоративный, не завязан на тему)
+- **TaoContainer** — max-width (wide / slim / ultra-slim) and centering
+- **TaoFlex** — flexbox wrapper: justify / align / direction / wrap / gap
+- **TaoSpace** — even gap between children
+- **TaoDivider** — `line` (hairline), `text` (line with a label), `gap` (empty space, size: small / medium / large)
+- **TaoFieldset** — grouped frame: `legend` sits on the top border, `align` is start / center / end
+- **TaoAnimatedBorder** — rainbow border wrapper (decorative, not tied to the theme)
 
-### Формы и ввод
+### Forms
 
-- **TaoCheckbox** — чекбокс с v-model, слотами pre/post и `indeterminate` (частично выбран)
-- **TaoSwitch** — переключатель для булевых настроек (`role="switch"`)
-- **TaoRadio** / **TaoRadioGroup** — взаимоисключающий выбор из 2–5 вариантов
-- **TaoSelect** — выпадающий список с клавиатурой, тот же визуал, что у Input. Сброс — «Очистить» в списке или Delete
-- **TaoCombobox** — Select с полем: фильтр по вводу, `allow-create` пишет своё в `v-model`, `create` — чтобы родитель дополнил список
-- **TaoDate** — один день: `YYYY-MM-DD`, без часов и пояса. Календарь как у Select
-- **TaoFormField** — общие label / hint / error для полей формы
-- **TaoInputNumber** — число с min/max/step и кнопками ± справа. Пустое значение — `null`
-- **TaoQuantity** — количество в корзине: `− | поле | +`, целые штуки, сток, минус на минимуме может убрать строку
-- **TaoTextarea** — многострочное поле с авто-высотой. `maxlength` ограничивает ввод, `count` показывает «введено / максимум»
-- **TaoPinCode** — пин-код из N полей. По умолчанию клик стирает ячейку и все справа (`clear-on="focus"`); `clear-on="input"` заменяет цифру только при вводе. Последняя ячейка снимает фокус и эмитит `complete`
-- **TaoSlider** — слайдер: мышь, тач и стрелки. Опциональный точный ввод по правому клику
-- **TaoFileDrop** — зона загрузки (drag & drop + клик). Список имён под зоной, `v-model` — `File[]`. Очистку всей пачки решает родитель (`clear-request`)
+- **TaoCheckbox** — checkbox with v-model, pre/post slots, and `indeterminate`
+- **TaoSwitch** — boolean toggle (`role="switch"`)
+- **TaoRadio** / **TaoRadioGroup** — exclusive choice among 2–5 options
+- **TaoSelect** — dropdown with keyboard, same chrome as Input. Clear via “Clear” in the list or Delete
+- **TaoCombobox** — Select with a field: type to filter, `allow-create` writes a custom value into `v-model`, `create` lets the parent append the list
+- **TaoDate** — a single day: `YYYY-MM-DD`, no time, no timezone. Calendar popup like Select
+- **TaoDateRange** — a period: `v-model` is `{ start, end }` or `null`. First click is start, second is end (they swap if end is earlier). An incomplete pick is not written to the model
+- **TaoFormField** — shared label / hint / error for form controls
+- **TaoInputNumber** — number with min/max/step and ± on the right. Empty value is `null`
+- **TaoQuantity** — cart quantity: `− | field | +`, integers, stock; minus at the minimum can remove the row
+- **TaoTextarea** — autosizing multiline. `maxlength` caps input, `count` shows “entered / max”
+- **TaoPinCode** — N cells. By default a click clears the cell and everything to the right (`clear-on="focus"`); `clear-on="input"` replaces the digit only when typing. The last cell blurs and emits `complete`
+- **TaoSlider** — mouse, touch, and arrows. Optional precise input on right-click
+- **TaoFileDrop** — drop zone (drag & drop + click). File names listed under the zone, `v-model` is `File[]`. Clearing the whole batch is the parent’s job (`clear-request`)
 
-### Отображение данных
+### Data display
 
-- **TaoTable** — простая таблица: колонки, empty, loading, сортировка через `v-model:sort`. Не datagrid.
-- **TaoPagination** — страницы с многоточием. Клик по «…» прыгает на `jump` страниц (5 по умолчанию)
-- **TaoEmpty** — пустой список, нет результатов, нет прав
-- **TaoStages** — список стадий: `wait` / `work` / `ok` / `bad`. Не линейный степпер
-- **TaoSkeleton** — плейсхолдер загрузки (text / title / circle / rect)
-- **TaoCounter** — витрина числа с переворотом цифр (не инпут)
-- **TaoCarousel** — лента: целый слайд с `autoplay`, карточка с `peek`, полоса с `per-view`. Стрелки через `controls` или `#prev` / `#next`, точки — `dots`
-- **TaoAvatar** — фото или инициалы, размеры `small` / `medium` / `large`. Точка `dot` и счётчик `count`
-- **TaoTag** — тег/бейдж со статусами (neutral, success, danger, warning, info)
-- **TaoAlert** — инлайн-баннер страницы или ошибки формы (success / error / warning / info)
-- **TaoProgress** — статичная полоса (`progress` в %). Проценты сверху по центру или `showPercentage="right"` справа; слоты `#left` / `#right` — подписи, тогда процент справа в скобках. `false` прячет. Ширина — `minWidth` / `maxWidth`, не диапазон значения
-- **TaoLoader** — анимированный лоадер (четыре точки)
-- **TaoImage** — обёртка над `<img>`: fade-in и плейсхолдер. `lazy` включает нативный `loading="lazy"`
-- **TaoIcon** — обёртка для icon-шрифта (см. раздел «Иконки» ниже)
+- **TaoTable** — simple table: columns, empty, loading, sort via `v-model:sort`. Not a datagrid.
+- **TaoPagination** — pages with ellipsis. Clicking “…” jumps `jump` pages (5 by default)
+- **TaoEmpty** — empty list, no results, no access
+- **TaoStages** — stage list: `wait` / `work` / `ok` / `bad`. Not a linear stepper
+- **TaoSkeleton** — loading placeholder (text / title / circle / rect)
+- **TaoCounter** — flipping digits (not an input)
+- **TaoCarousel** — strip: full slide with `autoplay`, card with `peek`, row with `per-view`. Arrows via `controls` or `#prev` / `#next`, dots via `dots`
+- **TaoAvatar** — photo or initials, sizes `small` / `medium` / `large`. Status `dot` and `count`
+- **TaoTag** — badge with tones (neutral, success, danger, warning, info)
+- **TaoAlert** — inline page/form banner (success / error / warning / info)
+- **TaoProgress** — static bar (`progress` in %). Percent centered on top, or `showPercentage="right"`; `#left` / `#right` slots are captions, then the percent sits in parentheses on the right. `false` hides it. Width is `minWidth` / `maxWidth`, not the value domain
+- **TaoLoader** — four-dot spinner
+- **TaoImage** — `<img>` wrapper: fade-in and placeholder. `lazy` turns on native `loading="lazy"`
+- **TaoIcon** — icon-font wrapper (see Icons below)
 
-### Навигация и взаимодействие
+### Navigation
 
-- **TaoLink** — ссылка, использующая `<NuxtLink>` в Nuxt-проекте и обычный `<a>` вне его — без дополнительной настройки
-- **TaoBreadcrumb** — крошки: последний пункт — текущая страница
-- **TaoDropdownMenu** — выпадающее меню с авто-позиционированием у края экрана
-- **TaoScrollTop** — плавающая кнопка «наверх» с ripple. Появляется при обратном скролле после `boundary`
+- **TaoLink** — uses `<NuxtLink>` in Nuxt and a plain `<a>` elsewhere, with no extra setup
+- **TaoBreadcrumb** — crumbs: the last item is the current page
+- **TaoDropdownMenu** — dropdown that flips at the viewport edge
+- **TaoScrollTop** — floating “back to top” with a ripple. Appears on reverse scroll after `boundary`
 
-### Обратная связь
+### Feedback
 
-- **toast()** — fluent-уведомления: `toast().success().message('Сохранено')`
-- **confirm()** — вопрос с оверлеем: тот же fluent + `await`. Не тост — ждёт ответ, не исчезает сам.
-- **TaoToastViewport** / **TaoConfirmHost** — контейнеры; если их нет в разметке, первый вызов сам монтирует их в `body`
+- **toast()** — fluent toasts: `toast().success().message('Saved')`
+- **confirm()** — overlay question: the same fluent API plus `await`. Not a toast — it waits for an answer and does not dismiss itself.
+- **TaoToastViewport** / **TaoConfirmHost** — hosts; if they are missing from the tree, the first call mounts them on `body`
 
-## Соглашения
+## Conventions
 
-Тоны визуала: `success` | `danger` | `warning` | `info` | `neutral`.
-`error` у Alert, Tag и `toast()` — синоним `danger`. Button уже `danger`.
-Stages — это процесс, не тон: `wait` / `work` / `ok` / `bad` (`danger` принимается как `bad`).
+Visual tones: `success` | `danger` | `warning` | `info` | `neutral`.
+`error` on Alert, Tag, and `toast()` is an alias of `danger`. Button already uses `danger`.
+Stages describe a process, not a tone: `wait` / `work` / `ok` / `bad` (`danger` is accepted as `bad`).
 
-Размеры контролов: `small` | `medium` | `large`.
-Avatar понимает и короткие `s` / `m` / `l`. Divider `gap` раньше называл крупный размер `big` — это алиас `large`.
-Container живёт на другой оси: `wide` / `slim` / `ultra-slim`.
+Control sizes: `small` | `medium` | `large`.
+Avatar also accepts short `s` / `m` / `l`. Divider `gap` used to call the large size `big` — that is an alias of `large`.
+Container lives on another axis: `wide` / `slim` / `ultra-slim`.
 
-## Иконки
+## Icons
 
-`TaoIcon` не поставляет собственный набор иконок — он рендерит класс `icon-<name>`
-по соглашению, рассчитанному на подключение внешнего icon-шрифта (например,
-собранного через IcoMoon/Fontello). Чтобы иконки отображались, подключите
-свой шрифт с классами вида `.icon-arrow-up { ... }` в проекте.
+`TaoIcon` does not ship its own set — it renders `icon-<name>`
+for an external icon font (IcoMoon / Fontello and the like). Connect a font
+with classes such as `.icon-arrow-up { ... }` in the host app.
 
-## Установка
+## Install
 
-Или локально из папки:
+```bash
+npm install @1337exp/taoui
+```
+
+From a local folder:
 
 ```bash
 npm install ../path-to-tao-ui
 ```
 
-## Использование
+## Usage
 
-### Подключение в Nuxt 3
+### Nuxt 3
 
-Создайте плагин `plugins/tao-ui.ts`:
+Create `plugins/tao-ui.ts`:
 
 ```typescript
 import { defineNuxtPlugin } from '#app'
@@ -116,7 +122,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 })
 ```
 
-Импортируйте стили в `app.vue` или layout:
+Import styles in `app.vue` or a layout:
 
 ```vue
 <script setup>
@@ -124,7 +130,7 @@ import '@1337exp/taoui/styles.css'
 </script>
 ```
 
-### Подключение в Vue 3 проекте
+### Vue 3
 
 ```javascript
 // main.js
@@ -138,7 +144,7 @@ app.use(TaoUI)
 app.mount('#app')
 ```
 
-### Использование отдельных компонентов
+### Individual components
 
 ```vue
 <script setup>
@@ -147,41 +153,41 @@ import '@1337exp/taoui/styles.css'
 </script>
 
 <template>
-  <TaoButton variant="primary">Нажми меня</TaoButton>
-  <TaoInput v-model="text" label="Введите текст" />
-  <TaoModal v-model="isOpen" title="Заголовок">
-    Содержимое модального окна
+  <TaoButton variant="primary">Press me</TaoButton>
+  <TaoInput v-model="text" label="Your text" />
+  <TaoModal v-model="isOpen" title="Title">
+    Modal body
   </TaoModal>
 </template>
 ```
 
 ## Toast
 
-Вызов — цепочка в одном тике, `setTimeout(0)` отправляет уведомление.
+The chain runs in the same tick; `setTimeout(0)` actually shows the toast.
 
 ```javascript
 import { toast } from '@1337exp/taoui'
 
-toast().success().message('Сохранено')
-toast().error().title('Сеть').timeout(5000).message('Нет соединения')
-toast.success('Сохранено')
-toast.warning('Черновик', { timeout: 1000 })
+toast().success().message('Saved')
+toast().error().title('Network').timeout(5000).message('No connection')
+toast.success('Saved')
+toast.warning('Draft', { timeout: 1000 })
 ```
 
-Позиция по умолчанию — `topCenter`. Глобально:
+Default position is `topCenter`. Globally:
 
 ```javascript
 toast.defaults({ position: 'bottomRight' })
 toast.byBottomRight()
 ```
 
-`question` с оверлеем в kit нет — это confirm, не toast. Кнопки в тосте, если нужны:
+There is no overlay `question` in this kit — that is confirm, not toast. Buttons on a toast, if needed:
 
 ```javascript
-toast().info().message('Удалить файл?').action('Удалить', onRemove)
+toast().info().message('Delete the file?').action('Delete', onRemove)
 ```
 
-Viewport можно не вставлять: первый вызов сам создаст его. Если нужен явный контроль (тесты, свой layout):
+You can skip the viewport: the first call creates it. For explicit control (tests, a custom layout):
 
 ```vue
 <TaoToastViewport />
@@ -189,62 +195,62 @@ Viewport можно не вставлять: первый вызов сам со
 
 ## Confirm
 
-Вопрос с оверлеем: всплывает по центру и спрашивает. Это не toast — нет прогресс-бара и автозакрытия, есть `await`, Esc и клик по оверлею = отмена.
+An overlay question in the center of the screen. This is not a toast: no progress bar, no auto-close, `await`, Esc and overlay click = cancel.
 
 ```javascript
 import { confirm } from '@1337exp/taoui'
 
-if (await confirm().title('Удалить файл?').message('Это нельзя отменить').danger()) {
+if (await confirm().title('Delete the file?').message('This cannot be undone').danger()) {
   remove()
 }
 
-const ok = await confirm('Выйти без сохранения?', {
-  ok: 'Выйти',
-  cancel: 'Остаться',
+const ok = await confirm('Leave without saving?', {
+  ok: 'Leave',
+  cancel: 'Stay',
 })
 ```
 
-Очередь: второй `confirm()`, пока открыт первый, подождёт. Подписи по умолчанию — «ОК» / «Отмена»:
+Queue: a second `confirm()` while the first is open will wait. Default labels are “OK” / “Cancel”:
 
 ```javascript
 confirm.defaults({ ok: 'Yes', cancel: 'No' })
 ```
 
-## Формы
+## Forms
 
-`TaoFormField` вешает общий label / hint / error и прокидывает `id` во вложенный контрол.
+`TaoFormField` attaches a shared label / hint / error and forwards `id` to the nested control.
 
 ```vue
-<TaoFormField label="Город" hint="Необязательно">
+<TaoFormField label="City" hint="Optional">
   <TaoSelect v-model="city" :options="cities" />
 </TaoFormField>
 
-<TaoSwitch v-model="dark" label="Тёмная тема" />
+<TaoSwitch v-model="dark" label="Dark theme" />
 
-<TaoRadioGroup v-model="plan" legend="Тариф">
+<TaoRadioGroup v-model="plan" legend="Plan">
   <TaoRadio value="free" label="Free" />
   <TaoRadio value="pro" label="Pro" />
 </TaoRadioGroup>
 
-<TaoAlert type="warning" title="Черновик">Сохраните, прежде чем уйти.</TaoAlert>
+<TaoAlert type="warning" title="Draft">Save before you leave.</TaoAlert>
 ```
 
-`TaoSelect` открывается с клавиатуры (стрелки, Enter, Esc), список переворачивается у края экрана. Delete или «Очистить» внизу списка сбрасывает значение в `null`.
+`TaoSelect` opens from the keyboard (arrows, Enter, Esc); the list flips at the viewport edge. Delete or “Clear” at the bottom of the list resets the value to `null`.
 
-`TaoCombobox` — то же меню, но с полем. Печатаете — варианты режутся. `allow-create` пишет введённое в `v-model`, если точного совпадения нет. Список сам не меняется: слушайте `create` и добавьте option снаружи.
+`TaoCombobox` is the same menu with a field. Typing filters options. `allow-create` writes the typed string into `v-model` when there is no exact match. The list does not mutate itself: listen to `create` and append an option from the parent.
 
-`TaoFormField` также оборачивает `TaoTextarea` и `TaoCheckbox` — id, hint и error прокидываются сами.
+`TaoFormField` also wraps `TaoTextarea` and `TaoCheckbox` — id, hint, and error are forwarded for you.
 
-## Таблица и пагинация
+## Table and pagination
 
-Таблица рендерит то, что передали: сама данные не режет и не сортирует. Это удобно и для серверной выборки, и для клиентской — страница режется снаружи.
+The table renders what you pass in: it does not slice or sort the data. That works for both server-side and client-side paging — the page is cut outside.
 
 ```vue
 <TaoTable
   :columns="columns"
   :rows="pageRows"
   v-model:sort="sort"
-  empty-text="Пока нет записей"
+  empty-text="No records yet"
 >
   <template #cell-status="{ row }">
     <TaoTag :type="row.status === 'active' ? 'success' : 'neutral'">
@@ -258,21 +264,21 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 
 ```javascript
 const columns = [
-  { key: 'name', label: 'Имя', sortable: true },
-  { key: 'city', label: 'Город' },
-  { key: 'status', label: 'Статус' },
+  { key: 'name', label: 'Name', sortable: true },
+  { key: 'city', label: 'City' },
+  { key: 'status', label: 'Status' },
 ]
 ```
 
-Слот `cell-<ключ>` перекрывает ячейку. `loading` показывает оверлей, пустой список — текст или слот `#empty`. Клик по шапке с `sortable` крутит `asc → desc → сброс`.
+The `cell-<key>` slot replaces a cell. `loading` shows an overlay; an empty list shows text or the `#empty` slot. Clicking a `sortable` header cycles `asc → desc → off`.
 
-## Пустые состояния и загрузка
+## Empty states and loading
 
 ```vue
-<TaoEmpty title="Ничего не нашлось">
-  Измените фильтр или сбросьте поиск.
+<TaoEmpty title="Nothing found">
+  Change the filter or reset search.
   <template #action>
-    <TaoButton variant="secondary">Сбросить</TaoButton>
+    <TaoButton variant="secondary">Reset</TaoButton>
   </template>
 </TaoEmpty>
 
@@ -281,14 +287,14 @@ const columns = [
 <TaoSkeleton variant="circle" />
 
 <TaoStages :items="[
-  { key: 'pay', label: 'Оплата', status: 'ok' },
-  { key: 'pack', label: 'Сборка', status: 'work' },
-  { key: 'ship', label: 'Доставка', status: 'wait' },
+  { key: 'pay', label: 'Payment', status: 'ok' },
+  { key: 'pack', label: 'Packing', status: 'work' },
+  { key: 'ship', label: 'Shipping', status: 'wait' },
 ]" />
 ```
 
 ```vue
-<TaoInput v-model="q" placeholder="Найти…">
+<TaoInput v-model="q" placeholder="Search…">
   <template #prefix>⌕</template>
 </TaoInput>
 
@@ -296,7 +302,7 @@ const columns = [
   <template #before>https://</template>
   <TaoInput v-model="host" placeholder="example.com" />
   <template #after>
-    <TaoButton>Проверить</TaoButton>
+    <TaoButton>Check</TaoButton>
   </template>
 </TaoInputGroup>
 
@@ -304,17 +310,21 @@ const columns = [
   <TaoFormField label="Email">
     <TaoInput v-model="email" type="email" />
   </TaoFormField>
-  <TaoButton type="submit">Сохранить</TaoButton>
+  <TaoButton type="submit">Save</TaoButton>
 </form>
 
-<TaoFormField label="Количество">
+<TaoFormField label="Quantity">
   <TaoInputNumber v-model="qty" :min="1" :max="99" />
 </TaoFormField>
 
 <TaoQuantity v-model="qty" :max="12" @dec="onDec" />
 
-<TaoFormField label="День доставки" hint="В модели всегда YYYY-MM-DD">
+<TaoFormField label="Delivery day" hint="The model is always YYYY-MM-DD">
   <TaoDate v-model="day" min="2026-09-01" max="2026-09-30" />
+</TaoFormField>
+
+<TaoFormField label="Stay">
+  <TaoDateRange v-model="stay" min="2026-09-01" max="2026-09-30" />
 </TaoFormField>
 
 <TaoCounter :value="score" :max-digits="6" />
@@ -329,49 +339,48 @@ const columns = [
 <TaoCarousel v-model="slide" :per-view="5" :peek="28">
   <template #prev></template>
   <template #next="{ go, disabled }">
-    <button type="button" :disabled="disabled" @click="go">вперёд</button>
+    <button type="button" :disabled="disabled" @click="go">next</button>
   </template>
   <article v-for="item in products" :key="item.id">…</article>
 </TaoCarousel>
 ```
 
-`TaoDrawer` — лист сбоку, не модалка по центру:
+`TaoDrawer` is a side sheet, not a centered modal:
 
 ```vue
-<TaoDrawer v-model="open" title="Фильтры">
+<TaoDrawer v-model="open" title="Filters">
   ...
 </TaoDrawer>
 ```
 
-## Дизайн-токены и темизация
+## Design tokens and theming
 
-Стили библиотеки построены в три слоя. Компоненты **никогда** не обращаются
-к цветам/размерам напрямую — только через переменные из семантического слоя.
-Это и есть механизм темизации: переопределяете 20-30 переменных — меняется
-внешний вид всех компонентов сразу, без правок самих компонентов.
+Library styles are three layers. Components **never** touch raw colors or sizes —
+only semantic variables. That is the theming mechanism: override 20–30 variables
+and every component follows, with no edits inside the components themselves.
 
 ```
-primitives.css   →   semantic.css   →   themes/*.css (опционально)
-   сырые цвета         публичный API      готовые темы поверх
-   и размеры,          темизации:         semantic — пример: light
-   не трогать          вот что менять
+primitives.css   →   semantic.css   →   themes/*.css (optional)
+  raw colors          public theming     ready-made themes on top
+  and scales,         API: this is       of semantic — light is
+  leave them alone    what you change    the example
 ```
 
-### Слои
+### Layers
 
-| Файл | Назначение | Трогать? |
+| File | Role | Touch it? |
 |---|---|---|
-| `primitives.css` | Сырая палитра, шкалы отступов/радиусов/теней (`--tao-orange-400`, `--tao-space-3`...) | Обычно нет |
-| `semantic.css` | Токены темы по умолчанию (dark): `--tao-color-accent`, `--tao-color-surface`, `--tao-color-danger` и т.д. | **Да — это и есть API темизации** |
-| `themes/light.css` | Пример альтернативной темы через `[data-tao-theme="light"]` | Да, как образец |
-| `base.css` | Глобальный reset (скроллбар, ссылки, box-sizing) | Редко |
+| `primitives.css` | Raw palette, space / radius / shadow scales (`--tao-orange-400`, `--tao-space-3`…) | Usually no |
+| `semantic.css` | Default (dark) theme tokens: `--tao-color-accent`, `--tao-color-surface`, `--tao-color-danger`, etc. | **Yes — this is the theming API** |
+| `themes/light.css` | Alternate theme via `[data-tao-theme="light"]` | Yes, as a sample |
+| `base.css` | Global reset (scrollbar, links, box-sizing) | Rarely |
 
-Все четыре подключаются одним файлом `@1337exp/taoui/styles.css`.
+All four come in through `@1337exp/taoui/styles.css`.
 
-### Как сделать свою тему
+### Your own theme
 
-Тема — это просто переопределение семантических токенов под своим селектором.
-Ничего в компонентах менять не нужно:
+A theme is just semantic tokens under your selector.
+Nothing in the components needs to change:
 
 ```css
 /* my-brand-theme.css */
@@ -383,7 +392,7 @@ primitives.css   →   semantic.css   →   themes/*.css (опционально
     --tao-color-surface-raised: #1a1a2e;
     --tao-color-text: #d6d6e8;
     --tao-color-text-strong: #ffffff;
-    /* остальные токены см. semantic.css */
+    /* remaining tokens: see semantic.css */
 }
 ```
 
@@ -396,40 +405,39 @@ primitives.css   →   semantic.css   →   themes/*.css (опционально
 </template>
 ```
 
-Или переключайте тему целиком на `<html>`, чтобы стилизовать модалки/тултипы,
-которые телепортируются в `body`:
+Or switch the theme on `<html>` so modals/tooltips teleported to `body` pick it up:
 
 ```javascript
 document.documentElement.setAttribute('data-tao-theme', 'light')
 ```
 
-### Ключевые группы токенов
+### Token groups
 
-- `--tao-color-accent*` — акцентный/брендовый цвет (кнопки primary, активные вкладки, ссылки)
-- `--tao-color-on-accent` — текст на акцентном фоне (`--tao-color-text-on-accent` — алиас)
-- `--tao-color-selection`, `--tao-color-selection-text` — выделение текста (`::selection`)
-- `--tao-color-surface*` — фоны контейнеров (обычный / приподнятый / утопленный / hover)
-- `--tao-color-border*` — границы
-- `--tao-color-text*` — текст (обычный / усиленный / приглушённый / disabled)
-- `--tao-color-danger*`, `--tao-color-success*`, `--tao-color-warning*`, `--tao-color-info*` — статусные цвета
-- `--tao-color-input-*` — поля ввода отдельно, т.к. фон/текст полей часто не совпадают с surface/text
-- `--tao-radius-control`, `--tao-radius-panel` — скругления (мелкие контролы vs крупные панели)
-- `--tao-shadow-panel`, `--tao-shadow-overlay` — тени
+- `--tao-color-accent*` — brand/accent (primary buttons, active tabs, links)
+- `--tao-color-on-accent` — text on the accent (`--tao-color-text-on-accent` is an alias)
+- `--tao-color-selection`, `--tao-color-selection-text` — text selection (`::selection`)
+- `--tao-color-surface*` — container backgrounds (default / raised / sunken / hover)
+- `--tao-color-border*` — borders
+- `--tao-color-text*` — text (default / strong / muted / disabled)
+- `--tao-color-danger*`, `--tao-color-success*`, `--tao-color-warning*`, `--tao-color-info*` — status colors
+- `--tao-color-input-*` — fields, because input bg/text often differs from surface/text
+- `--tao-radius-control`, `--tao-radius-panel` — radii (small controls vs large panels)
+- `--tao-shadow-panel`, `--tao-shadow-overlay` — shadows
 
-Полный список — в `src/styles/semantic.css`, он же единственный файл,
-который стоит открыть, чтобы понять весь доступный API темизации.
+The full list lives in `src/styles/semantic.css` — the only file worth opening
+to see the whole theming API.
 
-### Если нужна тема с нуля, без primitives
+### A theme from scratch, without primitives
 
 ```javascript
-import '@1337exp/taoui/styles/primitives.css' // шкалы можно оставить
-import './my-semantic.css'              // свой семантический слой вместо @1337exp/taoui/styles/semantic.css
+import '@1337exp/taoui/styles/primitives.css' // keep the scales if you want
+import './my-semantic.css'              // your semantic layer instead of @1337exp/taoui/styles/semantic.css
 import '@1337exp/taoui/styles/base.css'
 ```
 
-## Демонстрация
+## Showcase
 
-Для просмотра всех компонентов запустите showcase:
+To browse every component:
 
 ```bash
 cd showcase
@@ -437,45 +445,43 @@ npm install
 npm run dev
 ```
 
-В showcase есть переключатель темы (dark / light) в шапке — так виден
-эффект переопределения токенов без правок кода компонентов.
+The showcase has a dark / light switch in the header, so you can see token
+overrides without editing component code.
 
-Showcase смотрит прямо в `src/`, поэтому правки компонентов видны без
-`npm run build`. Сборка `dist/` нужна для публикации и для чужих проектов,
-которые ставят пакет.
+The showcase points at `src/` directly, so component edits show up without
+`npm run build`. Building `dist/` is for publishing and for other projects
+that install the package.
 
-## Разработка
+## Development
 
 ```bash
-# Сборка библиотеки
+# Build the library
 npm run build
 
-# Режим разработки (watch)
+# Watch mode
 npm run dev
 
-# Проверка типов
+# Type check
 npm run type-check
 ```
 
-## Публикация в npm
+## Publishing to npm
 
-Публикуется только `dist/` (собранная библиотека) и `src/styles/` (сырые
-токены — чтобы можно было подключить `primitives.css` отдельно при
-кастомной теме). Исходники компонентов (`src/components/*.vue`),
-конфиги сборки и `showcase/` в пакет не попадают — они остаются в
-репозитории; чтобы их получить, репозиторий клонируют.
+Only `dist/` (the built library) and `src/styles/` (raw tokens, so you can
+import `primitives.css` on its own for a custom theme) are published.
+Component sources (`src/components/*.vue`), build configs, and `showcase/`
+stay in the repo — clone it to get them.
 
-`npm publish` **сам** прогоняет проверку типов и полную пересборку перед
-публикацией (хук `prepublishOnly` в `package.json`) — так в реестр не
-уедет пакет со старым или отсутствующим `dist/`. Собирать вручную перед
-`npm publish` не нужно.
+`npm publish` **itself** runs the type check and a full rebuild first
+(`prepublishOnly` in `package.json`), so a stale or missing `dist/` cannot
+reach the registry. You do not need to build by hand before `npm publish`.
 
-Проверить, что именно попадёт в пакет, без реальной публикации:
+See what would go into the tarball, without publishing:
 
 ```bash
 npm pack --dry-run
 ```
 
-## Лицензия
+## License
 
 MIT

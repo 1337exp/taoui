@@ -36,6 +36,7 @@ import TaoFormField from './components/TaoFormField.vue';
 import TaoSelect from './components/TaoSelect.vue';
 import TaoCombobox from './components/TaoCombobox.vue';
 import TaoDate from './components/TaoDate.vue';
+import TaoDateRange from './components/TaoDateRange.vue';
 import TaoSwitch from './components/TaoSwitch.vue';
 import TaoRadio from './components/TaoRadio.vue';
 import TaoRadioGroup from './components/TaoRadioGroup.vue';
@@ -99,6 +100,7 @@ const components = [
     TaoSelect,
     TaoCombobox,
     TaoDate,
+    TaoDateRange,
     TaoSwitch,
     TaoRadio,
     TaoRadioGroup,
@@ -163,6 +165,7 @@ export {
     TaoSelect,
     TaoCombobox,
     TaoDate,
+    TaoDateRange,
     TaoSwitch,
     TaoRadio,
     TaoRadioGroup,
@@ -203,9 +206,16 @@ export type {
     TaoConfirmShortcutOptions,
 } from './confirm';
 
-export { parseTaoDate, formatTaoDateIso, todayTaoDate, formatTaoDateLabel } from './date';
+export {
+    parseTaoDate,
+    parseTaoDateRange,
+    formatTaoDateIso,
+    todayTaoDate,
+    formatTaoDateLabel,
+    formatTaoDateRangeLabel,
+} from './date';
 export type { TaoSelectOption } from './select';
-export type { TaoDateCell, TaoDateParts } from './date';
+export type { TaoDateCell, TaoDateParts, TaoDateRangeValue } from './date';
 export type { TaoRadioValue } from './radio';
 export type { TaoSpoilerName } from './spoiler';
 export type { TaoFormFieldContext } from './formField';

@@ -3,24 +3,27 @@ import { computed, inject, nextTick, onBeforeUnmount, ref, useId, watch } from '
 import { formFieldKey } from '../formField';
 import {
     buildTaoDateGrid,
-    formatTaoDateIso,
     formatTaoDateLabel,
+    formatTaoDateRangeLabel,
     formatTaoMonthLabel,
     isTaoDateInRange,
     parseTaoDate,
+    parseTaoDateRange,
     shiftTaoDate,
     shiftTaoMonth,
+    sortTaoDateRange,
     taoDateWeekdayIndex,
     taoWeekdayLabels,
     todayTaoDate,
+    type TaoDateRangeValue,
 } from '../date';
 import '../styles/date-popup.css';
 
-defineOptions({ name: 'TaoDate' });
+defineOptions({ name: 'TaoDateRange' });
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: string | null;
+        modelValue?: TaoDateRangeValue | null;
         placeholder?: string;
         disabled?: boolean;
         error?: boolean;
@@ -30,7 +33,7 @@ const props = withDefaults(
     }>(),
     {
         modelValue: null,
-        placeholder: 'Дата',
+        placeholder: 'Период',
         disabled: false,
         error: false,
         min: undefined,
@@ -40,8 +43,8 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    'update:modelValue': [value: string | null];
-    change: [value: string | null];
+    'update:modelValue': [value: TaoDateRangeValue | null];
+    change: [value: TaoDateRangeValue | null];
 }>();
 
 const field = inject(formFieldKey, null);
@@ -55,20 +58,36 @@ const open = ref(false);
 const viewYear = ref(2026);
 const viewMonth = ref(1);
 const cursorIso = ref(todayTaoDate());
+const draftStart = ref<string | null>(null);
+const hoverIso = ref<string | null>(null);
 const triggerRef = ref<HTMLButtonElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
 const panelStyle = ref({ top: '0px', left: '0px' });
 
-const valueIso = computed(() => {
-    const parsed = parseTaoDate(props.modelValue);
-    return parsed ? formatTaoDateIso(parsed) : null;
+const committed = computed(() => parseTaoDateRange(props.modelValue));
+const highlight = computed(() => {
+    if (draftStart.value) {
+        return sortTaoDateRange(draftStart.value, hoverIso.value ?? cursorIso.value ?? draftStart.value);
+    }
+
+    return committed.value;
 });
-const displayLabel = computed(() => (valueIso.value ? formatTaoDateLabel(valueIso.value, props.locale) : ''));
+const displayLabel = computed(() =>
+    committed.value ? formatTaoDateRangeLabel(committed.value.start, committed.value.end, props.locale) : '',
+);
 const weekdays = computed(() => taoWeekdayLabels(props.locale));
 const monthLabel = computed(() => formatTaoMonthLabel(viewYear.value, viewMonth.value, props.locale));
 const cells = computed(() => buildTaoDateGrid(viewYear.value, viewMonth.value));
 const todayIso = computed(() => todayTaoDate());
 const todayEnabled = computed(() => isTaoDateInRange(todayIso.value, props.min, props.max));
+
+function daySelected(iso: string) {
+    return Boolean(highlight.value && (iso === highlight.value.start || iso === highlight.value.end));
+}
+
+function dayInRange(iso: string) {
+    return Boolean(highlight.value && iso > highlight.value.start && iso < highlight.value.end);
+}
 
 function syncViewFrom(iso: string) {
     const parts = parseTaoDate(iso);
@@ -112,7 +131,9 @@ async function setOpen(next: boolean) {
         return;
     }
 
-    syncViewFrom(valueIso.value ?? todayIso.value);
+    draftStart.value = null;
+    hoverIso.value = null;
+    syncViewFrom(committed.value?.start ?? todayIso.value);
     await nextTick();
     updatePosition();
     panelRef.value?.focus();
@@ -126,25 +147,49 @@ function close() {
     open.value = false;
 }
 
+function commitRange(range: TaoDateRangeValue) {
+    emit('update:modelValue', range);
+    emit('change', range);
+    draftStart.value = null;
+    hoverIso.value = null;
+    close();
+    triggerRef.value?.focus();
+}
+
 function selectDay(iso: string) {
     if (!isTaoDateInRange(iso, props.min, props.max)) {
         return;
     }
 
-    emit('update:modelValue', iso);
-    emit('change', iso);
-    close();
-    triggerRef.value?.focus();
+    if (!draftStart.value) {
+        draftStart.value = iso;
+        hoverIso.value = iso;
+        cursorIso.value = iso;
+        return;
+    }
+
+    commitRange(sortTaoDateRange(draftStart.value, iso));
+}
+
+function selectToday() {
+    if (!todayEnabled.value) {
+        return;
+    }
+
+    commitRange({ start: todayIso.value, end: todayIso.value });
 }
 
 function clear() {
     emit('update:modelValue', null);
     emit('change', null);
+    draftStart.value = null;
+    hoverIso.value = null;
     close();
     triggerRef.value?.focus();
 }
 
 function goMonth(delta: number) {
+    hoverIso.value = null;
     const next = shiftTaoMonth(`${viewYear.value}-${String(viewMonth.value).padStart(2, '0')}-01`, delta);
     const parts = parseTaoDate(next);
     if (!parts) {
@@ -158,9 +203,22 @@ function goMonth(delta: number) {
 }
 
 function moveCursor(days: number) {
+    hoverIso.value = null;
     cursorIso.value = shiftTaoDate(cursorIso.value, days);
     syncViewFrom(cursorIso.value);
     void nextTick(updatePosition);
+}
+
+function onDayEnter(iso: string) {
+    if (!isTaoDateInRange(iso, props.min, props.max)) {
+        return;
+    }
+
+    hoverIso.value = iso;
+}
+
+function onGridLeave() {
+    hoverIso.value = null;
 }
 
 function onTriggerKeydown(event: KeyboardEvent) {
@@ -259,6 +317,8 @@ watch(open, (isOpen) => {
         return;
     }
 
+    draftStart.value = null;
+    hoverIso.value = null;
     document.removeEventListener('pointerdown', onDocumentPointer);
     window.removeEventListener('resize', onViewportChange);
     window.removeEventListener('scroll', onViewportChange, true);
@@ -272,13 +332,13 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="tao-date" :class="{ 'tao-date--open': open, 'tao-date--invalid': invalid }">
+    <div class="tao-date-range" :class="{ 'tao-date-range--open': open, 'tao-date-range--invalid': invalid }">
         <button
             :id="controlId"
             ref="triggerRef"
             type="button"
-            class="tao-date__trigger"
-            :class="{ 'tao-date__trigger--placeholder': !valueIso }"
+            class="tao-date-range__trigger"
+            :class="{ 'tao-date-range__trigger--placeholder': !committed }"
             role="combobox"
             :aria-expanded="open"
             aria-haspopup="dialog"
@@ -289,8 +349,8 @@ onBeforeUnmount(() => {
             @click="toggle"
             @keydown="onTriggerKeydown"
         >
-            <span class="tao-date__value">{{ displayLabel || placeholder }}</span>
-            <svg class="tao-date__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+            <span class="tao-date-range__value">{{ displayLabel || placeholder }}</span>
+            <svg class="tao-date-range__icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
                 <rect
                     x="2"
                     y="3"
@@ -349,7 +409,7 @@ onBeforeUnmount(() => {
                     <span v-for="day in weekdays" :key="day">{{ day }}</span>
                 </div>
 
-                <div class="tao-date__grid" role="grid">
+                <div class="tao-date__grid" role="grid" @mouseleave="onGridLeave">
                     <button
                         v-for="cell in cells"
                         :key="cell.iso"
@@ -358,15 +418,19 @@ onBeforeUnmount(() => {
                         :class="{
                             'tao-date__day--outside': !cell.currentMonth,
                             'tao-date__day--today': cell.iso === todayIso,
-                            'tao-date__day--selected': cell.iso === valueIso,
+                            'tao-date__day--selected': daySelected(cell.iso),
+                            'tao-date__day--in-range': dayInRange(cell.iso),
+                            'tao-date__day--range-start': highlight?.start === cell.iso,
+                            'tao-date__day--range-end': highlight?.end === cell.iso,
                             'tao-date__day--cursor': cell.iso === cursorIso,
                             'tao-date__day--disabled': !isTaoDateInRange(cell.iso, min, max),
                         }"
                         role="gridcell"
                         :aria-label="formatTaoDateLabel(cell.iso, locale)"
-                        :aria-selected="cell.iso === valueIso"
+                        :aria-selected="daySelected(cell.iso)"
                         :disabled="!isTaoDateInRange(cell.iso, min, max)"
                         @mousedown.prevent
+                        @mouseenter="onDayEnter(cell.iso)"
                         @click="selectDay(cell.iso)"
                     >
                         {{ cell.day }}
@@ -374,10 +438,10 @@ onBeforeUnmount(() => {
                 </div>
 
                 <div class="tao-date__footer">
-                    <button type="button" class="tao-date__link" :disabled="!todayEnabled" @click="selectDay(todayIso)">
+                    <button type="button" class="tao-date__link" :disabled="!todayEnabled" @click="selectToday">
                         Сегодня
                     </button>
-                    <button v-if="valueIso" type="button" class="tao-date__link" @click="clear">Очистить</button>
+                    <button v-if="committed" type="button" class="tao-date__link" @click="clear">Очистить</button>
                 </div>
             </div>
         </Teleport>
@@ -385,11 +449,11 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.tao-date {
+.tao-date-range {
     width: 100%;
 }
 
-.tao-date__trigger {
+.tao-date-range__trigger {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -408,37 +472,37 @@ onBeforeUnmount(() => {
     transition: var(--tao-transition-base);
 }
 
-.tao-date__trigger--placeholder {
+.tao-date-range__trigger--placeholder {
     color: var(--tao-color-input-placeholder);
 }
 
-.tao-date__trigger:focus {
+.tao-date-range__trigger:focus {
     outline: none;
     border-color: var(--tao-color-accent);
     box-shadow: 0 0 0 2px var(--tao-color-accent-subtle-hover);
 }
 
-.tao-date--invalid .tao-date__trigger {
+.tao-date-range--invalid .tao-date-range__trigger {
     border-color: var(--tao-color-danger);
 }
 
-.tao-date--invalid .tao-date__trigger:focus {
+.tao-date-range--invalid .tao-date-range__trigger:focus {
     box-shadow: 0 0 0 2px var(--tao-color-danger-subtle);
 }
 
-.tao-date__trigger:disabled {
+.tao-date-range__trigger:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
-.tao-date__value {
+.tao-date-range__value {
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.tao-date__icon {
+.tao-date-range__icon {
     flex-shrink: 0;
     opacity: 0.7;
 }
