@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
 import { getFocusable, trapTab } from '../focusTrap';
+import { isBrowser, lockBodyScroll, unlockBodyScroll } from '../bodyScroll';
 
 defineOptions({ name: 'TaoModal' });
 
@@ -21,9 +22,8 @@ const emit = defineEmits(['update:modelValue', 'close']);
 
 const panelRef = ref<HTMLElement | null>(null);
 const titleId = useId();
-let previousOverflow = '';
 let previousFocus: HTMLElement | null = null;
-let scrollLocked = false;
+let scrollHeld = false;
 
 function close() {
     if (!props.closable) {
@@ -33,22 +33,20 @@ function close() {
     emit('close');
 }
 
-function lockBodyScroll() {
-    if (scrollLocked) {
+function holdScroll() {
+    if (scrollHeld || !isBrowser()) {
         return;
     }
-    previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    scrollLocked = true;
+    lockBodyScroll();
+    scrollHeld = true;
 }
 
-function unlockBodyScroll() {
-    if (!scrollLocked) {
+function releaseScroll() {
+    if (!scrollHeld) {
         return;
     }
-    document.body.style.overflow = previousOverflow;
-    previousOverflow = '';
-    scrollLocked = false;
+    unlockBodyScroll();
+    scrollHeld = false;
 }
 
 function restoreFocus() {
@@ -68,6 +66,9 @@ async function focusPanel() {
 
 function onKeydown(event: KeyboardEvent) {
     if (event.key === 'Escape') {
+        if (!props.closable) {
+            return;
+        }
         event.preventDefault();
         close();
         return;
@@ -81,20 +82,25 @@ function onKeydown(event: KeyboardEvent) {
 watch(
     () => props.modelValue,
     (isOpen) => {
+        if (!isBrowser()) {
+            return;
+        }
+
         if (isOpen) {
             previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-            lockBodyScroll();
+            holdScroll();
             void focusPanel();
             return;
         }
-        unlockBodyScroll();
+        releaseScroll();
         restoreFocus();
     },
     { immediate: true },
 );
 
 onBeforeUnmount(() => {
-    unlockBodyScroll();
+    releaseScroll();
+    restoreFocus();
 });
 </script>
 

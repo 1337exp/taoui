@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 defineOptions({ name: 'TaoAvatar' });
 
@@ -97,12 +97,26 @@ const label = computed(() => {
     }
     return extra.length ? `${base}, ${extra.join(', ')}` : base;
 });
+
+const imgFailed = ref(false);
+const showImage = computed(() => Boolean(props.src) && !imgFailed.value);
+
+watch(
+    () => props.src,
+    () => {
+        imgFailed.value = false;
+    },
+);
+
+function onImgError() {
+    imgFailed.value = true;
+}
 </script>
 
 <template>
     <span class="tao-avatar" :class="`tao-avatar--${sizeClass}`" :title="label">
         <span class="tao-avatar__face">
-            <img v-if="src" class="tao-avatar__img" :src="src" :alt="label" />
+            <img v-if="showImage" class="tao-avatar__img" :src="src" :alt="label" @error="onImgError" />
             <span v-else class="tao-avatar__fallback" :aria-label="label">{{ initials || '?' }}</span>
         </span>
         <span

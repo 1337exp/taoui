@@ -3,20 +3,20 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import TaoButton from './TaoButton.vue';
 import { currentConfirm, registerConfirmHost, resolveConfirm, unregisterConfirmHost } from '../confirm/store';
 import { trapTab } from '../focusTrap';
+import { isBrowser, lockBodyScroll, unlockBodyScroll } from '../bodyScroll';
 
 defineOptions({ name: 'TaoConfirmHost' });
 
 const panelRef = ref<HTMLElement | null>(null);
-let previousOverflow = '';
 let previousFocus: HTMLElement | null = null;
-let scrollLocked = false;
+let scrollHeld = false;
 
 onMounted(() => {
     registerConfirmHost();
 });
 
 onBeforeUnmount(() => {
-    unlockBodyScroll();
+    releaseScroll();
     unregisterConfirmHost();
 });
 
@@ -24,13 +24,17 @@ watch(
     () => currentConfirm.value?.id,
     async (id) => {
         if (!id) {
-            unlockBodyScroll();
+            releaseScroll();
             restoreFocus();
             return;
         }
 
+        if (!isBrowser()) {
+            return;
+        }
+
         previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-        lockBodyScroll();
+        holdScroll();
         await nextTick();
         queryButton(currentConfirm.value?.danger ? 'cancel' : 'ok')?.focus();
     },
@@ -40,24 +44,20 @@ function queryButton(which: 'ok' | 'cancel') {
     return panelRef.value?.querySelector<HTMLButtonElement>(`[data-tao-confirm-${which}]`) ?? null;
 }
 
-function lockBodyScroll() {
-    if (scrollLocked) {
+function holdScroll() {
+    if (scrollHeld || !isBrowser()) {
         return;
     }
-
-    previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    scrollLocked = true;
+    lockBodyScroll();
+    scrollHeld = true;
 }
 
-function unlockBodyScroll() {
-    if (!scrollLocked) {
+function releaseScroll() {
+    if (!scrollHeld) {
         return;
     }
-
-    document.body.style.overflow = previousOverflow;
-    previousOverflow = '';
-    scrollLocked = false;
+    unlockBodyScroll();
+    scrollHeld = false;
 }
 
 function restoreFocus() {

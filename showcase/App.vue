@@ -2384,6 +2384,17 @@ confirm.defaults({ ok: 'OK', cancel: 'Cancel' })</code></pre>
         </TaoSpoiler>
       </TaoSpoilerGroup>
 
+      <h3 style="margin: 24px 0 12px;">Без v-model</h3>
+      <p class="carousel-note">Группа сама помнит открытую панель — <code>v-model</code> не обязателен.</p>
+      <TaoSpoilerGroup>
+        <TaoSpoiler name="a" title="Первая">
+          <p>Клики работают и без привязки модели.</p>
+        </TaoSpoiler>
+        <TaoSpoiler name="b" title="Вторая">
+          <p>Открыли эту — первая закрылась.</p>
+        </TaoSpoiler>
+      </TaoSpoilerGroup>
+
       <div class="code-block">
         <pre><code>&lt;TaoSpoiler v-model="open" title="Заголовок"&gt;
   &lt;p&gt;Скрытое содержимое&lt;/p&gt;
@@ -2623,6 +2634,9 @@ toast.defaults({ closeLabel: 'Dismiss notification' })</code></pre>
       <div style="width: 160px; height: 120px;">
         <TaoImage :src="imageSrc" />
       </div>
+      <div style="width: 160px; height: 120px; margin-top: 12px;">
+        <TaoImage src="https://invalid.example/missing.png" placeholder-text="No image available" />
+      </div>
 
       <div class="code-block">
         <pre><code>&lt;TaoImage :src="imageUrl" /&gt;
@@ -2640,6 +2654,7 @@ toast.defaults({ closeLabel: 'Dismiss notification' })</code></pre>
         <TaoAvatar name="Анна Козлова" />
         <TaoAvatar name="Борис" size="large" />
         <TaoAvatar :src="imageSrc" name="Демо" size="large" />
+        <TaoAvatar src="https://invalid.example/missing.png" name="Анна Козлова" />
       </div>
 
       <h3>Индикатор</h3>

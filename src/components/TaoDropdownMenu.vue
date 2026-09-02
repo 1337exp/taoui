@@ -146,13 +146,12 @@ onBeforeUnmount(() => {
             class="tao-dropdown-menu__button"
             aria-haspopup="menu"
             :aria-expanded="isOpen"
+            :aria-label="$slots.button ? undefined : menuLabel"
             @click="toggleMenu"
         >
             <slot v-if="$slots.button" name="button" />
-            <span v-else :aria-label="menuLabel">
-                <span aria-hidden="true">
-                    <slot name="icon">⋮</slot>
-                </span>
+            <span v-else aria-hidden="true">
+                <slot name="icon">⋮</slot>
             </span>
         </button>
 

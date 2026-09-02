@@ -18,7 +18,7 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoModal** — modal with animation and slots
 - **TaoDrawer** — side panel (filters, settings). Esc, backdrop click, focus trap — same as the modal
 - **TaoSpoiler** — disclosure. `v-model` and `aria-expanded`. Neighbours do not close each other
-- **TaoSpoilerGroup** — accordion: `v-model` is the open panel key (`null` = all closed); spoilers take `name`
+- **TaoSpoilerGroup** — accordion: `v-model` is the open panel key (`null` = all closed); spoilers take `name`. Without `v-model` the group keeps that key itself
 - **TaoTabs** — tabbed sections
 - **TaoTooltip** — hover hint. `top` / `bottom` / `left` / `right`, flips at the viewport edge
 - **TaoPopover** — click panel with any slot content, Esc and outside click. Not a tooltip, not an action menu

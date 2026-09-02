@@ -1,26 +1,26 @@
 <script lang="ts" setup>
-import { computed, provide } from 'vue';
+import { computed, provide, ref } from 'vue';
 import { spoilerGroupKey, type TaoSpoilerName } from '../spoiler';
 
 defineOptions({ name: 'TaoSpoilerGroup' });
 
-const props = withDefaults(
-    defineProps<{
-        modelValue?: TaoSpoilerName | null;
-    }>(),
-    {
-        modelValue: null,
-    },
-);
+const props = defineProps<{
+    modelValue?: TaoSpoilerName | null;
+}>();
 
 const emit = defineEmits<{
     'update:modelValue': [value: TaoSpoilerName | null];
     change: [value: TaoSpoilerName | null];
 }>();
 
-const model = computed(() => props.modelValue);
+const isControlled = computed(() => props.modelValue !== undefined);
+const internal = ref<TaoSpoilerName | null>(null);
+const model = computed(() => (isControlled.value ? props.modelValue : internal.value));
 
 function setOpen(name: TaoSpoilerName | null) {
+    if (!isControlled.value) {
+        internal.value = name;
+    }
     emit('update:modelValue', name);
     emit('change', name);
 }

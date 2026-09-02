@@ -23,37 +23,40 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['load', 'error']);
 
 const isLoaded = ref(false);
+const hasError = ref(false);
 
 function handleLoad() {
     isLoaded.value = true;
+    hasError.value = false;
     emit('load');
 }
 
 function handleError() {
     isLoaded.value = false;
+    hasError.value = true;
     emit('error');
 }
 
 watch(() => props.src, () => {
     isLoaded.value = false;
+    hasError.value = false;
 });
 </script>
 
 <template>
     <div class="tao-image">
-        <template v-if="src">
-            <img
-                :class="{ 'tao-image__img--hidden': !isLoaded, 'tao-image__img--pixelated': props.pixelated }"
-                :src="src"
-                :alt="alt"
-                :loading="lazy ? 'lazy' : 'eager'"
-                decoding="async"
-                draggable="false"
-                @load="handleLoad"
-                @error="handleError"
-            />
-        </template>
-        <template v-else>
+        <img
+            v-if="src && !hasError"
+            :class="{ 'tao-image__img--hidden': !isLoaded, 'tao-image__img--pixelated': props.pixelated }"
+            :src="src"
+            :alt="alt"
+            :loading="lazy ? 'lazy' : 'eager'"
+            decoding="async"
+            draggable="false"
+            @load="handleLoad"
+            @error="handleError"
+        />
+        <template v-if="!src || hasError">
             <slot>
                 <div class="tao-image__placeholder">{{ placeholderText }}</div>
             </slot>
@@ -94,6 +97,11 @@ watch(() => props.src, () => {
 }
 
 .tao-image__placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
     font-size: var(--tao-font-size-sm);
     font-family: var(--tao-font-family);
     letter-spacing: 0.01rem;

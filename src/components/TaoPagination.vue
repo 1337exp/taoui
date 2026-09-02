@@ -54,11 +54,15 @@ const items = computed(() => buildPaginationItems(current.value, pageCount.value
 const from = computed(() => (props.total === 0 ? 0 : (current.value - 1) * props.pageSize + 1));
 const to = computed(() => Math.min(current.value * props.pageSize, props.total));
 
-watch(pageCount, (count) => {
-    if (props.page > count) {
-        goTo(count);
-    }
-});
+watch(
+    () => [props.page, pageCount.value] as const,
+    ([page, count]) => {
+        if (page > count || page < 1) {
+            goTo(page);
+        }
+    },
+    { immediate: true },
+);
 
 function goTo(next: number) {
     if (props.disabled) {
