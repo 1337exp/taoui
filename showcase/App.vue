@@ -27,7 +27,9 @@ import {
   TaoFileDrop,
   TaoDropdownMenu,
   TaoPinCode,
-  TaoLink
+  TaoLink,
+  toast,
+  confirm,
 } from '@tao/ui'
 
 // Theme switcher demo
@@ -80,10 +82,15 @@ const sliderValue = ref(35)
 // TaoFileDrop demo — два сценария очистки: мгновенно и через подтверждение
 const filesInstant = ref([])
 const filesConfirm = ref([])
-const isClearConfirmOpen = ref(false)
-function confirmClearFiles() {
-  filesConfirm.value = []
-  isClearConfirmOpen.value = false
+async function requestClearConfirm() {
+  const ok = await confirm()
+    .title('Удалить файлы?')
+    .message('Список загруженных файлов будет очищен.')
+    .ok('Удалить')
+    .danger()
+  if (ok) {
+    filesConfirm.value = []
+  }
 }
 
 // TaoDropdownMenu demo
@@ -96,6 +103,50 @@ const dropdownActions = [
 // TaoPinCode demo
 const pinValue = ref('')
 const pinValueNumeric = ref('')
+
+function fireToast(kind) {
+  if (kind === 'success') {
+    toast().success().message('Сохранено')
+    return
+  }
+  if (kind === 'error') {
+    toast().error().title('Сеть').message('Нет соединения')
+    return
+  }
+  if (kind === 'warning') {
+    toast().warning().short().message('Черновик не отправлен')
+    return
+  }
+  if (kind === 'info') {
+    toast.info('Можно вызвать и короткой формой')
+    return
+  }
+  if (kind === 'action') {
+    toast()
+      .show()
+      .title('Файл загружен')
+      .message('Открыть в новой вкладке?')
+      .action('Понятно', () => {})
+    return
+  }
+  toast().byBottomRight().success().message('Справа снизу')
+}
+
+const confirmResult = ref('')
+async function fireConfirm(kind) {
+  if (kind === 'danger') {
+    const ok = await confirm()
+      .title('Удалить файл?')
+      .message('Это нельзя отменить.')
+      .ok('Удалить')
+      .danger()
+    confirmResult.value = ok ? 'удалили' : 'отменили'
+    return
+  }
+
+  const ok = await confirm('Сохранить изменения?').ok('Сохранить').cancel('Не сейчас')
+  confirmResult.value = ok ? 'сохранили' : 'не сейчас'
+}
 
 // TaoImage demo — data URI, чтобы демонстрация не зависела от внешней сети
 const imageSrc = ref('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNjAiIGhlaWdodD0iMTIwIiB2aWV3Qm94PSIwIDAgMTYwIDEyMCI+CiAgPHJlY3Qgd2lkdGg9IjE2MCIgaGVpZ2h0PSIxMjAiIGZpbGw9IiNlNWU1ZTUiLz4KICA8cmVjdCB4PSIxIiB5PSIxIiB3aWR0aD0iMTU4IiBoZWlnaHQ9IjExOCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjYmZiZmJmIiBzdHJva2Utd2lkdGg9IjIiLz4KICA8dGV4dCB4PSI4MCIgeT0iNjUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNjY2NjY2IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5kZW1vIGltYWdlPC90ZXh0Pgo8L3N2Zz4K')
@@ -577,6 +628,45 @@ const tabs = [
       </div>
     </section>
 
+    <!-- toast -->
+    <section class="showcase-section">
+      <h2>toast()</h2>
+      <p>Fluent-уведомления: цепочка в одном тике, setTimeout(0) отправляет показ. Стили — токены темы, не iziToast.</p>
+
+      <div class="button-row">
+        <TaoButton variant="primary" @click="fireToast('success')">success</TaoButton>
+        <TaoButton variant="danger" @click="fireToast('error')">error</TaoButton>
+        <TaoButton variant="secondary" @click="fireToast('warning')">warning</TaoButton>
+        <TaoButton variant="ghost" @click="fireToast('info')">info</TaoButton>
+        <TaoButton variant="secondary" @click="fireToast('action')">с кнопкой</TaoButton>
+        <TaoButton variant="secondary" @click="fireToast('corner')">bottomRight</TaoButton>
+      </div>
+
+      <div class="code-block">
+        <pre><code>toast().success().message('Сохранено')
+toast().error().title('Сеть').message('Нет соединения')
+toast.success('Сохранено')</code></pre>
+      </div>
+    </section>
+
+    <!-- confirm -->
+    <section class="showcase-section">
+      <h2>confirm()</h2>
+      <p>Вопрос с оверлеем — то, что в woop было question(). Не тост: ждёт ответ, Esc и клик по фону = отмена, можно await.</p>
+
+      <div class="button-row">
+        <TaoButton variant="primary" @click="fireConfirm('save')">обычный</TaoButton>
+        <TaoButton variant="danger" @click="fireConfirm('danger')">опасный</TaoButton>
+      </div>
+      <p v-if="confirmResult" style="margin-top: 8px; font-size: 13px;">Ответ: {{ confirmResult }}</p>
+
+      <div class="code-block">
+        <pre><code>if (await confirm().title('Удалить файл?').danger()) {
+  remove()
+}</code></pre>
+      </div>
+    </section>
+
     <!-- TaoProgress / TaoSlider -->
     <section class="showcase-section">
       <h2>TaoProgress / TaoSlider</h2>
@@ -646,23 +736,21 @@ const tabs = [
         v-model="filesConfirm"
         style="max-width: 400px;"
         show-clear
-        @clear-request="isClearConfirmOpen = true"
+        @clear-request="requestClearConfirm"
       />
       <p style="margin-top: 4px; font-size: 13px;">Файлов: {{ filesConfirm.length }}</p>
-
-      <TaoModal v-model="isClearConfirmOpen" title="Удалить файлы?">
-        <p>Вы уверены, что хотите очистить список файлов?</p>
-        <template #footer>
-          <TaoButton variant="secondary" @click="isClearConfirmOpen = false">Отмена</TaoButton>
-          <TaoButton variant="danger" @click="confirmClearFiles">Удалить</TaoButton>
-        </template>
-      </TaoModal>
 
       <div class="code-block">
         <pre><code>&lt;TaoFileDrop v-model="files" show-clear @clear-request="files = []" /&gt;
 
-&lt;!-- или с подтверждением через модалку --&gt;
-&lt;TaoFileDrop v-model="files" show-clear @clear-request="isConfirmOpen = true" /&gt;</code></pre>
+&lt;!-- или с подтверждением --&gt;
+&lt;TaoFileDrop v-model="files" show-clear @clear-request="onClear" /&gt;
+
+async function onClear() {
+  if (await confirm().title('Удалить файлы?').danger()) {
+    files = []
+  }
+}</code></pre>
       </div>
     </section>
 

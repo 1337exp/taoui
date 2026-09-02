@@ -26,6 +26,10 @@ import TaoFileDrop from './components/TaoFileDrop.vue';
 import TaoDropdownMenu from './components/TaoDropdownMenu.vue';
 import TaoPinCode from './components/TaoPinCode.vue';
 import TaoLink from './components/TaoLink.vue';
+import TaoToastViewport from './components/TaoToastViewport.vue';
+import TaoConfirmHost from './components/TaoConfirmHost.vue';
+import { toast } from './toast';
+import { confirm } from './confirm';
 
 // Импорт нужен только для того, чтобы Vite подхватил CSS в сборку
 // styles.css. Сам JS-бандл эти стили в рантайме НЕ применяет —
@@ -61,6 +65,8 @@ const components = [
     TaoDropdownMenu,
     TaoPinCode,
     TaoLink,
+    TaoToastViewport,
+    TaoConfirmHost,
 ];
 
 export const TaoUI: Plugin = {
@@ -99,6 +105,30 @@ export {
     TaoDropdownMenu,
     TaoPinCode,
     TaoLink,
+    TaoToastViewport,
+    TaoConfirmHost,
+    toast,
+    confirm,
 };
+
+export type {
+    TaoToastAction,
+    TaoToastApi,
+    TaoToastBuilder,
+    TaoToastDefaults,
+    TaoToastDisplayMode,
+    TaoToastPosition,
+    TaoToastRecord,
+    TaoToastShortcutOptions,
+    TaoToastType,
+} from './toast';
+
+export type {
+    TaoConfirmApi,
+    TaoConfirmBuilder,
+    TaoConfirmDefaults,
+    TaoConfirmRecord,
+    TaoConfirmShortcutOptions,
+} from './confirm';
 
 export default TaoUI;

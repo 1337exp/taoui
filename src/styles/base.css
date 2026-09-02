@@ -1,0 +1,59 @@
+/**
+ * Tao UI — Global base styles
+ *
+ * Минимальный reset + глобальные штрихи (скроллбар, ссылки, инпуты).
+ * Не содержит хардкод-цветов — всё через семантические токены,
+ * поэтому переключение темы работает и здесь.
+ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    padding: 0;
+    margin: 0;
+    font-family: var(--tao-font-family);
+    background: var(--tao-color-bg);
+    color: var(--tao-color-text);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    max-width: 5px;
+    max-height: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--tao-color-accent);
+    border-radius: var(--tao-radius-full);
+}
+
+/* Links */
+a {
+    color: var(--tao-color-link);
+    text-decoration: none;
+    transition: color var(--tao-duration-base) var(--tao-ease-base);
+}
+
+a:hover {
+    color: var(--tao-color-link-hover);
+}
+
+/* Number input spinners */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield !important;
+}

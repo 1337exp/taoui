@@ -47,6 +47,12 @@
 - **TaoDropdownMenu** — выпадающее меню с авто-позиционированием у края экрана
 - **TaoScrollTop** — плавающая кнопка «наверх» с ripple-эффектом, появляется при обратном скролле
 
+### Обратная связь
+
+- **toast()** — fluent-уведомления в духе `woop`: `toast().success().message('Сохранено')`. Рендер на токенах Tao, без iziToast.
+- **confirm()** — вопрос с оверлеем: тот же fluent + `await`. Не тост — ждёт ответ, не исчезает сам.
+- **TaoToastViewport** / **TaoConfirmHost** — контейнеры; если их нет в разметке, первый вызов сам монтирует их в `body`
+
 ## Иконки
 
 `TaoIcon` не поставляет собственный набор иконок — он рендерит класс `icon-<name>`
@@ -116,6 +122,61 @@ import '@1337exp/taoui/styles.css'
 </template>
 ```
 
+## Toast
+
+Вызов — как в `@daeren/woop`: цепочка в одном тике, `setTimeout(0)` отправляет уведомление. Рендер — Vue и токены темы, не iziToast.
+
+```javascript
+import { toast } from '@1337exp/taoui'
+
+toast().success().message('Сохранено')
+toast().error().title('Сеть').timeout(5000).message('Нет соединения')
+toast.success('Сохранено')
+toast.warning('Черновик', { timeout: 1000 })
+```
+
+Позиция по умолчанию — `topCenter`. Глобально:
+
+```javascript
+toast.defaults({ position: 'bottomRight' })
+toast.byBottomRight()
+```
+
+`question` с оверлеем в kit нет — это confirm, не toast. Кнопки в тосте, если нужны:
+
+```javascript
+toast().info().message('Удалить файл?').action('Удалить', onRemove)
+```
+
+Viewport можно не вставлять: первый вызов сам создаст его. Если нужен явный контроль (тесты, свой layout):
+
+```vue
+<TaoToastViewport />
+```
+
+## Confirm
+
+То же, что `woop().question()` с оверлеем: всплывает по центру и спрашивает. Это не toast — нет прогресс-бара и автозакрытия, есть `await`, Esc и клик по оверлею = отмена.
+
+```javascript
+import { confirm } from '@1337exp/taoui'
+
+if (await confirm().title('Удалить файл?').message('Это нельзя отменить').danger()) {
+  remove()
+}
+
+const ok = await confirm('Выйти без сохранения?', {
+  ok: 'Выйти',
+  cancel: 'Остаться',
+})
+```
+
+Очередь: второй `confirm()`, пока открыт первый, подождёт. Подписи по умолчанию — «ОК» / «Отмена»:
+
+```javascript
+confirm.defaults({ ok: 'Yes', cancel: 'No' })
+```
+
 ## Дизайн-токены и темизация
 
 Стили библиотеки построены в три слоя. Компоненты **никогда** не обращаются
@@ -182,7 +243,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-color-surface*` — фоны контейнеров (обычный / приподнятый / утопленный / hover)
 - `--tao-color-border*` — границы
 - `--tao-color-text*` — текст (обычный / усиленный / приглушённый / disabled)
-- `--tao-color-danger*`, `--tao-color-success*` — статусные цвета
+- `--tao-color-danger*`, `--tao-color-success*`, `--tao-color-warning*`, `--tao-color-info*` — статусные цвета
 - `--tao-color-input-*` — поля ввода отдельно, т.к. фон/текст полей часто не совпадают с surface/text
 - `--tao-radius-control`, `--tao-radius-panel` — скругления (мелкие контролы vs крупные панели)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — тени

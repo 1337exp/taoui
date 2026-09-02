@@ -1,0 +1,79 @@
+/**
+ * Tao UI — Semantic tokens (default / dark theme)
+ *
+ * Это и есть публичный API темизации библиотеки. Компоненты используют
+ * ТОЛЬКО эти переменные, никогда — primitives напрямую.
+ *
+ * Чтобы сделать свою тему — переопредели этот набор в своём CSS
+ * (глобально, или через [data-tao-theme="имя"], см. themes/*.css).
+ */
+:root,
+[data-tao-theme="dark"] {
+    color-scheme: dark;
+
+    /* ---------- Brand / accent ---------- */
+    --tao-color-accent: var(--tao-orange-300);
+    --tao-color-accent-hover: var(--tao-orange-400);
+    --tao-color-accent-active: var(--tao-orange-500);
+    --tao-color-accent-subtle: color-mix(in srgb, var(--tao-color-accent) 8%, transparent);
+    --tao-color-accent-subtle-hover: color-mix(in srgb, var(--tao-color-accent) 14%, transparent);
+    --tao-color-on-accent: var(--tao-gray-950); /* текст поверх accent-фона */
+
+    /* ---------- Surfaces ---------- */
+    --tao-color-bg: var(--tao-gray-900);
+    --tao-color-surface: var(--tao-gray-900);
+    --tao-color-surface-raised: var(--tao-gray-800);
+    --tao-color-surface-sunken: color-mix(in srgb, var(--tao-gray-600) 20%, transparent);
+    --tao-color-surface-hover: var(--tao-gray-700);
+
+    /* ---------- Borders ---------- */
+    --tao-color-border: color-mix(in srgb, var(--tao-gray-600) 40%, transparent);
+    --tao-color-border-strong: var(--tao-gray-500);
+
+    /* ---------- Text ---------- */
+    --tao-color-text: var(--tao-gray-200);
+    --tao-color-text-strong: var(--tao-gray-0);
+    --tao-color-text-muted: var(--tao-gray-400);
+    --tao-color-text-on-accent: var(--tao-gray-950);
+    --tao-color-text-disabled: var(--tao-gray-300);
+
+    /* ---------- Links ---------- */
+    --tao-color-link: var(--tao-orange-300);
+    --tao-color-link-hover: var(--tao-orange-500);
+    --tao-color-link-shadow: 0 0 1px color-mix(in srgb, var(--tao-orange-300) 10%, transparent),
+        0 0 6px color-mix(in srgb, var(--tao-orange-300) 60%, transparent);
+
+    /* ---------- Status ---------- */
+    --tao-color-danger: var(--tao-red-500);
+    --tao-color-danger-hover: var(--tao-red-600);
+    --tao-color-danger-subtle: color-mix(in srgb, var(--tao-red-500) 15%, transparent);
+    --tao-color-success: var(--tao-green-500);
+    --tao-color-success-hover: var(--tao-green-600);
+    --tao-color-success-subtle: color-mix(in srgb, var(--tao-color-success) 15%, transparent);
+    --tao-color-warning: var(--tao-yellow-500);
+    --tao-color-warning-hover: var(--tao-yellow-600);
+    --tao-color-warning-subtle: color-mix(in srgb, var(--tao-color-warning) 15%, transparent);
+    --tao-color-info: var(--tao-blue-400);
+    --tao-color-info-hover: var(--tao-blue-500);
+    --tao-color-info-subtle: color-mix(in srgb, var(--tao-color-info) 15%, transparent);
+
+    /* ---------- Form controls ---------- */
+    --tao-color-input-bg: var(--tao-color-surface-sunken);
+    --tao-color-input-text: var(--tao-gray-200);
+    --tao-color-input-placeholder: var(--tao-gray-300);
+    --tao-color-input-disabled-bg: color-mix(in srgb, var(--tao-gray-600) 10%, transparent);
+    --tao-color-input-disabled-text: var(--tao-gray-300);
+
+    /* ---------- Overlay ---------- */
+    --tao-color-overlay: rgba(0, 0, 0, 0.7);
+
+    /* ---------- Radii / spacing / shadows (aliasable per-theme too) ---------- */
+    --tao-radius-control: var(--tao-radius-sm);
+    --tao-radius-panel: var(--tao-radius-md);
+    --tao-shadow-panel: var(--tao-shadow-md);
+    --tao-shadow-overlay: var(--tao-shadow-xl);
+
+    /* ---------- Typography / motion passthrough ---------- */
+    --tao-font-family: var(--tao-font-family-base);
+    --tao-transition-base: all var(--tao-duration-base) var(--tao-ease-base);
+}

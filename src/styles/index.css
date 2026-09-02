@@ -1,0 +1,9 @@
+/**
+ * Tao UI — styles entry point
+ *
+ * Порядок важен: primitives -> semantic (default theme) -> optional themes -> base reset.
+ */
+@import "./primitives.css";
+@import "./semantic.css";
+@import "./themes/light.css";
+@import "./base.css";

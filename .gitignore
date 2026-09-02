@@ -202,3 +202,4 @@ Thumbs.db
 *.mjs
 *.mjs.map
 *.css
+!src/styles/**/*.css

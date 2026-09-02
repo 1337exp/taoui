@@ -1,0 +1,58 @@
+/**
+ * Tao UI — Light theme
+ *
+ * Пример того, как выглядит альтернативная тема: переопределяются
+ * ТОЛЬКО семантические токены из semantic.css, ничего в компонентах
+ * менять не нужно.
+ *
+ * Подключение: <html data-tao-theme="light">
+ */
+[data-tao-theme="light"] {
+    color-scheme: light;
+
+    --tao-color-accent: var(--tao-orange-500);
+    --tao-color-accent-hover: var(--tao-orange-600);
+    --tao-color-accent-active: var(--tao-orange-600);
+    --tao-color-accent-subtle: color-mix(in srgb, var(--tao-color-accent) 10%, transparent);
+    --tao-color-accent-subtle-hover: color-mix(in srgb, var(--tao-color-accent) 16%, transparent);
+    --tao-color-on-accent: var(--tao-gray-0);
+
+    --tao-color-bg: var(--tao-gray-0);
+    --tao-color-surface: var(--tao-gray-0);
+    --tao-color-surface-raised: var(--tao-gray-50);
+    --tao-color-surface-sunken: var(--tao-gray-50);
+    --tao-color-surface-hover: var(--tao-gray-100);
+
+    --tao-color-border: var(--tao-gray-100);
+    --tao-color-border-strong: var(--tao-gray-200);
+
+    --tao-color-text: var(--tao-gray-700);
+    --tao-color-text-strong: var(--tao-gray-950);
+    --tao-color-text-muted: var(--tao-gray-400);
+    --tao-color-text-on-accent: var(--tao-gray-0);
+    --tao-color-text-disabled: var(--tao-gray-300);
+
+    --tao-color-link: var(--tao-orange-600);
+    --tao-color-link-hover: var(--tao-orange-500);
+
+    --tao-color-danger: var(--tao-red-500);
+    --tao-color-danger-hover: var(--tao-red-600);
+    --tao-color-danger-subtle: color-mix(in srgb, var(--tao-red-500) 10%, transparent);
+    --tao-color-success: var(--tao-green-500);
+    --tao-color-success-hover: var(--tao-green-600);
+    --tao-color-success-subtle: color-mix(in srgb, var(--tao-color-success) 10%, transparent);
+    --tao-color-warning: var(--tao-yellow-600);
+    --tao-color-warning-hover: var(--tao-yellow-500);
+    --tao-color-warning-subtle: color-mix(in srgb, var(--tao-color-warning) 12%, transparent);
+    --tao-color-info: var(--tao-blue-500);
+    --tao-color-info-hover: var(--tao-blue-600);
+    --tao-color-info-subtle: color-mix(in srgb, var(--tao-color-info) 12%, transparent);
+
+    --tao-color-input-bg: var(--tao-gray-0);
+    --tao-color-input-text: var(--tao-gray-950);
+    --tao-color-input-placeholder: var(--tao-gray-300);
+    --tao-color-input-disabled-bg: var(--tao-gray-50);
+    --tao-color-input-disabled-text: var(--tao-gray-300);
+
+    --tao-color-overlay: rgba(0, 0, 0, 0.4);
+}

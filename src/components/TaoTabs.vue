@@ -28,12 +28,16 @@ function selectTab(key: string) {
                 v-for="tab in tabs"
                 :key="tab.key"
                 :class="{ active: tab.key === modelValue, disabled: tab.disabled }"
-                @click="selectTab(tab.key)"
             >
-                <a v-if="$slots.label">
-                    <slot name="label" :text="tab.label" :value="tab.key" />
-                </a>
-                <a v-else>{{ tab.label }}</a>
+                <button
+                    type="button"
+                    class="tao-tabs__tab"
+                    :disabled="tab.disabled"
+                    @click="selectTab(tab.key)"
+                >
+                    <slot v-if="$slots.label" name="label" :text="tab.label" :value="tab.key" />
+                    <template v-else>{{ tab.label }}</template>
+                </button>
             </li>
         </ul>
         <div class="tao-tabs__content">
@@ -64,42 +68,36 @@ function selectTab(key: string) {
 
 .tao-tabs__list li {
     flex: 1;
-    text-align: center;
-    padding: var(--tao-space-3) 0;
-    cursor: pointer;
-    transition: background-color var(--tao-duration-base) var(--tao-ease-base);
+    min-width: 0;
 }
 
-.tao-tabs__list li a {
+.tao-tabs__tab {
+    display: block;
+    width: 100%;
+    padding: var(--tao-space-3) 0;
+    border: none;
+    background: transparent;
     color: var(--tao-color-text);
+    font: inherit;
     font-size: var(--tao-font-size-md);
     font-weight: 500;
-    text-decoration: none;
-    display: block;
+    text-align: center;
+    cursor: pointer;
 }
 
-.tao-tabs__list li.active {
+.tao-tabs__list li.active .tao-tabs__tab {
     background: var(--tao-color-accent);
-}
-
-.tao-tabs__list li.active a {
     color: var(--tao-color-on-accent);
 }
 
-.tao-tabs__list li.disabled {
+.tao-tabs__list li.disabled .tao-tabs__tab {
     cursor: not-allowed;
     background: var(--tao-color-surface);
-}
-
-.tao-tabs__list li.disabled a {
     color: var(--tao-color-text-disabled);
 }
 
-.tao-tabs__list li:hover:not(.active, .disabled) {
+.tao-tabs__list li:not(.active, .disabled) .tao-tabs__tab:hover {
     background: var(--tao-color-surface-hover);
-}
-
-.tao-tabs__list li:hover:not(.active, .disabled) a {
     color: var(--tao-color-text-strong);
 }
 
