@@ -117,6 +117,7 @@ function onChange() {
     z-index: 1;
     display: inline-flex;
     flex: 0 0 auto;
+    align-items: center;
     min-width: 0;
     cursor: pointer;
     user-select: none;
@@ -132,7 +133,7 @@ function onChange() {
     border-radius: calc(var(--tao-radius-control) - 1px);
     font-family: inherit;
     font-weight: 500;
-    line-height: 1;
+    line-height: 1.25;
     white-space: nowrap;
     transition:
         color var(--tao-duration-base) var(--tao-ease-base),
@@ -182,8 +183,7 @@ function onChange() {
 
 .tao-segmented-option__label {
     min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    line-height: 1.25;
 }
 
 .tao-segmented-option__count {

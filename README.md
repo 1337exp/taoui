@@ -60,7 +60,7 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoCounter** — flipping digits (not an input)
 - **TaoCarousel** — strip: full slide with `autoplay`, card with `peek`, row with `per-view`. Arrows via `controls` or `#prev` / `#next`, dots via `dots`
 - **TaoAvatar** — photo or initials, sizes `small` / `medium` / `large`. Status `dot` and `count`
-- **TaoTag** — badge with tones (neutral, success, danger, warning, info)
+- **TaoTag** — badge with tones. `#prefix` (avatar), `closable` dismisses the chip
 - **TaoAlert** — inline page/form banner (success / error / warning / info)
 - **TaoProgress** — static bar (`progress` in %). Percent centered on top, or `showPercentage="right"`; `#left` / `#right` slots are captions, then the percent sits in parentheses on the right. `false` hides it. Width is `minWidth` / `maxWidth`, not the value domain
 - **TaoLoader** — four-dot spinner
@@ -249,6 +249,17 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 `TaoCombobox` is the same menu with a field. Typing filters options. `allow-create` writes the typed string into `v-model` when there is no exact match. The list does not mutate itself: listen to `create` and append an option from the parent.
 
 `TaoFormField` also wraps `TaoTextarea` and `TaoCheckbox` — id, hint, and error are forwarded for you.
+
+`TaoTag` can be a chip: `#prefix` on the left (usually `TaoAvatar`), `closable` draws a cross and emits `close`. The close click does not bubble.
+
+```vue
+<TaoTag type="neutral" closable @close="remove">
+  <template #prefix>
+    <TaoAvatar name="Anna Kozlova" size="small" />
+  </template>
+  Anna Kozlova
+</TaoTag>
+```
 
 ## Table and pagination
 

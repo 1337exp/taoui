@@ -199,6 +199,11 @@ onBeforeUnmount(() => {
     min-width: 0;
 }
 
+.tao-segmented--block .tao-segmented__track > :deep(.tao-segmented-option__label) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .tao-segmented__thumb {
     position: absolute;
     top: 0;

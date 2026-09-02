@@ -253,6 +253,20 @@ const plan = ref('pro')
 const period = ref('month')
 const layoutView = ref('list')
 const inboxFilter = ref('all')
+const tagPeople = ref([
+  { name: 'Анна Козлова' },
+  { name: 'Борис Волков' },
+  { name: 'Кира' },
+])
+const tagFilters = ref(['Москва', 'Pro', 'Новые'])
+
+function removeTagPerson(index) {
+  tagPeople.value.splice(index, 1)
+}
+
+function removeTagFilter(index) {
+  tagFilters.value.splice(index, 1)
+}
 const comboCity = ref(null)
 const comboTag = ref(null)
 const comboFree = ref(null)
@@ -511,7 +525,7 @@ const navGroups = [
     items: [
       { id: 'toast', label: 'toast()' },
       { id: 'alert', label: 'TaoAlert' },
-      { id: 'tag', label: 'TaoTag' },
+      { id: 'tag', label: 'TaoTag', aliases: ['closable', 'chip'] },
       { id: 'loader', label: 'TaoLoader' },
     ],
   },
@@ -2110,7 +2124,10 @@ toast.success('Сохранено')</code></pre>
     <!-- TaoTag -->
     <section id="tag" class="showcase-section" v-show="sectionVisible('feedback', 'tag')">
       <h2>TaoTag</h2>
-      <p>Тег / бейдж со статусами</p>
+      <p>
+        Тег / бейдж. <code>#prefix</code> — аватар или иконка слева, <code>closable</code> — крестик.
+        Крестик не всплывает наружу: клик по чипу и снятие — разные жесты.
+      </p>
 
       <div style="display: flex; gap: 8px; flex-wrap: wrap;">
         <TaoTag>default</TaoTag>
@@ -2122,9 +2139,47 @@ toast.success('Сохранено')</code></pre>
         <TaoTag pointer>кликабельный</TaoTag>
       </div>
 
+      <h3>Закрытие и люди</h3>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+        <TaoTag
+          v-for="(filter, index) in tagFilters"
+          :key="filter"
+          type="neutral"
+          closable
+          @close="removeTagFilter(index)"
+        >
+          {{ filter }}
+        </TaoTag>
+      </div>
+      <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <TaoTag
+          v-for="(person, index) in tagPeople"
+          :key="person.name"
+          type="neutral"
+          closable
+          :close-label="`Убрать ${person.name}`"
+          @close="removeTagPerson(index)"
+        >
+          <template #prefix>
+            <TaoAvatar :name="person.name" size="small" />
+          </template>
+          {{ person.name }}
+        </TaoTag>
+      </div>
+
       <div class="code-block">
         <pre><code>&lt;TaoTag type="success"&gt;Активен&lt;/TaoTag&gt;
-&lt;TaoTag type="danger"&gt;Ошибка&lt;/TaoTag&gt;</code></pre>
+
+&lt;TaoTag type="neutral" closable @close="remove"&gt;
+  Москва
+&lt;/TaoTag&gt;
+
+&lt;TaoTag type="neutral" closable @close="remove"&gt;
+  &lt;template #prefix&gt;
+    &lt;TaoAvatar name="Анна Козлова" size="small" /&gt;
+  &lt;/template&gt;
+  Анна Козлова
+&lt;/TaoTag&gt;</code></pre>
       </div>
     </section>
 
