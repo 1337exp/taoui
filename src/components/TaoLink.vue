@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, resolveComponent } from 'vue';
+import { computed, getCurrentInstance } from 'vue';
 
 defineOptions({ name: 'TaoLink' });
 
@@ -17,20 +17,21 @@ const props = withDefaults(defineProps<Props>(), {
     exactPath: false,
 });
 
-// В Nuxt-проекте <NuxtLink> зарегистрирован глобально и resolveComponent
-// его находит — тогда используем клиентский роутинг. Вне Nuxt (или если
-// компонент не найден) резолвится строкой — тогда рендерим обычный <a>.
-// Так TaoLink работает и в Nuxt, и в чистом Vue без доп. настройки.
-const linkComponent = computed(() => {
-    const resolved = resolveComponent('NuxtLink');
-    return typeof resolved === 'string' ? 'a' : resolved;
-});
+const globals = getCurrentInstance()?.appContext.components ?? {};
+
+// NuxtLink (Nuxt) → RouterLink (vue-router) → <a>.
+// Nuxt первым: это обёртка над RouterLink с prefetch.
+// Ищем в глобальном реестре, а не через resolveComponent — иначе Vue
+// пишет warning, если Nuxt/vue-router в проекте нет.
+const linkKind = globals.NuxtLink ? 'nuxt' : globals.RouterLink ? 'router' : 'a';
+const linkComponent =
+    linkKind === 'nuxt' ? globals.NuxtLink : linkKind === 'router' ? globals.RouterLink : 'a';
 
 const linkProps = computed(() => {
     const target = props.asNewTab ? '_blank' : undefined;
     const rel = (props.private && 'noopener noreferrer') || (props.asNewTab && 'noopener') || undefined;
 
-    if (linkComponent.value === 'a') {
+    if (linkKind === 'a') {
         return {
             href: typeof props.to === 'string' ? props.to : undefined,
             target,
@@ -42,7 +43,7 @@ const linkProps = computed(() => {
         to: props.to,
         target,
         rel,
-        exactPath: props.exactPath,
+        ...(linkKind === 'nuxt' ? { exactPath: props.exactPath } : {}),
     };
 });
 </script>

@@ -205,6 +205,7 @@ const textareaValue = ref('')
 
 // TaoProgress / TaoSlider demo
 const sliderValue = ref(35)
+const sliderVolume = ref(70)
 
 // TaoFileDrop demo — два сценария очистки: мгновенно и через подтверждение
 const filesInstant = ref([])
@@ -1267,7 +1268,7 @@ onBeforeUnmount(() => {
     <!-- TaoProgress / TaoSlider -->
     <section id="slider" class="showcase-section" v-show="sectionVisible('forms', 'slider')">
       <h2>TaoProgress / TaoSlider</h2>
-      <p>Статичная полоса и слайдер. Проценты сверху по центру или <code>show-percentage="right"</code> справа; если есть <code>#right</code>, процент справа в скобках. <code>:show-percentage="false"</code> прячет. Слайдер слушает стрелки, Home/End и PageUp/Down.</p>
+      <p>Статичная полоса и слайдер. Проценты сверху по центру или <code>show-percentage="right"</code> справа; если есть <code>#right</code>, процент справа в скобках. <code>:show-percentage="false"</code> прячет. Слайдер слушает стрелки, Home/End и PageUp/Down. По умолчанию — форм-контрол; <code>size="small"</code> — тонкий трек для seek / громкости.</p>
 
       <h3>TaoProgress</h3>
       <div class="demo-stack">
@@ -1290,6 +1291,10 @@ onBeforeUnmount(() => {
       <TaoSlider v-model="sliderValue" show-value class="demo-wide" />
       <p style="margin-top: 4px; font-size: 13px;">Значение: {{ sliderValue }} — <em>ПКМ по слайдеру открывает точный ввод числа</em></p>
 
+      <h3>size="small"</h3>
+      <TaoSlider v-model="sliderVolume" size="small" class="demo-wide" />
+      <p style="margin-top: 4px; font-size: 13px;">Громкость: {{ sliderVolume }}</p>
+
       <div class="code-block">
         <pre><code>&lt;TaoProgress :progress="65" /&gt;
 
@@ -1308,7 +1313,8 @@ onBeforeUnmount(() => {
   &lt;template #right&gt;50кб&lt;/template&gt;
 &lt;/TaoProgress&gt;
 
-&lt;TaoSlider v-model="value" show-value /&gt;</code></pre>
+&lt;TaoSlider v-model="value" show-value /&gt;
+&lt;TaoSlider v-model="volume" size="small" /&gt;</code></pre>
       </div>
     </section>
 
@@ -1952,7 +1958,7 @@ const tabs = [
     <!-- TaoLink -->
     <section id="link" class="showcase-section" v-show="sectionVisible('nav', 'link')">
       <h2>TaoLink</h2>
-      <p>Ссылка, использующая &lt;NuxtLink&gt; в Nuxt-проекте и обычный &lt;a&gt; вне его — без дополнительной настройки</p>
+      <p>Ссылка: &lt;NuxtLink&gt; в Nuxt, &lt;RouterLink&gt; при vue-router, иначе обычный &lt;a&gt; — без дополнительной настройки</p>
 
       <TaoLink to="https://github.com" as-new-tab>Открыть в новой вкладке →</TaoLink>
 

@@ -13,6 +13,8 @@ const props = withDefaults(
         placeholder?: string;
         modelValue: number | string;
         disabled?: boolean;
+        /** `medium` — форм-контрол. `small` — тонкий трек (seek, громкость). */
+        size?: 'small' | 'medium';
     }>(),
     {
         min: 0,
@@ -21,6 +23,7 @@ const props = withDefaults(
         showValue: false,
         placeholder: '',
         disabled: false,
+        size: 'medium',
     },
 );
 
@@ -193,7 +196,10 @@ onBeforeUnmount(() => {
         :id="controlId"
         ref="trackRef"
         class="tao-slider"
-        :class="{ 'tao-slider--show-value': showValue, 'tao-slider--disabled': disabled }"
+        :class="[
+            `tao-slider--${size}`,
+            { 'tao-slider--show-value': showValue, 'tao-slider--disabled': disabled },
+        ]"
         role="slider"
         :tabindex="disabled ? -1 : 0"
         :aria-valuemin="min"
@@ -230,9 +236,13 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .tao-slider {
+    --tao-slider-hit: 14px;
+    --tao-slider-track: var(--tao-slider-hit);
+    --tao-slider-thumb: 20px;
+
     position: relative;
     width: 100%;
-    height: 14px;
+    height: var(--tao-slider-hit);
     cursor: pointer;
     user-select: none;
 }
@@ -248,7 +258,18 @@ onBeforeUnmount(() => {
 }
 
 .tao-slider--show-value {
-    height: 20px;
+    --tao-slider-hit: 20px;
+}
+
+/* Тонкий трек, hit-area шире картинки — seek / громкость. */
+.tao-slider--small {
+    --tao-slider-hit: 16px;
+    --tao-slider-track: 4px;
+    --tao-slider-thumb: 12px;
+}
+
+.tao-slider--small.tao-slider--show-value {
+    --tao-slider-hit: 20px;
 }
 
 .tao-slider--disabled {
@@ -260,30 +281,35 @@ onBeforeUnmount(() => {
     cursor: not-allowed;
 }
 
-.tao-slider__track {
+.tao-slider__track,
+.tao-slider__fill {
     position: absolute;
-    top: 0;
+    top: 50%;
     left: 0;
-    width: 100%;
-    height: 100%;
+    height: var(--tao-slider-track);
     border-radius: var(--tao-radius-sm);
+    transform: translateY(-50%);
+}
+
+.tao-slider__track {
+    width: 100%;
     background-color: var(--tao-color-surface-sunken);
 }
 
 .tao-slider__fill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
     background-color: var(--tao-color-accent);
-    border-radius: var(--tao-radius-sm);
+}
+
+.tao-slider--small .tao-slider__track,
+.tao-slider--small .tao-slider__fill {
+    border-radius: var(--tao-radius-full);
 }
 
 .tao-slider__thumb {
     position: absolute;
     top: 50%;
-    width: 20px;
-    height: 20px;
+    width: var(--tao-slider-thumb);
+    height: var(--tao-slider-thumb);
     background-color: var(--tao-color-accent);
     border: 2px solid var(--tao-color-surface-sunken);
     border-radius: var(--tao-radius-full);

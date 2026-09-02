@@ -46,7 +46,7 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoQuantity** — cart quantity: `− | field | +`, integers, stock; minus at the minimum can remove the row
 - **TaoTextarea** — autosizing multiline. `maxlength` caps input, `count` shows “entered / max”
 - **TaoPinCode** — N cells. By default a click clears the cell and everything to the right (`clear-on="focus"`); `clear-on="input"` replaces the digit only when typing. The last cell blurs and emits `complete`
-- **TaoSlider** — mouse, touch, and arrows. Optional precise input on right-click
+- **TaoSlider** — mouse, touch, and arrows. Optional precise input on right-click. `size="small"` is a thin track for seek / volume
 - **TaoFileDrop** — drop zone (drag & drop + click). File names listed under the zone, `v-model` is `File[]`. Clearing the whole batch is the parent’s job (`clear-request`)
 
 ### Data display
@@ -68,7 +68,7 @@ change a handful of CSS variables and the whole kit follows.
 
 ### Navigation
 
-- **TaoLink** — uses `<NuxtLink>` in Nuxt and a plain `<a>` elsewhere, with no extra setup
+- **TaoLink** — `<NuxtLink>` in Nuxt, `<RouterLink>` with vue-router, otherwise a plain `<a>` — no extra setup
 - **TaoBreadcrumb** — crumbs: the last item is the current page
 - **TaoDropdownMenu** — dropdown that flips at the viewport edge
 - **TaoScrollTop** — floating “back to top” with a ripple. Appears on reverse scroll after `boundary`
