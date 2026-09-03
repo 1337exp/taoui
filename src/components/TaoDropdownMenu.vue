@@ -203,6 +203,7 @@ onBeforeUnmount(() => {
 }
 
 .tao-dropdown-menu__list .tao-dropdown-menu__item {
+    position: relative;
     padding: var(--tao-space-2) var(--tao-space-4);
     border: none;
     border-radius: 0;
@@ -216,8 +217,15 @@ onBeforeUnmount(() => {
     transition: var(--tao-transition-base);
 }
 
-.tao-dropdown-menu__list .tao-dropdown-menu__item:not(:last-child) {
-    border-bottom: 1px solid var(--tao-color-border);
+.tao-dropdown-menu__list .tao-dropdown-menu__item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: var(--tao-space-2);
+    bottom: 0;
+    left: var(--tao-space-2);
+    height: 1px;
+    background: var(--tao-color-border);
+    pointer-events: none;
 }
 
 .tao-dropdown-menu__list .tao-dropdown-menu__item:hover,
