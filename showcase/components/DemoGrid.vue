@@ -110,10 +110,6 @@ const gridNotes = [
 </template>
 
 <style scoped>
-:deep(.tao-card) {
-  height: 100%;
-}
-
 :deep(.tao-card__title) {
   font-size: var(--tao-font-size-lg);
 }

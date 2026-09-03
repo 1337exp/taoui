@@ -56,10 +56,5 @@ const gridStyle = computed(() => ({
     .tao-grid--fixed {
         grid-template-columns: minmax(0, 1fr);
     }
-
-    .tao-grid :deep(.tao-grid-item) {
-        grid-column: span 1;
-        grid-row: span 1;
-    }
 }
 </style>

@@ -29,9 +29,24 @@ const itemStyle = computed(() => ({
 
 <style scoped>
 .tao-grid-item {
+    display: flex;
+    flex-direction: column;
     min-width: 0;
     min-height: 0;
     grid-column: span var(--tao-grid-col, 1);
     grid-row: span var(--tao-grid-row, 1);
+}
+
+.tao-grid-item > * {
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+}
+
+@container (max-width: 560px) {
+    .tao-grid-item {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
 }
 </style>
