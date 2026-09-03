@@ -28,6 +28,7 @@
 - **TaoContainer** — контейнер с ограничением ширины (wide/slim/ultra-slim) и авто-центровкой
 - **TaoFlex** — обёртка над flexbox с пропами justify/align/direction/wrap/gap
 - **TaoSpace** — авто-расстановка дочерних элементов с равномерным gap
+- **TaoGrid** / **TaoGridItem** — плитки: `min` — каталог (auto-fill), `cols` — bento. У item `col` / `row`; уже ~560px span сбрасывается. Не masonry
 - **TaoDivider** — разделитель: line (тонкая линия), text (линия с текстом), gap (пустой отступ, size: small/medium/large)
 - **TaoSplit** — две панели и полоса. `row` / `column` как у Flex. `v-model` — размер start в `%` или `px`; `resizable="false"` фиксирует полосу. Не Divider.
 - **TaoFieldset** — рамка-группа: `legend` сидит на верхней границе, `align` — start / center / end
@@ -91,6 +92,9 @@ Stages — это процесс, не тон: `wait` / `work` / `ok` / `bad` (`
 Размеры контролов: `small` | `medium` | `large`.
 Avatar понимает и короткие `s` / `m` / `l`. Divider `gap` раньше называл крупный размер `big` — это алиас `large`.
 Container живёт на другой оси: `wide` / `slim` / `ultra-slim`.
+
+Шкала кегля (примитивы): `xs` 12 … `xl` 18 для контролов; `2xl` 24, `3xl` 32, `4xl` 36 для заголовков и прозы.
+Отдельного компонента заголовка нет — `h1 { font-size: var(--tao-font-size-3xl) }`.
 
 ## Иконки
 
@@ -479,6 +483,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-color-input-*` — поля ввода отдельно, т.к. фон/текст полей часто не совпадают с surface/text
 - `--tao-radius-control`, `--tao-radius-panel` — скругления (мелкие контролы vs крупные панели)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — тени
+- `--tao-font-size-*` — шкала кегля в `primitives.css`: `xs`–`xl` контролы, `2xl`–`4xl` заголовки / проза
 
 Полный список — в `src/styles/semantic.css`, он же единственный файл,
 который стоит открыть, чтобы понять весь доступный API темизации.

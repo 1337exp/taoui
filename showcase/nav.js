@@ -48,7 +48,7 @@ export const navGroups = [
     items: [
       { id: 'container', label: 'TaoContainer' },
       { id: 'flex', label: 'Flex / Space', aliases: ['TaoFlex', 'TaoSpace'] },
-      { id: 'grid', label: 'Grid (demo)', aliases: ['masonry', 'плитки', 'каталог', 'сетка', 'GridPlayground'] },
+      { id: 'grid', label: 'TaoGrid', aliases: ['TaoGridItem', 'masonry', 'плитки', 'каталог', 'сетка', 'GridPlayground'] },
       { id: 'divider', label: 'TaoDivider' },
       { id: 'split', label: 'TaoSplit' },
       { id: 'fieldset', label: 'TaoFieldset' },

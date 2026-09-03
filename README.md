@@ -28,6 +28,7 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoContainer** — max-width (wide / slim / ultra-slim) and centering
 - **TaoFlex** — flexbox wrapper: justify / align / direction / wrap / gap
 - **TaoSpace** — even gap between children
+- **TaoGrid** / **TaoGridItem** — tiles: `min` is a catalog (auto-fill), `cols` is bento. Item `col` / `row` span; below ~560px span resets. Not masonry
 - **TaoDivider** — `line` (hairline), `text` (line with a label), `gap` (empty space, size: small / medium / large)
 - **TaoSplit** — two panes and a gutter. `row` / `column` like Flex. `v-model` is the start size in `%` or `px`; `resizable="false"` locks the gutter. Not Divider.
 - **TaoFieldset** — grouped frame: `legend` sits on the top border, `align` is start / center / end
@@ -91,6 +92,9 @@ Stages describe a process, not a tone: `wait` / `work` / `ok` / `bad` (`danger` 
 Control sizes: `small` | `medium` | `large`.
 Avatar also accepts short `s` / `m` / `l`. Divider `gap` used to call the large size `big` — that is an alias of `large`.
 Container lives on another axis: `wide` / `slim` / `ultra-slim`.
+
+Font size scale (primitives): `xs` 12 … `xl` 18 for controls; `2xl` 24, `3xl` 32, `4xl` 36 for titles and prose.
+There is no heading component — use `h1 { font-size: var(--tao-font-size-3xl) }`.
 
 ## Icons
 
@@ -476,6 +480,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-color-input-*` — fields, because input bg/text often differs from surface/text
 - `--tao-radius-control`, `--tao-radius-panel` — radii (small controls vs large panels)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — shadows
+- `--tao-font-size-*` — type scale in `primitives.css`: `xs`–`xl` controls, `2xl`–`4xl` titles / prose
 
 The full list lives in `src/styles/semantic.css` — the only file worth opening
 to see the whole theming API.

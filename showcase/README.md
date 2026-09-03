@@ -27,5 +27,5 @@ npm run dev
 - `package.json` — зависимости и скрипты
 - `components/` — одна секция на компонент библиотеки (`DemoButton.vue` и т.д.)
 - `demo/` — черновики только для витрины, в npm-пакет не попадают:
-  - `GridPlayground.vue`, `TypeaheadPlayground.vue` — сами виджеты, их можно копировать в проект
-  - `DemoGrid.vue`, `DemoTypeahead.vue` — секции витрины вокруг них
+  - `TypeaheadPlayground.vue` — виджет, его можно копировать в проект
+  - `DemoTypeahead.vue` — секция витрины вокруг него

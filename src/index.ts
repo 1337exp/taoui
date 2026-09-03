@@ -16,6 +16,8 @@ import TaoCopy from './components/TaoCopy.vue';
 import TaoContainer from './components/TaoContainer.vue';
 import TaoFlex from './components/TaoFlex.vue';
 import TaoSpace from './components/TaoSpace.vue';
+import TaoGrid from './components/TaoGrid.vue';
+import TaoGridItem from './components/TaoGridItem.vue';
 import TaoSplit from './components/TaoSplit.vue';
 import TaoIcon from './components/TaoIcon.vue';
 import TaoLoader from './components/TaoLoader.vue';
@@ -85,6 +87,8 @@ const components = [
     TaoContainer,
     TaoFlex,
     TaoSpace,
+    TaoGrid,
+    TaoGridItem,
     TaoSplit,
     TaoIcon,
     TaoLoader,
@@ -155,6 +159,8 @@ export {
     TaoContainer,
     TaoFlex,
     TaoSpace,
+    TaoGrid,
+    TaoGridItem,
     TaoSplit,
     TaoIcon,
     TaoLoader,

@@ -445,13 +445,21 @@ export const propTables = {
   ],
   grid: [
     {
-      title: 'GridPlayground',
+      title: 'TaoGrid',
       rows: [
-        r('min', 'string', "'220px'", 'Минимальная ширина плитки (auto-fill). Как wrapByWidth'),
-        r('cols', 'number', '0', 'Фиксированное число колонок. 0 — режим min'),
+        r('min', 'string', "'220px'", 'Минимальная ширина плитки (auto-fill). Каталог. Игнорируется, если cols > 0'),
+        r('cols', 'number', '0', 'Фиксированные колонки (bento). 0 — режим min'),
         r('gap', 'string', 'token space-4', 'Просвет между ячейками'),
       ],
-      slots: 'default — карточки. Не masonry: ряд выравнивается по самой высокой. Не часть npm-пакета, лежит в showcase/demo.',
+      slots: 'default — карточки или TaoGridItem. Не masonry: ряд по самой высокой. Уже ~560px cols → 1 колонка, span → 1.',
+    },
+    {
+      title: 'TaoGridItem',
+      rows: [
+        r('col', 'number', '1', 'Сколько колонок занять. Для cols, не для min'),
+        r('row', 'number', '1', 'Сколько рядов занять'),
+      ],
+      slots: 'default — плитка. В каталоге можно без обёртки.',
     },
   ],
   divider: [

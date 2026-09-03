@@ -63,6 +63,9 @@
     --tao-font-size-md: 14px;
     --tao-font-size-lg: 16px;
     --tao-font-size-xl: 18px;
+    --tao-font-size-2xl: 24px;
+    --tao-font-size-3xl: 32px;
+    --tao-font-size-4xl: 36px;
 
     /* ---------- Shadow scale (color-agnostic, opacity baked in) ---------- */
     --tao-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.12);
