@@ -466,10 +466,12 @@ export const propTables = {
     {
       title: 'TaoDivider',
       rows: [
-        r('variant', "'line' | 'text' | 'gap'", "'line'", 'Линия, линия с подписью, пустой отступ'),
-        r('size', "'small' | 'medium' | 'large'", "'medium'", 'Для gap — величина отступа'),
+        r('variant', "'solid' | 'dashed' | 'colored' | 'gap'", "'solid'", 'solid — обычный border, dashed — пунктир, colored — акцент, gap — отступ'),
+        r('text', 'string', "''", 'Опциональная подпись посередине. Работает с любым variant'),
+        r('fade', 'boolean', 'false', 'Плавные края линии. Не влияет на gap'),
+        r('size', "'small' | 'medium' | 'large'", "'medium'", 'Только для gap — высота отступа'),
       ],
-      slots: 'default — текст посередине при variant="text".',
+      slots: 'default — то же, что text. Если есть слот, он важнее пропа.',
     },
   ],
   split: [

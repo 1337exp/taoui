@@ -1,96 +1,169 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, useSlots } from 'vue';
 
 defineOptions({ name: 'TaoDivider' });
 
 const props = withDefaults(
     defineProps<{
-        variant?: 'gap' | 'line' | 'text';
+        /** `solid` — обычная линия. `dashed` — пунктир. `colored` — акцент. `gap` — пустой отступ. */
+        variant?: 'solid' | 'dashed' | 'colored' | 'gap';
         size?: 'small' | 'medium' | 'large' | 'big';
+        /** Подпись посередине. Не меняет стиль линии — для этого `variant`. */
+        text?: string;
+        /** Плавные края линии. У `gap` ничего не делает. */
+        fade?: boolean;
     }>(),
     {
-        variant: 'line',
+        variant: 'solid',
         size: 'medium',
+        text: '',
+        fade: false,
     },
 );
 
+const slots = useSlots();
 const gapSize = computed(() => (props.size === 'big' ? 'large' : props.size));
+const hasLabel = computed(() => Boolean(props.text) || Boolean(slots.default));
 </script>
 
 <template>
-    <div v-if="variant === 'gap'" class="tao-divider-gap" :class="`tao-divider-gap--${gapSize}`"></div>
-
-    <div v-else-if="variant === 'text'" class="tao-divider-text">
-        <span class="tao-divider-text__line tao-divider-text__line--left"></span>
-        <span class="tao-divider-text__value"><slot /></span>
-        <span class="tao-divider-text__line tao-divider-text__line--right"></span>
+    <div
+        class="tao-divider"
+        :class="[
+            `tao-divider--${variant}`,
+            {
+                'tao-divider--labeled': hasLabel,
+                'tao-divider--fade': fade && variant !== 'gap',
+                [`tao-divider--gap-${gapSize}`]: variant === 'gap',
+            },
+        ]"
+        :role="variant === 'gap' && !hasLabel ? undefined : 'separator'"
+        :aria-hidden="variant === 'gap' && !hasLabel ? true : undefined"
+    >
+        <span
+            v-if="variant !== 'gap'"
+            class="tao-divider__line"
+            :class="{ 'tao-divider__line--start': hasLabel }"
+        />
+        <span v-if="hasLabel" class="tao-divider__text">
+            <slot>{{ text }}</slot>
+        </span>
+        <span
+            v-if="variant !== 'gap' && hasLabel"
+            class="tao-divider__line tao-divider__line--end"
+        />
     </div>
-
-    <div v-else class="tao-divider-line"></div>
 </template>
 
 <style scoped>
-/* variant="gap" — пустой отступ заданной высоты, без линии */
-.tao-divider-gap {
-    height: 40px;
+.tao-divider {
+    margin: var(--tao-space-5) 0;
 }
 
-.tao-divider-gap--small {
-    height: 20px;
-}
-
-.tao-divider-gap--large,
-.tao-divider-gap--big {
-    height: 60px;
-}
-
-/* variant="text" — линия с текстом посередине, затухающая по краям */
-.tao-divider-text {
+.tao-divider--labeled {
     display: flex;
     align-items: center;
-    margin: var(--tao-space-5) 0;
-    padding: 0 var(--tao-space-4);
-    opacity: 0.3;
 }
 
-.tao-divider-text__line {
+.tao-divider__line {
+    box-sizing: content-box;
+    display: block;
+    height: 0;
+    min-width: 0;
+}
+
+.tao-divider--labeled .tao-divider__line {
     flex: 1;
-    height: 1px;
-    border-top: 1px dashed var(--tao-color-border-strong);
 }
 
-.tao-divider-text__line--left {
-    mask: linear-gradient(90deg, transparent 0%, black 30%);
+.tao-divider:not(.tao-divider--labeled) .tao-divider__line {
+    width: 100%;
 }
 
-.tao-divider-text__line--right {
-    mask: linear-gradient(90deg, black 70%, transparent 100%);
-}
-
-.tao-divider-text__value {
-    padding: 0 var(--tao-space-4);
+.tao-divider__text {
+    margin: 0 var(--tao-space-4);
     font-size: var(--tao-font-size-xs);
     font-weight: 500;
+    line-height: 1;
     white-space: nowrap;
     color: var(--tao-color-text-muted);
 }
 
-/* variant="line" (по умолчанию) — тонкая линия с акцентным свечением по центру */
-.tao-divider-line {
-    position: relative;
-    width: 100%;
+.tao-divider--labeled:not(.tao-divider--gap) .tao-divider__text {
     height: 1px;
-    margin: var(--tao-space-5) auto;
+    display: flex;
+    align-items: center;
+    overflow: visible;
 }
 
-.tao-divider-line::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 5%;
-    right: 5%;
-    width: 90%;
+.tao-divider--solid .tao-divider__line {
+    border-top: 1px solid var(--tao-color-border);
+}
+
+.tao-divider--dashed .tao-divider__line {
+    border-top: 1px dashed var(--tao-color-border-strong);
+    opacity: 0.45;
+}
+
+.tao-divider--colored .tao-divider__line {
     height: 1px;
-    background-image: linear-gradient(to right, transparent, var(--tao-color-accent), transparent);
+    background: var(--tao-color-accent);
+}
+
+.tao-divider--colored.tao-divider--fade:not(.tao-divider--labeled) .tao-divider__line {
+    background: linear-gradient(to right, transparent, var(--tao-color-accent), transparent);
+}
+
+.tao-divider--colored.tao-divider--fade.tao-divider--labeled .tao-divider__line--start {
+    background: linear-gradient(to right, transparent, var(--tao-color-accent));
+}
+
+.tao-divider--colored.tao-divider--fade.tao-divider--labeled .tao-divider__line--end {
+    background: linear-gradient(to left, transparent, var(--tao-color-accent));
+}
+
+.tao-divider--fade:not(.tao-divider--colored):not(.tao-divider--labeled) .tao-divider__line {
+    mask: linear-gradient(90deg, transparent 0%, black 20%, black 80%, transparent 100%);
+}
+
+.tao-divider--fade:not(.tao-divider--colored) .tao-divider__line--start {
+    mask: linear-gradient(90deg, transparent 0%, black 30%);
+}
+
+.tao-divider--fade:not(.tao-divider--colored) .tao-divider__line--end {
+    mask: linear-gradient(90deg, black 70%, transparent 100%);
+}
+
+.tao-divider--gap {
+    margin: 0;
+}
+
+.tao-divider--gap:not(.tao-divider--labeled) {
+    height: 40px;
+}
+
+.tao-divider--gap-small:not(.tao-divider--labeled) {
+    height: 20px;
+}
+
+.tao-divider--gap-large:not(.tao-divider--labeled),
+.tao-divider--gap-big:not(.tao-divider--labeled) {
+    height: 60px;
+}
+
+.tao-divider--gap.tao-divider--labeled {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+}
+
+.tao-divider--gap-small.tao-divider--labeled {
+    min-height: 20px;
+}
+
+.tao-divider--gap-large.tao-divider--labeled,
+.tao-divider--gap-big.tao-divider--labeled {
+    min-height: 60px;
 }
 </style>

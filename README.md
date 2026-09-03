@@ -29,7 +29,7 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoFlex** — flexbox wrapper: justify / align / direction / wrap / gap
 - **TaoSpace** — even gap between children
 - **TaoGrid** / **TaoGridItem** — tiles: `min` is a catalog (auto-fill), `cols` is bento. Item `col` / `row` span; below ~560px span resets. Not masonry
-- **TaoDivider** — `line` (hairline), `text` (line with a label), `gap` (empty space, size: small / medium / large)
+- **TaoDivider** — `solid` (plain border) / `dashed` / `colored` (accent) / `gap`. Optional `text` sits in the middle of any of them; `fade` softens the line ends; `size` is for `gap` (small / medium / large)
 - **TaoSplit** — two panes and a gutter. `row` / `column` like Flex. `v-model` is the start size in `%` or `px`; `resizable="false"` locks the gutter. Not Divider.
 - **TaoFieldset** — grouped frame: `legend` sits on the top border, `align` is start / center / end
 - **TaoAnimatedBorder** — rainbow border wrapper (decorative, not tied to the theme)
