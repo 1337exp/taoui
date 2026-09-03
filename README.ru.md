@@ -56,6 +56,7 @@
 - **TaoTable** — простая таблица: колонки, empty, loading, сортировка через `v-model:sort`. Не datagrid.
 - **TaoPagination** — страницы с многоточием. Клик по «…» прыгает на `jump` страниц (5 по умолчанию)
 - **TaoEmpty** — пустой список, нет результатов, нет прав
+- **TaoList** / **TaoListItem** — строка списка: иконка, заголовок, подпись, действие по ховеру. Не Select и не таблица
 - **TaoStages** — список стадий: `wait` / `work` / `ok` / `bad`. Не линейный степпер
 - **TaoSkeleton** — плейсхолдер загрузки (text / title / circle / rect)
 - **TaoCounter** — витрина числа с переворотом цифр (не инпут)
@@ -330,6 +331,20 @@ const columns = [
   { key: 'pack', label: 'Сборка', status: 'work' },
   { key: 'ship', label: 'Доставка', status: 'wait' },
 ]" />
+
+<TaoList>
+  <TaoListItem
+    title="Анна Козлова"
+    description="Дизайн · Москва"
+    clickable
+    :selected="picked === 'anna'"
+    @click="picked = 'anna'"
+  >
+    <template #prefix>
+      <TaoAvatar name="Анна Козлова" size="small" />
+    </template>
+  </TaoListItem>
+</TaoList>
 ```
 
 ```vue

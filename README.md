@@ -56,6 +56,7 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoTable** — simple table: columns, empty, loading, sort via `v-model:sort`. Not a datagrid.
 - **TaoPagination** — pages with ellipsis. Clicking “…” jumps `jump` pages (5 by default)
 - **TaoEmpty** — empty list, no results, no access
+- **TaoList** / **TaoListItem** — list row: icon, title, caption, hover action. Not Select, not a table
 - **TaoStages** — stage list: `wait` / `work` / `ok` / `bad`. Not a linear stepper
 - **TaoSkeleton** — loading placeholder (text / title / circle / rect)
 - **TaoCounter** — flipping digits (not an input)
@@ -329,6 +330,20 @@ The `cell-<key>` slot replaces a cell. `loading` shows an overlay; an empty list
   { key: 'pack', label: 'Packing', status: 'work' },
   { key: 'ship', label: 'Shipping', status: 'wait' },
 ]" />
+
+<TaoList>
+  <TaoListItem
+    title="Ann Kozlova"
+    description="Design · Moscow"
+    clickable
+    :selected="picked === 'ann'"
+    @click="picked = 'ann'"
+  >
+    <template #prefix>
+      <TaoAvatar name="Ann Kozlova" size="small" />
+    </template>
+  </TaoListItem>
+</TaoList>
 ```
 
 ```vue

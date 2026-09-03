@@ -338,6 +338,34 @@ export const propTables = {
       slots: 'default — пояснение. #icon — картинка/иконка. #action — кнопка.',
     },
   ],
+  list: [
+    {
+      title: 'TaoList',
+      rows: [
+        r('size', "'small' | 'medium' | 'large'", "'medium'", 'Высота строк. Item без своего size берёт отсюда'),
+        r('bordered', 'boolean', 'true', 'Рамка вокруг списка'),
+        r('divided', 'boolean', 'true', 'Линии между строками'),
+        r('maxHeight', 'number | string', '—', 'Скролл. Число — пиксели'),
+        r('empty', 'boolean', 'false', 'Показать #empty вместо строк'),
+        r('ariaLabel', 'string', "''", 'Имя списка'),
+      ],
+      slots: 'default — TaoListItem. #empty — если empty.',
+    },
+    {
+      title: 'TaoListItem',
+      rows: [
+        r('title', 'string', "''", 'Заголовок. Слот default его подменяет'),
+        r('description', 'string', "''", 'Подпись под заголовком'),
+        r('selected', 'boolean', 'false', 'Выбранная строка'),
+        r('disabled', 'boolean', 'false', 'Неактивна'),
+        r('active', 'boolean', 'false', 'Подсветка без selected'),
+        r('clickable', 'boolean', 'false', 'Строка-кнопка, шлёт click'),
+        r('size', "'small' | 'medium' | 'large'", 'из списка', 'Перебить size родителя'),
+        r('actionAlways', 'boolean', 'false', '#action всегда виден, не только по ховеру'),
+      ],
+      slots: 'default — заголовок. #prefix, #description, #suffix, #action (по ховеру; на таче всегда).',
+    },
+  ],
   stages: [
     {
       title: 'TaoStages',

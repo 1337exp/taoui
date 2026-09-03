@@ -47,6 +47,8 @@ import TaoAlert from './components/TaoAlert.vue';
 import TaoTable from './components/TaoTable.vue';
 import TaoPagination from './components/TaoPagination.vue';
 import TaoEmpty from './components/TaoEmpty.vue';
+import TaoList from './components/TaoList.vue';
+import TaoListItem from './components/TaoListItem.vue';
 import TaoSkeleton from './components/TaoSkeleton.vue';
 import TaoDrawer from './components/TaoDrawer.vue';
 import TaoAvatar from './components/TaoAvatar.vue';
@@ -114,6 +116,8 @@ const components = [
     TaoTable,
     TaoPagination,
     TaoEmpty,
+    TaoList,
+    TaoListItem,
     TaoSkeleton,
     TaoDrawer,
     TaoAvatar,
@@ -182,6 +186,8 @@ export {
     TaoTable,
     TaoPagination,
     TaoEmpty,
+    TaoList,
+    TaoListItem,
     TaoSkeleton,
     TaoDrawer,
     TaoAvatar,
@@ -236,5 +242,6 @@ export type { TaoDropdownAction } from './dropdown';
 export type { TaoQuantityChangeSource } from './quantity';
 export type { TaoStageItem, TaoStageStatus } from './stage';
 export type { TaoSplitDirection, TaoSplitUnit } from './split';
+export type { TaoListSize } from './list';
 
 export default TaoUI;

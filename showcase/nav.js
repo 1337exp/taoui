@@ -35,6 +35,7 @@ export const navGroups = [
       { id: 'table', label: 'TaoTable' },
       { id: 'pagination', label: 'TaoPagination' },
       { id: 'empty', label: 'TaoEmpty' },
+      { id: 'list', label: 'TaoList', aliases: ['TaoListItem', 'ListItem', 'список'] },
       { id: 'stages', label: 'TaoStages' },
       { id: 'skeleton', label: 'TaoSkeleton' },
       { id: 'counter', label: 'TaoCounter' },

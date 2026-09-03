@@ -18,6 +18,7 @@ import DemoFileDrop from './components/DemoFileDrop.vue'
 import DemoTable from './components/DemoTable.vue'
 import DemoPagination from './components/DemoPagination.vue'
 import DemoEmpty from './components/DemoEmpty.vue'
+import DemoList from './components/DemoList.vue'
 import DemoStages from './components/DemoStages.vue'
 import DemoSkeleton from './components/DemoSkeleton.vue'
 import DemoCounter from './components/DemoCounter.vue'
@@ -69,6 +70,7 @@ export const demoById = {
   'table': DemoTable,
   'pagination': DemoPagination,
   'empty': DemoEmpty,
+  'list': DemoList,
   'stages': DemoStages,
   'skeleton': DemoSkeleton,
   'counter': DemoCounter,
