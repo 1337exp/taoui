@@ -85,6 +85,7 @@ function onClose(event: MouseEvent) {
     vertical-align: middle;
     white-space: nowrap;
     text-align: start;
+    font-size: var(--tao-font-size-xs);
     line-height: 1.25;
     color: var(--tao-color-accent);
     background: var(--tao-color-accent-subtle);

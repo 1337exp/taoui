@@ -26,6 +26,20 @@ const tablePageSize = 8
 const tableSort = ref({ key: 'name', dir: 'asc' })
 const tableLoading = ref(false)
 const tableEmpty = ref(false)
+const tableHead = ref(true)
+const tableLines = ref(true)
+const tableStriped = ref(true)
+
+const stripedLabel = computed(() => {
+  if (tableStriped.value === 'even') return 'even'
+  if (tableStriped.value) return 'striped'
+  return 'striped off'
+})
+
+function cycleStriped() {
+  tableStriped.value =
+    tableStriped.value === true ? 'even' : tableStriped.value === 'even' ? false : true
+}
 
 const tableSorted = computed(() => {
   const rows = tableAll.slice()
@@ -65,12 +79,21 @@ function flashTableLoading() {
 <template>
   <ShowcaseSection id="table" :tables="propTables['table']">
     <h2>TaoTable</h2>
-          <p>Простая таблица для списков сущностей. Сама не сортирует и не режет страницы — это делает родитель, поэтому тот же компонент работает и с сервером.</p>
+          <p>Простая таблица для списков сущностей. Сама не сортирует и не режет страницы — это делает родитель, поэтому тот же компонент работает и с сервером. Подсветка шапки — <code>head</code>, линии — <code>lines</code>. Зебра — <code>striped</code> (с первой строки) или <code>striped="even"</code>.</p>
     
           <div class="button-row">
             <TaoButton size="small" variant="secondary" @click="flashTableLoading">Загрузка</TaoButton>
             <TaoButton size="small" variant="ghost" @click="tableEmpty = !tableEmpty; tablePage = 1">
               {{ tableEmpty ? 'Показать строки' : 'Пустая таблица' }}
+            </TaoButton>
+            <TaoButton size="small" :variant="tableHead ? 'secondary' : 'ghost'" @click="tableHead = !tableHead">
+              head
+            </TaoButton>
+            <TaoButton size="small" :variant="tableLines ? 'secondary' : 'ghost'" @click="tableLines = !tableLines">
+              lines
+            </TaoButton>
+            <TaoButton size="small" :variant="tableStriped ? 'secondary' : 'ghost'" @click="cycleStriped">
+              {{ stripedLabel }}
             </TaoButton>
           </div>
     
@@ -79,7 +102,9 @@ function flashTableLoading() {
             :rows="tableRows"
             v-model:sort="tableSort"
             :loading="tableLoading"
-            striped
+            :head="tableHead"
+            :lines="tableLines"
+            :striped="tableStriped"
             clickable
             empty-text="Пока нет записей"
             @sort="onTableSort"

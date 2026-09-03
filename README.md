@@ -54,7 +54,7 @@ change a handful of CSS variables and the whole kit follows.
 
 ### Data display
 
-- **TaoTable** — simple table: columns, empty, loading, sort via `v-model:sort`. Not a datagrid.
+- **TaoTable** — simple table: columns, empty, loading, sort via `v-model:sort`. `head` tints the header, `lines` draws row rules (both on by default). `striped` starts on the first row; `striped="even"` starts on the second. Not a datagrid.
 - **TaoPagination** — pages with ellipsis. Clicking “…” jumps `jump` pages (5 by default)
 - **TaoEmpty** — empty list, no results, no access
 - **TaoList** / **TaoListItem** — list row: icon, title, caption, hover action. Not Select, not a table

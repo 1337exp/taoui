@@ -12,9 +12,14 @@ const props = withDefaults(
         rowKey?: string | ((row: Record<string, unknown>, index: number) => string | number);
         loading?: boolean;
         emptyText?: string;
-        striped?: boolean;
+        /** Зебра. `true` / `odd` — с первой строки, `even` — со второй. */
+        striped?: boolean | 'odd' | 'even';
         compact?: boolean;
         hover?: boolean;
+        /** Подсветка шапки. */
+        head?: boolean;
+        /** Горизонтальные линии между рядами. */
+        lines?: boolean;
         sticky?: boolean;
         maxHeight?: string;
         clickable?: boolean;
@@ -29,6 +34,8 @@ const props = withDefaults(
         striped: false,
         compact: false,
         hover: true,
+        head: true,
+        lines: true,
         sticky: false,
         maxHeight: '',
         clickable: false,
@@ -45,6 +52,15 @@ const emit = defineEmits<{
 
 const colCount = computed(() => Math.max(props.columns.length, 1));
 const isEmpty = computed(() => !props.rows.length && !props.loading);
+const stripeFrom = computed(() => {
+    if (props.striped === 'even') {
+        return 'even';
+    }
+    if (props.striped === 'odd' || props.striped === true) {
+        return 'odd';
+    }
+    return null;
+});
 
 function columnWidth(column: TaoTableColumn) {
     if (column.width == null) {
@@ -108,9 +124,12 @@ function onRowClick(row: Record<string, unknown>, index: number) {
         <table
             class="tao-table"
             :class="{
-                'tao-table--striped': striped,
+                'tao-table--striped': stripeFrom === 'odd',
+                'tao-table--striped-even': stripeFrom === 'even',
                 'tao-table--compact': compact,
                 'tao-table--hover': hover,
+                'tao-table--head': head,
+                'tao-table--lines': lines,
                 'tao-table--clickable': clickable,
                 'tao-table--sticky': sticky,
             }"
@@ -225,8 +244,12 @@ function onRowClick(row: Record<string, unknown>, index: number) {
 .tao-table th,
 .tao-table td {
     padding: var(--tao-space-3) var(--tao-space-4);
-    border-bottom: 1px solid var(--tao-color-border);
     vertical-align: middle;
+}
+
+.tao-table--lines th,
+.tao-table--lines td {
+    border-bottom: 1px solid var(--tao-color-border);
 }
 
 .tao-table--compact th,
@@ -239,22 +262,34 @@ function onRowClick(row: Record<string, unknown>, index: number) {
     font-weight: 600;
     font-size: var(--tao-font-size-sm);
     color: var(--tao-color-text-muted);
-    background: var(--tao-color-surface-raised);
     white-space: nowrap;
     text-align: left;
+}
+
+.tao-table--head th {
+    background: var(--tao-color-surface-raised);
 }
 
 .tao-table--sticky thead th {
     position: sticky;
     top: 0;
     z-index: 1;
+    background: var(--tao-color-surface);
 }
 
-.tao-table tbody tr:last-child td {
+.tao-table--sticky.tao-table--head thead th {
+    background: var(--tao-color-surface-raised);
+}
+
+.tao-table--lines tbody tr:last-child td {
     border-bottom: none;
 }
 
-.tao-table--striped tbody tr:nth-child(even) td {
+.tao-table--striped tbody tr:nth-child(odd) td {
+    background: var(--tao-color-surface-sunken);
+}
+
+.tao-table--striped-even tbody tr:nth-child(even) td {
     background: var(--tao-color-surface-sunken);
 }
 
