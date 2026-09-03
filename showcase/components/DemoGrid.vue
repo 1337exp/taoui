@@ -92,6 +92,86 @@ const gridNotes = [
       </TaoGridItem>
     </TaoGrid>
 
+    <h3>Мозаика: обложка / заливка / тень снизу</h3>
+    <p class="carousel-note">
+      Слева высокий A, справа сверху широкий D, под ним четыре клетки, внизу два блока 50/50.
+      Высота рядов в пикселях: мелкие и D — <code>130px</code>, нижние 50/50 — <code>270px</code> (чуть больше двух мелких).
+    </p>
+    <TaoGrid class="mosaic" :cols="4" gap="12px">
+      <TaoGridItem :col="2" :row="3">
+        <TaoCard :padding="0" :radius="6">
+          <template #cover>
+            <div class="mosaic-media">
+              <img :src="stubPhoto('A', '#5c5346')" alt="" />
+              <span>North Paper Mill</span>
+            </div>
+          </template>
+        </TaoCard>
+      </TaoGridItem>
+      <TaoGridItem :col="2">
+        <TaoCard :padding="0" :radius="6">
+          <template #cover>
+            <div class="mosaic-media">
+              <img :src="stubPhoto('D', '#4a4558')" alt="" />
+              <span>Glass Harbor</span>
+            </div>
+          </template>
+        </TaoCard>
+      </TaoGridItem>
+      <TaoGridItem>
+        <TaoCard :padding="0" :radius="6">
+          <template #cover>
+            <div class="mosaic-media">
+              <img :src="stubPhoto('B', '#6a4a3a')" alt="" />
+              <span>Quiet Kettle</span>
+            </div>
+          </template>
+        </TaoCard>
+      </TaoGridItem>
+      <TaoGridItem>
+        <TaoCard :padding="0" :radius="6" :shadow="false" shadow-bottom-only>
+          <div class="mosaic-fill mosaic-fill--compact mosaic-fill--gold">
+            <span>PR Breaks</span>
+            <strong>854.6K</strong>
+          </div>
+        </TaoCard>
+      </TaoGridItem>
+      <TaoGridItem>
+        <TaoCard :padding="0" :radius="6" :shadow="false" shadow-bottom-only>
+          <div class="mosaic-fill mosaic-fill--compact mosaic-fill--crimson">
+            <span>HEX</span>
+            <strong>Shuffle</strong>
+          </div>
+        </TaoCard>
+      </TaoGridItem>
+      <TaoGridItem>
+        <TaoCard :padding="0" :radius="6">
+          <template #cover>
+            <div class="mosaic-media">
+              <img :src="stubPhoto('C', '#3f4a55')" alt="" />
+              <span>Second Floor</span>
+            </div>
+          </template>
+        </TaoCard>
+      </TaoGridItem>
+      <TaoGridItem :col="2">
+        <TaoCard :padding="0" :radius="6" :shadow="false" shadow-bottom-only>
+          <div class="mosaic-fill mosaic-fill--obsidian">
+            <span>Osaka</span>
+            <strong>Est. 2019</strong>
+          </div>
+        </TaoCard>
+      </TaoGridItem>
+      <TaoGridItem :col="2">
+        <TaoCard :padding="0" :radius="6" :shadow="false" shadow-bottom-only>
+          <div class="mosaic-fill mosaic-fill--champagne">
+            <span>Spotify</span>
+            <strong>Listen ↗</strong>
+          </div>
+        </TaoCard>
+      </TaoGridItem>
+    </TaoGrid>
+
     <div class="code-block">
       <pre><code>&lt;TaoGrid min="220px"&gt;
   &lt;TaoCard v-for="item in products" :key="item.id" :padding="12" :radius="12"&gt;
@@ -104,6 +184,17 @@ const gridNotes = [
 &lt;TaoGrid :cols="4"&gt;
   &lt;TaoGridItem :col="2" :row="2"&gt;…&lt;/TaoGridItem&gt;
   &lt;TaoGridItem&gt;…&lt;/TaoGridItem&gt;
+&lt;/TaoGrid&gt;
+
+&lt;TaoGrid :cols="4" gap="12px"&gt;
+  &lt;TaoGridItem :col="2" :row="3"&gt;A&lt;/TaoGridItem&gt;
+  &lt;TaoGridItem :col="2"&gt;D&lt;/TaoGridItem&gt;
+  &lt;TaoGridItem&gt;…&lt;/TaoGridItem&gt;
+  &lt;TaoGridItem&gt;…&lt;/TaoGridItem&gt;
+  &lt;TaoGridItem&gt;…&lt;/TaoGridItem&gt;
+  &lt;TaoGridItem&gt;…&lt;/TaoGridItem&gt;
+  &lt;TaoGridItem :col="2"&gt;50%&lt;/TaoGridItem&gt;
+  &lt;TaoGridItem :col="2"&gt;50%&lt;/TaoGridItem&gt;
 &lt;/TaoGrid&gt;</code></pre>
     </div>
   </ShowcaseSection>
@@ -116,5 +207,113 @@ const gridNotes = [
 
 :deep(.tao-card__footer) {
   font-weight: 600;
+}
+
+.mosaic {
+  grid-auto-rows: unset;
+  grid-template-rows: 130px 130px 130px 270px;
+}
+
+@media (max-width: 700px) {
+  .mosaic {
+    grid-template-rows: none;
+    grid-auto-rows: minmax(140px, auto);
+  }
+}
+
+.mosaic :deep(.tao-card) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.mosaic :deep(.tao-card__cover),
+.mosaic :deep(.tao-card__content) {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.mosaic :deep(.tao-card__content) {
+  padding: 0;
+}
+
+.mosaic :deep(.tao-card__content:empty) {
+  display: none;
+}
+
+.mosaic-media {
+  position: relative;
+  height: 100%;
+}
+
+.mosaic-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.mosaic-media span {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  left: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 10px rgb(0 0 0 / 55%);
+}
+
+.mosaic-fill {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  padding: 14px 16px;
+}
+
+.mosaic-fill span {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.mosaic-fill strong {
+  margin-top: 4px;
+  font-size: clamp(14px, 2.4vw, 22px);
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.mosaic-fill--compact {
+  padding: 8px 12px;
+}
+
+.mosaic-fill--compact strong {
+  margin-top: 2px;
+  font-size: clamp(12px, 1.8vw, 16px);
+}
+
+.mosaic-fill--gold {
+  background: color-mix(in srgb, var(--tao-color-warning) 82%, #1a1408);
+  color: #1a1408;
+}
+
+.mosaic-fill--crimson {
+  background: color-mix(in srgb, var(--tao-color-danger) 78%, #140808);
+  color: #fff;
+}
+
+.mosaic-fill--obsidian {
+  background: var(--tao-color-surface-hover);
+  color: var(--tao-color-text);
+}
+
+.mosaic-fill--champagne {
+  background: color-mix(in srgb, var(--tao-color-accent) 28%, var(--tao-color-surface-raised));
+  color: var(--tao-color-text-strong);
 }
 </style>
