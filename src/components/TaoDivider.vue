@@ -96,13 +96,17 @@ const hasLabel = computed(() => Boolean(props.text) || Boolean(slots.default));
     overflow: visible;
 }
 
+.tao-divider--solid .tao-divider__line,
+.tao-divider--dashed .tao-divider__line {
+    opacity: 0.2;
+}
+
 .tao-divider--solid .tao-divider__line {
-    border-top: 1px solid var(--tao-color-border);
+    border-top: 1px solid var(--tao-gray-300);
 }
 
 .tao-divider--dashed .tao-divider__line {
-    border-top: 1px dashed var(--tao-color-border-strong);
-    opacity: 0.45;
+    border-top: 1px dashed var(--tao-gray-300);
 }
 
 .tao-divider--colored .tao-divider__line {
