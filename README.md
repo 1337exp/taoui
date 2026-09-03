@@ -475,7 +475,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-color-selection`, `--tao-color-selection-text` — text selection (`::selection`)
 - `--tao-color-surface*` — container backgrounds (default / raised / sunken / hover)
 - `--tao-color-border*` — borders
-- `--tao-color-text*` — text (default / strong / muted / disabled)
+- `--tao-color-text*` — text (default / strong / subtle / muted / disabled)
 - `--tao-color-danger*`, `--tao-color-success*`, `--tao-color-warning*`, `--tao-color-info*` — status colors
 - `--tao-color-input-*` — fields, because input bg/text often differs from surface/text
 - `--tao-radius-control`, `--tao-radius-panel` — radii (small controls vs large panels)

@@ -36,6 +36,7 @@
     /* ---------- Text ---------- */
     --tao-color-text: var(--tao-gray-200);
     --tao-color-text-strong: var(--tao-gray-0);
+    --tao-color-text-subtle: var(--tao-gray-300); /* idle-контролы: segmented, tabs. Подписи остаются muted */
     --tao-color-text-muted: var(--tao-gray-400);
     --tao-color-text-disabled: var(--tao-gray-300);
 

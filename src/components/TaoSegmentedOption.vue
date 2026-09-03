@@ -121,7 +121,7 @@ function onChange() {
     min-width: 0;
     cursor: pointer;
     user-select: none;
-    color: var(--tao-color-text-muted);
+    color: var(--tao-color-text-subtle);
 }
 
 .tao-segmented-option__face {

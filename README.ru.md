@@ -478,7 +478,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-color-selection`, `--tao-color-selection-text` — выделение текста (`::selection`)
 - `--tao-color-surface*` — фоны контейнеров (обычный / приподнятый / утопленный / hover)
 - `--tao-color-border*` — границы
-- `--tao-color-text*` — текст (обычный / усиленный / приглушённый / disabled)
+- `--tao-color-text*` — текст (обычный / усиленный / subtle / приглушённый / disabled)
 - `--tao-color-danger*`, `--tao-color-success*`, `--tao-color-warning*`, `--tao-color-info*` — статусные цвета
 - `--tao-color-input-*` — поля ввода отдельно, т.к. фон/текст полей часто не совпадают с surface/text
 - `--tao-radius-control`, `--tao-radius-panel` — скругления (мелкие контролы vs крупные панели)

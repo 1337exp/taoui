@@ -122,7 +122,7 @@ function onKeydown(event: KeyboardEvent) {
     border: none;
     border-bottom: 2px solid transparent;
     background: transparent;
-    color: var(--tao-color-text-muted);
+    color: var(--tao-color-text-subtle);
     font: inherit;
     font-size: var(--tao-font-size-md);
     font-weight: 500;
