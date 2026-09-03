@@ -11,7 +11,7 @@ change a handful of CSS variables and the whole kit follows.
 
 - **TaoBlock** — container with padding and radius
 - **TaoButton** — `primary` / `secondary` / `ghost` / `text` / `danger`. `tone` tints ghost and text (danger, success, warning, info)
-- **TaoCard** — card with cover / header / footer slots. `#cover` can be a photo or `TaoCarousel`
+- **TaoCard** — card with cover / header / footer slots. `#cover` can be a photo or `TaoCarousel`. `flush` is a tile (no padding/shadow, fills the cell); `#overlay` is a scrim on the cover
 - **TaoCopy** — clipboard icon. After a click, a “Copied” tooltip; if the trigger is gone, the tooltip is too
 - **TaoInput** — text field with v-model, validation, and `#prefix` / `#suffix` slots (icon or text inside the frame)
 - **TaoInputGroup** — outer glue: `#before` | field | `#after` (protocol, unit, button)

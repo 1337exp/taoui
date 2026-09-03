@@ -95,44 +95,45 @@ const gridNotes = [
     <h3>Мозаика: обложка / заливка / градиент снизу</h3>
     <p class="carousel-note">
       Слева высокий A, справа сверху широкий D, под ним четыре клетки, внизу два блока 50/50.
-      «Тень» на большом A — <code>mosaic-mega-gradient</code> (с 35%). У четырёх мелких справа — <code>mosaic-tile-gradient</code> (с 55%).
+      «Тень» на большом A — <code>#overlay</code> + <code>mosaic-mega-gradient</code> (с 35%).
+      У четырёх мелких — <code>mosaic-tile-gradient</code> (с 55%). Плитки через <code>flush</code>.
       Нижний левый — заливка как <code>mosaic-stigma</code>.
     </p>
     <TaoGrid class="mosaic" :cols="4" gap="12px">
       <TaoGridItem :col="2" :row="3">
-        <TaoCard :padding="0" :radius="6" :shadow="false">
+        <TaoCard flush :radius="6">
           <template #cover>
-            <div class="mosaic-media">
-              <img :src="stubPhoto('A', '#5c5346')" alt="" />
-              <div class="mosaic-mega-gradient" aria-hidden="true" />
-              <span>North Paper Mill</span>
-            </div>
+            <img :src="stubPhoto('A', '#5c5346')" alt="" />
+          </template>
+          <template #overlay>
+            <div class="mosaic-mega-gradient" aria-hidden="true" />
+            <span class="mosaic-caption">North Paper Mill</span>
           </template>
         </TaoCard>
       </TaoGridItem>
       <TaoGridItem :col="2">
-        <TaoCard :padding="0" :radius="6" :shadow="false">
+        <TaoCard flush :radius="6">
           <template #cover>
-            <div class="mosaic-media">
-              <img :src="stubPhoto('D', '#4a4558')" alt="" />
-              <span>Glass Harbor</span>
-            </div>
+            <img :src="stubPhoto('D', '#4a4558')" alt="" />
+          </template>
+          <template #overlay>
+            <span class="mosaic-caption">Glass Harbor</span>
           </template>
         </TaoCard>
       </TaoGridItem>
       <TaoGridItem>
-        <TaoCard :padding="0" :radius="6" :shadow="false">
+        <TaoCard flush :radius="6">
           <template #cover>
-            <div class="mosaic-media">
-              <img :src="stubPhoto('B', '#6a4a3a')" alt="" />
-              <div class="mosaic-tile-gradient" aria-hidden="true" />
-              <span>Quiet Kettle</span>
-            </div>
+            <img :src="stubPhoto('B', '#6a4a3a')" alt="" />
+          </template>
+          <template #overlay>
+            <div class="mosaic-tile-gradient" aria-hidden="true" />
+            <span class="mosaic-caption">Quiet Kettle</span>
           </template>
         </TaoCard>
       </TaoGridItem>
       <TaoGridItem>
-        <TaoCard :padding="0" :radius="6" :shadow="false">
+        <TaoCard flush :radius="6">
           <div class="mosaic-fill mosaic-fill--compact mosaic-fill--gold">
             <div class="mosaic-tile-gradient" aria-hidden="true" />
             <span>PR Breaks</span>
@@ -141,7 +142,7 @@ const gridNotes = [
         </TaoCard>
       </TaoGridItem>
       <TaoGridItem>
-        <TaoCard :padding="0" :radius="6" :shadow="false">
+        <TaoCard flush :radius="6">
           <div class="mosaic-fill mosaic-fill--compact mosaic-fill--crimson">
             <div class="mosaic-tile-gradient" aria-hidden="true" />
             <span>HEX</span>
@@ -150,18 +151,18 @@ const gridNotes = [
         </TaoCard>
       </TaoGridItem>
       <TaoGridItem>
-        <TaoCard :padding="0" :radius="6" :shadow="false">
+        <TaoCard flush :radius="6">
           <template #cover>
-            <div class="mosaic-media">
-              <img :src="stubPhoto('C', '#3f4a55')" alt="" />
-              <div class="mosaic-tile-gradient" aria-hidden="true" />
-              <span>Second Floor</span>
-            </div>
+            <img :src="stubPhoto('C', '#3f4a55')" alt="" />
+          </template>
+          <template #overlay>
+            <div class="mosaic-tile-gradient" aria-hidden="true" />
+            <span class="mosaic-caption">Second Floor</span>
           </template>
         </TaoCard>
       </TaoGridItem>
       <TaoGridItem :col="2">
-        <TaoCard :padding="0" :radius="6" :shadow="false">
+        <TaoCard flush :radius="6">
           <div class="mosaic-fill mosaic-stigma">
             <span>Osaka</span>
             <strong>Est. 2019</strong>
@@ -169,7 +170,7 @@ const gridNotes = [
         </TaoCard>
       </TaoGridItem>
       <TaoGridItem :col="2">
-        <TaoCard :padding="0" :radius="6" :shadow="false">
+        <TaoCard flush :radius="6">
           <div class="mosaic-fill mosaic-fill--champagne">
             <span>Spotify</span>
             <strong>Listen ↗</strong>
@@ -192,16 +193,13 @@ const gridNotes = [
   &lt;TaoGridItem&gt;…&lt;/TaoGridItem&gt;
 &lt;/TaoGrid&gt;
 
-&lt;TaoGrid :cols="4" gap="12px"&gt;
-  &lt;TaoGridItem :col="2" :row="3"&gt;A&lt;/TaoGridItem&gt;
-  &lt;TaoGridItem :col="2"&gt;D&lt;/TaoGridItem&gt;
-  &lt;TaoGridItem&gt;…&lt;/TaoGridItem&gt;
-  &lt;TaoGridItem&gt;…&lt;/TaoGridItem&gt;
-  &lt;TaoGridItem&gt;…&lt;/TaoGridItem&gt;
-  &lt;TaoGridItem&gt;…&lt;/TaoGridItem&gt;
-  &lt;TaoGridItem :col="2"&gt;50%&lt;/TaoGridItem&gt;
-  &lt;TaoGridItem :col="2"&gt;50%&lt;/TaoGridItem&gt;
-&lt;/TaoGrid&gt;</code></pre>
+&lt;TaoCard flush :radius="6"&gt;
+  &lt;template #cover&gt;&lt;img src="cover.jpg" alt="" /&gt;&lt;/template&gt;
+  &lt;template #overlay&gt;
+    &lt;div class="mosaic-mega-gradient" /&gt;
+    &lt;span class="mosaic-caption"&gt;North Paper Mill&lt;/span&gt;
+  &lt;/template&gt;
+&lt;/TaoCard&gt;</code></pre>
     </div>
   </ShowcaseSection>
 </template>
@@ -227,48 +225,7 @@ const gridNotes = [
   }
 }
 
-.mosaic :deep(.tao-card) {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.mosaic :deep(.tao-card__cover),
-.mosaic :deep(.tao-card__content) {
-  flex: 1 1 auto;
-  min-height: 0;
-}
-
-.mosaic :deep(.tao-card__content) {
-  display: flex;
-  flex-direction: column;
-  padding: 0;
-}
-
-.mosaic :deep(.tao-card__body) {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  min-height: 0;
-}
-
-.mosaic :deep(.tao-card__content:empty) {
-  display: none;
-}
-
-.mosaic-media {
-  position: relative;
-  height: 100%;
-}
-
-.mosaic-media img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.mosaic-media span {
+.mosaic-caption {
   position: absolute;
   z-index: 1;
   right: 12px;

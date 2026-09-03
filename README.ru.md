@@ -11,7 +11,7 @@
 
 - **TaoBlock** — базовый контейнер с настраиваемыми отступами и скруглением
 - **TaoButton** — кнопка: `primary` / `secondary` / `ghost` / `text` / `danger`. `tone` красит ghost и text (danger, success, warning, info)
-- **TaoCard** — карточка со слотами cover / header / footer. В `#cover` — фото или `TaoCarousel`
+- **TaoCard** — карточка со слотами cover / header / footer. В `#cover` — фото или `TaoCarousel`. `flush` — плитка без padding/тени на всю ячейку; `#overlay` — scrim на обложке
 - **TaoCopy** — иконка копирования в буфер. После клика сверху тултип «Скопировано»; если кнопку убрали — тултип тоже
 - **TaoInput** — поле ввода с поддержкой v-model, валидации и слотов `#prefix` / `#suffix` (иконка или текст внутри рамки)
 - **TaoInputGroup** — склейка снаружи: `#before` | поле | `#after` (протокол, единица, кнопка)

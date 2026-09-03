@@ -17,6 +17,7 @@ const cardGallery = ref(0)
           <p>
             Карточка со слотами cover / header / footer. Обложка — любой контент: фото или карусель.
             Проп <code>hover</code> даёт обводку акцентом при наведении — у товаров ниже он выключен.
+            Для плитки в сетке — <code>flush</code> и слот <code>#overlay</code> (градиент поверх фото).
           </p>
           
           <TaoCard :padding="20" :radius="12">

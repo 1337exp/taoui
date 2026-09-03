@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, useSlots } from 'vue';
 
 defineOptions({ name: 'TaoCard' });
 
@@ -11,6 +11,8 @@ interface Props {
     hover?: boolean;
     active?: boolean;
     overflow?: boolean;
+    /** Плитка: без отступа и без тени, cover/body тянутся на ячейку. */
+    flush?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -21,9 +23,28 @@ const props = withDefaults(defineProps<Props>(), {
     hover: false,
     active: false,
     overflow: false,
+    flush: false,
 });
 
+const slots = useSlots();
+
+const hasContent = computed(
+    () =>
+        Boolean(slots.headerTitle) ||
+        Boolean(slots.header) ||
+        Boolean(slots.headerSecondary) ||
+        Boolean(slots.title) ||
+        Boolean(slots.sub) ||
+        Boolean(slots.default) ||
+        Boolean(slots.footer),
+);
+
+const coverOnly = computed(() => Boolean(slots.cover) && !hasContent.value);
+
 const paddingStyle = computed(() => {
+    if (props.flush) {
+        return { padding: '0' };
+    }
     if (Array.isArray(props.padding)) {
         return { padding: `${props.padding.map((p) => `${p}px`).join(' ')}` };
     }
@@ -31,25 +52,34 @@ const paddingStyle = computed(() => {
 });
 
 const radiusStyle = computed(() => ({ borderRadius: `${props.radius}px` }));
+const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly && !props.flush);
 </script>
 
 <template>
     <div
         class="tao-card"
         :class="{
-            'tao-card--shadow': shadow && !shadowBottomOnly,
+            'tao-card--shadow': showPanelShadow,
             'tao-card--shadow-bottom': shadowBottomOnly,
             'tao-card--hover': hover,
             'tao-card--active': active,
             'tao-card--overflow': overflow,
+            'tao-card--flush': flush,
+            'tao-card--cover-only': coverOnly,
         }"
         :style="radiusStyle"
     >
         <div v-if="$slots.cover" class="tao-card__cover">
             <slot name="cover" />
+            <div v-if="$slots.overlay" class="tao-card__overlay">
+                <slot name="overlay" />
+            </div>
+        </div>
+        <div v-else-if="$slots.overlay" class="tao-card__overlay">
+            <slot name="overlay" />
         </div>
 
-        <div class="tao-card__content" :style="paddingStyle">
+        <div v-if="hasContent" class="tao-card__content" :style="paddingStyle">
             <h2 v-if="$slots.headerTitle" class="tao-card__header-title">
                 <slot name="headerTitle" />
             </h2>
@@ -73,7 +103,12 @@ const radiusStyle = computed(() => ({ borderRadius: `${props.radius}px` }));
 
 <style scoped>
 .tao-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     width: 100%;
+    height: 100%;
+    min-height: 0;
     background: var(--tao-color-surface-raised);
     color: var(--tao-color-text);
     transition: var(--tao-transition-base);
@@ -105,13 +140,38 @@ const radiusStyle = computed(() => ({ borderRadius: `${props.radius}px` }));
 }
 
 .tao-card__cover {
+    position: relative;
     overflow: hidden;
+}
+
+.tao-card--cover-only .tao-card__cover {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.tao-card--cover-only .tao-card__cover > :deep(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tao-card__overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
 }
 
 .tao-card__content {
     display: flex;
+    flex: 1 1 auto;
     flex-direction: column;
     gap: var(--tao-space-3);
+    min-height: 0;
+}
+
+.tao-card--flush .tao-card__content {
+    padding: 0;
 }
 
 .tao-card__header-title {
@@ -144,6 +204,14 @@ const radiusStyle = computed(() => ({ borderRadius: `${props.radius}px` }));
 }
 
 .tao-card__body {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
     font-size: var(--tao-font-size-md);
+}
+
+.tao-card__footer {
+    margin-top: auto;
 }
 </style>

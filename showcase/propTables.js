@@ -33,15 +33,16 @@ export const propTables = {
     {
       title: 'TaoCard',
       rows: [
-        r('padding', 'number | number[]', '20', 'Отступ тела карточки в px'),
+        r('padding', 'number | number[]', '20', 'Отступ тела карточки в px. У flush — 0'),
         r('radius', 'number', '8', 'Скругление в px'),
-        r('shadow', 'boolean', 'true', 'Обычная тень'),
-        r('shadowBottomOnly', 'boolean', 'false', 'Тень только снизу'),
+        r('shadow', 'boolean', 'true', 'Обычная тень. У flush выключена'),
+        r('shadowBottomOnly', 'boolean', 'false', 'Линия снизу карточки, не scrim на фото'),
+        r('flush', 'boolean', 'false', 'Плитка: без padding и тени, cover/body на всю ячейку'),
         r('hover', 'boolean', 'false', 'Обводка акцентом при наведении'),
         r('active', 'boolean', 'false', 'Выделенное состояние'),
         r('overflow', 'boolean', 'false', 'Не обрезать содержимое (cover/карусель)'),
       ],
-      slots: 'default — тело. #cover, #header, #title, #sub, #footer.',
+      slots: 'default — тело. #cover, #overlay (scrim поверх cover или всей плитки), #header, #title, #sub, #footer.',
     },
   ],
   copy: [
