@@ -72,7 +72,7 @@ const carouselProducts = [
           </p>
     
           <h3 class="carousel-heading">Целый слайд</h3>
-          <p class="carousel-note">Каждые 4 секунды вперёд. Наведи курсор или сфокусируй — пауза. <code>loop</code> крутит по кругу. <code>dots</code> — сколько слайдов и где вы.</p>
+          <p class="carousel-note">Каждые 4 секунды вперёд. Наведи курсор — пауза, убери — снова едет. Tab на ленту тоже ставит на паузу. <code>loop</code> крутит по кругу. <code>dots</code> — сколько слайдов и где вы.</p>
           <TaoCarousel v-model="carouselHero" :autoplay="4000" loop dots aria-label="Баннеры">
             <article v-for="item in carouselBanners" :key="item.id" class="carousel-hero">
               <strong>{{ item.title }}</strong>

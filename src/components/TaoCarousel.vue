@@ -10,7 +10,7 @@ const props = withDefaults(
         /** How many slides fit in the viewport. 5 = product strip. 1 = one card. */
         perView?: number;
         controls?: boolean;
-        /** Interval in ms. 0 — off. Pauses on hover, focus, drag, and reduced motion. */
+        /** Interval in ms. 0 — off. Pauses on hover, keyboard focus, drag, and reduced motion. */
         autoplay?: number;
         loop?: boolean;
         /** Pips under the track: one per snap. Inactive are dots, the current one stretches into a pill. */
@@ -65,6 +65,7 @@ let dragStartScroll = 0;
 let dragMoved = 0;
 let dragPointer = -1;
 let scrollFrame = 0;
+let focusFrame = 0;
 let autoplayTimer = 0;
 
 const step = computed(() => Math.max(1, Math.round(props.perView)));
@@ -205,20 +206,36 @@ function onMouseLeave() {
     syncAutoplay();
 }
 
-function onFocusIn() {
-    focusPaused.value = true;
-    stopAutoplay();
-}
-
-function onFocusOut(event: FocusEvent) {
-    const root = event.currentTarget as HTMLElement;
-    const next = event.relatedTarget as Node | null;
-    if (next && root.contains(next)) {
-        return;
+function hasKeyboardFocus(root: HTMLElement) {
+    const active = document.activeElement;
+    if (!(active instanceof HTMLElement) || !root.contains(active)) {
+        return false;
     }
 
-    focusPaused.value = false;
-    syncAutoplay();
+    try {
+        return active.matches(':focus-visible');
+    } catch {
+        return true;
+    }
+}
+
+function scheduleFocusPause(event: FocusEvent) {
+    const root = event.currentTarget as HTMLElement;
+    cancelAnimationFrame(focusFrame);
+    focusFrame = requestAnimationFrame(() => {
+        if (!track.value) {
+            return;
+        }
+
+        const next = hasKeyboardFocus(root);
+        focusPaused.value = next;
+        if (next) {
+            stopAutoplay();
+            return;
+        }
+
+        syncAutoplay();
+    });
 }
 
 function onScroll() {
@@ -382,6 +399,7 @@ onUpdated(refreshCount);
 onBeforeUnmount(() => {
     endDrag();
     cancelAnimationFrame(scrollFrame);
+    cancelAnimationFrame(focusFrame);
     stopAutoplay();
     document.removeEventListener('visibilitychange', onVisibilityChange);
     window.removeEventListener('blur', onWindowBlur);
@@ -395,8 +413,8 @@ onBeforeUnmount(() => {
         :style="trackStyle"
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
-        @focusin="onFocusIn"
-        @focusout="onFocusOut"
+        @focusin="scheduleFocusPause"
+        @focusout="scheduleFocusPause"
     >
         <div class="tao-carousel__row">
             <slot name="prev" :disabled="atStart" :go="goPrev">
