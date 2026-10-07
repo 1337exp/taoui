@@ -282,6 +282,7 @@ export const propTables = {
         r('size', "'small' | 'medium'", "'medium'", 'medium — форм-контрол, small — тонкий трек (seek / громкость)'),
         r('showValue', 'boolean', 'false', 'Число рядом. ПКМ — точный ввод'),
         r('disabled', 'boolean', 'false', 'Неактивен'),
+        r('wheel', 'number', '0', 'Шаг изменения при прокрутке колёсика. 0 — отключено'),
       ],
     },
   ],
