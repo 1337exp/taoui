@@ -136,7 +136,7 @@ watch(
 .tao-checkbox__label {
     font-size: var(--tao-font-size-sm);
     white-space: nowrap;
-    color: var(--tao-color-text-muted);
+    color: var(--tao-color-text);
 }
 
 .tao-checkbox--disabled {
