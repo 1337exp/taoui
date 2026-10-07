@@ -130,7 +130,7 @@ function onKeydown(event: KeyboardEvent) {
 }
 
 .tao-tabs__tab:hover:not(:disabled) {
-    color: var(--tao-color-text-strong);
+    color: var(--tao-color-accent);
 }
 
 .tao-tabs__tab[aria-selected='true'] {
