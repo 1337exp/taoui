@@ -24,6 +24,7 @@ const panelRef = ref<HTMLElement | null>(null);
 const titleId = useId();
 let previousFocus: HTMLElement | null = null;
 let scrollHeld = false;
+let pointerDownOnOverlay = false;
 
 function close() {
     if (!props.closable) {
@@ -79,6 +80,17 @@ function onKeydown(event: KeyboardEvent) {
     }
 }
 
+function onOverlayPointerDown(event: PointerEvent) {
+    pointerDownOnOverlay = event.target === event.currentTarget;
+}
+
+function onOverlayPointerUp(event: PointerEvent) {
+    if (pointerDownOnOverlay && event.target === event.currentTarget) {
+        close();
+    }
+    pointerDownOnOverlay = false;
+}
+
 watch(
     () => props.modelValue,
     (isOpen) => {
@@ -107,7 +119,13 @@ onBeforeUnmount(() => {
 <template>
     <Teleport to="body">
         <Transition name="tao-modal-fade">
-            <div v-if="modelValue" class="tao-modal-overlay" @click.self="close" @keydown="onKeydown">
+            <div
+                v-if="modelValue"
+                class="tao-modal-overlay"
+                @pointerdown="onOverlayPointerDown"
+                @pointerup="onOverlayPointerUp"
+                @keydown="onKeydown"
+            >
                 <div
                     ref="panelRef"
                     class="tao-modal"
