@@ -16,6 +16,8 @@ const props = withDefaults(
         disabled?: boolean;
         /** `medium` — форм-контрол. `small` — тонкий трек (seek, громкость). */
         size?: 'small' | 'medium';
+        /** Шаг изменения значения при прокрутке колёсика мыши. 0 — отключено. */
+        wheel?: number;
     }>(),
     {
         min: 0,
@@ -25,6 +27,7 @@ const props = withDefaults(
         placeholder: '',
         disabled: false,
         size: 'medium',
+        wheel: 0,
     },
 );
 
@@ -177,6 +180,16 @@ function onKeydown(event: KeyboardEvent) {
     }
 }
 
+function onWheel(event: WheelEvent) {
+    if (props.disabled || props.wheel <= 0 || showShadowModel.value) {
+        return;
+    }
+
+    event.preventDefault();
+    const delta = event.deltaY < 0 ? props.wheel : -props.wheel;
+    commit(current.value + delta);
+}
+
 function onBlurShadowModel() {
     if (shadowModel.value) {
         const newValue = packModelValue(clampValue(parseFloat(shadowModel.value) || 0));
@@ -236,6 +249,7 @@ onBeforeUnmount(() => {
         @pointercancel="onPointerEnd"
         @lostpointercapture="onLostPointerCapture"
         @keydown="onKeydown"
+        @wheel="onWheel"
     >
         <div class="tao-slider__track"></div>
         <div class="tao-slider__fill" :style="{ width: `${progressPercent}%` }"></div>
