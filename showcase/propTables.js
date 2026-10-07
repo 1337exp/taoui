@@ -611,6 +611,7 @@ export const propTables = {
       rows: [
         r('v-model', 'string', '—', 'key активной вкладки. Обязательный'),
         r('tabs', '{ key, label, disabled? }[]', '—', 'Список вкладок. Обязательный'),
+        r('justify', 'string', "''", 'CSS justify-content для выравнивания вкладок (center, flex-end, space-between и т.д.)'),
       ],
       slots: 'default="{ key }" — содержимое активной панели.',
     },
