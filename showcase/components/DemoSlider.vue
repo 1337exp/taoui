@@ -8,6 +8,7 @@ defineOptions({ name: 'DemoSlider' })
 
 const sliderValue = ref(35)
 const sliderVolume = ref(70)
+const sliderWheel = ref(50)
 </script>
 
 <template>
@@ -39,6 +40,10 @@ const sliderVolume = ref(70)
           <h3>size="small"</h3>
           <TaoSlider v-model="sliderVolume" size="small" class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">Громкость: {{ sliderVolume }}</p>
+
+          <h3>wheel</h3>
+          <TaoSlider v-model="sliderWheel" size="small" :wheel="5" class="demo-wide" />
+          <p style="margin-top: 4px; font-size: 13px;">Громкость с колёсиком: {{ sliderWheel }} — <em>прокрутка над слайдером меняет значение на 5</em></p>
     
           <div class="code-block">
             <pre><code>&lt;TaoProgress :progress="65" /&gt;
@@ -59,7 +64,8 @@ const sliderVolume = ref(70)
 &lt;/TaoProgress&gt;
 
 &lt;TaoSlider v-model="value" show-value /&gt;
-&lt;TaoSlider v-model="volume" size="small" /&gt;</code></pre>
+&lt;TaoSlider v-model="volume" size="small" /&gt;
+&lt;TaoSlider v-model="volume" size="small" :wheel="5" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>
