@@ -57,7 +57,7 @@ withDefaults(
 }
 
 .tao-breadcrumb__current {
-    color: var(--tao-color-text-strong);
+    color: var(--tao-color-text);
     font-weight: 500;
 }
 </style>

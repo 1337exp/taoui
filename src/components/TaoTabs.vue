@@ -138,6 +138,10 @@ function onKeydown(event: KeyboardEvent) {
     border-bottom-color: var(--tao-color-accent);
 }
 
+.tao-tabs__tab[aria-selected='true']:hover:not(:disabled) {
+    color: var(--tao-color-accent);
+}
+
 .tao-tabs__tab:disabled {
     cursor: not-allowed;
     color: var(--tao-color-text-disabled);
