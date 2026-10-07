@@ -119,7 +119,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <span ref="triggerRef" class="tao-copy">
+    <span ref="triggerRef" class="tao-copy" :class="{ 'tao-copy--button': !$slots.default }">
         <slot :copy="copy" :copied="copied">
             <button
                 type="button"
@@ -198,6 +198,9 @@ onBeforeUnmount(() => {
 .tao-copy {
     display: inline-flex;
     align-items: center;
+}
+
+.tao-copy--button {
     vertical-align: middle;
 }
 
