@@ -9,10 +9,17 @@ interface Tab {
     disabled?: boolean;
 }
 
-const props = defineProps<{
-    tabs: Tab[];
-    modelValue: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        tabs: Tab[];
+        modelValue: string;
+        /** Выравнивание вкладок по горизонтали (CSS justify-content). */
+        justify?: string;
+    }>(),
+    {
+        justify: '',
+    },
+);
 
 const emit = defineEmits(['update:modelValue']);
 const uid = useId();
