@@ -117,7 +117,7 @@ watch(
     height: 18px;
     pointer-events: none;
     background-color: var(--tao-color-surface-raised);
-    border: 2px solid var(--tao-color-border-strong);
+    border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-sm);
     transition: var(--tao-transition-base);
 }
