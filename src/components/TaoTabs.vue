@@ -80,7 +80,7 @@ function onKeydown(event: KeyboardEvent) {
 
 <template>
     <div class="tao-tabs">
-        <div class="tao-tabs__list" role="tablist" @keydown="onKeydown">
+        <div class="tao-tabs__list" :style="{ justifyContent: justify || undefined }" role="tablist" @keydown="onKeydown">
             <button
                 v-for="tab in tabs"
                 :key="tab.key"
