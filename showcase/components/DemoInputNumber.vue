@@ -8,6 +8,8 @@ defineOptions({ name: 'DemoInputNumber' })
 
 const qty = ref(2)
 const price = ref(1490)
+const commits = ref([])
+const onCommit = (v) => commits.value.unshift(v)
 </script>
 
 <template>
@@ -22,6 +24,9 @@ const price = ref(1490)
             <TaoFormField label="Цена">
               <TaoInputNumber v-model="price" :min="0" :step="10" />
             </TaoFormField>
+            <TaoFormField label="@commit" :hint="`Fires on blur, Enter, ±, arrows / На blur, Enter, ±, стрелки. Last: ${commits.slice(0, 5).join(', ') || '—'}`">
+              <TaoInputNumber v-model="qty" :min="1" :max="99" @commit="onCommit" />
+            </TaoFormField>
             <TaoFormField label="Без кнопок" hint="Только клавиатура и ввод">
               <TaoInputNumber v-model="price" :min="0" :step="10" :controls="false" />
             </TaoFormField>
@@ -31,6 +36,8 @@ const price = ref(1490)
             <pre><code>&lt;TaoFormField label="Количество"&gt;
   &lt;TaoInputNumber v-model="qty" :min="1" :max="99" /&gt;
 &lt;/TaoFormField&gt;
+
+&lt;TaoInputNumber v-model="qty" @commit="saveStep" /&gt;
 
 &lt;TaoInputNumber v-model="qty" increment-label="Increase" decrement-label="Decrease"&gt;
   &lt;template #increment-icon&gt;&lt;TaoIcon name="plus" /&gt;&lt;/template&gt;

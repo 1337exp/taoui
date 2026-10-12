@@ -30,6 +30,12 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     'update:modelValue': [value: number | null];
+    /**
+     * The user finished an edit: blur, Enter, ± button, arrow key. Fires once per action (typing emits only update:modelValue),
+     * so forms can save or push an undo step here. / Правка закончена: blur, Enter, кнопка ±, стрелка. Один раз на действие
+     * (при наборе уходит только update:modelValue): здесь удобно сохранять или делать шаг отмены.
+     */
+    commit: [value: number | null];
     blur: [event: FocusEvent];
     focus: [event: FocusEvent];
 }>();
@@ -104,12 +110,12 @@ function isAllowed(text: string) {
     return /^-?\d*([.,]\d*)?$/.test(text);
 }
 
+/** Applies a finished value: normalises, emits update:modelValue and commit. / Применяет готовое значение. */
 function commit(value: number | null) {
     const next = value === null ? null : clamp(value);
     emit('update:modelValue', next);
-    if (!focused.value) {
-        draft.value = toDraft(next);
-    }
+    draft.value = toDraft(next);
+    emit('commit', next);
 }
 
 function bump(direction: 1 | -1) {
@@ -145,6 +151,11 @@ function onBlur(event: FocusEvent) {
 }
 
 function onKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+        const parsed = parseDraft(draft.value);
+        commit(parsed === 'incomplete' ? null : parsed);
+        return;
+    }
     if (event.key === 'ArrowUp') {
         event.preventDefault();
         bump(1);

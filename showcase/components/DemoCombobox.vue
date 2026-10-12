@@ -7,6 +7,8 @@ import { propTables } from '../propTables.js'
 defineOptions({ name: 'DemoCombobox' })
 
 const comboCity = ref(null)
+const comboSmall = ref("msk")
+const comboLarge = ref("msk")
 const comboTag = ref(null)
 const comboFree = ref(null)
 const comboCities = [
@@ -94,6 +96,10 @@ function onComboTagCreate(text) {
     
             <TaoFormField label="Disabled">
               <TaoCombobox model-value="msk" :options="comboCities" disabled />
+              <div style="display: flex; flex-direction: column; gap: 12px">
+                <TaoCombobox v-model="comboSmall" :options="comboCities" size="small" :clearable="false" placeholder="small, clearable=false" />
+                <TaoCombobox v-model="comboLarge" :options="comboCities" size="large" placeholder="large" />
+              </div>
             </TaoFormField>
           </div>
     

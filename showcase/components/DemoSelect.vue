@@ -14,6 +14,12 @@ const cities = [
   { value: 'kzn', label: 'Казань', disabled: true },
   { value: 'nsk', label: 'Новосибирск' },
 ]
+const step = ref(4)
+const steps = [1, 2, 3, 4, 6, 8, 12, 16].map((n) => ({ value: n, label: `1/${n}` }))
+const sizeSmall = ref('msk')
+const sizeMedium = ref('msk')
+const sizeLarge = ref('msk')
+const customClear = ref('spb')
 const notifyEmail = ref(true)
 const plan = ref('pro')
 </script>
@@ -28,6 +34,24 @@ const plan = ref('pro')
               <TaoSelect v-model="city" :options="cities" placeholder="Выберите город" />
             </TaoFormField>
     
+            <TaoFormField label="Sizes / Размеры (small, medium, large)">
+              <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+                <TaoSelect v-model="sizeSmall" :options="cities" size="small" />
+                <TaoSelect v-model="sizeMedium" :options="cities" />
+                <TaoSelect v-model="sizeLarge" :options="cities" size="large" />
+              </div>
+            </TaoFormField>
+
+            <TaoFormField label="Not clearable / Без сброса" hint="clearable=false: no clear row, Delete does nothing / нет строки сброса, Delete не работает">
+              <TaoSelect v-model="step" :options="steps" size="small" :clearable="false" />
+            </TaoFormField>
+
+            <TaoFormField label="Custom clear row / Своя строка сброса" hint="#clear slot">
+              <TaoSelect v-model="customClear" :options="cities">
+                <template #clear>✕ Reset / Сбросить</template>
+              </TaoSelect>
+            </TaoFormField>
+
             <TaoFormField label="С ошибкой" error="Выберите город">
               <TaoSelect v-model="cityError" :options="cities" />
             </TaoFormField>
@@ -57,6 +81,12 @@ const plan = ref('pro')
 
 &lt;TaoSelect v-model="city" :options="cities" placeholder="Select a city" clear-text="Clear"&gt;
   &lt;template #chevron&gt;&lt;TaoIcon name="chevron-down" /&gt;&lt;/template&gt;
+&lt;/TaoSelect&gt;
+
+&lt;TaoSelect v-model="step" :options="steps" size="small" :clearable="false" /&gt;
+
+&lt;TaoSelect v-model="city" :options="cities"&gt;
+  &lt;template #clear&gt;✕ Reset&lt;/template&gt;
 &lt;/TaoSelect&gt;
 
 &lt;TaoFormField label="Уведомления" hint="Письма на почту"&gt;

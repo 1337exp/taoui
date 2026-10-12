@@ -12,7 +12,17 @@ const props = withDefaults(
         placeholder?: string;
         disabled?: boolean;
         error?: boolean;
+        /** Label of the clear row in the list. Slot `#clear` replaces it (icon, markup). / Подпись пункта сброса; слот `#clear` заменяет её (иконка, разметка). */
         clearText?: string;
+        /**
+         * Whether the value can be cleared: shows the clear row and enables Delete / Backspace.
+         * Turn off when null is not a valid value (grid step, sort order).
+         * Можно ли очистить значение: показывает пункт сброса и включает Delete / Backspace.
+         * Выключайте, когда null не допустим (шаг сетки, порядок сортировки).
+         */
+        clearable?: boolean;
+        /** Control size, same scale as TaoButton. / Размер контрола, шкала как у TaoButton. */
+        size?: 'small' | 'medium' | 'large';
     }>(),
     {
         modelValue: null,
@@ -21,6 +31,8 @@ const props = withDefaults(
         disabled: false,
         error: false,
         clearText: 'Очистить',
+        clearable: true,
+        size: 'medium',
     },
 );
 
@@ -150,7 +162,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
         return;
     }
 
-    if ((event.key === 'Backspace' || event.key === 'Delete') && selected.value) {
+    if ((event.key === 'Backspace' || event.key === 'Delete') && selected.value && props.clearable) {
         event.preventDefault();
         clear();
         return;
@@ -197,7 +209,7 @@ function onListKeydown(event: KeyboardEvent) {
     }
 
     if (event.key === 'Backspace' || event.key === 'Delete') {
-        if (selected.value) {
+        if (selected.value && props.clearable) {
             event.preventDefault();
             clear();
         }
@@ -251,7 +263,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="tao-select" :class="{ 'tao-select--open': open, 'tao-select--invalid': invalid }">
+    <div class="tao-select" :class="[`tao-select--${size}`, { 'tao-select--open': open, 'tao-select--invalid': invalid }]">
         <button
             :id="controlId"
             ref="triggerRef"
@@ -283,6 +295,7 @@ onBeforeUnmount(() => {
                 v-if="open"
                 ref="panelRef"
                 class="tao-select__panel"
+                :class="`tao-select__panel--${size}`"
                 :style="listStyle"
             >
                 <ul
@@ -316,7 +329,7 @@ onBeforeUnmount(() => {
                     </li>
                 </ul>
                 <button
-                    v-if="selected"
+                    v-if="clearable && selected"
                     type="button"
                     class="tao-select__clear"
                     @mousedown.prevent
@@ -394,6 +407,19 @@ onBeforeUnmount(() => {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+/* Sizes of the teleported panel follow the control / Размеры панели (она телепортирована) следуют размеру контрола */
+.tao-select__panel--small .tao-select__option,
+.tao-select__panel--small .tao-select__clear {
+    padding: var(--tao-space-1) var(--tao-space-2);
+    font-size: var(--tao-font-size-xs);
+}
+
+.tao-select__panel--large .tao-select__option,
+.tao-select__panel--large .tao-select__clear {
+    padding: var(--tao-space-3) var(--tao-space-4);
+    font-size: var(--tao-font-size-lg);
+}
 </style>
 
 <style scoped>
@@ -418,6 +444,18 @@ onBeforeUnmount(() => {
     text-align: left;
     cursor: pointer;
     transition: var(--tao-transition-base);
+}
+
+.tao-select--small .tao-select__trigger {
+    min-height: 28px;
+    padding: var(--tao-space-1) var(--tao-space-2);
+    font-size: var(--tao-font-size-xs);
+}
+
+.tao-select--large .tao-select__trigger {
+    min-height: 44px;
+    padding: var(--tao-space-3) var(--tao-space-4);
+    font-size: var(--tao-font-size-lg);
 }
 
 .tao-select__trigger--placeholder {

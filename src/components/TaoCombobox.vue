@@ -14,7 +14,12 @@ const props = withDefaults(
         disabled?: boolean;
         error?: boolean;
         emptyText?: string;
+        /** Label of the clear row in the list. Slot `#clear` replaces it (icon, markup). / Подпись пункта сброса; слот `#clear` заменяет её (иконка, разметка). */
         clearText?: string;
+        /** Whether the value can be cleared: shows the clear row. Turn off when null is not valid. / Можно ли очистить значение: показывает пункт сброса. Выключайте, когда null не допустим. */
+        clearable?: boolean;
+        /** Control size, same scale as TaoButton and TaoSelect. / Размер контрола, шкала как у TaoButton и TaoSelect. */
+        size?: 'small' | 'medium' | 'large';
         /** Можно оставить то, чего нет в списке. */
         allowCreate?: boolean;
     }>(),
@@ -26,6 +31,8 @@ const props = withDefaults(
         error: false,
         emptyText: 'Ничего не найдено',
         clearText: 'Очистить',
+        clearable: true,
+        size: 'medium',
         allowCreate: false,
     },
 );
@@ -468,11 +475,14 @@ onBeforeUnmount(() => {
 <template>
     <div
         class="tao-combobox"
-        :class="{
-            'tao-combobox--open': open,
-            'tao-combobox--invalid': invalid,
-            'tao-combobox--disabled': disabled,
-        }"
+        :class="[
+            `tao-combobox--${size}`,
+            {
+                'tao-combobox--open': open,
+                'tao-combobox--invalid': invalid,
+                'tao-combobox--disabled': disabled,
+            },
+        ]"
     >
         <div ref="fieldRef" class="tao-combobox__field" @mousedown="onFieldMouseDown">
             <input
@@ -507,7 +517,7 @@ onBeforeUnmount(() => {
         </div>
 
         <Teleport to="body">
-            <div v-if="open" ref="panelRef" class="tao-combobox__panel" :style="listStyle">
+            <div v-if="open" ref="panelRef" class="tao-combobox__panel" :class="`tao-combobox__panel--${size}`" :style="listStyle">
                 <ul :id="listId" ref="listRef" class="tao-combobox__list" role="listbox">
                     <li v-if="!rows.length" class="tao-combobox__empty">
                         <slot name="empty">{{ emptyText }}</slot>
@@ -539,7 +549,7 @@ onBeforeUnmount(() => {
                     </li>
                 </ul>
                 <button
-                    v-if="selected"
+                    v-if="clearable && selected"
                     type="button"
                     class="tao-combobox__clear"
                     @mousedown.prevent="markPicking"
@@ -623,6 +633,21 @@ onBeforeUnmount(() => {
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+/* Sizes of the teleported panel follow the control / Размеры панели (она телепортирована) следуют размеру контрола */
+.tao-combobox__panel--small .tao-combobox__option,
+.tao-combobox__panel--small .tao-combobox__clear,
+.tao-combobox__panel--small .tao-combobox__empty {
+    padding: var(--tao-space-1) var(--tao-space-2);
+    font-size: var(--tao-font-size-xs);
+}
+
+.tao-combobox__panel--large .tao-combobox__option,
+.tao-combobox__panel--large .tao-combobox__clear,
+.tao-combobox__panel--large .tao-combobox__empty {
+    padding: var(--tao-space-3) var(--tao-space-4);
+    font-size: var(--tao-font-size-lg);
+}
 </style>
 
 <style scoped>
@@ -642,6 +667,26 @@ onBeforeUnmount(() => {
     background: var(--tao-color-input-bg);
     color: var(--tao-color-input-text);
     transition: var(--tao-transition-base);
+}
+
+.tao-combobox--small .tao-combobox__field {
+    min-height: 28px;
+    padding: 0 var(--tao-space-2);
+}
+
+.tao-combobox--small .tao-combobox__input {
+    height: 26px;
+    font-size: var(--tao-font-size-xs);
+}
+
+.tao-combobox--large .tao-combobox__field {
+    min-height: 44px;
+    padding: 0 var(--tao-space-4);
+}
+
+.tao-combobox--large .tao-combobox__input {
+    height: 42px;
+    font-size: var(--tao-font-size-lg);
 }
 
 .tao-combobox__field:focus-within {

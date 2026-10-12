@@ -40,12 +40,12 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoSwitch** — boolean toggle (`role="switch"`)
 - **TaoRadio** / **TaoRadioGroup** — classic radios: longer labels, can stack vertically
 - **TaoSegmented** / **TaoSegmentedOption** — compact exclusive choice among 2–5 short options. Not tabs
-- **TaoSelect** — dropdown with keyboard, same chrome as Input. Clear via “Clear” in the list or Delete
-- **TaoCombobox** — Select with a field: type to filter, `allow-create` writes a custom value into `v-model`, `create` lets the parent append the list
+- **TaoSelect** — dropdown with keyboard, same chrome as Input. `size` (`small` / `medium` / `large`, same scale as Button). Clear via “Clear” in the list or Delete; `clearable="false"` turns clearing off, `#clear` replaces the row content
+- **TaoCombobox** — Select with a field: type to filter, `allow-create` writes a custom value into `v-model`, `create` lets the parent append the list. Takes the same `size`, `clearable` and `#clear` as `TaoSelect`
 - **TaoDate** — a single day: `YYYY-MM-DD`, no time, no timezone. Calendar popup like Select
 - **TaoDateRange** — a period: `v-model` is `{ start, end }` or `null`. First click is start, second is end (they swap if end is earlier). An incomplete pick is not written to the model
 - **TaoFormField** — shared label / hint / error for form controls
-- **TaoInputNumber** — number with min/max/step and ± on the right. Empty value is `null`
+- **TaoInputNumber** — number with min/max/step and ± on the right. Empty value is `null`. `@commit` fires once when an edit is finished (blur, Enter, ±, arrow), unlike `v-model`, which updates on every keystroke
 - **TaoQuantity** — cart quantity: `− | field | +`, integers, stock; minus at the minimum can remove the row
 - **TaoTextarea** — autosizing multiline. `maxlength` caps input, `count` shows “entered / max”
 - **TaoPinCode** — N cells. By default a click clears the cell and everything to the right (`clear-on="focus"`); `clear-on="input"` replaces the digit only when typing. The last cell blurs and emits `complete`
@@ -268,6 +268,16 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 `TaoSegmented` is a short exclusive choice with every option visible. It is not page navigation — that is `TaoTabs`. Longer labels or more than 5–6 items belong in `TaoRadioGroup` or `TaoSelect`.
 
 `TaoSelect` opens from the keyboard (arrows, Enter, Esc); the list flips at the viewport edge. Delete or “Clear” at the bottom of the list resets the value to `null`.
+
+When `null` is not a valid value (a grid step, a sort order), pass `:clearable="false"`: the clear row and the Delete / Backspace shortcut disappear. The clear row label is `clear-text`; for an icon or any markup use the `#clear` slot. `size` is `small` / `medium` (default) / `large` and also scales the open list.
+
+```vue
+<TaoSelect v-model="step" :options="steps" size="small" :clearable="false" />
+
+<TaoSelect v-model="city" :options="cities">
+  <template #clear><TaoIcon name="close" /> Reset</template>
+</TaoSelect>
+```
 
 `TaoCombobox` is the same menu with a field. Typing filters options. `allow-create` writes the typed string into `v-model` when there is no exact match. The list does not mutate itself: listen to `create` and append an option from the parent.
 
