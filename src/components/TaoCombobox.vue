@@ -660,7 +660,7 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: var(--tao-space-2);
     width: 100%;
-    min-height: 36px;
+    height: var(--tao-field-height);
     padding: 0 var(--tao-space-3);
     border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-control);
@@ -670,17 +670,20 @@ onBeforeUnmount(() => {
 }
 
 .tao-combobox--small .tao-combobox__field {
-    min-height: 28px;
+    /* same height as TaoButton small / как у TaoButton small */
+    height: var(--tao-control-height-small);
+    min-height: 0;
     padding: 0 var(--tao-space-2);
 }
 
 .tao-combobox--small .tao-combobox__input {
-    height: 26px;
+    height: 24px;
     font-size: var(--tao-font-size-xs);
 }
 
 .tao-combobox--large .tao-combobox__field {
-    min-height: 44px;
+    height: var(--tao-control-height-large);
+    min-height: 0;
     padding: 0 var(--tao-space-4);
 }
 

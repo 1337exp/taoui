@@ -231,7 +231,8 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
 
 .tao-input-number__input {
     width: 100%;
-    padding: var(--tao-space-2) var(--tao-space-3);
+    height: var(--tao-field-height);
+    padding: 0 var(--tao-space-3);
     border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-control);
     background: var(--tao-color-input-bg);

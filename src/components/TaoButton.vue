@@ -85,19 +85,19 @@ function handleClick(event: MouseEvent) {
 .tao-button--small {
     padding: var(--tao-space-1) var(--tao-space-3);
     font-size: var(--tao-font-size-xs);
-    height: 26px;
+    height: var(--tao-control-height-small);
 }
 
 .tao-button--medium {
     padding: var(--tao-space-2) var(--tao-space-4);
     font-size: var(--tao-font-size-md);
-    height: 30px;
+    height: var(--tao-control-height-medium);
 }
 
 .tao-button--large {
     padding: var(--tao-space-2) var(--tao-space-6);
     font-size: var(--tao-font-size-lg);
-    height: 38px;
+    height: var(--tao-control-height-large);
 }
 
 .tao-button--primary {

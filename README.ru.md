@@ -494,6 +494,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-radius-control`, `--tao-radius-panel` — скругления (мелкие контролы vs крупные панели)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — тени
 - `--tao-font-size-*` — шкала кегля в `primitives.css`: `xs`–`xl` контролы, `2xl`–`4xl` заголовки / проза
+- `--tao-control-height-small` / `-medium` / `-large` — единая шкала высот (26 / 36 / 44px) для всех контролов с `size`: Button, Segmented, Select, Combobox. `--tao-field-height` (= medium) — высота полей без `size`: Input, InputNumber, Date, DateRange, Quantity
 
 Полный список — в `src/styles/semantic.css`, он же единственный файл,
 который стоит открыть, чтобы понять весь доступный API темизации.

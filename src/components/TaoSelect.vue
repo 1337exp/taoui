@@ -433,8 +433,8 @@ onBeforeUnmount(() => {
     justify-content: space-between;
     gap: var(--tao-space-2);
     width: 100%;
-    min-height: 36px;
-    padding: var(--tao-space-2) var(--tao-space-3);
+    height: var(--tao-field-height);
+    padding: 0 var(--tao-space-3);
     border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-control);
     background: var(--tao-color-input-bg);
@@ -447,14 +447,17 @@ onBeforeUnmount(() => {
 }
 
 .tao-select--small .tao-select__trigger {
-    min-height: 28px;
-    padding: var(--tao-space-1) var(--tao-space-2);
+    /* same height as TaoButton small / как у TaoButton small */
+    height: var(--tao-control-height-small);
+    min-height: 0;
+    padding: 0 var(--tao-space-2);
     font-size: var(--tao-font-size-xs);
 }
 
 .tao-select--large .tao-select__trigger {
-    min-height: 44px;
-    padding: var(--tao-space-3) var(--tao-space-4);
+    height: var(--tao-control-height-large);
+    min-height: 0;
+    padding: 0 var(--tao-space-4);
     font-size: var(--tao-font-size-lg);
 }
 

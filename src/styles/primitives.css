@@ -41,6 +41,15 @@
     --tao-blue-500: #4c82f7;
     --tao-blue-600: #3b6de0;
 
+    /* ---------- Control height / Высота контролов ----------
+       One scale for every sized control: Button, Segmented, Select, Combobox (size small / medium / large).
+       Единая шкала для всех контролов с размером. Fields without a size prop (Input, InputNumber, Date, DateRange,
+       Quantity) are always medium, see --tao-field-height. / Поля без size всегда medium (--tao-field-height). */
+    --tao-control-height-small: 26px;
+    --tao-control-height-medium: 36px;
+    --tao-control-height-large: 44px;
+    --tao-field-height: var(--tao-control-height-medium);
+
     /* ---------- Spacing scale (4px base) ---------- */
     --tao-space-1: 4px;
     --tao-space-2: 8px;

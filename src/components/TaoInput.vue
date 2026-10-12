@@ -107,6 +107,7 @@ function handleFocus(event: FocusEvent) {
     align-items: center;
     width: 100%;
     min-width: 0;
+    min-height: var(--tao-field-height);
     border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-control);
     background: var(--tao-color-input-bg);

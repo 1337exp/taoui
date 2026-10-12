@@ -223,7 +223,7 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? props.remo
 
 .tao-quantity__btn,
 .tao-quantity__input {
-    height: 36px;
+    height: var(--tao-field-height);
     margin: 0;
     border: 1px solid var(--tao-color-border-strong);
     background: var(--tao-color-input-bg);

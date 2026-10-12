@@ -491,6 +491,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-radius-control`, `--tao-radius-panel` — radii (small controls vs large panels)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — shadows
 - `--tao-font-size-*` — type scale in `primitives.css`: `xs`–`xl` controls, `2xl`–`4xl` titles / prose
+- `--tao-control-height-small` / `-medium` / `-large` — one height scale (26 / 36 / 44px) for every control with `size`: Button, Segmented, Select, Combobox. `--tao-field-height` (= medium) is the height of fields without `size`: Input, InputNumber, Date, DateRange, Quantity
 
 The full list lives in `src/styles/semantic.css` — the only file worth opening
 to see the whole theming API.

@@ -141,19 +141,20 @@ function onChange() {
 }
 
 .tao-segmented-option--small .tao-segmented-option__face {
-    min-height: 20px;
+    /* the track adds 6px: padding 2 + border 1 on each side / дорожка добавляет 6px */
+    min-height: calc(var(--tao-control-height-small) - 6px);
     padding: 0 var(--tao-space-2);
     font-size: var(--tao-font-size-xs);
 }
 
 .tao-segmented-option--medium .tao-segmented-option__face {
-    min-height: 24px;
+    min-height: calc(var(--tao-control-height-medium) - 6px);
     padding: 0 var(--tao-space-3);
     font-size: var(--tao-font-size-sm);
 }
 
 .tao-segmented-option--large .tao-segmented-option__face {
-    min-height: 32px;
+    min-height: calc(var(--tao-control-height-large) - 6px);
     padding: 0 var(--tao-space-4);
     font-size: var(--tao-font-size-md);
 }

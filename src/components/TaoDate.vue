@@ -414,8 +414,8 @@ onBeforeUnmount(() => {
     justify-content: space-between;
     gap: var(--tao-space-2);
     width: 100%;
-    min-height: 36px;
-    padding: var(--tao-space-2) var(--tao-space-3);
+    height: var(--tao-field-height);
+    padding: 0 var(--tao-space-3);
     border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-control);
     background: var(--tao-color-input-bg);
