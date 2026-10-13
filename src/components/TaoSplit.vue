@@ -386,7 +386,10 @@ onBeforeUnmount(() => {
     height: 100%;
     min-width: 0;
     min-height: 0;
+    /* clip, а не только hidden: hidden-контейнер браузер всё равно прокручивает, когда фокус уходит на элемент за его краем (например
+       галочка в нижней панели), и панель «отламывалась». clip не прокручивается совсем; hidden остаётся запасным для старых браузеров. */
     overflow: hidden;
+    overflow: clip;
 }
 
 .tao-split--row {
@@ -401,6 +404,7 @@ onBeforeUnmount(() => {
     min-width: 0;
     min-height: 0;
     overflow: hidden;
+    overflow: clip; /* см. комментарий у .tao-split */
 }
 
 .tao-split__pane--start {
