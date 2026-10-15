@@ -89,7 +89,16 @@ Visual tones: `success` | `danger` | `warning` | `info` | `neutral`.
 `error` on Alert, Tag, and `toast()` is an alias of `danger`. Button already uses `danger`.
 Stages describe a process, not a tone: `wait` / `work` / `ok` / `bad` (`danger` is accepted as `bad`).
 
-Control sizes: `small` | `medium` | `large`.
+Control sizes: `small` | `medium` | `large` (type `TaoSize`). One scale for Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup and FormField — controls of one size line up in a row.
+Without `size` a control takes the size of its ancestors, `medium` at the root. Set it for a whole block with the class `tao-size-small` / `-medium` / `-large` on any element, or with `size` on `TaoFormField` / `TaoInputGroup`. An explicit `size` on a control wins.
+
+```vue
+<div class="tao-size-small">
+  <TaoInput v-model="q" />
+  <TaoButton>Find</TaoButton>
+</div>
+```
+
 Avatar also accepts short `s` / `m` / `l`. Divider `gap` used to call the large size `big` — that is an alias of `large`.
 Container lives on another axis: `wide` / `slim` / `ultra-slim`.
 
@@ -269,7 +278,7 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 
 `TaoSelect` opens from the keyboard (arrows, Enter, Esc); the list flips at the viewport edge. Delete or “Clear” at the bottom of the list resets the value to `null`.
 
-When `null` is not a valid value (a grid step, a sort order), pass `:clearable="false"`: the clear row and the Delete / Backspace shortcut disappear. The clear row label is `clear-text`; for an icon or any markup use the `#clear` slot. `size` is `small` / `medium` (default) / `large` and also scales the open list.
+When `null` is not a valid value (a grid step, a sort order), pass `:clearable="false"`: the clear row and the Delete / Backspace shortcut disappear. The clear row label is `clear-text`; for an icon or any markup use the `#clear` slot. `size` is `small` / `medium` / `large` (inherited from ancestors when not set) and also scales the open list.
 
 ```vue
 <TaoSelect v-model="step" :options="steps" size="small" :clearable="false" />
@@ -491,7 +500,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-radius-control`, `--tao-radius-panel` — radii (small controls vs large panels)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — shadows
 - `--tao-font-size-*` — type scale in `primitives.css`: `xs`–`xl` controls, `2xl`–`4xl` titles / prose
-- `--tao-control-height-small` / `-medium` / `-large` — one height scale (26 / 36 / 44px) for every control with `size`: Button, Segmented, Select, Combobox. `--tao-field-height` (= medium) is the height of fields without `size`: Input, InputNumber, Date, DateRange, Quantity
+- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*` — the size scale in `primitives.css`. Components read the current values from `size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`. Use them in your own controls to match the size around them. `--tao-field-height` is a deprecated alias of `--tao-control-height`
 
 The full list lives in `src/styles/semantic.css` — the only file worth opening
 to see the whole theming API.

@@ -1,7 +1,13 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoInputGroup' });
+
+defineProps<{
+    /** Size of the whole group: addons, field and buttons inside. / Размер всей группы: аддоны, поле и кнопки внутри. */
+    size?: TaoSize;
+}>();
 
 const focused = ref(false);
 
@@ -21,7 +27,7 @@ function onFocusOut(event: FocusEvent) {
 <template>
     <div
         class="tao-input-group"
-        :class="{ 'tao-input-group--focused': focused }"
+        :class="[sizeClass(size), { 'tao-input-group--focused': focused }]"
         role="group"
         @focusin="onFocusIn"
         @focusout="onFocusOut"
@@ -93,11 +99,11 @@ function onFocusOut(event: FocusEvent) {
     flex: 0 0 auto;
     align-items: center;
     align-self: stretch;
-    padding: 0 var(--tao-space-3);
+    padding: 0 var(--tao-control-padding-x);
     border: 1px solid var(--tao-color-border-strong);
     background: var(--tao-color-surface-sunken);
     color: var(--tao-color-text-muted);
-    font-size: var(--tao-font-size-sm);
+    font-size: var(--tao-control-font-size-secondary);
     font-weight: 600;
     line-height: 1;
     white-space: nowrap;

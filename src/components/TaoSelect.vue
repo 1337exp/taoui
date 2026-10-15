@@ -2,6 +2,7 @@
 import { computed, inject, nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
 import type { TaoSelectOption } from '../select';
+import { resolveSize, sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoSelect' });
 
@@ -21,8 +22,8 @@ const props = withDefaults(
          * Выключайте, когда null не допустим (шаг сетки, порядок сортировки).
          */
         clearable?: boolean;
-        /** Control size, same scale as TaoButton. / Размер контрола, шкала как у TaoButton. */
-        size?: 'small' | 'medium' | 'large';
+        /** Control size, same scale as TaoButton; without it — the size of ancestors. Also scales the open list. / Размер контрола, шкала как у TaoButton; без него — размер предков. Масштабирует и список. */
+        size?: TaoSize;
     }>(),
     {
         modelValue: null,
@@ -32,7 +33,6 @@ const props = withDefaults(
         error: false,
         clearText: 'Очистить',
         clearable: true,
-        size: 'medium',
     },
 );
 
@@ -54,6 +54,8 @@ const triggerRef = ref<HTMLButtonElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
 const listRef = ref<HTMLElement | null>(null);
 const listStyle = ref({ top: '0px', left: '0px', width: '0px' });
+/** The panel is teleported to body, so it gets the size resolved at the trigger. / Панель в body — размер берём у триггера. */
+const panelSize = ref<TaoSize>('medium');
 
 const selected = computed(() => props.options.find((option) => option.value === props.modelValue) ?? null);
 const enabledIndexes = computed(() =>
@@ -244,6 +246,7 @@ function onViewportChange() {
 
 watch(open, (isOpen) => {
     if (isOpen) {
+        panelSize.value = resolveSize(triggerRef.value, props.size);
         document.addEventListener('pointerdown', onDocumentPointer);
         window.addEventListener('resize', onViewportChange);
         window.addEventListener('scroll', onViewportChange, true);
@@ -263,7 +266,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="tao-select" :class="[`tao-select--${size}`, { 'tao-select--open': open, 'tao-select--invalid': invalid }]">
+    <div class="tao-select" :class="[sizeClass(size), { 'tao-select--open': open, 'tao-select--invalid': invalid }]">
         <button
             :id="controlId"
             ref="triggerRef"
@@ -295,7 +298,7 @@ onBeforeUnmount(() => {
                 v-if="open"
                 ref="panelRef"
                 class="tao-select__panel"
-                :class="`tao-select__panel--${size}`"
+                :class="sizeClass(panelSize)"
                 :style="listStyle"
             >
                 <ul
@@ -370,13 +373,13 @@ onBeforeUnmount(() => {
     display: block;
     width: 100%;
     margin: 0;
-    padding: var(--tao-space-2) var(--tao-space-3);
+    padding: var(--tao-control-padding-y) var(--tao-control-padding-x);
     border: none;
     border-top: 1px solid var(--tao-color-border);
     background: none;
     color: var(--tao-color-text-muted);
     font: inherit;
-    font-size: var(--tao-font-size-sm);
+    font-size: var(--tao-control-font-size-secondary);
     text-align: left;
     cursor: pointer;
 }
@@ -387,9 +390,9 @@ onBeforeUnmount(() => {
 }
 
 .tao-select__option {
-    padding: var(--tao-space-2) var(--tao-space-3);
+    padding: var(--tao-control-padding-y) var(--tao-control-padding-x);
     border-radius: var(--tao-radius-sm);
-    font-size: var(--tao-font-size-md);
+    font-size: var(--tao-control-font-size);
     cursor: pointer;
     user-select: none;
 }
@@ -407,19 +410,6 @@ onBeforeUnmount(() => {
     opacity: 0.5;
     cursor: not-allowed;
 }
-
-/* Sizes of the teleported panel follow the control / Размеры панели (она телепортирована) следуют размеру контрола */
-.tao-select__panel--small .tao-select__option,
-.tao-select__panel--small .tao-select__clear {
-    padding: var(--tao-space-1) var(--tao-space-2);
-    font-size: var(--tao-font-size-xs);
-}
-
-.tao-select__panel--large .tao-select__option,
-.tao-select__panel--large .tao-select__clear {
-    padding: var(--tao-space-3) var(--tao-space-4);
-    font-size: var(--tao-font-size-lg);
-}
 </style>
 
 <style scoped>
@@ -433,32 +423,17 @@ onBeforeUnmount(() => {
     justify-content: space-between;
     gap: var(--tao-space-2);
     width: 100%;
-    height: var(--tao-field-height);
-    padding: 0 var(--tao-space-3);
+    height: var(--tao-control-height);
+    padding: 0 var(--tao-control-padding-x);
     border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-control);
     background: var(--tao-color-input-bg);
     color: var(--tao-color-input-text);
-    font-size: var(--tao-font-size-md);
+    font-size: var(--tao-control-font-size);
     font-family: inherit;
     text-align: left;
     cursor: pointer;
     transition: var(--tao-transition-base);
-}
-
-.tao-select--small .tao-select__trigger {
-    /* same height as TaoButton small / как у TaoButton small */
-    height: var(--tao-control-height-small);
-    min-height: 0;
-    padding: 0 var(--tao-space-2);
-    font-size: var(--tao-font-size-xs);
-}
-
-.tao-select--large .tao-select__trigger {
-    height: var(--tao-control-height-large);
-    min-height: 0;
-    padding: 0 var(--tao-space-4);
-    font-size: var(--tao-font-size-lg);
 }
 
 .tao-select__trigger--placeholder {

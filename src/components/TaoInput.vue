@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, inject, ref, useId } from 'vue';
 import { formFieldKey } from '../formField';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoInput' });
 
@@ -9,6 +10,8 @@ interface Props {
     type?: 'text' | 'password' | 'email' | 'number' | 'tel';
     placeholder?: string;
     disabled?: boolean;
+    /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
+    size?: TaoSize;
     error?: boolean;
     errorMessage?: string;
     label?: string;
@@ -51,7 +54,7 @@ function handleFocus(event: FocusEvent) {
 </script>
 
 <template>
-    <div class="tao-input-wrapper">
+    <div class="tao-input-wrapper" :class="sizeClass(size)">
         <label v-if="label && !field" class="tao-input__label" :for="controlId">{{ label }}</label>
         <div
             class="tao-input-shell"
@@ -107,7 +110,7 @@ function handleFocus(event: FocusEvent) {
     align-items: center;
     width: 100%;
     min-width: 0;
-    min-height: var(--tao-field-height);
+    min-height: var(--tao-control-height);
     border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-control);
     background: var(--tao-color-input-bg);
@@ -120,12 +123,14 @@ function handleFocus(event: FocusEvent) {
     min-width: 0;
     width: 100%;
     margin: 0;
-    padding: var(--tao-space-2) var(--tao-space-3);
+    /* shell height minus its 1px borders / высота оболочки без рамок */
+    min-height: calc(var(--tao-control-height) - 2px);
+    padding: 0 var(--tao-control-padding-x);
     border: none;
     border-radius: inherit;
     background: transparent;
     color: inherit;
-    font-size: var(--tao-font-size-md);
+    font-size: var(--tao-control-font-size);
     font-family: inherit;
     line-height: 1.25;
 }
@@ -176,19 +181,19 @@ function handleFocus(event: FocusEvent) {
     align-items: center;
     gap: var(--tao-space-1);
     color: var(--tao-color-text-muted);
-    font-size: var(--tao-font-size-sm);
+    font-size: var(--tao-control-font-size-secondary);
     font-weight: 600;
     line-height: 1;
     white-space: nowrap;
 }
 
 .tao-input__affix--prefix {
-    padding-left: var(--tao-space-3);
+    padding-left: var(--tao-control-padding-x);
     padding-right: var(--tao-space-2);
 }
 
 .tao-input__affix--suffix {
-    padding-right: var(--tao-space-3);
+    padding-right: var(--tao-control-padding-x);
     padding-left: var(--tao-space-2);
 }
 

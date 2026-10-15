@@ -2,7 +2,8 @@
 import { computed, inject, nextTick, onBeforeUnmount, onMounted, provide, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
 import { type TaoRadioValue } from '../radio';
-import { segmentedKey, type TaoSegmentedSize } from '../segmented';
+import { segmentedKey } from '../segmented';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoSegmented' });
 
@@ -12,12 +13,12 @@ const props = withDefaults(
         name?: string;
         legend?: string;
         disabled?: boolean;
-        size?: TaoSegmentedSize;
+        /** Without it the group takes the size of its ancestors. / Без него — размер предков. */
+        size?: TaoSize;
         block?: boolean;
     }>(),
     {
         disabled: false,
-        size: 'medium',
         block: false,
     },
 );
@@ -32,7 +33,6 @@ const autoName = useId();
 const groupName = computed(() => props.name || autoName);
 const model = computed(() => props.modelValue);
 const groupDisabled = computed(() => props.disabled);
-const groupSize = computed(() => props.size);
 const invalid = computed(() => Boolean(field?.invalid.value));
 const describedBy = computed(() => field?.describedBy.value);
 
@@ -86,7 +86,6 @@ provide(segmentedKey, {
     name: groupName,
     model,
     disabled: groupDisabled,
-    size: groupSize,
     setValue,
 });
 
@@ -131,7 +130,7 @@ onBeforeUnmount(() => {
     <fieldset
         class="tao-segmented"
         :class="[
-            `tao-segmented--${size}`,
+            sizeClass(size),
             {
                 'tao-segmented--block': block,
                 'tao-segmented--disabled': disabled,

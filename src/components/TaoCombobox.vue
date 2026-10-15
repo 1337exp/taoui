@@ -3,6 +3,7 @@ import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, useId, wat
 import { formFieldKey } from '../formField';
 import { listenFocusLoss } from '../focusLoss';
 import type { TaoSelectOption } from '../select';
+import { resolveSize, sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoCombobox' });
 
@@ -18,8 +19,8 @@ const props = withDefaults(
         clearText?: string;
         /** Whether the value can be cleared: shows the clear row. Turn off when null is not valid. / Можно ли очистить значение: показывает пункт сброса. Выключайте, когда null не допустим. */
         clearable?: boolean;
-        /** Control size, same scale as TaoButton and TaoSelect. / Размер контрола, шкала как у TaoButton и TaoSelect. */
-        size?: 'small' | 'medium' | 'large';
+        /** Control size, same scale as TaoButton and TaoSelect; without it — the size of ancestors. / Размер контрола, шкала как у TaoButton и TaoSelect; без него — размер предков. */
+        size?: TaoSize;
         /** Можно оставить то, чего нет в списке. */
         allowCreate?: boolean;
     }>(),
@@ -32,7 +33,6 @@ const props = withDefaults(
         emptyText: 'Ничего не найдено',
         clearText: 'Очистить',
         clearable: true,
-        size: 'medium',
         allowCreate: false,
     },
 );
@@ -62,6 +62,8 @@ const activeIndex = ref(-1);
 const fieldRef = ref<HTMLElement | null>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
+/** The panel is teleported to body, so it gets the size resolved at the field. / Панель в body — размер берём у поля. */
+const panelSize = ref<TaoSize>('medium');
 const listRef = ref<HTMLElement | null>(null);
 const listStyle = ref({ top: '0px', left: '0px', width: '0px' });
 
@@ -446,6 +448,7 @@ watch(rows, () => {
 
 watch(open, (isOpen) => {
     if (isOpen) {
+        panelSize.value = resolveSize(fieldRef.value, props.size);
         document.addEventListener('pointerdown', onDocumentPointer);
         window.addEventListener('resize', onViewportChange);
         window.addEventListener('scroll', onViewportChange, true);
@@ -476,7 +479,7 @@ onBeforeUnmount(() => {
     <div
         class="tao-combobox"
         :class="[
-            `tao-combobox--${size}`,
+            sizeClass(size),
             {
                 'tao-combobox--open': open,
                 'tao-combobox--invalid': invalid,
@@ -517,7 +520,7 @@ onBeforeUnmount(() => {
         </div>
 
         <Teleport to="body">
-            <div v-if="open" ref="panelRef" class="tao-combobox__panel" :class="`tao-combobox__panel--${size}`" :style="listStyle">
+            <div v-if="open" ref="panelRef" class="tao-combobox__panel" :class="sizeClass(panelSize)" :style="listStyle">
                 <ul :id="listId" ref="listRef" class="tao-combobox__list" role="listbox">
                     <li v-if="!rows.length" class="tao-combobox__empty">
                         <slot name="empty">{{ emptyText }}</slot>
@@ -583,22 +586,22 @@ onBeforeUnmount(() => {
 }
 
 .tao-combobox__empty {
-    padding: var(--tao-space-2) var(--tao-space-3);
+    padding: var(--tao-control-padding-y) var(--tao-control-padding-x);
     color: var(--tao-color-text-muted);
-    font-size: var(--tao-font-size-sm);
+    font-size: var(--tao-control-font-size-secondary);
 }
 
 .tao-combobox__clear {
     display: block;
     width: 100%;
     margin: 0;
-    padding: var(--tao-space-2) var(--tao-space-3);
+    padding: var(--tao-control-padding-y) var(--tao-control-padding-x);
     border: none;
     border-top: 1px solid var(--tao-color-border);
     background: none;
     color: var(--tao-color-text-muted);
     font: inherit;
-    font-size: var(--tao-font-size-sm);
+    font-size: var(--tao-control-font-size-secondary);
     text-align: left;
     cursor: pointer;
 }
@@ -609,9 +612,9 @@ onBeforeUnmount(() => {
 }
 
 .tao-combobox__option {
-    padding: var(--tao-space-2) var(--tao-space-3);
+    padding: var(--tao-control-padding-y) var(--tao-control-padding-x);
     border-radius: var(--tao-radius-sm);
-    font-size: var(--tao-font-size-md);
+    font-size: var(--tao-control-font-size);
     cursor: pointer;
     user-select: none;
 }
@@ -633,21 +636,6 @@ onBeforeUnmount(() => {
     opacity: 0.5;
     cursor: not-allowed;
 }
-
-/* Sizes of the teleported panel follow the control / Размеры панели (она телепортирована) следуют размеру контрола */
-.tao-combobox__panel--small .tao-combobox__option,
-.tao-combobox__panel--small .tao-combobox__clear,
-.tao-combobox__panel--small .tao-combobox__empty {
-    padding: var(--tao-space-1) var(--tao-space-2);
-    font-size: var(--tao-font-size-xs);
-}
-
-.tao-combobox__panel--large .tao-combobox__option,
-.tao-combobox__panel--large .tao-combobox__clear,
-.tao-combobox__panel--large .tao-combobox__empty {
-    padding: var(--tao-space-3) var(--tao-space-4);
-    font-size: var(--tao-font-size-lg);
-}
 </style>
 
 <style scoped>
@@ -660,36 +648,13 @@ onBeforeUnmount(() => {
     align-items: center;
     gap: var(--tao-space-2);
     width: 100%;
-    height: var(--tao-field-height);
-    padding: 0 var(--tao-space-3);
+    height: var(--tao-control-height);
+    padding: 0 var(--tao-control-padding-x);
     border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-control);
     background: var(--tao-color-input-bg);
     color: var(--tao-color-input-text);
     transition: var(--tao-transition-base);
-}
-
-.tao-combobox--small .tao-combobox__field {
-    /* same height as TaoButton small / как у TaoButton small */
-    height: var(--tao-control-height-small);
-    min-height: 0;
-    padding: 0 var(--tao-space-2);
-}
-
-.tao-combobox--small .tao-combobox__input {
-    height: 24px;
-    font-size: var(--tao-font-size-xs);
-}
-
-.tao-combobox--large .tao-combobox__field {
-    height: var(--tao-control-height-large);
-    min-height: 0;
-    padding: 0 var(--tao-space-4);
-}
-
-.tao-combobox--large .tao-combobox__input {
-    height: 42px;
-    font-size: var(--tao-font-size-lg);
 }
 
 .tao-combobox__field:focus-within {
@@ -708,12 +673,13 @@ onBeforeUnmount(() => {
 .tao-combobox__input {
     flex: 1;
     min-width: 0;
-    height: 34px;
+    /* field height minus its 1px borders / высота поля без рамок */
+    height: calc(var(--tao-control-height) - 2px);
     padding: 0;
     border: none;
     background: transparent;
     color: inherit;
-    font-size: var(--tao-font-size-md);
+    font-size: var(--tao-control-font-size);
     font-family: inherit;
     outline: none;
 }

@@ -34,7 +34,6 @@ const localId = useId();
 
 const isDisabled = computed(() => props.disabled || Boolean(group?.disabled.value));
 const inputName = computed(() => group?.name.value ?? props.name);
-const size = computed(() => group?.size.value ?? 'medium');
 const isChecked = computed(() => {
     const current = group ? group.model.value : props.modelValue;
     return current === props.value;
@@ -77,14 +76,11 @@ function onChange() {
 <template>
     <label
         class="tao-segmented-option"
-        :class="[
-            `tao-segmented-option--${size}`,
-            {
-                'tao-segmented-option--checked': isChecked,
-                'tao-segmented-option--disabled': props.disabled,
-                'tao-segmented-option--icon-only': isIconOnly,
-            },
-        ]"
+        :class="{
+            'tao-segmented-option--checked': isChecked,
+            'tao-segmented-option--disabled': props.disabled,
+            'tao-segmented-option--icon-only': isIconOnly,
+        }"
         :for="localId"
     >
         <input
@@ -135,42 +131,18 @@ function onChange() {
     font-weight: 500;
     line-height: 1.25;
     white-space: nowrap;
+    /* the track adds 6px: padding 2 + border 1 on each side / дорожка добавляет 6px */
+    min-height: calc(var(--tao-control-height) - 6px);
+    padding: 0 var(--tao-control-padding-x);
+    font-size: var(--tao-control-font-size-secondary);
     transition:
         color var(--tao-duration-base) var(--tao-ease-base),
         background var(--tao-duration-base) var(--tao-ease-base);
 }
 
-.tao-segmented-option--small .tao-segmented-option__face {
-    /* the track adds 6px: padding 2 + border 1 on each side / дорожка добавляет 6px */
-    min-height: calc(var(--tao-control-height-small) - 6px);
-    padding: 0 var(--tao-space-2);
-    font-size: var(--tao-font-size-xs);
-}
-
-.tao-segmented-option--medium .tao-segmented-option__face {
-    min-height: calc(var(--tao-control-height-medium) - 6px);
-    padding: 0 var(--tao-space-3);
-    font-size: var(--tao-font-size-sm);
-}
-
-.tao-segmented-option--large .tao-segmented-option__face {
-    min-height: calc(var(--tao-control-height-large) - 6px);
-    padding: 0 var(--tao-space-4);
-    font-size: var(--tao-font-size-md);
-}
-
-.tao-segmented-option--icon-only.tao-segmented-option--small .tao-segmented-option__face {
-    min-width: 20px;
-    padding: 0;
-}
-
-.tao-segmented-option--icon-only.tao-segmented-option--medium .tao-segmented-option__face {
-    min-width: 24px;
-    padding: 0;
-}
-
-.tao-segmented-option--icon-only.tao-segmented-option--large .tao-segmented-option__face {
-    min-width: 32px;
+.tao-segmented-option--icon-only .tao-segmented-option__face {
+    /* square / квадрат */
+    min-width: calc(var(--tao-control-height) - 6px);
     padding: 0;
 }
 

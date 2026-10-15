@@ -89,7 +89,16 @@
 `error` у Alert, Tag и `toast()` — синоним `danger`. Button уже `danger`.
 Stages — это процесс, не тон: `wait` / `work` / `ok` / `bad` (`danger` принимается как `bad`).
 
-Размеры контролов: `small` | `medium` | `large`.
+Размеры контролов: `small` | `medium` | `large` (тип `TaoSize`). Одна шкала для Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup и FormField — контролы одного размера встают в ряд ровно.
+Без `size` контрол берёт размер предков, в корне — `medium`. На целый блок размер задаётся классом `tao-size-small` / `-medium` / `-large` на любом элементе или `size` у `TaoFormField` / `TaoInputGroup`. Явный `size` у контрола главнее.
+
+```vue
+<div class="tao-size-small">
+  <TaoInput v-model="q" />
+  <TaoButton>Найти</TaoButton>
+</div>
+```
+
 Avatar понимает и короткие `s` / `m` / `l`. Divider `gap` раньше называл крупный размер `big` — это алиас `large`.
 Container живёт на другой оси: `wide` / `slim` / `ultra-slim`.
 
@@ -270,7 +279,7 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 
 `TaoSelect` открывается с клавиатуры (стрелки, Enter, Esc), список переворачивается у края экрана. Delete или «Очистить» внизу списка сбрасывает значение в `null`.
 
-Если `null` не допустим (шаг сетки, порядок сортировки), передайте `:clearable="false"`: строка сброса и Delete / Backspace пропадут. Подпись строки сброса — `clear-text`, для иконки или своей разметки есть слот `#clear`. `size` — `small` / `medium` (по умолчанию) / `large`, масштабирует и раскрытый список.
+Если `null` не допустим (шаг сетки, порядок сортировки), передайте `:clearable="false"`: строка сброса и Delete / Backspace пропадут. Подпись строки сброса — `clear-text`, для иконки или своей разметки есть слот `#clear`. `size` — `small` / `medium` / `large` (без него — от предков), масштабирует и раскрытый список.
 
 ```vue
 <TaoSelect v-model="step" :options="steps" size="small" :clearable="false" />
@@ -494,7 +503,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-radius-control`, `--tao-radius-panel` — скругления (мелкие контролы vs крупные панели)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — тени
 - `--tao-font-size-*` — шкала кегля в `primitives.css`: `xs`–`xl` контролы, `2xl`–`4xl` заголовки / проза
-- `--tao-control-height-small` / `-medium` / `-large` — единая шкала высот (26 / 36 / 44px) для всех контролов с `size`: Button, Segmented, Select, Combobox. `--tao-field-height` (= medium) — высота полей без `size`: Input, InputNumber, Date, DateRange, Quantity
+- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*` — шкала размеров в `primitives.css`. Компоненты читают текущие значения из `size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`. Используйте их в своих контролах, чтобы попасть в размер окружения. `--tao-field-height` — устаревший алиас `--tao-control-height`
 
 Полный список — в `src/styles/semantic.css`, он же единственный файл,
 который стоит открыть, чтобы понять весь доступный API темизации.

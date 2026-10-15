@@ -1,0 +1,45 @@
+/**
+ * Tao UI — Size context / Контекст размера
+ *
+ * Controls never read the per-size primitives directly — only the "current" tokens below.
+ * :root is medium; `.tao-size-small` / `-medium` / `-large` on any element switches its whole subtree.
+ * A control with an explicit `size` prop adds the same class to itself; without the prop it inherits.
+ *
+ * Контролы читают только «текущие» токены ниже, не примитивы по размерам.
+ * :root — medium; класс `.tao-size-*` на любом элементе переключает всё поддерево.
+ * Контрол с явным `size` вешает этот же класс на себя, без prop — наследует.
+ */
+:root,
+.tao-size-medium {
+    --tao-size: medium;
+    --tao-control-height: var(--tao-control-height-medium);
+    --tao-control-padding-x: var(--tao-control-padding-x-medium);
+    --tao-control-padding-y: var(--tao-control-padding-y-medium);
+    --tao-control-font-size: var(--tao-control-font-size-medium);
+    --tao-control-font-size-secondary: var(--tao-control-font-size-secondary-medium);
+    --tao-button-padding-x: var(--tao-button-padding-x-medium);
+    /* Deprecated alias, follows the current size. / Устаревший алиас, следует текущему размеру. */
+    --tao-field-height: var(--tao-control-height);
+}
+
+.tao-size-small {
+    --tao-size: small;
+    --tao-control-height: var(--tao-control-height-small);
+    --tao-control-padding-x: var(--tao-control-padding-x-small);
+    --tao-control-padding-y: var(--tao-control-padding-y-small);
+    --tao-control-font-size: var(--tao-control-font-size-small);
+    --tao-control-font-size-secondary: var(--tao-control-font-size-secondary-small);
+    --tao-button-padding-x: var(--tao-button-padding-x-small);
+    --tao-field-height: var(--tao-control-height);
+}
+
+.tao-size-large {
+    --tao-size: large;
+    --tao-control-height: var(--tao-control-height-large);
+    --tao-control-padding-x: var(--tao-control-padding-x-large);
+    --tao-control-padding-y: var(--tao-control-padding-y-large);
+    --tao-control-font-size: var(--tao-control-font-size-large);
+    --tao-control-font-size-secondary: var(--tao-control-font-size-secondary-large);
+    --tao-button-padding-x: var(--tao-button-padding-x-large);
+    --tao-field-height: var(--tao-control-height);
+}

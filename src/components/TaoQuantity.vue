@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, inject, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
+import { sizeClass, type TaoSize } from '../size';
 import type { TaoQuantityChangeSource } from '../quantity';
 
 defineOptions({ name: 'TaoQuantity' });
@@ -11,6 +12,8 @@ const props = withDefaults(
         min?: number;
         max?: number;
         disabled?: boolean;
+        /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
+        size?: TaoSize;
         /** Minus stays enabled at min and still emits `dec` — parent can remove the line. */
         allowRemove?: boolean;
         /** Clamp to max on blur and when the incoming value is above stock. */
@@ -162,11 +165,14 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? props.remo
 <template>
     <div
         class="tao-quantity"
-        :class="{
-            'tao-quantity--invalid': invalid,
-            'tao-quantity--focused': focused,
-            'tao-quantity--disabled': disabled,
-        }"
+        :class="[
+            sizeClass(size),
+            {
+                'tao-quantity--invalid': invalid,
+                'tao-quantity--focused': focused,
+                'tao-quantity--disabled': disabled,
+            },
+        ]"
     >
         <button
             type="button"
@@ -217,13 +223,14 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? props.remo
 .tao-quantity {
     display: inline-flex;
     width: 100%;
-    min-width: 148px;
+    /* 148px at medium / 148px в medium */
+    min-width: calc(var(--tao-control-height) * 4 + 4px);
     isolation: isolate;
 }
 
 .tao-quantity__btn,
 .tao-quantity__input {
-    height: var(--tao-field-height);
+    height: var(--tao-control-height);
     margin: 0;
     border: 1px solid var(--tao-color-border-strong);
     background: var(--tao-color-input-bg);
@@ -233,11 +240,13 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? props.remo
 }
 
 .tao-quantity__btn {
-    flex: 0 0 50px;
-    width: 50px;
+    /* 50px at medium / 50px в medium */
+    --tao-quantity-btn: calc(var(--tao-control-height) + var(--tao-space-3) + 2px);
+    flex: 0 0 var(--tao-quantity-btn);
+    width: var(--tao-quantity-btn);
     padding: 0;
     color: var(--tao-color-text-muted);
-    font-size: var(--tao-font-size-md);
+    font-size: var(--tao-control-font-size);
     font-weight: 800;
     line-height: 1;
     cursor: pointer;
@@ -278,7 +287,7 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? props.remo
     border-right: 0;
     border-left: 0;
     text-align: center;
-    font-size: var(--tao-font-size-md);
+    font-size: var(--tao-control-font-size);
     font-weight: 700;
     font-variant-numeric: tabular-nums;
 }

@@ -235,6 +235,7 @@ export {
     formatTaoDateLabel,
     formatTaoDateRangeLabel,
 } from './date';
+export type { TaoSize } from './size';
 export type { TaoSelectOption } from './select';
 export type { TaoDateCell, TaoDateParts, TaoDateRangeValue } from './date';
 export type { TaoRadioValue } from './radio';

@@ -1,6 +1,8 @@
 import type { ComputedRef, InjectionKey } from 'vue';
+import type { TaoSize } from './size';
 
-export type TaoListSize = 'small' | 'medium' | 'large';
+/** Same scale as TaoSize. / Та же шкала, что TaoSize. */
+export type TaoListSize = TaoSize;
 
 export interface TaoListContext {
     size: ComputedRef<TaoListSize>;

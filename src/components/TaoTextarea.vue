@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, inject, nextTick, onMounted, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoTextarea' });
 
@@ -12,6 +13,8 @@ const props = withDefaults(
         minlength?: number;
         maxlength?: number;
         disabled?: boolean;
+        /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
+        size?: TaoSize;
         noSpace?: boolean;
         dummy?: boolean;
         rows?: number;
@@ -134,8 +137,8 @@ onMounted(() => {
 </script>
 
 <template>
-    <span v-if="dummy" class="tao-textarea tao-textarea--dummy">{{ modelValue }}</span>
-    <div v-else class="tao-textarea-wrap">
+    <span v-if="dummy" class="tao-textarea tao-textarea--dummy" :class="sizeClass(size)">{{ modelValue }}</span>
+    <div v-else class="tao-textarea-wrap" :class="sizeClass(size)">
         <textarea
             :id="controlId"
             ref="textareaRef"
@@ -184,10 +187,10 @@ onMounted(() => {
 
 .tao-textarea {
     width: 100%;
-    min-height: 31px;
+    min-height: var(--tao-control-height);
     height: auto;
-    padding: var(--tao-space-2);
-    font-size: var(--tao-font-size-sm);
+    padding: var(--tao-control-padding-y);
+    font-size: var(--tao-control-font-size-secondary);
     font-family: var(--tao-font-family);
     letter-spacing: 0.01rem;
     line-height: 1.4;
@@ -236,7 +239,7 @@ onMounted(() => {
 
 .tao-textarea--dummy {
     display: block;
-    min-height: 31px;
+    min-height: var(--tao-control-height);
     height: auto;
     border-color: var(--tao-color-danger);
     white-space: pre-wrap;

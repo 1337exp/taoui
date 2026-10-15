@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
+import { sizeClass, type TaoSize } from '../size';
 import { listenFocusLoss } from '../focusLoss';
 import {
     buildTaoDateGrid,
@@ -28,6 +29,8 @@ const props = withDefaults(
         modelValue?: TaoDateRangeValue | null;
         placeholder?: string;
         disabled?: boolean;
+        /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
+        size?: TaoSize;
         error?: boolean;
         min?: string;
         max?: string;
@@ -346,7 +349,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="tao-date-range" :class="{ 'tao-date-range--open': open, 'tao-date-range--invalid': invalid }">
+    <div class="tao-date-range" :class="[sizeClass(size), { 'tao-date-range--open': open, 'tao-date-range--invalid': invalid }]">
         <button
             :id="controlId"
             ref="triggerRef"
@@ -487,13 +490,13 @@ onBeforeUnmount(() => {
     justify-content: space-between;
     gap: var(--tao-space-2);
     width: 100%;
-    height: var(--tao-field-height);
-    padding: 0 var(--tao-space-3);
+    height: var(--tao-control-height);
+    padding: 0 var(--tao-control-padding-x);
     border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-control);
     background: var(--tao-color-input-bg);
     color: var(--tao-color-input-text);
-    font-size: var(--tao-font-size-md);
+    font-size: var(--tao-control-font-size);
     font-family: inherit;
     text-align: left;
     cursor: pointer;

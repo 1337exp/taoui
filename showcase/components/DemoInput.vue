@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoInput, TaoFormField, TaoInputGroup, TaoButton, toast } from '@tao/ui'
+import { TaoInput, TaoFormField, TaoInputGroup, TaoButton, TaoSelect, TaoInputNumber, TaoDate, TaoSegmented, TaoSegmentedOption, toast } from '@tao/ui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { propTables } from '../propTables.js'
 
@@ -13,6 +13,18 @@ const siteHost = ref('taoui.dev')
 const formEmail = ref('')
 const formPassword = ref('')
 const formSaving = ref(false)
+
+const sizes = ['small', 'medium', 'large']
+const sizeCities = [
+  { value: 'msk', label: 'Москва' },
+  { value: 'spb', label: 'Санкт-Петербург' },
+]
+const sizeModel = ref({
+  small: { text: '', city: 'msk', count: 2, date: null, view: 'list' },
+  medium: { text: '', city: 'msk', count: 2, date: null, view: 'list' },
+  large: { text: '', city: 'msk', count: 2, date: null, view: 'list' },
+})
+const groupHost = ref('taoui.dev')
 
 function onDemoSubmit() {
   formSaving.value = true
@@ -91,6 +103,34 @@ function onDemoSubmit() {
             </TaoFormField>
           </div>
     
+          <h3 class="carousel-heading">Размеры (size)</h3>
+          <p class="carousel-note">Одна шкала <code>small</code> / <code>medium</code> / <code>large</code> для кнопок и полей — в одном ряду всё одной высоты. Без <code>size</code> контрол берёт размер предков: класс <code>tao-size-*</code> на любой обёртке или <code>size</code> у TaoFormField / TaoInputGroup. Ниже размер задан один раз — классом на строке.</p>
+          <div class="demo-stack">
+            <div
+              v-for="s in sizes"
+              :key="s"
+              :class="`tao-size-${s}`"
+              style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center"
+            >
+              <div style="width: 160px"><TaoInput v-model="sizeModel[s].text" :placeholder="s" /></div>
+              <div style="width: 150px"><TaoSelect v-model="sizeModel[s].city" :options="sizeCities" :clearable="false" /></div>
+              <div style="width: 110px"><TaoInputNumber v-model="sizeModel[s].count" :min="0" /></div>
+              <div style="width: 150px"><TaoDate v-model="sizeModel[s].date" /></div>
+              <TaoSegmented v-model="sizeModel[s].view">
+                <TaoSegmentedOption value="list" label="List" />
+                <TaoSegmentedOption value="grid" label="Grid" />
+              </TaoSegmented>
+              <TaoButton>Button</TaoButton>
+            </div>
+            <TaoInputGroup size="small">
+              <template #before>https://</template>
+              <TaoInput v-model="groupHost" />
+              <template #after>
+                <TaoButton>small group</TaoButton>
+              </template>
+            </TaoInputGroup>
+          </div>
+
           <h3 class="carousel-heading">Форма и submit</h3>
           <p class="carousel-note">Отдельного TaoForm нет: обычный <code>&lt;form&gt;</code>, Enter в поле отправляет, кнопка с <code>type="submit"</code>. В SPA — <code>@submit.prevent</code>.</p>
           <form class="demo-stack" @submit.prevent="onDemoSubmit">
@@ -116,6 +156,15 @@ function onDemoSubmit() {
     &lt;TaoButton&gt;Проверить&lt;/TaoButton&gt;
   &lt;/template&gt;
 &lt;/TaoInputGroup&gt;
+
+&lt;!-- one size for a whole block / один размер на весь блок --&gt;
+&lt;div class="tao-size-small"&gt;
+  &lt;TaoInput v-model="q" /&gt;
+  &lt;TaoButton&gt;Найти&lt;/TaoButton&gt;
+&lt;/div&gt;
+
+&lt;TaoInputGroup size="large"&gt;…&lt;/TaoInputGroup&gt;
+&lt;TaoInput size="small" /&gt;
 
 &lt;form @submit.prevent="onSave"&gt;
   &lt;TaoFormField label="Email"&gt;

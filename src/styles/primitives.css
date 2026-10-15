@@ -41,14 +41,34 @@
     --tao-blue-500: #4c82f7;
     --tao-blue-600: #3b6de0;
 
-    /* ---------- Control height / Высота контролов ----------
-       One scale for every sized control: Button, Segmented, Select, Combobox (size small / medium / large).
-       Единая шкала для всех контролов с размером. Fields without a size prop (Input, InputNumber, Date, DateRange,
-       Quantity) are always medium, see --tao-field-height. / Поля без size всегда medium (--tao-field-height). */
+    /* ---------- Control size scale / Шкала размеров контролов ----------
+       One scale (small / medium / large) for every control with `size`. Components read the current values
+       from size.css (--tao-control-height etc.), never these directly.
+       Единая шкала для всех контролов с `size`. Компоненты читают текущие значения из size.css, не эти. */
     --tao-control-height-small: 26px;
     --tao-control-height-medium: 36px;
     --tao-control-height-large: 44px;
-    --tao-field-height: var(--tao-control-height-medium);
+
+    --tao-control-padding-x-small: var(--tao-space-2);
+    --tao-control-padding-x-medium: var(--tao-space-3);
+    --tao-control-padding-x-large: var(--tao-space-4);
+
+    --tao-control-padding-y-small: var(--tao-space-1);
+    --tao-control-padding-y-medium: var(--tao-space-2);
+    --tao-control-padding-y-large: var(--tao-space-3);
+
+    --tao-control-font-size-small: var(--tao-font-size-xs);
+    --tao-control-font-size-medium: var(--tao-font-size-md);
+    --tao-control-font-size-large: var(--tao-font-size-lg);
+
+    /* Secondary text inside controls: affixes, segmented labels, service rows / Вторичный текст в контролах */
+    --tao-control-font-size-secondary-small: var(--tao-font-size-xs);
+    --tao-control-font-size-secondary-medium: var(--tao-font-size-sm);
+    --tao-control-font-size-secondary-large: var(--tao-font-size-md);
+
+    --tao-button-padding-x-small: var(--tao-space-3);
+    --tao-button-padding-x-medium: var(--tao-space-4);
+    --tao-button-padding-x-large: var(--tao-space-6);
 
     /* ---------- Spacing scale (4px base) ---------- */
     --tao-space-1: 4px;

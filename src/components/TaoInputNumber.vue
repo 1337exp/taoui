@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, inject, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoInputNumber' });
 
@@ -12,6 +13,8 @@ const props = withDefaults(
         step?: number;
         precision?: number;
         disabled?: boolean;
+        /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
+        size?: TaoSize;
         placeholder?: string;
         controls?: boolean;
         incrementLabel?: string;
@@ -172,7 +175,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
 </script>
 
 <template>
-    <div class="tao-input-number" :class="{ 'tao-input-number--invalid': invalid, 'tao-input-number--controls': controls }">
+    <div class="tao-input-number" :class="[sizeClass(size), { 'tao-input-number--invalid': invalid, 'tao-input-number--controls': controls }]">
         <input
             :id="controlId"
             class="tao-input-number__input"
@@ -231,13 +234,13 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
 
 .tao-input-number__input {
     width: 100%;
-    height: var(--tao-field-height);
-    padding: 0 var(--tao-space-3);
+    height: var(--tao-control-height);
+    padding: 0 var(--tao-control-padding-x);
     border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-control);
     background: var(--tao-color-input-bg);
     color: var(--tao-color-input-text);
-    font-size: var(--tao-font-size-md);
+    font-size: var(--tao-control-font-size);
     font-family: inherit;
     font-variant-numeric: tabular-nums;
     transition: var(--tao-transition-base);

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, provide, useId } from 'vue';
 import { formFieldKey } from '../formField';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoFormField' });
 
@@ -8,6 +9,8 @@ const props = defineProps<{
     label?: string;
     hint?: string;
     error?: string;
+    /** Size of the control inside. / Размер контрола внутри. */
+    size?: TaoSize;
 }>();
 
 const id = useId();
@@ -54,7 +57,7 @@ function onLabelClick() {
 </script>
 
 <template>
-    <div class="tao-form-field" :class="{ 'tao-form-field--invalid': invalid }">
+    <div class="tao-form-field" :class="[sizeClass(size), { 'tao-form-field--invalid': invalid }]">
         <label v-if="label" :id="labelId" class="tao-form-field__label" :for="id" @click="onLabelClick">{{ label }}</label>
         <slot />
         <p v-if="error" :id="errorId" class="tao-form-field__error">{{ error }}</p>

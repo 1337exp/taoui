@@ -1,9 +1,12 @@
 <script lang="ts" setup>
+import { sizeClass, type TaoSize } from '../size';
+
 defineOptions({ name: 'TaoButton' });
 
 interface Props {
     type?: 'button' | 'submit' | 'reset';
-    size?: 'small' | 'medium' | 'large';
+    /** Without it the button takes the size of its ancestors (medium by default). / Без него — размер предков (по умолчанию medium). */
+    size?: TaoSize;
     variant?: 'primary' | 'secondary' | 'ghost' | 'text' | 'danger';
     /** Красит кнопку: danger / success / warning / info. Не вместо variant. */
     tone?: 'danger' | 'success' | 'warning' | 'info' | '';
@@ -15,7 +18,6 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
     type: 'button',
-    size: 'medium',
     variant: 'primary',
     tone: '',
     disabled: false,
@@ -37,7 +39,7 @@ function handleClick(event: MouseEvent) {
     <button
         class="tao-button"
         :class="[
-            `tao-button--${size}`,
+            sizeClass(size),
             `tao-button--${variant}`,
             {
                 'tao-button--disabled': disabled,
@@ -63,11 +65,14 @@ function handleClick(event: MouseEvent) {
     align-items: center;
     justify-content: center;
     gap: var(--tao-space-2);
+    height: var(--tao-control-height);
+    padding: 0 var(--tao-button-padding-x);
 
     border: none;
     border-radius: var(--tao-radius-control);
     cursor: pointer;
     font-family: inherit;
+    font-size: var(--tao-control-font-size);
     font-weight: 500;
     transition: var(--tao-transition-base);
     position: relative;
@@ -80,24 +85,6 @@ function handleClick(event: MouseEvent) {
 .tao-button:focus-visible {
     outline: 2px solid var(--tao-color-accent);
     outline-offset: 2px;
-}
-
-.tao-button--small {
-    padding: var(--tao-space-1) var(--tao-space-3);
-    font-size: var(--tao-font-size-xs);
-    height: var(--tao-control-height-small);
-}
-
-.tao-button--medium {
-    padding: var(--tao-space-2) var(--tao-space-4);
-    font-size: var(--tao-font-size-md);
-    height: var(--tao-control-height-medium);
-}
-
-.tao-button--large {
-    padding: var(--tao-space-2) var(--tao-space-6);
-    font-size: var(--tao-font-size-lg);
-    height: var(--tao-control-height-large);
 }
 
 .tao-button--primary {
@@ -134,13 +121,6 @@ function handleClick(event: MouseEvent) {
     padding: 2px 4px;
     background: transparent;
     color: var(--tao-color-accent);
-}
-
-.tao-button--text.tao-button--small,
-.tao-button--text.tao-button--medium,
-.tao-button--text.tao-button--large {
-    height: auto;
-    padding: 2px 4px;
 }
 
 .tao-button--text:hover:not(.tao-button--disabled) {
