@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { computed, inject, useSlots } from 'vue';
-import { taoListKey, type TaoListSize } from '../list';
+import { computed, useSlots } from 'vue';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoListItem' });
 
@@ -14,7 +14,8 @@ const props = withDefaults(
         active?: boolean;
         /** Строка-кнопка: Enter/Space, курсор pointer. */
         clickable?: boolean;
-        size?: TaoListSize;
+        /** Overrides the list size. / Перебивает размер списка. */
+        size?: TaoSize;
         /** `#action` всегда на виду, не только по ховеру. */
         actionAlways?: boolean;
     }>(),
@@ -34,18 +35,6 @@ const emit = defineEmits<{
 }>();
 
 const slots = useSlots();
-const list = inject(taoListKey, null);
-
-const sizeClass = computed(() => {
-    const size: TaoListSize = props.size ?? list?.size.value ?? 'medium';
-    if (size === 'small') {
-        return 's';
-    }
-    if (size === 'large') {
-        return 'l';
-    }
-    return 'm';
-});
 
 const hasAction = computed(() => Boolean(slots.action));
 const hasPrefix = computed(() => Boolean(slots.prefix));
@@ -64,7 +53,7 @@ function onHitClick(event: MouseEvent) {
     <li
         class="tao-list-item"
         :class="[
-            `tao-list-item--${sizeClass}`,
+            sizeClass(size),
             {
                 'tao-list-item--selected': selected,
                 'tao-list-item--disabled': disabled,
@@ -117,24 +106,12 @@ function onHitClick(event: MouseEvent) {
     align-items: center;
     gap: var(--tao-space-1);
     min-width: 0;
+    min-height: var(--tao-control-height);
+    padding: 0 var(--tao-space-2) 0 var(--tao-control-padding-x);
     color: var(--tao-color-text);
     transition: background var(--tao-duration-fast) var(--tao-ease-base);
 }
 
-.tao-list-item--s {
-    min-height: 32px;
-    padding: 0 var(--tao-space-1) 0 var(--tao-space-2);
-}
-
-.tao-list-item--m {
-    min-height: 36px;
-    padding: 0 var(--tao-space-2) 0 var(--tao-space-3);
-}
-
-.tao-list-item--l {
-    min-height: 48px;
-    padding: var(--tao-space-1) var(--tao-space-2) var(--tao-space-1) var(--tao-space-3);
-}
 
 .tao-list-item:hover:not(.tao-list-item--disabled),
 .tao-list-item--active:not(.tao-list-item--disabled) {
@@ -161,21 +138,12 @@ function onHitClick(event: MouseEvent) {
     flex: 1 1 auto;
     min-width: 0;
     margin: 0;
-    padding: var(--tao-space-2) 0;
+    padding: var(--tao-control-padding-y) 0;
     border: none;
     background: none;
     color: inherit;
     font: inherit;
     text-align: left;
-}
-
-.tao-list-item--s .tao-list-item__hit {
-    padding: var(--tao-space-1) 0;
-    gap: var(--tao-space-2);
-}
-
-.tao-list-item--l .tao-list-item__hit {
-    padding: var(--tao-space-2) 0;
 }
 
 button.tao-list-item__hit {
@@ -214,14 +182,11 @@ button.tao-list-item__hit:focus-visible {
 .tao-list-item__title {
     min-width: 0;
     overflow: hidden;
-    font-size: var(--tao-font-size-md);
-    line-height: 1.3;
+    font-size: var(--tao-control-font-size);
+    /* fits the row height with control padding / влезает в высоту строки с отступами контрола */
+    line-height: 1.25;
     text-overflow: ellipsis;
     white-space: nowrap;
-}
-
-.tao-list-item--s .tao-list-item__title {
-    font-size: var(--tao-font-size-sm);
 }
 
 .tao-list-item--selected .tao-list-item__title {

@@ -12,16 +12,16 @@ defineOptions({ name: 'DemoContainer' })
           <p>Ограничение ширины контента с авто-центровкой (wide / slim / ultra-slim)</p>
     
           <div style="display: flex; flex-direction: column; gap: 12px;">
-            <TaoContainer size="ultra-slim" style="background: var(--tao-color-surface-sunken); padding: 8px; border-radius: 6px;">
+            <TaoContainer width="ultra-slim" style="background: var(--tao-color-surface-sunken); padding: 8px; border-radius: 6px;">
               ultra-slim (max-width: 400px)
             </TaoContainer>
-            <TaoContainer size="slim" style="background: var(--tao-color-surface-sunken); padding: 8px; border-radius: 6px;">
+            <TaoContainer width="slim" style="background: var(--tao-color-surface-sunken); padding: 8px; border-radius: 6px;">
               slim (max-width: 500px)
             </TaoContainer>
           </div>
     
           <div class="code-block">
-            <pre><code>&lt;TaoContainer size="slim"&gt;
+            <pre><code>&lt;TaoContainer width="slim"&gt;
   Контент ограниченной ширины
 &lt;/TaoContainer&gt;</code></pre>
           </div>

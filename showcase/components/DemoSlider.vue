@@ -37,12 +37,12 @@ const sliderWheel = ref(50)
           <TaoSlider v-model="sliderValue" show-value class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">Значение: {{ sliderValue }} — <em>ПКМ по слайдеру открывает точный ввод числа</em></p>
     
-          <h3>size="small"</h3>
-          <TaoSlider v-model="sliderVolume" size="small" class="demo-wide" />
+          <h3>variant="thin"</h3>
+          <TaoSlider v-model="sliderVolume" variant="thin" class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">Громкость: {{ sliderVolume }}</p>
 
           <h3>wheel</h3>
-          <TaoSlider v-model="sliderWheel" size="small" :wheel="5" class="demo-wide" />
+          <TaoSlider v-model="sliderWheel" variant="thin" :wheel="5" class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">Громкость с колёсиком: {{ sliderWheel }} — <em>прокрутка над слайдером меняет значение на 5</em></p>
     
           <div class="code-block">
@@ -64,8 +64,8 @@ const sliderWheel = ref(50)
 &lt;/TaoProgress&gt;
 
 &lt;TaoSlider v-model="value" show-value /&gt;
-&lt;TaoSlider v-model="volume" size="small" /&gt;
-&lt;TaoSlider v-model="volume" size="small" :wheel="5" /&gt;</code></pre>
+&lt;TaoSlider v-model="volume" variant="thin" /&gt;
+&lt;TaoSlider v-model="volume" variant="thin" :wheel="5" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

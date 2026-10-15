@@ -2,6 +2,7 @@
 import { computed, inject, onBeforeUnmount, onMounted, ref, useId } from 'vue';
 import { formFieldKey } from '../formField';
 import { listenFocusLoss } from '../focusLoss';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoSlider' });
 
@@ -14,8 +15,10 @@ const props = withDefaults(
         placeholder?: string;
         modelValue: number | string;
         disabled?: boolean;
-        /** `medium` — форм-контрол. `small` — тонкий трек (seek, громкость). */
-        size?: 'small' | 'medium';
+        /** `bar` — thick track, a form control. `thin` — thin track (seek, volume). / `bar` — толстый трек, форм-контрол. `thin` — тонкий (seek, громкость). */
+        variant?: 'bar' | 'thin';
+        /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
+        size?: TaoSize;
         /** Шаг изменения значения при прокрутке колёсика мыши. 0 — отключено. */
         wheel?: number;
     }>(),
@@ -26,7 +29,7 @@ const props = withDefaults(
         showValue: false,
         placeholder: '',
         disabled: false,
-        size: 'medium',
+        variant: 'bar',
         wheel: 0,
     },
 );
@@ -232,7 +235,8 @@ onBeforeUnmount(() => {
         ref="trackRef"
         class="tao-slider"
         :class="[
-            `tao-slider--${size}`,
+            `tao-slider--${variant}`,
+            sizeClass(size),
             { 'tao-slider--show-value': showValue, 'tao-slider--disabled': disabled },
         ]"
         role="slider"
@@ -275,9 +279,10 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .tao-slider {
-    --tao-slider-hit: 14px;
+    /* bar: 14 / 20 at medium / bar: 14 / 20 в medium */
+    --tao-slider-hit: calc(var(--tao-indicator-size) - 4px);
     --tao-slider-track: var(--tao-slider-hit);
-    --tao-slider-thumb: 20px;
+    --tao-slider-thumb: calc(var(--tao-indicator-size) + 2px);
 
     position: relative;
     width: 100%;
@@ -298,18 +303,18 @@ onBeforeUnmount(() => {
 }
 
 .tao-slider--show-value {
-    --tao-slider-hit: 20px;
+    --tao-slider-hit: calc(var(--tao-indicator-size) + 2px);
 }
 
-/* Тонкий трек, hit-area шире картинки — seek / громкость. */
-.tao-slider--small {
-    --tao-slider-hit: 16px;
+/* Тонкий трек, hit-area шире картинки — seek / громкость. 16 / 4 / 12 в medium. */
+.tao-slider--thin {
+    --tao-slider-hit: calc(var(--tao-indicator-size) - 2px);
     --tao-slider-track: 4px;
-    --tao-slider-thumb: 12px;
+    --tao-slider-thumb: calc(var(--tao-indicator-size) - 6px);
 }
 
-.tao-slider--small.tao-slider--show-value {
-    --tao-slider-hit: 20px;
+.tao-slider--thin.tao-slider--show-value {
+    --tao-slider-hit: calc(var(--tao-indicator-size) + 2px);
 }
 
 .tao-slider--disabled {
@@ -340,8 +345,8 @@ onBeforeUnmount(() => {
     background-color: var(--tao-color-accent);
 }
 
-.tao-slider--small .tao-slider__track,
-.tao-slider--small .tao-slider__fill {
+.tao-slider--thin .tao-slider__track,
+.tao-slider--thin .tao-slider__fill {
     border-radius: var(--tao-radius-full);
 }
 
@@ -370,7 +375,7 @@ onBeforeUnmount(() => {
     justify-content: center;
     width: 100%;
     height: 100%;
-    font-size: var(--tao-font-size-sm);
+    font-size: var(--tao-control-font-size-secondary);
     font-weight: 900;
     letter-spacing: 0.05em;
 }

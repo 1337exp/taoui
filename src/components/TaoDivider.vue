@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, useSlots } from 'vue';
+import type { TaoSize } from '../size';
 
 defineOptions({ name: 'TaoDivider' });
 
@@ -7,7 +8,8 @@ const props = withDefaults(
     defineProps<{
         /** `solid` — обычная линия. `dashed` — пунктир. `colored` — акцент. `gap` — пустой отступ. */
         variant?: 'solid' | 'dashed' | 'colored' | 'gap';
-        size?: 'small' | 'medium' | 'large' | 'big';
+        /** Height of `gap`. Spacing, not a control: does not inherit. `big` is a deprecated alias of `large`. / Высота `gap`. Отступ, не контрол: не наследуется. `big` — устаревший алиас `large`. */
+        size?: TaoSize | 'big';
         /** Подпись посередине. Не меняет стиль линии — для этого `variant`. */
         text?: string;
         /** Плавные края линии. У `gap` ничего не делает. */

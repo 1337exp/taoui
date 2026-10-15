@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
+import type { TaoSize } from '../size';
 
 defineOptions({ name: 'TaoAvatar' });
 
@@ -10,7 +11,11 @@ const props = withDefaults(
         src?: string;
         name?: string;
         alt?: string;
-        size?: 'small' | 'medium' | 'large' | 's' | 'm' | 'l';
+        /**
+         * 24 / 32 / 48px. Content, not a control: does not inherit the size of ancestors. `s` / `m` / `l` are deprecated.
+         * Контент, не контрол: размер предков не наследует. `s` / `m` / `l` устарели.
+         */
+        size?: TaoSize | 's' | 'm' | 'l';
         /** Точка статуса. `true` = success (в сети). */
         dot?: boolean | TaoAvatarDot;
         /** Счётчик в углу. 0 и пустое не рисуются, больше 99 — «99+». */

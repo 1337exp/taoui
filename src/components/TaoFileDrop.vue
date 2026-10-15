@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoFileDrop' });
 
@@ -10,7 +11,8 @@ interface Props {
      * Это и даёт возможность подтверждения: родитель решает, когда
      * именно менять modelValue (сразу или после ответа в модалке). */
     modelValue?: File[];
-    size?: 'small' | 'medium' | 'large';
+    /** Zone height and file rows; without it — the size of ancestors. / Высота зоны и строк файлов; без него — размер предков. */
+    size?: TaoSize;
     accept?: string;
     multiple?: boolean;
     showClear?: boolean;
@@ -24,7 +26,6 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
     modelValue: () => [],
-    size: 'medium',
     accept: '*',
     multiple: false,
     showClear: false,
@@ -181,7 +182,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
 </script>
 
 <template>
-    <div class="tao-file-drop">
+    <div class="tao-file-drop" :class="sizeClass(size)">
         <div class="tao-file-drop__row">
             <button
                 v-if="showClear && modelValue.length"
@@ -197,7 +198,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
 
             <label
                 class="tao-file-drop__zone"
-                :class="[`tao-file-drop__zone--${size}`, { 'tao-file-drop__zone--dragging': isDragging }]"
+                :class="{ 'tao-file-drop__zone--dragging': isDragging }"
                 @dragover="handleDragOver"
                 @dragleave="handleDragLeave"
                 @drop="handleDrop"
@@ -269,7 +270,9 @@ onBeforeUnmount(() => stopFocusLoss?.());
 
 .tao-file-drop__zone {
     flex-grow: 1;
-    font-size: var(--tao-font-size-sm);
+    /* 32 / 20 at medium / 32 / 20 в medium */
+    padding: calc(var(--tao-control-height) - 4px) calc(var(--tao-control-padding-x) + var(--tao-space-2));
+    font-size: var(--tao-control-font-size-secondary);
     font-family: var(--tao-font-family);
     letter-spacing: 0.01rem;
     text-align: center;
@@ -291,18 +294,6 @@ onBeforeUnmount(() => stopFocusLoss?.());
     background-color: var(--tao-color-surface-sunken);
 }
 
-.tao-file-drop__zone--small {
-    padding: var(--tao-space-5) var(--tao-space-4);
-}
-
-.tao-file-drop__zone--medium {
-    padding: var(--tao-space-8) var(--tao-space-5);
-}
-
-.tao-file-drop__zone--large {
-    padding: var(--tao-space-10) var(--tao-space-6);
-}
-
 .tao-file-drop__list {
     margin: 0;
     padding: 0;
@@ -317,8 +308,8 @@ onBeforeUnmount(() => stopFocusLoss?.());
     align-items: center;
     gap: var(--tao-space-2);
     min-width: 0;
-    min-height: 36px;
-    padding: 0 var(--tao-space-2) 0 var(--tao-space-3);
+    min-height: var(--tao-control-height);
+    padding: 0 var(--tao-space-2) 0 var(--tao-control-padding-x);
     border-bottom: 1px solid var(--tao-color-border);
     background: var(--tao-color-surface-raised);
     color: var(--tao-color-text);
@@ -332,7 +323,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
     flex: 1 1 auto;
     min-width: 0;
     overflow: hidden;
-    font-size: var(--tao-font-size-sm);
+    font-size: var(--tao-control-font-size-secondary);
     text-overflow: ellipsis;
     white-space: nowrap;
     user-select: text;
@@ -346,8 +337,8 @@ onBeforeUnmount(() => stopFocusLoss?.());
 
 .tao-file-drop__remove {
     flex-shrink: 0;
-    width: 28px;
-    height: 28px;
+    width: calc(var(--tao-control-height) - 8px);
+    height: calc(var(--tao-control-height) - 8px);
     margin: 0;
     padding: 0;
     border: none;

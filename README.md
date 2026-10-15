@@ -49,7 +49,7 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoQuantity** — cart quantity: `− | field | +`, integers, stock; minus at the minimum can remove the row
 - **TaoTextarea** — autosizing multiline. `maxlength` caps input, `count` shows “entered / max”
 - **TaoPinCode** — N cells. By default a click clears the cell and everything to the right (`clear-on="focus"`); `clear-on="input"` replaces the digit only when typing. The last cell blurs and emits `complete`
-- **TaoSlider** — mouse, touch, and arrows. Optional precise input on right-click. `size="small"` is a thin track for seek / volume
+- **TaoSlider** — mouse, touch, and arrows. Optional precise input on right-click. `variant="thin"` is a thin track for seek / volume; `size` scales either track
 - **TaoFileDrop** — drop zone (drag & drop + click). File names listed under the zone, `v-model` is `File[]`. Clearing the whole batch is the parent’s job (`clear-request`)
 
 ### Data display
@@ -89,7 +89,7 @@ Visual tones: `success` | `danger` | `warning` | `info` | `neutral`.
 `error` on Alert, Tag, and `toast()` is an alias of `danger`. Button already uses `danger`.
 Stages describe a process, not a tone: `wait` / `work` / `ok` / `bad` (`danger` is accepted as `bad`).
 
-Control sizes: `small` | `medium` | `large` (type `TaoSize`). One scale for Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup and FormField — controls of one size line up in a row. Checkbox, Radio / RadioGroup and Switch scale the indicator (14 / 18 / 22px) and the label; Tag scales its height (18 / 20 / 24px); Tabs take the Button height.
+Control sizes: `small` | `medium` | `large` (type `TaoSize`). One scale for Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup and FormField — controls of one size line up in a row. Checkbox, Radio / RadioGroup and Switch scale the indicator (14 / 18 / 22px) and the label; Tag scales its height (18 / 20 / 24px); Tabs, Pagination buttons and List rows take the Button height; Table scales cell padding (`size="small"` replaces `compact`); FileDrop scales the zone and file rows; Slider scales the track and thumb.
 Without `size` a control takes the size of its ancestors, `medium` at the root. Set it for a whole block with the class `tao-size-small` / `-medium` / `-large` on any element, or with `size` on `TaoFormField` / `TaoInputGroup`. An explicit `size` on a control wins.
 
 ```vue
@@ -99,8 +99,8 @@ Without `size` a control takes the size of its ancestors, `medium` at the root. 
 </div>
 ```
 
-Avatar also accepts short `s` / `m` / `l`. Divider `gap` used to call the large size `big` — that is an alias of `large`.
-Container lives on another axis: `wide` / `slim` / `ultra-slim`.
+Content and layout keep their own scale and do not inherit: Avatar (24 / 32 / 48px; `s` / `m` / `l` are deprecated), Divider `gap` (`big` is a deprecated alias of `large`), Loader / Icon / ScrollTop (pixels).
+Container lives on another axis — width: `width="wide" | "slim" | "ultra-slim"` (`size` is a deprecated alias).
 
 Font size scale (primitives): `xs` 12 … `xl` 18 for controls; `2xl` 24, `3xl` 32, `4xl` 36 for titles and prose.
 There is no heading component — use `h1 { font-size: var(--tao-font-size-3xl) }`.

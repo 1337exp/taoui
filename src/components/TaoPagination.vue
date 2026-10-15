@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, watch } from 'vue';
 import { buildPaginationItems } from '../pagination';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoPagination' });
 
@@ -12,7 +13,8 @@ const props = withDefaults(
         siblingCount?: number;
         disabled?: boolean;
         showTotal?: boolean;
-        size?: 'small' | 'medium';
+        /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
+        size?: TaoSize;
         /** Click ellipsis to skip this many pages. 0 keeps … decorative. */
         jump?: number;
         ariaLabel?: string;
@@ -31,7 +33,6 @@ const props = withDefaults(
         siblingCount: 1,
         disabled: false,
         showTotal: true,
-        size: 'medium',
         jump: 5,
         ariaLabel: 'Пагинация',
         prevLabel: 'Назад',
@@ -80,7 +81,7 @@ function goTo(next: number) {
 </script>
 
 <template>
-    <nav class="tao-pagination" :class="`tao-pagination--${size}`" :aria-label="ariaLabel">
+    <nav class="tao-pagination" :class="sizeClass(size)" :aria-label="ariaLabel">
         <p v-if="showTotal" class="tao-pagination__total">
             <slot name="total" :from="from" :to="to" :total="total">
                 <template v-if="total === 0">0 из 0</template>
@@ -154,7 +155,7 @@ function goTo(next: number) {
 
 .tao-pagination__total {
     margin: 0;
-    font-size: var(--tao-font-size-sm);
+    font-size: var(--tao-control-font-size-secondary);
     color: var(--tao-color-text-muted);
 }
 
@@ -169,24 +170,19 @@ function goTo(next: number) {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 36px;
-    height: 36px;
+    /* square at least / как минимум квадрат */
+    min-width: var(--tao-control-height);
+    height: var(--tao-control-height);
     padding: 0 var(--tao-space-2);
     border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-control);
     background: var(--tao-color-surface-sunken);
     color: var(--tao-color-text);
     font-family: inherit;
-    font-size: var(--tao-font-size-md);
+    font-size: var(--tao-control-font-size);
     line-height: 1;
     cursor: pointer;
     transition: var(--tao-transition-base);
-}
-
-.tao-pagination--small .tao-pagination__btn {
-    min-width: 28px;
-    height: 28px;
-    font-size: var(--tao-font-size-xs);
 }
 
 .tao-pagination__btn:hover:not(:disabled) {

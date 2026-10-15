@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import TaoLoader from './TaoLoader.vue';
+import { sizeClass, type TaoSize } from '../size';
 import type { TaoTableColumn, TaoTableSort } from '../table';
 
 defineOptions({ name: 'TaoTable' });
@@ -14,6 +15,9 @@ const props = withDefaults(
         emptyText?: string;
         /** Зебра. `true` / `odd` — с первой строки, `even` — со второй. */
         striped?: boolean | 'odd' | 'even';
+        /** Cell padding and text; also the size of controls inside cells. Without it — the size of ancestors. / Отступы и текст ячеек, заодно размер контролов в ячейках. Без него — размер предков. */
+        size?: TaoSize;
+        /** @deprecated Use size="small". / Используйте size="small". */
         compact?: boolean;
         hover?: boolean;
         /** Подсветка шапки. */
@@ -115,10 +119,13 @@ function onRowClick(row: Record<string, unknown>, index: number) {
 <template>
     <div
         class="tao-table-wrap"
-        :class="{
-            'tao-table-wrap--sticky': sticky,
-            'tao-table-wrap--loading': loading,
-        }"
+        :class="[
+            sizeClass(size ?? (compact ? 'small' : undefined)),
+            {
+                'tao-table-wrap--sticky': sticky,
+                'tao-table-wrap--loading': loading,
+            },
+        ]"
         :style="maxHeight ? { maxHeight } : undefined"
     >
         <table
@@ -126,7 +133,6 @@ function onRowClick(row: Record<string, unknown>, index: number) {
             :class="{
                 'tao-table--striped': stripeFrom === 'odd',
                 'tao-table--striped-even': stripeFrom === 'even',
-                'tao-table--compact': compact,
                 'tao-table--hover': hover,
                 'tao-table--head': head,
                 'tao-table--lines': lines,
@@ -229,7 +235,7 @@ function onRowClick(row: Record<string, unknown>, index: number) {
 .tao-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: var(--tao-font-size-md);
+    font-size: var(--tao-control-font-size);
     color: var(--tao-color-text);
 }
 
@@ -243,7 +249,8 @@ function onRowClick(row: Record<string, unknown>, index: number) {
 
 .tao-table th,
 .tao-table td {
-    padding: var(--tao-space-3) var(--tao-space-4);
+    /* 12 / 16 at medium / 12 / 16 в medium */
+    padding: calc(var(--tao-control-padding-y) + var(--tao-space-1)) calc(var(--tao-control-padding-x) + var(--tao-space-1));
     vertical-align: middle;
 }
 
@@ -252,15 +259,9 @@ function onRowClick(row: Record<string, unknown>, index: number) {
     border-bottom: 1px solid var(--tao-color-border);
 }
 
-.tao-table--compact th,
-.tao-table--compact td {
-    padding: var(--tao-space-2) var(--tao-space-3);
-    font-size: var(--tao-font-size-sm);
-}
-
 .tao-table th {
     font-weight: 600;
-    font-size: var(--tao-font-size-sm);
+    font-size: var(--tao-control-font-size-secondary);
     color: var(--tao-color-text-muted);
     white-space: nowrap;
     text-align: left;

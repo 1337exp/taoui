@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoInput, TaoFormField, TaoInputGroup, TaoButton, TaoSelect, TaoInputNumber, TaoDate, TaoSegmented, TaoSegmentedOption, TaoCheckbox, TaoSwitch, TaoRadio, TaoTag, TaoTabs, toast } from '@tao/ui'
+import { TaoInput, TaoFormField, TaoInputGroup, TaoButton, TaoSelect, TaoInputNumber, TaoDate, TaoSegmented, TaoSegmentedOption, TaoCheckbox, TaoSwitch, TaoRadio, TaoTag, TaoTabs, TaoPagination, TaoSlider, toast } from '@tao/ui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { propTables } from '../propTables.js'
 
@@ -20,9 +20,9 @@ const sizeCities = [
   { value: 'spb', label: 'Санкт-Петербург' },
 ]
 const sizeModel = ref({
-  small: { text: '', city: 'msk', count: 2, date: null, view: 'list', check: true, on: true, pick: 'a', tab: 'one' },
-  medium: { text: '', city: 'msk', count: 2, date: null, view: 'list', check: true, on: true, pick: 'a', tab: 'one' },
-  large: { text: '', city: 'msk', count: 2, date: null, view: 'list', check: true, on: true, pick: 'a', tab: 'one' },
+  small: { text: '', city: 'msk', count: 2, date: null, view: 'list', check: true, on: true, pick: 'a', tab: 'one', page: 3, level: 40 },
+  medium: { text: '', city: 'msk', count: 2, date: null, view: 'list', check: true, on: true, pick: 'a', tab: 'one', page: 3, level: 40 },
+  large: { text: '', city: 'msk', count: 2, date: null, view: 'list', check: true, on: true, pick: 'a', tab: 'one', page: 3, level: 40 },
 })
 const groupHost = ref('taoui.dev')
 const sizeTabs = [
@@ -131,6 +131,8 @@ function onDemoSubmit() {
               <TaoTag type="info">tag</TaoTag>
               <TaoTag type="neutral" closable>closable</TaoTag>
               <div style="width: 100%"><TaoTabs v-model="sizeModel[s].tab" :tabs="sizeTabs" /></div>
+              <div style="width: 100%"><TaoPagination v-model:page="sizeModel[s].page" :total="120" :show-total="false" /></div>
+              <div style="width: 100%"><TaoSlider v-model="sizeModel[s].level" /></div>
             </div>
             <TaoInputGroup size="small">
               <template #before>https://</template>

@@ -1,12 +1,13 @@
 <script lang="ts" setup>
-import { computed, provide } from 'vue';
-import { taoListKey, type TaoListSize } from '../list';
+import { computed } from 'vue';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoList' });
 
 const props = withDefaults(
     defineProps<{
-        size?: TaoListSize;
+        /** Row height; items inherit it. Without it — the size of ancestors. / Высота строк, item наследует. Без него — размер предков. */
+        size?: TaoSize;
         /** Рамка, как у списка файлов. */
         bordered?: boolean;
         /** Линии между строками. */
@@ -18,16 +19,12 @@ const props = withDefaults(
         ariaLabel?: string;
     }>(),
     {
-        size: 'medium',
         bordered: true,
         divided: true,
         empty: false,
         ariaLabel: '',
     },
 );
-
-const size = computed(() => props.size);
-provide(taoListKey, { size });
 
 const listStyle = computed(() => {
     if (props.maxHeight === undefined || props.maxHeight === '') {
@@ -42,7 +39,7 @@ const listStyle = computed(() => {
     <ul
         class="tao-list"
         :class="[
-            `tao-list--${size}`,
+            sizeClass(size),
             {
                 'tao-list--bordered': bordered,
                 'tao-list--divided': divided,
@@ -99,7 +96,7 @@ const listStyle = computed(() => {
     margin: 0;
     padding: var(--tao-space-3);
     color: var(--tao-color-text-muted);
-    font-size: var(--tao-font-size-sm);
+    font-size: var(--tao-control-font-size-secondary);
     line-height: 1.45;
     text-align: center;
 }

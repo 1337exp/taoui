@@ -49,7 +49,7 @@
 - **TaoQuantity** — количество в корзине: `− | поле | +`, целые штуки, сток, минус на минимуме может убрать строку
 - **TaoTextarea** — многострочное поле с авто-высотой. `maxlength` ограничивает ввод, `count` показывает «введено / максимум»
 - **TaoPinCode** — пин-код из N полей. По умолчанию клик стирает ячейку и все справа (`clear-on="focus"`); `clear-on="input"` заменяет цифру только при вводе. Последняя ячейка снимает фокус и эмитит `complete`
-- **TaoSlider** — слайдер: мышь, тач и стрелки. Опциональный точный ввод по правому клику. `size="small"` — тонкий трек для seek / громкости
+- **TaoSlider** — слайдер: мышь, тач и стрелки. Опциональный точный ввод по правому клику. `variant="thin"` — тонкий трек для seek / громкости; `size` масштабирует любой трек
 - **TaoFileDrop** — зона загрузки (drag & drop + клик). Список имён под зоной, `v-model` — `File[]`. Очистку всей пачки решает родитель (`clear-request`)
 
 ### Отображение данных
@@ -89,7 +89,7 @@
 `error` у Alert, Tag и `toast()` — синоним `danger`. Button уже `danger`.
 Stages — это процесс, не тон: `wait` / `work` / `ok` / `bad` (`danger` принимается как `bad`).
 
-Размеры контролов: `small` | `medium` | `large` (тип `TaoSize`). Одна шкала для Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup и FormField — контролы одного размера встают в ряд ровно. Checkbox, Radio / RadioGroup и Switch масштабируют индикатор (14 / 18 / 22px) и подпись; Tag — высоту (18 / 20 / 24px); Tabs берут высоту Button.
+Размеры контролов: `small` | `medium` | `large` (тип `TaoSize`). Одна шкала для Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup и FormField — контролы одного размера встают в ряд ровно. Checkbox, Radio / RadioGroup и Switch масштабируют индикатор (14 / 18 / 22px) и подпись; Tag — высоту (18 / 20 / 24px); Tabs, кнопки Pagination и строки List берут высоту Button; Table масштабирует отступы ячеек (`size="small"` вместо `compact`); FileDrop — зону и строки файлов; Slider — трек и бегунок.
 Без `size` контрол берёт размер предков, в корне — `medium`. На целый блок размер задаётся классом `tao-size-small` / `-medium` / `-large` на любом элементе или `size` у `TaoFormField` / `TaoInputGroup`. Явный `size` у контрола главнее.
 
 ```vue
@@ -99,8 +99,8 @@ Stages — это процесс, не тон: `wait` / `work` / `ok` / `bad` (`
 </div>
 ```
 
-Avatar понимает и короткие `s` / `m` / `l`. Divider `gap` раньше называл крупный размер `big` — это алиас `large`.
-Container живёт на другой оси: `wide` / `slim` / `ultra-slim`.
+Контент и раскладка держат свою шкалу и не наследуют: Avatar (24 / 32 / 48px; `s` / `m` / `l` устарели), Divider `gap` (`big` — устаревший алиас `large`), Loader / Icon / ScrollTop (пиксели).
+Container живёт на другой оси — ширина: `width="wide" | "slim" | "ultra-slim"` (`size` — устаревший алиас).
 
 Шкала кегля (примитивы): `xs` 12 … `xl` 18 для контролов; `2xl` 24, `3xl` 32, `4xl` 36 для заголовков и прозы.
 Отдельного компонента заголовка нет — `h1 { font-size: var(--tao-font-size-3xl) }`.
