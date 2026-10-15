@@ -47,7 +47,7 @@
 - **TaoFormField** — общие label / hint / error для полей формы
 - **TaoInputNumber** — число с min/max/step и кнопками ± справа. Пустое значение — `null`. `@commit` срабатывает один раз, когда правка закончена (blur, Enter, ±, стрелка), в отличие от `v-model`, который обновляется на каждую клавишу
 - **TaoQuantity** — количество в корзине: `− | поле | +`, целые штуки, сток, минус на минимуме может убрать строку
-- **TaoTextarea** — многострочное поле с авто-высотой. `maxlength` ограничивает ввод, `count` показывает «введено / максимум»
+- **TaoTextarea** — многострочное поле с авто-высотой. `maxlength` ограничивает ввод, `count` показывает «введено / максимум». `variant`: `bar` (по умолчанию) / `outline` (рамка как у Input) / `filled` / `plain`; `readonly`. `noBorder`, `noBackground`, `borderInverse`, `dummy` устарели
 - **TaoPinCode** — пин-код из N полей. По умолчанию клик стирает ячейку и все справа (`clear-on="focus"`); `clear-on="input"` заменяет цифру только при вводе. Последняя ячейка снимает фокус и эмитит `complete`
 - **TaoSlider** — слайдер: мышь, тач и стрелки. Опциональный точный ввод по правому клику. `variant="thin"` — тонкий трек для seek / громкости; `size` масштабирует любой трек
 - **TaoFileDrop** — зона загрузки (drag & drop + клик). Список имён под зоной, `v-model` — `File[]`. Очистку всей пачки решает родитель (`clear-request`)
@@ -165,13 +165,15 @@ app.mount('#app')
 
 ```vue
 <script setup>
-import { TaoButton, TaoInput, TaoModal } from '@1337exp/taoui'
+import { TaoButton, TaoFormField, TaoInput, TaoModal } from '@1337exp/taoui'
 import '@1337exp/taoui/styles.css'
 </script>
 
 <template>
   <TaoButton variant="primary">Нажми меня</TaoButton>
-  <TaoInput v-model="text" label="Введите текст" />
+  <TaoFormField label="Введите текст">
+    <TaoInput v-model="text" />
+  </TaoFormField>
   <TaoModal v-model="isOpen" title="Заголовок">
     Содержимое модального окна
   </TaoModal>
@@ -291,7 +293,7 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 
 `TaoCombobox` — то же меню, но с полем. Печатаете — варианты режутся. `allow-create` пишет введённое в `v-model`, если точного совпадения нет. Список сам не меняется: слушайте `create` и добавьте option снаружи.
 
-`TaoFormField` также оборачивает `TaoTextarea`, `TaoCheckbox`, `TaoSwitch`, `TaoRadioGroup` и `TaoSegmented` — id, hint и error прокидываются сами.
+Подпись, подсказка и текст ошибки всегда идут через `TaoFormField`; `label` / `error-message` у `TaoInput` устарели. `TaoFormField` также оборачивает `TaoTextarea`, `TaoCheckbox`, `TaoSwitch`, `TaoRadioGroup` и `TaoSegmented` — id, hint и error прокидываются сами.
 
 `TaoTag` может быть чипом: `#prefix` слева (обычно `TaoAvatar`), `closable` рисует крестик и эмитит `close`. Клик по крестику наружу не всплывает. `flat` снимает рамку, заливка остаётся.
 

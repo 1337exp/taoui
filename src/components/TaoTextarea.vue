@@ -5,6 +5,8 @@ import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoTextarea' });
 
+type TaoTextareaVariant = 'bar' | 'outline' | 'filled' | 'plain';
+
 const props = withDefaults(
     defineProps<{
         placeholder?: string;
@@ -15,14 +17,26 @@ const props = withDefaults(
         disabled?: boolean;
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
+        /**
+         * `bar` — accent bar on the left, `outline` — frame like TaoInput, `filled` — fill only, `plain` — no frame, no fill.
+         * `bar` — полоса слева, `outline` — рамка как у TaoInput, `filled` — только заливка, `plain` — без рамки и заливки.
+         */
+        variant?: TaoTextareaVariant;
+        /** Text can be read and selected, not edited. / Текст читается и выделяется, но не правится. */
+        readonly?: boolean;
+        /** Spaces are not entered: neither typed nor pasted. / Пробелы не вводятся — ни с клавиатуры, ни вставкой. */
         noSpace?: boolean;
+        /** @deprecated Use `readonly`. Renders the text instead of the field. / Используйте `readonly`. */
         dummy?: boolean;
         rows?: number;
         resize?: boolean;
         modelValue?: string;
+        /** @deprecated Use `variant="filled"` (or `"plain"` together with noBackground). / Используйте `variant="filled"`. */
         noBorder?: boolean;
+        /** @deprecated Use `variant="plain"`. / Используйте `variant="plain"`. */
         noBackground?: boolean;
         autoFocus?: boolean;
+        /** @deprecated The bar on the right. Will be removed. / Полоса справа. Будет удалено. */
         borderInverse?: boolean;
         textCenter?: boolean;
         submitOnEnter?: boolean;
@@ -38,6 +52,7 @@ const props = withDefaults(
         minlength: 0,
         maxlength: undefined,
         disabled: false,
+        readonly: false,
         noSpace: false,
         dummy: false,
         rows: 3,
@@ -61,6 +76,23 @@ const localId = useId();
 const controlId = computed(() => props.id || field?.id || localId);
 const invalid = computed(() => props.error || Boolean(field?.invalid.value));
 const counterId = computed(() => `${controlId.value}-count`);
+/** Explicit variant wins; otherwise the deprecated flags. / Явный variant главнее; иначе — устаревшие флаги. */
+const resolvedVariant = computed<TaoTextareaVariant>(() => {
+    if (props.variant) {
+        return props.variant;
+    }
+    if (props.noBorder) {
+        return props.noBackground ? 'plain' : 'filled';
+    }
+    return 'bar';
+});
+const variantClasses = computed(() => [
+    `tao-textarea--${resolvedVariant.value}`,
+    {
+        'tao-textarea--inverse': props.borderInverse && resolvedVariant.value === 'bar',
+        'tao-textarea--no-background': !props.variant && props.noBackground && !props.noBorder,
+    },
+]);
 const describedBy = computed(() => {
     const ids = [field?.describedBy.value, props.count ? counterId.value : undefined].filter(Boolean);
     return ids.length ? ids.join(' ') : undefined;
@@ -81,7 +113,18 @@ const textareaRef = ref<HTMLTextAreaElement | null>(null);
 
 function onInput(e: Event) {
     const target = e.target as HTMLTextAreaElement;
-    emit('update:modelValue', target.value);
+    let value = target.value;
+
+    // Keydown stops typed spaces; paste and autocorrect get here. / Keydown ловит набор, вставка доходит сюда.
+    if (props.noSpace && value.includes(' ')) {
+        const caret = target.selectionStart ?? value.length;
+        const nextCaret = value.slice(0, caret).replace(/ /g, '').length;
+        value = value.replace(/ /g, '');
+        target.value = value;
+        target.setSelectionRange(nextCaret, nextCaret);
+    }
+
+    emit('update:modelValue', value);
     autoResize();
 }
 
@@ -137,26 +180,31 @@ onMounted(() => {
 </script>
 
 <template>
-    <span v-if="dummy" class="tao-textarea tao-textarea--dummy" :class="sizeClass(size)">{{ modelValue }}</span>
+    <span
+        v-if="dummy"
+        class="tao-textarea tao-textarea--dummy"
+        :class="[sizeClass(size), variantClasses, { 'tao-textarea--center': textCenter }]"
+    >{{ modelValue }}</span>
     <div v-else class="tao-textarea-wrap" :class="sizeClass(size)">
         <textarea
             :id="controlId"
             ref="textareaRef"
             class="tao-textarea"
-            :class="{
-                'tao-textarea--inverse': borderInverse,
-                'tao-textarea--center': textCenter,
-                'tao-textarea--no-border': noBorder,
-                'tao-textarea--no-background': noBackground,
-                'tao-textarea--no-resize': !resize,
-                'tao-textarea--invalid': invalid,
-            }"
+            :class="[
+                variantClasses,
+                {
+                    'tao-textarea--center': textCenter,
+                    'tao-textarea--no-resize': !resize,
+                    'tao-textarea--invalid': invalid,
+                },
+            ]"
             :placeholder="placeholder"
             :spellcheck="spellcheck"
             :autocomplete="autocomplete"
             :minlength="minlength"
             :maxlength="maxlength"
             :disabled="disabled"
+            :readonly="readonly"
             :rows="rows"
             :value="modelValue"
             :aria-invalid="invalid || undefined"
@@ -195,7 +243,6 @@ onMounted(() => {
     letter-spacing: 0.01rem;
     line-height: 1.4;
     border: none;
-    border-left: 4px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-sm);
     background-color: var(--tao-color-input-bg);
     color: var(--tao-color-input-text);
@@ -208,29 +255,52 @@ onMounted(() => {
     color: var(--tao-color-input-placeholder);
 }
 
+/* ---------- Variants / Варианты (before states, so state colors win / до состояний, чтобы цвета состояний побеждали) */
+.tao-textarea--bar {
+    border-left: 4px solid var(--tao-color-border-strong);
+}
+
+.tao-textarea--bar.tao-textarea--inverse {
+    border-left: none;
+    border-right: 4px solid var(--tao-color-border-strong);
+}
+
+/* Same frame, text and padding as TaoInput / Та же рамка, текст и отступы, что у TaoInput */
+.tao-textarea--outline {
+    padding: var(--tao-control-padding-y) var(--tao-control-padding-x);
+    border: 1px solid var(--tao-color-border-strong);
+    border-radius: var(--tao-radius-control);
+    font-size: var(--tao-control-font-size);
+}
+
+.tao-textarea--plain,
+.tao-textarea--no-background {
+    background-color: transparent;
+}
+
+/* ---------- States / Состояния */
 .tao-textarea:focus {
     border-color: var(--tao-color-accent);
+}
+
+.tao-textarea--outline:focus {
+    box-shadow: 0 0 0 2px var(--tao-color-accent-subtle-hover);
 }
 
 .tao-textarea--invalid {
     border-color: var(--tao-color-danger);
 }
 
-.tao-textarea--inverse {
-    border-left: none;
-    border-right: 4px solid var(--tao-color-border-strong);
+.tao-textarea--outline.tao-textarea--invalid:focus {
+    box-shadow: 0 0 0 2px var(--tao-color-danger-subtle);
+}
+
+.tao-textarea[readonly] {
+    cursor: default;
 }
 
 .tao-textarea--center {
     text-align: center;
-}
-
-.tao-textarea--no-border {
-    border: none;
-}
-
-.tao-textarea--no-background {
-    background-color: transparent;
 }
 
 .tao-textarea--no-resize {
@@ -241,7 +311,6 @@ onMounted(() => {
     display: block;
     min-height: var(--tao-control-height);
     height: auto;
-    border-color: var(--tao-color-danger);
     white-space: pre-wrap;
     overflow-wrap: anywhere;
 }

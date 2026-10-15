@@ -12,8 +12,11 @@ interface Props {
     disabled?: boolean;
     /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
     size?: TaoSize;
+    /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
     error?: boolean;
+    /** @deprecated Use TaoFormField `error` — same as every other field. / Используйте `error` у TaoFormField — как у всех полей. */
     errorMessage?: string;
+    /** @deprecated Use TaoFormField `label` — same as every other field. / Используйте `label` у TaoFormField — как у всех полей. */
     label?: string;
     id?: string;
 }

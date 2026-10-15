@@ -47,7 +47,7 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoFormField** — shared label / hint / error for form controls
 - **TaoInputNumber** — number with min/max/step and ± on the right. Empty value is `null`. `@commit` fires once when an edit is finished (blur, Enter, ±, arrow), unlike `v-model`, which updates on every keystroke
 - **TaoQuantity** — cart quantity: `− | field | +`, integers, stock; minus at the minimum can remove the row
-- **TaoTextarea** — autosizing multiline. `maxlength` caps input, `count` shows “entered / max”
+- **TaoTextarea** — autosizing multiline. `maxlength` caps input, `count` shows “entered / max”. `variant`: `bar` (default) / `outline` (frame like Input) / `filled` / `plain`; `readonly`. `noBorder`, `noBackground`, `borderInverse`, `dummy` are deprecated
 - **TaoPinCode** — N cells. By default a click clears the cell and everything to the right (`clear-on="focus"`); `clear-on="input"` replaces the digit only when typing. The last cell blurs and emits `complete`
 - **TaoSlider** — mouse, touch, and arrows. Optional precise input on right-click. `variant="thin"` is a thin track for seek / volume; `size` scales either track
 - **TaoFileDrop** — drop zone (drag & drop + click). File names listed under the zone, `v-model` is `File[]`. Clearing the whole batch is the parent’s job (`clear-request`)
@@ -164,13 +164,15 @@ app.mount('#app')
 
 ```vue
 <script setup>
-import { TaoButton, TaoInput, TaoModal } from '@1337exp/taoui'
+import { TaoButton, TaoFormField, TaoInput, TaoModal } from '@1337exp/taoui'
 import '@1337exp/taoui/styles.css'
 </script>
 
 <template>
   <TaoButton variant="primary">Press me</TaoButton>
-  <TaoInput v-model="text" label="Your text" />
+  <TaoFormField label="Your text">
+    <TaoInput v-model="text" />
+  </TaoFormField>
   <TaoModal v-model="isOpen" title="Title">
     Modal body
   </TaoModal>
@@ -290,7 +292,7 @@ When `null` is not a valid value (a grid step, a sort order), pass `:clearable="
 
 `TaoCombobox` is the same menu with a field. Typing filters options. `allow-create` writes the typed string into `v-model` when there is no exact match. The list does not mutate itself: listen to `create` and append an option from the parent.
 
-`TaoFormField` also wraps `TaoTextarea`, `TaoCheckbox`, `TaoSwitch`, `TaoRadioGroup`, and `TaoSegmented` — id, hint, and error are forwarded for you.
+Label, hint and error text always come from `TaoFormField`; `label` / `error-message` on `TaoInput` are deprecated. `TaoFormField` also wraps `TaoTextarea`, `TaoCheckbox`, `TaoSwitch`, `TaoRadioGroup`, and `TaoSegmented` — id, hint, and error are forwarded for you.
 
 `TaoTag` can be a chip: `#prefix` on the left (usually `TaoAvatar`), `closable` draws a cross and emits `close`. The close click does not bubble. `flat` drops the border and keeps the fill.
 

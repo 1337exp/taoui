@@ -45,37 +45,26 @@ function onDemoSubmit() {
           <p>Поле ввода с v-model. Иконка или единица — слоты <code>#prefix</code> / <code>#suffix</code> внутри рамки. Склейка снаружи — <code>TaoInputGroup</code>.</p>
           
           <div class="demo-stack">
-            <TaoInput 
-              v-model="inputValue" 
-              label="Текстовое поле" 
-              placeholder="Введите текст" 
-            />
-            
-            <TaoInput 
-              type="email" 
-              label="Email" 
-              placeholder="example@mail.com" 
-            />
-            
-            <TaoInput 
-              type="password" 
-              label="Пароль" 
-              placeholder="••••••••" 
-            />
-            
-            <TaoInput 
-              label="С ошибкой" 
-              error 
-              error-message="Некорректное значение" 
-              model-value="Невалидное значение"
-            />
-            
-            <TaoInput 
-              label="Отключенное поле" 
-              disabled 
-              model-value="Нельзя редактировать"
-            />
-    
+            <TaoFormField label="Текстовое поле">
+              <TaoInput v-model="inputValue" placeholder="Введите текст" />
+            </TaoFormField>
+
+            <TaoFormField label="Email">
+              <TaoInput type="email" placeholder="example@mail.com" />
+            </TaoFormField>
+
+            <TaoFormField label="Пароль">
+              <TaoInput type="password" placeholder="••••••••" />
+            </TaoFormField>
+
+            <TaoFormField label="С ошибкой" error="Некорректное значение">
+              <TaoInput model-value="Невалидное значение" />
+            </TaoFormField>
+
+            <TaoFormField label="Отключенное поле">
+              <TaoInput disabled model-value="Нельзя редактировать" />
+            </TaoFormField>
+
             <TaoFormField label="Поиск" hint="Иконка и крестик живут внутри поля">
               <TaoInput v-model="searchQuery" placeholder="Найти…">
                 <template #prefix>
