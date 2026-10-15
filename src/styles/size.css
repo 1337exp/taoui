@@ -18,6 +18,10 @@
     --tao-control-font-size: var(--tao-control-font-size-medium);
     --tao-control-font-size-secondary: var(--tao-control-font-size-secondary-medium);
     --tao-button-padding-x: var(--tao-button-padding-x-medium);
+    --tao-indicator-size: var(--tao-indicator-size-medium);
+    --tao-tag-height: var(--tao-tag-height-medium);
+    --tao-tag-padding-x: var(--tao-tag-padding-x-medium);
+    --tao-tag-font-size: var(--tao-tag-font-size-medium);
     /* Deprecated alias, follows the current size. / Устаревший алиас, следует текущему размеру. */
     --tao-field-height: var(--tao-control-height);
 }
@@ -30,6 +34,10 @@
     --tao-control-font-size: var(--tao-control-font-size-small);
     --tao-control-font-size-secondary: var(--tao-control-font-size-secondary-small);
     --tao-button-padding-x: var(--tao-button-padding-x-small);
+    --tao-indicator-size: var(--tao-indicator-size-small);
+    --tao-tag-height: var(--tao-tag-height-small);
+    --tao-tag-padding-x: var(--tao-tag-padding-x-small);
+    --tao-tag-font-size: var(--tao-tag-font-size-small);
     --tao-field-height: var(--tao-control-height);
 }
 
@@ -41,5 +49,9 @@
     --tao-control-font-size: var(--tao-control-font-size-large);
     --tao-control-font-size-secondary: var(--tao-control-font-size-secondary-large);
     --tao-button-padding-x: var(--tao-button-padding-x-large);
+    --tao-indicator-size: var(--tao-indicator-size-large);
+    --tao-tag-height: var(--tao-tag-height-large);
+    --tao-tag-padding-x: var(--tao-tag-padding-x-large);
+    --tao-tag-font-size: var(--tao-tag-font-size-large);
     --tao-field-height: var(--tao-control-height);
 }

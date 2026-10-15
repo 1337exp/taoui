@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, nextTick, useId } from 'vue';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoTabs' });
 
@@ -15,6 +16,8 @@ const props = withDefaults(
         modelValue: string;
         /** Выравнивание вкладок по горизонтали (CSS justify-content). */
         justify?: string;
+        /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
+        size?: TaoSize;
     }>(),
     {
         justify: '',
@@ -79,7 +82,7 @@ function onKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-    <div class="tao-tabs">
+    <div class="tao-tabs" :class="sizeClass(size)">
         <div class="tao-tabs__list" :style="{ justifyContent: justify || undefined }" role="tablist" @keydown="onKeydown">
             <button
                 v-for="tab in tabs"
@@ -124,14 +127,15 @@ function onKeydown(event: KeyboardEvent) {
 }
 
 .tao-tabs__tab {
+    min-height: var(--tao-control-height);
     margin-bottom: -1px;
-    padding: var(--tao-space-2) var(--tao-space-4);
+    padding: 0 var(--tao-button-padding-x);
     border: none;
     border-bottom: 2px solid transparent;
     background: transparent;
     color: var(--tao-color-text-subtle);
     font: inherit;
-    font-size: var(--tao-font-size-md);
+    font-size: var(--tao-control-font-size);
     font-weight: 500;
     cursor: pointer;
 }

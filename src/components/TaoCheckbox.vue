@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, inject, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoCheckbox' });
 
@@ -10,6 +11,8 @@ const props = withDefaults(
         modelValue?: boolean;
         label?: string;
         disabled?: boolean;
+        /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
+        size?: TaoSize;
         error?: boolean;
         /** Частично выбран: черта вместо квадрата. Клик ставит checked — indeterminate снимает родитель. */
         indeterminate?: boolean;
@@ -73,7 +76,7 @@ watch(
 </script>
 
 <template>
-    <label class="tao-checkbox" :class="{ 'tao-checkbox--disabled': disabled }" :for="controlId">
+    <label class="tao-checkbox" :class="[sizeClass(size), { 'tao-checkbox--disabled': disabled }]" :for="controlId">
         <slot name="pre" :text="label" />
 
         <input
@@ -113,8 +116,9 @@ watch(
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 18px;
-    height: 18px;
+    flex-shrink: 0;
+    width: var(--tao-indicator-size);
+    height: var(--tao-indicator-size);
     pointer-events: none;
     background-color: var(--tao-color-surface-raised);
     border: 1px solid var(--tao-color-border-strong);
@@ -125,8 +129,8 @@ watch(
 .tao-checkbox__box::after {
     content: '';
     display: block;
-    width: 12px;
-    height: 12px;
+    width: calc(var(--tao-indicator-size) - 6px);
+    height: calc(var(--tao-indicator-size) - 6px);
     background-color: transparent;
     border-radius: 2px;
     transform: scale(0);
@@ -134,7 +138,7 @@ watch(
 }
 
 .tao-checkbox__label {
-    font-size: var(--tao-font-size-sm);
+    font-size: var(--tao-control-font-size-secondary);
     white-space: nowrap;
     color: var(--tao-color-text);
 }
@@ -156,7 +160,7 @@ watch(
 }
 
 .tao-checkbox__input:indeterminate + .tao-checkbox__box::after {
-    width: 10px;
+    width: calc(var(--tao-indicator-size) - 8px);
     height: 2px;
     border-radius: 1px;
     background-color: var(--tao-color-on-accent);

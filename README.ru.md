@@ -89,7 +89,7 @@
 `error` у Alert, Tag и `toast()` — синоним `danger`. Button уже `danger`.
 Stages — это процесс, не тон: `wait` / `work` / `ok` / `bad` (`danger` принимается как `bad`).
 
-Размеры контролов: `small` | `medium` | `large` (тип `TaoSize`). Одна шкала для Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup и FormField — контролы одного размера встают в ряд ровно.
+Размеры контролов: `small` | `medium` | `large` (тип `TaoSize`). Одна шкала для Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup и FormField — контролы одного размера встают в ряд ровно. Checkbox, Radio / RadioGroup и Switch масштабируют индикатор (14 / 18 / 22px) и подпись; Tag — высоту (18 / 20 / 24px); Tabs берут высоту Button.
 Без `size` контрол берёт размер предков, в корне — `medium`. На целый блок размер задаётся классом `tao-size-small` / `-medium` / `-large` на любом элементе или `size` у `TaoFormField` / `TaoInputGroup`. Явный `size` у контрола главнее.
 
 ```vue
@@ -503,7 +503,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-radius-control`, `--tao-radius-panel` — скругления (мелкие контролы vs крупные панели)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — тени
 - `--tao-font-size-*` — шкала кегля в `primitives.css`: `xs`–`xl` контролы, `2xl`–`4xl` заголовки / проза
-- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*` — шкала размеров в `primitives.css`. Компоненты читают текущие значения из `size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`. Используйте их в своих контролах, чтобы попасть в размер окружения. `--tao-field-height` — устаревший алиас `--tao-control-height`
+- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — шкала размеров в `primitives.css`. Компоненты читают текущие значения из `size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Используйте их в своих контролах, чтобы попасть в размер окружения. `--tao-field-height` — устаревший алиас `--tao-control-height`
 
 Полный список — в `src/styles/semantic.css`, он же единственный файл,
 который стоит открыть, чтобы понять весь доступный API темизации.

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, useSlots } from 'vue';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoTag' });
 
@@ -13,6 +14,8 @@ interface Props {
     closeLabel?: string;
     /** Без рамки, заливка остаётся. Высота как у обычного тега. */
     flat?: boolean;
+    /** Size; without it — the size of ancestors. / Размер; без него — размер предков. */
+    size?: TaoSize;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -45,6 +48,7 @@ function onClose(event: MouseEvent) {
         class="tao-tag"
         :class="[
             tone ? `tao-tag--${tone}` : '',
+            sizeClass(size),
             {
                 'tao-tag--pointer': pointer,
                 'tao-tag--closable': closable,
@@ -79,13 +83,14 @@ function onClose(event: MouseEvent) {
     align-items: center;
     gap: 6px;
     max-width: 100%;
-    height: auto;
+    /* min: an avatar in #prefix makes it taller / min — аватар в #prefix делает тег выше */
+    min-height: var(--tao-tag-height);
     margin: 0;
-    padding: 1px var(--tao-space-2);
+    padding: 0 var(--tao-tag-padding-x);
     vertical-align: middle;
     white-space: nowrap;
     text-align: start;
-    font-size: var(--tao-font-size-xs);
+    font-size: var(--tao-tag-font-size);
     line-height: 1.25;
     color: var(--tao-color-accent);
     background: var(--tao-color-accent-subtle);
@@ -130,8 +135,9 @@ function onClose(event: MouseEvent) {
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    width: 18px;
-    height: 18px;
+    /* fits the tag: border + 1px gap on each side / влезает в тег: рамка + 1px с каждой стороны */
+    width: calc(var(--tao-tag-height) - 4px);
+    height: calc(var(--tao-tag-height) - 4px);
     margin: 0;
     padding: 0;
     border: none;

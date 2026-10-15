@@ -89,7 +89,7 @@ Visual tones: `success` | `danger` | `warning` | `info` | `neutral`.
 `error` on Alert, Tag, and `toast()` is an alias of `danger`. Button already uses `danger`.
 Stages describe a process, not a tone: `wait` / `work` / `ok` / `bad` (`danger` is accepted as `bad`).
 
-Control sizes: `small` | `medium` | `large` (type `TaoSize`). One scale for Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup and FormField — controls of one size line up in a row.
+Control sizes: `small` | `medium` | `large` (type `TaoSize`). One scale for Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup and FormField — controls of one size line up in a row. Checkbox, Radio / RadioGroup and Switch scale the indicator (14 / 18 / 22px) and the label; Tag scales its height (18 / 20 / 24px); Tabs take the Button height.
 Without `size` a control takes the size of its ancestors, `medium` at the root. Set it for a whole block with the class `tao-size-small` / `-medium` / `-large` on any element, or with `size` on `TaoFormField` / `TaoInputGroup`. An explicit `size` on a control wins.
 
 ```vue
@@ -500,7 +500,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-radius-control`, `--tao-radius-panel` — radii (small controls vs large panels)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — shadows
 - `--tao-font-size-*` — type scale in `primitives.css`: `xs`–`xl` controls, `2xl`–`4xl` titles / prose
-- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*` — the size scale in `primitives.css`. Components read the current values from `size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`. Use them in your own controls to match the size around them. `--tao-field-height` is a deprecated alias of `--tao-control-height`
+- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — the size scale in `primitives.css`. Components read the current values from `size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Use them in your own controls to match the size around them. `--tao-field-height` is a deprecated alias of `--tao-control-height`
 
 The full list lives in `src/styles/semantic.css` — the only file worth opening
 to see the whole theming API.

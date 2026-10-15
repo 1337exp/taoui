@@ -70,6 +70,23 @@
     --tao-button-padding-x-medium: var(--tao-space-4);
     --tao-button-padding-x-large: var(--tao-space-6);
 
+    /* Choice indicators: Checkbox box, Radio circle; Switch track is 2px taller.
+       Индикаторы выбора: квадрат Checkbox, круг Radio; дорожка Switch на 2px выше. */
+    --tao-indicator-size-small: 14px;
+    --tao-indicator-size-medium: 18px;
+    --tao-indicator-size-large: 22px;
+
+    /* Tag / Тег */
+    --tao-tag-height-small: 18px;
+    --tao-tag-height-medium: 20px;
+    --tao-tag-height-large: 24px;
+    --tao-tag-padding-x-small: 6px;
+    --tao-tag-padding-x-medium: var(--tao-space-2);
+    --tao-tag-padding-x-large: 10px;
+    --tao-tag-font-size-small: var(--tao-font-size-xs);
+    --tao-tag-font-size-medium: var(--tao-font-size-xs);
+    --tao-tag-font-size-large: var(--tao-font-size-sm);
+
     /* ---------- Spacing scale (4px base) ---------- */
     --tao-space-1: 4px;
     --tao-space-2: 8px;

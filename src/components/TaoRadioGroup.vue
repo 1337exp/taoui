@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, inject, provide, useId } from 'vue';
 import { formFieldKey } from '../formField';
+import { sizeClass, type TaoSize } from '../size';
 import { radioGroupKey, type TaoRadioValue } from '../radio';
 
 defineOptions({ name: 'TaoRadioGroup' });
@@ -12,6 +13,8 @@ const props = withDefaults(
         legend?: string;
         disabled?: boolean;
         direction?: 'row' | 'column';
+        /** Size of every radio inside. / Размер всех радио внутри. */
+        size?: TaoSize;
     }>(),
     {
         disabled: false,
@@ -50,7 +53,7 @@ provide(radioGroupKey, {
     <fieldset
         :id="field?.id"
         class="tao-radio-group"
-        :class="[`tao-radio-group--${direction}`, { 'tao-radio-group--invalid': invalid }]"
+        :class="[`tao-radio-group--${direction}`, sizeClass(size), { 'tao-radio-group--invalid': invalid }]"
         :disabled="disabled"
         :aria-describedby="describedBy"
         :aria-invalid="invalid || undefined"

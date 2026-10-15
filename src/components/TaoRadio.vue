@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, inject, useId } from 'vue';
 import { formFieldKey } from '../formField';
+import { sizeClass, type TaoSize } from '../size';
 import { radioGroupKey, type TaoRadioValue } from '../radio';
 
 defineOptions({ name: 'TaoRadio' });
@@ -12,6 +13,8 @@ const props = withDefaults(
         name?: string;
         label?: string;
         disabled?: boolean;
+        /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
+        size?: TaoSize;
     }>(),
     {
         label: '',
@@ -54,7 +57,7 @@ function onChange() {
 </script>
 
 <template>
-    <label class="tao-radio" :class="{ 'tao-radio--disabled': isDisabled, 'tao-radio--invalid': invalid && !group }" :for="controlId">
+    <label class="tao-radio" :class="[sizeClass(size), { 'tao-radio--disabled': isDisabled, 'tao-radio--invalid': invalid && !group }]" :for="controlId">
         <input
             :id="controlId"
             class="tao-radio__input"
@@ -101,8 +104,8 @@ function onChange() {
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    width: 18px;
-    height: 18px;
+    width: var(--tao-indicator-size);
+    height: var(--tao-indicator-size);
     pointer-events: none;
     background: var(--tao-color-surface-raised);
     border: 2px solid var(--tao-color-border-strong);
@@ -112,8 +115,8 @@ function onChange() {
 
 .tao-radio__dot::after {
     content: '';
-    width: 8px;
-    height: 8px;
+    width: calc(var(--tao-indicator-size) / 2 - 1px);
+    height: calc(var(--tao-indicator-size) / 2 - 1px);
     background: transparent;
     border-radius: var(--tao-radius-full);
     transform: scale(0);
@@ -135,7 +138,7 @@ function onChange() {
 }
 
 .tao-radio__label {
-    font-size: var(--tao-font-size-sm);
+    font-size: var(--tao-control-font-size-secondary);
     color: var(--tao-color-text);
 }
 

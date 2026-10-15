@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, inject, useId } from 'vue';
 import { formFieldKey } from '../formField';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoSwitch' });
 
@@ -9,6 +10,8 @@ const props = withDefaults(
         modelValue?: boolean;
         label?: string;
         disabled?: boolean;
+        /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
+        size?: TaoSize;
     }>(),
     {
         modelValue: false,
@@ -40,7 +43,7 @@ function toggle() {
 </script>
 
 <template>
-    <label class="tao-switch" :class="{ 'tao-switch--disabled': disabled, 'tao-switch--on': modelValue, 'tao-switch--invalid': invalid }" :for="controlId">
+    <label class="tao-switch" :class="[sizeClass(size), { 'tao-switch--disabled': disabled, 'tao-switch--on': modelValue, 'tao-switch--invalid': invalid }]" :for="controlId">
         <input
             :id="controlId"
             class="tao-switch__input"
@@ -63,6 +66,8 @@ function toggle() {
 
 <style scoped>
 .tao-switch {
+    /* track: 36 × 20 at medium / дорожка 36 × 20 в medium */
+    --tao-switch-height: calc(var(--tao-indicator-size) + 2px);
     display: inline-flex;
     align-items: center;
     gap: var(--tao-space-2);
@@ -88,8 +93,8 @@ function toggle() {
     display: inline-flex;
     flex-shrink: 0;
     align-items: center;
-    width: 36px;
-    height: 20px;
+    width: calc(var(--tao-switch-height) * 2 - 4px);
+    height: var(--tao-switch-height);
     padding: 2px;
     pointer-events: none;
     background: var(--tao-color-surface-sunken);
@@ -99,8 +104,9 @@ function toggle() {
 }
 
 .tao-switch__thumb {
-    width: 14px;
-    height: 14px;
+    /* track minus padding and border / дорожка без padding и рамки */
+    width: calc(var(--tao-switch-height) - 6px);
+    height: calc(var(--tao-switch-height) - 6px);
     background: var(--tao-color-text-muted);
     border-radius: var(--tao-radius-full);
     transform: translateX(0);
@@ -114,7 +120,8 @@ function toggle() {
 
 .tao-switch--on .tao-switch__thumb {
     background: var(--tao-color-on-accent);
-    transform: translateX(16px);
+    /* track width − padding − border − thumb / ширина дорожки − padding − рамка − бегунок */
+    transform: translateX(calc(var(--tao-switch-height) - 4px));
 }
 
 .tao-switch__input:focus-visible + .tao-switch__track {
@@ -123,7 +130,7 @@ function toggle() {
 }
 
 .tao-switch__label {
-    font-size: var(--tao-font-size-sm);
+    font-size: var(--tao-control-font-size-secondary);
     color: var(--tao-color-text);
 }
 
