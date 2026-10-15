@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import TaoLoader from './TaoLoader.vue';
 import { sizeClass, type TaoSize } from '../size';
+import { toCssLength, type TaoLength } from '../length';
 import type { TaoTableColumn, TaoTableSort } from '../table';
 
 defineOptions({ name: 'TaoTable' });
@@ -25,7 +26,8 @@ const props = withDefaults(
         /** Горизонтальные линии между рядами. */
         lines?: boolean;
         sticky?: boolean;
-        maxHeight?: string;
+        /** Number — px, string — any CSS length. / Число — px, строка — любая CSS-длина. */
+        maxHeight?: TaoLength;
         clickable?: boolean;
         sort?: TaoTableSort | null;
         caption?: string;
@@ -50,6 +52,9 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     'update:sort': [value: TaoTableSort | null];
+    /** The user changed the sort. / Пользователь сменил сортировку. */
+    change: [value: TaoTableSort | null];
+    /** @deprecated Use `change` (or v-model:sort). / Используйте `change` (или v-model:sort). */
     sort: [value: TaoTableSort | null];
     'row-click': [row: Record<string, unknown>, index: number];
 }>();
@@ -105,6 +110,7 @@ function toggleSort(column: TaoTableColumn) {
         current == null ? { key: column.key, dir: 'asc' } : current === 'asc' ? { key: column.key, dir: 'desc' } : null;
 
     emit('update:sort', next);
+    emit('change', next);
     emit('sort', next);
 }
 
@@ -126,7 +132,7 @@ function onRowClick(row: Record<string, unknown>, index: number) {
                 'tao-table-wrap--loading': loading,
             },
         ]"
-        :style="maxHeight ? { maxHeight } : undefined"
+        :style="maxHeight ? { maxHeight: toCssLength(maxHeight) } : undefined"
     >
         <table
             class="tao-table"

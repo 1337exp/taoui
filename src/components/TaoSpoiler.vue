@@ -22,6 +22,8 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     'update:modelValue': [value: boolean];
+    /** Opened or closed by the user. / Пользователь открыл или закрыл. */
+    change: [value: boolean];
 }>();
 
 const panelId = useId();
@@ -47,6 +49,7 @@ function toggle() {
         internal.value = next;
     }
     emit('update:modelValue', next);
+    emit('change', next);
 }
 
 function onBeforeEnter(el: Element) {

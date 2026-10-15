@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
+import { toCssLength, type TaoLength } from '../length';
 
 defineOptions({ name: 'TaoList' });
 
@@ -13,7 +14,7 @@ const props = withDefaults(
         /** Линии между строками. */
         divided?: boolean;
         /** Скролл, если строки не влезают. Число — пиксели. */
-        maxHeight?: number | string;
+        maxHeight?: TaoLength;
         /** Показать `#empty` вместо строк. */
         empty?: boolean;
         ariaLabel?: string;
@@ -27,11 +28,8 @@ const props = withDefaults(
 );
 
 const listStyle = computed(() => {
-    if (props.maxHeight === undefined || props.maxHeight === '') {
-        return undefined;
-    }
-    const value = typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight;
-    return { maxHeight: value };
+    const value = toCssLength(props.maxHeight);
+    return value ? { maxHeight: value } : undefined;
 });
 </script>
 

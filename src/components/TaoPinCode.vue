@@ -1,14 +1,23 @@
 <script lang="ts" setup>
 import { computed, inject, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoPinCode' });
 
 const props = withDefaults(
     defineProps<{
         length: number;
+        /** Cells show dots instead of characters. / Ячейки показывают точки вместо символов. */
+        masked?: boolean;
+        /** @deprecated Use `masked` — `hidden` is a native attribute. / Используйте `masked` — `hidden` это нативный атрибут. */
         hidden?: boolean;
         placeholder?: string;
+        disabled?: boolean;
+        /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
+        error?: boolean;
+        /** Cell size; without it — the size of ancestors. / Размер ячеек; без него — размер предков. */
+        size?: TaoSize;
         modelValue?: string;
         numbersOnly?: boolean;
         /** `focus` — клик сбрасывает ячейку и все справа (неверный код, набор заново).
@@ -16,8 +25,11 @@ const props = withDefaults(
         clearOn?: 'focus' | 'input';
     }>(),
     {
+        masked: false,
         hidden: false,
         placeholder: '',
+        disabled: false,
+        error: false,
         modelValue: '',
         numbersOnly: false,
         clearOn: 'focus',
@@ -35,7 +47,8 @@ const emit = defineEmits<{
 const field = inject(formFieldKey, null);
 const localId = useId();
 const controlId = computed(() => field?.id ?? localId);
-const invalid = computed(() => Boolean(field?.invalid.value));
+const invalid = computed(() => props.error || Boolean(field?.invalid.value));
+const isMasked = computed(() => props.masked || props.hidden);
 const describedBy = computed(() => field?.describedBy.value);
 
 const numbers = ref<string[]>([]);
@@ -225,6 +238,7 @@ watch(
 <template>
     <div
         class="tao-pin-code"
+        :class="[sizeClass(size), { 'tao-pin-code--disabled': disabled }]"
         role="group"
         :aria-invalid="invalid || undefined"
         :aria-describedby="describedBy"
@@ -241,7 +255,9 @@ watch(
             }"
             :value="num"
             :placeholder="placeholder"
-            :type="hidden ? 'password' : 'text'"
+            :type="isMasked ? 'password' : 'text'"
+            :disabled="disabled"
+            :aria-invalid="invalid || undefined"
             :inputmode="numbersOnly ? 'numeric' : 'text'"
             :pattern="numbersOnly ? '[0-9]' : undefined"
             autocomplete="one-time-code"
@@ -262,12 +278,14 @@ watch(
 }
 
 .tao-pin-code__value {
-    width: 50px;
-    height: 56px;
+    /* 50 × 56, 21px at medium / 50 × 56, 21px в medium */
+    --tao-pin-code-height: calc(var(--tao-control-height) + 20px);
+    width: calc(var(--tao-pin-code-height) - 6px);
+    height: var(--tao-pin-code-height);
     margin: 2px;
     border: 3px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-md);
-    font-size: 21px;
+    font-size: calc(var(--tao-pin-code-height) * 0.375);
     font-weight: 500;
     font-family: inherit;
     text-align: center;
@@ -286,5 +304,13 @@ watch(
 
 .tao-pin-code__value--invalid {
     border-color: var(--tao-color-danger);
+}
+
+.tao-pin-code--disabled {
+    opacity: 0.6;
+}
+
+.tao-pin-code__value:disabled {
+    cursor: not-allowed;
 }
 </style>

@@ -12,6 +12,8 @@ const props = withDefaults(
         min?: number;
         max?: number;
         disabled?: boolean;
+        /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
+        error?: boolean;
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
         /** Minus stays enabled at min and still emits `dec` — parent can remove the line. */
@@ -26,6 +28,7 @@ const props = withDefaults(
         modelValue: 1,
         min: 1,
         disabled: false,
+        error: false,
         allowRemove: true,
         forceMaxLimit: true,
         decrementLabel: 'Уменьшить',
@@ -46,7 +49,7 @@ const emit = defineEmits<{
 const field = inject(formFieldKey, null);
 const localId = useId();
 const controlId = computed(() => field?.id ?? localId);
-const invalid = computed(() => Boolean(field?.invalid.value));
+const invalid = computed(() => props.error || Boolean(field?.invalid.value));
 const describedBy = computed(() => field?.describedBy.value);
 
 const focused = ref(false);

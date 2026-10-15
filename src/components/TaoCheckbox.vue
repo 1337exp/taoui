@@ -7,7 +7,13 @@ defineOptions({ name: 'TaoCheckbox' });
 
 const props = withDefaults(
     defineProps<{
+        /**
+         * @deprecated Use `checked` (or v-model). `value` will mean the option value, as in TaoRadio.
+         * Используйте `checked` (или v-model). `value` станет значением опции, как у TaoRadio.
+         */
         value?: boolean;
+        /** Checked state without v-model. / Состояние без v-model. */
+        checked?: boolean;
         modelValue?: boolean;
         label?: string;
         disabled?: boolean;
@@ -19,6 +25,7 @@ const props = withDefaults(
     }>(),
     {
         value: undefined,
+        checked: undefined,
         modelValue: undefined,
         label: '',
         disabled: false,
@@ -42,6 +49,9 @@ const isChecked = computed({
     get: () => {
         if (props.modelValue !== undefined) {
             return props.modelValue;
+        }
+        if (props.checked !== undefined) {
+            return props.checked;
         }
         return Boolean(props.value);
     },

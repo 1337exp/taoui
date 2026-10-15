@@ -1,16 +1,21 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
+import type { TaoTone } from '../tone';
 defineOptions({ name: 'TaoAlert' });
 
 const props = withDefaults(
     defineProps<{
-        type?: 'success' | 'error' | 'danger' | 'warning' | 'info' | 'neutral';
+        /** Status color; `error` is an alias of `danger`. / Цвет статуса; `error` — алиас `danger`. */
+        tone?: TaoTone | 'error';
+        /** @deprecated Use `tone`, same as TaoButton. / Используйте `tone`, как у TaoButton. */
+        type?: TaoTone | 'error';
         title?: string;
         closable?: boolean;
         closeLabel?: string;
     }>(),
     {
-        type: 'info',
+        tone: undefined,
+        type: undefined,
         title: '',
         closable: false,
         closeLabel: 'Закрыть',
@@ -21,15 +26,20 @@ const emit = defineEmits<{
     close: [];
 }>();
 
-const tone = computed(() => (props.type === 'danger' ? 'error' : props.type));
-const live = computed(() => (tone.value === 'error' || tone.value === 'warning' ? 'assertive' : 'polite'));
+const resolvedTone = computed(() => {
+    const value = props.tone ?? props.type ?? 'info';
+    return value === 'danger' ? 'error' : value;
+});
+const live = computed(() =>
+    resolvedTone.value === 'error' || resolvedTone.value === 'warning' ? 'assertive' : 'polite',
+);
 </script>
 
 <template>
     <div
         class="tao-alert"
-        :class="`tao-alert--${tone}`"
-        :role="tone === 'error' ? 'alert' : 'status'"
+        :class="`tao-alert--${resolvedTone}`"
+        :role="resolvedTone === 'error' ? 'alert' : 'status'"
         :aria-live="live"
     >
         <div class="tao-alert__body">

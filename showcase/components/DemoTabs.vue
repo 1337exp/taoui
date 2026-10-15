@@ -8,9 +8,9 @@ defineOptions({ name: 'DemoTabs' })
 
 const activeTab = ref('tab1')
 const tabs = [
-  { key: 'tab1', label: 'Вкладка 1' },
-  { key: 'tab2', label: 'Вкладка 2' },
-  { key: 'tab3', label: 'Вкладка 3', disabled: true },
+  { value: 'tab1', label: 'Вкладка 1' },
+  { value: 'tab2', label: 'Вкладка 2' },
+  { value: 'tab3', label: 'Вкладка 3', disabled: true },
 ]
 const tabContents = {
   tab1: 'Содержимое первой вкладки. Здесь может быть любой контент.',
@@ -24,14 +24,14 @@ const tabContents = {
     <h2>TaoTabs</h2>
           <p>Вкладки — примитив, не карточка страницы. Стрелки листают, Home/End — к краям.</p>
           
-          <TaoTabs v-model="activeTab" :tabs="tabs">
+          <TaoTabs v-model="activeTab" :items="tabs">
             <template #default="{ activeTab }">
               <p>{{ tabContents[activeTab] }}</p>
             </template>
           </TaoTabs>
     
           <div class="code-block">
-            <pre><code>&lt;TaoTabs v-model="activeTab" :tabs="tabs"&gt;
+            <pre><code>&lt;TaoTabs v-model="activeTab" :items="tabs"&gt;
   &lt;template #default="{ activeTab }"&gt;
     &lt;p&gt;&#123;&#123; tabContents[activeTab] &#125;&#125;&lt;/p&gt;
   &lt;/template&gt;
@@ -39,8 +39,8 @@ const tabContents = {
 
 &lt;script setup&gt;
 const tabs = [
-  { key: 'tab1', label: 'Вкладка 1' },
-  { key: 'tab2', label: 'Вкладка 2' }
+  { value: 'tab1', label: 'Вкладка 1' },
+  { value: 'tab2', label: 'Вкладка 2' }
 ]
 &lt;/script&gt;</code></pre>
           </div>

@@ -28,6 +28,8 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     'update:modelValue': [value: number];
+    /** The user finished changing: drag released or key. / Пользователь закончил менять: отпустил ручку или нажал клавишу. */
+    change: [value: number];
 }>();
 
 const rootRef = ref<HTMLElement | null>(null);
@@ -44,6 +46,7 @@ const ariaOrientation = computed(() => (isRow.value ? 'vertical' : 'horizontal')
 
 let dragPointer = -1;
 let dragStartPx = 0;
+let dragStartValue = 0;
 let dragStartCoord = 0;
 let savedBodyCursor = '';
 let savedHtmlCursor = '';
@@ -170,6 +173,9 @@ function endDrag() {
     dragPointer = -1;
     restoreDragCursor();
     applyLayout(true);
+    if (!valuesEqual(size.value, dragStartValue)) {
+        emit('change', size.value);
+    }
 }
 
 function setStartFromDelta(delta: number) {
@@ -188,6 +194,7 @@ function onPointerDown(event: PointerEvent) {
     dragPointer = event.pointerId;
     isDragging.value = true;
     dragStartPx = startPx.value;
+    dragStartValue = size.value;
     dragStartCoord = isRow.value ? event.clientX : event.clientY;
     applyDragCursor();
     event.preventDefault();
@@ -242,6 +249,14 @@ const ariaValueNow = computed(() => size.value);
 const ariaValueText = computed(() => (props.unit === '%' ? `${size.value}%` : `${Math.round(size.value)}px`));
 
 function onKeydown(event: KeyboardEvent) {
+    const before = size.value;
+    moveByKey(event);
+    if (!valuesEqual(before, size.value)) {
+        emit('change', size.value);
+    }
+}
+
+function moveByKey(event: KeyboardEvent) {
     if (!props.resizable) {
         return;
     }

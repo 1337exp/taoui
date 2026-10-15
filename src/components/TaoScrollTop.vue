@@ -9,7 +9,11 @@ interface Props {
     bottom?: string | number;
     zIndex?: number;
     boundary?: number;
+    /** Focus outline. / Обводка фокуса. */
+    outline?: boolean;
+    /** @deprecated Use `outline`. / Используйте `outline`. */
     hasOutline?: boolean;
+    /** @deprecated Pass `tabindex` as a plain attribute: it lands on the button anyway. / Передавайте как обычный атрибут — он и так попадёт на кнопку. */
     tabindex?: number;
     ariaLabel?: string;
 }
@@ -20,7 +24,8 @@ const props = withDefaults(defineProps<Props>(), {
     bottom: 24,
     zIndex: 1000,
     boundary: 300,
-    hasOutline: true,
+    outline: undefined,
+    hasOutline: undefined,
     tabindex: 0,
     ariaLabel: 'Наверх',
 });
@@ -124,7 +129,7 @@ onBeforeUnmount(() => {
             :style="mainStyle"
             :tabindex="props.tabindex"
             class="tao-scroll-top"
-            :class="{ 'tao-scroll-top--no-outline': !props.hasOutline }"
+            :class="{ 'tao-scroll-top--no-outline': (props.outline ?? props.hasOutline) === false }"
             :aria-label="props.ariaLabel"
             @click.prevent="onClick"
         >

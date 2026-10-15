@@ -107,14 +107,14 @@ function flashTableLoading() {
             :striped="tableStriped"
             clickable
             empty-text="Пока нет записей"
-            @sort="onTableSort"
+            @change="onTableSort"
             @row-click="(row) => toast().info().message(row.name)"
           >
             <template #empty>
               <TaoEmpty title="Пока нет записей">Список пуст — нажмите «Показать строки».</TaoEmpty>
             </template>
             <template #cell-status="{ row }">
-              <TaoTag :type="row.status === 'active' ? 'success' : row.status === 'banned' ? 'danger' : 'neutral'">
+              <TaoTag :tone="row.status === 'active' ? 'success' : row.status === 'banned' ? 'danger' : 'neutral'">
                 {{ row.status }}
               </TaoTag>
             </template>
@@ -130,7 +130,7 @@ function flashTableLoading() {
           <div class="code-block">
             <pre><code>&lt;TaoTable :columns="columns" :rows="pageRows" v-model:sort="sort" empty-text="No records yet"&gt;
   &lt;template #cell-status="{ row }"&gt;
-    &lt;TaoTag :type="row.status === 'active' ? 'success' : 'neutral'"&gt;
+    &lt;TaoTag :tone="row.status === 'active' ? 'success' : 'neutral'"&gt;
       &#123;&#123; row.status &#125;&#125;
     &lt;/TaoTag&gt;
   &lt;/template&gt;

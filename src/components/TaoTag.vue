@@ -1,14 +1,21 @@
 <script lang="ts" setup>
 import { computed, useSlots } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
+import type { TaoTone } from '../tone';
 
 defineOptions({ name: 'TaoTag' });
 
 interface Props {
-    type?: 'neutral' | 'success' | 'danger' | 'error' | 'warning' | 'info' | '';
+    /** Status color; `error` is an alias of `danger`. / Цвет статуса; `error` — алиас `danger`. */
+    tone?: TaoTone | 'error' | '';
+    /** @deprecated Use `tone`, same as TaoButton. / Используйте `tone`, как у TaoButton. */
+    type?: TaoTone | 'error' | '';
     color?: string;
     background?: string;
     borderColor?: string;
+    /** Pointer cursor, same as TaoListItem / TaoTable. / Курсор-рука, как у TaoListItem / TaoTable. */
+    clickable?: boolean;
+    /** @deprecated Use `clickable`. / Используйте `clickable`. */
     pointer?: boolean;
     closable?: boolean;
     closeLabel?: string;
@@ -19,7 +26,9 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    type: '',
+    tone: undefined,
+    type: undefined,
+    clickable: false,
     pointer: false,
     closable: false,
     closeLabel: 'Убрать',
@@ -31,7 +40,10 @@ const emit = defineEmits<{
 }>();
 
 const slots = useSlots();
-const tone = computed(() => (props.type === 'error' ? 'danger' : props.type));
+const resolvedTone = computed(() => {
+    const value = props.tone ?? props.type ?? '';
+    return value === 'error' ? 'danger' : value;
+});
 const style = computed(() => ({
     color: props.color || '',
     background: props.background || '',
@@ -47,10 +59,10 @@ function onClose(event: MouseEvent) {
     <span
         class="tao-tag"
         :class="[
-            tone ? `tao-tag--${tone}` : '',
+            resolvedTone ? `tao-tag--${resolvedTone}` : '',
             sizeClass(size),
             {
-                'tao-tag--pointer': pointer,
+                'tao-tag--pointer': clickable || pointer,
                 'tao-tag--closable': closable,
                 'tao-tag--prefix': Boolean(slots.prefix),
                 'tao-tag--flat': flat,

@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { toCssLength, type TaoLength } from '../length';
+
 defineOptions({ name: 'TaoFlex' });
 
 interface Props {
@@ -7,7 +9,8 @@ interface Props {
     align?: 'stretch' | 'flex-start' | 'center' | 'flex-end' | 'baseline';
     direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
     wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
-    gap?: string;
+    /** Number — px, string — any CSS length. / Число — px, строка — любая CSS-длина. */
+    gap?: TaoLength;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -29,7 +32,7 @@ withDefaults(defineProps<Props>(), {
             alignItems: align,
             flexDirection: direction,
             flexWrap: wrap,
-            gap: gap,
+            gap: toCssLength(gap),
         }"
     >
         <slot />

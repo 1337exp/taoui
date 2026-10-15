@@ -15,7 +15,12 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits(['selected']);
+const emit = defineEmits<{
+    /** Action id. / id действия. */
+    select: [id: string];
+    /** @deprecated Use `select`. / Используйте `select`. */
+    selected: [id: string];
+}>();
 
 const menuRef = ref<HTMLElement | null>(null);
 const listRef = ref<HTMLElement | null>(null);
@@ -76,6 +81,7 @@ function closeMenu() {
 
 function emitAction(id: string) {
     isOpen.value = false;
+    emit('select', id);
     emit('selected', id);
     triggerRef.value?.focus();
 }

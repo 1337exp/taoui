@@ -12,12 +12,15 @@ const props = withDefaults(
         name?: string;
         legend?: string;
         disabled?: boolean;
+        /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
+        error?: boolean;
         direction?: 'row' | 'column';
         /** Size of every radio inside. / Размер всех радио внутри. */
         size?: TaoSize;
     }>(),
     {
         disabled: false,
+        error: false,
         direction: 'row',
     },
 );
@@ -32,7 +35,7 @@ const autoName = useId();
 const groupName = computed(() => props.name || autoName);
 const model = computed(() => props.modelValue);
 const groupDisabled = computed(() => props.disabled);
-const invalid = computed(() => Boolean(field?.invalid.value));
+const invalid = computed(() => props.error || Boolean(field?.invalid.value));
 const describedBy = computed(() => field?.describedBy.value);
 const labelledBy = computed(() => (props.legend || !field ? undefined : `${field.id}-label`));
 

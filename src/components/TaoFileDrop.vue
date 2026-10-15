@@ -36,6 +36,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
     'update:modelValue': [files: File[]];
+    /** The user added or removed files. / Пользователь добавил или убрал файлы. */
+    change: [files: File[]];
+    /** @deprecated Use `change`. / Используйте `change`. */
     files: [files: File[]];
     /** Запрос на очистку — компонент НЕ очищает себя сам. Родитель решает:
      * очистить сразу (emit → v-model = []) или сперва показать модалку
@@ -81,6 +84,7 @@ function fileMatchesAccept(file: File, accept: string) {
 
 function commit(files: File[]) {
     emit('update:modelValue', files);
+    emit('change', files);
     emit('files', files);
 }
 

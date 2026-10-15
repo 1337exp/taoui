@@ -17,10 +17,10 @@ const dropdownActions = [
     <h2>TaoDropdownMenu</h2>
           <p>Выпадающее меню с авто-позиционированием у края экрана</p>
     
-          <TaoDropdownMenu :actions="dropdownActions" @selected="(id) => console.log('selected:', id)" />
+          <TaoDropdownMenu :actions="dropdownActions" @select="(id) => console.log('selected:', id)" />
     
           <div class="code-block">
-            <pre><code>&lt;TaoDropdownMenu :actions="actions" @selected="onSelected" /&gt;
+            <pre><code>&lt;TaoDropdownMenu :actions="actions" @select="onSelected" /&gt;
 
 &lt;TaoDropdownMenu :actions="actions" menu-label="Menu"&gt;
   &lt;template #icon&gt;&lt;TaoIcon name="more" /&gt;&lt;/template&gt;

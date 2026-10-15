@@ -236,7 +236,10 @@ export {
     formatTaoDateRangeLabel,
 } from './date';
 export type { TaoSize } from './size';
+export type { TaoTone } from './tone';
+export type { TaoLength } from './length';
 export type { TaoSelectOption } from './select';
+export type { TaoTabItem } from './tabs';
 export type { TaoDateCell, TaoDateParts, TaoDateRangeValue } from './date';
 export type { TaoRadioValue } from './radio';
 export type { TaoSegmentedSize } from './segmented';

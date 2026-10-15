@@ -10,6 +10,8 @@ const props = withDefaults(
         modelValue?: boolean;
         label?: string;
         disabled?: boolean;
+        /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
+        error?: boolean;
         /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
     }>(),
@@ -17,6 +19,7 @@ const props = withDefaults(
         modelValue: false,
         label: '',
         disabled: false,
+        error: false,
     },
 );
 
@@ -28,7 +31,7 @@ const emit = defineEmits<{
 const field = inject(formFieldKey, null);
 const localId = useId();
 const controlId = computed(() => field?.id ?? localId);
-const invalid = computed(() => Boolean(field?.invalid.value));
+const invalid = computed(() => props.error || Boolean(field?.invalid.value));
 const describedBy = computed(() => field?.describedBy.value);
 
 function toggle() {

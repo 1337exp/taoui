@@ -24,7 +24,7 @@ const copyText = 'Этот текст будет скопирован в буф�
     
           <div class="code-block">
             <pre><code>&lt;TaoCopy :text="value" /&gt;
-&lt;TaoCopy :text="value" copy-label="Copy" success-message="Copied!" /&gt;
+&lt;TaoCopy :text="value" copy-label="Copy" success-text="Copied!" /&gt;
 
 &lt;TaoCopy :text="value"&gt;
   &lt;template #default="{ copy, copied }"&gt;

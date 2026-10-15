@@ -39,7 +39,7 @@ const importStages = [
           </div>
     
           <h3>В строку</h3>
-          <TaoStages :items="orderStages" :vertical="false" />
+          <TaoStages :items="orderStages" direction="row" />
     
           <div class="code-block">
             <pre><code>&lt;TaoStages :items="[

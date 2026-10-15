@@ -85,7 +85,7 @@
 
 ## Соглашения
 
-Тоны визуала: `success` | `danger` | `warning` | `info` | `neutral`.
+Тоны визуала: `success` | `danger` | `warning` | `info` | `neutral` (тип `TaoTone`), всегда через проп `tone`: Button, Alert, Tag. `type` у Alert / Tag — устаревший алиас.
 `error` у Alert, Tag и `toast()` — синоним `danger`. Button уже `danger`.
 Stages — это процесс, не тон: `wait` / `work` / `ok` / `bad` (`danger` принимается как `bad`).
 
@@ -104,6 +104,15 @@ Container живёт на другой оси — ширина: `width="wide" | 
 
 Шкала кегля (примитивы): `xs` 12 … `xl` 18 для контролов; `2xl` 24, `3xl` 32, `4xl` 36 для заголовков и прозы.
 Отдельного компонента заголовка нет — `h1 { font-size: var(--tao-font-size-3xl) }`.
+
+Правила API — им следуют все компоненты; старые имена остаются устаревшими алиасами:
+
+- **Поля** принимают `v-model`, `disabled`, `error` (красная рамка) и `size`. Подпись, подсказка и текст ошибки — через `TaoFormField`.
+- **События**: `update:X` для v-model плюс `change`, когда пользователь закончил изменение (Slider, Split — по отпусканию). Остальные события — глаголы в настоящем времени: `select`, `close`, `create`.
+- **Тексты**: видимые — `*Text` (`clearText`, `successText`), для скринридера — `*Label` (`closeLabel`).
+- **Списки**: массивы данных — `items`; выбираемые элементы несут `value` + `label` (`TaoSelectOption`, `TaoTabItem`). Идентификаторы обычных данных (колонки таблицы, стадии) остаются `key`.
+- **Булевы** — прилагательные без `is` / `has` / `as`: `closable`, `clickable`, `masked`, `newTab`. Ось раскладки — `direction: 'row' | 'column'`, не `vertical`.
+- **Длины** (`padding`, `radius`, `gap`, `maxHeight`): число — пиксели, строка уходит в CSS как есть (тип `TaoLength`).
 
 ## Иконки
 
@@ -274,7 +283,7 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
   <TaoSegmentedOption value="year">Год</TaoSegmentedOption>
 </TaoSegmented>
 
-<TaoAlert type="warning" title="Черновик">Сохраните, прежде чем уйти.</TaoAlert>
+<TaoAlert tone="warning" title="Черновик">Сохраните, прежде чем уйти.</TaoAlert>
 ```
 
 `TaoSegmented` — короткий взаимоисключающий выбор, все варианты видны сразу. Не для навигации по страницам: это `TaoTabs`. Длинные подписи или больше 5–6 пунктов — `TaoRadioGroup` или `TaoSelect`.
@@ -298,7 +307,7 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 `TaoTag` может быть чипом: `#prefix` слева (обычно `TaoAvatar`), `closable` рисует крестик и эмитит `close`. Клик по крестику наружу не всплывает. `flat` снимает рамку, заливка остаётся.
 
 ```vue
-<TaoTag type="neutral" closable @close="remove">
+<TaoTag tone="neutral" closable @close="remove">
   <template #prefix>
     <TaoAvatar name="Анна Козлова" size="small" />
   </template>
@@ -318,7 +327,7 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
   empty-text="Пока нет записей"
 >
   <template #cell-status="{ row }">
-    <TaoTag :type="row.status === 'active' ? 'success' : 'neutral'">
+    <TaoTag :tone="row.status === 'active' ? 'success' : 'neutral'">
       {{ row.status }}
     </TaoTag>
   </template>

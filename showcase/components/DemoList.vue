@@ -52,7 +52,7 @@ function removeFile(id) {
           <TaoAvatar :name="person.name" size="small" />
         </template>
         <template v-if="person.id === 'oleg'" #suffix>
-          <TaoTag type="info" flat>new</TaoTag>
+          <TaoTag tone="info" flat>new</TaoTag>
         </template>
       </TaoListItem>
     </TaoList>

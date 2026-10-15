@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { computed } from 'vue';
 import type { TaoStageItem, TaoStageStatus } from '../stage';
 
 defineOptions({ name: 'TaoStages' });
@@ -6,13 +7,17 @@ defineOptions({ name: 'TaoStages' });
 const props = withDefaults(
     defineProps<{
         items?: TaoStageItem[];
+        /** `column` (default) — steps top to bottom, `row` — left to right. / `column` — сверху вниз, `row` — слева направо. */
+        direction?: 'row' | 'column';
+        /** @deprecated Use `direction`. / Используйте `direction`. */
         vertical?: boolean;
         ariaLabel?: string;
         statusLabels?: Partial<Record<TaoStageStatus, string>>;
     }>(),
     {
         items: () => [],
-        vertical: true,
+        direction: undefined,
+        vertical: undefined,
         ariaLabel: 'Стадии',
         statusLabels: () => ({}),
     },
@@ -41,12 +46,14 @@ function itemLabel(item: TaoStageItem): string {
     const status = statusOf(item);
     return `${item.label ?? item.key}, ${props.statusLabels[status] ?? fallbackStatusText[status]}`;
 }
+
+const isRow = computed(() => (props.direction ?? (props.vertical === false ? 'row' : 'column')) === 'row');
 </script>
 
 <template>
     <ul
         class="tao-stages"
-        :class="{ 'tao-stages--horizontal': !props.vertical }"
+        :class="{ 'tao-stages--horizontal': isRow }"
         :aria-label="ariaLabel"
     >
         <li

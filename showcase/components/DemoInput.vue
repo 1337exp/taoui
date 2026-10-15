@@ -26,8 +26,8 @@ const sizeModel = ref({
 })
 const groupHost = ref('taoui.dev')
 const sizeTabs = [
-  { key: 'one', label: 'Обзор' },
-  { key: 'two', label: 'Детали' },
+  { value: 'one', label: 'Обзор' },
+  { value: 'two', label: 'Детали' },
 ]
 
 function onDemoSubmit() {
@@ -117,9 +117,9 @@ function onDemoSubmit() {
               <TaoCheckbox v-model="sizeModel[s].check" label="Checkbox" />
               <TaoRadio v-model="sizeModel[s].pick" value="a" label="Radio" />
               <TaoSwitch v-model="sizeModel[s].on" label="Switch" />
-              <TaoTag type="info">tag</TaoTag>
-              <TaoTag type="neutral" closable>closable</TaoTag>
-              <div style="width: 100%"><TaoTabs v-model="sizeModel[s].tab" :tabs="sizeTabs" /></div>
+              <TaoTag tone="info">tag</TaoTag>
+              <TaoTag tone="neutral" closable>closable</TaoTag>
+              <div style="width: 100%"><TaoTabs v-model="sizeModel[s].tab" :items="sizeTabs" /></div>
               <div style="width: 100%"><TaoPagination v-model:page="sizeModel[s].page" :total="120" :show-total="false" /></div>
               <div style="width: 100%"><TaoSlider v-model="sizeModel[s].level" /></div>
             </div>

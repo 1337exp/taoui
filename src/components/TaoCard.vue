@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import { computed, useSlots } from 'vue';
+import { toCssBox, toCssLength, type TaoLength } from '../length';
 
 defineOptions({ name: 'TaoCard' });
 
 interface Props {
-    padding?: number | number[];
-    radius?: number;
+    /** Number — px, string — any CSS length. / Число — px, строка — любая CSS-длина. */
+    padding?: TaoLength | TaoLength[];
+    /** Number — px, string — any CSS length. / Число — px, строка — любая CSS-длина. */
+    radius?: TaoLength;
     shadow?: boolean;
     shadowBottomOnly?: boolean;
     hover?: boolean;
@@ -45,13 +48,10 @@ const paddingStyle = computed(() => {
     if (props.flush) {
         return { padding: '0' };
     }
-    if (Array.isArray(props.padding)) {
-        return { padding: `${props.padding.map((p) => `${p}px`).join(' ')}` };
-    }
-    return { padding: `${props.padding}px` };
+    return { padding: toCssBox(props.padding) };
 });
 
-const radiusStyle = computed(() => ({ borderRadius: `${props.radius}px` }));
+const radiusStyle = computed(() => ({ borderRadius: toCssLength(props.radius) }));
 const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly && !props.flush);
 </script>
 

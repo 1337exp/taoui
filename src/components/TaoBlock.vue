@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
+import { toCssBox, toCssLength, type TaoLength } from '../length';
 
 defineOptions({ name: 'TaoBlock' });
 
 interface Props {
-    padding?: number | number[];
-    radius?: number;
+    /** Number — px, string — any CSS length. / Число — px, строка — любая CSS-длина. */
+    padding?: TaoLength | TaoLength[];
+    /** Number — px, string — any CSS length. / Число — px, строка — любая CSS-длина. */
+    radius?: TaoLength;
     shadow?: boolean;
     hover?: boolean;
 }
@@ -17,18 +20,9 @@ const props = withDefaults(defineProps<Props>(), {
     hover: false,
 });
 
-const paddingStyle = computed(() => {
-    if (Array.isArray(props.padding)) {
-        return {
-            padding: `${props.padding.map(p => `${p}px`).join(' ')}`
-        };
-    }
-    return { padding: `${props.padding}px` };
-});
+const paddingStyle = computed(() => ({ padding: toCssBox(props.padding) }));
 
-const radiusStyle = computed(() => ({
-    borderRadius: `${props.radius}px`
-}));
+const radiusStyle = computed(() => ({ borderRadius: toCssLength(props.radius) }));
 </script>
 
 <template>

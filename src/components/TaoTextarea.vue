@@ -35,10 +35,22 @@ const props = withDefaults(
         noBorder?: boolean;
         /** @deprecated Use `variant="plain"`. / Используйте `variant="plain"`. */
         noBackground?: boolean;
+        /** Focus on mount. / Фокус при монтировании. */
+        autofocus?: boolean;
+        /** @deprecated Use `autofocus`, same as the native attribute. / Используйте `autofocus`, как нативный атрибут. */
         autoFocus?: boolean;
         /** @deprecated The bar on the right. Will be removed. / Полоса справа. Будет удалено. */
         borderInverse?: boolean;
+        /** Text alignment. / Выравнивание текста. */
+        align?: 'start' | 'center' | 'end';
+        /** @deprecated Use `align="center"`. / Используйте `align="center"`. */
         textCenter?: boolean;
+        /**
+         * Enter leaves the field instead of a new line (Shift+Enter still breaks the line); `keydown` is emitted first.
+         * Enter снимает фокус вместо переноса (Shift+Enter переносит); `keydown` уходит раньше.
+         */
+        blurOnEnter?: boolean;
+        /** @deprecated It never submitted anything — use `blurOnEnter`. / Ничего не отправлял — используйте `blurOnEnter`. */
         submitOnEnter?: boolean;
         error?: boolean;
         id?: string;
@@ -60,9 +72,12 @@ const props = withDefaults(
         modelValue: '',
         noBorder: false,
         noBackground: false,
+        autofocus: false,
         autoFocus: false,
         borderInverse: false,
+        align: undefined,
         textCenter: false,
+        blurOnEnter: false,
         submitOnEnter: false,
         error: false,
         count: false,
@@ -85,6 +100,10 @@ const resolvedVariant = computed<TaoTextareaVariant>(() => {
         return props.noBackground ? 'plain' : 'filled';
     }
     return 'bar';
+});
+const alignClass = computed(() => {
+    const align = props.align ?? (props.textCenter ? 'center' : 'start');
+    return align === 'start' ? undefined : `tao-textarea--align-${align}`;
 });
 const variantClasses = computed(() => [
     `tao-textarea--${resolvedVariant.value}`,
@@ -143,7 +162,7 @@ function onBlur(e: FocusEvent) {
 function onKeydown(event: KeyboardEvent) {
     emit('keydown', event);
 
-    if (props.submitOnEnter && event.key === 'Enter' && !event.shiftKey) {
+    if ((props.blurOnEnter || props.submitOnEnter) && event.key === 'Enter' && !event.shiftKey) {
         textareaRef.value?.blur();
         event.preventDefault();
         return;
@@ -172,7 +191,7 @@ watch(
 );
 
 onMounted(() => {
-    if (props.autoFocus) {
+    if (props.autofocus || props.autoFocus) {
         textareaRef.value?.focus();
     }
     nextTick(autoResize);
@@ -183,7 +202,7 @@ onMounted(() => {
     <span
         v-if="dummy"
         class="tao-textarea tao-textarea--dummy"
-        :class="[sizeClass(size), variantClasses, { 'tao-textarea--center': textCenter }]"
+        :class="[sizeClass(size), variantClasses, alignClass]"
     >{{ modelValue }}</span>
     <div v-else class="tao-textarea-wrap" :class="sizeClass(size)">
         <textarea
@@ -192,8 +211,8 @@ onMounted(() => {
             class="tao-textarea"
             :class="[
                 variantClasses,
+                alignClass,
                 {
-                    'tao-textarea--center': textCenter,
                     'tao-textarea--no-resize': !resize,
                     'tao-textarea--invalid': invalid,
                 },
@@ -299,8 +318,12 @@ onMounted(() => {
     cursor: default;
 }
 
-.tao-textarea--center {
+.tao-textarea--align-center {
     text-align: center;
+}
+
+.tao-textarea--align-end {
+    text-align: end;
 }
 
 .tao-textarea--no-resize {

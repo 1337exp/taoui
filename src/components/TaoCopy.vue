@@ -1,18 +1,22 @@
 <script lang="ts" setup>
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 defineOptions({ name: 'TaoCopy' });
 
 const props = withDefaults(
     defineProps<{
         text: string;
+        /** Visible text after copying. / Видимый текст после копирования. */
+        successText?: string;
+        /** @deprecated Use `successText`: visible texts are `*Text`, aria texts are `*Label`. / Используйте `successText`. */
         successMessage?: string;
         copyLabel?: string;
         /** Показать подсказку над кнопкой после копирования. */
         tip?: boolean;
     }>(),
     {
-        successMessage: 'Скопировано!',
+        successText: undefined,
+        successMessage: undefined,
         copyLabel: 'Копировать',
         tip: true,
     },
@@ -116,6 +120,8 @@ onBeforeUnmount(() => {
     visibleObserver?.disconnect();
     visibleObserver = null;
 });
+
+const doneText = computed(() => props.successText ?? props.successMessage ?? 'Скопировано!');
 </script>
 
 <template>
@@ -125,7 +131,7 @@ onBeforeUnmount(() => {
                 type="button"
                 class="tao-copy__button"
                 :class="{ 'tao-copy__button--copied': copied }"
-                :aria-label="copied ? successMessage : copyLabel"
+                :aria-label="copied ? doneText : copyLabel"
                 @click="copy"
             >
                 <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
@@ -151,13 +157,13 @@ onBeforeUnmount(() => {
 
         <Teleport to="body">
             <div
-                v-if="copied && tip && successMessage"
+                v-if="copied && tip && doneText"
                 ref="tipRef"
                 class="tao-copy__tip"
                 role="status"
                 :style="tipStyle"
             >
-                {{ successMessage }}
+                {{ doneText }}
             </div>
         </Teleport>
     </span>

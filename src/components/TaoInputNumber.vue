@@ -13,6 +13,8 @@ const props = withDefaults(
         step?: number;
         precision?: number;
         disabled?: boolean;
+        /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
+        error?: boolean;
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
         placeholder?: string;
@@ -24,6 +26,7 @@ const props = withDefaults(
         modelValue: null,
         step: 1,
         disabled: false,
+        error: false,
         placeholder: '',
         controls: true,
         incrementLabel: 'Увеличить',
@@ -46,7 +49,7 @@ const emit = defineEmits<{
 const field = inject(formFieldKey, null);
 const localId = useId();
 const controlId = computed(() => field?.id ?? localId);
-const invalid = computed(() => Boolean(field?.invalid.value));
+const invalid = computed(() => props.error || Boolean(field?.invalid.value));
 const describedBy = computed(() => field?.describedBy.value);
 
 const focused = ref(false);

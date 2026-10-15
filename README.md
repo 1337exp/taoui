@@ -85,7 +85,7 @@ change a handful of CSS variables and the whole kit follows.
 
 ## Conventions
 
-Visual tones: `success` | `danger` | `warning` | `info` | `neutral`.
+Visual tones: `success` | `danger` | `warning` | `info` | `neutral` (type `TaoTone`), always the `tone` prop: Button, Alert, Tag. `type` on Alert / Tag is a deprecated alias.
 `error` on Alert, Tag, and `toast()` is an alias of `danger`. Button already uses `danger`.
 Stages describe a process, not a tone: `wait` / `work` / `ok` / `bad` (`danger` is accepted as `bad`).
 
@@ -104,6 +104,15 @@ Container lives on another axis — width: `width="wide" | "slim" | "ultra-slim"
 
 Font size scale (primitives): `xs` 12 … `xl` 18 for controls; `2xl` 24, `3xl` 32, `4xl` 36 for titles and prose.
 There is no heading component — use `h1 { font-size: var(--tao-font-size-3xl) }`.
+
+API rules — every component follows them; old names stay as deprecated aliases:
+
+- **Fields** take `v-model`, `disabled`, `error` (red frame) and `size`. Label, hint and error text come from `TaoFormField`.
+- **Events**: `update:X` for v-model plus `change` when the user finished a change (Slider, Split — on release). Other events are verbs in the present tense: `select`, `close`, `create`.
+- **Texts**: visible ones are `*Text` (`clearText`, `successText`), screen-reader ones are `*Label` (`closeLabel`).
+- **Lists**: data arrays are `items`; selectable items carry `value` + `label` (`TaoSelectOption`, `TaoTabItem`). Identifiers of plain data (table columns, stages) stay `key`.
+- **Booleans** are adjectives without `is` / `has` / `as`: `closable`, `clickable`, `masked`, `newTab`. Layout axis is `direction: 'row' | 'column'`, not `vertical`.
+- **Lengths** (`padding`, `radius`, `gap`, `maxHeight`): a number is pixels, a string goes to CSS as is (type `TaoLength`).
 
 ## Icons
 
@@ -273,7 +282,7 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
   <TaoSegmentedOption value="year">Year</TaoSegmentedOption>
 </TaoSegmented>
 
-<TaoAlert type="warning" title="Draft">Save before you leave.</TaoAlert>
+<TaoAlert tone="warning" title="Draft">Save before you leave.</TaoAlert>
 ```
 
 `TaoSegmented` is a short exclusive choice with every option visible. It is not page navigation — that is `TaoTabs`. Longer labels or more than 5–6 items belong in `TaoRadioGroup` or `TaoSelect`.
@@ -297,7 +306,7 @@ Label, hint and error text always come from `TaoFormField`; `label` / `error-mes
 `TaoTag` can be a chip: `#prefix` on the left (usually `TaoAvatar`), `closable` draws a cross and emits `close`. The close click does not bubble. `flat` drops the border and keeps the fill.
 
 ```vue
-<TaoTag type="neutral" closable @close="remove">
+<TaoTag tone="neutral" closable @close="remove">
   <template #prefix>
     <TaoAvatar name="Anna Kozlova" size="small" />
   </template>
@@ -317,7 +326,7 @@ The table renders what you pass in: it does not slice or sort the data. That wor
   empty-text="No records yet"
 >
   <template #cell-status="{ row }">
-    <TaoTag :type="row.status === 'active' ? 'success' : 'neutral'">
+    <TaoTag :tone="row.status === 'active' ? 'success' : 'neutral'">
       {{ row.status }}
     </TaoTag>
   </template>
