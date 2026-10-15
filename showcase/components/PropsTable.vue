@@ -9,6 +9,10 @@ const props = defineProps({
 })
 
 const isApi = () => props.kind === 'api'
+
+// "min / max" → ['min', 'max']: a line may break between parts, never inside one.
+// «min / max» → части: перенос только между ними, не внутри.
+const parts = (text) => String(text).split(' / ')
 </script>
 
 <template>
@@ -32,9 +36,16 @@ const isApi = () => props.kind === 'api'
         </thead>
         <tbody>
           <tr v-for="row in rows" :key="row.name">
-            <td><code>{{ row.name }}</code></td>
-            <td><code>{{ row.type }}</code></td>
-            <td v-if="!isApi()"><code v-if="row.default">{{ row.default }}</code><span v-else class="props-table__empty">—</span></td>
+            <td class="props-table__name">
+              <template v-for="(part, i) in parts(row.name)" :key="i"><span v-if="i" class="props-table__sep"> / </span><code>{{ part }}</code></template>
+            </td>
+            <td class="props-table__type"><code>{{ row.type }}</code></td>
+            <td v-if="!isApi()" class="props-table__default">
+              <template v-if="row.default">
+                <template v-for="(part, i) in parts(row.default)" :key="i"><span v-if="i" class="props-table__sep"> / </span><code>{{ part }}</code></template>
+              </template>
+              <span v-else class="props-table__empty">—</span>
+            </td>
             <td>{{ row.note }}</td>
           </tr>
         </tbody>
@@ -105,7 +116,7 @@ const isApi = () => props.kind === 'api'
   background: var(--tao-color-surface-sunken);
 }
 
-.props-table td:first-child code {
+.props-table__name code {
   color: var(--tao-color-accent);
   font-weight: 600;
 }
@@ -114,13 +125,33 @@ const isApi = () => props.kind === 'api'
   font-family: 'Fira Code', 'Consolas', monospace;
   font-size: 12px;
   color: var(--tao-color-text);
-  word-break: break-word;
+}
+
+/* Name and default never break inside a word; only between " / " parts.
+   Имя и дефолт не рвутся внутри слова — только между частями « / ». */
+.props-table__name code,
+.props-table__default code {
+  white-space: nowrap;
+}
+
+/* Type breaks only at spaces, i.e. between union members. / Тип переносится только по пробелам — между вариантами union. */
+.props-table__type code {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.props-table__type {
+  min-width: 120px;
+}
+
+.props-table__sep {
+  color: var(--tao-color-text-muted);
 }
 
 .props-table td:last-child {
   color: var(--tao-color-text);
   line-height: 1.45;
-  min-width: 180px;
+  min-width: 240px;
 }
 
 .props-table__empty {
