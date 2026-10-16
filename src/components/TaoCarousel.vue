@@ -57,6 +57,8 @@ const track = ref<HTMLElement | null>(null);
 const index = ref(props.modelValue);
 const count = ref(0);
 const dragging = ref(false);
+/** Momentum after a mouse drag: scroll-snap stays off until the glide lands on a slide. / Инерция после перетаскивания мышью. */
+const gliding = ref(false);
 const hoverPaused = ref(false);
 const focusPaused = ref(false);
 
@@ -65,6 +67,10 @@ let dragStartScroll = 0;
 let dragMoved = 0;
 let dragPointer = -1;
 let scrollFrame = 0;
+let glideFrame = 0;
+let settleTimer = 0;
+/** Recent pointer positions for the release speed. / Последние позиции указателя — для скорости при отпускании. */
+let samples: { x: number; t: number }[] = [];
 let focusFrame = 0;
 let autoplayTimer = 0;
 
@@ -131,6 +137,7 @@ function goNext() {
 }
 
 function goTo(next: number, instant = false) {
+    cancelGlide();
     const el = track.value;
     const { width, gap, total } = metrics();
     if (!el || width <= 0 || total <= 0) {
@@ -171,6 +178,7 @@ function canAutoplay() {
         !hoverPaused.value &&
         !focusPaused.value &&
         !dragging.value &&
+        !gliding.value &&
         typeof document !== 'undefined' &&
         !document.hidden &&
         !prefersReducedMotion() &&
@@ -239,21 +247,157 @@ function scheduleFocusPause(event: FocusEvent) {
 }
 
 function onScroll() {
-    if (dragging.value) {
+    if (dragging.value || gliding.value) {
         return;
     }
 
     cancelAnimationFrame(scrollFrame);
-    scrollFrame = requestAnimationFrame(() => {
-        const next = nearestIndex();
-        const { width, gap } = metrics();
-        const el = track.value;
-        if (el && width > 0 && el.scrollLeft - next * (width + gap) > (width + gap) / 2) {
-            goTo(next, true);
+    scrollFrame = requestAnimationFrame(() => setIndex(nearestIndex()));
+
+    // No scrollend (older Safari): treat a short pause as the end. / Нет scrollend — конец по короткой паузе.
+    if (!supportsScrollEnd()) {
+        window.clearTimeout(settleTimer);
+        settleTimer = window.setTimeout(settle, 150);
+    }
+}
+
+function supportsScrollEnd() {
+    return typeof window !== 'undefined' && 'onscrollend' in window;
+}
+
+/**
+ * Wheel / trackpad scroll freely (no CSS snap on fine pointers) and only when it has fully stopped
+ * the strip eases onto the nearest whole slide. Touch keeps native snap, see CSS.
+ * Колёсико и тачпад крутят свободно (на мыши CSS-snap выключен), и только после полной остановки
+ * полоса мягко доезжает до ближайшей целой карточки. На таче — родной snap, см. CSS.
+ */
+function settle() {
+    window.clearTimeout(settleTimer);
+    const el = track.value;
+    if (!el || dragging.value || gliding.value || getComputedStyle(el).scrollSnapType !== 'none') {
+        return;
+    }
+
+    const max = el.scrollWidth - el.clientWidth;
+    // The very end may sit between snap points — leave it there. / Самый конец может быть между точками — оставляем.
+    if (el.scrollLeft >= max - 1) {
+        return;
+    }
+
+    const target = glideTarget(el.scrollLeft, 0);
+    if (Math.abs(target - el.scrollLeft) >= 1) {
+        glideTo(target, 0);
+    }
+}
+
+/** New wheel / touch input takes over from a settling glide. / Новый ввод колёсиком или пальцем перебивает доводку. */
+function onUserScrollInput() {
+    if (!dragging.value) {
+        cancelGlide();
+    }
+}
+
+/** How long momentum keeps going, ms (close to iOS). / Сколько длится инерция, мс (близко к iOS). */
+const GLIDE_TIME = 325;
+/** Release speed above which a flick always moves at least one slide, px/ms. / Скорость, с которой щелчок всегда сдвигает хотя бы на слайд. */
+const FLICK_SPEED = 0.3;
+
+function recordSample(x: number) {
+    const t = performance.now();
+    samples.push({ x, t });
+    while (samples.length > 2 && t - samples[0]!.t > 100) {
+        samples.shift();
+    }
+}
+
+/** Scroll speed at release, px/ms; 0 if the pointer stood still before letting go. / Скорость прокрутки при отпускании. */
+function releaseVelocity() {
+    const first = samples[0];
+    const last = samples[samples.length - 1];
+    if (!first || !last || last.t === first.t || performance.now() - last.t > 80) {
+        return 0;
+    }
+    // pointer moves right → content scrolls left / указатель вправо → прокрутка влево
+    return -(last.x - first.x) / (last.t - first.t);
+}
+
+function cancelGlide() {
+    if (!glideFrame) {
+        return;
+    }
+    cancelAnimationFrame(glideFrame);
+    glideFrame = 0;
+    gliding.value = false;
+}
+
+/** Where momentum would stop, rounded to a whole slide. / Где остановит инерция, с точностью до целого слайда. */
+function glideTarget(from: number, velocity: number) {
+    const el = track.value;
+    const { width, gap } = metrics();
+    if (!el || width <= 0) {
+        return from;
+    }
+
+    const pitch = width + gap;
+    let slide = Math.round((from + velocity * GLIDE_TIME) / pitch);
+    if (velocity > FLICK_SPEED) {
+        slide = Math.max(slide, Math.floor(from / pitch) + 1);
+    } else if (velocity < -FLICK_SPEED) {
+        slide = Math.min(slide, Math.ceil(from / pitch) - 1);
+    }
+
+    const max = el.scrollWidth - el.clientWidth;
+    return Math.min(Math.max(slide * pitch, 0), max);
+}
+
+function finishGlide() {
+    glideFrame = 0;
+    gliding.value = false;
+    setIndex(nearestIndex());
+    syncAutoplay();
+}
+
+/**
+ * Ease-out from the current position to `target`. Its starting speed matches the release speed,
+ * so the strip keeps moving the way it was thrown and settles on a slide.
+ * Плавно к `target`; начальная скорость равна скорости броска — полоса не дёргается и встаёт на слайд.
+ */
+function glideTo(target: number, velocity: number) {
+    const el = track.value;
+    if (!el) {
+        return;
+    }
+
+    cancelGlide();
+    const from = el.scrollLeft;
+    const distance = target - from;
+    setIndex(nearestIndex(target));
+
+    if (Math.abs(distance) < 1 || prefersReducedMotion()) {
+        el.scrollLeft = target;
+        syncAutoplay();
+        return;
+    }
+
+    // ease-out cubic starts at 3·distance/duration; a settle from rest is short and calm.
+    // ease-out cubic стартует со скоростью 3·distance/duration; доводка с места — короткая и спокойная.
+    const sameDirection = Math.abs(velocity) > 0.05 && Math.sign(velocity) === Math.sign(distance);
+    const duration = sameDirection
+        ? Math.min(Math.max((3 * Math.abs(distance)) / Math.abs(velocity), 220), 900)
+        : Math.min(200 + Math.abs(distance) * 1.2, 450);
+    const start = performance.now();
+    gliding.value = true;
+
+    const frame = (now: number) => {
+        const t = Math.min((now - start) / duration, 1);
+        el.scrollLeft = from + distance * (1 - (1 - t) ** 3);
+        if (t < 1) {
+            glideFrame = requestAnimationFrame(frame);
             return;
         }
-        setIndex(next);
-    });
+        finishGlide();
+    };
+    glideFrame = requestAnimationFrame(frame);
 }
 
 function releaseDragCapture() {
@@ -286,8 +430,12 @@ function endDrag(keepClickGuard = false) {
         dragMoved = 0;
     }
 
-    if (track.value) {
-        goTo(nearestIndex(), true);
+    const el = track.value;
+    const velocity = releaseVelocity();
+    samples = [];
+    if (el) {
+        glideTo(glideTarget(el.scrollLeft, velocity), velocity);
+        return;
     }
     syncAutoplay();
 }
@@ -297,10 +445,14 @@ function onPointerDown(event: PointerEvent) {
         return;
     }
 
+    // grabbing a moving strip stops it where it is / схватить летящую полосу — остановить её на месте
+    cancelGlide();
     dragPointer = event.pointerId;
     dragStartX = event.clientX;
     dragStartScroll = track.value.scrollLeft;
     dragMoved = 0;
+    samples = [];
+    recordSample(event.clientX);
     dragging.value = true;
     try {
         track.value.setPointerCapture(event.pointerId);
@@ -315,7 +467,8 @@ function onPointerMove(event: PointerEvent) {
     }
 
     const dx = event.clientX - dragStartX;
-    dragMoved = Math.abs(dx);
+    dragMoved = Math.max(dragMoved, Math.abs(dx));
+    recordSample(event.clientX);
     track.value.scrollLeft = dragStartScroll - dx;
 }
 
@@ -379,7 +532,7 @@ watch(
 );
 
 watch(
-    () => [props.autoplay, props.loop, count.value, dragging.value, index.value] as const,
+    () => [props.autoplay, props.loop, count.value, dragging.value, gliding.value, index.value] as const,
     () => syncAutoplay(),
 );
 
@@ -398,6 +551,8 @@ onUpdated(refreshCount);
 
 onBeforeUnmount(() => {
     endDrag();
+    cancelGlide();
+    window.clearTimeout(settleTimer);
     cancelAnimationFrame(scrollFrame);
     cancelAnimationFrame(focusFrame);
     stopAutoplay();
@@ -446,11 +601,14 @@ onBeforeUnmount(() => {
             <div
                 ref="track"
                 class="tao-carousel__track"
-                :class="{ 'tao-carousel__track--dragging': dragging }"
+                :class="{ 'tao-carousel__track--dragging': dragging, 'tao-carousel__track--gliding': gliding }"
                 role="region"
                 :aria-label="ariaLabel"
                 tabindex="0"
                 @scroll="onScroll"
+                @scrollend="settle"
+                @wheel.passive="onUserScrollInput"
+                @touchstart.passive="onUserScrollInput"
                 @keydown="onKeydown"
                 @pointerdown="onPointerDown"
                 @pointermove="onPointerMove"
@@ -532,12 +690,20 @@ onBeforeUnmount(() => {
     min-width: 0;
     overflow-x: auto;
     overscroll-behavior-x: contain;
-    scroll-snap-type: x mandatory;
+    /* Mouse / trackpad: free scroll, JS eases onto a slide after it stops (settle). / Мышь, тачпад: свободно, доводит JS. */
+    scroll-snap-type: none;
     scroll-padding-inline: 0;
     scrollbar-width: none;
     user-select: none;
     touch-action: pan-x;
     cursor: grab;
+}
+
+/* Touch: native snap is smooth under the finger and lands flings on a slide. / Тач: родной snap плавный и сам доводит бросок. */
+@media (pointer: coarse) {
+    .tao-carousel__track {
+        scroll-snap-type: x mandatory;
+    }
 }
 
 .tao-carousel__track::-webkit-scrollbar {
@@ -547,6 +713,11 @@ onBeforeUnmount(() => {
 .tao-carousel__track--dragging {
     scroll-snap-type: none;
     cursor: grabbing;
+}
+
+/* Momentum drives scrollLeft itself and lands on a slide; snap would fight it. / Инерция сама ведёт scrollLeft до слайда — snap бы мешал. */
+.tao-carousel__track--gliding {
+    scroll-snap-type: none;
 }
 
 .tao-carousel__track:focus-visible {
