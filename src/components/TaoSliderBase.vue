@@ -150,6 +150,9 @@ function onPointerDown(event: PointerEvent) {
     dragStart = [...values.value];
     isDragging.value = true;
     activeThumb.value = nearestThumb(values.value, target, activeThumb.value);
+    // preventDefault ниже гасит и фокус, поэтому берём его сами и первым делом: поле ввода, в котором печатали, теряет фокус
+    // и записывает свой текст до того, как слайдер поменяет значение, а не после (иначе устаревший текст затёр бы его)
+    railRef.value.querySelectorAll<HTMLElement>('.tao-slider__thumb')[activeThumb.value]?.focus({ preventScroll: true });
     setThumb(activeThumb.value, target);
     event.preventDefault();
     try {

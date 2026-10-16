@@ -14,6 +14,13 @@ Cleaner slider family. Breaking changes are allowed in this major: quality over 
 - **`flat`** hides the round thumbs (a plain filled bar); they stay in the markup for keyboard and screen readers.
 - **Pure logic in `src/slider.ts`** (value ↔ position, steps without float tails, nearest thumb, marks) with unit tests.
 
+### Fixes
+
+- **TaoSlider takes focus on press** (it used to keep it in a text field). The field blurs first and commits its text, then the slider
+  sets the value.
+- **TaoInputNumber:** a value changed from outside (a slider, another field) now replaces the draft of a focused field, so blur does not
+  write the stale text over it. Typing is not affected: the echo of the field's own value does not overwrite the draft.
+
 ### Breaking
 
 - `TaoSlider` `v-model` is a **number** now; the `number | string` form is gone.

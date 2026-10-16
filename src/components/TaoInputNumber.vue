@@ -55,10 +55,17 @@ const describedBy = computed(() => field?.describedBy.value);
 const focused = ref(false);
 const draft = ref(toDraft(props.modelValue));
 
+/** Last value this field emitted itself: tells typing apart from a change made elsewhere. / Последнее значение, которое поле отдало само: так отличаем набор от правки снаружи. */
+let emitted: number | null | undefined;
+
+// While the field is focused its text is the user's draft and survives the echo of its own value. A value that came from
+// elsewhere (a slider, another field) replaces the draft, otherwise blur would commit the stale text over it.
+// Пока поле в фокусе, текст это черновик пользователя и переживает эхо собственного значения. Значение, пришедшее
+// снаружи (слайдер, другое поле), заменяет черновик: иначе blur записал бы устаревший текст поверх него.
 watch(
     () => props.modelValue,
     (value) => {
-        if (!focused.value) {
+        if (!focused.value || value !== emitted) {
             draft.value = toDraft(value);
         }
     },
@@ -119,6 +126,7 @@ function isAllowed(text: string) {
 /** Applies a finished value: normalises, emits update:modelValue and commit. / Применяет готовое значение. */
 function commit(value: number | null) {
     const next = value === null ? null : clamp(value);
+    emitted = next;
     emit('update:modelValue', next);
     draft.value = toDraft(next);
     emit('commit', next);
@@ -140,7 +148,8 @@ function onInput(event: Event) {
     draft.value = text;
     const parsed = parseDraft(text);
     if (parsed !== 'incomplete') {
-        emit('update:modelValue', parsed === null ? null : clamp(parsed));
+        emitted = parsed === null ? null : clamp(parsed);
+        emit('update:modelValue', emitted);
     }
 }
 

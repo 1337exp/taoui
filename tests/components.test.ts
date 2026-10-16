@@ -230,3 +230,38 @@ describe('locale in components', () => {
         expect(w.find('.tao-pagination__total').text()).toBe('1–10 of 42');
     });
 });
+
+describe('input and slider together', () => {
+    it('InputNumber: a value changed elsewhere replaces the draft of a focused field, typing is not overwritten', async () => {
+        const w = mount(TaoInputNumber, { props: { modelValue: 5 }, attachTo: document.body });
+        const input = w.find('input');
+        await input.trigger('focus');
+
+        // набор: поле само отдало значение, родитель вернул его же, черновик остаётся
+        (input.element as HTMLInputElement).value = '12';
+        await input.trigger('input');
+        await w.setProps({ modelValue: 12 });
+        expect((input.element as HTMLInputElement).value).toBe('12');
+
+        // правка снаружи (слайдер): черновик заменяется, blur не вернёт старый текст
+        await w.setProps({ modelValue: 40 });
+        expect((input.element as HTMLInputElement).value).toBe('40');
+        await input.trigger('blur');
+        expect(last(w.emitted('commit')!)).toEqual([40]);
+        w.unmount();
+    });
+
+    it('Slider: pressing on it takes the focus from a field first, then sets the value', async () => {
+        const host = document.createElement('div');
+        document.body.appendChild(host);
+        const field = document.createElement('input');
+        host.appendChild(field);
+        field.focus();
+
+        const w = mount(TaoSlider, { props: { modelValue: 10, min: 0, max: 100 }, attachTo: host });
+        await w.find('.tao-slider__rail').trigger('pointerdown', { button: 0, clientX: 0, clientY: 0, pointerId: 1 });
+        expect(document.activeElement).toBe(w.find('.tao-slider__thumb').element);
+        w.unmount();
+        host.remove();
+    });
+});
