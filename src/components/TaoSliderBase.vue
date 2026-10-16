@@ -28,6 +28,7 @@ const props = withDefaults(defineProps<TaoSliderBaseProps & { modelValue: TaoSli
     step: 1,
     minGap: 0,
     showValue: false,
+    marksSide: 'end',
     discrete: false,
     flat: false,
     vertical: false,
@@ -253,6 +254,7 @@ onBeforeUnmount(() => {
                 'tao-slider--collapsed': isRange && values[0] === values[1],
                 'tao-slider--range': isRange,
                 'tao-slider--has-marks': markList.length > 0,
+                'tao-slider--marks-start': marksSide === 'start',
                 'tao-slider--show-value': showValue,
                 'tao-slider--disabled': disabled,
                 'tao-slider--invalid': invalid,
@@ -437,6 +439,26 @@ onBeforeUnmount(() => {
     border-color: transparent;
 }
 
+.tao-slider--vertical.tao-slider--marks-start {
+    display: inline-flex;
+    flex-direction: row;
+}
+
+.tao-slider--vertical.tao-slider--marks-start .tao-slider__marks {
+    margin-bottom: 0;
+    margin-right: calc(max(0px, var(--tao-slider-thumb) - var(--tao-slider-hit)) / 2 + 2px);
+    margin-left: 0;
+    padding-right: 0;
+    padding-left: 2px;
+}
+
+.tao-slider--vertical.tao-slider--marks-start .tao-slider__mark {
+    left: auto;
+    right: 0;
+    bottom: auto;
+    flex-direction: row-reverse;
+}
+
 .tao-slider--vertical.tao-slider--flat.tao-slider--collapsed .tao-slider__thumb {
     width: calc(var(--tao-slider-track) + 6px);
     height: calc(var(--tao-slider-track) / 2);
@@ -506,6 +528,24 @@ onBeforeUnmount(() => {
 
 .tao-slider__mark:disabled {
     cursor: not-allowed;
+}
+
+/* Метки с другой стороны: над горизонтальным слайдером (черта у полосы, подпись выше) и слева от вертикального */
+.tao-slider--marks-start {
+    display: flex;
+    flex-direction: column;
+}
+
+.tao-slider--marks-start .tao-slider__marks {
+    order: -1;
+    margin-top: 0;
+    margin-bottom: calc(max(0px, var(--tao-slider-thumb) - var(--tao-slider-hit)) / 2 + 2px);
+}
+
+.tao-slider--marks-start .tao-slider__mark {
+    top: auto;
+    bottom: 0;
+    flex-direction: column-reverse;
 }
 
 .tao-slider__tick {

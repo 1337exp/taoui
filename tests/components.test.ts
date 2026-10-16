@@ -306,3 +306,14 @@ describe('focus ring', () => {
         w.unmount();
     });
 });
+
+describe('marksSide', () => {
+    it('start puts the marks on the other side: a class, the marks stay in the markup', () => {
+        const props = { modelValue: 5, min: 0, max: 10, marks: [0, 5, 10] };
+        const end = mount(TaoSlider, { props });
+        expect(end.classes()).not.toContain('tao-slider--marks-start');
+        const start = mount(TaoSlider, { props: { ...props, marksSide: 'start' as const } });
+        expect(start.classes()).toContain('tao-slider--marks-start');
+        expect(start.findAll('.tao-slider__mark')).toHaveLength(3);
+    });
+});

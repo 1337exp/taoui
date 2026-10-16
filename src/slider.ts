@@ -24,6 +24,11 @@ export interface TaoSliderBaseProps {
      * / Метки шкалы: `true` — автоматические деления с числами, массив чисел или объекты `{ value, label? }`.
      */
     marks?: boolean | readonly (number | TaoSliderMark)[];
+    /**
+     * Side of the marks: `end` (default) — below a horizontal slider / right of a vertical one, `start` — above / left.
+     * / Сторона меток: `end` (по умолчанию) — под горизонтальным слайдером и справа от вертикального, `start` — над и слева.
+     */
+    marksSide?: 'start' | 'end';
     /** The value can only be on a mark (stepped scale with captions). / Значение только на метках (ступенчатая шкала с подписями). */
     discrete?: boolean;
     /** Text for numbers (marks, bar). / Текст чисел (метки, полоса). */

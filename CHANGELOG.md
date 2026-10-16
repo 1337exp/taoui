@@ -11,6 +11,7 @@ Cleaner slider family. Breaking changes are allowed in this major: quality over 
   `discrete` (the value only sits on marks: stepped scales with captions), `format`, `vertical`, plus the old
   `min / max / step / variant / size / showValue / disabled / error / wheel`. Clicking a mark caption moves the nearest thumb.
   Slot `#mark="{ mark, active }"` draws a custom caption.
+- **`marksSide`** (`'end'` by default, or `'start'`) puts the marks above a horizontal slider / left of a vertical one.
 - **`flat`** hides the round thumbs (a plain filled bar); they stay in the markup for keyboard and screen readers.
 - **Pure logic in `src/slider.ts`** (value ↔ position, steps without float tails, nearest thumb, marks) with unit tests.
 
