@@ -2,6 +2,7 @@
 import { computed, inject, ref, useId } from 'vue';
 import { formFieldKey } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
+import { warnDeprecated } from '../deprecate';
 
 defineOptions({ name: 'TaoInput' });
 
@@ -54,6 +55,11 @@ function handleFocus(event: FocusEvent) {
     focused.value = true;
     emit('focus', event);
 }
+
+warnDeprecated('TaoInput', {
+    label: 'use `label` of TaoFormField',
+    errorMessage: 'use `error` of TaoFormField',
+});
 </script>
 
 <template>

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
+import { warnDeprecated } from '../deprecate';
 
 defineOptions({ name: 'TaoContainer' });
 
@@ -19,6 +20,10 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const resolvedWidth = computed(() => props.width ?? props.size ?? 'wide');
+
+warnDeprecated('TaoContainer', {
+    size: 'use `width`',
+});
 </script>
 
 <template>

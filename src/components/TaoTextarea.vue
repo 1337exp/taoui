@@ -2,6 +2,7 @@
 import { computed, inject, nextTick, onMounted, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
+import { warnDeprecated } from '../deprecate';
 
 defineOptions({ name: 'TaoTextarea' });
 
@@ -195,6 +196,16 @@ onMounted(() => {
         textareaRef.value?.focus();
     }
     nextTick(autoResize);
+});
+
+warnDeprecated('TaoTextarea', {
+    noBorder: 'use variant="filled"',
+    noBackground: 'use variant="plain"',
+    borderInverse: 'use `variant` (the bar on the right goes away)',
+    dummy: 'use `readonly`',
+    textCenter: 'use align="center"',
+    autoFocus: 'use `autofocus`',
+    submitOnEnter: 'use `blurOnEnter`',
 });
 </script>
 

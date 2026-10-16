@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { warnDeprecated } from '../deprecate';
+import { taoLocale, useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoCopy' });
 
@@ -17,10 +19,10 @@ const props = withDefaults(
     {
         successText: undefined,
         successMessage: undefined,
-        copyLabel: 'Копировать',
         tip: true,
     },
 );
+const l10n = useLocaleText(props, 'copy');
 
 const copied = ref(false);
 const triggerRef = ref<HTMLElement | null>(null);
@@ -121,7 +123,11 @@ onBeforeUnmount(() => {
     visibleObserver = null;
 });
 
-const doneText = computed(() => props.successText ?? props.successMessage ?? 'Скопировано!');
+const doneText = computed(() => props.successText ?? props.successMessage ?? taoLocale().copy.successText);
+
+warnDeprecated('TaoCopy', {
+    successMessage: 'use `successText`',
+});
 </script>
 
 <template>
@@ -131,7 +137,7 @@ const doneText = computed(() => props.successText ?? props.successMessage ?? 'С
                 type="button"
                 class="tao-copy__button"
                 :class="{ 'tao-copy__button--copied': copied }"
-                :aria-label="copied ? doneText : copyLabel"
+                :aria-label="copied ? doneText : l10n.copyLabel"
                 @click="copy"
             >
                 <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">

@@ -2,6 +2,7 @@
 import { computed, nextTick, useId } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
 import { tabValue, type TaoTabItem } from '../tabs';
+import { deprecationWarning, warnDeprecated } from '../deprecate';
 
 defineOptions({ name: 'TaoTabs' });
 
@@ -87,6 +88,14 @@ function onKeydown(event: KeyboardEvent) {
         const last = enabledTabs.value[enabledTabs.value.length - 1];
         selectTab(last ? tabValue(last) : props.modelValue, true);
     }
+}
+
+warnDeprecated('TaoTabs', {
+    tabs: 'use `items` (with `value` instead of `key`)',
+});
+
+if (list.value.some((tab) => tab.key !== undefined)) {
+    deprecationWarning('TaoTabs', 'item `key`', 'use item `value`');
 }
 </script>
 

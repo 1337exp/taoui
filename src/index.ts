@@ -62,6 +62,7 @@ import TaoToastViewport from './components/TaoToastViewport.vue';
 import TaoConfirmHost from './components/TaoConfirmHost.vue';
 import { toast } from './toast';
 import { confirm } from './confirm';
+import { setTaoLocale, type TaoLocale, type TaoLocaleOverrides } from './locale';
 
 // Импорт нужен только для того, чтобы Vite подхватил CSS в сборку
 // styles.css. Сам JS-бандл эти стили в рантайме НЕ применяет —
@@ -133,8 +134,19 @@ const components = [
     TaoConfirmHost,
 ];
 
-export const TaoUI: Plugin = {
-    install(app) {
+export interface TaoUIOptions {
+    /**
+     * Language of built-in texts: `localeEn`, or a few keys on top of Russian (the default).
+     * Язык встроенных текстов: `localeEn` или несколько ключей поверх русской (по умолчанию).
+     */
+    locale?: TaoLocale | TaoLocaleOverrides;
+}
+
+export const TaoUI: Plugin<[TaoUIOptions?]> = {
+    install(app, options: TaoUIOptions = {}) {
+        if (options.locale) {
+            setTaoLocale(options.locale);
+        }
         components.forEach(component => {
             app.component(component.name!, component);
         });
@@ -235,6 +247,8 @@ export {
     formatTaoDateLabel,
     formatTaoDateRangeLabel,
 } from './date';
+export { localeRu, localeEn, setTaoLocale, taoLocale } from './locale';
+export type { TaoLocale, TaoLocaleOverrides } from './locale';
 export type { TaoSize } from './size';
 export type { TaoTone } from './tone';
 export type { TaoLength } from './length';

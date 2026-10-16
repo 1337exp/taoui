@@ -1,22 +1,23 @@
 <script lang="ts" setup>
 import TaoLink from './TaoLink.vue';
 import type { TaoBreadcrumbItem } from '../breadcrumb';
+import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoBreadcrumb' });
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         items: TaoBreadcrumbItem[];
         ariaLabel?: string;
     }>(),
     {
-        ariaLabel: 'Хлебные крошки',
     },
 );
+const l10n = useLocaleText(props, 'breadcrumb');
 </script>
 
 <template>
-    <nav class="tao-breadcrumb" :aria-label="ariaLabel">
+    <nav class="tao-breadcrumb" :aria-label="l10n.ariaLabel">
         <ol class="tao-breadcrumb__list">
             <li v-for="(item, index) in items" :key="`${item.label}-${index}`" class="tao-breadcrumb__item">
                 <span v-if="index > 0" class="tao-breadcrumb__sep" aria-hidden="true">/</span>

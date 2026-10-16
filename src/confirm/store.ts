@@ -1,9 +1,10 @@
 import { ref } from 'vue';
+import { localeRu } from '../locale/ru';
 import type { TaoConfirmDefaults, TaoConfirmRecord } from './types';
 
 export const confirmDefaults: TaoConfirmDefaults = {
-    ok: 'ОК',
-    cancel: 'Отмена',
+    ok: localeRu.confirm.ok,
+    cancel: localeRu.confirm.cancel,
 };
 
 export const currentConfirm = ref<TaoConfirmRecord | null>(null);

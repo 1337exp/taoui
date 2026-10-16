@@ -2,6 +2,7 @@
 import { computed, inject, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
+import { warnDeprecated } from '../deprecate';
 
 defineOptions({ name: 'TaoPinCode' });
 
@@ -233,6 +234,10 @@ watch(
     },
     { immediate: true },
 );
+
+warnDeprecated('TaoPinCode', {
+    hidden: 'use `masked`',
+});
 </script>
 
 <template>

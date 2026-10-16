@@ -2,6 +2,7 @@
 import { nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
 import { getFocusable, trapTab } from '../focusTrap';
 import { isBrowser, lockBodyScroll, unlockBodyScroll } from '../bodyScroll';
+import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoModal' });
 
@@ -15,8 +16,8 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     title: '',
     closable: true,
-    closeLabel: 'Закрыть',
 });
+const l10n = useLocaleText(props, 'modal');
 
 const emit = defineEmits(['update:modelValue', 'close']);
 
@@ -143,7 +144,7 @@ onBeforeUnmount(() => {
                             v-if="closable"
                             type="button"
                             class="tao-modal__close"
-                            :aria-label="closeLabel"
+                            :aria-label="l10n.closeLabel"
                             @click="close"
                         >
                             <span aria-hidden="true">

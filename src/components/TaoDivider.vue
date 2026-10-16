@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, useSlots } from 'vue';
 import type { TaoSize } from '../size';
+import { deprecationWarning } from '../deprecate';
 
 defineOptions({ name: 'TaoDivider' });
 
@@ -26,6 +27,10 @@ const props = withDefaults(
 const slots = useSlots();
 const gapSize = computed(() => (props.size === 'big' ? 'large' : props.size));
 const hasLabel = computed(() => Boolean(props.text) || Boolean(slots.default));
+
+if (props.size === 'big') {
+    deprecationWarning('TaoDivider', 'size "big"', 'use size="large"');
+}
 </script>
 
 <template>

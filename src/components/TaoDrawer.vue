@@ -2,6 +2,7 @@
 import { nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
 import { getFocusable, trapTab } from '../focusTrap';
 import { isBrowser, lockBodyScroll, unlockBodyScroll } from '../bodyScroll';
+import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoDrawer' });
 
@@ -17,9 +18,9 @@ const props = withDefaults(
         title: '',
         side: 'right',
         closable: true,
-        closeLabel: 'Закрыть',
     },
 );
+const l10n = useLocaleText(props, 'drawer');
 
 const emit = defineEmits(['update:modelValue', 'close']);
 
@@ -126,7 +127,7 @@ onBeforeUnmount(() => {
                             v-if="closable"
                             type="button"
                             class="tao-drawer__close"
-                            :aria-label="closeLabel"
+                            :aria-label="l10n.closeLabel"
                             @click="close"
                         >
                             <span aria-hidden="true">

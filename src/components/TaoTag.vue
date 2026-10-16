@@ -2,6 +2,8 @@
 import { computed, useSlots } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
 import type { TaoTone } from '../tone';
+import { warnDeprecated } from '../deprecate';
+import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoTag' });
 
@@ -31,9 +33,9 @@ const props = withDefaults(defineProps<Props>(), {
     clickable: false,
     pointer: false,
     closable: false,
-    closeLabel: 'Убрать',
     flat: false,
 });
+const l10n = useLocaleText(props, 'tag');
 
 const emit = defineEmits<{
     close: [event: MouseEvent];
@@ -53,6 +55,11 @@ const style = computed(() => ({
 function onClose(event: MouseEvent) {
     emit('close', event);
 }
+
+warnDeprecated('TaoTag', {
+    type: 'use `tone`',
+    pointer: 'use `clickable`',
+});
 </script>
 
 <template>
@@ -78,7 +85,7 @@ function onClose(event: MouseEvent) {
             v-if="closable"
             type="button"
             class="tao-tag__close"
-            :aria-label="closeLabel"
+            :aria-label="l10n.closeLabel"
             @click.stop="onClose"
         >
             <span aria-hidden="true">

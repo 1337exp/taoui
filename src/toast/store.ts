@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue';
+import { localeRu } from '../locale/ru';
 import type { TaoToastDefaults, TaoToastPosition, TaoToastRecord } from './types';
 
 export const TOAST_POSITIONS: TaoToastPosition[] = [
@@ -16,7 +17,7 @@ export const toastDefaults: TaoToastDefaults = {
     timeout: 3000,
     closable: true,
     progress: true,
-    closeLabel: 'Закрыть уведомление',
+    closeLabel: localeRu.toast.closeLabel,
 };
 
 export const toasts = ref<TaoToastRecord[]>([]);

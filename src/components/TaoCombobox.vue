@@ -4,6 +4,7 @@ import { formFieldKey } from '../formField';
 import { listenFocusLoss } from '../focusLoss';
 import type { TaoSelectOption } from '../select';
 import { resolveSize, sizeClass, type TaoSize } from '../size';
+import { formatText, taoLocale, useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoCombobox' });
 
@@ -27,15 +28,13 @@ const props = withDefaults(
     {
         modelValue: null,
         options: () => [],
-        placeholder: 'Начните вводить',
         disabled: false,
         error: false,
-        emptyText: 'Ничего не найдено',
-        clearText: 'Очистить',
         clearable: true,
         allowCreate: false,
     },
 );
+const l10n = useLocaleText(props, 'combobox');
 
 const emit = defineEmits<{
     'update:modelValue': [value: string | number | null];
@@ -503,7 +502,7 @@ onBeforeUnmount(() => {
                 :aria-invalid="invalid || undefined"
                 :aria-describedby="describedBy"
                 :disabled="disabled"
-                :placeholder="placeholder"
+                :placeholder="l10n.placeholder"
                 :value="query"
                 @input="query = ($event.target as HTMLInputElement).value; onInput()"
                 @focus="onFocus"
@@ -523,7 +522,7 @@ onBeforeUnmount(() => {
             <div v-if="open" ref="panelRef" class="tao-combobox__panel" :class="sizeClass(panelSize)" :style="listStyle">
                 <ul :id="listId" ref="listRef" class="tao-combobox__list" role="listbox">
                     <li v-if="!rows.length" class="tao-combobox__empty">
-                        <slot name="empty">{{ emptyText }}</slot>
+                        <slot name="empty">{{ l10n.emptyText }}</slot>
                     </li>
                     <li
                         v-for="(row, index) in rows"
@@ -546,7 +545,7 @@ onBeforeUnmount(() => {
                         @mouseenter="!(row.kind === 'option' && row.option.disabled) && (activeIndex = index)"
                     >
                         <template v-if="row.kind === 'create'">
-                            <slot name="create" :text="row.text">Добавить «{{ row.text }}»</slot>
+                            <slot name="create" :text="row.text">{{ formatText(taoLocale().combobox.createText, { text: row.text }) }}</slot>
                         </template>
                         <template v-else>{{ row.option.label }}</template>
                     </li>
@@ -558,7 +557,7 @@ onBeforeUnmount(() => {
                     @mousedown.prevent="markPicking"
                     @click="clear"
                 >
-                    <slot name="clear">{{ clearText }}</slot>
+                    <slot name="clear">{{ l10n.clearText }}</slot>
                 </button>
             </div>
         </Teleport>

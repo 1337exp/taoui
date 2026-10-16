@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, getCurrentInstance } from 'vue';
+import { warnDeprecated } from '../deprecate';
 
 defineOptions({ name: 'TaoLink' });
 
@@ -50,6 +51,10 @@ const linkProps = computed(() => {
         rel,
         ...(linkKind === 'nuxt' ? { exactPath: props.exactPath } : {}),
     };
+});
+
+warnDeprecated('TaoLink', {
+    asNewTab: 'use `newTab`',
 });
 </script>
 

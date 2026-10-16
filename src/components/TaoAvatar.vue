@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
 import type { TaoSize } from '../size';
+import { deprecationWarning } from '../deprecate';
+import { taoLocale, useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoAvatar' });
 
@@ -32,11 +34,10 @@ const props = withDefaults(
         size: 'medium',
         dot: false,
         count: undefined,
-        fallbackLabel: 'Аватар',
-        notificationsLabel: '{count} уведомлений',
         dotLabels: () => ({}),
     },
 );
+const l10n = useLocaleText(props, 'avatar');
 
 const sizeClass = computed(() => {
     if (props.size === 'small' || props.size === 's') {
@@ -83,22 +84,14 @@ const badge = computed(() => {
     return String(props.count);
 });
 
-const defaultDotLabel: Record<Exclude<TaoAvatarDot, 'error'>, string> = {
-    success: 'в сети',
-    danger: 'занят',
-    warning: 'отошёл',
-    info: 'статус',
-    neutral: 'не в сети',
-};
-
 const label = computed(() => {
-    const base = props.alt || props.name || props.fallbackLabel;
+    const base = props.alt || props.name || l10n.value.fallbackLabel;
     const extra: string[] = [];
     if (dotTone.value) {
-        extra.push(props.dotLabels[dotTone.value] ?? defaultDotLabel[dotTone.value]);
+        extra.push(props.dotLabels[dotTone.value] ?? taoLocale().avatar.dotLabels[dotTone.value]);
     }
     if (badge.value) {
-        extra.push(props.notificationsLabel.replace('{count}', badge.value));
+        extra.push(l10n.value.notificationsLabel.replace('{count}', badge.value));
     }
     return extra.length ? `${base}, ${extra.join(', ')}` : base;
 });
@@ -115,6 +108,10 @@ watch(
 
 function onImgError() {
     imgFailed.value = true;
+}
+
+if (props.size === 's' || props.size === 'm' || props.size === 'l') {
+    deprecationWarning('TaoAvatar', `size "${props.size}"`, 'use small / medium / large');
 }
 </script>
 

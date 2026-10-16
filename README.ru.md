@@ -170,6 +170,43 @@ app.use(TaoUI)
 app.mount('#app')
 ```
 
+### Язык
+
+Встроенные тексты (плейсхолдеры, «Очистить», aria-подписи, даты) по умолчанию русские. Английский идёт в комплекте:
+
+```javascript
+import TaoUI, { localeEn } from '@1337exp/taoui'
+
+app.use(TaoUI, { locale: localeEn })
+```
+
+Поменять отдельные тексты — остальное останется от локали по умолчанию:
+
+```javascript
+app.use(TaoUI, { locale: { select: { placeholder: 'Выберите город' } } })
+```
+
+Другой язык: скопируйте `localeEn`, переведите и передайте так же (тип `TaoLocale`). Ключи повторяют имена пропсов —
+`locale.select.placeholder` — значение по умолчанию для `placeholder` у TaoSelect, а переданный руками проп всегда главнее.
+
+Язык можно переключать в любой момент — из настроек, переключателя языка, по маршруту. Уже показанные компоненты
+обновятся сразу, без перезагрузки и без потери введённого:
+
+```javascript
+import { setTaoLocale, localeEn, localeRu } from '@1337exp/taoui'
+
+function onLanguageChange(lang) {
+  setTaoLocale(lang === 'en' ? localeEn : localeRu)
+}
+```
+
+Без плагина (отдельные компоненты) достаточно одного вызова `setTaoLocale()`.
+
+### Переход с 1.x
+
+Смотрите [CHANGELOG.md](CHANGELOG.md): что сломалось и таблица «старое имя → новое». В 2.x старые имена ещё работают
+и в режиме разработки пишут предупреждение в консоль.
+
 ### Использование отдельных компонентов
 
 ```vue
@@ -555,6 +592,9 @@ npm run dev
 
 # Проверка типов
 npm run type-check
+
+# Тесты (Vitest)
+npm test
 ```
 
 ## Публикация в npm

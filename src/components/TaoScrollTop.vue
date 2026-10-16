@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { ref, reactive, onBeforeMount, onBeforeUnmount } from 'vue';
+import { warnDeprecated } from '../deprecate';
+import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoScrollTop' });
 
@@ -27,8 +29,8 @@ const props = withDefaults(defineProps<Props>(), {
     outline: undefined,
     hasOutline: undefined,
     tabindex: 0,
-    ariaLabel: 'Наверх',
 });
+const l10n = useLocaleText(props, 'scrollTop');
 
 const RIPPLE_DURATION = 750;
 const fmtProp = (value: number | string, unit = 'px') => (typeof value === 'number' ? value + unit : value);
@@ -118,6 +120,11 @@ onBeforeMount(() => {
 
 onBeforeUnmount(() => {
     window.removeEventListener('scroll', onScroll);
+});
+
+warnDeprecated('TaoScrollTop', {
+    hasOutline: 'use `outline`',
+    tabindex: 'pass `tabindex` as a plain attribute',
 });
 </script>
 

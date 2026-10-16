@@ -3,6 +3,7 @@ import { computed, inject, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import type { TaoQuantityChangeSource } from '../quantity';
+import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoQuantity' });
 
@@ -31,11 +32,9 @@ const props = withDefaults(
         error: false,
         allowRemove: true,
         forceMaxLimit: true,
-        decrementLabel: 'Уменьшить',
-        removeLabel: 'Убрать',
-        incrementLabel: 'Увеличить',
     },
 );
+const l10n = useLocaleText(props, 'quantity');
 
 const emit = defineEmits<{
     'update:modelValue': [value: number];
@@ -162,7 +161,7 @@ const atMin = computed(() => props.modelValue <= props.min);
 const atMax = computed(() => props.modelValue >= ceiling.value);
 const minusDisabled = computed(() => props.disabled || (!props.allowRemove && atMin.value));
 const plusDisabled = computed(() => props.disabled || atMax.value);
-const minusLabel = computed(() => (atMin.value && props.allowRemove ? props.removeLabel : props.decrementLabel));
+const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value.removeLabel : l10n.value.decrementLabel));
 </script>
 
 <template>
@@ -211,7 +210,7 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? props.remo
         <button
             type="button"
             class="tao-quantity__btn tao-quantity__btn--inc"
-            :aria-label="incrementLabel"
+            :aria-label="l10n.incrementLabel"
             :disabled="plusDisabled"
             @click="onInc"
         >

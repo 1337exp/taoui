@@ -17,6 +17,7 @@ import {
     todayTaoDate,
 } from '../date';
 import '../styles/date-popup.css';
+import { taoLocale, useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoDate' });
 
@@ -38,18 +39,14 @@ const props = withDefaults(
     }>(),
     {
         modelValue: null,
-        placeholder: 'Дата',
         disabled: false,
         error: false,
         min: undefined,
         max: undefined,
-        locale: 'ru-RU',
-        todayText: 'Сегодня',
-        clearText: 'Очистить',
-        prevMonthLabel: 'Предыдущий месяц',
-        nextMonthLabel: 'Следующий месяц',
     },
 );
+const l10n = useLocaleText(props, 'date');
+const dateLocale = computed(() => props.locale ?? taoLocale().code);
 
 const emit = defineEmits<{
     'update:modelValue': [value: string | null];
@@ -75,9 +72,9 @@ const valueIso = computed(() => {
     const parsed = parseTaoDate(props.modelValue);
     return parsed ? formatTaoDateIso(parsed) : null;
 });
-const displayLabel = computed(() => (valueIso.value ? formatTaoDateLabel(valueIso.value, props.locale) : ''));
-const weekdays = computed(() => taoWeekdayLabels(props.locale));
-const monthLabel = computed(() => formatTaoMonthLabel(viewYear.value, viewMonth.value, props.locale));
+const displayLabel = computed(() => (valueIso.value ? formatTaoDateLabel(valueIso.value, dateLocale.value) : ''));
+const weekdays = computed(() => taoWeekdayLabels(dateLocale.value));
+const monthLabel = computed(() => formatTaoMonthLabel(viewYear.value, viewMonth.value, dateLocale.value));
 const cells = computed(() => buildTaoDateGrid(viewYear.value, viewMonth.value));
 const todayIso = computed(() => todayTaoDate());
 const todayEnabled = computed(() => isTaoDateInRange(todayIso.value, props.min, props.max));
@@ -297,7 +294,7 @@ onBeforeUnmount(() => {
             @click="toggle"
             @keydown="onTriggerKeydown"
         >
-            <span class="tao-date__value">{{ displayLabel || placeholder }}</span>
+            <span class="tao-date__value">{{ displayLabel || l10n.placeholder }}</span>
             <span class="tao-date__icon" aria-hidden="true">
                 <slot name="icon">
                     <svg viewBox="0 0 16 16" width="16" height="16" focusable="false">
@@ -330,7 +327,7 @@ onBeforeUnmount(() => {
                 @keydown="onPanelKeydown"
             >
                 <div class="tao-date__header">
-                    <button type="button" class="tao-date__nav" :aria-label="prevMonthLabel" @click="goMonth(-1)">
+                    <button type="button" class="tao-date__nav" :aria-label="l10n.prevMonthLabel" @click="goMonth(-1)">
                         <span aria-hidden="true">
                             <slot name="prev-icon">
                                 <svg viewBox="0 0 24 24" width="14" height="14" focusable="false">
@@ -347,7 +344,7 @@ onBeforeUnmount(() => {
                         </span>
                     </button>
                     <p class="tao-date__month">{{ monthLabel }}</p>
-                    <button type="button" class="tao-date__nav" :aria-label="nextMonthLabel" @click="goMonth(1)">
+                    <button type="button" class="tao-date__nav" :aria-label="l10n.nextMonthLabel" @click="goMonth(1)">
                         <span aria-hidden="true">
                             <slot name="next-icon">
                                 <svg viewBox="0 0 24 24" width="14" height="14" focusable="false">
@@ -383,7 +380,7 @@ onBeforeUnmount(() => {
                             'tao-date__day--disabled': !isTaoDateInRange(cell.iso, min, max),
                         }"
                         role="gridcell"
-                        :aria-label="formatTaoDateLabel(cell.iso, locale)"
+                        :aria-label="formatTaoDateLabel(cell.iso, dateLocale)"
                         :aria-selected="cell.iso === valueIso"
                         :disabled="!isTaoDateInRange(cell.iso, min, max)"
                         @mousedown.prevent
@@ -395,10 +392,10 @@ onBeforeUnmount(() => {
 
                 <div class="tao-date__footer">
                     <button type="button" class="tao-date__link" :disabled="!todayEnabled" @click="selectDay(todayIso)">
-                        <slot name="today">{{ todayText }}</slot>
+                        <slot name="today">{{ l10n.todayText }}</slot>
                     </button>
                     <button v-if="valueIso" type="button" class="tao-date__link" @click="clear">
-                        <slot name="clear">{{ clearText }}</slot>
+                        <slot name="clear">{{ l10n.clearText }}</slot>
                     </button>
                 </div>
             </div>

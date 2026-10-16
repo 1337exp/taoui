@@ -1,14 +1,15 @@
 <script lang="ts" setup>
+import { useLocaleText } from '../locale';
 defineOptions({ name: 'TaoEmpty' });
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         title?: string;
     }>(),
     {
-        title: 'Ничего нет',
     },
 );
+const l10n = useLocaleText(props, 'empty');
 </script>
 
 <template>
@@ -16,7 +17,7 @@ withDefaults(
         <div v-if="$slots.icon" class="tao-empty__icon">
             <slot name="icon" />
         </div>
-        <p v-if="title" class="tao-empty__title">{{ title }}</p>
+        <p v-if="l10n.title" class="tao-empty__title">{{ l10n.title }}</p>
         <p v-if="$slots.default" class="tao-empty__text"><slot /></p>
         <div v-if="$slots.action" class="tao-empty__action">
             <slot name="action" />

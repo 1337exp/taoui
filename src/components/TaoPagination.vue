@@ -2,6 +2,7 @@
 import { computed, watch } from 'vue';
 import { buildPaginationItems } from '../pagination';
 import { sizeClass, type TaoSize } from '../size';
+import { formatText, taoLocale, useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoPagination' });
 
@@ -34,14 +35,9 @@ const props = withDefaults(
         disabled: false,
         showTotal: true,
         jump: 5,
-        ariaLabel: 'Пагинация',
-        prevLabel: 'Назад',
-        nextLabel: 'Вперёд',
-        pageLabel: 'Страница {page}',
-        jumpPrevLabel: 'Назад на {n} страниц',
-        jumpNextLabel: 'Вперёд на {n} страниц',
     },
 );
+const l10n = useLocaleText(props, 'pagination');
 
 const emit = defineEmits<{
     'update:page': [value: number];
@@ -81,11 +77,11 @@ function goTo(next: number) {
 </script>
 
 <template>
-    <nav class="tao-pagination" :class="sizeClass(size)" :aria-label="ariaLabel">
+    <nav class="tao-pagination" :class="sizeClass(size)" :aria-label="l10n.ariaLabel">
         <p v-if="showTotal" class="tao-pagination__total">
             <slot name="total" :from="from" :to="to" :total="total">
-                <template v-if="total === 0">0 из 0</template>
-                <template v-else>{{ from }}–{{ to }} из {{ total }}</template>
+                <template v-if="total === 0">{{ taoLocale().pagination.emptyTotalText }}</template>
+                <template v-else>{{ formatText(taoLocale().pagination.totalText, { from, to, total }) }}</template>
             </slot>
         </p>
 
@@ -93,7 +89,7 @@ function goTo(next: number) {
             <button
                 type="button"
                 class="tao-pagination__btn"
-                :aria-label="prevLabel"
+                :aria-label="l10n.prevLabel"
                 :disabled="disabled || current <= 1"
                 @click="goTo(current - 1)"
             >
@@ -107,7 +103,7 @@ function goTo(next: number) {
                     v-if="item.type === 'ellipsis' && jump > 0"
                     type="button"
                     class="tao-pagination__btn tao-pagination__btn--jump"
-                    :aria-label="item.id === 'left' ? jumpPrevLabel.replace('{n}', String(jump)) : jumpNextLabel.replace('{n}', String(jump))"
+                    :aria-label="item.id === 'left' ? l10n.jumpPrevLabel.replace('{n}', String(jump)) : l10n.jumpNextLabel.replace('{n}', String(jump))"
                     :disabled="disabled"
                     @click="goTo(item.id === 'left' ? current - jump : current + jump)"
                 >
@@ -120,7 +116,7 @@ function goTo(next: number) {
                     class="tao-pagination__btn"
                     :class="{ 'tao-pagination__btn--current': item.page === current }"
                     :aria-current="item.page === current ? 'page' : undefined"
-                    :aria-label="pageLabel.replace('{page}', String(item.page))"
+                    :aria-label="l10n.pageLabel.replace('{page}', String(item.page))"
                     :disabled="disabled"
                     @click="goTo(item.page)"
                 >
@@ -131,7 +127,7 @@ function goTo(next: number) {
             <button
                 type="button"
                 class="tao-pagination__btn"
-                :aria-label="nextLabel"
+                :aria-label="l10n.nextLabel"
                 :disabled="disabled || current >= pageCount"
                 @click="goTo(current + 1)"
             >

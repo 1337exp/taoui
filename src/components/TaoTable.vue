@@ -4,6 +4,8 @@ import TaoLoader from './TaoLoader.vue';
 import { sizeClass, type TaoSize } from '../size';
 import { toCssLength, type TaoLength } from '../length';
 import type { TaoTableColumn, TaoTableSort } from '../table';
+import { warnDeprecated } from '../deprecate';
+import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoTable' });
 
@@ -36,7 +38,6 @@ const props = withDefaults(
         rows: () => [],
         rowKey: 'id',
         loading: false,
-        emptyText: 'Нет данных',
         striped: false,
         compact: false,
         hover: true,
@@ -49,6 +50,7 @@ const props = withDefaults(
         caption: '',
     },
 );
+const l10n = useLocaleText(props, 'table');
 
 const emit = defineEmits<{
     'update:sort': [value: TaoTableSort | null];
@@ -120,6 +122,11 @@ function onRowClick(row: Record<string, unknown>, index: number) {
     }
     emit('row-click', row, index);
 }
+
+warnDeprecated('TaoTable', {
+    compact: 'use size="small"',
+    onSort: 'listen to "change" (or v-model:sort)',
+});
 </script>
 
 <template>
@@ -187,7 +194,7 @@ function onRowClick(row: Record<string, unknown>, index: number) {
             <tbody>
                 <tr v-if="isEmpty">
                     <td class="tao-table__empty" :colspan="colCount">
-                        <slot name="empty">{{ emptyText }}</slot>
+                        <slot name="empty">{{ l10n.emptyText }}</slot>
                     </td>
                 </tr>
                 <tr

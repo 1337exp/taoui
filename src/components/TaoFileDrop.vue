@@ -2,6 +2,8 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
 import { sizeClass, type TaoSize } from '../size';
+import { warnDeprecated } from '../deprecate';
+import { taoLocale, useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoFileDrop' });
 
@@ -29,10 +31,9 @@ const props = withDefaults(defineProps<Props>(), {
     accept: '*',
     multiple: false,
     showClear: false,
-    clearLabel: 'Очистить файлы',
-    removeLabel: 'Убрать «{name}»',
     list: true,
 });
+const l10n = useLocaleText(props, 'fileDrop');
 
 const emit = defineEmits<{
     'update:modelValue': [files: File[]];
@@ -154,17 +155,18 @@ function processFiles(fileList: FileList) {
 }
 
 function defaultFormatSize(bytes: number) {
+    const { units, decimalSeparator } = taoLocale().fileDrop;
     if (bytes < 1024) {
-        return `${bytes} Б`;
+        return `${bytes} ${units[0]}`;
     }
     const kb = bytes / 1024;
     if (kb < 1024) {
         const value = kb < 10 ? kb.toFixed(1) : String(Math.round(kb));
-        return `${value.replace('.', ',')} КБ`;
+        return `${value.replace('.', decimalSeparator)} ${units[1]}`;
     }
     const mb = kb / 1024;
     const value = mb < 10 ? mb.toFixed(1) : String(Math.round(mb));
-    return `${value.replace('.', ',')} МБ`;
+    return `${value.replace('.', decimalSeparator)} ${units[2]}`;
 }
 
 function sizeLabel(bytes: number) {
@@ -183,6 +185,9 @@ onMounted(() => {
 });
 onBeforeUnmount(() => stopFocusLoss?.());
 
+warnDeprecated('TaoFileDrop', {
+    onFiles: 'listen to "change"',
+});
 </script>
 
 <template>
@@ -192,7 +197,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
                 v-if="showClear && modelValue.length"
                 type="button"
                 class="tao-file-drop__clear"
-                :aria-label="clearLabel"
+                :aria-label="l10n.clearLabel"
                 @click="requestClear"
             >
                 <span aria-hidden="true">
@@ -207,7 +212,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
                 @dragleave="handleDragLeave"
                 @drop="handleDrop"
             >
-                <slot>Перетащите файл сюда или нажмите, чтобы выбрать</slot>
+                <slot>{{ taoLocale().fileDrop.zoneText }}</slot>
 
                 <input
                     ref="fileInput"
@@ -228,7 +233,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
                 <button
                     type="button"
                     class="tao-file-drop__remove"
-                    :aria-label="removeLabel.replace('{name}', file.name)"
+                    :aria-label="l10n.removeLabel.replace('{name}', file.name)"
                     @click="removeAt(index)"
                 >
                     <span aria-hidden="true">

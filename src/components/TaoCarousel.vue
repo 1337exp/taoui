@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue';
+import { glideDuration, glideTarget as snapTarget } from '../carousel';
+import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoCarousel' });
 
@@ -30,13 +32,9 @@ const props = withDefaults(
         autoplay: 0,
         loop: false,
         dots: false,
-        ariaLabel: 'Лента',
-        prevLabel: 'Назад',
-        nextLabel: 'Вперёд',
-        dotsLabel: 'Слайды',
-        slideLabel: 'Слайд {n} из {count}',
     },
 );
+const l10n = useLocaleText(props, 'carousel');
 
 const emit = defineEmits<{
     'update:modelValue': [value: number];
@@ -297,11 +295,6 @@ function onUserScrollInput() {
     }
 }
 
-/** How long momentum keeps going, ms (close to iOS). / Сколько длится инерция, мс (близко к iOS). */
-const GLIDE_TIME = 325;
-/** Release speed above which a flick always moves at least one slide, px/ms. / Скорость, с которой щелчок всегда сдвигает хотя бы на слайд. */
-const FLICK_SPEED = 0.3;
-
 function recordSample(x: number) {
     const t = performance.now();
     samples.push({ x, t });
@@ -338,16 +331,7 @@ function glideTarget(from: number, velocity: number) {
         return from;
     }
 
-    const pitch = width + gap;
-    let slide = Math.round((from + velocity * GLIDE_TIME) / pitch);
-    if (velocity > FLICK_SPEED) {
-        slide = Math.max(slide, Math.floor(from / pitch) + 1);
-    } else if (velocity < -FLICK_SPEED) {
-        slide = Math.min(slide, Math.ceil(from / pitch) - 1);
-    }
-
-    const max = el.scrollWidth - el.clientWidth;
-    return Math.min(Math.max(slide * pitch, 0), max);
+    return snapTarget(from, velocity, width + gap, el.scrollWidth - el.clientWidth);
 }
 
 function finishGlide() {
@@ -379,12 +363,7 @@ function glideTo(target: number, velocity: number) {
         return;
     }
 
-    // ease-out cubic starts at 3·distance/duration; a settle from rest is short and calm.
-    // ease-out cubic стартует со скоростью 3·distance/duration; доводка с места — короткая и спокойная.
-    const sameDirection = Math.abs(velocity) > 0.05 && Math.sign(velocity) === Math.sign(distance);
-    const duration = sameDirection
-        ? Math.min(Math.max((3 * Math.abs(distance)) / Math.abs(velocity), 220), 900)
-        : Math.min(200 + Math.abs(distance) * 1.2, 450);
+    const duration = glideDuration(distance, velocity);
     const start = performance.now();
     gliding.value = true;
 
@@ -577,7 +556,7 @@ onBeforeUnmount(() => {
                     v-if="showControls"
                     type="button"
                     class="tao-carousel__nav"
-                    :aria-label="prevLabel"
+                    :aria-label="l10n.prevLabel"
                     :disabled="atStart"
                     @click="goPrev"
                 >
@@ -603,7 +582,7 @@ onBeforeUnmount(() => {
                 class="tao-carousel__track"
                 :class="{ 'tao-carousel__track--dragging': dragging, 'tao-carousel__track--gliding': gliding }"
                 role="region"
-                :aria-label="ariaLabel"
+                :aria-label="l10n.ariaLabel"
                 tabindex="0"
                 @scroll="onScroll"
                 @scrollend="settle"
@@ -625,7 +604,7 @@ onBeforeUnmount(() => {
                     v-if="showControls"
                     type="button"
                     class="tao-carousel__nav"
-                    :aria-label="nextLabel"
+                    :aria-label="l10n.nextLabel"
                     :disabled="atEnd"
                     @click="goNext"
                 >
@@ -648,14 +627,14 @@ onBeforeUnmount(() => {
         </div>
 
         <slot name="dots" :index="index" :count="snapCount" :go="goTo">
-            <div v-if="showDots" class="tao-carousel__dots" role="group" :aria-label="dotsLabel">
+            <div v-if="showDots" class="tao-carousel__dots" role="group" :aria-label="l10n.dotsLabel">
                 <button
                     v-for="n in snapCount"
                     :key="n"
                     type="button"
                     class="tao-carousel__dot"
                     :class="{ 'tao-carousel__dot--active': n - 1 === index }"
-                    :aria-label="slideLabel.replace('{n}', String(n)).replace('{count}', String(snapCount))"
+                    :aria-label="l10n.slideLabel.replace('{n}', String(n)).replace('{count}', String(snapCount))"
                     :aria-current="n - 1 === index ? 'true' : undefined"
                     @click="goTo(n - 1)"
                 >

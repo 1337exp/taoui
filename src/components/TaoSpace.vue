@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
+import { warnDeprecated } from '../deprecate';
 
 defineOptions({ name: 'TaoSpace' });
 
@@ -20,6 +21,10 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const isColumn = computed(() => (props.direction ?? (props.vertical ? 'column' : 'row')) === 'column');
+
+warnDeprecated('TaoSpace', {
+    vertical: 'use direction="column"',
+});
 </script>
 
 <template>

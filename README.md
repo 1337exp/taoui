@@ -169,6 +169,43 @@ app.use(TaoUI)
 app.mount('#app')
 ```
 
+### Language
+
+Built-in texts (placeholders, “Clear”, aria labels, dates) are Russian by default. English ships with the library:
+
+```javascript
+import TaoUI, { localeEn } from '@1337exp/taoui'
+
+app.use(TaoUI, { locale: localeEn })
+```
+
+Change single texts — the rest stays from the default:
+
+```javascript
+app.use(TaoUI, { locale: { select: { placeholder: 'Pick one' } } })
+```
+
+Another language: copy `localeEn`, translate, pass it the same way (type `TaoLocale`). Keys repeat prop names —
+`locale.select.placeholder` is the default of TaoSelect `placeholder`, and a prop passed by hand always wins.
+
+Switch the language at any moment — from your settings, a language picker, a route. Components already on the page
+update at once, without a reload and without losing what users typed:
+
+```javascript
+import { setTaoLocale, localeEn, localeRu } from '@1337exp/taoui'
+
+function onLanguageChange(lang) {
+  setTaoLocale(lang === 'en' ? localeEn : localeRu)
+}
+```
+
+Without the plugin (individual components) `setTaoLocale()` is the only call you need.
+
+### Upgrading from 1.x
+
+See [CHANGELOG.md](CHANGELOG.md): what broke, and a table of old names → new ones. Old names still work in 2.x and
+warn in the console during development.
+
 ### Individual components
 
 ```vue
@@ -552,6 +589,9 @@ npm run dev
 
 # Type check
 npm run type-check
+
+# Tests (Vitest)
+npm test
 ```
 
 ## Publishing to npm

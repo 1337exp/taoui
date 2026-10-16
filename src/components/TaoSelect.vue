@@ -3,6 +3,7 @@ import { computed, inject, nextTick, onBeforeUnmount, ref, useId, watch } from '
 import { formFieldKey } from '../formField';
 import type { TaoSelectOption } from '../select';
 import { resolveSize, sizeClass, type TaoSize } from '../size';
+import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoSelect' });
 
@@ -28,13 +29,12 @@ const props = withDefaults(
     {
         modelValue: null,
         options: () => [],
-        placeholder: 'Выберите',
         disabled: false,
         error: false,
-        clearText: 'Очистить',
         clearable: true,
     },
 );
+const l10n = useLocaleText(props, 'select');
 
 const emit = defineEmits<{
     'update:modelValue': [value: string | number | null];
@@ -283,7 +283,7 @@ onBeforeUnmount(() => {
             @click="toggle"
             @keydown="onTriggerKeydown"
         >
-            <span class="tao-select__value">{{ selected?.label ?? placeholder }}</span>
+            <span class="tao-select__value">{{ selected?.label ?? l10n.placeholder }}</span>
             <span
                 class="tao-select__chevron"
                 :class="{ 'tao-select__chevron--custom': $slots.chevron }"
@@ -338,7 +338,7 @@ onBeforeUnmount(() => {
                     @mousedown.prevent
                     @click="clear"
                 >
-                    <slot name="clear">{{ clearText }}</slot>
+                    <slot name="clear">{{ l10n.clearText }}</slot>
                 </button>
             </div>
         </Teleport>

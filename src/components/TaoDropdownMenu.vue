@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import type { TaoDropdownAction } from '../dropdown';
+import { warnDeprecated } from '../deprecate';
+import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoDropdownMenu' });
 
@@ -11,9 +13,9 @@ const props = withDefaults(
     }>(),
     {
         actions: () => [],
-        menuLabel: 'Меню',
     },
 );
+const l10n = useLocaleText(props, 'dropdownMenu');
 
 const emit = defineEmits<{
     /** Action id. / id действия. */
@@ -142,6 +144,10 @@ onBeforeUnmount(() => {
     window.removeEventListener('scroll', onWinScroll, true);
     window.removeEventListener('resize', updatePosition);
 });
+
+warnDeprecated('TaoDropdownMenu', {
+    onSelected: 'listen to "select"',
+});
 </script>
 
 <template>
@@ -152,7 +158,7 @@ onBeforeUnmount(() => {
             class="tao-dropdown-menu__button"
             aria-haspopup="menu"
             :aria-expanded="isOpen"
-            :aria-label="$slots.button ? undefined : menuLabel"
+            :aria-label="$slots.button ? undefined : l10n.menuLabel"
             @click="toggleMenu"
         >
             <slot v-if="$slots.button" name="button" />

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import type { TaoTone } from '../tone';
+import { warnDeprecated } from '../deprecate';
+import { useLocaleText } from '../locale';
 defineOptions({ name: 'TaoAlert' });
 
 const props = withDefaults(
@@ -18,9 +20,9 @@ const props = withDefaults(
         type: undefined,
         title: '',
         closable: false,
-        closeLabel: 'Закрыть',
     },
 );
+const l10n = useLocaleText(props, 'alert');
 
 const emit = defineEmits<{
     close: [];
@@ -33,6 +35,10 @@ const resolvedTone = computed(() => {
 const live = computed(() =>
     resolvedTone.value === 'error' || resolvedTone.value === 'warning' ? 'assertive' : 'polite',
 );
+
+warnDeprecated('TaoAlert', {
+    type: 'use `tone`',
+});
 </script>
 
 <template>
@@ -50,7 +56,7 @@ const live = computed(() =>
             v-if="closable"
             type="button"
             class="tao-alert__close"
-            :aria-label="closeLabel"
+            :aria-label="l10n.closeLabel"
             @click="emit('close')"
         >
             <span aria-hidden="true">

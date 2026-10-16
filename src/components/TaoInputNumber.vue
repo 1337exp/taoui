@@ -2,6 +2,7 @@
 import { computed, inject, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
+import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoInputNumber' });
 
@@ -29,10 +30,9 @@ const props = withDefaults(
         error: false,
         placeholder: '',
         controls: true,
-        incrementLabel: 'Увеличить',
-        decrementLabel: 'Уменьшить',
     },
 );
+const l10n = useLocaleText(props, 'inputNumber');
 
 const emit = defineEmits<{
     'update:modelValue': [value: number | null];
@@ -203,7 +203,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
             <button
                 type="button"
                 class="tao-input-number__step"
-                :aria-label="incrementLabel"
+                :aria-label="l10n.incrementLabel"
                 tabindex="-1"
                 :disabled="disabled || atMax"
                 @click="bump(1)"
@@ -215,7 +215,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
             <button
                 type="button"
                 class="tao-input-number__step"
-                :aria-label="decrementLabel"
+                :aria-label="l10n.decrementLabel"
                 tabindex="-1"
                 :disabled="disabled || atMin"
                 @click="bump(-1)"

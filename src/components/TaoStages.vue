@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import type { TaoStageItem, TaoStageStatus } from '../stage';
+import { warnDeprecated } from '../deprecate';
+import { taoLocale, useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoStages' });
 
@@ -18,22 +20,15 @@ const props = withDefaults(
         items: () => [],
         direction: undefined,
         vertical: undefined,
-        ariaLabel: 'Стадии',
         statusLabels: () => ({}),
     },
 );
+const l10n = useLocaleText(props, 'stages');
 
 defineSlots<{
     default(props: { item: TaoStageItem; index: number; status: TaoStageStatus }): unknown;
     icon(props: { item: TaoStageItem; index: number; status: TaoStageStatus }): unknown;
 }>();
-
-const fallbackStatusText: Record<TaoStageStatus, string> = {
-    wait: 'ожидание',
-    work: 'в работе',
-    ok: 'готово',
-    bad: 'ошибка',
-};
 
 function statusOf(item: TaoStageItem): TaoStageStatus {
     if (item.status === 'danger') {
@@ -44,17 +39,21 @@ function statusOf(item: TaoStageItem): TaoStageStatus {
 
 function itemLabel(item: TaoStageItem): string {
     const status = statusOf(item);
-    return `${item.label ?? item.key}, ${props.statusLabels[status] ?? fallbackStatusText[status]}`;
+    return `${item.label ?? item.key}, ${props.statusLabels[status] ?? taoLocale().stages.statusLabels[status]}`;
 }
 
 const isRow = computed(() => (props.direction ?? (props.vertical === false ? 'row' : 'column')) === 'row');
+
+warnDeprecated('TaoStages', {
+    vertical: 'use `direction`',
+});
 </script>
 
 <template>
     <ul
         class="tao-stages"
         :class="{ 'tao-stages--horizontal': isRow }"
-        :aria-label="ariaLabel"
+        :aria-label="l10n.ariaLabel"
     >
         <li
             v-for="(item, index) in items"
