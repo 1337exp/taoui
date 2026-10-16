@@ -355,6 +355,27 @@ export const propTables = {
         r('…', '', '', 'Остальное как у TaoSlider: min / max / step, marks, discrete, format, vertical, variant, size, showValue, disabled, error'),
       ],
     },
+    {
+      title: 'TaoTimeline',
+      rows: [
+        r('v-model', 'number', '—', 'Текущее время. Обязательный'),
+        r('v-model:playing', 'boolean', 'false', 'Идёт ли воспроизведение (вид кнопки). Время компонент сам не ведёт'),
+        r('length', 'number', '—', 'Длина; слайдер идёт от 0 до неё. Обязательный'),
+        r('step', 'number', '0.01', 'Шаг слайдера'),
+        r('marks', '(number | { value, label? })[]', '—', 'Метки событий на шкале'),
+        r('marksSide', "'start' | 'end'", "'end'", 'Метки над слайдером или под ним'),
+        r('format', '(time: number) => string', 'toFixed(2)', 'Текст времени в метках и подписи'),
+        r('pauseOnScrub', 'boolean', 'true', 'Пауза, когда пользователь взялся за слайдер'),
+        r('showRestart / showTime', 'boolean', 'true', 'Кнопка «в начало»; подпись «время / длина»'),
+        r('variant', "'bar' | 'thin'", "'thin'", 'Толщина трека'),
+        r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер; без него — размер предков'),
+        r('disabled', 'boolean', 'false', 'Неактивен'),
+        r('playLabel / pauseLabel / restartLabel', 'string', 'из локали', 'Подписи кнопок для скринридеров'),
+        r('@restart', '—', '—', 'Кнопка «в начало» (время уже поставлено в 0)'),
+        r('@seek', 'time', '—', 'Закончили перемотку: отпустили слайдер или клавиша'),
+        r('#mark / #time', '{ mark, active } / { time, length, text }', '—', 'Своя подпись метки; своя подпись времени'),
+      ],
+    },
   ],
   filedrop: [
     {

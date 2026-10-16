@@ -1,6 +1,6 @@
 <script setup>
-import { ref } from 'vue'
-import { TaoProgress, TaoRangeSlider, TaoSlider } from '@tao/ui'
+import { onBeforeUnmount, ref, watch } from 'vue'
+import { TaoProgress, TaoRangeSlider, TaoSlider, TaoTimeline } from '@tao/ui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { propTables } from '../propTables.js'
 
@@ -11,12 +11,21 @@ const sliderVolume = ref(70)
 const sliderWheel = ref(50)
 const sliderRange = ref([200, 4000])
 const sliderColor = ref(3)
+// Таймлайн сам время не ведёт: здесь его ведёт простой таймер (в проектах: usePlayback из @1337exp/taoux/playback)
+const time = ref(1.25)
+const playing = ref(false)
+let timer = 0
+watch(playing, (on) => {
+  clearInterval(timer)
+  if (on) timer = window.setInterval(() => { time.value = (time.value + 0.05) % 8 }, 50)
+})
+onBeforeUnmount(() => clearInterval(timer))
 const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) => ({ value, label }))
 </script>
 
 <template>
   <ShowcaseSection id="slider" :tables="propTables['slider']">
-    <h2>TaoProgress / TaoSlider</h2>
+    <h2>TaoProgress / TaoSlider / TaoTimeline</h2>
           <p>Статичная полоса и слайдер. Проценты сверху по центру или <code>show-percentage="right"</code> справа; если есть <code>#right</code>, процент справа в скобках. <code>:show-percentage="false"</code> прячет. Слайдер слушает стрелки, Home/End и PageUp/Down. По умолчанию — форм-контрол; <code>size="small"</code> — тонкий трек для seek / громкости.</p>
     
           <h3>TaoProgress</h3>
@@ -54,6 +63,10 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
           <TaoSlider v-model="sliderColor" :min="0" :max="7" :marks="colorMarks" discrete class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">Ступенчатая шкала: значение только на метках, клик по подписи переносит ручку</p>
 
+          <h3>TaoTimeline</h3>
+          <TaoTimeline v-model="time" v-model:playing="playing" :length="8" :marks="[0, 2, 4, 6]" :format="(t) => `${t.toFixed(2)} с`" class="demo-wide" />
+          <p style="margin-top: 4px; font-size: 13px;">Кнопки, слайдер с метками событий и подпись. Время не ведёт сам: v-model и v-model:playing</p>
+
           <div class="code-block">
             <pre><code>&lt;TaoProgress :progress="65" /&gt;
 
@@ -76,7 +89,8 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
 &lt;TaoSlider v-model="volume" variant="thin" /&gt;
 &lt;TaoSlider v-model="volume" variant="thin" :wheel="5" /&gt;
 &lt;TaoRangeSlider v-model="range" :min="0" :max="5000" :step="100" marks /&gt;
-&lt;TaoSlider v-model="color" :min="0" :max="7" :marks="colorMarks" discrete /&gt;</code></pre>
+&lt;TaoSlider v-model="color" :min="0" :max="7" :marks="colorMarks" discrete /&gt;
+&lt;TaoTimeline v-model="time" v-model:playing="playing" :length="8" :marks="[0, 2, 4, 6]" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

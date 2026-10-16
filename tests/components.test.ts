@@ -12,6 +12,7 @@ import TaoInputNumber from '../src/components/TaoInputNumber.vue';
 import TaoPagination from '../src/components/TaoPagination.vue';
 import TaoPinCode from '../src/components/TaoPinCode.vue';
 import TaoSelect from '../src/components/TaoSelect.vue';
+import TaoTimeline from '../src/components/TaoTimeline.vue';
 import TaoSlider from '../src/components/TaoSlider.vue';
 import TaoRangeSlider from '../src/components/TaoRangeSlider.vue';
 import TaoSpace from '../src/components/TaoSpace.vue';
@@ -315,5 +316,53 @@ describe('marksSide', () => {
         const start = mount(TaoSlider, { props: { ...props, marksSide: 'start' as const } });
         expect(start.classes()).toContain('tao-slider--marks-start');
         expect(start.findAll('.tao-slider__mark')).toHaveLength(3);
+    });
+});
+
+describe('Timeline', () => {
+    const mountTimeline = (props: Record<string, unknown> = {}) => mount(TaoTimeline, { props: { modelValue: 1.25, length: 8, ...props } });
+
+    it('shows time / length, the play button toggles and is labelled from the locale', async () => {
+        const w = mountTimeline();
+        expect(w.find('.tao-timeline__time').text()).toBe('1.25 / 8.00');
+        const play = w.find('.tao-timeline__controls button');
+        expect(play.attributes('aria-label')).toBe('Играть');
+        await play.trigger('click');
+        expect(w.emitted('update:playing')).toEqual([[true]]);
+
+        await w.setProps({ playing: true });
+        expect(w.find('.tao-timeline__controls button').attributes('aria-label')).toBe('Пауза');
+        await w.find('.tao-timeline__controls button').trigger('click');
+        expect(last(w.emitted('update:playing')!)).toEqual([false]);
+    });
+
+    it('restart sets the time to 0 and tells about it, it can be hidden', async () => {
+        const w = mountTimeline();
+        await w.findAll('.tao-timeline__controls button')[1]!.trigger('click');
+        expect(last(w.emitted('update:modelValue')!)).toEqual([0]);
+        expect(w.emitted('restart')).toHaveLength(1);
+        expect(mountTimeline({ showRestart: false }).findAll('.tao-timeline__controls button')).toHaveLength(1);
+    });
+
+    it('scrubbing sends the time and pauses a playing timeline (unless pauseOnScrub is off)', async () => {
+        const w = mountTimeline({ playing: true });
+        await w.find('.tao-slider__thumb').trigger('keydown', { key: 'ArrowRight' });
+        expect(last(w.emitted('update:modelValue')!)).toEqual([1.26]);
+        expect(last(w.emitted('update:playing')!)).toEqual([false]);
+        expect(last(w.emitted('seek')!)).toEqual([1.26]);
+
+        const still = mountTimeline({ playing: true, pauseOnScrub: false });
+        await still.find('.tao-slider__thumb').trigger('keydown', { key: 'ArrowRight' });
+        expect(still.emitted('update:playing')).toBeUndefined();
+    });
+
+    it('marks, format, the time slot and own texts', () => {
+        const w = mount(TaoTimeline, {
+            props: { modelValue: 2, length: 8, marks: [0, 2, 4], format: (t: number) => `${t} с`, playLabel: 'Go' },
+            slots: { time: '<b class="custom">{{ params.text }}</b>' },
+        });
+        expect(w.findAll('.tao-slider__mark').map((m) => m.text())).toEqual(['0 с', '2 с', '4 с']);
+        expect(w.find('.custom').text()).toBe('2 с / 8 с');
+        expect(w.find('.tao-timeline__controls button').attributes('aria-label')).toBe('Go');
     });
 });

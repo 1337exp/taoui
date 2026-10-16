@@ -27,6 +27,13 @@ Cleaner slider family. Breaking changes are allowed in this major: quality over 
 
 - **No focus ring after a mouse press:** the ring is for the keyboard; it comes back on the first key press.
 
+### Timeline
+
+- **New `TaoTimeline`**: play / pause and «to start» buttons, a slider over time with event marks, a «time / length» label.
+  `v-model` is the time, `v-model:playing` the play state; `pauseOnScrub` pauses when the user grabs the slider; `marks`, `marksSide`,
+  `format`, `showRestart`, `showTime`, `variant`, `size`, slots `#mark` and `#time`. It does not advance the time itself: drive it with
+  anything (for example `usePlayback` from `@1337exp/taoux/playback`). New locale section `timeline` (`playLabel`, `pauseLabel`, `restartLabel`).
+
 ### Breaking
 
 - `TaoSlider` `v-model` is a **number** now; the `number | string` form is gone.

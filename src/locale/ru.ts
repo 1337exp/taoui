@@ -77,5 +77,6 @@ export const localeRu: TaoLocale = {
     },
     table: { emptyText: 'Нет данных' },
     tag: { closeLabel: 'Убрать' },
+    timeline: { playLabel: 'Играть', pauseLabel: 'Пауза', restartLabel: 'В начало' },
     toast: { closeLabel: 'Закрыть уведомление' },
 };

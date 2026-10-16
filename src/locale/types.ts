@@ -79,6 +79,7 @@ export interface TaoLocale {
     stages: { ariaLabel: string; statusLabels: Record<TaoStageStatus, string> };
     table: { emptyText: string };
     tag: { closeLabel: string };
+    timeline: { playLabel: string; pauseLabel: string; restartLabel: string };
     toast: { closeLabel: string };
 }
 

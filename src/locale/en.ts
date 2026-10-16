@@ -76,5 +76,6 @@ export const localeEn: TaoLocale = {
     },
     table: { emptyText: 'No data' },
     tag: { closeLabel: 'Remove' },
+    timeline: { playLabel: 'Play', pauseLabel: 'Pause', restartLabel: 'Restart' },
     toast: { closeLabel: 'Close notification' },
 };
