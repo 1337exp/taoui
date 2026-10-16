@@ -28,6 +28,8 @@ export interface TaoSliderBaseProps {
     discrete?: boolean;
     /** Text for numbers (marks, bar). / Текст чисел (метки, полоса). */
     format?: (value: number) => string;
+    /** No round thumbs: a flat bar with the fill only (the thumbs stay for keyboard and screen readers). / Без круглых ручек: плоская полоса с заливкой (для клавиатуры и скринридеров ручки остаются). */
+    flat?: boolean;
     /** Vertical: the maximum is at the top. / Вертикальный: максимум сверху. */
     vertical?: boolean;
     disabled?: boolean;

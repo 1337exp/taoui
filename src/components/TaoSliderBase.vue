@@ -29,6 +29,7 @@ const props = withDefaults(defineProps<TaoSliderBaseProps & { modelValue: TaoSli
     minGap: 0,
     showValue: false,
     discrete: false,
+    flat: false,
     vertical: false,
     disabled: false,
     error: false,
@@ -230,6 +231,7 @@ onBeforeUnmount(() => {
             sizeClass(size),
             {
                 'tao-slider--vertical': vertical,
+                'tao-slider--flat': flat,
                 'tao-slider--range': isRange,
                 'tao-slider--has-marks': markList.length > 0,
                 'tao-slider--show-value': showValue,
@@ -397,6 +399,12 @@ onBeforeUnmount(() => {
     outline: none;
 }
 
+/* flat: бегунков не видно, но они остаются в разметке для клавиатуры; фокус виден кольцом */
+.tao-slider--flat .tao-slider__thumb {
+    background-color: transparent;
+    border-color: transparent;
+}
+
 .tao-slider__thumb:focus-visible {
     outline: 2px solid var(--tao-color-accent);
     outline-offset: 3px;
@@ -425,6 +433,8 @@ onBeforeUnmount(() => {
 .tao-slider__marks {
     position: relative;
     height: calc(var(--tao-control-font-size-secondary) * 1.5 + 8px);
+    /* бегунок выступает за полосу: метки ниже его края, а не под ним */
+    margin-top: calc(max(0px, var(--tao-slider-thumb) - var(--tao-slider-hit)) / 2 + 2px);
 }
 
 .tao-slider__mark {
@@ -518,7 +528,8 @@ onBeforeUnmount(() => {
 .tao-slider--vertical .tao-slider__marks {
     width: auto;
     height: 100%;
-    margin-left: 4px;
+    margin-top: 0;
+    margin-left: calc(max(0px, var(--tao-slider-thumb) - var(--tao-slider-hit)) / 2 + 2px);
     padding-right: 2px;
     min-width: 1em;
 }
