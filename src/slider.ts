@@ -28,12 +28,14 @@ export interface TaoSliderBaseProps {
     discrete?: boolean;
     /** Text for numbers (marks, bar). / Текст чисел (метки, полоса). */
     format?: (value: number) => string;
-    /**
-     * No round thumbs: a flat bar with the fill only (the thumbs stay for keyboard and screen readers). A range collapsed into one point
-     * shows a small dash there. / Без круглых ручек: плоская полоса с заливкой (для клавиатуры и скринридеров ручки остаются).
-     * Диапазон, сведённый в точку, показывает там короткий штрих.
-     */
+    /** No round thumbs: a flat bar with the fill only (the thumbs stay for keyboard and screen readers). / Без круглых ручек: плоская полоса с заливкой (для клавиатуры и скринридеров ручки остаются). */
     flat?: boolean;
+    /**
+     * With `flat`, a range collapsed into one point shows a small dash there (otherwise nothing is visible). Off by default: a design
+     * may not want extra marks. / При `flat` диапазон, сведённый в точку, показывает там короткий штрих (иначе не видно ничего).
+     * По умолчанию выключено: дизайну могут быть не нужны лишние знаки.
+     */
+    collapsedMark?: boolean;
     /** Vertical: the maximum is at the top. / Вертикальный: максимум сверху. */
     vertical?: boolean;
     disabled?: boolean;

@@ -30,6 +30,7 @@ const props = withDefaults(defineProps<TaoSliderBaseProps & { modelValue: TaoSli
     showValue: false,
     discrete: false,
     flat: false,
+    collapsedMark: false,
     vertical: false,
     disabled: false,
     error: false,
@@ -246,6 +247,7 @@ onBeforeUnmount(() => {
                 'tao-slider--vertical': vertical,
                 'tao-slider--flat': flat,
                 'tao-slider--collapsed': isRange && values[0] === values[1],
+                'tao-slider--collapsed-mark': flat && collapsedMark,
                 'tao-slider--range': isRange,
                 'tao-slider--has-marks': markList.length > 0,
                 'tao-slider--show-value': showValue,
@@ -420,10 +422,10 @@ onBeforeUnmount(() => {
 }
 
 /*
- * flat и диапазон сведён в точку: заливки нет, и без бегунков не видно, где он. Показываем точку-штрих шириной с полосу:
- * её видно и за неё можно схватить (потянув вправо вынется верхняя ручка, влево нижняя).
+ * flat + collapsedMark и диапазон сведён в точку: заливки нет, и без бегунков не видно, где он. Показываем штрих.
+ * Схватить точку можно и без него (потянув вправо вынется верхняя ручка, влево нижняя).
  */
-.tao-slider--flat.tao-slider--collapsed .tao-slider__thumb {
+.tao-slider--collapsed-mark.tao-slider--collapsed .tao-slider__thumb {
     width: calc(var(--tao-slider-track) / 2);
     height: calc(var(--tao-slider-track) + 6px);
     border-radius: var(--tao-radius-sm);
@@ -431,7 +433,7 @@ onBeforeUnmount(() => {
     border-color: transparent;
 }
 
-.tao-slider--vertical.tao-slider--flat.tao-slider--collapsed .tao-slider__thumb {
+.tao-slider--vertical.tao-slider--collapsed-mark.tao-slider--collapsed .tao-slider__thumb {
     width: calc(var(--tao-slider-track) + 6px);
     height: calc(var(--tao-slider-track) / 2);
 }

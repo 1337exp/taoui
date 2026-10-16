@@ -278,6 +278,7 @@ describe('range collapsed into one point', () => {
     it('the collapsed class is set, a drag to the right pulls the upper thumb, to the left the lower', async () => {
         const w = mountRange([40, 40]);
         expect(w.classes()).toContain('tao-slider--collapsed');
+        expect(w.classes()).not.toContain('tao-slider--collapsed-mark'); // штрих по умолчанию не рисуется
 
         await rail(w).trigger('pointerdown', { button: 0, clientX: 40, clientY: 8, pointerId: 1 });
         await rail(w).trigger('pointermove', { clientX: 40, clientY: 8, pointerId: 1 });
@@ -292,5 +293,14 @@ describe('range collapsed into one point', () => {
         await rail(left).trigger('pointermove', { clientX: 10, clientY: 8, pointerId: 1 });
         expect(last(left.emitted('update:modelValue')!)).toEqual([[10, 40]]);
         left.unmount();
+    });
+});
+
+describe('collapsedMark', () => {
+    it('the dash class only with flat and collapsedMark together', () => {
+        const props = { modelValue: [30, 30] as [number, number], min: 0, max: 100 };
+        expect(mount(TaoRangeSlider, { props: { ...props, flat: true } }).classes()).not.toContain('tao-slider--collapsed-mark');
+        expect(mount(TaoRangeSlider, { props: { ...props, collapsedMark: true } }).classes()).not.toContain('tao-slider--collapsed-mark');
+        expect(mount(TaoRangeSlider, { props: { ...props, flat: true, collapsedMark: true } }).classes()).toContain('tao-slider--collapsed-mark');
     });
 });
