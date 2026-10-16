@@ -70,7 +70,9 @@ function goToTop() {
     const c = getScrollValue();
     if (c > 0) {
         window.requestAnimationFrame(goToTop);
-        window.scrollTo(0, c - Math.max(10, c / 8));
+        // Шаги анимации делаем сами, поэтому 'instant': иначе при `scroll-behavior: smooth` на html каждый шаг
+        // запускает своё плавное движение, и подъём ползёт.
+        window.scrollTo({ top: c - Math.max(10, c / 8), left: 0, behavior: 'instant' });
     }
 }
 
