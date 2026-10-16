@@ -22,7 +22,9 @@ Cleaner slider family. Breaking changes are allowed in this major: quality over 
   write the stale text over it. Typing is not affected: the echo of the field's own value does not overwrite the draft.
 
 - **A range collapsed into one point can be pulled apart again:** pressing exactly on the point decides the thumb by the direction of the
-  first move (right: the upper one, left: the lower one). With `flat` + `collapsedMark` such a range shows a small dash (off by default).
+  first move (right: the upper one, left: the lower one). With `flat` such a range shows a small dash instead of disappearing.
+
+- **No focus ring after a mouse press:** the ring is for the keyboard; it comes back on the first key press.
 
 ### Breaking
 

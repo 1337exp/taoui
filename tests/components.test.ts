@@ -278,7 +278,6 @@ describe('range collapsed into one point', () => {
     it('the collapsed class is set, a drag to the right pulls the upper thumb, to the left the lower', async () => {
         const w = mountRange([40, 40]);
         expect(w.classes()).toContain('tao-slider--collapsed');
-        expect(w.classes()).not.toContain('tao-slider--collapsed-mark'); // штрих по умолчанию не рисуется
 
         await rail(w).trigger('pointerdown', { button: 0, clientX: 40, clientY: 8, pointerId: 1 });
         await rail(w).trigger('pointermove', { clientX: 40, clientY: 8, pointerId: 1 });
@@ -296,11 +295,14 @@ describe('range collapsed into one point', () => {
     });
 });
 
-describe('collapsedMark', () => {
-    it('the dash class only with flat and collapsedMark together', () => {
-        const props = { modelValue: [30, 30] as [number, number], min: 0, max: 100 };
-        expect(mount(TaoRangeSlider, { props: { ...props, flat: true } }).classes()).not.toContain('tao-slider--collapsed-mark');
-        expect(mount(TaoRangeSlider, { props: { ...props, collapsedMark: true } }).classes()).not.toContain('tao-slider--collapsed-mark');
-        expect(mount(TaoRangeSlider, { props: { ...props, flat: true, collapsedMark: true } }).classes()).toContain('tao-slider--collapsed-mark');
+
+describe('focus ring', () => {
+    it('after a mouse press the ring is suppressed, a key press brings it back', async () => {
+        const w = mount(TaoSlider, { props: { modelValue: 10, min: 0, max: 100 }, attachTo: document.body });
+        await w.find('.tao-slider__rail').trigger('pointerdown', { button: 0, clientX: 0, clientY: 0, pointerId: 1 });
+        expect(w.classes()).toContain('tao-slider--pointer-focus');
+        await w.find('.tao-slider__thumb').trigger('keydown', { key: 'ArrowRight' });
+        expect(w.classes()).not.toContain('tao-slider--pointer-focus');
+        w.unmount();
     });
 });

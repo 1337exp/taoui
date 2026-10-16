@@ -30,7 +30,6 @@ const props = withDefaults(defineProps<TaoSliderBaseProps & { modelValue: TaoSli
     showValue: false,
     discrete: false,
     flat: false,
-    collapsedMark: false,
     vertical: false,
     disabled: false,
     error: false,
@@ -118,6 +117,8 @@ function valueUnder(event: PointerEvent | MouseEvent): number {
 const railRef = ref<HTMLElement | null>(null);
 const isDragging = ref(false);
 const activeThumb = ref(0);
+/** Фокус пришёл от мыши: кольцо фокуса не показываем (оно для клавиатуры), хотя фокус на ручке стоит. */
+const pointerFocus = ref(false);
 let dragPointer = -1;
 let dragStart: number[] = [];
 /** Нажали ровно на точку, где сведены обе ручки диапазона: какую вытянуть, решит направление первого движения. */
@@ -155,6 +156,7 @@ function onPointerDown(event: PointerEvent) {
     isDragging.value = true;
     activeThumb.value = nearestThumb(values.value, target, activeThumb.value);
     tieAt = isRange.value && values.value[0] === values.value[1] && target === values.value[0] ? target : null;
+    pointerFocus.value = true;
     // preventDefault ниже гасит и фокус, поэтому берём его сами и первым делом: поле ввода, в котором печатали, теряет фокус
     // и записывает свой текст до того, как слайдер поменяет значение, а не после (иначе устаревший текст затёр бы его)
     railRef.value.querySelectorAll<HTMLElement>('.tao-slider__thumb')[activeThumb.value]?.focus({ preventScroll: true });
@@ -189,6 +191,7 @@ function onPointerEnd(event: PointerEvent) {
 
 function onKeydown(event: KeyboardEvent, index: number) {
     if (props.disabled) return;
+    pointerFocus.value = false; // дальше слайдером управляют с клавиатуры: кольцо снова нужно
     activeThumb.value = index;
     const at = values.value[index]!;
 
@@ -246,8 +249,8 @@ onBeforeUnmount(() => {
             {
                 'tao-slider--vertical': vertical,
                 'tao-slider--flat': flat,
+                'tao-slider--pointer-focus': pointerFocus,
                 'tao-slider--collapsed': isRange && values[0] === values[1],
-                'tao-slider--collapsed-mark': flat && collapsedMark,
                 'tao-slider--range': isRange,
                 'tao-slider--has-marks': markList.length > 0,
                 'tao-slider--show-value': showValue,
@@ -288,6 +291,7 @@ onBeforeUnmount(() => {
                 :aria-invalid="invalid || undefined"
                 :aria-describedby="describedBy"
                 @keydown="onKeydown($event, i)"
+                @blur="pointerFocus = false"
             ></div>
 
             <div v-if="showValue" class="tao-slider__value">
@@ -422,10 +426,10 @@ onBeforeUnmount(() => {
 }
 
 /*
- * flat + collapsedMark и диапазон сведён в точку: заливки нет, и без бегунков не видно, где он. Показываем штрих.
- * Схватить точку можно и без него (потянув вправо вынется верхняя ручка, влево нижняя).
+ * flat и диапазон сведён в точку: заливки нет, и без бегунков не видно, где он. Показываем штрих: его видно и за него можно
+ * схватить (потянув вправо вынется верхняя ручка, влево нижняя).
  */
-.tao-slider--collapsed-mark.tao-slider--collapsed .tao-slider__thumb {
+.tao-slider--flat.tao-slider--collapsed .tao-slider__thumb {
     width: calc(var(--tao-slider-track) / 2);
     height: calc(var(--tao-slider-track) + 6px);
     border-radius: var(--tao-radius-sm);
@@ -433,12 +437,12 @@ onBeforeUnmount(() => {
     border-color: transparent;
 }
 
-.tao-slider--vertical.tao-slider--collapsed-mark.tao-slider--collapsed .tao-slider__thumb {
+.tao-slider--vertical.tao-slider--flat.tao-slider--collapsed .tao-slider__thumb {
     width: calc(var(--tao-slider-track) + 6px);
     height: calc(var(--tao-slider-track) / 2);
 }
 
-.tao-slider__thumb:focus-visible {
+.tao-slider:not(.tao-slider--pointer-focus) .tao-slider__thumb:focus-visible {
     outline: 2px solid var(--tao-color-accent);
     outline-offset: 3px;
 }
