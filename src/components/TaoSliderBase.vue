@@ -119,6 +119,8 @@ const isDragging = ref(false);
 const activeThumb = ref(0);
 let dragPointer = -1;
 let dragStart: number[] = [];
+/** Нажали ровно на точку, где сведены обе ручки диапазона: какую вытянуть, решит направление первого движения. */
+let tieAt: number | null = null;
 
 function releaseDragCapture() {
     const el = railRef.value;
@@ -137,6 +139,7 @@ function endDrag() {
     isDragging.value = false;
     releaseDragCapture();
     dragPointer = -1;
+    tieAt = null;
     if (values.value.some((v, i) => v !== dragStart[i])) {
         emit('change', isRange.value ? [values.value[0]!, values.value[1]!] : values.value[0]!);
     }
@@ -150,6 +153,7 @@ function onPointerDown(event: PointerEvent) {
     dragStart = [...values.value];
     isDragging.value = true;
     activeThumb.value = nearestThumb(values.value, target, activeThumb.value);
+    tieAt = isRange.value && values.value[0] === values.value[1] && target === values.value[0] ? target : null;
     // preventDefault ниже гасит и фокус, поэтому берём его сами и первым делом: поле ввода, в котором печатали, теряет фокус
     // и записывает свой текст до того, как слайдер поменяет значение, а не после (иначе устаревший текст затёр бы его)
     railRef.value.querySelectorAll<HTMLElement>('.tao-slider__thumb')[activeThumb.value]?.focus({ preventScroll: true });
@@ -164,7 +168,13 @@ function onPointerDown(event: PointerEvent) {
 
 function onPointerMove(event: PointerEvent) {
     if (!isDragging.value || event.pointerId !== dragPointer) return;
-    setThumb(activeThumb.value, valueUnder(event));
+    const target = valueUnder(event);
+    if (tieAt !== null) {
+        if (target === tieAt) return; // ещё на точке: ручки не трогаем
+        activeThumb.value = target > tieAt ? 1 : 0;
+        tieAt = null;
+    }
+    setThumb(activeThumb.value, target);
 }
 
 function onPointerEnd(event: PointerEvent) {
@@ -235,6 +245,7 @@ onBeforeUnmount(() => {
             {
                 'tao-slider--vertical': vertical,
                 'tao-slider--flat': flat,
+                'tao-slider--collapsed': isRange && values[0] === values[1],
                 'tao-slider--range': isRange,
                 'tao-slider--has-marks': markList.length > 0,
                 'tao-slider--show-value': showValue,
@@ -406,6 +417,23 @@ onBeforeUnmount(() => {
 .tao-slider--flat .tao-slider__thumb {
     background-color: transparent;
     border-color: transparent;
+}
+
+/*
+ * flat и диапазон сведён в точку: заливки нет, и без бегунков не видно, где он. Показываем точку-штрих шириной с полосу:
+ * её видно и за неё можно схватить (потянув вправо вынется верхняя ручка, влево нижняя).
+ */
+.tao-slider--flat.tao-slider--collapsed .tao-slider__thumb {
+    width: calc(var(--tao-slider-track) / 2);
+    height: calc(var(--tao-slider-track) + 6px);
+    border-radius: var(--tao-radius-sm);
+    background-color: var(--tao-color-accent);
+    border-color: transparent;
+}
+
+.tao-slider--vertical.tao-slider--flat.tao-slider--collapsed .tao-slider__thumb {
+    width: calc(var(--tao-slider-track) + 6px);
+    height: calc(var(--tao-slider-track) / 2);
 }
 
 .tao-slider__thumb:focus-visible {

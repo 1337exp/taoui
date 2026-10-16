@@ -265,3 +265,32 @@ describe('input and slider together', () => {
         host.remove();
     });
 });
+
+describe('range collapsed into one point', () => {
+    const mountRange = (value: [number, number]) => {
+        const w = mount(TaoRangeSlider, { props: { modelValue: value, min: 0, max: 100 }, attachTo: document.body });
+        const rail = w.find('.tao-slider__rail').element;
+        rail.getBoundingClientRect = () => ({ left: 0, top: 0, width: 100, height: 16, right: 100, bottom: 16, x: 0, y: 0, toJSON: () => ({}) });
+        return w;
+    };
+    const rail = (w: ReturnType<typeof mountRange>) => w.find('.tao-slider__rail');
+
+    it('the collapsed class is set, a drag to the right pulls the upper thumb, to the left the lower', async () => {
+        const w = mountRange([40, 40]);
+        expect(w.classes()).toContain('tao-slider--collapsed');
+
+        await rail(w).trigger('pointerdown', { button: 0, clientX: 40, clientY: 8, pointerId: 1 });
+        await rail(w).trigger('pointermove', { clientX: 40, clientY: 8, pointerId: 1 });
+        expect(last(w.emitted('update:modelValue')!)).toEqual([[40, 40]]); // пока на точке, значение не меняется
+        await rail(w).trigger('pointermove', { clientX: 70, clientY: 8, pointerId: 1 });
+        expect(last(w.emitted('update:modelValue')!)).toEqual([[40, 70]]);
+        await rail(w).trigger('pointerup', { pointerId: 1 });
+        w.unmount();
+
+        const left = mountRange([40, 40]);
+        await rail(left).trigger('pointerdown', { button: 0, clientX: 40, clientY: 8, pointerId: 1 });
+        await rail(left).trigger('pointermove', { clientX: 10, clientY: 8, pointerId: 1 });
+        expect(last(left.emitted('update:modelValue')!)).toEqual([[10, 40]]);
+        left.unmount();
+    });
+});
