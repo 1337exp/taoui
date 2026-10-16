@@ -9,6 +9,7 @@ export const propTables = {
         r('radius', 'number | string', '8', 'Скругление. Число — px, строка — CSS'),
         r('shadow', 'boolean', 'true', 'Тень панели'),
         r('hover', 'boolean', 'false', 'Усилить тень при наведении, курсор pointer'),
+        r('surface', "'flat' | 'grain' | 'glass'", "'flat'", 'Из чего сделан блок: заливка / зерно / стекло. См. «Поверхности»'),
       ],
       slots: 'default — содержимое блока.',
     },
@@ -29,6 +30,18 @@ export const propTables = {
       slots: 'default — подпись кнопки.',
     },
   ],
+  surface: [
+    {
+      title: 'Классы и токены',
+      rows: [
+        r('.tao-surface-grain', 'class', '—', 'Статичное плёночное зерно. Любой элемент'),
+        r('.tao-surface-glass', 'class', '—', 'Полупрозрачная заливка + размытие фона. Без поддержки blur или при prefers-reduced-transparency — сплошная'),
+        r('--tao-surface-grain-image / -size', 'image / length', 'SVG / 160px', 'Своя текстура зерна'),
+        r('--tao-glass-fill / -border / -blur', 'color / color / length', '55% / white 8% / 16px', 'Стекло'),
+      ],
+      slots: 'Поверхность принадлежит одному элементу: вложенные панели её не наследуют. Toast и confirm стеклянные по умолчанию: toast.defaults({ surface: \'flat\' }) / confirm.defaults({ surface: \'flat\' }) выключают.',
+    },
+  ],
   card: [
     {
       title: 'TaoCard',
@@ -39,6 +52,7 @@ export const propTables = {
         r('shadowBottomOnly', 'boolean', 'false', 'Линия снизу карточки, не scrim на фото'),
         r('flush', 'boolean', 'false', 'Плитка: без padding и тени, cover/body на всю ячейку'),
         r('hover', 'boolean', 'false', 'Обводка акцентом при наведении'),
+        r('surface', "'flat' | 'grain' | 'glass'", "'flat'", 'Из чего сделана карточка: заливка / зерно / стекло. См. «Поверхности»'),
         r('active', 'boolean', 'false', 'Выделенное состояние'),
         r('overflow', 'boolean', 'false', 'Не обрезать содержимое (cover/карусель)'),
       ],

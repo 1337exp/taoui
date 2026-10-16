@@ -2,6 +2,8 @@ import { mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import TaoAlert from '../src/components/TaoAlert.vue';
+import TaoBlock from '../src/components/TaoBlock.vue';
+import TaoCard from '../src/components/TaoCard.vue';
 import TaoCheckbox from '../src/components/TaoCheckbox.vue';
 import TaoCopy from '../src/components/TaoCopy.vue';
 import TaoDropdownMenu from '../src/components/TaoDropdownMenu.vue';
@@ -26,6 +28,14 @@ describe('sizes', () => {
     it('explicit size adds the size class, no size inherits', () => {
         expect(cls(mount(TaoInput, { props: { size: 'small' } }).element)).toContain('tao-size-small');
         expect(cls(mount(TaoInput).element)).not.toContain('tao-size-');
+    });
+});
+
+describe('surfaces', () => {
+    it('Card / Block get the surface class, flat keeps the plain look', () => {
+        expect(cls(mount(TaoCard, { props: { surface: 'grain' } }).element)).toContain('tao-surface-grain');
+        expect(cls(mount(TaoBlock, { props: { surface: 'glass' } }).element)).toContain('tao-surface-glass');
+        expect(cls(mount(TaoCard).element)).not.toContain('tao-surface-');
     });
 });
 

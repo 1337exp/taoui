@@ -1,3 +1,5 @@
+import type { TaoSurface } from '../surface';
+
 export type TaoToastType = 'success' | 'error' | 'danger' | 'warning' | 'info' | 'neutral';
 
 export type TaoToastPosition =
@@ -26,6 +28,7 @@ export interface TaoToastRecord {
     position: TaoToastPosition;
     closable: boolean;
     progress: boolean;
+    surface: TaoSurface;
     displayMode?: TaoToastDisplayMode;
     dedupeId?: string;
     actions: TaoToastAction[];
@@ -38,6 +41,8 @@ export interface TaoToastDefaults {
     closable: boolean;
     progress: boolean;
     closeLabel: string;
+    /** `glass` by default; `flat` turns it off. / По умолчанию `glass`; `flat` выключает. */
+    surface: TaoSurface;
 }
 
 export interface TaoToastShortcutOptions {
@@ -47,6 +52,7 @@ export interface TaoToastShortcutOptions {
     icon?: string;
     closable?: boolean;
     progress?: boolean;
+    surface?: TaoSurface;
     id?: string;
     once?: boolean;
     replace?: boolean;

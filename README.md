@@ -102,6 +102,15 @@ Without `size` a control takes the size of its ancestors, `medium` at the root. 
 Content and layout keep their own scale and do not inherit: Avatar (24 / 32 / 48px; `s` / `m` / `l` are deprecated), Divider `gap` (`big` is a deprecated alias of `large`), Loader / Icon / ScrollTop (pixels).
 Container lives on another axis — width: `width="wide" | "slim" | "ultra-slim"` (`size` is a deprecated alias).
 
+Surfaces — what a panel is made of: `flat` fill (default), `grain` (static film grain), `glass` (translucent, blurs what is
+behind). Use `surface` on TaoCard / TaoBlock or the class `tao-surface-grain` / `-glass` on any element — a game HUD, a
+landing section, a sidebar. Tune the look once with theme tokens (`--tao-surface-grain-image` / `-size`, `--tao-glass-fill`
+/ `-border` / `-blur`). A surface belongs to one element: nested panels do not inherit it. Glass needs something behind
+it — keep it for things that float over content; over a flat background it is just a grey fill, over animation it is
+re-blurred every frame. Toast and confirm are glass by default, tinted by their tone; `toast.defaults({ surface: 'flat' })`
+and `confirm.defaults({ surface: 'flat' })` turn it off, `.surface('flat')` does it for one. Without blur support or with
+`prefers-reduced-transparency` glass falls back to a solid panel.
+
 Font size scale (primitives): `xs` 12 … `xl` 18 for controls; `2xl` 24, `3xl` 32, `4xl` 36 for titles and prose.
 There is no heading component — use `h1 { font-size: var(--tao-font-size-3xl) }`.
 

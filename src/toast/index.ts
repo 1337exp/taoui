@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import TaoToastViewport from '../components/TaoToastViewport.vue';
 import { addToast, configureToastDefaults, dismissToasts, hasToastViewport, toastDefaults } from './store';
+import type { TaoSurface } from '../surface';
 import type {
     TaoToastAction,
     TaoToastDefaults,
@@ -39,6 +40,7 @@ interface Draft {
     position: TaoToastPosition;
     closable: boolean;
     progress: boolean;
+    surface: TaoSurface;
     displayMode?: TaoToastDisplayMode;
     dedupeId?: string;
     actions: TaoToastAction[];
@@ -92,6 +94,7 @@ function flushDraft(draft: Draft) {
         position: draft.position,
         closable: draft.closable,
         progress: draft.progress,
+        surface: draft.surface,
         displayMode: draft.displayMode,
         dedupeId,
         actions: draft.actions,
@@ -109,6 +112,7 @@ function createDraft(): Draft {
         position: toastDefaults.position,
         closable: toastDefaults.closable,
         progress: toastDefaults.progress,
+        surface: toastDefaults.surface,
         actions: [],
     };
 }
@@ -135,6 +139,8 @@ export interface TaoToastBuilder {
     byBottomCenter(): TaoToastBuilder;
     closable(value?: boolean): TaoToastBuilder;
     progress(value?: boolean): TaoToastBuilder;
+    /** `glass` (default) or `flat`. */
+    surface(value: TaoSurface): TaoToastBuilder;
     id(value: string): TaoToastBuilder;
     once(): TaoToastBuilder;
     replace(): TaoToastBuilder;
@@ -236,6 +242,10 @@ function createBuilder(): TaoToastBuilder {
             draft.progress = value;
             return ctx;
         },
+        surface(value: TaoSurface) {
+            draft.surface = value;
+            return ctx;
+        },
         id(value: string) {
             draft.dedupeId = value;
             return ctx;
@@ -292,6 +302,9 @@ function shortcut(type: TaoToastType, message: string, options?: TaoToastShortcu
     }
     if (options?.progress !== undefined) {
         builder.progress(options.progress);
+    }
+    if (options?.surface) {
+        builder.surface(options.surface);
     }
     if (options?.id) {
         builder.id(options.id);

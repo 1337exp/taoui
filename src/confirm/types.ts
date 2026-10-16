@@ -1,6 +1,10 @@
+import type { TaoSurface } from '../surface';
+
 export interface TaoConfirmDefaults {
     ok: string;
     cancel: string;
+    /** `glass` by default; `flat` turns it off. / По умолчанию `glass`; `flat` выключает. */
+    surface: TaoSurface;
 }
 
 export interface TaoConfirmRecord {
@@ -10,6 +14,7 @@ export interface TaoConfirmRecord {
     okLabel: string;
     cancelLabel: string;
     danger: boolean;
+    surface: TaoSurface;
     resolve: (value: boolean) => void;
 }
 
@@ -18,4 +23,5 @@ export interface TaoConfirmShortcutOptions {
     ok?: string;
     cancel?: string;
     danger?: boolean;
+    surface?: TaoSurface;
 }

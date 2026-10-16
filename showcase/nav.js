@@ -7,6 +7,7 @@ export const navGroups = [
       { id: 'button', label: 'TaoButton', aliases: ['text', 'tone'] },
       { id: 'card', label: 'TaoCard' },
       { id: 'copy', label: 'TaoCopy' },
+      { id: 'surface', label: 'Поверхности', aliases: ['glass', 'grain', 'lit', 'surface'] },
     ],
   },
   {

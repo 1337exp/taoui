@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, useSlots } from 'vue';
 import { toCssBox, toCssLength, type TaoLength } from '../length';
+import { surfaceClass, type TaoSurface } from '../surface';
 
 defineOptions({ name: 'TaoCard' });
 
@@ -16,6 +17,8 @@ interface Props {
     overflow?: boolean;
     /** Плитка: без отступа и без тени, cover/body тянутся на ячейку. */
     flush?: boolean;
+    /** `flat` fill, `grain` film grain, `glass` blurred translucent. / Из чего сделана панель. */
+    surface?: TaoSurface;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -27,6 +30,7 @@ const props = withDefaults(defineProps<Props>(), {
     active: false,
     overflow: false,
     flush: false,
+    surface: 'flat',
 });
 
 const slots = useSlots();
@@ -58,7 +62,7 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
 <template>
     <div
         class="tao-card"
-        :class="{
+        :class="[surfaceClass(surface), {
             'tao-card--shadow': showPanelShadow,
             'tao-card--shadow-bottom': shadowBottomOnly,
             'tao-card--hover': hover,
@@ -66,7 +70,7 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
             'tao-card--overflow': overflow,
             'tao-card--flush': flush,
             'tao-card--cover-only': coverOnly,
-        }"
+        }]"
         :style="radiusStyle"
     >
         <div v-if="$slots.cover" class="tao-card__cover">
@@ -109,7 +113,12 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
     width: 100%;
     height: 100%;
     min-height: 0;
-    background: var(--tao-color-surface-raised);
+    background-color: var(--tao-surface-fill, var(--tao-color-surface-raised));
+    background-image: var(--tao-surface-image, none);
+    background-size: var(--tao-surface-image-size, auto);
+    box-shadow: var(--tao-surface-inset, 0 0 #0000);
+    -webkit-backdrop-filter: var(--tao-surface-backdrop, none);
+    backdrop-filter: var(--tao-surface-backdrop, none);
     color: var(--tao-color-text);
     transition: var(--tao-transition-base);
 }
@@ -123,11 +132,11 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
 }
 
 .tao-card--shadow {
-    box-shadow: var(--tao-shadow-panel);
+    box-shadow: var(--tao-surface-inset, 0 0 #0000), var(--tao-shadow-panel);
 }
 
 .tao-card--shadow-bottom {
-    box-shadow: 0 1px 0 0 var(--tao-color-border-strong);
+    box-shadow: var(--tao-surface-inset, 0 0 #0000), 0 1px 0 0 var(--tao-color-border-strong);
 }
 
 .tao-card--hover {
@@ -136,7 +145,7 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
 
 .tao-card--hover:hover,
 .tao-card--hover.tao-card--active {
-    box-shadow: 0 0 0 1px var(--tao-color-accent), var(--tao-shadow-lg);
+    box-shadow: var(--tao-surface-inset, 0 0 #0000), 0 0 0 1px var(--tao-color-accent), var(--tao-shadow-lg);
 }
 
 .tao-card__cover {

@@ -8,6 +8,7 @@ import {
     resolveConfirm,
 } from './store';
 import type { TaoConfirmDefaults, TaoConfirmShortcutOptions } from './types';
+import type { TaoSurface } from '../surface';
 
 export type { TaoConfirmDefaults, TaoConfirmRecord, TaoConfirmShortcutOptions } from './types';
 
@@ -17,6 +18,7 @@ interface Draft {
     okLabel: string;
     cancelLabel: string;
     danger: boolean;
+    surface: TaoSurface;
 }
 
 function isClient() {
@@ -48,6 +50,7 @@ function createDraft(): Draft {
         okLabel: confirmDefaults.ok,
         cancelLabel: confirmDefaults.cancel,
         danger: false,
+        surface: confirmDefaults.surface,
     };
 }
 
@@ -57,6 +60,8 @@ export interface TaoConfirmBuilder extends PromiseLike<boolean> {
     ok(label: string): TaoConfirmBuilder;
     cancel(label: string): TaoConfirmBuilder;
     danger(value?: boolean): TaoConfirmBuilder;
+    /** `glass` (default) or `flat`. */
+    surface(value: TaoSurface): TaoConfirmBuilder;
 }
 
 function createBuilder(): TaoConfirmBuilder {
@@ -87,6 +92,10 @@ function createBuilder(): TaoConfirmBuilder {
             draft.danger = value;
             return ctx;
         },
+        surface(value: TaoSurface) {
+            draft.surface = value;
+            return ctx;
+        },
         then(onFulfilled, onRejected) {
             return promise.then(onFulfilled, onRejected);
         },
@@ -107,6 +116,7 @@ function createBuilder(): TaoConfirmBuilder {
             okLabel: draft.okLabel,
             cancelLabel: draft.cancelLabel,
             danger: draft.danger,
+            surface: draft.surface,
             resolve: settle,
         });
     }, 0);
@@ -130,6 +140,9 @@ function applyOptions(builder: TaoConfirmBuilder, options?: TaoConfirmShortcutOp
     }
     if (options.danger) {
         builder.danger(true);
+    }
+    if (options.surface) {
+        builder.surface(options.surface);
     }
 
     return builder;

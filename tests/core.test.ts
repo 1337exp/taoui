@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { glideDuration, glideTarget, FLICK_SPEED } from '../src/carousel';
 import { toCssBox, toCssLength } from '../src/length';
 import { resolveSize, sizeClass } from '../src/size';
+import { surfaceClass } from '../src/surface';
 import { formatText, localeEn, localeRu, setTaoLocale, taoLocale } from '../src/locale';
 import { confirmDefaults } from '../src/confirm/store';
 import { toastDefaults } from '../src/toast/store';
@@ -22,6 +23,19 @@ describe('size', () => {
         expect(resolveSize(el)).toBe('medium');
         expect(resolveSize(null)).toBe('medium');
         el.remove();
+    });
+});
+
+describe('surface', () => {
+    it('flat and nothing add no class', () => {
+        expect(surfaceClass('flat')).toBeUndefined();
+        expect(surfaceClass(undefined)).toBeUndefined();
+        expect(surfaceClass('glass')).toBe('tao-surface-glass');
+    });
+
+    it('toast and confirm float over the page, so they are glass by default', () => {
+        expect(toastDefaults.surface).toBe('glass');
+        expect(confirmDefaults.surface).toBe('glass');
     });
 });
 

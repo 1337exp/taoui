@@ -1,0 +1,102 @@
+/**
+ * Tao UI — Surfaces / Поверхности
+ *
+ * How a panel is "made": flat fill (default), grain (film grain), glass (blurred translucent).
+ * Put `.tao-surface-grain` / `-glass` on any element — a game HUD, a landing section, a sidebar —
+ * or pass `surface` to TaoCard / TaoBlock. Theme tokens below tune the look once for the whole app.
+ *
+ * Из чего «сделана» панель: плоская заливка (по умолчанию), grain (плёночное зерно), glass (размытое
+ * полупрозрачное стекло). Класс `.tao-surface-*` — на любой элемент, или проп `surface` у TaoCard / TaoBlock.
+ * Токены ниже настраивают вид один раз на всё приложение.
+ */
+
+/* The surface belongs to one element: a glass panel does not turn its children into glass.
+   Поверхность принадлежит одному элементу: стеклянная панель не делает стеклянными детей. */
+@property --tao-surface-fill {
+    syntax: '*';
+    inherits: false;
+}
+
+@property --tao-surface-image {
+    syntax: '*';
+    inherits: false;
+}
+
+@property --tao-surface-image-size {
+    syntax: '*';
+    inherits: false;
+}
+
+@property --tao-surface-inset {
+    syntax: '*';
+    inherits: false;
+}
+
+@property --tao-surface-backdrop {
+    syntax: '*';
+    inherits: false;
+}
+
+/* ---------- Theme tokens: dark (default) / Токены темы: тёмная ---------- */
+:root,
+[data-tao-theme="dark"] {
+    /* static film grain, light specks; replace with your own image / статичное зерно, светлые крапинки */
+    --tao-surface-grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.07 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --tao-surface-grain-size: 160px;
+    --tao-glass-fill: color-mix(in srgb, var(--tao-color-surface-raised) 55%, transparent);
+    --tao-glass-border: rgb(255 255 255 / 0.08);
+    --tao-glass-blur: 16px;
+}
+
+/* ---------- Theme tokens: light / Токены темы: светлая ----------
+   After the dark block on purpose: :root and [data-tao-theme] weigh the same, the later one wins.
+   Специально после тёмной: :root и [data-tao-theme] весят одинаково, побеждает поздний. */
+[data-tao-theme="light"] {
+    /* dark specks / тёмные крапинки */
+    --tao-surface-grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.035 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --tao-glass-fill: color-mix(in srgb, var(--tao-color-surface) 60%, transparent);
+    --tao-glass-border: rgb(0 0 0 / 0.08);
+}
+
+/* ---------- Classes / Классы ---------- */
+.tao-surface-grain {
+    --tao-surface-image: var(--tao-surface-grain-image);
+    --tao-surface-image-size: var(--tao-surface-grain-size);
+    background-image: var(--tao-surface-image);
+    background-size: var(--tao-surface-image-size);
+}
+
+/* Glass needs something behind it: use it for things that float over content (popovers, HUD, a header over a scroll).
+   Стеклу нужно что-то позади: для того, что плавает над контентом (поповеры, HUD, шапка над прокруткой). */
+.tao-surface-glass {
+    --tao-surface-fill: var(--tao-glass-fill);
+    /* the edge keeps glass apart from what is behind / край отделяет стекло от того, что позади */
+    --tao-surface-inset: inset 0 0 0 1px var(--tao-glass-border);
+    --tao-surface-backdrop: blur(var(--tao-glass-blur)) saturate(1.4);
+    background-color: var(--tao-surface-fill);
+    box-shadow: var(--tao-surface-inset);
+    -webkit-backdrop-filter: var(--tao-surface-backdrop);
+    backdrop-filter: var(--tao-surface-backdrop);
+}
+
+/* No blur support, or the user asked for less transparency: a solid panel.
+   Нет размытия или пользователь попросил меньше прозрачности — сплошная панель.
+   The token itself turns solid, so components that tint glass (toast, confirm) follow.
+   Сплошным становится сам токен — за ним идут и компоненты, которые подкрашивают стекло (toast, confirm). */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    :root,
+    [data-tao-theme] {
+        --tao-glass-fill: var(--tao-color-surface-raised);
+    }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+    :root,
+    [data-tao-theme] {
+        --tao-glass-fill: var(--tao-color-surface-raised);
+    }
+
+    .tao-surface-glass {
+        --tao-surface-backdrop: none;
+    }
+}

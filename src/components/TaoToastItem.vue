@@ -5,6 +5,7 @@ import TaoIcon from './TaoIcon.vue';
 import { listenFocusLoss } from '../focusLoss';
 import { removeToast, toastDefaults } from '../toast/store';
 import type { TaoToastRecord } from '../toast/types';
+import { surfaceClass } from '../surface';
 
 defineOptions({ name: 'TaoToastItem' });
 
@@ -79,7 +80,7 @@ onBeforeUnmount(() => {
 <template>
     <div
         class="tao-toast"
-        :class="[`tao-toast--${toast.type}`, { 'tao-toast--paused': paused }]"
+        :class="[`tao-toast--${toast.type}`, surfaceClass(toast.surface), { 'tao-toast--paused': paused }]"
         :role="toast.type === 'error' || toast.type === 'danger' || toast.type === 'warning' ? 'alert' : 'status'"
         aria-live="polite"
         @mouseenter="pause"
@@ -154,12 +155,23 @@ onBeforeUnmount(() => {
     width: min(470px, calc(100vw - 32px));
     padding: var(--tao-space-3) var(--tao-space-4);
     overflow: hidden;
-    background: color-mix(in srgb, var(--tao-toast-tone) 8%, var(--tao-color-surface-raised));
+    background-color: var(--tao-surface-fill, color-mix(in srgb, var(--tao-toast-tone) 8%, var(--tao-color-surface-raised)));
+    background-image: var(--tao-surface-image, none);
+    background-size: var(--tao-surface-image-size, auto);
+    -webkit-backdrop-filter: var(--tao-surface-backdrop, none);
+    backdrop-filter: var(--tao-surface-backdrop, none);
     color: var(--tao-color-text);
     border: 1px solid var(--tao-color-border);
     border-radius: var(--tao-radius-panel);
     box-shadow: var(--tao-shadow-overlay);
     pointer-events: auto;
+}
+
+/* Glass keeps the tone tint; its own edge replaces the border. / Стекло сохраняет оттенок тона; край стекла вместо рамки. */
+.tao-toast.tao-surface-glass {
+    --tao-surface-fill: color-mix(in srgb, var(--tao-toast-tone) 10%, var(--tao-glass-fill));
+    border-color: var(--tao-glass-border);
+    box-shadow: var(--tao-shadow-overlay);
 }
 
 .tao-toast--success {

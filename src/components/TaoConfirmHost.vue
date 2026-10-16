@@ -4,6 +4,7 @@ import TaoButton from './TaoButton.vue';
 import { currentConfirm, registerConfirmHost, resolveConfirm, unregisterConfirmHost } from '../confirm/store';
 import { trapTab } from '../focusTrap';
 import { isBrowser, lockBodyScroll, unlockBodyScroll } from '../bodyScroll';
+import { surfaceClass } from '../surface';
 
 defineOptions({ name: 'TaoConfirmHost' });
 
@@ -92,6 +93,7 @@ function onKeydown(event: KeyboardEvent) {
             <div
                 v-if="currentConfirm"
                 class="tao-confirm"
+                :class="{ 'tao-confirm--glass': currentConfirm.surface === 'glass' }"
                 data-tao-confirm-host
                 @keydown="onKeydown"
             >
@@ -100,7 +102,7 @@ function onKeydown(event: KeyboardEvent) {
                 <div
                     ref="panelRef"
                     class="tao-confirm__panel"
-                    :class="{ 'tao-confirm__panel--danger': currentConfirm.danger }"
+                    :class="[surfaceClass(currentConfirm.surface), { 'tao-confirm__panel--danger': currentConfirm.danger }]"
                     role="alertdialog"
                     aria-modal="true"
                     :aria-labelledby="currentConfirm.title ? 'tao-confirm-title' : undefined"
@@ -165,6 +167,11 @@ function onKeydown(event: KeyboardEvent) {
     background: var(--tao-color-overlay);
 }
 
+/* Glass needs the page to show through: a lighter dim. / Стеклу нужно, чтобы страница просвечивала: затемнение слабее. */
+.tao-confirm--glass .tao-confirm__overlay {
+    background: color-mix(in srgb, var(--tao-color-overlay) 65%, transparent);
+}
+
 .tao-confirm__panel {
     --tao-confirm-tone: var(--tao-color-warning);
 
@@ -178,11 +185,22 @@ function onKeydown(event: KeyboardEvent) {
     gap: var(--tao-space-3) var(--tao-space-4);
     width: min(420px, 100%);
     padding: var(--tao-space-5);
-    background: color-mix(in srgb, var(--tao-confirm-tone) 8%, var(--tao-color-surface-raised));
+    background-color: var(--tao-surface-fill, color-mix(in srgb, var(--tao-confirm-tone) 8%, var(--tao-color-surface-raised)));
+    background-image: var(--tao-surface-image, none);
+    background-size: var(--tao-surface-image-size, auto);
+    -webkit-backdrop-filter: var(--tao-surface-backdrop, none);
+    backdrop-filter: var(--tao-surface-backdrop, none);
     border: 1px solid var(--tao-color-border);
     border-radius: var(--tao-radius-panel);
     box-shadow: var(--tao-shadow-overlay);
     outline: none;
+}
+
+/* Glass keeps the tone tint; its own edge replaces the border. / Стекло сохраняет оттенок тона; край стекла вместо рамки. */
+.tao-confirm__panel.tao-surface-glass {
+    --tao-surface-fill: color-mix(in srgb, var(--tao-confirm-tone) 10%, var(--tao-glass-fill));
+    border-color: var(--tao-glass-border);
+    box-shadow: var(--tao-shadow-overlay);
 }
 
 .tao-confirm__panel--danger {

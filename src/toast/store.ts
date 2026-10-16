@@ -18,6 +18,7 @@ export const toastDefaults: TaoToastDefaults = {
     closable: true,
     progress: true,
     closeLabel: localeRu.toast.closeLabel,
+    surface: 'glass',
 };
 
 export const toasts = ref<TaoToastRecord[]>([]);

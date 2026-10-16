@@ -42,6 +42,11 @@ as deprecated aliases and print a warning in development builds; they will be re
 - **Locale.** `app.use(TaoUI, { locale: localeEn })`, `setTaoLocale()`, `localeRu` (default), `localeEn`,
   types `TaoLocale`, `TaoLocaleOverrides`, `TaoUIOptions`. Pass a few keys to change single texts.
   Switching at runtime updates components already on the page.
+- **Surfaces.** `surface` on TaoCard / TaoBlock (`flat | grain | glass`, type `TaoSurface`) and classes
+  `.tao-surface-grain` / `-glass` for any element. Theme tokens `--tao-surface-grain-image` / `-size`,
+  `--tao-glass-fill` / `-border` / `-blur`. Toast and confirm are glass by default (`surface` in their defaults, options
+  and builders; `'flat'` turns it off). Glass falls back to a solid panel without blur support or with
+  `prefers-reduced-transparency`.
 - **`error`** on InputNumber, Quantity, Switch, Segmented, Radio, RadioGroup, Slider and PinCode.
 - **`change`** on Slider, Split (on release), Spoiler, Tabs; FileDrop and Table got `change` too.
 - **PinCode** `disabled`, `size`, `masked`. **Textarea** `variant` (`bar | outline | filled | plain`), `readonly`,
