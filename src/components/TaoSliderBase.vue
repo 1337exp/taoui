@@ -1,0 +1,548 @@
+<script lang="ts" setup>
+import { computed, inject, onBeforeUnmount, onMounted, ref, useId } from 'vue';
+import { listenFocusLoss } from '../focusLoss';
+import { formFieldKey } from '../formField';
+import { sizeClass } from '../size';
+import {
+    isMarkActive,
+    moveThumb,
+    nearestMark,
+    nearestThumb,
+    normalizeMarks,
+    normalizeValue,
+    ratioOf,
+    stepMark,
+    valueAt,
+    type TaoSliderBaseProps,
+    type TaoSliderMark,
+    type TaoSliderValue,
+} from '../slider';
+
+// Общая основа TaoSlider и TaoRangeSlider: одна ручка или две, значение приходит как число или пара.
+// Наружу отдаются обёртки с точными типами (число / пара), сама основа не экспортируется.
+defineOptions({ name: 'TaoSliderBase' });
+
+const props = withDefaults(defineProps<TaoSliderBaseProps & { modelValue: TaoSliderValue }>(), {
+    min: 0,
+    max: 100,
+    step: 1,
+    minGap: 0,
+    showValue: false,
+    discrete: false,
+    vertical: false,
+    disabled: false,
+    error: false,
+    variant: 'bar',
+    wheel: 0,
+});
+
+const emit = defineEmits<{
+    'update:modelValue': [value: TaoSliderValue];
+    change: [value: TaoSliderValue];
+}>();
+
+defineSlots<{
+    /** Caption of a mark. / Подпись метки. */
+    mark?(props: { mark: TaoSliderMark; active: boolean }): unknown;
+    'pre-value'?(): unknown;
+    'post-value'?(): unknown;
+}>();
+
+const field = inject(formFieldKey, null);
+const localId = useId();
+const controlId = computed(() => field?.id ?? localId);
+const describedBy = computed(() => field?.describedBy.value);
+const invalid = computed(() => props.error || Boolean(field?.invalid.value));
+
+const isRange = computed(() => Array.isArray(props.modelValue));
+const values = computed(() => normalizeValue(props.modelValue, props.min, props.max));
+const text = (v: number) => (props.format ? props.format(v) : String(v));
+
+const markList = computed(() => normalizeMarks(props.marks, props.min, props.max, text));
+const markValues = computed(() => markList.value.map((m) => m.value));
+/** Ступенчатая шкала: значения только на метках. Без меток ступенчатости нет. */
+const stepped = computed(() => props.discrete && markValues.value.length > 0);
+
+const percent = (v: number) => ratioOf(v, props.min, props.max) * 100;
+const place = (v: number) => (props.vertical ? { bottom: `${percent(v)}%` } : { left: `${percent(v)}%` });
+
+const fillStyle = computed(() => {
+    const from = isRange.value ? percent(values.value[0]!) : 0;
+    const to = percent(values.value[isRange.value ? 1 : 0]!);
+    return props.vertical ? { bottom: `${from}%`, height: `${to - from}%` } : { left: `${from}%`, width: `${to - from}%` };
+});
+
+const barText = computed(() => values.value.map(text).join(' – '));
+
+//--------------------------------------------------
+// Запись значения
+
+function write(next: number[], final = false) {
+    const before = values.value;
+    const value: TaoSliderValue = isRange.value ? [next[0]!, next[1]!] : next[0]!;
+    const changed = next.some((v, i) => v !== before[i]);
+    emit('update:modelValue', value);
+    if (final && changed) emit('change', value);
+}
+
+/** Ставит ручку `index` в значение `target` (оно уже прижато к шагу или метке). */
+function setThumb(index: number, target: number, final = false) {
+    if (isRange.value) {
+        write(moveThumb(values.value as [number, number], index as 0 | 1, target, props.min, props.max, props.minGap), final);
+    } else {
+        write([Math.min(Math.max(target, props.min), props.max)], final);
+    }
+}
+
+/** Значение под указателем: по доле шкалы, прижатое к шагу или к ближайшей метке. */
+function valueUnder(event: PointerEvent | MouseEvent): number {
+    const el = railRef.value;
+    if (!el) return props.min;
+    const rect = el.getBoundingClientRect();
+    const ratio = props.vertical
+        ? rect.height
+            ? 1 - (event.clientY - rect.top) / rect.height
+            : 0
+        : rect.width
+          ? (event.clientX - rect.left) / rect.width
+          : 0;
+    const raw = valueAt(ratio, props.min, props.max, stepped.value ? 0 : props.step);
+    return stepped.value ? nearestMark(raw, markValues.value) : raw;
+}
+
+//--------------------------------------------------
+// Указатель
+
+const railRef = ref<HTMLElement | null>(null);
+const isDragging = ref(false);
+const activeThumb = ref(0);
+let dragPointer = -1;
+let dragStart: number[] = [];
+
+function releaseDragCapture() {
+    const el = railRef.value;
+    const id = dragPointer;
+    if (!el || id === -1) return;
+    if (typeof el.hasPointerCapture === 'function' && !el.hasPointerCapture(id)) return;
+    try {
+        el.releasePointerCapture(id);
+    } catch {
+        /* already released by the browser */
+    }
+}
+
+function endDrag() {
+    if (!isDragging.value) return;
+    isDragging.value = false;
+    releaseDragCapture();
+    dragPointer = -1;
+    if (values.value.some((v, i) => v !== dragStart[i])) {
+        emit('change', isRange.value ? [values.value[0]!, values.value[1]!] : values.value[0]!);
+    }
+}
+
+function onPointerDown(event: PointerEvent) {
+    if (props.disabled || event.button !== 0 || !railRef.value) return;
+
+    const target = valueUnder(event);
+    dragPointer = event.pointerId;
+    dragStart = [...values.value];
+    isDragging.value = true;
+    activeThumb.value = nearestThumb(values.value, target, activeThumb.value);
+    setThumb(activeThumb.value, target);
+    event.preventDefault();
+    try {
+        railRef.value.setPointerCapture(event.pointerId);
+    } catch {
+        /* untrusted events / capture already gone */
+    }
+}
+
+function onPointerMove(event: PointerEvent) {
+    if (!isDragging.value || event.pointerId !== dragPointer) return;
+    setThumb(activeThumb.value, valueUnder(event));
+}
+
+function onPointerEnd(event: PointerEvent) {
+    if (!isDragging.value) return;
+    if (dragPointer !== -1 && event.pointerId !== dragPointer) return;
+    endDrag();
+}
+
+//--------------------------------------------------
+// Клавиатура и колёсико
+
+function onKeydown(event: KeyboardEvent, index: number) {
+    if (props.disabled) return;
+    activeThumb.value = index;
+    const at = values.value[index]!;
+
+    let next: number | null = null;
+    const forward = event.key === 'ArrowRight' || event.key === 'ArrowUp';
+    const backward = event.key === 'ArrowLeft' || event.key === 'ArrowDown';
+    if (forward || backward) {
+        const dir = forward ? 1 : -1;
+        next = stepped.value ? stepMark(at, markValues.value, dir) : at + dir * props.step;
+    } else if (event.key === 'PageUp' || event.key === 'PageDown') {
+        const dir = event.key === 'PageUp' ? 1 : -1;
+        next = stepped.value ? stepMark(at, markValues.value, dir) : at + dir * props.step * 10;
+    } else if (event.key === 'Home') {
+        next = props.min;
+    } else if (event.key === 'End') {
+        next = props.max;
+    }
+    if (next === null) return;
+
+    event.preventDefault();
+    setThumb(index, stepped.value ? nearestMark(next, markValues.value) : valueAt(ratioOf(next, props.min, props.max), props.min, props.max, props.step), true);
+}
+
+function onWheel(event: WheelEvent) {
+    if (props.disabled || props.wheel <= 0 || isRange.value) return;
+    event.preventDefault();
+    setThumb(0, values.value[0]! + (event.deltaY < 0 ? props.wheel : -props.wheel), true);
+}
+
+/** Клик по подписи метки: ближайшая ручка прыгает к ней. */
+function onMarkClick(mark: TaoSliderMark) {
+    if (props.disabled) return;
+    activeThumb.value = nearestThumb(values.value, mark.value, activeThumb.value);
+    setThumb(activeThumb.value, mark.value, true);
+}
+
+let stopFocusLoss: (() => void) | undefined;
+
+onMounted(() => {
+    stopFocusLoss = listenFocusLoss(endDrag);
+});
+
+onBeforeUnmount(() => {
+    endDrag();
+    stopFocusLoss?.();
+});
+</script>
+
+<template>
+    <div
+        class="tao-slider"
+        :class="[
+            `tao-slider--${variant}`,
+            sizeClass(size),
+            {
+                'tao-slider--vertical': vertical,
+                'tao-slider--range': isRange,
+                'tao-slider--has-marks': markList.length > 0,
+                'tao-slider--show-value': showValue,
+                'tao-slider--disabled': disabled,
+                'tao-slider--invalid': invalid,
+            },
+        ]"
+        role="group"
+        :aria-disabled="disabled || undefined"
+        @wheel="onWheel"
+    >
+        <div
+            ref="railRef"
+            class="tao-slider__rail"
+            @pointerdown="onPointerDown"
+            @pointermove="onPointerMove"
+            @pointerup="onPointerEnd"
+            @pointercancel="onPointerEnd"
+            @lostpointercapture="endDrag"
+        >
+            <div class="tao-slider__track"></div>
+            <div class="tao-slider__fill" :style="fillStyle"></div>
+            <div
+                v-for="(v, i) in values"
+                :id="i === 0 ? controlId : undefined"
+                :key="i"
+                class="tao-slider__thumb"
+                :class="{ 'tao-slider__thumb--active': isDragging && activeThumb === i }"
+                :style="place(v)"
+                role="slider"
+                :tabindex="disabled ? -1 : 0"
+                :aria-valuemin="min"
+                :aria-valuemax="max"
+                :aria-valuenow="v"
+                :aria-valuetext="text(v)"
+                :aria-orientation="vertical ? 'vertical' : 'horizontal'"
+                :aria-disabled="disabled || undefined"
+                :aria-invalid="invalid || undefined"
+                :aria-describedby="describedBy"
+                @keydown="onKeydown($event, i)"
+            ></div>
+
+            <div v-if="showValue" class="tao-slider__value">
+                <slot name="pre-value" />{{ barText }}<slot name="post-value" />
+            </div>
+        </div>
+
+        <div v-if="markList.length > 0" class="tao-slider__marks">
+            <button
+                v-for="mark in markList"
+                :key="mark.value"
+                type="button"
+                class="tao-slider__mark"
+                :class="{
+                    'tao-slider__mark--active': isMarkActive(mark.value, values),
+                    'tao-slider__mark--start': mark.value === min,
+                    'tao-slider__mark--end': mark.value === max && max > min,
+                }"
+                :style="place(mark.value)"
+                :disabled="disabled"
+                tabindex="-1"
+                @click="onMarkClick(mark)"
+            >
+                <span class="tao-slider__tick"></span>
+                <span v-if="mark.label" class="tao-slider__mark-label">
+                    <slot name="mark" :mark="mark" :active="isMarkActive(mark.value, values)">{{ mark.label }}</slot>
+                </span>
+            </button>
+        </div>
+    </div>
+</template>
+
+<style scoped>
+.tao-slider {
+    /* bar: 14 / 20 at medium / bar: 14 / 20 в medium */
+    --tao-slider-hit: calc(var(--tao-indicator-size) - 4px);
+    --tao-slider-track: var(--tao-slider-hit);
+    --tao-slider-thumb: calc(var(--tao-indicator-size) + 2px);
+    /* Длина вертикального слайдера. / Length of a vertical slider. */
+    --tao-slider-length: 10rem;
+
+    position: relative;
+    width: 100%;
+    user-select: none;
+}
+
+.tao-slider--show-value {
+    --tao-slider-hit: calc(var(--tao-indicator-size) + 2px);
+}
+
+/* Тонкий трек, hit-area шире картинки — seek / громкость. 16 / 4 / 12 в medium. */
+.tao-slider--thin {
+    --tao-slider-hit: calc(var(--tao-indicator-size) - 2px);
+    --tao-slider-track: 4px;
+    --tao-slider-thumb: calc(var(--tao-indicator-size) - 6px);
+}
+
+.tao-slider--thin.tao-slider--show-value {
+    --tao-slider-hit: calc(var(--tao-indicator-size) + 2px);
+}
+
+.tao-slider--disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.tao-slider__rail {
+    position: relative;
+    width: 100%;
+    height: var(--tao-slider-hit);
+    cursor: pointer;
+    touch-action: none;
+}
+
+.tao-slider--disabled .tao-slider__rail {
+    cursor: not-allowed;
+}
+
+.tao-slider__track,
+.tao-slider__fill {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: var(--tao-slider-track);
+    border-radius: var(--tao-radius-sm);
+    transform: translateY(-50%);
+}
+
+.tao-slider__track {
+    width: 100%;
+    background-color: var(--tao-color-surface-sunken);
+}
+
+.tao-slider__fill {
+    background-color: var(--tao-color-accent);
+}
+
+.tao-slider--invalid .tao-slider__track {
+    box-shadow: inset 0 0 0 1px var(--tao-color-danger);
+}
+
+.tao-slider--thin .tao-slider__track,
+.tao-slider--thin .tao-slider__fill {
+    border-radius: var(--tao-radius-full);
+}
+
+.tao-slider__thumb {
+    position: absolute;
+    top: 50%;
+    width: var(--tao-slider-thumb);
+    height: var(--tao-slider-thumb);
+    background-color: var(--tao-color-accent);
+    border: 2px solid var(--tao-color-surface-sunken);
+    border-radius: var(--tao-radius-full);
+    transform: translate(-50%, -50%);
+    cursor: grab;
+}
+
+.tao-slider__thumb:active,
+.tao-slider__thumb--active {
+    cursor: grabbing;
+}
+
+.tao-slider__thumb:focus {
+    outline: none;
+}
+
+.tao-slider__thumb:focus-visible {
+    outline: 2px solid var(--tao-color-accent);
+    outline-offset: 3px;
+}
+
+.tao-slider--disabled .tao-slider__thumb {
+    cursor: not-allowed;
+}
+
+.tao-slider__value {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    font-size: var(--tao-control-font-size-secondary);
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    color: var(--tao-color-text-strong);
+    text-shadow: -1px -1px 0 var(--tao-color-bg), 1px -1px 0 var(--tao-color-bg),
+        -1px 1px 0 var(--tao-color-bg), 1px 1px 0 var(--tao-color-bg);
+}
+
+/* Метки: черта и подпись, подпись вне закрашенной части тускнеет */
+.tao-slider__marks {
+    position: relative;
+    height: calc(var(--tao-control-font-size-secondary) * 1.5 + 8px);
+}
+
+.tao-slider__mark {
+    position: absolute;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--tao-color-text-muted);
+    font: inherit;
+    font-size: var(--tao-control-font-size-secondary);
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+    transform: translateX(-50%);
+}
+
+/* Крайние метки прижаты к краю шкалы, а не центрируются на нём: подпись не вылезает за пределы компонента, черта остаётся на месте */
+.tao-slider__mark--start {
+    align-items: flex-start;
+    transform: none;
+}
+
+.tao-slider__mark--end {
+    align-items: flex-end;
+    transform: translateX(-100%);
+}
+
+.tao-slider__mark:disabled {
+    cursor: not-allowed;
+}
+
+.tao-slider__tick {
+    width: 1px;
+    height: 4px;
+    background-color: currentColor;
+}
+
+.tao-slider__mark--active {
+    color: var(--tao-color-text-strong);
+}
+
+.tao-slider__mark:hover:not(:disabled) {
+    color: var(--tao-color-accent);
+}
+
+/* Вертикальный: полоса стоит, максимум сверху, метки справа */
+.tao-slider--vertical {
+    display: inline-flex;
+    width: auto;
+    height: var(--tao-slider-length);
+}
+
+.tao-slider--vertical .tao-slider__rail {
+    width: var(--tao-slider-hit);
+    height: 100%;
+}
+
+.tao-slider--vertical .tao-slider__track,
+.tao-slider--vertical .tao-slider__fill {
+    top: auto;
+    left: 50%;
+    width: var(--tao-slider-track);
+    transform: translateX(-50%);
+}
+
+.tao-slider--vertical .tao-slider__track {
+    top: 0;
+    height: 100%;
+}
+
+.tao-slider--vertical .tao-slider__fill {
+    top: auto;
+}
+
+.tao-slider--vertical .tao-slider__thumb {
+    top: auto;
+    left: 50%;
+    transform: translate(-50%, 50%);
+}
+
+.tao-slider--vertical .tao-slider__value {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+}
+
+.tao-slider--vertical .tao-slider__marks {
+    width: auto;
+    height: 100%;
+    margin-left: 4px;
+    padding-right: 2px;
+    min-width: 1em;
+}
+
+.tao-slider--vertical .tao-slider__mark {
+    top: auto;
+    left: 0;
+    flex-direction: row;
+    gap: 4px;
+    transform: translateY(50%);
+}
+
+.tao-slider--vertical .tao-slider__tick {
+    width: 4px;
+    height: 1px;
+}
+
+.tao-slider--vertical .tao-slider__mark--start {
+    align-items: flex-end;
+    transform: none;
+}
+
+.tao-slider--vertical .tao-slider__mark--end {
+    align-items: flex-start;
+    transform: translateY(100%);
+}
+</style>

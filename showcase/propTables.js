@@ -328,16 +328,29 @@ export const propTables = {
     {
       title: 'TaoSlider',
       rows: [
-        r('v-model', 'number | string', '—', 'Текущее значение. Обязательный'),
+        r('v-model', 'number', '—', 'Текущее значение. Обязательный. Две ручки: TaoRangeSlider с парой [от, до]'),
         r('min / max / step', 'number', '0 / 100 / 1', 'Диапазон и шаг'),
+        r('marks', "boolean | (number | { value, label? })[]", '—', 'Метки шкалы: true — автоматические деления, массив чисел или объекты с подписью. Клик по подписи переносит ручку'),
+        r('discrete', 'boolean', 'false', 'Значение только на метках (ступенчатая шкала); стрелки идут по меткам'),
+        r('format', '(value: number) => string', '—', 'Текст чисел: подписи автоматических меток и значение на полосе'),
+        r('vertical', 'boolean', 'false', 'Вертикальный: максимум сверху, метки справа. Длина — --tao-slider-length (10rem)'),
         r('variant', "'bar' | 'thin'", "'bar'", 'bar — толстый трек, форм-контрол; thin — тонкий (seek / громкость). Раньше это был size="small"'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Масштаб трека и бегунка (бегунок 16 / 20 / 24). Без него — размер предков'),
-        r('showValue', 'boolean', 'false', 'Число рядом. ПКМ — точный ввод'),
+        r('showValue', 'boolean', 'false', 'Значение поверх полосы'),
         r('disabled', 'boolean', 'false', 'Неактивен'),
         r('error', 'boolean', 'false', 'Красная обводка трека. Текст ошибки — error у TaoFormField'),
-        r('wheel', 'number', '0', 'Шаг изменения при прокрутке колёсика. 0 — отключено'),
-        r('@change', 'value', '—', 'Закончили менять: отпустили, клавиша, колёсико, ввод. v-model — на каждое движение'),
+        r('wheel', 'number', '0', 'Шаг изменения при прокрутке колёсика (одна ручка). 0 — отключено'),
+        r('@change', 'value', '—', 'Закончили менять: отпустили, клавиша, колёсико, клик по метке. v-model — на каждое движение'),
+        r('#mark', '{ mark, active }', '—', 'Своя подпись метки'),
 
+      ],
+    },
+    {
+      title: 'TaoRangeSlider',
+      rows: [
+        r('v-model', '[number, number]', '—', 'Пара [от, до]. Обязательный'),
+        r('minGap', 'number', '0', 'Наименьшее расстояние между ручками; ручки не перепрыгивают друг друга'),
+        r('…', '', '', 'Остальное как у TaoSlider: min / max / step, marks, discrete, format, vertical, variant, size, showValue, disabled, error'),
       ],
     },
   ],

@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoProgress, TaoSlider } from '@tao/ui'
+import { TaoProgress, TaoRangeSlider, TaoSlider } from '@tao/ui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { propTables } from '../propTables.js'
 
@@ -9,6 +9,9 @@ defineOptions({ name: 'DemoSlider' })
 const sliderValue = ref(35)
 const sliderVolume = ref(70)
 const sliderWheel = ref(50)
+const sliderRange = ref([200, 4000])
+const sliderColor = ref(3)
+const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) => ({ value, label }))
 </script>
 
 <template>
@@ -35,7 +38,7 @@ const sliderWheel = ref(50)
     
           <h3>TaoSlider</h3>
           <TaoSlider v-model="sliderValue" show-value class="demo-wide" />
-          <p style="margin-top: 4px; font-size: 13px;">Значение: {{ sliderValue }} — <em>ПКМ по слайдеру открывает точный ввод числа</em></p>
+          <p style="margin-top: 4px; font-size: 13px;">Значение: {{ sliderValue }}</p>
     
           <h3>variant="thin"</h3>
           <TaoSlider v-model="sliderVolume" variant="thin" class="demo-wide" />
@@ -45,6 +48,12 @@ const sliderWheel = ref(50)
           <TaoSlider v-model="sliderWheel" variant="thin" :wheel="5" class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">Громкость с колёсиком: {{ sliderWheel }} — <em>прокрутка над слайдером меняет значение на 5</em></p>
     
+          <h3>TaoRangeSlider, marks, discrete</h3>
+          <TaoRangeSlider v-model="sliderRange" :min="0" :max="5000" :step="100" marks class="demo-wide" />
+          <p style="margin-top: 4px; font-size: 13px;">Диапазон: {{ sliderRange[0] }} – {{ sliderRange[1] }}</p>
+          <TaoSlider v-model="sliderColor" :min="0" :max="7" :marks="colorMarks" discrete class="demo-wide" />
+          <p style="margin-top: 4px; font-size: 13px;">Ступенчатая шкала: значение только на метках, клик по подписи переносит ручку</p>
+
           <div class="code-block">
             <pre><code>&lt;TaoProgress :progress="65" /&gt;
 
@@ -65,7 +74,9 @@ const sliderWheel = ref(50)
 
 &lt;TaoSlider v-model="value" show-value /&gt;
 &lt;TaoSlider v-model="volume" variant="thin" /&gt;
-&lt;TaoSlider v-model="volume" variant="thin" :wheel="5" /&gt;</code></pre>
+&lt;TaoSlider v-model="volume" variant="thin" :wheel="5" /&gt;
+&lt;TaoRangeSlider v-model="range" :min="0" :max="5000" :step="100" marks /&gt;
+&lt;TaoSlider v-model="color" :min="0" :max="7" :marks="colorMarks" discrete /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

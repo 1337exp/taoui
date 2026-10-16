@@ -31,6 +31,7 @@ import TaoTextarea from './components/TaoTextarea.vue';
 import TaoScrollTop from './components/TaoScrollTop.vue';
 import TaoProgress from './components/TaoProgress.vue';
 import TaoSlider from './components/TaoSlider.vue';
+import TaoRangeSlider from './components/TaoRangeSlider.vue';
 import TaoFileDrop from './components/TaoFileDrop.vue';
 import TaoDropdownMenu from './components/TaoDropdownMenu.vue';
 import TaoPinCode from './components/TaoPinCode.vue';
@@ -103,6 +104,7 @@ const components = [
     TaoScrollTop,
     TaoProgress,
     TaoSlider,
+    TaoRangeSlider,
     TaoFileDrop,
     TaoDropdownMenu,
     TaoPinCode,
@@ -186,6 +188,7 @@ export {
     TaoScrollTop,
     TaoProgress,
     TaoSlider,
+    TaoRangeSlider,
     TaoFileDrop,
     TaoDropdownMenu,
     TaoPinCode,
@@ -267,6 +270,7 @@ export type { TaoDropdownAction } from './dropdown';
 export type { TaoQuantityChangeSource } from './quantity';
 export type { TaoStageItem, TaoStageStatus } from './stage';
 export type { TaoSplitDirection, TaoSplitUnit } from './split';
+export type { TaoSliderMark, TaoSliderValue } from './slider';
 export type { TaoListSize } from './list';
 
 export default TaoUI;

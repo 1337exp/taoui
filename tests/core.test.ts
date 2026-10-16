@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { glideDuration, glideTarget, FLICK_SPEED } from '../src/carousel';
 import { toCssBox, toCssLength } from '../src/length';
+import { decimalsOf, isMarkActive, moveThumb, nearestMark, nearestThumb, niceTicks, normalizeMarks, normalizeValue, ratioOf, stepMark, valueAt } from '../src/slider';
 import { resolveSize, sizeClass } from '../src/size';
 import { surfaceClass } from '../src/surface';
 import { formatText, localeEn, localeRu, setTaoLocale, taoLocale } from '../src/locale';
@@ -108,5 +109,61 @@ describe('locale', () => {
     it('fills {placeholders}', () => {
         expect(formatText('Слайд {n} из {count}', { n: 1, count: 5 })).toBe('Слайд 1 из 5');
         expect(formatText('{missing}', {})).toBe('{missing}');
+    });
+});
+
+describe('slider logic', () => {
+    it('value from a ratio snaps to the step without a float tail', () => {
+        expect(valueAt(0.5, 0, 100, 1)).toBe(50);
+        expect(valueAt(0.333, 0, 1, 0.05)).toBe(0.35);
+        expect(valueAt(0.3, 0, 1, 0.1)).toBe(0.3);
+        expect(valueAt(2, 0, 10, 1)).toBe(10);
+        expect(valueAt(-1, 5, 10, 1)).toBe(5);
+        expect(valueAt(0.5, 1, 10, 3)).toBe(7); // шаг считается от min: 1, 4, 7, 10; 5.5 ровно посередине, округляем вверх
+        expect(decimalsOf(0.05)).toBe(2);
+        expect(decimalsOf(1e-7)).toBe(7);
+        expect(ratioOf(5, 0, 10)).toBe(0.5);
+        expect(ratioOf(5, 3, 3)).toBe(0);
+    });
+
+    it('marks: nearest, next in a direction, active part', () => {
+        expect(nearestMark(6, [0, 5, 10])).toBe(5);
+        expect(nearestMark(2.5, [0, 5])).toBe(0); // поровну: меньшая
+        expect(stepMark(5, [10, 0, 5], 1)).toBe(10);
+        expect(stepMark(5, [0, 5, 10], -1)).toBe(0);
+        expect(stepMark(10, [0, 5, 10], 1)).toBe(10);
+        expect(isMarkActive(3, [5])).toBe(true);
+        expect(isMarkActive(7, [5])).toBe(false);
+        expect(isMarkActive(7, [5, 8])).toBe(true);
+        expect(isMarkActive(2, [5, 8])).toBe(false);
+    });
+
+    it('the nearest thumb of a range, ties are resolved by the side', () => {
+        expect(nearestThumb([2, 8], 3)).toBe(0);
+        expect(nearestThumb([2, 8], 7)).toBe(1);
+        expect(nearestThumb([5, 5], 7)).toBe(1);
+        expect(nearestThumb([5, 5], 3)).toBe(0);
+        expect(nearestThumb([5, 5], 5, 1)).toBe(1);
+        expect(nearestThumb([4], 9)).toBe(0);
+    });
+
+    it('thumbs do not cross and keep the gap, values are normalised', () => {
+        expect(moveThumb([2, 6], 0, 9, 0, 10, 1)).toEqual([5, 6]);
+        expect(moveThumb([2, 6], 1, 0, 0, 10, 1)).toEqual([2, 3]);
+        expect(moveThumb([2, 6], 1, 99, 0, 10)).toEqual([2, 10]);
+        expect(normalizeValue([9, 2], 0, 10)).toEqual([2, 9]);
+        expect(normalizeValue(50, 0, 10)).toEqual([10]);
+        expect(normalizeValue(Number.NaN, 0, 10)).toEqual([0]);
+    });
+
+    it('automatic ticks are 1-2-5 and marks are built from any form', () => {
+        expect(niceTicks(0, 100, 5)).toEqual([0, 20, 40, 60, 80, 100]);
+        expect(niceTicks(0, 1, 4)).toEqual([0, 0.2, 0.4, 0.6, 0.8, 1]);
+        expect(niceTicks(3, 3)).toEqual([3]);
+
+        expect(normalizeMarks(false, 0, 10)).toEqual([]);
+        expect(normalizeMarks([5, 20, 0], 0, 10, (v) => `${v}$`)).toEqual([{ value: 0, label: '0$' }, { value: 5, label: '5$' }]);
+        expect(normalizeMarks([{ value: 1, label: 'D' }, { value: 2 }], 0, 10)).toEqual([{ value: 1, label: 'D' }, { value: 2, label: '2' }]);
+        expect(normalizeMarks(true, 0, 10)[0]).toEqual({ value: 0, label: '0' });
     });
 });

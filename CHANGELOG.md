@@ -1,5 +1,26 @@
 # Changelog
 
+## 3.0.0 (in progress)
+
+Cleaner slider family. Breaking changes are allowed in this major: quality over compatibility.
+
+### Slider
+
+- **New `TaoRangeSlider`**: two thumbs, `v-model` is a `[from, to]` pair, `minGap` keeps the thumbs apart.
+- **`TaoSlider` and `TaoRangeSlider` share props:** `marks` (`true` for automatic ticks, numbers, or `{ value, label? }`),
+  `discrete` (the value only sits on marks: stepped scales with captions), `format`, `vertical`, plus the old
+  `min / max / step / variant / size / showValue / disabled / error / wheel`. Clicking a mark caption moves the nearest thumb.
+  Slot `#mark="{ mark, active }"` draws a custom caption.
+- **Pure logic in `src/slider.ts`** (value ↔ position, steps without float tails, nearest thumb, marks) with unit tests.
+
+### Breaking
+
+- `TaoSlider` `v-model` is a **number** now; the `number | string` form is gone.
+- **Right-click to type a value is gone** (with the `placeholder` prop): use `TaoInputNumber` next to the slider.
+- **Markup:** the root is a `group`; each thumb is its own focusable `role="slider"` (keys go to the thumb, `id` for labels is on the first thumb).
+  The pointer area is `.tao-slider__rail`; the root also holds the marks.
+- `wheel` works for a single thumb only.
+
 ## 2.0.0
 
 One size scale, one API standard, built-in texts in any language. Old prop and event names keep working

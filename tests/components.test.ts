@@ -13,6 +13,7 @@ import TaoPagination from '../src/components/TaoPagination.vue';
 import TaoPinCode from '../src/components/TaoPinCode.vue';
 import TaoSelect from '../src/components/TaoSelect.vue';
 import TaoSlider from '../src/components/TaoSlider.vue';
+import TaoRangeSlider from '../src/components/TaoRangeSlider.vue';
 import TaoSpace from '../src/components/TaoSpace.vue';
 import TaoSpoiler from '../src/components/TaoSpoiler.vue';
 import TaoStages from '../src/components/TaoStages.vue';
@@ -23,6 +24,8 @@ import TaoTextarea from '../src/components/TaoTextarea.vue';
 import { localeEn, localeRu, setTaoLocale } from '../src/locale';
 
 const cls = (el: Element) => el.className;
+
+const last = <T,>(list: T[]): T => list[list.length - 1]!;
 
 describe('sizes', () => {
     it('explicit size adds the size class, no size inherits', () => {
@@ -140,11 +143,48 @@ describe('events', () => {
 
     it('Slider: change after a key press, not when the value stays', async () => {
         const w = mount(TaoSlider, { props: { modelValue: 0, min: 0, max: 10 } });
-        await w.trigger('keydown', { key: 'ArrowRight' });
+        const thumb = w.find('.tao-slider__thumb');
+        await thumb.trigger('keydown', { key: 'ArrowRight' });
         expect(w.emitted('change')).toEqual([[1]]);
         await w.setProps({ modelValue: 0 });
-        await w.trigger('keydown', { key: 'Home' });
+        await thumb.trigger('keydown', { key: 'Home' });
         expect(w.emitted('change')).toHaveLength(1);
+    });
+
+    it('Slider: a range has two thumbs, each moves on its own and they keep the gap', async () => {
+        const w = mount(TaoRangeSlider, { props: { modelValue: [2, 6] as [number, number], min: 0, max: 10, minGap: 1 } });
+        const thumbs = w.findAll('.tao-slider__thumb');
+        expect(thumbs).toHaveLength(2);
+
+        await thumbs[0]!.trigger('keydown', { key: 'ArrowRight' });
+        expect(last(w.emitted('update:modelValue')!)).toEqual([[3, 6]]);
+
+        await thumbs[1]!.trigger('keydown', { key: 'Home' });
+        expect(last(w.emitted('update:modelValue')!)).toEqual([[2, 3]]); // не ближе зазора к нижней ручке
+    });
+
+    it('Slider: marks are drawn, a click on a stepped mark sets the value', async () => {
+        const marks = [{ value: 0, label: 'S' }, { value: 5, label: 'M' }, { value: 10, label: 'L' }];
+        const w = mount(TaoSlider, { props: { modelValue: 0, min: 0, max: 10, marks, discrete: true } });
+        expect(w.findAll('.tao-slider__mark').map((m) => m.text())).toEqual(['S', 'M', 'L']);
+        expect(w.findAll('.tao-slider__mark--active')).toHaveLength(1); // подсвечена метка в закрашенной части
+
+        await w.findAll('.tao-slider__mark')[2]!.trigger('click');
+        expect(last(w.emitted('update:modelValue')!)).toEqual([10]);
+        expect(last(w.emitted('change')!)).toEqual([10]);
+
+        await w.setProps({ modelValue: 5 });
+        await w.find('.tao-slider__thumb').trigger('keydown', { key: 'ArrowRight' });
+        expect(last(w.emitted('update:modelValue')!)).toEqual([10]); // стрелка идёт по меткам, а не по шагу
+    });
+
+    it('Slider: vertical, aria and the id for a label', () => {
+        const w = mount(TaoSlider, { props: { modelValue: 3, vertical: true } });
+        expect(w.classes()).toContain('tao-slider--vertical');
+        const thumb = w.find('.tao-slider__thumb');
+        expect(thumb.attributes('aria-orientation')).toBe('vertical');
+        expect(thumb.attributes('role')).toBe('slider');
+        expect(thumb.attributes('id')).toBeTruthy();
     });
 });
 
