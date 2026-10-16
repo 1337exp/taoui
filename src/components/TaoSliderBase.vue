@@ -62,6 +62,8 @@ const text = (v: number) => (props.format ? props.format(v) : String(v));
 
 const markList = computed(() => normalizeMarks(props.marks, props.min, props.max, text));
 const markValues = computed(() => markList.value.map((m) => m.value));
+/** Есть ли у меток подписи: без них метки это только черты, и места под текст не нужно. */
+const hasCaptions = computed(() => markList.value.some((m) => m.label));
 /** Ступенчатая шкала: значения только на метках. Без меток ступенчатости нет. */
 const stepped = computed(() => props.discrete && markValues.value.length > 0);
 
@@ -255,6 +257,7 @@ onBeforeUnmount(() => {
                 'tao-slider--range': isRange,
                 'tao-slider--has-marks': markList.length > 0,
                 'tao-slider--marks-start': marksSide === 'start',
+                'tao-slider--marks-bare': markList.length > 0 && !hasCaptions,
                 'tao-slider--show-value': showValue,
                 'tao-slider--disabled': disabled,
                 'tao-slider--invalid': invalid,
@@ -494,6 +497,11 @@ onBeforeUnmount(() => {
     height: calc(var(--tao-control-font-size-secondary) * 1.5 + 8px);
     /* бегунок выступает за полосу: метки ниже его края, а не под ним */
     margin-top: calc(max(0px, var(--tao-slider-thumb) - var(--tao-slider-hit)) / 2 + 2px);
+}
+
+/* Метки без подписей: только черты, высота маленькая */
+.tao-slider--marks-bare .tao-slider__marks {
+    height: 6px;
 }
 
 .tao-slider__mark {
