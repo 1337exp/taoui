@@ -9,6 +9,8 @@ defineOptions({ name: 'DemoPinCode' })
 const pinValue = ref('')
 const pinValueNumeric = ref('')
 const pinValueReplace = ref('')
+const pinFormatted = ref('')
+const pinPhone = ref('')
 const pinCompleteNote = ref('')
 
 function onPinComplete(value) {
@@ -38,12 +40,25 @@ function onPinComplete(value) {
           <TaoPinCode v-model="pinValueReplace" :length="4" numbers-only clear-on="input" />
           <p style="margin-top: 8px; font-size: 13px;">Значение: {{ pinValueReplace }}</p>
     
+          <h3>Формат с разделителями</h3>
+          <p>
+            <code>format="#-##-##"</code>: <code>#</code> это ячейка, остальное разделитель. Разделители только рисуются, в значение они не попадают.
+            Вставка «0-12-34» раскладывается по ячейкам; если формат не совпал, но длина равна коду («01234»), он вставляется как есть.
+            С <code>numbers-only</code> набранный разделитель переходит в следующую группу.
+          </p>
+          <TaoPinCode v-model="pinFormatted" format="#-##-##" numbers-only />
+          <p style="margin-top: 8px; font-size: 13px;">Значение: {{ pinFormatted }}</p>
+          <TaoPinCode v-model="pinPhone" format="(###) ###" numbers-only size="small" style="margin-top: 8px;" />
+          <p style="margin-top: 8px; font-size: 13px;">Значение: {{ pinPhone }}</p>
+
           <div class="code-block">
             <pre><code>&lt;TaoPinCode v-model="pin" :length="4" @complete="onDone" /&gt;
 
 &lt;TaoPinCode v-model="pin" :length="4" numbers-only /&gt;
 
-&lt;TaoPinCode v-model="pin" :length="4" clear-on="input" /&gt;</code></pre>
+&lt;TaoPinCode v-model="pin" :length="4" clear-on="input" /&gt;
+
+&lt;TaoPinCode v-model="pin" format="#-##-##" numbers-only /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

@@ -48,7 +48,7 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoInputNumber** — number with min/max/step and ± on the right. Empty value is `null`. `@commit` fires once when an edit is finished (blur, Enter, ±, arrow), unlike `v-model`, which updates on every keystroke
 - **TaoQuantity** — cart quantity: `− | field | +`, integers, stock; minus at the minimum can remove the row
 - **TaoTextarea** — autosizing multiline. `maxlength` caps input, `count` shows “entered / max”. `variant`: `bar` (default) / `outline` (frame like Input) / `filled` / `plain`; `readonly`. `noBorder`, `noBackground`, `borderInverse`, `dummy` are deprecated
-- **TaoPinCode** — N cells. By default a click clears the cell and everything to the right (`clear-on="focus"`); `clear-on="input"` replaces the digit only when typing. The last cell blurs and emits `complete`
+- **TaoPinCode** — N cells. By default a click clears the cell and everything to the right (`clear-on="focus"`); `clear-on="input"` replaces the digit only when typing. `format="#-##-##"` draws visual separators (not part of the value; a paste in that shape or as a clean code is split into cells). The last cell blurs and emits `complete`
 - **TaoSlider** — mouse, touch, and arrows. Optional precise input on right-click. `variant="thin"` is a thin track for seek / volume; `size` scales either track
 - **TaoFileDrop** — drop zone (drag & drop + click). File names listed under the zone, `v-model` is `File[]`. Clearing the whole batch is the parent’s job (`clear-request`)
 

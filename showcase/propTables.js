@@ -299,7 +299,8 @@ export const propTables = {
     {
       title: 'TaoPinCode',
       rows: [
-        r('length', 'number', '—', 'Число ячеек. Обязательный'),
+        r('length', 'number', '—', 'Число ячеек. С format не нужен: считается по маске'),
+        r('format', 'string', '—', 'Маска с разделителями: # ячейка, остальное разделитель (#-##-## даёт 0-00-00). Разделители не входят в значение'),
         r('v-model', 'string', "''", 'Склеенная строка из ячеек'),
         r('numbersOnly', 'boolean', 'false', 'Только цифры'),
         r('masked', 'boolean', 'false', 'Точки вместо символов'),
