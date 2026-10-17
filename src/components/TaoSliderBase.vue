@@ -291,6 +291,7 @@ onBeforeUnmount(() => {
                 :aria-valuemax="max"
                 :aria-valuenow="v"
                 :aria-valuetext="text(v)"
+                :aria-label="ariaLabel"
                 :aria-orientation="vertical ? 'vertical' : 'horizontal'"
                 :aria-disabled="disabled || undefined"
                 :aria-invalid="invalid || undefined"
@@ -385,13 +386,14 @@ onBeforeUnmount(() => {
     transform: translateY(-50%);
 }
 
+/* Свои цвета полосы, заливки и бегунка (палитра красит трек оттенков и прозрачности): --tao-slider-track-bg, --tao-slider-fill-bg, --tao-slider-thumb-bg */
 .tao-slider__track {
     width: 100%;
-    background-color: var(--tao-color-surface-sunken);
+    background: var(--tao-slider-track-bg, var(--tao-color-surface-sunken));
 }
 
 .tao-slider__fill {
-    background-color: var(--tao-color-accent);
+    background: var(--tao-slider-fill-bg, var(--tao-color-accent));
 }
 
 .tao-slider--invalid .tao-slider__track {
@@ -408,7 +410,7 @@ onBeforeUnmount(() => {
     top: 50%;
     width: var(--tao-slider-thumb);
     height: var(--tao-slider-thumb);
-    background-color: var(--tao-color-accent);
+    background: var(--tao-slider-thumb-bg, var(--tao-color-accent));
     border: 2px solid var(--tao-color-surface-sunken);
     border-radius: var(--tao-radius-full);
     transform: translate(-50%, -50%);

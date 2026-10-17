@@ -48,6 +48,8 @@ export interface TaoSliderBaseProps {
     variant?: 'bar' | 'thin';
     /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
     size?: TaoSize;
+    /** Accessible name of the thumbs. / Имя ручек для скринридеров. */
+    ariaLabel?: string;
     /** Step for the mouse wheel (a single thumb only). 0 — off. / Шаг для колёсика мыши (только одна ручка). 0 — отключено. */
     wheel?: number;
 }

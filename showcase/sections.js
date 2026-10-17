@@ -15,6 +15,7 @@ import DemoTypeahead from './demo/DemoTypeahead.vue'
 import DemoDate from './components/DemoDate.vue'
 import DemoPinCode from './components/DemoPinCode.vue'
 import DemoSlider from './components/DemoSlider.vue'
+import DemoColor from './components/DemoColor.vue'
 import DemoFileDrop from './components/DemoFileDrop.vue'
 import DemoTable from './components/DemoTable.vue'
 import DemoPagination from './components/DemoPagination.vue'
@@ -68,6 +69,7 @@ export const demoById = {
   'date': DemoDate,
   'pincode': DemoPinCode,
   'slider': DemoSlider,
+  'color': DemoColor,
   'filedrop': DemoFileDrop,
   'table': DemoTable,
   'pagination': DemoPagination,

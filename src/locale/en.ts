@@ -76,6 +76,15 @@ export const localeEn: TaoLocale = {
     },
     table: { emptyText: 'No data' },
     tag: { closeLabel: 'Remove' },
+    colorPicker: {
+        areaLabel: 'Saturation and brightness',
+        hueLabel: 'Hue',
+        alphaLabel: 'Opacity',
+        hexLabel: 'Color in hex',
+        swatchesLabel: 'Swatches',
+        eyedropperLabel: 'Eyedropper',
+        chooseLabel: 'Choose color',
+    },
     timeline: { playLabel: 'Play', pauseLabel: 'Pause', restartLabel: 'Restart' },
     toast: { closeLabel: 'Close notification' },
 };

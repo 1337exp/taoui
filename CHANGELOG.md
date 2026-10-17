@@ -1,6 +1,16 @@
 # Changelog
 
-## 3.0.0 (in progress)
+## 3.1.0 (in progress)
+
+### Colour
+
+- **New `TaoColorPicker`**: square of saturation and brightness, hue and opacity strips, a hex field, swatches, the eyedropper where the browser has `EyeDropper`. `v-model` is a hex string (`#rrggbb`, with `alpha` also `#rrggbbaa`); keyboard: arrows move the cursor (Shift is ten times bigger).
+- **New `TaoColorInput`**: a field with a swatch and the hex text; the picker opens in a popover.
+- **`colorModel(source, options)`** turns your own colour storage (object, array, css string; 0…255 or 0…1; sRGB or linear) into a writable hex string for `v-model`. The pure helpers (`parseColor`, `toHex`, `rgbaToHsva`, `srgbToLinear`, ...) are exported too.
+- `TaoSlider`: `ariaLabel` prop and CSS hooks `--tao-slider-track-bg`, `--tao-slider-fill-bg`, `--tao-slider-thumb-bg` (the picker colours its strips with them).
+- Locale section `colorPicker`.
+
+## 3.0.0
 
 Cleaner slider family. Breaking changes are allowed in this major: quality over compatibility.
 

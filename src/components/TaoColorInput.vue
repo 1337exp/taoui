@@ -1,0 +1,125 @@
+<script lang="ts" setup>
+import { computed } from 'vue';
+import { normalizeHex } from '../color';
+import { useLocaleText } from '../locale';
+import { sizeClass, type TaoSize } from '../size';
+import TaoColorPicker from './TaoColorPicker.vue';
+import TaoPopover from './TaoPopover.vue';
+
+defineOptions({ name: 'TaoColorInput' });
+
+// Поле цвета: образец и hex на кнопке, по нажатию открывается палитра (TaoColorPicker) во всплывающем окне.
+const props = withDefaults(
+    defineProps<{
+        /** Color as a hex string. / Цвет строкой hex. */
+        modelValue: string;
+        /** The opacity strip and `#rrggbbaa`. / Полоса прозрачности и `#rrggbbaa`. */
+        alpha?: boolean;
+        swatches?: readonly string[];
+        eyedropper?: boolean;
+        disabled?: boolean;
+        /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
+        error?: boolean;
+        position?: 'top' | 'bottom' | 'left' | 'right';
+        /** Without it the size of ancestors. / Без него — размер предков. */
+        size?: TaoSize;
+        chooseLabel?: string;
+    }>(),
+    { alpha: false, eyedropper: true, disabled: false, error: false, position: 'bottom' },
+);
+
+const emit = defineEmits<{
+    'update:modelValue': [hex: string];
+    change: [hex: string];
+}>();
+
+const l10n = useLocaleText(props, 'colorPicker');
+const shown = computed(() => normalizeHex(props.modelValue, props.alpha) ?? props.modelValue);
+</script>
+
+<template>
+    <TaoPopover :position="position" :disabled="disabled" class="tao-color-input-root">
+        <template #trigger="{ open }">
+            <button
+                type="button"
+                class="tao-color-input"
+                :class="[sizeClass(size), { 'tao-color-input--open': open, 'tao-color-input--invalid': error }]"
+                :disabled="disabled"
+                :aria-label="`${l10n.chooseLabel}: ${shown}`"
+                aria-haspopup="dialog"
+                :aria-expanded="open"
+            >
+                <span class="tao-color-input__swatch"><span :style="{ backgroundColor: shown }"></span></span>
+                <span class="tao-color-input__text">{{ shown }}</span>
+            </button>
+        </template>
+
+        <TaoColorPicker
+            :model-value="modelValue"
+            :alpha="alpha"
+            :swatches="swatches"
+            :eyedropper="eyedropper"
+            :size="size"
+            @update:model-value="emit('update:modelValue', $event)"
+            @change="emit('change', $event)"
+        />
+    </TaoPopover>
+</template>
+
+<style scoped>
+.tao-color-input {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tao-space-2);
+    min-height: var(--tao-control-height);
+    padding: 0 var(--tao-control-padding-x) 0 6px;
+    border: 1px solid var(--tao-color-border-strong);
+    border-radius: var(--tao-radius-control);
+    background: var(--tao-color-input-bg);
+    color: var(--tao-color-input-text);
+    font: inherit;
+    font-size: var(--tao-control-font-size);
+    cursor: pointer;
+    transition: var(--tao-transition-base);
+}
+
+.tao-color-input:hover:not(:disabled),
+.tao-color-input--open {
+    border-color: var(--tao-color-accent);
+}
+
+.tao-color-input:focus-visible {
+    outline: 2px solid var(--tao-color-accent);
+    outline-offset: 2px;
+}
+
+.tao-color-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.tao-color-input--invalid {
+    border-color: var(--tao-color-danger);
+}
+
+.tao-color-input__swatch {
+    flex: none;
+    width: calc(var(--tao-control-height) - 12px);
+    height: calc(var(--tao-control-height) - 12px);
+    overflow: hidden;
+    border: 1px solid var(--tao-color-border-strong);
+    border-radius: var(--tao-radius-sm);
+    background: repeating-conic-gradient(var(--tao-color-surface-hover) 0% 25%, var(--tao-color-surface-sunken) 0% 50%) 50% / 8px 8px;
+}
+
+.tao-color-input__swatch > span {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.tao-color-input__text {
+    font-variant-numeric: tabular-nums;
+    text-transform: uppercase;
+}
+</style>

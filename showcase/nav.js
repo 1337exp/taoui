@@ -25,6 +25,7 @@ export const navGroups = [
       { id: 'typeahead', label: 'Typeahead (demo)', aliases: ['autocomplete', 'remote', 'поиск'] },
       { id: 'date', label: 'TaoDate / Range', aliases: ['TaoDate', 'TaoDateRange', 'DateRange'] },
       { id: 'pincode', label: 'TaoPinCode' },
+      { id: 'color', label: 'TaoColorPicker / Input', aliases: ['TaoColorPicker', 'TaoColorInput', 'colorModel', 'палитра', 'цвет'] },
       { id: 'slider', label: 'Progress / Slider / Timeline', aliases: ['TaoProgress', 'TaoSlider', 'TaoRangeSlider', 'TaoTimeline'] },
       { id: 'filedrop', label: 'TaoFileDrop' },
     ],

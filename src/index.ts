@@ -39,6 +39,8 @@ import TaoPinCode from './components/TaoPinCode.vue';
 import TaoLink from './components/TaoLink.vue';
 import TaoFormField from './components/TaoFormField.vue';
 import TaoSelect from './components/TaoSelect.vue';
+import TaoColorInput from './components/TaoColorInput.vue';
+import TaoColorPicker from './components/TaoColorPicker.vue';
 import TaoCombobox from './components/TaoCombobox.vue';
 import TaoDate from './components/TaoDate.vue';
 import TaoDateRange from './components/TaoDateRange.vue';
@@ -113,6 +115,8 @@ const components = [
     TaoLink,
     TaoFormField,
     TaoSelect,
+    TaoColorInput,
+    TaoColorPicker,
     TaoCombobox,
     TaoDate,
     TaoDateRange,
@@ -198,6 +202,8 @@ export {
     TaoLink,
     TaoFormField,
     TaoSelect,
+    TaoColorInput,
+    TaoColorPicker,
     TaoCombobox,
     TaoDate,
     TaoDateRange,
@@ -274,6 +280,8 @@ export type { TaoQuantityChangeSource } from './quantity';
 export type { TaoStageItem, TaoStageStatus } from './stage';
 export type { TaoSplitDirection, TaoSplitUnit } from './split';
 export type { TaoSliderMark, TaoSliderValue } from './slider';
+export { colorModel, type ColorModelOptions } from './colorModel';
+export { hsvaToRgba, linearToSrgb, normalizeHex, parseColor, rgbaToHsva, srgbToLinear, toHex, type Hsva, type Rgba } from './color';
 export type { TaoListSize } from './list';
 
 export default TaoUI;

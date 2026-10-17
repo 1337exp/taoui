@@ -79,6 +79,17 @@ export interface TaoLocale {
     stages: { ariaLabel: string; statusLabels: Record<TaoStageStatus, string> };
     table: { emptyText: string };
     tag: { closeLabel: string };
+    colorPicker: {
+        /** Square of saturation and brightness. / Квадрат насыщенности и яркости. */
+        areaLabel: string;
+        hueLabel: string;
+        alphaLabel: string;
+        hexLabel: string;
+        swatchesLabel: string;
+        eyedropperLabel: string;
+        /** Trigger of TaoColorInput. / Кнопка TaoColorInput. */
+        chooseLabel: string;
+    };
     timeline: { playLabel: string; pauseLabel: string; restartLabel: string };
     toast: { closeLabel: string };
 }

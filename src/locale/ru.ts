@@ -77,6 +77,15 @@ export const localeRu: TaoLocale = {
     },
     table: { emptyText: 'Нет данных' },
     tag: { closeLabel: 'Убрать' },
+    colorPicker: {
+        areaLabel: 'Насыщенность и яркость',
+        hueLabel: 'Оттенок',
+        alphaLabel: 'Прозрачность',
+        hexLabel: 'Цвет в hex',
+        swatchesLabel: 'Образцы',
+        eyedropperLabel: 'Пипетка',
+        chooseLabel: 'Выбрать цвет',
+    },
     timeline: { playLabel: 'Играть', pauseLabel: 'Пауза', restartLabel: 'В начало' },
     toast: { closeLabel: 'Закрыть уведомление' },
 };

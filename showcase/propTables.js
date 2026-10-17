@@ -377,6 +377,42 @@ export const propTables = {
       ],
     },
   ],
+  color: [
+    {
+      title: 'TaoColorPicker',
+      rows: [
+        r('v-model', 'string', '—', 'Цвет строкой hex: #rrggbb, с alpha ещё #rrggbbaa. Понимает и rgb()/rgba() на входе. Обязательный'),
+        r('alpha', 'boolean', 'false', 'Полоса прозрачности и #rrggbbaa'),
+        r('swatches', 'string[]', '—', 'Готовые цвета под палитрой; выбранный отмечен'),
+        r('eyedropper', 'boolean', 'true', 'Пипетка (только где браузер умеет EyeDropper)'),
+        r('disabled', 'boolean', 'false', 'Неактивна'),
+        r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер полей; без него — размер предков'),
+        r('areaLabel / hueLabel / alphaLabel / hexLabel / swatchesLabel / eyedropperLabel', 'string', 'из локали', 'Подписи для скринридеров (локаль colorPicker)'),
+        r('@change', 'hex', '—', 'Закончили правку: отпустили квадрат или полосу, клавиша, поле hex, образец. v-model — на каждое движение'),
+      ],
+    },
+    {
+      title: 'TaoColorInput',
+      rows: [
+        r('v-model', 'string', '—', 'Цвет строкой hex. Обязательный'),
+        r('alpha / swatches / eyedropper / size', '', '', 'Как у TaoColorPicker'),
+        r('position', "'top' | 'bottom' | 'left' | 'right'", "'bottom'", 'С какой стороны открывается палитра'),
+        r('error', 'boolean', 'false', 'Красная рамка. Текст ошибки — error у TaoFormField'),
+        r('disabled', 'boolean', 'false', 'Неактивно'),
+      ],
+    },
+    {
+      title: 'colorModel(source, options)',
+      rows: [
+        r('source', 'Ref<T>', '—', 'Ваше хранилище цвета. Возвращает записываемую строку hex для v-model'),
+        r('format', "'object' | 'array' | 'css'", "'object'", '{ r, g, b, a }, [r, g, b, a] или строка rgb(r g b / a)'),
+        r('range', '255 | 1', '255', 'Диапазон r, g, b; прозрачность всегда 0…1'),
+        r('space', "'srgb' | 'linear'", "'srgb'", 'Пространство r, g, b; linear только с range: 1 (рендер, градиент TaoFX)'),
+        r('alpha', 'boolean', 'false', 'Хранить прозрачность; без неё hex #rrggbb'),
+        r('precision', 'number', '5', 'Знаков у дробных значений (range 1); у линейного цвета меньше даёт ступени в тёмном'),
+      ],
+    },
+  ],
   filedrop: [
     {
       title: 'TaoFileDrop',
