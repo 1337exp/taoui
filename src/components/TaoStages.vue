@@ -146,11 +146,11 @@ warnDeprecated('TaoStages', {
 }
 
 .tao-stages__item--ok .tao-stages__ico {
-    color: var(--tao-color-success);
+    color: var(--tao-color-success-text);
 }
 
 .tao-stages__item--bad .tao-stages__ico {
-    color: var(--tao-color-danger);
+    color: var(--tao-color-danger-text);
 }
 
 .tao-stages__item--work .tao-stages__mark {

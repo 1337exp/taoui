@@ -61,6 +61,16 @@
     --tao-color-info-hover: var(--tao-blue-500);
     --tao-color-info-subtle: color-mix(in srgb, var(--tao-color-info) 15%, transparent);
 
+    /* Status colours as TEXT on the page / a raised surface (>= 4.5:1). The plain tokens above are for solid fills. */
+    --tao-color-danger-text: var(--tao-red-400);
+    --tao-color-danger-text-hover: color-mix(in srgb, var(--tao-color-danger-text) 85%, var(--tao-color-text-strong));
+    --tao-color-success-text: var(--tao-green-400);
+    --tao-color-success-text-hover: color-mix(in srgb, var(--tao-color-success-text) 85%, var(--tao-color-text-strong));
+    --tao-color-warning-text: var(--tao-yellow-400);
+    --tao-color-warning-text-hover: color-mix(in srgb, var(--tao-color-warning-text) 85%, var(--tao-color-text-strong));
+    --tao-color-info-text: var(--tao-blue-400);
+    --tao-color-info-text-hover: color-mix(in srgb, var(--tao-color-info-text) 85%, var(--tao-color-text-strong));
+
     /* ---------- Form controls ---------- */
     --tao-color-input-bg: var(--tao-color-surface-sunken);
     --tao-color-input-text: var(--tao-gray-200);

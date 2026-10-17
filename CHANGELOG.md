@@ -17,6 +17,11 @@
 - New optional token `--tao-button-primary-text-shadow` (none by default; the light theme sets a soft one).
 - The light theme no longer inherits the dark theme's glowing link shadow.
 
+### Status colours as text
+
+- **New tokens `--tao-color-{danger,success,warning,info}-text` and `-text-hover`** for status colours used as text. The plain tokens are the solid-fill shades (white text on top); as text on a dark page they were dim (danger about 4:1). The text tokens use lighter shades in the dark theme and darker ones in the light theme (new primitives `green-700`, `yellow-700`, `blue-700`), at least 4.5:1 on the page and on raised surfaces, enforced by `tests/tokens.test.ts`.
+- Used by `text` / `ghost` / `secondary` Button tones, Tag, Stages, FileDrop, FormField and the error text of Input and Textarea. Fills, borders and toasts are unchanged.
+
 ### Feedback
 
 - **toast():** a light shadow hugging the edge (hook `--tao-toast-shadow`) instead of the large overlay shadow, which showed as a wide smear on stacked toasts.

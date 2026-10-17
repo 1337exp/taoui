@@ -88,3 +88,18 @@ describe('on-* text colours', () => {
         }
     }
 });
+
+// `--tao-color-<status>-text` is the status colour as text (buttons, tags, error messages); the plain token is for fills.
+const textTokens = ['danger', 'success', 'warning', 'info'].map((status) => `--tao-color-${status}-text`);
+
+describe('status text colours', () => {
+    for (const [theme, scope] of Object.entries(themes)) {
+        for (const token of textTokens) {
+            for (const surface of ['--tao-color-bg', '--tao-color-surface-raised']) {
+                it(`${theme}: ${token} on ${surface} has at least 4.5:1 contrast`, () => {
+                    expect(contrast(resolveValue(token, scope), resolveValue(surface, scope))).toBeGreaterThanOrEqual(4.5);
+                });
+            }
+        }
+    }
+});

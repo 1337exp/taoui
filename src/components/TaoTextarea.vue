@@ -359,6 +359,6 @@ warnDeprecated('TaoTextarea', {
 }
 
 .tao-textarea__count--limit {
-    color: var(--tao-color-danger);
+    color: var(--tao-color-danger-text);
 }
 </style>

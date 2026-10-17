@@ -88,6 +88,6 @@ function onLabelClick() {
 .tao-form-field__error {
     margin: 0;
     font-size: var(--tao-font-size-xs);
-    color: var(--tao-color-danger);
+    color: var(--tao-color-danger-text);
 }
 </style>

@@ -237,6 +237,6 @@ warnDeprecated('TaoInput', {
 
 .tao-input__error {
     font-size: var(--tao-font-size-xs);
-    color: var(--tao-color-danger);
+    color: var(--tao-color-danger-text);
 }
 </style>

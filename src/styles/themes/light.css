@@ -55,6 +55,15 @@
     --tao-color-info-hover: var(--tao-blue-600);
     --tao-color-info-subtle: color-mix(in srgb, var(--tao-color-info) 12%, transparent);
 
+    --tao-color-danger-text: var(--tao-red-600);
+    --tao-color-danger-text-hover: color-mix(in srgb, var(--tao-color-danger-text) 85%, var(--tao-color-text-strong));
+    --tao-color-success-text: var(--tao-green-700);
+    --tao-color-success-text-hover: color-mix(in srgb, var(--tao-color-success-text) 85%, var(--tao-color-text-strong));
+    --tao-color-warning-text: var(--tao-yellow-700);
+    --tao-color-warning-text-hover: color-mix(in srgb, var(--tao-color-warning-text) 85%, var(--tao-color-text-strong));
+    --tao-color-info-text: var(--tao-blue-700);
+    --tao-color-info-text-hover: color-mix(in srgb, var(--tao-color-info-text) 85%, var(--tao-color-text-strong));
+
     --tao-color-input-bg: var(--tao-gray-0);
     --tao-color-input-text: var(--tao-gray-950);
     --tao-color-input-placeholder: var(--tao-gray-300);

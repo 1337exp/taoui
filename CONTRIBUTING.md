@@ -65,8 +65,9 @@ Rules:
    wants dark text, which is exactly why one shared "text on fill" token does not work.
 3. Text roles keep their order in every theme: `text-strong` ≥ `text` ≥ `text-subtle` ≥ `text-muted` ≥ `text-disabled` in emphasis.
    `subtle` is for idle controls (Segmented, Tabs), `muted` for captions and hints.
-4. A theme file sets every colour role explicitly, even when the value equals the dark one. It must not invent roles.
-5. No literal colours in components (the rainbow border is the one deliberate exception).
+4. **Status colour as text uses `<status>-text`, as a fill uses `<status>`.** One shade cannot do both: the fill is picked for white text on top of it, the text for contrast against the page.
+5. A theme file sets every colour role explicitly, even when the value equals the dark one. It must not invent roles.
+6. No literal colours in components (the rainbow border is the one deliberate exception).
 
 `tests/tokens.test.ts` enforces the mechanical part: a theme only overrides roles that exist, sets every colour role, and every
 `on-*` colour has at least 3:1 contrast on its fill in both themes. Adding a role? Add it to `semantic.css` **and** every file in `themes/`.

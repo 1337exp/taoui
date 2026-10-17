@@ -266,7 +266,7 @@ warnDeprecated('TaoFileDrop', {
     text-align: center;
     border: 2px dashed var(--tao-color-danger);
     border-radius: var(--tao-radius-panel);
-    color: var(--tao-color-danger);
+    color: var(--tao-color-danger-text);
     background-color: var(--tao-color-danger-subtle);
     cursor: pointer;
     font-family: inherit;
@@ -361,7 +361,7 @@ warnDeprecated('TaoFileDrop', {
 }
 
 .tao-file-drop__remove:hover {
-    color: var(--tao-color-danger);
+    color: var(--tao-color-danger-text);
     background: var(--tao-color-danger-subtle);
 }
 

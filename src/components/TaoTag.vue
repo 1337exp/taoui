@@ -187,26 +187,26 @@ warnDeprecated('TaoTag', {
 }
 
 .tao-tag--success {
-    color: var(--tao-color-success);
+    color: var(--tao-color-success-text);
     background: color-mix(in srgb, var(--tao-color-success) 12%, transparent);
     border-color: color-mix(in srgb, var(--tao-color-success) 30%, transparent);
 }
 
 .tao-tag--danger,
 .tao-tag--error {
-    color: var(--tao-color-danger);
+    color: var(--tao-color-danger-text);
     background: var(--tao-color-danger-subtle);
     border-color: color-mix(in srgb, var(--tao-color-danger) 30%, transparent);
 }
 
 .tao-tag--warning {
-    color: var(--tao-color-warning);
+    color: var(--tao-color-warning-text);
     background: var(--tao-color-warning-subtle);
     border-color: color-mix(in srgb, var(--tao-color-warning) 30%, transparent);
 }
 
 .tao-tag--info {
-    color: var(--tao-color-info);
+    color: var(--tao-color-info-text);
     background: var(--tao-color-info-subtle);
     border-color: color-mix(in srgb, var(--tao-color-info) 30%, transparent);
 }
