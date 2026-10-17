@@ -55,7 +55,8 @@ function bindDismiss() {
         return;
     }
 
-    document.addEventListener('pointerdown', onDocumentPointer);
+    // Фаза перехвата: иначе приложение, которое гасит pointerdown у своей панели (stopPropagation), не закроет окно кликом по ней
+    document.addEventListener('pointerdown', onDocumentPointer, true);
     document.addEventListener('keydown', onDocumentKey);
     window.addEventListener('resize', onViewportChange);
     window.addEventListener('scroll', onViewportChange, true);
@@ -66,7 +67,7 @@ function unbindDismiss() {
         return;
     }
 
-    document.removeEventListener('pointerdown', onDocumentPointer);
+    document.removeEventListener('pointerdown', onDocumentPointer, true);
     document.removeEventListener('keydown', onDocumentKey);
     window.removeEventListener('resize', onViewportChange);
     window.removeEventListener('scroll', onViewportChange, true);

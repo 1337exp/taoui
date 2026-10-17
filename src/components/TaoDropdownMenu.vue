@@ -134,13 +134,13 @@ function onListKeydown(event: KeyboardEvent) {
 }
 
 onMounted(() => {
-    document.addEventListener('pointerdown', onDocumentPointer);
+    document.addEventListener('pointerdown', onDocumentPointer, true);
     window.addEventListener('scroll', onWinScroll, true);
     window.addEventListener('resize', updatePosition);
 });
 
 onBeforeUnmount(() => {
-    document.removeEventListener('pointerdown', onDocumentPointer);
+    document.removeEventListener('pointerdown', onDocumentPointer, true);
     window.removeEventListener('scroll', onWinScroll, true);
     window.removeEventListener('resize', updatePosition);
 });

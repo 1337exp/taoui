@@ -317,7 +317,7 @@ function onViewportChange() {
 
 watch(open, (isOpen) => {
     if (isOpen) {
-        document.addEventListener('pointerdown', onDocumentPointer);
+        document.addEventListener('pointerdown', onDocumentPointer, true);
         window.addEventListener('resize', onViewportChange);
         window.addEventListener('scroll', onViewportChange, true);
         return;
@@ -325,7 +325,7 @@ watch(open, (isOpen) => {
 
     draftStart.value = null;
     hoverIso.value = null;
-    document.removeEventListener('pointerdown', onDocumentPointer);
+    document.removeEventListener('pointerdown', onDocumentPointer, true);
     window.removeEventListener('resize', onViewportChange);
     window.removeEventListener('scroll', onViewportChange, true);
 });
@@ -339,7 +339,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     stopFocusLoss?.();
-    document.removeEventListener('pointerdown', onDocumentPointer);
+    document.removeEventListener('pointerdown', onDocumentPointer, true);
     window.removeEventListener('resize', onViewportChange);
     window.removeEventListener('scroll', onViewportChange, true);
 });

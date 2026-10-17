@@ -448,13 +448,13 @@ watch(rows, () => {
 watch(open, (isOpen) => {
     if (isOpen) {
         panelSize.value = resolveSize(fieldRef.value, props.size);
-        document.addEventListener('pointerdown', onDocumentPointer);
+        document.addEventListener('pointerdown', onDocumentPointer, true);
         window.addEventListener('resize', onViewportChange);
         window.addEventListener('scroll', onViewportChange, true);
         return;
     }
 
-    document.removeEventListener('pointerdown', onDocumentPointer);
+    document.removeEventListener('pointerdown', onDocumentPointer, true);
     window.removeEventListener('resize', onViewportChange);
     window.removeEventListener('scroll', onViewportChange, true);
 });
@@ -468,7 +468,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     stopFocusLoss?.();
-    document.removeEventListener('pointerdown', onDocumentPointer);
+    document.removeEventListener('pointerdown', onDocumentPointer, true);
     window.removeEventListener('resize', onViewportChange);
     window.removeEventListener('scroll', onViewportChange, true);
 });

@@ -115,6 +115,25 @@ describe('ColorInput', () => {
         w.unmount();
     });
 
+    it('a press anywhere outside closes it, even where the app stops pointerdown from bubbling', async () => {
+        const wrapper = document.createElement('div');
+        wrapper.addEventListener('pointerdown', (e) => e.stopPropagation()); // like an app panel that keeps the press from its canvas
+        const outside = document.createElement('button');
+        wrapper.append(outside);
+        document.body.append(wrapper);
+
+        const w = mount(TaoColorInput, { props: { modelValue: '#ff8800' }, attachTo: document.body });
+        await w.find('.tao-color-input').trigger('click');
+        await nextTick();
+        expect(document.querySelector('.tao-popover__panel')).not.toBeNull();
+
+        outside.dispatchEvent(new Event('pointerdown', { bubbles: true }));
+        await nextTick();
+        expect(document.querySelector('.tao-popover__panel')).toBeNull();
+        w.unmount();
+        wrapper.remove();
+    });
+
     it('disabled does not open', async () => {
         const w = mount(TaoColorInput, { props: { modelValue: '#ff8800', disabled: true }, attachTo: document.body });
         await w.find('.tao-color-input').trigger('click');
