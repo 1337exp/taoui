@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { nextTick } from 'vue';
 import TaoColorInput from '../src/components/TaoColorInput.vue';
 import TaoColorPicker from '../src/components/TaoColorPicker.vue';
+import TaoSegmented from '../src/components/TaoSegmented.vue';
 
 const last = <T,>(list: T[]): T => list[list.length - 1]!;
 
@@ -120,5 +121,75 @@ describe('ColorInput', () => {
         await nextTick();
         expect(document.querySelector('.tao-popover__panel')).toBeNull();
         w.unmount();
+    });
+});
+
+describe('ColorPicker: input modes', () => {
+    const mountPicker = (props: Record<string, unknown> = {}) => mount(TaoColorPicker, { props: { modelValue: '#ff8800', ...props }, attachTo: document.body });
+    const channelInputs = (w: ReturnType<typeof mountPicker>) => w.findAll('.tao-color-picker__channel input').map((i) => (i.element as HTMLInputElement).value);
+
+    it('three modes by default, a single mode hides the switch, the choice goes out as update:mode', async () => {
+        const w = mountPicker();
+        expect(w.findComponent(TaoSegmented).exists()).toBe(true);
+        expect(w.findAll('.tao-segmented-option').map((o) => o.text())).toEqual(['HEX', 'RGB', 'HSL']);
+        w.findComponent(TaoSegmented).vm.$emit('update:modelValue', 'hsl');
+        expect(w.emitted('update:mode')).toEqual([['hsl']]);
+
+        expect(mountPicker({ modes: ['hex'] }).findComponent(TaoSegmented).exists()).toBe(false);
+        expect(mountPicker({ modes: ['rgb', 'hsl'] }).findAll('.tao-segmented-option').map((o) => o.text())).toEqual(['RGB', 'HSL']);
+    });
+
+    it('RGB mode: numbers instead of the hex field, editing a channel gives the new colour', async () => {
+        const w = mountPicker({ mode: 'rgb' });
+        expect(w.find('.tao-color-picker__hex').exists()).toBe(false);
+        expect(channelInputs(w)).toEqual(['255', '136', '0']);
+
+        const g = w.findAll('.tao-color-picker__channel input')[1]!;
+        await g.setValue('0');
+        await g.trigger('blur');
+        expect(last(w.emitted('update:modelValue')!)[0]).toBe('#ff0000');
+        expect(last(w.emitted('change')!)[0]).toBe('#ff0000');
+    });
+
+    it('HSL mode: H, S, L in degrees and percent, an edit converts back to hex', async () => {
+        const w = mountPicker({ mode: 'hsl', modelValue: '#ff0000' });
+        expect(channelInputs(w)).toEqual(['0', '100', '50']);
+
+        const h = w.findAll('.tao-color-picker__channel input')[0]!;
+        await h.setValue('240');
+        await h.trigger('blur');
+        expect(last(w.emitted('update:modelValue')!)[0]).toBe('#0000ff');
+
+        const l = w.findAll('.tao-color-picker__channel input')[2]!;
+        await l.setValue('25');
+        await l.trigger('blur');
+        expect(last(w.emitted('update:modelValue')!)[0]).toBe('#000080');
+    });
+
+    it('the hue entered in HSL survives a grey: S=0, then H, then S back', async () => {
+        const w = mountPicker({ mode: 'hsl', modelValue: '#ff0000' });
+        const field = (i: number) => w.findAll('.tao-color-picker__channel input')[i]!;
+        await field(1).setValue('0');
+        await field(1).trigger('blur');
+        await field(0).setValue('120');
+        await field(0).trigger('blur');
+        await field(1).setValue('100');
+        await field(1).trigger('blur');
+        expect(last(w.emitted('update:modelValue')!)[0]).toBe('#00ff00'); // оттенок 120° не потерян на сером
+    });
+
+    it('opacity in percent in RGB and HSL, none in hex mode', async () => {
+        const w = mountPicker({ mode: 'rgb', alpha: true, modelValue: '#ff880080' });
+        expect(channelInputs(w)).toEqual(['255', '136', '0', '50']);
+        const a = w.findAll('.tao-color-picker__channel input')[3]!;
+        await a.setValue('100');
+        await a.trigger('blur');
+        expect(last(w.emitted('update:modelValue')!)[0]).toBe('#ff8800ff');
+        expect(mountPicker({ mode: 'hex', alpha: true }).findAll('.tao-color-picker__channel')).toHaveLength(0);
+    });
+
+    it('a mode that is not in the list falls back to the first allowed one', () => {
+        const w = mountPicker({ mode: 'hsl', modes: ['rgb'] });
+        expect(channelInputs(w)).toEqual(['255', '136', '0']);
     });
 });

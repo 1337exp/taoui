@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { normalizeHex } from '../color';
+import { normalizeHex, type ColorMode } from '../color';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import TaoColorPicker from './TaoColorPicker.vue';
@@ -16,6 +16,10 @@ const props = withDefaults(
         /** The opacity strip and `#rrggbbaa`. / Полоса прозрачности и `#rrggbbaa`. */
         alpha?: boolean;
         swatches?: readonly string[];
+        /** Ways to enter the colour in the popover (HEX, RGB, HSL). / Способы ввода цвета в окне (HEX, RGB, HSL). */
+        modes?: readonly ColorMode[];
+        /** The current mode (`v-model:mode` remembers the choice). / Текущий способ ввода (`v-model:mode` запоминает выбор). */
+        mode?: ColorMode;
         eyedropper?: boolean;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
@@ -25,11 +29,12 @@ const props = withDefaults(
         size?: TaoSize;
         chooseLabel?: string;
     }>(),
-    { alpha: false, eyedropper: true, disabled: false, error: false, position: 'bottom' },
+    { alpha: false, modes: () => ['hex', 'rgb', 'hsl'], eyedropper: true, disabled: false, error: false, position: 'bottom' },
 );
 
 const emit = defineEmits<{
     'update:modelValue': [hex: string];
+    'update:mode': [mode: ColorMode];
     change: [hex: string];
 }>();
 
@@ -58,9 +63,12 @@ const shown = computed(() => normalizeHex(props.modelValue, props.alpha) ?? prop
             :model-value="modelValue"
             :alpha="alpha"
             :swatches="swatches"
+            :modes="modes"
+            :mode="mode"
             :eyedropper="eyedropper"
             :size="size"
             @update:model-value="emit('update:modelValue', $event)"
+            @update:mode="emit('update:mode', $event)"
             @change="emit('change', $event)"
         />
     </TaoPopover>

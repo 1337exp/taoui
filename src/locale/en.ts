@@ -81,6 +81,7 @@ export const localeEn: TaoLocale = {
         hueLabel: 'Hue',
         alphaLabel: 'Opacity',
         hexLabel: 'Color in hex',
+        modeLabel: 'Input mode',
         swatchesLabel: 'Swatches',
         eyedropperLabel: 'Eyedropper',
         chooseLabel: 'Choose color',

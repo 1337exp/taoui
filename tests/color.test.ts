@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { ref } from 'vue';
-import { hsvToRgb, linearToSrgb, normalizeHex, parseColor, rgbToHsv, rgbaToHsva, hsvaToRgba, srgbToLinear, toHex } from '../src/color';
+import { hslToRgb, hsvToRgb, linearToSrgb, normalizeHex, rgbToHsl, parseColor, rgbToHsv, rgbaToHsva, hsvaToRgba, srgbToLinear, toHex } from '../src/color';
 import { colorModel } from '../src/colorModel';
 
 describe('parseColor', () => {
@@ -22,7 +22,7 @@ describe('parseColor', () => {
     });
 
     it('не цвет: null', () => {
-        for (const bad of ['', 'red', '#12', '#12345', '#gg0000', 'rgb(1 2)', 'rgb(1 2 3 4 5)', 'rgb(a b c)', 'hsl(0 0% 0%)']) expect(parseColor(bad), bad).toBeNull();
+        for (const bad of ['', 'red', '#12', '#12345', '#gg0000', 'rgb(1 2)', 'rgb(1 2 3 4 5)', 'rgb(a b c)', 'hwb(0 0% 0%)']) expect(parseColor(bad), bad).toBeNull();
     });
 
     it('normalizeHex приводит к одному виду', () => {
@@ -114,5 +114,27 @@ describe('colorModel', () => {
         hex.value = 'не цвет';
         expect(stored.value).toEqual({ r: 1, g: 2, b: 3 });
         expect(() => colorModel(stored, { space: 'linear' })).toThrow(/range/);
+    });
+});
+
+describe('HSL', () => {
+    it('hsl() и hsla() читаются: запятые, пробелы, слэш', () => {
+        expect(parseColor('hsl(0 100% 50%)')).toEqual({ r: 255, g: 0, b: 0, a: 1 });
+        expect(parseColor('hsl(120, 100%, 25%)')).toEqual({ r: 0, g: 128, b: 0, a: 1 });
+        expect(parseColor('hsla(240, 100%, 50%, 0.5)')).toEqual({ r: 0, g: 0, b: 255, a: 0.5 });
+        expect(parseColor('hsl(30 100% 50% / 25%)')).toMatchObject({ r: 255, g: 128, b: 0, a: 0.25 });
+        expect(parseColor('hsl(a b c)')).toBeNull();
+        expect(parseColor('hsl(1 2)')).toBeNull();
+    });
+
+    it('RGB ↔ HSL: круговой проход, серый и края', () => {
+        for (const [r, g, b] of [[255, 0, 0], [0, 255, 0], [255, 136, 0], [12, 200, 90], [128, 128, 128], [0, 0, 0], [255, 255, 255]] as const) {
+            const { h, s, l } = rgbToHsl(r, g, b);
+            expect(hslToRgb(h, s, l)).toEqual({ r, g, b });
+        }
+        expect(rgbToHsl(255, 0, 0)).toEqual({ h: 0, s: 1, l: 0.5 });
+        expect(rgbToHsl(128, 128, 128).s).toBe(0);
+        expect(rgbToHsl(255, 255, 255)).toMatchObject({ s: 0, l: 1 });
+        expect(rgbToHsl(0, 0, 0)).toMatchObject({ s: 0, l: 0 });
     });
 });

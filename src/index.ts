@@ -281,7 +281,7 @@ export type { TaoStageItem, TaoStageStatus } from './stage';
 export type { TaoSplitDirection, TaoSplitUnit } from './split';
 export type { TaoSliderMark, TaoSliderValue } from './slider';
 export { colorModel, type ColorModelOptions } from './colorModel';
-export { hsvaToRgba, linearToSrgb, normalizeHex, parseColor, rgbaToHsva, srgbToLinear, toHex, type Hsva, type Rgba } from './color';
+export { hslToRgb, hsvaToRgba, rgbToHsl, type ColorMode, linearToSrgb, normalizeHex, parseColor, rgbaToHsva, srgbToLinear, toHex, type Hsva, type Rgba } from './color';
 export type { TaoListSize } from './list';
 
 export default TaoUI;

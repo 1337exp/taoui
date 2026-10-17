@@ -384,6 +384,8 @@ export const propTables = {
         r('v-model', 'string', '—', 'Цвет строкой hex: #rrggbb, с alpha ещё #rrggbbaa. Понимает и rgb()/rgba() на входе. Обязательный'),
         r('alpha', 'boolean', 'false', 'Полоса прозрачности и #rrggbbaa'),
         r('swatches', 'string[]', '—', 'Готовые цвета под палитрой; выбранный отмечен'),
+        r('modes', "('hex' | 'rgb' | 'hsl')[]", "['hex', 'rgb', 'hsl']", 'Способы ввода цвета; один способ скрывает переключатель'),
+        r('v-model:mode', "'hex' | 'rgb' | 'hsl'", 'первый из modes', 'Текущий способ ввода; v-model:mode запоминает выбор между открытиями'),
         r('eyedropper', 'boolean', 'true', 'Пипетка (только где браузер умеет EyeDropper)'),
         r('disabled', 'boolean', 'false', 'Неактивна'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер полей; без него — размер предков'),
@@ -395,7 +397,7 @@ export const propTables = {
       title: 'TaoColorInput',
       rows: [
         r('v-model', 'string', '—', 'Цвет строкой hex. Обязательный'),
-        r('alpha / swatches / eyedropper / size', '', '', 'Как у TaoColorPicker'),
+        r('alpha / swatches / modes / v-model:mode / eyedropper / size', '', '', 'Как у TaoColorPicker'),
         r('position', "'top' | 'bottom' | 'left' | 'right'", "'bottom'", 'С какой стороны открывается палитра'),
         r('error', 'boolean', 'false', 'Красная рамка. Текст ошибки — error у TaoFormField'),
         r('disabled', 'boolean', 'false', 'Неактивно'),

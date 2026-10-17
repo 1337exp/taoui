@@ -85,6 +85,8 @@ export interface TaoLocale {
         hueLabel: string;
         alphaLabel: string;
         hexLabel: string;
+        /** Switch of the input mode (HEX, RGB, HSL). / Переключатель способа ввода. */
+        modeLabel: string;
         swatchesLabel: string;
         eyedropperLabel: string;
         /** Trigger of TaoColorInput. / Кнопка TaoColorInput. */

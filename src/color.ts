@@ -1,6 +1,9 @@
 // Чистая логика цвета для TaoColorPicker и TaoColorInput: разбор строк, перевод RGB ↔ HSV, запись в hex, sRGB ↔ линейный.
 // Без Vue и DOM, поэтому проверяется тестами. Компоненты говорят строкой hex; всё остальное: переводчики на границе.
 
+/** Способ ввода цвета в палитре: строка hex, числа RGB или числа HSL. */
+export type ColorMode = 'hex' | 'rgb' | 'hsl';
+
 /** Цвет: r, g, b от 0 до 255, a (прозрачность) от 0 до 1. Это обычный sRGB, как в CSS. */
 export interface Rgba {
     r: number;
@@ -29,7 +32,7 @@ function channel(text: string, scale: number): number {
 
 /**
  * Разбирает цвет из строки: `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`, `rgb(255 136 0)`, `rgba(255, 136, 0, 0.5)`,
- * `rgb(255 136 0 / 50%)`. Не цвет: null.
+ * `rgb(255 136 0 / 50%)`, `hsl(30 100% 50%)`, `hsla(30, 100%, 50%, 0.5)`. Не цвет: null.
  */
 export function parseColor(input: string): Rgba | null {
     const text = input.trim();
@@ -42,9 +45,21 @@ export function parseColor(input: string): Rgba | null {
         return { r: n(0), g: n(2), b: n(4), a: h.length === 8 ? n(6) / 255 : 1 };
     }
 
-    const fn = /^rgba?\(\s*([^)]+?)\s*\)$/i.exec(text);
+    const fn = /^(rgba?|hsla?)\(\s*([^)]+?)\s*\)$/i.exec(text);
+    if (fn && fn[1]!.toLowerCase().startsWith('hsl')) {
+        const [main, slash] = fn[2]!.split('/');
+        const parts = main!.trim().split(/[\s,]+/);
+        const alphaText = slash !== undefined ? slash : parts[3];
+        if (parts.length < 3 || parts.length > (slash === undefined ? 4 : 3)) return null;
+        const h = parseFloat(parts[0]!);
+        const s = parseFloat(parts[1]!) / 100;
+        const l = parseFloat(parts[2]!) / 100;
+        const a = alphaText === undefined ? 1 : channel(alphaText, 1);
+        if ([h, s, l, a].some((v) => Number.isNaN(v))) return null;
+        return { ...hslToRgb(h, s, l), a: clamp(a, 0, 1) };
+    }
     if (fn) {
-        const [main, slash] = fn[1]!.split('/');
+        const [main, slash] = fn[2]!.split('/');
         const parts = main!.trim().split(/[\s,]+/);
         // rgb(r g b / a) и rgba(r, g, b, a): прозрачность либо после «/», либо четвёртым числом
         const alphaText = slash !== undefined ? slash : parts[3];
@@ -93,6 +108,22 @@ export function hsvToRgb(h: number, s: number, v: number): { r: number; g: numbe
         return V - V * S * Math.max(0, Math.min(k, 4 - k, 1));
     };
     return { r: f(5) * 255, g: f(3) * 255, b: f(1) * 255 };
+}
+
+/** RGB (0…255) в HSL: h 0…360, s и l 0…1. У серого оттенок 0. */
+export function rgbToHsl(r: number, g: number, b: number): { h: number; s: number; l: number } {
+    const { h, s: sv, v } = rgbToHsv(r, g, b);
+    const l = v * (1 - sv / 2);
+    return { h, s: l === 0 || l === 1 ? 0 : (v - l) / Math.min(l, 1 - l), l };
+}
+
+/** HSL в RGB (0…255, целые). */
+export function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: number } {
+    const S = clamp(s, 0, 1);
+    const L = clamp(l, 0, 1);
+    const v = L + S * Math.min(L, 1 - L);
+    const rgb = hsvToRgb(h, v === 0 ? 0 : 2 * (1 - L / v), v);
+    return { r: byte(rgb.r), g: byte(rgb.g), b: byte(rgb.b) };
 }
 
 export const rgbaToHsva = (c: Rgba): Hsva => ({ ...rgbToHsv(c.r, c.g, c.b), a: c.a });

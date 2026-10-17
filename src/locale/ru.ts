@@ -82,6 +82,7 @@ export const localeRu: TaoLocale = {
         hueLabel: 'Оттенок',
         alphaLabel: 'Прозрачность',
         hexLabel: 'Цвет в hex',
+        modeLabel: 'Способ ввода',
         swatchesLabel: 'Образцы',
         eyedropperLabel: 'Пипетка',
         chooseLabel: 'Выбрать цвет',

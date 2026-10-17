@@ -8,6 +8,7 @@ defineOptions({ name: 'DemoColor' })
 
 const swatches = ['#ff5252', '#ff9800', '#ffd740', '#69f0ae', '#40c4ff', '#7c4dff', '#e040fb', '#ffffff', '#9e9e9e', '#000000']
 const color = ref('#ff8800')
+const mode = ref('rgb')
 const withAlpha = ref('#40c4ff80')
 const inline = ref('#7c4dff')
 
@@ -32,7 +33,8 @@ const linearHex = colorModel(linear, { format: 'array', range: 1, space: 'linear
     <p style="margin-top: 4px; font-size: 13px;">{{ color }} · {{ withAlpha }}</p>
 
     <h3>TaoColorPicker</h3>
-    <TaoColorPicker v-model="inline" :swatches="swatches" />
+    <TaoColorPicker v-model="inline" v-model:mode="mode" :swatches="swatches" />
+    <p style="margin-top: 4px; font-size: 13px;">Способ ввода: {{ mode }} — переключатель HEX / RGB / HSL, выбор запоминается через v-model:mode</p>
 
     <h3>colorModel</h3>
     <div class="demo-row">

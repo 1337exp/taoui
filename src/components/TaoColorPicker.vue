@@ -1,12 +1,16 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, watch } from 'vue';
-import { hsvaToRgba, normalizeHex, parseColor, rgbaToHsva, toHex, type Hsva } from '../color';
+import { hslToRgb, hsvaToRgba, normalizeHex, parseColor, rgbaToHsva, rgbToHsl, toHex, type ColorMode, type Hsva } from '../color';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import TaoInput from './TaoInput.vue';
+import TaoInputNumber from './TaoInputNumber.vue';
+import TaoSegmented from './TaoSegmented.vue';
+import TaoSegmentedOption from './TaoSegmentedOption.vue';
 import TaoSlider from './TaoSlider.vue';
 
 defineOptions({ name: 'TaoColorPicker' });
+
 
 // Палитра: квадрат насыщенности и яркости, полосы оттенка и прозрачности, поле hex, образцы и пипетка.
 // Говорит строкой hex (`#rrggbb`, с `alpha` ещё и `#rrggbbaa`); числа и линейный цвет: `colorModel` рядом.
@@ -18,6 +22,10 @@ const props = withDefaults(
         alpha?: boolean;
         /** Ready colors under the picker. / Готовые цвета под палитрой. */
         swatches?: readonly string[];
+        /** Ways to enter the colour; one mode hides the switch. / Способы ввода цвета; один способ скрывает переключатель. */
+        modes?: readonly ColorMode[];
+        /** The current mode (`v-model:mode` remembers the choice). / Текущий способ ввода (`v-model:mode` запоминает выбор). */
+        mode?: ColorMode;
         /** The eyedropper button (only where the browser has `EyeDropper`). / Кнопка пипетки (только где браузер умеет `EyeDropper`). */
         eyedropper?: boolean;
         disabled?: boolean;
@@ -28,14 +36,16 @@ const props = withDefaults(
         hueLabel?: string;
         alphaLabel?: string;
         hexLabel?: string;
+        modeLabel?: string;
         swatchesLabel?: string;
         eyedropperLabel?: string;
     }>(),
-    { alpha: false, eyedropper: true, disabled: false },
+    { alpha: false, modes: () => ['hex', 'rgb', 'hsl'], eyedropper: true, disabled: false },
 );
 
 const emit = defineEmits<{
     'update:modelValue': [hex: string];
+    'update:mode': [mode: ColorMode];
     /** The user finished a change: released the area or a strip, a key, the hex field, a swatch. / Пользователь закончил правку. */
     change: [hex: string];
 }>();
@@ -71,6 +81,80 @@ watch(
     () => props.alpha,
     () => load(props.modelValue),
 );
+
+//--------------------------------------------------
+// Способ ввода: HEX, RGB, HSL
+
+const currentMode = ref<ColorMode>(props.mode ?? props.modes[0] ?? 'hex');
+watch(
+    () => props.mode,
+    (m) => {
+        if (m) currentMode.value = m;
+    },
+);
+// способ, которого нет в списке, не показываем: берём первый из разрешённых
+const activeMode = computed<ColorMode>(() => (props.modes.includes(currentMode.value) ? currentMode.value : (props.modes[0] ?? 'hex')));
+
+const modeValue = computed({
+    get: () => activeMode.value,
+    set: (m: ColorMode) => {
+        currentMode.value = m;
+        emit('update:mode', m);
+    },
+});
+
+/** Целые RGB и HSL для полей: в HSL оттенок берётся из состояния (у серого пересчёт из RGB дал бы 0 и сбросил бы его). */
+const rgbFields = computed(() => {
+    const c = hsvaToRgba(state);
+    return [Math.round(c.r), Math.round(c.g), Math.round(c.b)];
+});
+const hslFields = computed(() => {
+    const [r, g, b] = rgbFields.value as [number, number, number];
+    const { s, l } = rgbToHsl(r, g, b);
+    return [Math.round(state.h) % 360, Math.round(s * 100), Math.round(l * 100)];
+});
+const alphaPercent = computed(() => Math.round(state.a * 100));
+
+interface Channel {
+    key: string;
+    label: string;
+    max: number;
+    value: number;
+    kind: 'rgb' | 'hsl' | 'alpha';
+    index: number;
+}
+
+/** Числовые поля текущего способа ввода (для hex их нет). */
+const channels = computed<Channel[]>(() => {
+    const list: Channel[] = [];
+    if (activeMode.value === 'rgb') {
+        (['R', 'G', 'B'] as const).forEach((label, index) => list.push({ key: label, label, max: 255, value: rgbFields.value[index]!, kind: 'rgb', index }));
+    } else if (activeMode.value === 'hsl') {
+        const max = [360, 100, 100];
+        (['H', 'S', 'L'] as const).forEach((label, index) => list.push({ key: label, label, max: max[index]!, value: hslFields.value[index]!, kind: 'hsl', index }));
+    }
+    if (activeMode.value !== 'hex' && props.alpha) list.push({ key: 'A', label: 'A', max: 100, value: alphaPercent.value, kind: 'alpha', index: 0 });
+    return list;
+});
+
+/** Поле числа закончили править (blur, Enter): применяем и сообщаем о конце правки. */
+function commitChannel(kind: 'rgb' | 'hsl' | 'alpha', index: number, value: number | null) {
+    if (value === null || !Number.isFinite(value)) return;
+    if (kind === 'alpha') {
+        state.a = Math.min(100, Math.max(0, value)) / 100;
+    } else if (kind === 'rgb') {
+        const next = [...rgbFields.value];
+        next[index] = Math.min(255, Math.max(0, Math.round(value)));
+        load(toHex({ r: next[0]!, g: next[1]!, b: next[2]!, a: state.a }, true));
+    } else {
+        const next = [...hslFields.value];
+        next[index] = value;
+        const rgb = hslToRgb(((next[0]! % 360) + 360) % 360, next[1]! / 100, next[2]! / 100);
+        load(toHex({ ...rgb, a: state.a }, true));
+        state.h = ((next[0]! % 360) + 360) % 360; // оттенок, который ввели, остаётся и на сером
+    }
+    push(true);
+}
 
 const hexText = ref(hex.value);
 const hexInvalid = ref(false);
@@ -226,9 +310,14 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
             />
         </div>
 
+        <TaoSegmented v-if="modes.length > 1" v-model="modeValue" class="tao-color-picker__modes" size="small" :aria-label="l10n.modeLabel" :disabled="disabled">
+            <TaoSegmentedOption v-for="m in modes" :key="m" :value="m" :label="m.toUpperCase()" />
+        </TaoSegmented>
+
         <div class="tao-color-picker__row">
             <span class="tao-color-picker__preview"><span :style="{ backgroundColor: hex }"></span></span>
             <TaoInput
+                v-if="activeMode === 'hex'"
                 v-model="hexText"
                 class="tao-color-picker__hex"
                 size="small"
@@ -238,6 +327,21 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
                 @blur="commitHex"
                 @keydown.enter="commitHex"
             />
+            <div v-else class="tao-color-picker__channels">
+                <label v-for="c in channels" :key="c.key" class="tao-color-picker__channel">
+                    <span>{{ c.label }}</span>
+                    <TaoInputNumber
+                        size="small"
+                        :controls="false"
+                        :min="0"
+                        :max="c.max"
+                        :step="1"
+                        :model-value="c.value"
+                        :disabled="disabled"
+                        @commit="(v) => commitChannel(c.kind, c.index, v)"
+                    />
+                </label>
+            </div>
             <button v-if="canEyedrop" type="button" class="tao-color-picker__eyedropper" :disabled="disabled" :aria-label="l10n.eyedropperLabel" :title="l10n.eyedropperLabel" @click="eyedrop">
                 ✎
             </button>
@@ -353,6 +457,24 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
     flex: 1;
     min-width: 0;
     font-variant-numeric: tabular-nums;
+}
+
+.tao-color-picker__channels {
+    display: flex;
+    flex: 1;
+    gap: 4px;
+    min-width: 0;
+}
+
+.tao-color-picker__channel {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    color: var(--tao-color-text-muted);
+    font-size: 10px;
+    text-align: center;
 }
 
 .tao-color-picker__eyedropper {
