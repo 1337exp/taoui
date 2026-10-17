@@ -1,6 +1,7 @@
 <script setup>
-import { TaoLoader } from '@tao/ui'
+import { TaoLoader } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { tr } from '../i18n.js'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoLoader' })
@@ -9,7 +10,7 @@ defineOptions({ name: 'DemoLoader' })
 <template>
   <ShowcaseSection id="loader" :tables="propTables['loader']">
     <h2>TaoLoader</h2>
-          <p>Анимированный лоадер</p>
+          <p>{{ tr('An animated loader', 'Анимированный лоадер') }}</p>
     
           <div style="display: flex; gap: 24px; align-items: center;">
             <TaoLoader :size="40" />

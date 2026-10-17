@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoPagination } from '@tao/ui'
+import { TaoPagination } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import Tr from './Tr.vue'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoPagination' })
@@ -12,11 +13,22 @@ const pagerPage = ref(12)
 <template>
   <ShowcaseSection id="pagination" :tables="propTables['pagination']">
     <h2>TaoPagination</h2>
-          <p>
-            Страницы с многоточием, счётчик «с–по из N». Текущая страница — через <code>v-model:page</code>.
-            Клик по «…» прыгает на <code>jump</code> страниц (по умолчанию 5) — как в Ant, только без подписей «-3 / +5».
-            <code>:jump="0"</code> оставляет многоточие декоративным.
-          </p>
+          <Tr>
+            <template #en>
+              <p>
+                Pages with an ellipsis, a “from–to of N” counter. The current page goes through <code>v-model:page</code>.
+                A click on “…” jumps by <code>jump</code> pages (5 by default) — as in Ant, only without the “-3 / +5” captions.
+                <code>:jump="0"</code> keeps the ellipsis decorative.
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                Страницы с многоточием, счётчик «с–по из N». Текущая страница — через <code>v-model:page</code>.
+                Клик по «…» прыгает на <code>jump</code> страниц (по умолчанию 5) — как в Ant, только без подписей «-3 / +5».
+                <code>:jump="0"</code> оставляет многоточие декоративным.
+              </p>
+            </template>
+          </Tr>
     
           <TaoPagination v-model:page="pagerPage" :total="500" :page-size="10" />
           <TaoPagination v-model:page="pagerPage" :total="500" :page-size="10" :jump="3" size="small" style="margin-top: 12px;" />

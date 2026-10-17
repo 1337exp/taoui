@@ -1,7 +1,9 @@
 <script setup>
-import { ref } from 'vue'
-import { TaoCarousel } from '@tao/ui'
+import { computed, ref } from 'vue'
+import { TaoCarousel } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { tr } from '../i18n.js'
+import Tr from './Tr.vue'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoCarousel' })
@@ -11,7 +13,7 @@ const carouselPeek = ref(0)
 const carouselStrip = ref(0)
 const carouselBare = ref(0)
 const carouselCustom = ref(0)
-const carouselExample = [
+const carouselExample = computed(() => [
   '<TaoCarousel :autoplay="4000" loop dots>',
   '  <article v-for="item in banners" :key="item.id" class="hero">',
   '    <strong>{{ item.title }}</strong>',
@@ -25,7 +27,7 @@ const carouselExample = [
   '  …',
   '</TaoCarousel>',
   '',
-  '/* вид слайда — ваш article, не карусель */',
+  tr('/* the slide look is your article, not the carousel */', '/* вид слайда — ваш article, не карусель */'),
   '.hero {',
   '  display: flex;',
   '  flex-direction: column;',
@@ -36,13 +38,13 @@ const carouselExample = [
   '  border-radius: var(--tao-radius-panel);',
   '  background: linear-gradient(135deg, var(--tao-color-accent-subtle), var(--tao-color-surface-sunken));',
   '}',
-].join('\n')
-const carouselBanners = [
-  { id: 1, title: 'Осенняя коллекция', text: 'Новые фактуры и спокойные цвета' },
-  { id: 2, title: 'Скидка 20%', text: 'На вторую пару обуви' },
-  { id: 3, title: 'Только что поступило', text: 'Куртки Drift и рюкзаки Field' },
-  { id: 4, title: 'Бесплатная доставка', text: 'От 5 000 ₽ по городу' },
-]
+].join('\n'))
+const carouselBanners = computed(() => [
+  { id: 1, title: tr('Autumn collection', 'Осенняя коллекция'), text: tr('New textures and calm colours', 'Новые фактуры и спокойные цвета') },
+  { id: 2, title: tr('20% off', 'Скидка 20%'), text: tr('On a second pair of shoes', 'На вторую пару обуви') },
+  { id: 3, title: tr('Just arrived', 'Только что поступило'), text: tr('Drift jackets and Field backpacks', 'Куртки Drift и рюкзаки Field') },
+  { id: 4, title: tr('Free delivery', 'Бесплатная доставка'), text: tr('From 5 000 ₽ within the city', 'От 5 000 ₽ по городу') },
+])
 const carouselProducts = [
   { id: 1, name: 'Nova', price: '8 990 ₽' },
   { id: 2, name: 'Drift', price: '12 400 ₽' },
@@ -66,23 +68,39 @@ const carouselProducts = [
 <template>
   <ShowcaseSection id="carousel" :tables="propTables['carousel']">
     <h2>TaoCarousel</h2>
-          <p>
-            Три режима одной ленты: целый слайд с автопрокруткой, карточка с краешком следующей,
-            полоса из пяти квадратов. Стрелки и точки можно спрятать или подменить слотами.
-          </p>
+          <Tr>
+            <template #en>
+              <p>
+                Three modes of one strip: a whole slide with autoplay, a card with a peek of the next one,
+                a row of five squares. Arrows and dots can be hidden or replaced with slots.
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                Три режима одной ленты: целый слайд с автопрокруткой, карточка с краешком следующей,
+                полоса из пяти квадратов. Стрелки и точки можно спрятать или подменить слотами.
+              </p>
+            </template>
+          </Tr>
     
-          <h3 class="carousel-heading">Целый слайд</h3>
-          <p class="carousel-note">Каждые 4 секунды вперёд. Наведи курсор — пауза, убери — снова едет. Tab на ленту тоже ставит на паузу. <code>loop</code> крутит по кругу. <code>dots</code> — сколько слайдов и где вы.</p>
-          <TaoCarousel v-model="carouselHero" :autoplay="4000" loop dots aria-label="Баннеры">
+          <h3 class="carousel-heading">{{ tr('A whole slide', 'Целый слайд') }}</h3>
+          <Tr>
+            <template #en><p class="carousel-note">Moves forward every 4 seconds. Hover — it pauses, leave — it runs again. Tabbing onto the strip pauses it too. <code>loop</code> goes round in a circle. <code>dots</code> — how many slides there are and where you are.</p></template>
+            <template #ru><p class="carousel-note">Каждые 4 секунды вперёд. Наведи курсор — пауза, убери — снова едет. Tab на ленту тоже ставит на паузу. <code>loop</code> крутит по кругу. <code>dots</code> — сколько слайдов и где вы.</p></template>
+          </Tr>
+          <TaoCarousel v-model="carouselHero" :autoplay="4000" loop dots :aria-label="tr('Banners', 'Баннеры')">
             <article v-for="item in carouselBanners" :key="item.id" class="carousel-hero">
               <strong>{{ item.title }}</strong>
               <span>{{ item.text }}</span>
             </article>
           </TaoCarousel>
     
-          <h3 class="carousel-heading">Одна карточка + краешек</h3>
-          <p class="carousel-note"><code>per-view="1"</code> и <code>peek</code> — видно, что справа ещё есть товар.</p>
-          <TaoCarousel v-model="carouselPeek" :peek="72" aria-label="Карточка с краем">
+          <h3 class="carousel-heading">{{ tr('One card + a peek', 'Одна карточка + краешек') }}</h3>
+          <Tr>
+            <template #en><p class="carousel-note"><code>per-view="1"</code> and <code>peek</code> — you can see there is another product on the right.</p></template>
+            <template #ru><p class="carousel-note"><code>per-view="1"</code> и <code>peek</code> — видно, что справа ещё есть товар.</p></template>
+          </Tr>
+          <TaoCarousel v-model="carouselPeek" :peek="72" :aria-label="tr('Card with a peek', 'Карточка с краем')">
             <article v-for="item in carouselProducts.slice(0, 8)" :key="item.id" class="carousel-card">
               <div class="carousel-card__cover">{{ item.id }}</div>
               <strong>{{ item.name }}</strong>
@@ -90,9 +108,12 @@ const carouselProducts = [
             </article>
           </TaoCarousel>
     
-          <h3 class="carousel-heading">Полоса из пяти</h3>
-          <p class="carousel-note">Палец пролистывает пачку. Стрелки тоже прыгают на пять.</p>
-          <TaoCarousel v-model="carouselStrip" :per-view="5" :peek="28" aria-label="Товары">
+          <h3 class="carousel-heading">{{ tr('A row of five', 'Полоса из пяти') }}</h3>
+          <Tr>
+            <template #en><p class="carousel-note">A swipe turns a whole batch. The arrows jump by five too.</p></template>
+            <template #ru><p class="carousel-note">Палец пролистывает пачку. Стрелки тоже прыгают на пять.</p></template>
+          </Tr>
+          <TaoCarousel v-model="carouselStrip" :per-view="5" :peek="28" :aria-label="tr('Products', 'Товары')">
             <article v-for="item in carouselProducts" :key="item.id" class="carousel-card">
               <div class="carousel-card__cover">{{ item.id }}</div>
               <strong>{{ item.name }}</strong>
@@ -100,12 +121,22 @@ const carouselProducts = [
             </article>
           </TaoCarousel>
     
-          <h3 class="carousel-heading">Без стрелок</h3>
-          <p class="carousel-note">
-            <code>:controls="false"</code> прячет обе. Пустой <code>#prev</code> или <code>#next</code> — только одну сторону.
-            Здесь вместо стрелок — <code>dots</code>.
-          </p>
-          <TaoCarousel v-model="carouselBare" :peek="72" :controls="false" dots aria-label="Без стрелок">
+          <h3 class="carousel-heading">{{ tr('No arrows', 'Без стрелок') }}</h3>
+          <Tr>
+            <template #en>
+              <p class="carousel-note">
+                <code>:controls="false"</code> hides both. An empty <code>#prev</code> or <code>#next</code> — one side only.
+                Here <code>dots</code> stand in for the arrows.
+              </p>
+            </template>
+            <template #ru>
+              <p class="carousel-note">
+                <code>:controls="false"</code> прячет обе. Пустой <code>#prev</code> или <code>#next</code> — только одну сторону.
+                Здесь вместо стрелок — <code>dots</code>.
+              </p>
+            </template>
+          </Tr>
+          <TaoCarousel v-model="carouselBare" :peek="72" :controls="false" dots :aria-label="tr('No arrows', 'Без стрелок')">
             <article v-for="item in carouselProducts.slice(0, 8)" :key="item.id" class="carousel-card">
               <div class="carousel-card__cover">{{ item.id }}</div>
               <strong>{{ item.name }}</strong>
@@ -113,16 +144,25 @@ const carouselProducts = [
             </article>
           </TaoCarousel>
     
-          <h3 class="carousel-heading">Свои стрелки</h3>
-          <p class="carousel-note">
-            Слоты <code>#prev</code> / <code>#next</code> подменяют кнопки целиком. В слот приходят <code>go</code> и <code>disabled</code>.
-          </p>
-          <TaoCarousel v-model="carouselCustom" :peek="72" aria-label="Свои стрелки">
+          <h3 class="carousel-heading">{{ tr('Your own arrows', 'Свои стрелки') }}</h3>
+          <Tr>
+            <template #en>
+              <p class="carousel-note">
+                The <code>#prev</code> / <code>#next</code> slots replace the buttons entirely. The slot receives <code>go</code> and <code>disabled</code>.
+              </p>
+            </template>
+            <template #ru>
+              <p class="carousel-note">
+                Слоты <code>#prev</code> / <code>#next</code> подменяют кнопки целиком. В слот приходят <code>go</code> и <code>disabled</code>.
+              </p>
+            </template>
+          </Tr>
+          <TaoCarousel v-model="carouselCustom" :peek="72" :aria-label="tr('Your own arrows', 'Свои стрелки')">
             <template #prev="{ go, disabled }">
-              <button type="button" class="carousel-nav" :disabled="disabled" @click="go">назад</button>
+              <button type="button" class="carousel-nav" :disabled="disabled" @click="go">{{ tr('back', 'назад') }}</button>
             </template>
             <template #next="{ go, disabled }">
-              <button type="button" class="carousel-nav" :disabled="disabled" @click="go">вперёд</button>
+              <button type="button" class="carousel-nav" :disabled="disabled" @click="go">{{ tr('forward', 'вперёд') }}</button>
             </template>
             <article v-for="item in carouselProducts.slice(0, 8)" :key="'custom-' + item.id" class="carousel-card">
               <div class="carousel-card__cover">{{ item.id }}</div>

@@ -1,8 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoCard, TaoButton, TaoCarousel } from '@tao/ui'
+import { TaoCard, TaoButton, TaoCarousel } from '@1337exp/taoui'
 import { stubPhoto } from '../stubPhoto.js'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { tr } from '../i18n.js'
+import Tr from './Tr.vue'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoCard' })
@@ -14,60 +16,81 @@ const cardGallery = ref(0)
 <template>
   <ShowcaseSection id="card" :tables="propTables['card']">
     <h2>TaoCard</h2>
-          <p>
-            Карточка со слотами cover / header / footer. Обложка — любой контент: фото или карусель.
-            Проп <code>hover</code> даёт обводку акцентом при наведении — у товаров ниже он выключен.
-            Для плитки в сетке — <code>flush</code> и слот <code>#overlay</code> (градиент поверх фото).
-          </p>
+          <Tr>
+            <template #en>
+              <p>
+                A card with cover / header / footer slots. The cover is any content: a photo or a carousel.
+                The <code>hover</code> prop gives an accent outline on hover — it is off for the products below.
+                For a tile in a grid — <code>flush</code> and the <code>#overlay</code> slot (a gradient over the photo).
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                Карточка со слотами cover / header / footer. Обложка — любой контент: фото или карусель.
+                Проп <code>hover</code> даёт обводку акцентом при наведении — у товаров ниже он выключен.
+                Для плитки в сетке — <code>flush</code> и слот <code>#overlay</code> (градиент поверх фото).
+              </p>
+            </template>
+          </Tr>
           
           <TaoCard :padding="20" :radius="12">
             <template #cover>
               <div class="card-cover"></div>
             </template>
             <template #header>
-              <h3 style="margin: 0;">Заголовок карточки</h3>
+              <h3 style="margin: 0;">{{ tr('Card title', 'Заголовок карточки') }}</h3>
             </template>
-            <p>Основное содержимое карточки. Здесь можно разместить описание, изображение или любой другой контент.</p>
+            <p>{{ tr('The main content of the card. Put a description, an image or any other content here.', 'Основное содержимое карточки. Здесь можно разместить описание, изображение или любой другой контент.') }}</p>
             <template #footer>
               <div style="display: flex; gap: 8px; justify-content: flex-end;">
-                <TaoButton size="small" variant="secondary">Отмена</TaoButton>
-                <TaoButton size="small" variant="primary">Действие</TaoButton>
+                <TaoButton size="small" variant="secondary">{{ tr('Cancel', 'Отмена') }}</TaoButton>
+                <TaoButton size="small" variant="primary">{{ tr('Action', 'Действие') }}</TaoButton>
               </div>
             </template>
           </TaoCard>
     
-          <h3>Товар</h3>
-          <p class="carousel-note">
-            Ширина 220px — в витрине, сам Card на 100%. Одно фото — <code>TaoImage</code> в <code>#cover</code>.
-            Несколько — <code>TaoCarousel</code> туда же: без стрелок, точки, свайп.
-          </p>
+          <h3>{{ tr('Product', 'Товар') }}</h3>
+          <Tr>
+            <template #en>
+              <p class="carousel-note">
+                220px wide is the showcase wrapper; the Card itself is 100%. One photo — a <code>TaoImage</code> in <code>#cover</code>.
+                Several — a <code>TaoCarousel</code> in the same slot: no arrows, dots, swipe.
+              </p>
+            </template>
+            <template #ru>
+              <p class="carousel-note">
+                Ширина 220px — в витрине, сам Card на 100%. Одно фото — <code>TaoImage</code> в <code>#cover</code>.
+                Несколько — <code>TaoCarousel</code> туда же: без стрелок, точки, свайп.
+              </p>
+            </template>
+          </Tr>
           <div class="product-cards">
             <div class="product-card">
               <TaoCard :padding="12" :radius="12">
                 <template #cover>
-                  <img class="product-card__photo" :src="cardPhotos[0]" alt="Кроссовки Nova" />
+                  <img class="product-card__photo" :src="cardPhotos[0]" :alt="tr('Nova sneakers', 'Кроссовки Nova')" />
                 </template>
                 <template #title>Nova</template>
-                <template #sub>Кроссовки</template>
+                <template #sub>{{ tr('Sneakers', 'Кроссовки') }}</template>
                 <template #footer>8 990 ₽</template>
               </TaoCard>
             </div>
             <div class="product-card product-card--gallery">
               <TaoCard :padding="12" :radius="12">
                 <template #cover>
-                  <TaoCarousel v-model="cardGallery" :controls="false" dots aria-label="Фото товара">
+                  <TaoCarousel v-model="cardGallery" :controls="false" dots :aria-label="tr('Product photos', 'Фото товара')">
                     <img
                       v-for="(src, index) in cardPhotos"
                       :key="index"
                       class="product-card__photo"
                       :src="src"
-                      :alt="'Фото ' + (index + 1)"
+                      :alt="tr('Photo ', 'Фото ') + (index + 1)"
                       draggable="false"
                     />
                   </TaoCarousel>
                 </template>
                 <template #title>Drift</template>
-                <template #sub>3 фото, листайте</template>
+                <template #sub>{{ tr('3 photos, swipe', '3 фото, листайте') }}</template>
                 <template #footer>12 400 ₽</template>
               </TaoCard>
             </div>
@@ -76,10 +99,10 @@ const cardGallery = ref(0)
           <div class="code-block">
             <pre><code>&lt;TaoCard :padding="12" :radius="12"&gt;
   &lt;template #cover&gt;
-    &lt;img src="photo.jpg" alt="Товар" /&gt;
+    &lt;img src="photo.jpg" alt="{{ tr('Product', 'Товар') }}" /&gt;
   &lt;/template&gt;
   &lt;template #title&gt;Nova&lt;/template&gt;
-  &lt;template #sub&gt;Кроссовки&lt;/template&gt;
+  &lt;template #sub&gt;{{ tr('Sneakers', 'Кроссовки') }}&lt;/template&gt;
   &lt;template #footer&gt;8 990 ₽&lt;/template&gt;
 &lt;/TaoCard&gt;
 

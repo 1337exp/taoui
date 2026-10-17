@@ -1,8 +1,12 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
-import { TaoScrollTop } from '@tao/ui'
+import { TaoScrollTop } from '@1337exp/taoui'
 import { navGroups } from './nav.js'
 import { demoById } from './sections.js'
+import { lang, LANGS, tr } from './i18n.js'
+
+// Search looks through both languages, whichever is on screen.
+const both = (text) => (text && typeof text === 'object' ? `${text.en ?? ''} ${text.ru ?? ''}` : (text ?? ''))
 
 const theme = ref('dark')
 function setTheme(value) {
@@ -24,7 +28,7 @@ function sectionVisible(groupId, sectionId) {
   if (needle) {
     const group = navGroups.find((item) => item.id === groupId)
     const item = group?.items.find((entry) => entry.id === sectionId)
-    const hay = [groupId, group?.title, item?.id, item?.label, ...(item?.aliases ?? [])]
+    const hay = [groupId, both(group?.title), item?.id, both(item?.label), ...(item?.aliases ?? [])]
       .join(' ')
       .toLowerCase()
     return hay.includes(needle)
@@ -35,12 +39,12 @@ function sectionVisible(groupId, sectionId) {
 function groupVisibleInNav(group) {
   const needle = query.value.trim().toLowerCase()
   if (!needle) return true
-  if (group.title.toLowerCase().includes(needle)) return true
+  if (both(group.title).toLowerCase().includes(needle)) return true
   return group.items.some((item) => itemMatchesQuery(item, needle))
 }
 
 function itemMatchesQuery(item, needle) {
-  const hay = [item.id, item.label, ...(item.aliases ?? [])].join(' ').toLowerCase()
+  const hay = [item.id, both(item.label), ...(item.aliases ?? [])].join(' ').toLowerCase()
   return hay.includes(needle)
 }
 
@@ -97,10 +101,24 @@ onBeforeUnmount(() => {
     <header class="showcase-top">
       <div>
         <h1>Tao UI</h1>
-        <p class="showcase-lead">Vue 3 kit на дизайн-токенах. Поменял переменные — поменялась тема.</p>
+        <p class="showcase-lead">{{ tr('A Vue 3 kit on design tokens. Change the variables, the theme follows.', 'Vue 3 kit на дизайн-токенах. Поменял переменные — поменялась тема.') }}</p>
+      </div>
+      <div class="showcase-top__controls">
+      <div class="theme-switcher">
+        <span class="theme-switcher__label">{{ tr('Language:', 'Язык:') }}</span>
+        <button
+          v-for="code in LANGS"
+          :key="code"
+          type="button"
+          class="theme-switcher__btn"
+          :class="{ active: lang === code }"
+          @click="lang = code"
+        >
+          {{ code.toUpperCase() }}
+        </button>
       </div>
       <div class="theme-switcher">
-        <span class="theme-switcher__label">Тема:</span>
+        <span class="theme-switcher__label">{{ tr('Theme:', 'Тема:') }}</span>
         <button
           v-for="t in ['dark', 'light']"
           :key="t"
@@ -112,15 +130,16 @@ onBeforeUnmount(() => {
           {{ t }}
         </button>
       </div>
+      </div>
     </header>
 
     <div class="showcase-body">
-      <nav class="showcase-nav" aria-label="Разделы showcase">
+      <nav class="showcase-nav" :aria-label="tr('Showcase sections', 'Разделы showcase')">
         <input
           v-model="query"
           class="showcase-nav__search"
           type="search"
-          placeholder="Найти компонент…"
+          :placeholder="tr('Find a component…', 'Найти компонент…')"
         />
 
         <button
@@ -129,7 +148,7 @@ onBeforeUnmount(() => {
           :class="{ active: activeGroup === 'all' && !query }"
           @click="showAll"
         >
-          Все
+          {{ tr('All', 'Все') }}
         </button>
 
         <div
@@ -144,7 +163,7 @@ onBeforeUnmount(() => {
             :class="{ active: activeGroup === group.id }"
             @click="toggleGroup(group.id)"
           >
-            {{ group.title }}
+            {{ tr(group.title) }}
           </button>
           <a
             v-for="item in group.items"
@@ -155,7 +174,7 @@ onBeforeUnmount(() => {
             :href="'#' + item.id"
             @click.prevent="goTo(group.id, item.id)"
           >
-            {{ item.label }}
+            {{ tr(item.label) }}
           </a>
         </div>
       </nav>
@@ -163,10 +182,10 @@ onBeforeUnmount(() => {
       <main class="showcase-main">
         <div v-if="currentGroup" class="showcase-banner">
           <div>
-            <p class="showcase-banner__kicker">Раздел</p>
-            <h2 class="showcase-banner__title">{{ currentGroup.title }}</h2>
+            <p class="showcase-banner__kicker">{{ tr('Section', 'Раздел') }}</p>
+            <h2 class="showcase-banner__title">{{ tr(currentGroup.title) }}</h2>
           </div>
-          <button type="button" class="showcase-banner__reset" @click="showAll">Все компоненты</button>
+          <button type="button" class="showcase-banner__reset" @click="showAll">{{ tr('All components', 'Все компоненты') }}</button>
         </div>
 
         <template v-for="group in navGroups" :key="group.id">
@@ -181,7 +200,7 @@ onBeforeUnmount(() => {
     </div>
 
     <footer class="showcase-footer">
-      <p>Tao UI · MIT · 2026</p>
+      <p>Tao UI · MIT · 2026 · <a href="https://github.com/1337exp/taoui">GitHub</a> · <a href="https://www.npmjs.com/package/@1337exp/taoui">npm</a></p>
     </footer>
 
     <TaoScrollTop :boundary="200" />

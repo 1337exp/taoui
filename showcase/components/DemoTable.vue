@@ -1,26 +1,36 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { TaoButton, TaoTable, TaoEmpty, TaoTag, TaoPagination, toast } from '@tao/ui'
+import { TaoButton, TaoTable, TaoEmpty, TaoTag, TaoPagination, toast } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { lang } from '../i18n.js'
+import { tr } from '../i18n.js'
+import Tr from './Tr.vue'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoTable' })
 
-const tableCities = ['Москва', 'Казань', 'Санкт-Петербург', 'Новосибирск']
 const tableStatuses = ['active', 'paused', 'banned']
-const tableAll = Array.from({ length: 47 }, (_, index) => ({
-  id: index + 1,
-  name: `Пользователь ${String(index + 1).padStart(2, '0')}`,
-  city: tableCities[index % tableCities.length],
-  orders: (index * 7) % 41,
-  status: tableStatuses[index % 3],
-}))
-const tableColumns = [
-  { key: 'name', label: 'Имя', sortable: true },
-  { key: 'city', label: 'Город', sortable: true },
-  { key: 'orders', label: 'Заказы', align: 'right', sortable: true, width: 110 },
-  { key: 'status', label: 'Статус', width: 140 },
-]
+const tableAll = computed(() => {
+  const cities = [
+    tr('Moscow', 'Москва'),
+    tr('Kazan', 'Казань'),
+    tr('Saint Petersburg', 'Санкт-Петербург'),
+    tr('Novosibirsk', 'Новосибирск'),
+  ]
+  return Array.from({ length: 47 }, (_, index) => ({
+    id: index + 1,
+    name: `${tr('User', 'Пользователь')} ${String(index + 1).padStart(2, '0')}`,
+    city: cities[index % cities.length],
+    orders: (index * 7) % 41,
+    status: tableStatuses[index % 3],
+  }))
+})
+const tableColumns = computed(() => [
+  { key: 'name', label: tr('Name', 'Имя'), sortable: true },
+  { key: 'city', label: tr('City', 'Город'), sortable: true },
+  { key: 'orders', label: tr('Orders', 'Заказы'), align: 'right', sortable: true, width: 110 },
+  { key: 'status', label: tr('Status', 'Статус'), width: 140 },
+])
 const tablePage = ref(1)
 const tablePageSize = 8
 const tableSort = ref({ key: 'name', dir: 'asc' })
@@ -42,7 +52,7 @@ function cycleStriped() {
 }
 
 const tableSorted = computed(() => {
-  const rows = tableAll.slice()
+  const rows = tableAll.value.slice()
   const sort = tableSort.value
   if (!sort) return rows
   return rows.sort((a, b) => {
@@ -51,7 +61,7 @@ const tableSorted = computed(() => {
     const cmp =
       typeof left === 'number' && typeof right === 'number'
         ? left - right
-        : String(left).localeCompare(String(right), 'ru')
+        : String(left).localeCompare(String(right), lang.value)
     return sort.dir === 'asc' ? cmp : -cmp
   })
 })
@@ -62,7 +72,7 @@ const tableRows = computed(() => {
   return tableSorted.value.slice(start, start + tablePageSize)
 })
 
-const tableTotal = computed(() => (tableEmpty.value ? 0 : tableAll.length))
+const tableTotal = computed(() => (tableEmpty.value ? 0 : tableAll.value.length))
 
 function onTableSort() {
   tablePage.value = 1
@@ -79,12 +89,15 @@ function flashTableLoading() {
 <template>
   <ShowcaseSection id="table" :tables="propTables['table']">
     <h2>TaoTable</h2>
-          <p>Простая таблица для списков сущностей. Сама не сортирует и не режет страницы — это делает родитель, поэтому тот же компонент работает и с сервером. Подсветка шапки — <code>head</code>, линии — <code>lines</code>. Зебра — <code>striped</code> (с первой строки) или <code>striped="even"</code>.</p>
+          <Tr>
+            <template #en><p>A simple table for lists of entities. It neither sorts nor paginates — the parent does that, so the same component works with a server too. Header highlight — <code>head</code>, lines — <code>lines</code>. Zebra — <code>striped</code> (from the first row) or <code>striped="even"</code>.</p></template>
+            <template #ru><p>Простая таблица для списков сущностей. Сама не сортирует и не режет страницы — это делает родитель, поэтому тот же компонент работает и с сервером. Подсветка шапки — <code>head</code>, линии — <code>lines</code>. Зебра — <code>striped</code> (с первой строки) или <code>striped="even"</code>.</p></template>
+          </Tr>
     
           <div class="button-row">
-            <TaoButton size="small" variant="secondary" @click="flashTableLoading">Загрузка</TaoButton>
+            <TaoButton size="small" variant="secondary" @click="flashTableLoading">{{ tr('Loading', 'Загрузка') }}</TaoButton>
             <TaoButton size="small" variant="ghost" @click="tableEmpty = !tableEmpty; tablePage = 1">
-              {{ tableEmpty ? 'Показать строки' : 'Пустая таблица' }}
+              {{ tableEmpty ? tr('Show rows', 'Показать строки') : tr('Empty table', 'Пустая таблица') }}
             </TaoButton>
             <TaoButton size="small" :variant="tableHead ? 'secondary' : 'ghost'" @click="tableHead = !tableHead">
               head
@@ -106,12 +119,12 @@ function flashTableLoading() {
             :lines="tableLines"
             :striped="tableStriped"
             clickable
-            empty-text="Пока нет записей"
+            :empty-text="tr('No records yet', 'Пока нет записей')"
             @change="onTableSort"
             @row-click="(row) => toast().info().message(row.name)"
           >
             <template #empty>
-              <TaoEmpty title="Пока нет записей">Список пуст — нажмите «Показать строки».</TaoEmpty>
+              <TaoEmpty :title="tr('No records yet', 'Пока нет записей')">{{ tr('The list is empty — press “Show rows”.', 'Список пуст — нажмите «Показать строки».') }}</TaoEmpty>
             </template>
             <template #cell-status="{ row }">
               <TaoTag :tone="row.status === 'active' ? 'success' : row.status === 'banned' ? 'danger' : 'neutral'">

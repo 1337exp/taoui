@@ -1,45 +1,66 @@
 <script setup>
-import { TaoGrid, TaoGridItem, TaoCard } from '@tao/ui'
+import { computed } from 'vue'
+import { TaoGrid, TaoGridItem, TaoCard } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { tr } from '../i18n.js'
+import Tr from './Tr.vue'
 import { propTables } from '../propTables.js'
 import { stubPhoto } from '../stubPhoto.js'
 
 defineOptions({ name: 'DemoGrid' })
 
-const gridProducts = [
-  { id: '1', title: 'Gel Shine', sub: 'Топ 15 мл', price: '490 ₽' },
-  { id: '2', title: 'Rose Quartz', sub: 'Гель-лак', price: '320 ₽' },
-  { id: '3', title: 'Noir', sub: 'База', price: '410 ₽' },
-  { id: '4', title: 'Milk Foam', sub: 'Камуфляж', price: '380 ₽' },
-  { id: '5', title: 'Citrus', sub: 'Гель-лак', price: '320 ₽' },
-  { id: '6', title: 'Soft File', sub: 'Пилка 180/240', price: '90 ₽' },
-  { id: '7', title: 'Brush Duo', sub: 'Кисти', price: '540 ₽' },
-  { id: '8', title: 'Matte Coat', sub: 'Топ матовый', price: '490 ₽' },
-]
-const gridNotes = [
-  { id: 'a', title: 'Коротко', text: 'Одна строка.' },
+const gridProducts = computed(() => [
+  { id: '1', title: 'Gel Shine', sub: tr('Top coat 15 ml', 'Топ 15 мл'), price: '490 ₽' },
+  { id: '2', title: 'Rose Quartz', sub: tr('Gel polish', 'Гель-лак'), price: '320 ₽' },
+  { id: '3', title: 'Noir', sub: tr('Base', 'База'), price: '410 ₽' },
+  { id: '4', title: 'Milk Foam', sub: tr('Camouflage', 'Камуфляж'), price: '380 ₽' },
+  { id: '5', title: 'Citrus', sub: tr('Gel polish', 'Гель-лак'), price: '320 ₽' },
+  { id: '6', title: 'Soft File', sub: tr('Nail file 180/240', 'Пилка 180/240'), price: '90 ₽' },
+  { id: '7', title: 'Brush Duo', sub: tr('Brushes', 'Кисти'), price: '540 ₽' },
+  { id: '8', title: 'Matte Coat', sub: tr('Matte top coat', 'Топ матовый'), price: '490 ₽' },
+])
+const gridNotes = computed(() => [
+  { id: 'a', title: tr('Short', 'Коротко'), text: tr('A single line.', 'Одна строка.') },
   {
     id: 'b',
-    title: 'Длиннее',
-    text: 'Несколько предложений, чтобы было видно: в сетке ряд выравнивается по самой высокой карточке. Это не masonry — дырки не заполняются.',
+    title: tr('Longer', 'Длиннее'),
+    text: tr(
+      'Several sentences, so you can see that in a grid the row is levelled to the tallest card. This is not masonry — gaps are not filled.',
+      'Несколько предложений, чтобы было видно: в сетке ряд выравнивается по самой высокой карточке. Это не masonry — дырки не заполняются.',
+    ),
   },
-  { id: 'c', title: 'Средне', text: 'Две-три строки текста в теле карточки.' },
-  { id: 'd', title: 'Ещё одна', text: 'Четвёртая уезжает на следующий ряд.' },
-]
+  { id: 'c', title: tr('Medium', 'Средне'), text: tr('Two or three lines of text in the card body.', 'Две-три строки текста в теле карточки.') },
+  { id: 'd', title: tr('One more', 'Ещё одна'), text: tr('The fourth one moves to the next row.', 'Четвёртая уезжает на следующий ряд.') },
+])
 </script>
 
 <template>
   <ShowcaseSection id="grid" :tables="propTables['grid']">
     <h2>TaoGrid / TaoGridItem</h2>
-    <p>
-      Плитки на CSS Grid, без JS и без masonry. <code>min</code> — сколько колонок влезет (каталог).
-      <code>cols</code> — фиксированные колонки (bento). <code>TaoGridItem</code> с <code>col</code> /
-      <code>row</code> — только для span; в каталоге карточки можно класть напрямую.
-      Уже контейнера ~560px span сбрасывается в 1, <code>cols</code> складывается в одну колонку.
-    </p>
+    <Tr>
+      <template #en>
+        <p>
+          Tiles on CSS Grid, with no JS and no masonry. <code>min</code> — how many columns fit (a catalogue).
+          <code>cols</code> — fixed columns (bento). <code>TaoGridItem</code> with <code>col</code> /
+          <code>row</code> is only for spans; in a catalogue you can put cards in directly.
+          Below a container width of ~560px a span resets to 1, and <code>cols</code> collapses into one column.
+        </p>
+      </template>
+      <template #ru>
+        <p>
+          Плитки на CSS Grid, без JS и без masonry. <code>min</code> — сколько колонок влезет (каталог).
+          <code>cols</code> — фиксированные колонки (bento). <code>TaoGridItem</code> с <code>col</code> /
+          <code>row</code> — только для span; в каталоге карточки можно класть напрямую.
+          Уже контейнера ~560px span сбрасывается в 1, <code>cols</code> складывается в одну колонку.
+        </p>
+      </template>
+    </Tr>
 
-    <h3>Каталог, min="220px"</h3>
-    <p class="carousel-note">Сузь окно — колонок станет меньше. Карточки тянутся на ширину ячейки.</p>
+    <h3>{{ tr('Catalogue', 'Каталог') }}, min="220px"</h3>
+    <Tr>
+      <template #en><p class="carousel-note">Narrow the window — there will be fewer columns. The cards stretch to the cell width.</p></template>
+      <template #ru><p class="carousel-note">Сузь окно — колонок станет меньше. Карточки тянутся на ширину ячейки.</p></template>
+    </Tr>
     <TaoGrid min="220px">
       <TaoCard v-for="item in gridProducts" :key="item.id" :padding="12" :radius="12">
         <template #cover>
@@ -51,10 +72,19 @@ const gridNotes = [
       </TaoCard>
     </TaoGrid>
 
-    <h3>cols="3" — ряд по самой высокой</h3>
-    <p class="carousel-note">
-      Разный объём текста не даёт «водопад»: сосед в ряду тянется. Настоящий masonry сюда не кладём.
-    </p>
+    <h3>cols="3" — {{ tr('the row follows the tallest', 'ряд по самой высокой') }}</h3>
+    <Tr>
+      <template #en>
+        <p class="carousel-note">
+          Different amounts of text do not produce a “waterfall”: the neighbour in the row stretches. We do not put real masonry here.
+        </p>
+      </template>
+      <template #ru>
+        <p class="carousel-note">
+          Разный объём текста не даёт «водопад»: сосед в ряду тянется. Настоящий masonry сюда не кладём.
+        </p>
+      </template>
+    </Tr>
     <TaoGrid :cols="3">
       <TaoCard v-for="note in gridNotes" :key="note.id" :padding="12" :radius="12">
         <template #title>{{ note.title }}</template>
@@ -63,9 +93,18 @@ const gridNotes = [
     </TaoGrid>
 
     <h3>Bento, cols="4"</h3>
-    <p class="carousel-note">
-      <code>TaoGridItem</code> занимает несколько клеток. На узкой колонке span гасится.
-    </p>
+    <Tr>
+      <template #en>
+        <p class="carousel-note">
+          <code>TaoGridItem</code> takes several cells. In a narrow column the span is dropped.
+        </p>
+      </template>
+      <template #ru>
+        <p class="carousel-note">
+          <code>TaoGridItem</code> занимает несколько клеток. На узкой колонке span гасится.
+        </p>
+      </template>
+    </Tr>
     <TaoGrid :cols="4">
       <TaoGridItem :col="2" :row="2">
         <TaoCard :padding="12" :radius="12">
@@ -73,7 +112,7 @@ const gridNotes = [
             <img class="product-card__photo" :src="stubPhoto('1')" alt="Gel Shine" />
           </template>
           <template #title>Gel Shine</template>
-          <template #sub>Топ 15 мл</template>
+          <template #sub>{{ tr('Top coat 15 ml', 'Топ 15 мл') }}</template>
           <template #footer>490 ₽</template>
         </TaoCard>
       </TaoGridItem>
@@ -87,18 +126,30 @@ const gridNotes = [
       <TaoGridItem :col="2">
         <TaoCard :padding="12" :radius="12">
           <template #title>Matte Coat</template>
-          <p>Широкая плитка на две колонки.</p>
+          <p>{{ tr('A wide tile spanning two columns.', 'Широкая плитка на две колонки.') }}</p>
         </TaoCard>
       </TaoGridItem>
     </TaoGrid>
 
-    <h3>Мозаика: обложка / заливка / градиент снизу</h3>
-    <p class="carousel-note">
-      Слева высокий A, справа сверху широкий D, под ним четыре клетки, внизу два блока 50/50.
-      «Тень» на большом A — <code>#overlay</code> + <code>mosaic-mega-gradient</code> (с 35%).
-      У четырёх мелких — <code>mosaic-tile-gradient</code> (с 55%). Плитки через <code>flush</code>.
-      Нижний левый — заливка как <code>mosaic-stigma</code>.
-    </p>
+    <h3>{{ tr('Mosaic: cover / fill / gradient at the bottom', 'Мозаика: обложка / заливка / градиент снизу') }}</h3>
+    <Tr>
+      <template #en>
+        <p class="carousel-note">
+          On the left a tall A, top right a wide D, under it four cells, at the bottom two 50/50 blocks.
+          The “shadow” on the big A is <code>#overlay</code> + <code>mosaic-mega-gradient</code> (from 35%).
+          The four small ones have <code>mosaic-tile-gradient</code> (from 55%). Tiles use <code>flush</code>.
+          The bottom left one is a fill like <code>mosaic-stigma</code>.
+        </p>
+      </template>
+      <template #ru>
+        <p class="carousel-note">
+          Слева высокий A, справа сверху широкий D, под ним четыре клетки, внизу два блока 50/50.
+          «Тень» на большом A — <code>#overlay</code> + <code>mosaic-mega-gradient</code> (с 35%).
+          У четырёх мелких — <code>mosaic-tile-gradient</code> (с 55%). Плитки через <code>flush</code>.
+          Нижний левый — заливка как <code>mosaic-stigma</code>.
+        </p>
+      </template>
+    </Tr>
     <TaoGrid class="mosaic" :cols="4" gap="12px">
       <TaoGridItem :col="2" :row="3">
         <TaoCard flush :radius="6">

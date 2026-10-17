@@ -1,4 +1,6 @@
 <script setup>
+import { tr } from '../i18n.js'
+
 defineOptions({ name: 'PropsTable' })
 
 const props = defineProps({
@@ -18,20 +20,20 @@ const parts = (text) => String(text).split(' / ')
 <template>
   <div class="props-table">
     <h3 v-if="title" class="props-table__title">{{ title }}</h3>
-    <p class="props-table__kicker">{{ isApi() ? 'Методы' : 'Пропсы' }}</p>
+    <p class="props-table__kicker">{{ isApi() ? tr('Methods', 'Методы') : tr('Props', 'Пропсы') }}</p>
     <div class="props-table__wrap">
       <table>
         <thead>
           <tr v-if="isApi()">
-            <th>Метод</th>
-            <th>Сигнатура</th>
-            <th>Что ожидается</th>
+            <th>{{ tr('Method', 'Метод') }}</th>
+            <th>{{ tr('Signature', 'Сигнатура') }}</th>
+            <th>{{ tr('Expected', 'Что ожидается') }}</th>
           </tr>
           <tr v-else>
-            <th>Имя</th>
-            <th>Тип</th>
-            <th>По умолчанию</th>
-            <th>Что ожидается</th>
+            <th>{{ tr('Name', 'Имя') }}</th>
+            <th>{{ tr('Type', 'Тип') }}</th>
+            <th>{{ tr('Default', 'По умолчанию') }}</th>
+            <th>{{ tr('Expected', 'Что ожидается') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -51,7 +53,7 @@ const parts = (text) => String(text).split(' / ')
         </tbody>
       </table>
     </div>
-    <p v-if="slots" class="props-table__slots"><span>Слоты.</span> {{ slots }}</p>
+    <p v-if="slots" class="props-table__slots"><span>{{ tr('Slots.', 'Слоты.') }}</span> {{ slots }}</p>
   </div>
 </template>
 

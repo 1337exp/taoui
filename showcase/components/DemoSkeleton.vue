@@ -1,6 +1,7 @@
 <script setup>
-import { TaoSkeleton } from '@tao/ui'
+import { TaoSkeleton } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { tr } from '../i18n.js'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoSkeleton' })
@@ -9,7 +10,7 @@ defineOptions({ name: 'DemoSkeleton' })
 <template>
   <ShowcaseSection id="skeleton" :tables="propTables['skeleton']">
     <h2>TaoSkeleton</h2>
-          <p>Плейсхолдер, пока данные едут. Не путать с лоадером — это форма контента, а не спиннер.</p>
+          <p>{{ tr('A placeholder while the data is on its way. Not to be confused with a loader — this is the shape of the content, not a spinner.', 'Плейсхолдер, пока данные едут. Не путать с лоадером — это форма контента, а не спиннер.') }}</p>
     
           <div style="display: flex; flex-direction: column; gap: 16px; max-width: 360px;">
             <TaoSkeleton variant="title" />

@@ -1,6 +1,7 @@
 <script setup>
-import { TaoContainer } from '@tao/ui'
+import { TaoContainer } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { tr } from '../i18n.js'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoContainer' })
@@ -9,7 +10,7 @@ defineOptions({ name: 'DemoContainer' })
 <template>
   <ShowcaseSection id="container" :tables="propTables['container']">
     <h2>TaoContainer</h2>
-          <p>Ограничение ширины контента с авто-центровкой (wide / slim / ultra-slim)</p>
+          <p>{{ tr('Limits the content width and centres it automatically (wide / slim / ultra-slim)', 'Ограничение ширины контента с авто-центровкой (wide / slim / ultra-slim)') }}</p>
     
           <div style="display: flex; flex-direction: column; gap: 12px;">
             <TaoContainer width="ultra-slim" style="background: var(--tao-color-surface-sunken); padding: 8px; border-radius: 6px;">
@@ -22,7 +23,7 @@ defineOptions({ name: 'DemoContainer' })
     
           <div class="code-block">
             <pre><code>&lt;TaoContainer width="slim"&gt;
-  Контент ограниченной ширины
+  {{ tr('Content of limited width', 'Контент ограниченной ширины') }}
 &lt;/TaoContainer&gt;</code></pre>
           </div>
   </ShowcaseSection>

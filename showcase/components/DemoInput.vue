@@ -1,7 +1,9 @@
 <script setup>
-import { ref } from 'vue'
-import { TaoInput, TaoFormField, TaoInputGroup, TaoButton, TaoSelect, TaoInputNumber, TaoDate, TaoSegmented, TaoSegmentedOption, TaoCheckbox, TaoSwitch, TaoRadio, TaoTag, TaoTabs, TaoPagination, TaoSlider, toast } from '@tao/ui'
+import { computed, ref } from 'vue'
+import { TaoInput, TaoFormField, TaoInputGroup, TaoButton, TaoSelect, TaoInputNumber, TaoDate, TaoSegmented, TaoSegmentedOption, TaoCheckbox, TaoSwitch, TaoRadio, TaoTag, TaoTabs, TaoPagination, TaoSlider, toast } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { tr } from '../i18n.js'
+import Tr from './Tr.vue'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoInput' })
@@ -15,26 +17,26 @@ const formPassword = ref('')
 const formSaving = ref(false)
 
 const sizes = ['small', 'medium', 'large']
-const sizeCities = [
-  { value: 'msk', label: 'Москва' },
-  { value: 'spb', label: 'Санкт-Петербург' },
-]
+const sizeCities = computed(() => [
+  { value: 'msk', label: tr('Moscow', 'Москва') },
+  { value: 'spb', label: tr('Saint Petersburg', 'Санкт-Петербург') },
+])
 const sizeModel = ref({
   small: { text: '', city: 'msk', count: 2, date: null, view: 'list', check: true, on: true, pick: 'a', tab: 'one', page: 3, level: 40 },
   medium: { text: '', city: 'msk', count: 2, date: null, view: 'list', check: true, on: true, pick: 'a', tab: 'one', page: 3, level: 40 },
   large: { text: '', city: 'msk', count: 2, date: null, view: 'list', check: true, on: true, pick: 'a', tab: 'one', page: 3, level: 40 },
 })
 const groupHost = ref('taoui.dev')
-const sizeTabs = [
-  { value: 'one', label: 'Обзор' },
-  { value: 'two', label: 'Детали' },
-]
+const sizeTabs = computed(() => [
+  { value: 'one', label: tr('Overview', 'Обзор') },
+  { value: 'two', label: tr('Details', 'Детали') },
+])
 
 function onDemoSubmit() {
   formSaving.value = true
   window.setTimeout(() => {
     formSaving.value = false
-    toast().success().message('Сохранено')
+    toast().success().message(tr('Saved', 'Сохранено'))
   }, 700)
 }
 </script>
@@ -42,31 +44,34 @@ function onDemoSubmit() {
 <template>
   <ShowcaseSection id="input" :tables="propTables['input']">
     <h2>TaoInput</h2>
-          <p>Поле ввода с v-model. Иконка или единица — слоты <code>#prefix</code> / <code>#suffix</code> внутри рамки. Склейка снаружи — <code>TaoInputGroup</code>.</p>
+          <Tr>
+            <template #en><p>An input with v-model. An icon or a unit — the <code>#prefix</code> / <code>#suffix</code> slots inside the frame. Gluing things on the outside — <code>TaoInputGroup</code>.</p></template>
+            <template #ru><p>Поле ввода с v-model. Иконка или единица — слоты <code>#prefix</code> / <code>#suffix</code> внутри рамки. Склейка снаружи — <code>TaoInputGroup</code>.</p></template>
+          </Tr>
           
           <div class="demo-stack">
-            <TaoFormField label="Текстовое поле">
-              <TaoInput v-model="inputValue" placeholder="Введите текст" />
+            <TaoFormField :label="tr('Text field', 'Текстовое поле')">
+              <TaoInput v-model="inputValue" :placeholder="tr('Enter text', 'Введите текст')" />
             </TaoFormField>
 
             <TaoFormField label="Email">
               <TaoInput type="email" placeholder="example@mail.com" />
             </TaoFormField>
 
-            <TaoFormField label="Пароль">
+            <TaoFormField :label="tr('Password', 'Пароль')">
               <TaoInput type="password" placeholder="••••••••" />
             </TaoFormField>
 
-            <TaoFormField label="С ошибкой" error="Некорректное значение">
-              <TaoInput model-value="Невалидное значение" />
+            <TaoFormField :label="tr('With an error', 'С ошибкой')" :error="tr('Invalid value', 'Некорректное значение')">
+              <TaoInput :model-value="tr('Not a valid value', 'Невалидное значение')" />
             </TaoFormField>
 
-            <TaoFormField label="Отключенное поле">
-              <TaoInput disabled model-value="Нельзя редактировать" />
+            <TaoFormField :label="tr('Disabled field', 'Отключенное поле')">
+              <TaoInput disabled :model-value="tr('Cannot be edited', 'Нельзя редактировать')" />
             </TaoFormField>
 
-            <TaoFormField label="Поиск" hint="Иконка и крестик живут внутри поля">
-              <TaoInput v-model="searchQuery" placeholder="Найти…">
+            <TaoFormField :label="tr('Search', 'Поиск')" :hint="tr('The icon and the cross live inside the field', 'Иконка и крестик живут внутри поля')">
+              <TaoInput v-model="searchQuery" :placeholder="tr('Find…', 'Найти…')">
                 <template #prefix>
                   <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
                     <circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5" />
@@ -74,30 +79,33 @@ function onDemoSubmit() {
                   </svg>
                 </template>
                 <template #suffix>
-                  <button v-if="searchQuery" type="button" aria-label="Очистить" @click="searchQuery = ''">×</button>
+                  <button v-if="searchQuery" type="button" :aria-label="tr('Clear', 'Очистить')" @click="searchQuery = ''">×</button>
                 </template>
               </TaoInput>
             </TaoFormField>
     
-            <TaoFormField label="Сумма">
+            <TaoFormField :label="tr('Amount', 'Сумма')">
               <TaoInput v-model="amountText" placeholder="0">
                 <template #suffix>₽</template>
               </TaoInput>
             </TaoFormField>
     
-            <TaoFormField label="Сайт" hint="https:// и кнопка — снаружи, это уже группа">
+            <TaoFormField :label="tr('Website', 'Сайт')" :hint="tr('https:// and the button are outside — that is already a group', 'https:// и кнопка — снаружи, это уже группа')">
               <TaoInputGroup>
                 <template #before>https://</template>
                 <TaoInput v-model="siteHost" placeholder="example.com" />
                 <template #after>
-                  <TaoButton @click="toast().info().message('Проверяем ' + siteHost)">Проверить</TaoButton>
+                  <TaoButton @click="toast().info().message(tr('Checking ', 'Проверяем ') + siteHost)">{{ tr('Check', 'Проверить') }}</TaoButton>
                 </template>
               </TaoInputGroup>
             </TaoFormField>
           </div>
     
-          <h3 class="carousel-heading">Размеры (size)</h3>
-          <p class="carousel-note">Одна шкала <code>small</code> / <code>medium</code> / <code>large</code> для кнопок и полей — в одном ряду всё одной высоты. Без <code>size</code> контрол берёт размер предков: класс <code>tao-size-*</code> на любой обёртке или <code>size</code> у TaoFormField / TaoInputGroup. Ниже размер задан один раз — классом на строке.</p>
+          <h3 class="carousel-heading">{{ tr('Sizes (size)', 'Размеры (size)') }}</h3>
+          <Tr>
+            <template #en><p class="carousel-note">One <code>small</code> / <code>medium</code> / <code>large</code> scale for buttons and fields — everything in a row has the same height. Without <code>size</code> a control takes the size of its ancestors: the <code>tao-size-*</code> class on any wrapper, or <code>size</code> on TaoFormField / TaoInputGroup. Below, the size is set once — with a class on the row.</p></template>
+            <template #ru><p class="carousel-note">Одна шкала <code>small</code> / <code>medium</code> / <code>large</code> для кнопок и полей — в одном ряду всё одной высоты. Без <code>size</code> контрол берёт размер предков: класс <code>tao-size-*</code> на любой обёртке или <code>size</code> у TaoFormField / TaoInputGroup. Ниже размер задан один раз — классом на строке.</p></template>
+          </Tr>
           <div class="demo-stack">
             <div
               v-for="s in sizes"
@@ -132,20 +140,23 @@ function onDemoSubmit() {
             </TaoInputGroup>
           </div>
 
-          <h3 class="carousel-heading">Форма и submit</h3>
-          <p class="carousel-note">Отдельного TaoForm нет: обычный <code>&lt;form&gt;</code>, Enter в поле отправляет, кнопка с <code>type="submit"</code>. В SPA — <code>@submit.prevent</code>.</p>
+          <h3 class="carousel-heading">{{ tr('Form and submit', 'Форма и submit') }}</h3>
+          <Tr>
+            <template #en><p class="carousel-note">There is no separate TaoForm: a plain <code>&lt;form&gt;</code>, Enter in a field submits, the button has <code>type="submit"</code>. In an SPA — <code>@submit.prevent</code>.</p></template>
+            <template #ru><p class="carousel-note">Отдельного TaoForm нет: обычный <code>&lt;form&gt;</code>, Enter в поле отправляет, кнопка с <code>type="submit"</code>. В SPA — <code>@submit.prevent</code>.</p></template>
+          </Tr>
           <form class="demo-stack" @submit.prevent="onDemoSubmit">
             <TaoFormField label="Email">
               <TaoInput v-model="formEmail" type="email" placeholder="you@mail.com" />
             </TaoFormField>
-            <TaoFormField label="Пароль">
+            <TaoFormField :label="tr('Password', 'Пароль')">
               <TaoInput v-model="formPassword" type="password" placeholder="••••••••" />
             </TaoFormField>
-            <TaoButton type="submit" :loading="formSaving">Войти</TaoButton>
+            <TaoButton type="submit" :loading="formSaving">{{ tr('Sign in', 'Войти') }}</TaoButton>
           </form>
     
           <div class="code-block">
-            <pre><code>&lt;TaoInput v-model="q" placeholder="Найти…"&gt;
+            <pre><code>&lt;TaoInput v-model="q" placeholder="{{ tr('Find…', 'Найти…') }}"&gt;
   &lt;template #prefix&gt;…&lt;/template&gt;
   &lt;template #suffix&gt;₽&lt;/template&gt;
 &lt;/TaoInput&gt;
@@ -154,14 +165,14 @@ function onDemoSubmit() {
   &lt;template #before&gt;https://&lt;/template&gt;
   &lt;TaoInput v-model="host" /&gt;
   &lt;template #after&gt;
-    &lt;TaoButton&gt;Проверить&lt;/TaoButton&gt;
+    &lt;TaoButton&gt;{{ tr('Check', 'Проверить') }}&lt;/TaoButton&gt;
   &lt;/template&gt;
 &lt;/TaoInputGroup&gt;
 
-&lt;!-- one size for a whole block / один размер на весь блок --&gt;
+&lt;!-- {{ tr('one size for a whole block', 'один размер на весь блок') }} --&gt;
 &lt;div class="tao-size-small"&gt;
   &lt;TaoInput v-model="q" /&gt;
-  &lt;TaoButton&gt;Найти&lt;/TaoButton&gt;
+  &lt;TaoButton&gt;{{ tr('Find', 'Найти') }}&lt;/TaoButton&gt;
 &lt;/div&gt;
 
 &lt;TaoInputGroup size="large"&gt;…&lt;/TaoInputGroup&gt;
@@ -171,7 +182,7 @@ function onDemoSubmit() {
   &lt;TaoFormField label="Email"&gt;
     &lt;TaoInput v-model="email" type="email" /&gt;
   &lt;/TaoFormField&gt;
-  &lt;TaoButton type="submit"&gt;Сохранить&lt;/TaoButton&gt;
+  &lt;TaoButton type="submit"&gt;{{ tr('Save', 'Сохранить') }}&lt;/TaoButton&gt;
 &lt;/form&gt;</code></pre>
           </div>
   </ShowcaseSection>

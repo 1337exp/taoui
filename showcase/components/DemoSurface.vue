@@ -1,46 +1,79 @@
 <script setup>
-import { ref } from 'vue'
-import { TaoBlock, TaoButton, TaoCard, TaoSegmented, TaoSegmentedOption, confirm, toast } from '@tao/ui'
+import { computed, ref } from 'vue'
+import { TaoBlock, TaoButton, TaoCard, TaoSegmented, TaoSegmentedOption, confirm, toast } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { tr } from '../i18n.js'
+import Tr from './Tr.vue'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoSurface' })
 
 const backdrop = ref('content')
-const surfaces = [
-  { value: 'flat', note: 'Заливка. По умолчанию' },
-  { value: 'grain', note: 'Плёночное зерно' },
-  { value: 'glass', note: 'Размытие того, что позади' },
-]
-const modes = ['Выбор', 'Тап', 'Удержание', 'Проведение', 'Мяч', 'Колосс']
-const tools = ['Секции', 'Серия', 'Залп']
+const surfaces = computed(() => [
+  { value: 'flat', note: tr('A fill. The default', 'Заливка. По умолчанию') },
+  { value: 'grain', note: tr('Film grain', 'Плёночное зерно') },
+  { value: 'glass', note: tr('Blurs whatever is behind', 'Размытие того, что позади') },
+])
+const modes = computed(() => [
+  tr('Select', 'Выбор'),
+  tr('Tap', 'Тап'),
+  tr('Hold', 'Удержание'),
+  tr('Swipe', 'Проведение'),
+  tr('Ball', 'Мяч'),
+  tr('Colossus', 'Колосс'),
+])
+const tools = computed(() => [tr('Sections', 'Секции'), tr('Series', 'Серия'), tr('Salvo', 'Залп')])
 
 function showToast(surface) {
-  toast().success().title('Сохранено').message('Уровень записан на диск').surface(surface)
+  toast()
+    .success()
+    .title(tr('Saved', 'Сохранено'))
+    .message(tr('The level is written to disk', 'Уровень записан на диск'))
+    .surface(surface)
 }
 
 function showConfirm(surface) {
-  confirm('Удалить секцию?', { message: 'Ноты внутри тоже удалятся.', danger: true, surface })
+  confirm(tr('Delete the section?', 'Удалить секцию?'), {
+    message: tr('The notes inside will be deleted too.', 'Ноты внутри тоже удалятся.'),
+    danger: true,
+    surface,
+  })
 }
 </script>
 
 <template>
   <ShowcaseSection id="surface" :tables="propTables['surface']">
-    <h2>Поверхности</h2>
-    <p>
-      Из чего «сделана» панель. Класс <code>tao-surface-grain</code> / <code>-glass</code> на любом
-      элементе (HUD в игре, секция лендинга, сайдбар) или проп <code>surface</code> у TaoCard / TaoBlock.
-      Вид настраивается токенами темы один раз на всё приложение.
-    </p>
-    <p class="carousel-note">
-      Выразительность сначала даёт структура: меньше рамок, одно яркое пятно (активный пункт), подписи групп, хоткеи
-      клавишами. Потом зерно. Стекло — только для того, что лежит поверх контента:
-      над ровным фоном оно превращается в серую заливку, а над анимацией пересчитывается каждый кадр.
-    </p>
+    <h2>{{ tr('Surfaces', 'Поверхности') }}</h2>
+    <Tr>
+      <template #en>
+        <p>
+          What a panel is “made of”. The <code>tao-surface-grain</code> / <code>-glass</code> class on any
+          element (an in-game HUD, a landing section, a sidebar) or the <code>surface</code> prop of TaoCard / TaoBlock.
+          The look is tuned with theme tokens once for the whole app.
+        </p>
+        <p class="carousel-note">
+          Expressiveness comes first from structure: fewer borders, one bright spot (the active item), group captions, hotkeys
+          as keys. Grain comes after. Glass is only for what lies over content:
+          over a flat background it turns into a grey fill, and over an animation it is recalculated every frame.
+        </p>
+      </template>
+      <template #ru>
+        <p>
+          Из чего «сделана» панель. Класс <code>tao-surface-grain</code> / <code>-glass</code> на любом
+          элементе (HUD в игре, секция лендинга, сайдбар) или проп <code>surface</code> у TaoCard / TaoBlock.
+          Вид настраивается токенами темы один раз на всё приложение.
+        </p>
+        <p class="carousel-note">
+          Выразительность сначала даёт структура: меньше рамок, одно яркое пятно (активный пункт), подписи групп, хоткеи
+          клавишами. Потом зерно. Стекло — только для того, что лежит поверх контента:
+          над ровным фоном оно превращается в серую заливку, а над анимацией пересчитывается каждый кадр.
+        </p>
+      </template>
+    </Tr>
 
-    <TaoSegmented v-model="backdrop" size="small" legend="Под панелями">
-      <TaoSegmentedOption value="content" label="Контент" />
-      <TaoSegmentedOption value="plain" label="Ровный фон" />
+    <TaoSegmented v-model="backdrop" size="small" :legend="tr('Under the panels', 'Под панелями')">
+      <TaoSegmentedOption value="content" :label="tr('Content', 'Контент')" />
+      <TaoSegmentedOption value="plain" :label="tr('Plain background', 'Ровный фон')" />
     </TaoSegmented>
 
     <div class="surface-stage" :class="{ 'surface-stage--content': backdrop === 'content' }">
@@ -53,13 +86,13 @@ function showConfirm(surface) {
         class="surface-panel"
       >
         <p class="surface-panel__name">{{ s.value }}</p>
-        <p class="surface-panel__group">Режимы</p>
+        <p class="surface-panel__group">{{ tr('Modes', 'Режимы') }}</p>
         <ul class="surface-list">
           <li v-for="(m, i) in modes" :key="m" :class="{ 'surface-list__item--active': i === 1 }" class="surface-list__item">
             <span>{{ m }}</span><kbd>{{ i + 1 }}</kbd>
           </li>
         </ul>
-        <p class="surface-panel__group">Разметка</p>
+        <p class="surface-panel__group">{{ tr('Layout', 'Разметка') }}</p>
         <ul class="surface-list">
           <li v-for="(t, i) in tools" :key="t" class="surface-list__item">
             <span>{{ t }}</span><kbd>{{ i + 7 }}</kbd>
@@ -69,12 +102,23 @@ function showConfirm(surface) {
       </TaoBlock>
     </div>
 
-    <h3>Toast и confirm</h3>
-    <p class="carousel-note">
-      Всплывают поверх страницы, поэтому стеклянные по умолчанию. Оттенок тона сохраняется.
-      Выключить: <code>toast.defaults({ surface: 'flat' })</code>, <code>confirm.defaults({ surface: 'flat' })</code>
-      или для одного — <code>.surface('flat')</code>.
-    </p>
+    <h3>{{ tr('Toast and confirm', 'Toast и confirm') }}</h3>
+    <Tr>
+      <template #en>
+        <p class="carousel-note">
+          They pop up over the page, so they are glass by default. The tone tint is kept.
+          To turn it off: <code>toast.defaults({ surface: 'flat' })</code>, <code>confirm.defaults({ surface: 'flat' })</code>
+          or for a single one — <code>.surface('flat')</code>.
+        </p>
+      </template>
+      <template #ru>
+        <p class="carousel-note">
+          Всплывают поверх страницы, поэтому стеклянные по умолчанию. Оттенок тона сохраняется.
+          Выключить: <code>toast.defaults({ surface: 'flat' })</code>, <code>confirm.defaults({ surface: 'flat' })</code>
+          или для одного — <code>.surface('flat')</code>.
+        </p>
+      </template>
+    </Tr>
     <div class="demo-row" style="display: flex; flex-wrap: wrap; gap: 8px">
       <TaoButton variant="secondary" @click="showToast('glass')">Toast — glass</TaoButton>
       <TaoButton variant="secondary" @click="showToast('flat')">Toast — flat</TaoButton>
@@ -94,7 +138,7 @@ function showConfirm(surface) {
       <pre><code>&lt;TaoCard surface="grain"&gt;…&lt;/TaoCard&gt;
 &lt;aside class="tao-surface-glass"&gt;HUD&lt;/aside&gt;
 
-/* tune once for the whole app / настроить один раз на всё приложение */
+/* {{ tr('tune once for the whole app', 'настроить один раз на всё приложение') }} */
 :root {
   --tao-glass-blur: 24px;
   --tao-surface-grain-image: url(my-grain.png);

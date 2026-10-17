@@ -1,21 +1,23 @@
 <script setup>
-import { TaoDropdownMenu } from '@tao/ui'
+import { computed } from 'vue'
+import { TaoDropdownMenu } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { tr } from '../i18n.js'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoDropdown' })
 
-const dropdownActions = [
-  { id: 'edit', name: 'Редактировать' },
-  { id: 'duplicate', name: 'Дублировать' },
-  { id: 'delete', name: 'Удалить' },
-]
+const dropdownActions = computed(() => [
+  { id: 'edit', name: tr('Edit', 'Редактировать') },
+  { id: 'duplicate', name: tr('Duplicate', 'Дублировать') },
+  { id: 'delete', name: tr('Delete', 'Удалить') },
+])
 </script>
 
 <template>
   <ShowcaseSection id="dropdown" :tables="propTables['dropdown']">
     <h2>TaoDropdownMenu</h2>
-          <p>Выпадающее меню с авто-позиционированием у края экрана</p>
+          <p>{{ tr('A dropdown menu that positions itself automatically near the screen edge', 'Выпадающее меню с авто-позиционированием у края экрана') }}</p>
     
           <TaoDropdownMenu :actions="dropdownActions" @select="(id) => console.log('selected:', id)" />
     

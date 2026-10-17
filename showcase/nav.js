@@ -1,18 +1,18 @@
 export const navGroups = [
   {
     id: 'basics',
-    title: 'Основы',
+    title: { en: 'Basics', ru: 'Основы' },
     items: [
       { id: 'block', label: 'TaoBlock' },
       { id: 'button', label: 'TaoButton', aliases: ['text', 'tone'] },
       { id: 'card', label: 'TaoCard' },
       { id: 'copy', label: 'TaoCopy' },
-      { id: 'surface', label: 'Поверхности', aliases: ['glass', 'grain', 'lit', 'surface'] },
+      { id: 'surface', label: { en: 'Surfaces', ru: 'Поверхности' }, aliases: ['glass', 'grain', 'lit', 'surface'] },
     ],
   },
   {
     id: 'forms',
-    title: 'Формы',
+    title: { en: 'Forms', ru: 'Формы' },
     items: [
       { id: 'input', label: 'TaoInput / Group', aliases: ['TaoInput', 'TaoInputGroup'] },
       { id: 'input-number', label: 'TaoInputNumber' },
@@ -32,7 +32,7 @@ export const navGroups = [
   },
   {
     id: 'data',
-    title: 'Данные',
+    title: { en: 'Data', ru: 'Данные' },
     items: [
       { id: 'table', label: 'TaoTable' },
       { id: 'pagination', label: 'TaoPagination' },
@@ -46,7 +46,7 @@ export const navGroups = [
   },
   {
     id: 'layout',
-    title: 'Макет',
+    title: { en: 'Layout', ru: 'Макет' },
     items: [
       { id: 'container', label: 'TaoContainer' },
       { id: 'flex', label: 'Flex / Space', aliases: ['TaoFlex', 'TaoSpace'] },
@@ -59,7 +59,7 @@ export const navGroups = [
   },
   {
     id: 'overlays',
-    title: 'Оверлеи',
+    title: { en: 'Overlays', ru: 'Оверлеи' },
     items: [
       { id: 'modal', label: 'TaoModal' },
       { id: 'drawer', label: 'TaoDrawer' },
@@ -72,7 +72,7 @@ export const navGroups = [
   },
   {
     id: 'nav',
-    title: 'Навигация',
+    title: { en: 'Navigation', ru: 'Навигация' },
     items: [
       { id: 'tabs', label: 'TaoTabs' },
       { id: 'breadcrumb', label: 'TaoBreadcrumb' },
@@ -82,7 +82,7 @@ export const navGroups = [
   },
   {
     id: 'feedback',
-    title: 'Обратная связь',
+    title: { en: 'Feedback', ru: 'Обратная связь' },
     items: [
       { id: 'toast', label: 'toast()' },
       { id: 'alert', label: 'TaoAlert' },
@@ -92,7 +92,7 @@ export const navGroups = [
   },
   {
     id: 'media',
-    title: 'Медиа',
+    title: { en: 'Media', ru: 'Медиа' },
     items: [
       { id: 'image', label: 'TaoImage' },
       { id: 'avatar', label: 'TaoAvatar' },

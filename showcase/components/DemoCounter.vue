@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoCounter, TaoButton } from '@tao/ui'
+import { TaoCounter, TaoButton } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { tr } from '../i18n.js'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoCounter' })
@@ -12,7 +13,7 @@ const counterValue = ref(1284)
 <template>
   <ShowcaseSection id="counter" :tables="propTables['counter']">
     <h2>TaoCounter</h2>
-          <p>Витрина числа, не поле ввода. Цифры переворачиваются при смене значения. Для баланса, счёта, онлайна.</p>
+          <p>{{ tr('A number display, not an input. The digits flip when the value changes. For a balance, a score, an online count.', 'Витрина числа, не поле ввода. Цифры переворачиваются при смене значения. Для баланса, счёта, онлайна.') }}</p>
     
           <TaoCounter :value="counterValue" :max-digits="6" />
           <div class="button-row" style="margin-top: 12px;">
@@ -20,7 +21,7 @@ const counterValue = ref(1284)
             <TaoButton size="small" @click="counterValue += 1">+1</TaoButton>
             <TaoButton size="small" variant="ghost" @click="counterValue += 100">+100</TaoButton>
           </div>
-          <p style="margin-top: 8px; font-size: 13px;">Значение: {{ counterValue }}</p>
+          <p style="margin-top: 8px; font-size: 13px;">{{ tr('Value', 'Значение') }}: {{ counterValue }}</p>
     
           <div class="code-block">
             <pre><code>&lt;TaoCounter :value="score" :max-digits="6" /&gt;</code></pre>

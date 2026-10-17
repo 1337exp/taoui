@@ -1,0 +1,897 @@
+// English prop tables. Same shape as propTables.js (the Russian source), keyed by section id.
+// A section that is missing here falls back to the Russian table. Names, types and
+// defaults must match propTables.js; only titles, notes, slots and Russian default text
+// are translated. tests/showcase.propTables.test.ts keeps the two files in step.
+//
+// Editing a section: change the Russian one in propTables.js first, then mirror it here.
+
+const r = (name, type, def, note) => ({ name, type, default: def, note })
+
+export const propTablesEn = {
+  block: [
+    {
+      title: 'TaoBlock',
+      rows: [
+        r('padding', 'number | string | (…)[]', '16', 'Inner padding. A number is px, a string is any CSS length. An array works like CSS padding (1–4 values)'),
+        r('radius', 'number | string', '8', 'Corner radius. A number is px, a string is CSS'),
+        r('shadow', 'boolean', 'true', 'Panel shadow'),
+        r('hover', 'boolean', 'false', 'Stronger shadow on hover, pointer cursor'),
+        r('surface', "'flat' | 'grain' | 'glass'", "'flat'", 'What the block is made of: fill / grain / glass. See “Surfaces”'),
+      ],
+      slots: 'default — the block content.',
+    },
+  ],
+  button: [
+    {
+      title: 'TaoButton',
+      rows: [
+        r('type', "'button' | 'submit' | 'reset'", "'button'", 'The native button type'),
+        r('variant', "'primary' | 'secondary' | 'ghost' | 'text' | 'danger'", "'primary'", 'Shape. The filled red one is danger, not tone'),
+        r('tone', "'danger' | 'success' | 'warning' | 'info' | ''", "''", 'Colours ghost and text. Not a replacement for variant'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size. Without it — the size of the ancestors (the tao-size-* class or size on FormField / InputGroup), otherwise medium'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('loading', 'boolean', 'false', 'A spinner, the click is swallowed'),
+        r('block', 'boolean', 'false', '100% width'),
+        r('icon', 'string', "''", 'A symbol to the left of the text'),
+      ],
+      slots: 'default — the button caption.',
+    },
+  ],
+  surface: [
+    {
+      title: 'Classes and tokens',
+      rows: [
+        r('.tao-surface-grain', 'class', '—', 'Static film grain. Any element'),
+        r('.tao-surface-glass', 'class', '—', 'A translucent fill + background blur. Without blur support, or with prefers-reduced-transparency, it is solid'),
+        r('--tao-surface-grain-image / -size', 'image / length', 'SVG / 160px', 'Your own grain texture'),
+        r('--tao-glass-fill / -border / -blur', 'color / color / length', '55% / white 8% / 16px', 'Glass'),
+      ],
+      slots: "A surface belongs to a single element: nested panels do not inherit it. Toast and confirm are glass by default: toast.defaults({ surface: 'flat' }) / confirm.defaults({ surface: 'flat' }) turn it off.",
+    },
+  ],
+  card: [
+    {
+      title: 'TaoCard',
+      rows: [
+        r('padding', 'number | string | (…)[]', '20', 'Padding of the card body. A number is px, a string is CSS. With flush — 0'),
+        r('radius', 'number | string', '8', 'Corner radius. A number is px, a string is CSS'),
+        r('shadow', 'boolean', 'true', 'The regular shadow. Off with flush'),
+        r('shadowBottomOnly', 'boolean', 'false', 'A line at the bottom of the card, not a scrim over the photo'),
+        r('flush', 'boolean', 'false', 'A tile: no padding and no shadow, cover/body fill the whole cell'),
+        r('hover', 'boolean', 'false', 'An accent outline on hover'),
+        r('surface', "'flat' | 'grain' | 'glass'", "'flat'", 'What the card is made of: fill / grain / glass. See “Surfaces”'),
+        r('active', 'boolean', 'false', 'The selected state'),
+        r('overflow', 'boolean', 'false', 'Do not clip the content (cover / carousel)'),
+      ],
+      slots: 'default — the body. #cover, #overlay (a scrim over the cover or the whole tile), #header, #title, #sub, #footer.',
+    },
+  ],
+  copy: [
+    {
+      title: 'TaoCopy',
+      rows: [
+        r('text', 'string', '—', 'The string for the clipboard. Required'),
+        r('successText', 'string', "'Copied!'", 'The tooltip text after the click'),
+        r('successMessage', 'string', '—', 'Deprecated: successText (visible texts are *Text, aria ones are *Label)'),
+        r('copyLabel', 'string', "'Copy'", 'aria-label of the button'),
+        r('tip', 'boolean', 'true', 'Show a tooltip above the button after copying'),
+      ],
+    },
+  ],
+  input: [
+    {
+      title: 'TaoInput',
+      rows: [
+        r('v-model', 'string | number', "''", 'The field value'),
+        r('type', "'text' | 'password' | 'email' | 'number' | 'tel'", "'text'", 'The native input type'),
+        r('placeholder', 'string', "''", 'The hint inside'),
+        r('label', 'string', "''", 'Deprecated: the caption is label on TaoFormField, as for all fields'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
+        r('errorMessage', 'string', "''", 'Deprecated: the error text is error on TaoFormField'),
+        r('id', 'string', 'auto', 'The input id; otherwise taken from FormField or useId'),
+      ],
+      slots: '#prefix and #suffix — inside the frame, left/right (an icon, text).',
+    },
+    {
+      title: 'TaoInputGroup',
+      rows: [
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'The size of the whole group: addons, the field and buttons inside'),
+      ],
+      slots: 'default — the field itself (TaoInput etc.). #before / #after — a protocol, a unit, a button. Glues addon + field + addon into one frame.',
+    },
+  ],
+  'input-number': [
+    {
+      title: 'TaoInputNumber',
+      rows: [
+        r('v-model', 'number | null', 'null', 'A number. An empty field is null, not 0 and not a string'),
+        r('min / max', 'number', '—', 'The bounds. If not set — no limit'),
+        r('step', 'number', '1', 'The step of ± and the arrows'),
+        r('precision', 'number', '—', 'Digits after the decimal point'),
+        r('@commit', 'number | null', '—', 'Edit finished: blur, Enter, ±, arrow key (once per action; v-model fires per keystroke).'),
+        r('controls', 'boolean', 'true', '± buttons on the right'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
+        r('placeholder', 'string', "''", 'The hint when null'),
+      ],
+    },
+  ],
+  quantity: [
+    {
+      title: 'TaoQuantity',
+      rows: [
+        r('v-model', 'number', '1', 'A whole quantity. Never empty'),
+        r('min', 'number', '1', 'The lower bound'),
+        r('max', 'number', '—', 'Stock. If not set — no ceiling'),
+        r('allowRemove', 'boolean', 'true', 'The minus at min stays alive and fires dec — the parent may remove the row'),
+        r('forceMaxLimit', 'boolean', 'true', 'Clamp the input to max on blur and when more than the stock arrives'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
+      ],
+      slots: '#decrement-icon / #increment-icon — the button icons.',
+    },
+  ],
+  textarea: [
+    {
+      title: 'TaoTextarea',
+      rows: [
+        r('v-model', 'string', "''", 'Text'),
+        r('placeholder', 'string', "''", 'Hint'),
+        r('rows', 'number', '3', 'The initial height'),
+        r('maxlength', 'number', '—', 'Cuts the input'),
+        r('count', 'boolean', 'false', 'Show “typed / maximum” (together with maxlength)'),
+        r('resize', 'boolean', 'true', 'Can be dragged by the corner'),
+        r('variant', "'bar' | 'outline' | 'filled' | 'plain'", "'bar'", 'A stripe on the left / a frame like TaoInput / a fill only / nothing'),
+        r('readonly', 'boolean', 'false', 'Can be read and selected, but not edited'),
+        r('noSpace', 'boolean', 'false', 'A space cannot be typed — neither from the keyboard nor by pasting'),
+        r('noBorder / noBackground / borderInverse', 'boolean', 'false', 'Deprecated: variant="filled" / variant="plain" / a stripe on the right'),
+        r('dummy', 'boolean', 'false', 'Deprecated: readonly'),
+        r('align', "'start' | 'center' | 'end'", "'start'", 'Text alignment'),
+        r('autofocus', 'boolean', 'false', 'Focus on mount'),
+        r('blurOnEnter', 'boolean', 'false', 'Enter drops the focus instead of inserting a line break (Shift+Enter inserts it); keydown goes out first'),
+        r('textCenter / autoFocus / submitOnEnter', 'boolean', 'false', 'Deprecated: align="center" / autofocus / blurOnEnter'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('error', 'boolean', 'false', 'A red border'),
+      ],
+    },
+  ],
+  checkbox: [
+    {
+      title: 'TaoCheckbox',
+      rows: [
+        r('v-model', 'boolean', '—', 'Checked / not'),
+        r('checked', 'boolean', '—', 'The state without v-model'),
+        r('value', 'boolean', '—', 'Deprecated: checked. value will become the option value, as with TaoRadio'),
+        r('label', 'string', "''", 'The caption on the right'),
+        r('indeterminate', 'boolean', 'false', 'A dash instead of a tick. A click sets checked, the parent works out the mixed state'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'A 14 / 18 / 22 square and the caption font size. Without it — the size of the ancestors'),
+        r('error', 'boolean', 'false', 'A red accent. The error text goes through TaoFormField'),
+      ],
+    },
+  ],
+  select: [
+    {
+      title: 'TaoSelect',
+      rows: [
+        r('v-model', 'string | number | null', 'null', 'value of the selected option. Clearing → null'),
+        r('options', 'TaoSelectOption[]', '[]', '{ value, label, disabled? }'),
+        r('placeholder', 'string', "'Choose'", 'When the model is null'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('error', 'boolean', 'false', 'A red border'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, as TaoButton; also scales the opened list. Without it — the size of the ancestors'),
+        r('clearable', 'boolean', 'true', 'Clear row and Delete / Backspace. Turn off when null is not valid.'),
+        r('clearText', 'string', "'Clear'", 'Label of the clear row.'),
+      ],
+      slots: '#clear: content of the clear row (icon, markup), replaces clearText. #chevron: custom arrow.',
+    },
+    {
+      title: 'TaoSwitch',
+      rows: [
+        r('v-model', 'boolean', 'false', 'On / off. role="switch"'),
+        r('label', 'string', "''", 'The caption on the right'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'The track is 28 / 36 / 44 px wide, and the caption font size. Without it — the size of the ancestors'),
+        r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
+      ],
+    },
+    {
+      title: 'TaoRadio / TaoRadioGroup',
+      rows: [
+        r('value', 'string | number | boolean', '—', 'Radio: the value of this point. Required'),
+        r('v-model', 'the same', '—', 'Group holds the selection. A Radio without a group holds its own'),
+        r('legend', 'string', '—', 'Group: the group caption'),
+        r('direction', "'row' | 'column'", "'row'", 'Group: in a row or in a column'),
+        r('disabled', 'boolean', 'false', 'A single point or the whole group'),
+        r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'A 14 / 18 / 22 circle and the caption font size. On a group — for all the radios inside'),
+        r('label / name', 'string', "''", 'Radio: the caption and name, if there is no group'),
+      ],
+    },
+    {
+      title: 'TaoFormField',
+      rows: [
+        r('label', 'string', '—', 'A shared caption above the control'),
+        r('hint', 'string', '—', 'A hint under the field'),
+        r('error', 'string', '—', 'The error text; if present, the field is invalid'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'The size of the control inside'),
+      ],
+      slots: 'default — the control itself (Input, Select, Switch…).',
+    },
+  ],
+  segmented: [
+    {
+      title: 'TaoSegmented',
+      rows: [
+        r('v-model', 'string | number | boolean', '—', 'value of the selected option'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'The segment height, the same scale as TaoButton. Without it — the size of the ancestors'),
+        r('block', 'boolean', 'false', 'Stretch to the parent width'),
+        r('legend', 'string', '—', 'The accessible name of the group'),
+        r('disabled', 'boolean', 'false', 'The whole group'),
+        r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
+        r('name', 'string', 'auto', 'name for the radio inputs inside'),
+      ],
+      slots: 'default — a set of TaoSegmentedOption.',
+    },
+    {
+      title: 'TaoSegmentedOption',
+      rows: [
+        r('value', 'string | number | boolean', '—', 'The option value. Required'),
+        r('label', 'string', "''", 'The text. Or the default slot'),
+        r('icon', 'string', "''", 'A symbol on the left'),
+        r('count', 'number | string', '—', 'A number on the right (a badge)'),
+        r('disabled', 'boolean', 'false', 'This option'),
+      ],
+    },
+  ],
+  combobox: [
+    {
+      title: 'TaoCombobox',
+      rows: [
+        r('v-model', 'string | number | null', 'null', 'value of an option, or an arbitrary string with allow-create'),
+        r('options', 'TaoSelectOption[]', '[]', '{ value, label, disabled? }. The list is not mutated by the component'),
+        r('placeholder', 'string', "'Start typing'", 'The empty field'),
+        r('allowCreate', 'boolean', 'false', 'A value that is not in the list can be kept'),
+        r('emptyText', 'string', "'Nothing found'", 'An empty filter'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, as TaoButton and TaoSelect; also scales the opened list. Without it — the size of the ancestors'),
+        r('clearable', 'boolean', 'true', 'Clear row in the list. Turn off when null is not valid.'),
+        r('clearText', 'string', "'Clear'", 'Label of the clear row; slot #clear replaces it.'),
+        r('disabled / error', 'boolean', 'false', 'Disabled / a red border'),
+      ],
+      slots: 'create — an event when a new value is typed: the parent extends options itself.',
+    },
+  ],
+  typeahead: [
+    {
+      title: 'TypeaheadPlayground',
+      rows: [
+        r('v-model', 'object | null', 'null', 'The selected hit { id, name, city, role } or null'),
+      ],
+      slots: '#item="{ hit, active }" — a list row. #empty — nothing found. Not part of the npm package, lives in showcase/demo.',
+    },
+  ],
+  date: [
+    {
+      title: 'TaoDate',
+      rows: [
+        r('v-model', 'string | null', 'null', 'A single day YYYY-MM-DD, with no time and no time zone'),
+        r('min / max', 'string', '—', 'The bounds in the same format'),
+        r('placeholder', 'string', "'Date'", 'The empty field'),
+        r('locale', 'string', "'ru-RU'", 'The calendar captions'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium'),
+        r('disabled / error', 'boolean', 'false', 'Disabled / a red border'),
+        r('todayText / clearText', 'string', "'Today' / 'Clear'", 'The buttons at the bottom of the popup'),
+      ],
+      slots: '#icon, #prev-icon, #next-icon — the icons of the field and of the month arrows.',
+    },
+    {
+      title: 'TaoDateRange',
+      rows: [
+        r('v-model', '{ start, end } | null', 'null', 'A period YYYY-MM-DD. An incomplete choice is not written to the model'),
+        r('min / max', 'string', '—', 'The bounds'),
+        r('placeholder', 'string', "'Period'", 'While null'),
+        r('locale', 'string', "'ru-RU'", 'The calendar captions'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium'),
+        r('disabled / error', 'boolean', 'false', 'Disabled / a red border'),
+      ],
+      slots: 'The first click is start, the second is end (they swap if end is earlier).',
+    },
+  ],
+  pincode: [
+    {
+      title: 'TaoPinCode',
+      rows: [
+        r('length', 'number', '—', 'The number of cells. Not needed with format: it is counted from the mask'),
+        r('format', 'string', '—', 'A mask with separators: # is a cell, the rest is a separator (#-##-## gives 0-00-00). Separators are not part of the value'),
+        r('v-model', 'string', "''", 'The cells glued into a string'),
+        r('numbersOnly', 'boolean', 'false', 'Digits only'),
+        r('masked', 'boolean', 'false', 'Dots instead of characters'),
+        r('hidden', 'boolean', 'false', 'Deprecated: masked (hidden is a native attribute)'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Cells 40×46 / 50×56 / 58×64. Without it — the size of the ancestors'),
+        r('clearOn', "'focus' | 'input'", "'focus'", 'focus — a click clears the cell and everything to the right; input — changes only on typing'),
+        r('placeholder', 'string', "''", 'The character in an empty cell'),
+      ],
+      slots: 'The complete event — the last cell was typed (it blurs).',
+    },
+  ],
+  slider: [
+    {
+      title: 'TaoProgress',
+      rows: [
+        r('progress', 'number', '0', 'The fill 0–100, not the bar width'),
+        r('minWidth / maxWidth', 'number', '200 / —', 'The bar width in px'),
+        r('height', 'number', '8', 'The thickness in px'),
+        r('showPercentage', "boolean | 'top' | 'right'", 'true', 'true/top — above the bar, right — on the right, false — hide'),
+        r('animated', 'boolean', 'true', 'Smooth filling'),
+      ],
+      slots: '#left / #right — captions. If #right is present, the percentage goes on the right in brackets.',
+    },
+    {
+      title: 'TaoSlider',
+      rows: [
+        r('v-model', 'number', '—', 'The current value. Required. Two handles: TaoRangeSlider with a [from, to] pair'),
+        r('min / max / step', 'number', '0 / 100 / 1', 'The range and the step'),
+        r('marks', "boolean | (number | { value, label? })[]", '—', 'Scale marks: true — automatic divisions, an array of numbers or objects with a caption. A click on a caption moves the handle'),
+        r('marksSide', "'start' | 'end'", "'end'", 'The marks side: end — under a horizontal slider and to the right of a vertical one, start — above and to the left'),
+        r('discrete', 'boolean', 'false', 'The value only on the marks (a stepped scale); the arrows follow the marks'),
+        r('format', '(value: number) => string', '—', 'Number text: the captions of automatic marks and the value on the bar'),
+        r('flat', 'boolean', 'false', 'No round handles: a flat bar with a fill. Keyboard and focus work'),
+        r('vertical', 'boolean', 'false', 'Vertical: the maximum on top, marks on the right. Length — --tao-slider-length (10rem)'),
+        r('variant', "'bar' | 'thin'", "'bar'", 'bar — a thick track, a form control; thin — a thin one (seek / volume). It used to be size="small"'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'The scale of the track and the thumb (the thumb is 16 / 20 / 24). Without it — the size of the ancestors'),
+        r('showValue', 'boolean', 'false', 'The value over the bar'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('error', 'boolean', 'false', 'A red outline of the track. The error text is error on TaoFormField'),
+        r('wheel', 'number', '0', 'The change step for the mouse wheel (a single handle). 0 — disabled'),
+        r('@change', 'value', '—', 'Finished changing: released, a key, the wheel, a click on a mark. v-model fires on every move'),
+        r('#mark', '{ mark, active }', '—', 'A custom mark caption'),
+
+      ],
+    },
+    {
+      title: 'TaoRangeSlider',
+      rows: [
+        r('v-model', '[number, number]', '—', 'A [from, to] pair. Required'),
+        r('minGap', 'number', '0', 'The smallest distance between the handles; the handles do not jump over each other'),
+        r('…', '', '', 'The rest as in TaoSlider: min / max / step, marks, discrete, format, vertical, variant, size, showValue, disabled, error'),
+      ],
+    },
+    {
+      title: 'TaoTimeline',
+      rows: [
+        r('v-model', 'number', '—', 'The current time. Required'),
+        r('v-model:playing', 'boolean', 'false', 'Whether playback is running (the look of the button). The component does not keep time itself'),
+        r('length', 'number', '—', 'The length; the slider goes from 0 to it. Required'),
+        r('step', 'number', '0.01', 'The slider step'),
+        r('marks', '(number | { value, label? })[]', '—', 'Event marks on the scale'),
+        r('marksSide', "'start' | 'end'", "'end'", 'The marks above the slider or below it'),
+        r('format', '(time: number) => string', 'toFixed(2)', 'The time text in the marks and the caption'),
+        r('pauseOnScrub', 'boolean', 'true', 'Pause while the user holds the slider'),
+        r('showRestart / showTime', 'boolean', 'true', 'The “to the start” button; the “time / length” caption'),
+        r('variant', "'bar' | 'thin'", "'thin'", 'The track thickness'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size; without it — the size of the ancestors'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('playLabel / pauseLabel / restartLabel', 'string', 'from the locale', 'Button captions for screen readers'),
+        r('@restart', '—', '—', 'The “to the start” button (the time is already set to 0)'),
+        r('@seek', 'time', '—', 'Finished seeking: the slider was released or a key was pressed'),
+        r('#mark / #time', '{ mark, active } / { time, length, text }', '—', 'A custom mark caption; a custom time caption'),
+      ],
+    },
+  ],
+  color: [
+    {
+      title: 'TaoColorPicker',
+      rows: [
+        r('v-model', 'string', '—', 'The colour as a hex string: #rrggbb, with alpha also #rrggbbaa. rgb()/rgba() is accepted on input too. Required'),
+        r('alpha', 'boolean', 'false', 'The opacity bar and #rrggbbaa'),
+        r('swatches', 'string[]', '—', 'Ready colours under the palette; the selected one is marked'),
+        r('modes', "('hex' | 'rgb' | 'hsl')[]", "['hex', 'rgb', 'hsl']", 'Colour input modes; a single mode hides the switch'),
+        r('v-model:mode', "'hex' | 'rgb' | 'hsl'", 'the first of modes', 'The current input mode; v-model:mode remembers the choice between openings'),
+        r('eyedropper', 'boolean', 'true', 'An eyedropper (only where the browser supports EyeDropper)'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'The field size; without it — the size of the ancestors'),
+        r('areaLabel / hueLabel / alphaLabel / hexLabel / swatchesLabel / eyedropperLabel', 'string', 'from the locale', 'Captions for screen readers (the colorPicker locale)'),
+        r('@change', 'hex', '—', 'Finished editing: the square or a bar was released, a key, the hex field, a swatch. v-model fires on every move'),
+      ],
+    },
+    {
+      title: 'TaoColorInput',
+      rows: [
+        r('v-model', 'string', '—', 'The colour as a hex string. Required'),
+        r('alpha / swatches / modes / v-model:mode / eyedropper / size', '', '', 'As in TaoColorPicker'),
+        r('position', "'top' | 'bottom' | 'left' | 'right'", "'bottom'", 'The side the palette opens on'),
+        r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+      ],
+    },
+    {
+      title: 'colorModel(source, options)',
+      rows: [
+        r('source', 'Ref<T>', '—', 'Your colour storage. Returns a writable hex string for v-model'),
+        r('format', "'object' | 'array' | 'css'", "'object'", '{ r, g, b, a }, [r, g, b, a] or an rgb(r g b / a) string'),
+        r('range', '255 | 1', '255', 'The range of r, g, b; opacity is always 0…1'),
+        r('space', "'srgb' | 'linear'", "'srgb'", 'The space of r, g, b; linear only with range: 1 (rendering, the TaoFX gradient)'),
+        r('alpha', 'boolean', 'false', 'Store opacity; without it a hex #rrggbb'),
+        r('precision', 'number', '5', 'Digits of fractional values (range 1); for a linear colour fewer give steps in the dark'),
+      ],
+    },
+  ],
+  filedrop: [
+    {
+      title: 'TaoFileDrop',
+      rows: [
+        r('v-model', 'File[]', '[]', 'The list of files. The component does not accumulate it — only what the parent gave'),
+        r('multiple', 'boolean', 'false', 'Several files'),
+        r('accept', 'string', "'*'", 'As in <input type="file">'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'The height of the zone and of the file rows. Without it — the size of the ancestors'),
+        r('list', 'boolean', 'true', 'Names under the zone. Removing a file goes straight to v-model'),
+        r('showClear', 'boolean', 'false', 'The “clear all” button. It does not clear by itself — it fires clear-request'),
+      ],
+      slots: 'default — the zone text. The change event — files were added or removed (files is a deprecated alias). clear-request: the parent decides whether to reset at once or after confirm().',
+    },
+  ],
+  table: [
+    {
+      title: 'TaoTable',
+      rows: [
+        r('columns', 'TaoTableColumn[]', '—', 'Required. { key, label, sortable?, align?, width? }'),
+        r('rows', 'object[]', '[]', 'The data'),
+        r('v-model:sort', '{ key, dir } | null', 'null', 'Sorting. dir: asc | desc'),
+        r('loading', 'boolean', 'false', 'The loading overlay'),
+        r('emptyText', 'string', "'No data'", 'If rows is empty and not loading'),
+        r('striped', "boolean | 'odd' | 'even'", 'false', 'Zebra. true/odd — from the first row, even — from the second'),
+        r('hover', 'boolean', 'true', 'Highlight the row on hover'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Paddings and text of cells (small = the former compact), and the size of controls in cells too'),
+        r('compact', 'boolean', 'false', 'Deprecated: the same as size="small"'),
+        r('head', 'boolean', 'true', 'Highlight the header'),
+        r('lines', 'boolean', 'true', 'Lines between rows'),
+        r('sticky', 'boolean', 'false', 'A sticky header (needs maxHeight)'),
+        r('rowKey', 'string | fn', "'id'", 'The row key'),
+        r('maxHeight', 'number | string', '—', 'Scroll. A number is px'),
+      ],
+      slots: 'Cell: #cell-{key}="{ row, value }". Events: change — the sorting changed (sort is a deprecated alias), row-click, if clickable.',
+    },
+  ],
+  pagination: [
+    {
+      title: 'TaoPagination',
+      rows: [
+        r('v-model:page', 'number', '1', 'The current page'),
+        r('total', 'number', '0', 'Total records (not pages)'),
+        r('pageSize', 'number', '10', 'Records per page'),
+        r('jump', 'number', '5', 'A click on “…” jumps this many pages. 0 — “…” is decorative'),
+        r('siblingCount', 'number', '1', 'How many numbers around the current one'),
+        r('showTotal', 'boolean', 'true', 'The “1–10 of N” caption'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Buttons 26 / 36 / 44, like TaoButton. Without it — the size of the ancestors'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+      ],
+    },
+  ],
+  empty: [
+    {
+      title: 'TaoEmpty',
+      rows: [
+        r('title', 'string', "'Nothing here'", 'The empty state title'),
+      ],
+      slots: 'default — an explanation. #icon — a picture/icon. #action — a button.',
+    },
+  ],
+  list: [
+    {
+      title: 'TaoList',
+      rows: [
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Row height 26 / 36 / 44. An Item without its own size takes it from here'),
+        r('bordered', 'boolean', 'true', 'A border around the list'),
+        r('divided', 'boolean', 'true', 'Lines between rows'),
+        r('maxHeight', 'number | string', '—', 'Scroll. A number is pixels'),
+        r('empty', 'boolean', 'false', 'Show #empty instead of rows'),
+        r('ariaLabel', 'string', "''", 'The list name'),
+      ],
+      slots: 'default — TaoListItem. #empty — if empty.',
+    },
+    {
+      title: 'TaoListItem',
+      rows: [
+        r('title', 'string', "''", 'The title. The default slot replaces it'),
+        r('description', 'string', "''", 'A caption under the title'),
+        r('selected', 'boolean', 'false', 'The selected row'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('active', 'boolean', 'false', 'Highlight without selected'),
+        r('clickable', 'boolean', 'false', 'A button row, fires click'),
+        r('size', "'small' | 'medium' | 'large'", 'from the list', 'Override the list size'),
+        r('actionAlways', 'boolean', 'false', '#action is always visible, not only on hover'),
+      ],
+      slots: 'default — the title. #prefix, #description, #suffix, #action (on hover; always on touch).',
+    },
+  ],
+  stages: [
+    {
+      title: 'TaoStages',
+      rows: [
+        r('items', 'TaoStageItem[]', '[]', '{ key, label?, status?: wait | work | ok | bad }'),
+        r('direction', "'row' | 'column'", "'column'", 'column — top to bottom, row — in a row. As in TaoFlex'),
+        r('vertical', 'boolean', '—', 'Deprecated: direction'),
+        r('ariaLabel', 'string', "'Stages'", 'The list name'),
+      ],
+      slots: 'default / #icon="{ item, index, status }" — replace the step text or icon.',
+    },
+  ],
+  skeleton: [
+    {
+      title: 'TaoSkeleton',
+      rows: [
+        r('variant', "'text' | 'title' | 'circle' | 'rect'", "'text'", 'The placeholder shape'),
+        r('lines', 'number', '1', 'How many lines (text)'),
+        r('width / height', 'string', "''", 'A CSS size, if it has to be set explicitly'),
+      ],
+    },
+  ],
+  counter: [
+    {
+      title: 'TaoCounter',
+      rows: [
+        r('value', 'number', '0', 'A number on display. Not an input'),
+        r('maxDigits', 'number', '9', 'The minimum width in digits (leading zeros are hidden visually)'),
+      ],
+    },
+  ],
+  carousel: [
+    {
+      title: 'TaoCarousel',
+      rows: [
+        r('v-model', 'number', '0', 'The index of the current snap'),
+        r('perView', 'number', '1', 'How many slides are in the frame. 5 — a product strip'),
+        r('peek', 'number', '0', 'How many px of the next card are visible on the right'),
+        r('autoplay', 'number', '0', 'The interval in ms. 0 — off. Pauses on hover/focus/drag'),
+        r('loop', 'boolean', 'false', 'Loop round in a circle'),
+        r('dots', 'boolean', 'false', 'Dots under the strip'),
+        r('controls', 'boolean', 'true', 'Arrows. false hides both'),
+      ],
+      slots: 'default — slides. #prev / #next="{ go, disabled }" — custom buttons. #prev-icon / #next-icon — the icon only.',
+    },
+  ],
+  container: [
+    {
+      title: 'TaoContainer',
+      rows: [
+        r('width', "'wide' | 'slim' | 'ultra-slim'", "'wide'", 'max-width: 1120 / 500 / 400'),
+        r('size', "'wide' | 'slim' | 'ultra-slim'", '—', 'Deprecated: the same as width'),
+        r('free', 'boolean', 'false', 'No horizontal auto-centring'),
+      ],
+      slots: 'default — the content.',
+    },
+  ],
+  flex: [
+    {
+      title: 'TaoFlex',
+      rows: [
+        r('justify', 'flex justify-content', "'flex-start'", 'flex-start, center, space-between, space-around, space-evenly, flex-end, normal'),
+        r('align', 'flex align-items', "'stretch'", 'stretch, flex-start, center, flex-end, baseline'),
+        r('direction', 'flex-direction', "'row'", 'row, column and reverse'),
+        r('wrap', 'flex-wrap', "'nowrap'", 'nowrap, wrap, wrap-reverse'),
+        r('gap', 'number | string', "'0px'", 'The gap. A number is px, a string is CSS'),
+        r('tag', 'string', "'div'", 'Which HTML tag to render'),
+      ],
+    },
+    {
+      title: 'TaoSpace',
+      rows: [
+        r('direction', "'row' | 'column'", "'row'", 'As in TaoFlex'),
+        r('vertical', 'boolean', 'false', 'Deprecated: direction="column"'),
+        r('block', 'boolean', 'false', 'display: flex without wrap'),
+        r('expand', 'boolean', 'false', '100% width'),
+      ],
+      slots: 'default — children with an even gap.',
+    },
+  ],
+  grid: [
+    {
+      title: 'TaoGrid',
+      rows: [
+        r('min', 'string', "'220px'", 'The minimum tile width (auto-fill). A catalogue. Ignored if cols > 0'),
+        r('cols', 'number', '0', 'Fixed columns (bento). 0 — the min mode'),
+        r('gap', 'number | string', 'token space-4', 'The gap between cells. A number is px, a string is CSS'),
+      ],
+      slots: 'default — cards or TaoGridItem. Not masonry: the row follows the tallest. Below ~560px cols → 1 column, span → 1.',
+    },
+    {
+      title: 'TaoGridItem',
+      rows: [
+        r('col', 'number', '1', 'How many columns to take. For cols, not for min'),
+        r('row', 'number', '1', 'How many rows to take'),
+      ],
+      slots: 'default — a tile. In a catalogue it can go without the wrapper.',
+    },
+  ],
+  divider: [
+    {
+      title: 'TaoDivider',
+      rows: [
+        r('variant', "'solid' | 'dashed' | 'colored' | 'gap'", "'solid'", 'solid — a regular border, dashed — dashes, colored — accent, gap — a gap'),
+        r('text', 'string', "''", 'An optional caption in the middle. Works with any variant'),
+        r('fade', 'boolean', 'false', 'Soft line edges. Does not affect gap'),
+        r('size', "'small' | 'medium' | 'large'", "'medium'", 'For gap only — the height of the gap. Not inherited. big is a deprecated alias of large'),
+      ],
+      slots: 'default — the same as text. If there is a slot, it wins over the prop.',
+    },
+  ],
+  split: [
+    {
+      title: 'TaoSplit',
+      rows: [
+        r('v-model', 'number', '50', 'The size of the start pane in unit'),
+        r('direction', "'row' | 'column'", "'row'", 'As in Flex'),
+        r('unit', "'%' | 'px'", "'%'", 'Percent or pixels'),
+        r('min / max', 'number', '0 / —', 'The bounds of the start pane'),
+        r('minEnd', 'number', '0', 'The minimum of the second pane'),
+        r('resizable', 'boolean', 'true', 'false — the bar is there, but cannot be dragged'),
+        r('step', 'number', '1% or 8px', 'The arrow step when the bar is focused'),
+        r('@change', 'value', '—', 'Finished dragging or an arrow was pressed. v-model fires on every move'),
+
+      ],
+      slots: '#start and #end — the two panes. Three columns = two nested splits.',
+    },
+  ],
+  fieldset: [
+    {
+      title: 'TaoFieldset',
+      rows: [
+        r('legend', 'string', "''", 'A caption on the top frame'),
+        r('align', "'start' | 'center' | 'end'", "'start'", 'Where to shift the legend'),
+      ],
+      slots: 'default — the fields. #legend — if the caption is not a string.',
+    },
+  ],
+  'animated-border': [
+    {
+      title: 'TaoAnimatedBorder',
+      rows: [
+        r('borderWidth', 'number', '3', 'The outline thickness in px'),
+        r('speed', 'number', '6', 'The duration of one turn in seconds'),
+        r('light', 'boolean', 'false', 'A soft glow around the frame'),
+        r('glow', 'number', '16', 'The glow radius in px. Makes sense with light'),
+      ],
+      slots: 'default — the content inside the frame.',
+    },
+  ],
+  modal: [
+    {
+      title: 'TaoModal',
+      rows: [
+        r('v-model', 'boolean', '—', 'Open. Required'),
+        r('title', 'string', "''", 'The title in the header'),
+        r('closable', 'boolean', 'true', 'The cross, Esc, a click on the backdrop'),
+        r('closeLabel', 'string', "'Close'", 'aria-label of the cross'),
+      ],
+      slots: 'default — the body. #footer — buttons. #close-icon — the cross icon.',
+    },
+  ],
+  drawer: [
+    {
+      title: 'TaoDrawer',
+      rows: [
+        r('v-model', 'boolean', '—', 'Open. Required'),
+        r('title', 'string', "''", 'The title'),
+        r('side', "'left' | 'right'", "'right'", 'Where it slides in from'),
+        r('closable', 'boolean', 'true', 'Esc, the backdrop, the cross'),
+        r('closeLabel', 'string', "'Close'", 'aria-label of the cross'),
+      ],
+      slots: 'default — the body. #footer — buttons. #close-icon — the cross icon.',
+    },
+  ],
+  confirm: [
+    {
+      title: 'confirm()',
+      kind: 'api',
+      rows: [
+        r('confirm()', '() => Promise<boolean>', '', 'A chain in a single tick. true — ok, false — cancel / Esc / backdrop'),
+        r('confirm(message)', '(string) => Promise<boolean>', '', 'A short call with a text'),
+        r('.title / .message', '(string) => builder', '', 'The title and text'),
+        r('.ok / .cancel', '(label) => builder', '', 'Button captions'),
+        r('.danger()', '() => builder', '', 'A red confirm button'),
+        r('confirm.defaults', '({ ok, cancel })', '', 'Default captions for the whole app'),
+      ],
+    },
+  ],
+  tooltip: [
+    {
+      title: 'TaoTooltip',
+      rows: [
+        r('content', 'string', '—', 'The hint text. Required'),
+        r('position', "'top' | 'bottom' | 'left' | 'right'", "'top'", 'The side. Flips at the screen edge'),
+      ],
+      slots: 'default — the trigger (a button, an icon…).',
+    },
+  ],
+  popover: [
+    {
+      title: 'TaoPopover',
+      rows: [
+        r('v-model', 'boolean', 'uncontrolled', 'Open state. Without v-model it holds its own'),
+        r('position', "'top' | 'bottom' | 'left' | 'right'", "'bottom'", 'The panel side, flips at the edge'),
+        r('disabled', 'boolean', 'false', 'Does not open'),
+      ],
+      slots: '#trigger — the button. default — the panel content. Not a tooltip and not an action menu.',
+    },
+  ],
+  dropdown: [
+    {
+      title: 'TaoDropdownMenu',
+      rows: [
+        r('actions', '{ id, name, ico? }[]', '[]', 'The menu items'),
+        r('menuLabel', 'string', "'Menu'", 'aria-label of the button'),
+      ],
+      slots: '#icon — the trigger icon. The select event — the item id (selected is a deprecated alias).',
+    },
+  ],
+  spoiler: [
+    {
+      title: 'TaoSpoiler',
+      rows: [
+        r('v-model', 'boolean', 'uncontrolled', 'Open / closed. Without a model — defaultOpen'),
+        r('title', 'string', "''", 'The button title'),
+        r('name', 'string | number', '—', 'The panel key inside TaoSpoilerGroup'),
+        r('defaultOpen', 'boolean', 'false', 'The initial state, if there is no v-model'),
+        r('@change', 'value', '—', 'The user opened or closed it'),
+
+      ],
+      slots: 'default — the body. Neighbours do not close each other.',
+    },
+    {
+      title: 'TaoSpoilerGroup',
+      rows: [
+        r('v-model', 'string | number | null', 'uncontrolled', 'The key of the open panel. null — all closed. Without a model the group remembers the key itself'),
+      ],
+      slots: 'default — a set of TaoSpoiler with name.',
+    },
+  ],
+  tabs: [
+    {
+      title: 'TaoTabs',
+      rows: [
+        r('v-model', 'string', '—', 'value of the active tab. Required'),
+        r('items', 'TaoTabItem[]', '—', '{ value, label, disabled? } — like Select options'),
+        r('tabs', '{ key, label, disabled? }[]', '—', 'Deprecated: items, key → value'),
+        r('@change', 'value', '—', 'The user picked another tab'),
+
+        r('justify', 'string', "''", 'CSS justify-content for aligning tabs (center, flex-end, space-between, etc.)'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'The tab height as TaoButton (26 / 36 / 44). Without it — the size of the ancestors'),
+      ],
+      slots: 'default="{ key }" — the content of the active panel.',
+    },
+  ],
+  breadcrumb: [
+    {
+      title: 'TaoBreadcrumb',
+      rows: [
+        r('items', '{ label, to? }[]', '—', 'The crumbs. The last one is the current page, without a link. Required'),
+        r('ariaLabel', 'string', "'Breadcrumb'", 'The navigation name'),
+      ],
+    },
+  ],
+  link: [
+    {
+      title: 'TaoLink',
+      rows: [
+        r('to', 'string | object', '—', 'The address. NuxtLink → RouterLink → <a>'),
+        r('newTab', 'boolean', 'false', 'target=_blank + rel=noopener'),
+        r('asNewTab', 'boolean', 'false', 'Deprecated: newTab'),
+        r('private', 'boolean', 'false', 'rel=noopener noreferrer'),
+        r('exactPath', 'boolean', 'false', 'An exact path match for active (vue-router)'),
+      ],
+      slots: 'default — the link text.',
+    },
+  ],
+  scrolltop: [
+    {
+      title: 'TaoScrollTop',
+      rows: [
+        r('boundary', 'number', '300', 'The threshold in px: it appears on a reverse scroll after it'),
+        r('size', 'number', '40', 'The button size in px'),
+        r('right / bottom', 'number | string', '24', 'The offset from the edge'),
+        r('zIndex', 'number', '1000', 'The layer'),
+        r('ariaLabel', 'string', "'Back to top'", 'The accessible name'),
+        r('outline', 'boolean', 'true', 'The focus outline'),
+        r('hasOutline / tabindex', '—', '—', 'Deprecated: outline / tabindex as a plain attribute'),
+      ],
+    },
+  ],
+  toast: [
+    {
+      title: 'toast()',
+      kind: 'api',
+      rows: [
+        r('toast()', '() => builder', '', 'A chain in a single tick, shown on the next one'),
+        r('toast.success(msg)', '(string, options?) => builder', '', 'A short call. Also error / warning / info / show'),
+        r('.success() / .error() / …', '() => builder', '', 'The type. show() is neutral'),
+        r('.title / .message', '(string) => builder', '', 'The title and text'),
+        r('.short() / .timeout(ms)', '() => builder', '', '1 s or your own time'),
+        r('.byBottomRight() / …', '() => builder', '', 'The corner: top/bottom + left/right/center'),
+        r('.action(label, fn)', '(string, fn) => builder', '', 'A button in the toast'),
+        r('toast.defaults', '(partial) => toast', '', 'Position, timeout, closeLabel for the whole app'),
+      ],
+    },
+  ],
+  alert: [
+    {
+      title: 'TaoAlert',
+      rows: [
+        r('tone', "'success' | 'danger' | 'warning' | 'info' | 'neutral'", "'info'", 'The status colour, as TaoButton. error = danger'),
+        r('type', '—', '—', 'Deprecated: tone'),
+        r('title', 'string', "''", 'The title. Can be omitted'),
+        r('closable', 'boolean', 'false', 'The cross. It does not unmount itself — it fires close'),
+        r('closeLabel', 'string', "'Close'", 'aria-label of the cross'),
+      ],
+      slots: 'default — the text. #close-icon. v-if + @close — to hide it.',
+    },
+  ],
+  tag: [
+    {
+      title: 'TaoTag',
+      rows: [
+        r('tone', "'neutral' | 'success' | 'danger' | 'warning' | 'info' | ''", "''", 'The status colour, as TaoButton. error = danger'),
+        r('type', '—', '—', 'Deprecated: tone'),
+        r('flat', 'boolean', 'false', 'No border, the fill stays'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Height 18 / 20 / 24. Without it — the size of the ancestors'),
+        r('closable', 'boolean', 'false', 'The cross. Fires close, does not touch the array itself'),
+        r('clickable', 'boolean', 'false', 'A pointer cursor (a clickable chip), as TaoListItem / TaoTable'),
+        r('pointer', 'boolean', 'false', 'Deprecated: clickable'),
+        r('color / background / borderColor', 'string', '—', 'Override the tokens by hand'),
+      ],
+      slots: 'default — the text. #prefix — an avatar or an icon on the left.',
+    },
+  ],
+  loader: [
+    {
+      title: 'TaoLoader',
+      rows: [
+        r('size', 'number | string', '80', 'The size. A number is px'),
+        r('color', 'string', 'accent token', 'The dot colour'),
+        r('inline', 'boolean', 'false', 'Inline, without block centring'),
+      ],
+    },
+  ],
+  image: [
+    {
+      title: 'TaoImage',
+      rows: [
+        r('src', 'string', "''", 'The image address'),
+        r('alt', 'string', "''", 'The alternative text'),
+        r('lazy', 'boolean', 'false', 'The native loading="lazy"'),
+        r('pixelated', 'boolean', 'false', 'image-rendering: pixelated'),
+        r('placeholderText', 'string', "'No image available'", 'The text if src is empty or fails'),
+      ],
+    },
+  ],
+  avatar: [
+    {
+      title: 'TaoAvatar',
+      rows: [
+        r('src', 'string', "''", 'A photo. If empty — initials from name'),
+        r('name', 'string', "''", 'For the initials and alt'),
+        r('size', "'small' | 'medium' | 'large'", "'medium'", '24 / 32 / 48px. Content, does not inherit the size of ancestors. s / m / l are deprecated'),
+        r('dot', 'boolean | tone', 'false', 'The status dot. true = success'),
+        r('count', 'number | string', '—', 'A badge. 0 and empty are not drawn, >99 → 99+'),
+      ],
+    },
+  ],
+  icon: [
+    {
+      title: 'TaoIcon',
+      rows: [
+        r('name', 'string', '—', 'The class icon-{name}. You add the font yourself. Required'),
+        r('size', 'number', '—', 'font-size in px'),
+        r('margin', 'string', "'0px'", 'The outer margin'),
+        r('invert', 'boolean', 'false', 'Invert the colour'),
+      ],
+      slots: '#prefix / #postfix — next to the glyph.',
+    },
+  ],
+}

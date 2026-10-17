@@ -1,7 +1,9 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoPinCode } from '@tao/ui'
+import { TaoPinCode } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { tr } from '../i18n.js'
+import Tr from './Tr.vue'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoPinCode' })
@@ -14,42 +16,64 @@ const pinPhone = ref('')
 const pinCompleteNote = ref('')
 
 function onPinComplete(value) {
-  pinCompleteNote.value = 'Готово: ' + value
+  pinCompleteNote.value = tr('Done: ', 'Готово: ') + value
 }
 </script>
 
 <template>
   <ShowcaseSection id="pincode" :tables="propTables['pincode']">
     <h2>TaoPinCode</h2>
-          <p>
-            По умолчанию клик стирает ячейку и все справа — неверный код можно набрать заново с этого места.
-            <code>clear-on="input"</code> оставляет цифру, пока не введут новую.
-            Последняя ячейка снимает фокус и шлёт <code>complete</code>.
-          </p>
+          <Tr>
+            <template #en>
+              <p>
+                By default a click clears the cell and all those to the right — a wrong code can be retyped from that spot.
+                <code>clear-on="input"</code> keeps the digit until a new one is typed.
+                The last cell drops the focus and fires <code>complete</code>.
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                По умолчанию клик стирает ячейку и все справа — неверный код можно набрать заново с этого места.
+                <code>clear-on="input"</code> оставляет цифру, пока не введут новую.
+                Последняя ячейка снимает фокус и шлёт <code>complete</code>.
+              </p>
+            </template>
+          </Tr>
     
-          <h3>Стереть при фокусе</h3>
+          <h3>{{ tr('Clear on focus', 'Стереть при фокусе') }}</h3>
           <TaoPinCode v-model="pinValue" :length="4" @complete="onPinComplete" />
-          <p style="margin-top: 8px; font-size: 13px;">Значение: {{ pinValue }}</p>
+          <p style="margin-top: 8px; font-size: 13px;">{{ tr('Value', 'Значение') }}: {{ pinValue }}</p>
           <p v-if="pinCompleteNote" style="margin-top: 4px; font-size: 13px; color: var(--tao-color-success);">{{ pinCompleteNote }}</p>
     
-          <h3>Только цифры</h3>
+          <h3>{{ tr('Digits only', 'Только цифры') }}</h3>
           <TaoPinCode v-model="pinValueNumeric" :length="4" numbers-only />
-          <p style="margin-top: 8px; font-size: 13px;">Значение: {{ pinValueNumeric }}</p>
+          <p style="margin-top: 8px; font-size: 13px;">{{ tr('Value', 'Значение') }}: {{ pinValueNumeric }}</p>
     
-          <h3>Стереть при вводе</h3>
+          <h3>{{ tr('Clear on input', 'Стереть при вводе') }}</h3>
           <TaoPinCode v-model="pinValueReplace" :length="4" numbers-only clear-on="input" />
-          <p style="margin-top: 8px; font-size: 13px;">Значение: {{ pinValueReplace }}</p>
+          <p style="margin-top: 8px; font-size: 13px;">{{ tr('Value', 'Значение') }}: {{ pinValueReplace }}</p>
     
-          <h3>Формат с разделителями</h3>
-          <p>
-            <code>format="#-##-##"</code>: <code>#</code> это ячейка, остальное разделитель. Разделители только рисуются, в значение они не попадают.
-            Вставка «0-12-34» раскладывается по ячейкам; если формат не совпал, но длина равна коду («01234»), он вставляется как есть.
-            С <code>numbers-only</code> набранный разделитель переходит в следующую группу.
-          </p>
+          <h3>{{ tr('Format with separators', 'Формат с разделителями') }}</h3>
+          <Tr>
+            <template #en>
+              <p>
+                <code>format="#-##-##"</code>: <code>#</code> is a cell, everything else is a separator. Separators are only drawn, they do not get into the value.
+                Pasting “0-12-34” is spread over the cells; if the format does not match but the length equals the code (“01234”), it is pasted as is.
+                With <code>numbers-only</code> a typed separator moves on to the next group.
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                <code>format="#-##-##"</code>: <code>#</code> это ячейка, остальное разделитель. Разделители только рисуются, в значение они не попадают.
+                Вставка «0-12-34» раскладывается по ячейкам; если формат не совпал, но длина равна коду («01234»), он вставляется как есть.
+                С <code>numbers-only</code> набранный разделитель переходит в следующую группу.
+              </p>
+            </template>
+          </Tr>
           <TaoPinCode v-model="pinFormatted" format="#-##-##" numbers-only />
-          <p style="margin-top: 8px; font-size: 13px;">Значение: {{ pinFormatted }}</p>
+          <p style="margin-top: 8px; font-size: 13px;">{{ tr('Value', 'Значение') }}: {{ pinFormatted }}</p>
           <TaoPinCode v-model="pinPhone" format="(###) ###" numbers-only size="small" style="margin-top: 8px;" />
-          <p style="margin-top: 8px; font-size: 13px;">Значение: {{ pinPhone }}</p>
+          <p style="margin-top: 8px; font-size: 13px;">{{ tr('Value', 'Значение') }}: {{ pinPhone }}</p>
 
           <div class="code-block">
             <pre><code>&lt;TaoPinCode v-model="pin" :length="4" @complete="onDone" /&gt;

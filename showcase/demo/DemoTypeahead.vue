@@ -1,8 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoFormField } from '@tao/ui'
+import { TaoFormField } from '@1337exp/taoui'
 import TypeaheadPlayground from './TypeaheadPlayground.vue'
 import ShowcaseSection from '../components/ShowcaseSection.vue'
+import { tr } from '../i18n.js'
+import Tr from '../components/Tr.vue'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoTypeahead' })
@@ -12,27 +14,38 @@ const typeaheadPerson = ref(null)
 
 <template>
   <ShowcaseSection id="typeahead" :tables="propTables['typeahead']">
-    <h2>Typeahead (демо, не в пакете)</h2>
-          <p>
-            Черновик только для showcase: печатаете — после паузы уходит «запрос», предыдущий
-            отменяется, список под полем рисует ответ. Fetch, debounce и abort здесь нарочно,
-            в kit так класть не надо. Файл можно скопировать в проект; в kit это не едет.
-          </p>
+    <h2>Typeahead ({{ tr('demo, not in the package', 'демо, не в пакете') }})</h2>
+          <Tr>
+            <template #en>
+              <p>
+                A draft for the showcase only: you type — after a pause a “request” goes out, the previous one
+                is cancelled, and the list under the field draws the response. Fetch, debounce and abort are here on purpose,
+                the kit should not hold them. The file can be copied into a project; it does not ship with the kit.
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                Черновик только для showcase: печатаете — после паузы уходит «запрос», предыдущий
+                отменяется, список под полем рисует ответ. Fetch, debounce и abort здесь нарочно,
+                в kit так класть не надо. Файл можно скопировать в проект; в kit это не едет.
+              </p>
+            </template>
+          </Tr>
     
           <div class="demo-stack">
             <TaoFormField
-              label="Человек"
-              :hint="typeaheadPerson ? `${typeaheadPerson.name} · ${typeaheadPerson.city}` : 'Наберите «ан», «ива» или «моск». Быстрый ввод отменяет старый запрос'"
+              :label="tr('Person', 'Человек')"
+              :hint="typeaheadPerson ? `${typeaheadPerson.name} · ${typeaheadPerson.city}` : tr('Type “an”, “iva” or “mosc”. Fast typing cancels the old request', 'Наберите «ан», «ива» или «моск». Быстрый ввод отменяет старый запрос')"
             >
               <TypeaheadPlayground v-model="typeaheadPerson">
-                <template #empty>Никого нет. Попробуйте «ан» или «моск».</template>
+                <template #empty>{{ tr('Nobody here. Try “an” or “mosc”.', 'Никого нет. Попробуйте «ан» или «моск».') }}</template>
               </TypeaheadPlayground>
             </TaoFormField>
           </div>
     
           <div class="code-block">
             <pre><code>&lt;TypeaheadPlayground v-model="person"&gt;
-  &lt;template #empty&gt;Никого нет. Попробуйте «ан» или «моск».&lt;/template&gt;
+  &lt;template #empty&gt;{{ tr('Nobody here. Try “an” or “mosc”.', 'Никого нет. Попробуйте «ан» или «моск».') }}&lt;/template&gt;
 &lt;/TypeaheadPlayground&gt;
 
 &lt;TypeaheadPlayground v-model="person"&gt;

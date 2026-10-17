@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoButton, TaoDrawer } from '@tao/ui'
+import { TaoButton, TaoDrawer } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { tr } from '../i18n.js'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoDrawer' })
@@ -12,19 +13,19 @@ const isDrawerOpen = ref(false)
 <template>
   <ShowcaseSection id="drawer" :tables="propTables['drawer']">
     <h2>TaoDrawer</h2>
-          <p>Боковая панель: фильтры, корзина, настройки. Esc и клик по фону закрывают, фокус не уезжает на страницу.</p>
+          <p>{{ tr('A side panel: filters, a cart, settings. Esc and a click on the backdrop close it, the focus does not escape to the page.', 'Боковая панель: фильтры, корзина, настройки. Esc и клик по фону закрывают, фокус не уезжает на страницу.') }}</p>
     
-          <TaoButton variant="secondary" @click="isDrawerOpen = true">Открыть справа</TaoButton>
-          <TaoDrawer v-model="isDrawerOpen" title="Фильтры">
-            <p>Здесь могут быть поля формы. На узком экране это удобнее модалки по центру.</p>
+          <TaoButton variant="secondary" @click="isDrawerOpen = true">{{ tr('Open on the right', 'Открыть справа') }}</TaoButton>
+          <TaoDrawer v-model="isDrawerOpen" :title="tr('Filters', 'Фильтры')">
+            <p>{{ tr('Form fields can go here. On a narrow screen this is handier than a centred modal.', 'Здесь могут быть поля формы. На узком экране это удобнее модалки по центру.') }}</p>
             <template #footer>
-              <TaoButton variant="secondary" @click="isDrawerOpen = false">Сбросить</TaoButton>
-              <TaoButton @click="isDrawerOpen = false">Применить</TaoButton>
+              <TaoButton variant="secondary" @click="isDrawerOpen = false">{{ tr('Reset', 'Сбросить') }}</TaoButton>
+              <TaoButton @click="isDrawerOpen = false">{{ tr('Apply', 'Применить') }}</TaoButton>
             </template>
           </TaoDrawer>
     
           <div class="code-block">
-            <pre><code>&lt;TaoDrawer v-model="open" title="Фильтры"&gt;
+            <pre><code>&lt;TaoDrawer v-model="open" title="{{ tr('Filters', 'Фильтры') }}"&gt;
   ...
 &lt;/TaoDrawer&gt;
 

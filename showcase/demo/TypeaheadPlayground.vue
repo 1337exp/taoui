@@ -1,35 +1,36 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, ref, useId, watch } from 'vue'
-import { TaoLoader } from '@tao/ui'
+import { TaoLoader } from '@1337exp/taoui'
+import { tr } from '../i18n.js'
 
 defineOptions({ name: 'TypeaheadPlayground' })
 
 /**
- * Не часть библиотеки: черновик async-typeahead только для showcase.
- * Fetch, debounce и abort живут здесь, kit так делать не должен.
+ * Not part of the library: a draft of an async typeahead for the showcase only.
+ * Fetch, debounce and abort live here; the kit must not do this.
  */
 const selected = defineModel({ default: null })
 
-const catalog = [
-  { id: '1', name: 'Анна Козлова', city: 'Москва', role: 'Дизайн' },
-  { id: '2', name: 'Иван Петров', city: 'Санкт-Петербург', role: 'Фронтенд' },
-  { id: '3', name: 'Мария Соколова', city: 'Казань', role: 'Продукт' },
-  { id: '4', name: 'Андрей Волков', city: 'Новосибирск', role: 'Бэкенд' },
-  { id: '5', name: 'Елена Морозова', city: 'Екатеринбург', role: 'QA' },
-  { id: '6', name: 'Павел Новиков', city: 'Москва', role: 'Мобилка' },
-  { id: '7', name: 'Ольга Смирнова', city: 'Самара', role: 'Аналитика' },
-  { id: '8', name: 'Дмитрий Орлов', city: 'Красноярск', role: 'DevOps' },
-  { id: '9', name: 'Наталья Белова', city: 'Ростов-на-Дону', role: 'Маркетинг' },
-  { id: '10', name: 'Сергей Кузнецов', city: 'Воронеж', role: 'Фронтенд' },
-  { id: '11', name: 'Антон Лебедев', city: 'Пермь', role: 'Данные' },
-  { id: '12', name: 'Ирина Васильева', city: 'Москва', role: 'Контент' },
-  { id: '13', name: 'Алексей Попов', city: 'Омск', role: 'Поддержка' },
-  { id: '14', name: 'Татьяна Фёдорова', city: 'Уфа', role: 'HR' },
-  { id: '15', name: 'Никита Егоров', city: 'Волгоград', role: 'Фронтенд' },
-  { id: '16', name: 'Ангелина Крылова', city: 'Челябинск', role: 'Дизайн' },
-  { id: '17', name: 'Михаил Зайцев', city: 'Казань', role: 'Бэкенд' },
-  { id: '18', name: 'Светлана Панина', city: 'Санкт-Петербург', role: 'Продукт' },
-]
+const catalog = computed(() => [
+  { id: '1', name: tr('Anna Kozlova', 'Анна Козлова'), city: tr('Moscow', 'Москва'), role: tr('Design', 'Дизайн') },
+  { id: '2', name: tr('Ivan Petrov', 'Иван Петров'), city: tr('Saint Petersburg', 'Санкт-Петербург'), role: tr('Frontend', 'Фронтенд') },
+  { id: '3', name: tr('Maria Sokolova', 'Мария Соколова'), city: tr('Kazan', 'Казань'), role: tr('Product', 'Продукт') },
+  { id: '4', name: tr('Andrey Volkov', 'Андрей Волков'), city: tr('Novosibirsk', 'Новосибирск'), role: tr('Backend', 'Бэкенд') },
+  { id: '5', name: tr('Elena Morozova', 'Елена Морозова'), city: tr('Yekaterinburg', 'Екатеринбург'), role: 'QA' },
+  { id: '6', name: tr('Pavel Novikov', 'Павел Новиков'), city: tr('Moscow', 'Москва'), role: tr('Mobile', 'Мобилка') },
+  { id: '7', name: tr('Olga Smirnova', 'Ольга Смирнова'), city: tr('Samara', 'Самара'), role: tr('Analytics', 'Аналитика') },
+  { id: '8', name: tr('Dmitry Orlov', 'Дмитрий Орлов'), city: tr('Krasnoyarsk', 'Красноярск'), role: 'DevOps' },
+  { id: '9', name: tr('Natalia Belova', 'Наталья Белова'), city: tr('Rostov-on-Don', 'Ростов-на-Дону'), role: tr('Marketing', 'Маркетинг') },
+  { id: '10', name: tr('Sergey Kuznetsov', 'Сергей Кузнецов'), city: tr('Voronezh', 'Воронеж'), role: tr('Frontend', 'Фронтенд') },
+  { id: '11', name: tr('Anton Lebedev', 'Антон Лебедев'), city: tr('Perm', 'Пермь'), role: tr('Data', 'Данные') },
+  { id: '12', name: tr('Irina Vasilieva', 'Ирина Васильева'), city: tr('Moscow', 'Москва'), role: tr('Content', 'Контент') },
+  { id: '13', name: tr('Alexey Popov', 'Алексей Попов'), city: tr('Omsk', 'Омск'), role: tr('Support', 'Поддержка') },
+  { id: '14', name: tr('Tatiana Fedorova', 'Татьяна Фёдорова'), city: tr('Ufa', 'Уфа'), role: 'HR' },
+  { id: '15', name: tr('Nikita Egorov', 'Никита Егоров'), city: tr('Volgograd', 'Волгоград'), role: tr('Frontend', 'Фронтенд') },
+  { id: '16', name: tr('Angelina Krylova', 'Ангелина Крылова'), city: tr('Chelyabinsk', 'Челябинск'), role: tr('Design', 'Дизайн') },
+  { id: '17', name: tr('Mikhail Zaitsev', 'Михаил Зайцев'), city: tr('Kazan', 'Казань'), role: tr('Backend', 'Бэкенд') },
+  { id: '18', name: tr('Svetlana Panina', 'Светлана Панина'), city: tr('Saint Petersburg', 'Санкт-Петербург'), role: tr('Product', 'Продукт') },
+])
 
 const localId = useId()
 const listId = `${localId}-list`
@@ -65,7 +66,7 @@ function searchCatalog(text, signal) {
   return new Promise((resolve, reject) => {
     const timer = window.setTimeout(() => {
       resolve(
-        catalog.filter(
+        catalog.value.filter(
           (row) => row.name.toLowerCase().includes(q) || row.city.toLowerCase().includes(q),
         ),
       )
@@ -339,7 +340,7 @@ onBeforeUnmount(() => {
         :aria-controls="listId"
         :aria-activedescendant="showList ? activeId : undefined"
         :aria-busy="pending || undefined"
-        placeholder="Начните с «ан» или «моск»"
+        :placeholder="tr('Start with “an” or “mosc”', 'Начните с «ан» или «моск»')"
         :value="query"
         @input="onInput"
         @focus="onFocus"
@@ -353,7 +354,7 @@ onBeforeUnmount(() => {
         v-else-if="query"
         type="button"
         class="showcase-typeahead__clear"
-        aria-label="Очистить"
+        :aria-label="tr('Clear', 'Очистить')"
         @mousedown.prevent="picking = true"
         @click="clear"
       >
@@ -362,9 +363,9 @@ onBeforeUnmount(() => {
     </div>
 
     <p class="showcase-typeahead__meta">
-      Запросов: {{ requestSeq }} · отменено: {{ aborted }}
-      <template v-if="selected"> · выбрано: {{ selected.id }}</template>
-      <template v-else> · в модели: null</template>
+      {{ tr('Requests', 'Запросов') }}: {{ requestSeq }} · {{ tr('cancelled', 'отменено') }}: {{ aborted }}
+      <template v-if="selected"> · {{ tr('selected', 'выбрано') }}: {{ selected.id }}</template>
+      <template v-else> · {{ tr('in the model', 'в модели') }}: null</template>
     </p>
 
     <Teleport to="body">
@@ -374,7 +375,7 @@ onBeforeUnmount(() => {
         class="showcase-typeahead-panel"
         :style="listStyle"
       >
-        <p v-if="!canSearch" class="showcase-typeahead-panel__hint">Ещё хотя бы 2 символа — тогда уйдёт запрос</p>
+        <p v-if="!canSearch" class="showcase-typeahead-panel__hint">{{ tr('At least 2 characters more — then the request goes out', 'Ещё хотя бы 2 символа — тогда уйдёт запрос') }}</p>
         <ul
           v-else
           :id="listId"
@@ -383,9 +384,9 @@ onBeforeUnmount(() => {
           role="listbox"
           :aria-busy="pending || undefined"
         >
-          <li v-if="pending && !hits.length" class="showcase-typeahead-panel__hint">Ищем…</li>
+          <li v-if="pending && !hits.length" class="showcase-typeahead-panel__hint">{{ tr('Searching…', 'Ищем…') }}</li>
           <li v-else-if="!pending && !hits.length" class="showcase-typeahead-panel__empty">
-            <slot name="empty">Ничего не найдено</slot>
+            <slot name="empty">{{ tr('Nothing found', 'Ничего не найдено') }}</slot>
           </li>
           <li
             v-for="(row, index) in hits"

@@ -1,7 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoImage } from '@tao/ui'
+import { TaoImage } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import Tr from './Tr.vue'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoImage' })
@@ -12,10 +13,20 @@ const imageSrc = ref('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53
 <template>
   <ShowcaseSection id="image" :tables="propTables['image']">
     <h2>TaoImage</h2>
-          <p>
-            Обёртка над <code>&lt;img&gt;</code>: fade-in и плейсхолдер. По умолчанию грузится сразу.
-            <code>lazy</code> — браузер сам отложит загрузку, пока картинка не рядом с экраном.
-          </p>
+          <Tr>
+            <template #en>
+              <p>
+                A wrapper over <code>&lt;img&gt;</code>: fade-in and a placeholder. It loads immediately by default.
+                <code>lazy</code> — the browser defers loading until the image is near the screen.
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                Обёртка над <code>&lt;img&gt;</code>: fade-in и плейсхолдер. По умолчанию грузится сразу.
+                <code>lazy</code> — браузер сам отложит загрузку, пока картинка не рядом с экраном.
+              </p>
+            </template>
+          </Tr>
     
           <div style="width: 160px; height: 120px;">
             <TaoImage :src="imageSrc" />

@@ -1,6 +1,8 @@
 <script setup>
-import { TaoButton } from '@tao/ui'
+import { TaoButton } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
+import { tr } from '../i18n.js'
+import Tr from './Tr.vue'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoButton' })
@@ -13,13 +15,24 @@ const buttonSizes = ['small', 'medium', 'large']
 <template>
   <ShowcaseSection id="button" :tables="propTables['button']">
     <h2>TaoButton</h2>
-          <p>
-            Форма — <code>variant</code>, цвет — <code>tone</code>.
-            Красная текстовая кнопка: <code>variant="text" tone="danger"</code>, не <code>:deep</code>.
-            Залитый красный — по-прежнему <code>variant="danger"</code>.
-          </p>
+          <Tr>
+            <template #en>
+              <p>
+                Shape — <code>variant</code>, colour — <code>tone</code>.
+                A red text button: <code>variant="text" tone="danger"</code>, not <code>:deep</code>.
+                The filled red one is still <code>variant="danger"</code>.
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                Форма — <code>variant</code>, цвет — <code>tone</code>.
+                Красная текстовая кнопка: <code>variant="text" tone="danger"</code>, не <code>:deep</code>.
+                Залитый красный — по-прежнему <code>variant="danger"</code>.
+              </p>
+            </template>
+          </Tr>
           
-          <h3>Варианты (variant)</h3>
+          <h3>{{ tr('Variants (variant)', 'Варианты (variant)') }}</h3>
           <div class="button-row">
             <TaoButton
               v-for="variant in buttonVariants"
@@ -30,7 +43,7 @@ const buttonSizes = ['small', 'medium', 'large']
             </TaoButton>
           </div>
     
-          <h3>Размеры (size)</h3>
+          <h3>{{ tr('Sizes (size)', 'Размеры (size)') }}</h3>
           <div class="button-row">
             <TaoButton
               v-for="size in buttonSizes"
@@ -42,9 +55,9 @@ const buttonSizes = ['small', 'medium', 'large']
             </TaoButton>
           </div>
     
-          <h3>Текст и тон</h3>
+          <h3>{{ tr('Text and tone', 'Текст и тон') }}</h3>
           <div class="button-row" style="align-items: center;">
-            <TaoButton variant="text">Отмена</TaoButton>
+            <TaoButton variant="text">{{ tr('Cancel', 'Отмена') }}</TaoButton>
             <TaoButton
               v-for="tone in buttonTones"
               :key="tone"
@@ -53,37 +66,37 @@ const buttonSizes = ['small', 'medium', 'large']
             >
               {{ tone }}
             </TaoButton>
-            <TaoButton variant="ghost" tone="danger">Удалить</TaoButton>
+            <TaoButton variant="ghost" tone="danger">{{ tr('Delete', 'Удалить') }}</TaoButton>
           </div>
     
-          <h3>Состояния</h3>
+          <h3>{{ tr('States', 'Состояния') }}</h3>
           <div class="button-row">
             <TaoButton variant="primary" loading>Loading</TaoButton>
             <TaoButton variant="primary" disabled>Disabled</TaoButton>
             <TaoButton variant="primary" block>Block (100% width)</TaoButton>
           </div>
     
-          <h3>С иконкой</h3>
+          <h3>{{ tr('With an icon', 'С иконкой') }}</h3>
           <div class="button-row">
-            <TaoButton variant="primary" icon="★">С иконкой</TaoButton>
-            <TaoButton variant="secondary" icon="⚡">Действие</TaoButton>
+            <TaoButton variant="primary" icon="★">{{ tr('With an icon', 'С иконкой') }}</TaoButton>
+            <TaoButton variant="secondary" icon="⚡">{{ tr('Action', 'Действие') }}</TaoButton>
           </div>
     
           <div class="code-block">
             <pre><code>&lt;TaoButton variant="primary" size="medium"&gt;
-  Кнопка
+  {{ tr('Button', 'Кнопка') }}
 &lt;/TaoButton&gt;
 
 &lt;TaoButton variant="secondary" loading&gt;
-  Загрузка...
+  {{ tr('Loading...', 'Загрузка...') }}
 &lt;/TaoButton&gt;
 
 &lt;TaoButton variant="text" tone="danger"&gt;
-  Удалить
+  {{ tr('Delete', 'Удалить') }}
 &lt;/TaoButton&gt;
 
 &lt;TaoButton variant="primary" icon="★"&gt;
-  С иконкой
+  {{ tr('With an icon', 'С иконкой') }}
 &lt;/TaoButton&gt;</code></pre>
           </div>
   </ShowcaseSection>
