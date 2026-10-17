@@ -371,9 +371,10 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
     display: flex;
     flex-direction: column;
     gap: var(--tao-space-2);
-    width: 100%;
+    /* Fixed, not 100%: in a popover that shrinks to its content the inputs of the HEX / RGB / HSL modes would resize the window. / Фиксированная, не 100%: в окне по ширине содержимого поля режимов HEX / RGB / HSL меняли бы размер окна. */
+    width: 280px;
     min-width: 200px;
-    max-width: 280px;
+    max-width: 100%;
 }
 
 .tao-color-picker--disabled {
