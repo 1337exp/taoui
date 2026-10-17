@@ -6,11 +6,11 @@
 </p>
 
 <p align="center">
-[![npm](https://img.shields.io/npm/v/@1337exp/taoui?color=cb3837&logo=npm)](https://www.npmjs.com/package/@1337exp/taoui)
-[![CI](https://github.com/1337exp/taoui/actions/workflows/ci.yml/badge.svg)](https://github.com/1337exp/taoui/actions/workflows/ci.yml)
-[![license](https://img.shields.io/npm/l/@1337exp/taoui)](https://github.com/1337exp/taoui/blob/master/LICENSE)
-![Vue 3](https://img.shields.io/badge/Vue-3-42b883?logo=vuedotjs&logoColor=white)
-![TypeScript](https://img.shields.io/badge/types-included-3178c6?logo=typescript&logoColor=white)
+  <a href="https://www.npmjs.com/package/@1337exp/taoui"><img src="https://img.shields.io/npm/v/@1337exp/taoui?color=cb3837&logo=npm" alt="npm"></a>
+  <a href="https://github.com/1337exp/taoui/actions/workflows/ci.yml"><img src="https://github.com/1337exp/taoui/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/1337exp/taoui/blob/master/LICENSE"><img src="https://img.shields.io/npm/l/@1337exp/taoui" alt="license"></a>
+  <img src="https://img.shields.io/badge/Vue-3-42b883?logo=vuedotjs&logoColor=white" alt="Vue 3">
+  <img src="https://img.shields.io/badge/types-included-3178c6?logo=typescript&logoColor=white" alt="TypeScript">
 </p>
 
 <p align="center">
