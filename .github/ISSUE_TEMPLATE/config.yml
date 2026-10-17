@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Live showcase
+    url: https://666.io/sandbox/taoui
+    about: Check the behaviour you see against the showcase before opening an issue.

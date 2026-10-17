@@ -1,2 +1,16 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Media is binary: never touch line endings, never diff as text
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.webp binary
+*.gif  binary
+*.mp4  binary
+*.webm binary
+*.woff2 binary
+
+# Keep GitHub's language bar honest
+docs/media/** linguist-generated
+showcase/** linguist-documentation
