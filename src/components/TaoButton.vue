@@ -9,7 +9,7 @@ interface Props {
     size?: TaoSize;
     variant?: 'primary' | 'secondary' | 'ghost' | 'text' | 'danger';
     /** Красит кнопку: danger / success / warning / info. Не вместо variant. */
-    tone?: 'danger' | 'success' | 'warning' | 'info' | '';
+    tone?: 'danger' | 'success' | 'warning' | 'info' | 'neutral' | '';
     disabled?: boolean;
     loading?: boolean;
     block?: boolean;
@@ -180,6 +180,18 @@ function handleClick(event: MouseEvent) {
 .tao-button--text.tao-button--tone-info:hover:not(.tao-button--disabled) {
     color: var(--tao-color-info-hover);
     background-color: var(--tao-color-info-subtle);
+}
+
+/* neutral: no brand colour, for the quiet action next to a primary one (Cancel, Not now) */
+.tao-button--ghost.tao-button--tone-neutral,
+.tao-button--text.tao-button--tone-neutral {
+    color: var(--tao-color-text-strong);
+}
+
+.tao-button--ghost.tao-button--tone-neutral:hover:not(.tao-button--disabled),
+.tao-button--text.tao-button--tone-neutral:hover:not(.tao-button--disabled) {
+    color: var(--tao-color-text-strong);
+    background-color: var(--tao-color-surface-hover);
 }
 
 .tao-button--secondary.tao-button--tone-danger {

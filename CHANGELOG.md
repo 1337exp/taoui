@@ -20,7 +20,8 @@
 ### Feedback
 
 - **toast():** a light shadow hugging the edge (hook `--tao-toast-shadow`) instead of the large overlay shadow, which showed as a wide smear on stacked toasts.
-- **confirm():** the cancel button is `ghost`, so the primary action stands out and the dialog feels lighter.
+- **`TaoButton` `tone="neutral"`** for `ghost` and `text`: strong text colour, grey hover, no brand colour.
+- **confirm():** the cancel button is `ghost` with `tone="neutral"`, so the primary action stands out and the dialog feels lighter.
 
 ## 3.2.1
 
