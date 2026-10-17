@@ -317,7 +317,7 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
         <div class="tao-color-picker__row">
             <span class="tao-color-picker__preview"><span :style="{ backgroundColor: hex }"></span></span>
             <!-- The label is the same as over the RGB / HSL channels, so the row has the same height in every mode. / Подпись как над каналами RGB / HSL: так высота строки одинакова во всех режимах. -->
-            <label v-if="activeMode === 'hex'" class="tao-color-picker__channel tao-color-picker__hex">
+            <label v-if="activeMode === 'hex'" class="tao-color-picker__hex">
                 <span>HEX</span>
                 <TaoInput
                     v-model="hexText"
@@ -457,9 +457,15 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
 }
 
 .tao-color-picker__hex {
+    display: flex;
     flex: 1;
+    flex-direction: column;
+    gap: 2px;
     min-width: 0;
+    color: var(--tao-color-text-muted);
+    font-size: 10px;
     font-variant-numeric: tabular-nums;
+    text-align: center;
 }
 
 .tao-color-picker__hex :deep(input),
