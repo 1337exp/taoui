@@ -459,6 +459,11 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
     font-variant-numeric: tabular-nums;
 }
 
+.tao-color-picker__hex :deep(input),
+.tao-color-picker__channel :deep(input) {
+    text-align: center;
+}
+
 .tao-color-picker__channels {
     display: flex;
     flex: 1;
