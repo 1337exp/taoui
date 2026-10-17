@@ -49,6 +49,7 @@
     /* ---------- Status ---------- */
     --tao-color-danger: var(--tao-red-500);
     --tao-color-danger-hover: var(--tao-red-600);
+    --tao-color-on-danger: var(--tao-gray-0); /* текст поверх danger-фона */
     --tao-color-danger-subtle: color-mix(in srgb, var(--tao-red-500) 15%, transparent);
     --tao-color-success: var(--tao-green-500);
     --tao-color-success-hover: var(--tao-green-600);

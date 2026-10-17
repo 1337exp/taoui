@@ -1,9 +1,48 @@
-# Tao UI
+<h1 align="center">Tao UI</h1>
 
-**English** · [Русский](README.ru.md)
+<p align="center">
+  <b>A Vue 3 component library driven by design tokens.</b><br>
+  Change a handful of CSS variables and the whole kit follows.
+</p>
 
-A Vue 3 component library for Nuxt/Vue apps, driven by design tokens:
-change a handful of CSS variables and the whole kit follows.
+<p align="center">
+[![npm](https://img.shields.io/npm/v/@1337exp/taoui?color=cb3837&logo=npm)](https://www.npmjs.com/package/@1337exp/taoui)
+[![CI](https://github.com/1337exp/taoui/actions/workflows/ci.yml/badge.svg)](https://github.com/1337exp/taoui/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/@1337exp/taoui)](https://github.com/1337exp/taoui/blob/master/LICENSE)
+![Vue 3](https://img.shields.io/badge/Vue-3-42b883?logo=vuedotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/types-included-3178c6?logo=typescript&logoColor=white)
+</p>
+
+<p align="center">
+  <b>English</b> · <a href="https://github.com/1337exp/taoui/blob/master/README.ru.md">Русский</a> ·
+  <a href="#install">Install</a> ·
+  <a href="#showcase">Showcase</a> ·
+  <a href="CHANGELOG.md">Changelog</a>
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/1337exp/taoui/master/docs/media/screenshots/overview-dark.webp" alt="Tao UI components in the dark theme" width="860">
+</p>
+
+## Why Tao UI
+
+- **Tokens first.** Colours, radii, spacing and type come from CSS variables in three layers (primitives, semantic, theme). Re-theme the kit, or one panel of it, without touching a component.
+- **One scale, one API.** `small` / `medium` / `large` everywhere, the same `v-model` / `change` / `*Text` / `*Label` rules for every field, tones instead of ad-hoc colours.
+- **Dark and light** out of the box, plus surfaces (`flat` / `grain` / `glass`) for HUDs and landing pages.
+- **Built-in languages.** Placeholders, dates and aria labels in English and Russian, switchable at runtime without a reload.
+- **Nuxt and plain Vue.** `TaoLink` picks `NuxtLink`, `RouterLink` or `<a>` by itself. Fully typed, ES and CJS builds.
+- **Keyboard friendly.** Focus traps, `role` / `aria-*` on the controls.
+
+<table>
+  <tr>
+    <td width="50%"><img src="https://raw.githubusercontent.com/1337exp/taoui/master/docs/media/clips/color-picker.webp" alt="TaoColorPicker: square, hue strip, HEX / RGB / HSL modes"><br><sub><b>TaoColorPicker</b> — HEX / RGB / HSL, eyedropper, <code>v-model</code> is a hex string</sub></td>
+    <td width="50%"><img src="https://raw.githubusercontent.com/1337exp/taoui/master/docs/media/clips/themes.webp" alt="Dark and light themes switching"><br><sub><b>Themes</b> — one attribute, every component follows</sub></td>
+  </tr>
+  <tr>
+    <td><img src="https://raw.githubusercontent.com/1337exp/taoui/master/docs/media/clips/slider.webp" alt="TaoRangeSlider with marks"><br><sub><b>TaoSlider / TaoRangeSlider</b> — marks, discrete scales, vertical</sub></td>
+    <td><img src="https://raw.githubusercontent.com/1337exp/taoui/master/docs/media/screenshots/surfaces-dark.webp" alt="flat, grain and glass surfaces"><br><sub><b>Surfaces</b> — flat, grain, glass</sub></td>
+  </tr>
+</table>
 
 ## Components
 
@@ -49,7 +88,9 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoQuantity** — cart quantity: `− | field | +`, integers, stock; minus at the minimum can remove the row
 - **TaoTextarea** — autosizing multiline. `maxlength` caps input, `count` shows “entered / max”. `variant`: `bar` (default) / `outline` (frame like Input) / `filled` / `plain`; `readonly`. `noBorder`, `noBackground`, `borderInverse`, `dummy` are deprecated
 - **TaoPinCode** — N cells. By default a click clears the cell and everything to the right (`clear-on="focus"`); `clear-on="input"` replaces the digit only when typing. `format="#-##-##"` draws visual separators (not part of the value; a paste in that shape or as a clean code is split into cells). The last cell blurs and emits `complete`
-- **TaoSlider** — mouse, touch, and arrows. Optional precise input on right-click. `variant="thin"` is a thin track for seek / volume; `size` scales either track
+- **TaoSlider** / **TaoRangeSlider** — one thumb (`v-model` is a number) or two (`[from, to]`, `minGap`). Mouse, touch, arrows. `marks` (ticks, numbers, `{ value, label }`), `discrete` for stepped scales, `vertical`, `flat`, `format`; `variant="thin"` is a thin track for seek / volume
+- **TaoColorPicker** — saturation / brightness square, hue and opacity strips, swatches, eyedropper (where the browser has `EyeDropper`), HEX / RGB / HSL input modes. `v-model` is a hex string; `colorModel()` adapts your own colour storage
+- **TaoColorInput** — a field with a swatch and the hex text; the picker opens in a popover
 - **TaoFileDrop** — drop zone (drag & drop + click). File names listed under the zone, `v-model` is `File[]`. Clearing the whole batch is the parent’s job (`clear-request`)
 
 ### Data display
@@ -66,6 +107,7 @@ change a handful of CSS variables and the whole kit follows.
 - **TaoTag** — badge with tones. `#prefix` (avatar), `closable` dismisses the chip, `flat` drops the border
 - **TaoAlert** — inline page/form banner (success / error / warning / info)
 - **TaoProgress** — static bar (`progress` in %). Percent centered on top, or `showPercentage="right"`; `#left` / `#right` slots are captions, then the percent sits in parentheses on the right. `false` hides it. Width is `minWidth` / `maxWidth`, not the value domain
+- **TaoTimeline** — play / pause, a slider over time with event marks, a “time / length” label. Does not advance time by itself: drive `v-model` with your own clock
 - **TaoLoader** — four-dot spinner
 - **TaoImage** — `<img>` wrapper: fade-in and placeholder. `lazy` turns on native `loading="lazy"`
 - **TaoIcon** — icon-font wrapper (see Icons below)
@@ -572,20 +614,19 @@ import '@1337exp/taoui/styles/base.css'
 
 ## Showcase
 
-To browse every component:
+Every component with live examples, prop tables and copy-ready snippets. Language (EN / RU) and theme (dark / light) switch in the header.
 
 ```bash
 cd showcase
 npm install
-npm run dev
+npm run dev        # or, from the repo root: npm run showcase
 ```
 
-The showcase has a dark / light switch in the header, so you can see token
-overrides without editing component code.
-
 The showcase points at `src/` directly, so component edits show up without
-`npm run build`. Building `dist/` is for publishing and for other projects
-that install the package.
+`npm run build`. `npm run showcase:build` produces a static site with relative
+paths, ready to drop into any folder (for example `/sandbox/taoui/`).
+
+Screenshots and clips in this README come from the showcase: see [docs/media](docs/media/README.md).
 
 ## Development
 
@@ -606,11 +647,12 @@ npm test
 ## Publishing to npm
 
 Only `dist/` (the built library) and `src/styles/` (raw tokens, so you can
-import `primitives.css` on its own for a custom theme) are published.
+import `primitives.css` on its own for a custom theme) are published, plus
+`README.md`, `LICENSE` and `CHANGELOG.md`.
 Component sources (`src/components/*.vue`), build configs, and `showcase/`
 stay in the repo — clone it to get them.
 
-`npm publish` **itself** runs the type check and a full rebuild first
+`npm publish` **itself** runs the type check, the tests and a full rebuild first
 (`prepublishOnly` in `package.json`), so a stale or missing `dist/` cannot
 reach the registry. You do not need to build by hand before `npm publish`.
 
@@ -620,6 +662,15 @@ See what would go into the tarball, without publishing:
 npm pack --dry-run
 ```
 
+Keep the publish token out of the repository: reference it from `.npmrc` as
+`//registry.npmjs.org/:_authToken=${NPM_TOKEN}` and set `NPM_TOKEN` in your shell.
+`.npmrc` is git-ignored either way.
+
+## Contributing
+
+Issues and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md).
+Security reports: [SECURITY.md](SECURITY.md).
+
 ## License
 
-MIT
+[MIT](LICENSE) © 2026 1337exp

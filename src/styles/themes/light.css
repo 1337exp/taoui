@@ -10,12 +10,13 @@
 [data-tao-theme="light"] {
     color-scheme: light;
 
-    --tao-color-accent: var(--tao-orange-500);
-    --tao-color-accent-hover: var(--tao-orange-600);
-    --tao-color-accent-active: var(--tao-orange-600);
+    --tao-color-accent: var(--tao-pink-500);
+    --tao-color-accent-hover: var(--tao-pink-600);
+    --tao-color-accent-active: var(--tao-pink-700);
     --tao-color-accent-subtle: color-mix(in srgb, var(--tao-color-accent) 10%, transparent);
     --tao-color-accent-subtle-hover: color-mix(in srgb, var(--tao-color-accent) 16%, transparent);
-    --tao-color-on-accent: var(--tao-gray-0);
+    --tao-color-on-accent: #ffffff;
+    --tao-button-primary-text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
     --tao-color-selection: var(--tao-color-accent);
     --tao-color-selection-text: var(--tao-color-on-accent);
 
@@ -30,16 +31,19 @@
 
     --tao-color-text: var(--tao-gray-700);
     --tao-color-text-strong: var(--tao-gray-950);
-    --tao-color-text-subtle: var(--tao-gray-400);
+    --tao-color-text-subtle: var(--tao-gray-600);
     --tao-color-text-muted: var(--tao-gray-400);
     --tao-color-text-on-accent: var(--tao-color-on-accent);
     --tao-color-text-disabled: var(--tao-gray-300);
 
-    --tao-color-link: var(--tao-orange-600);
-    --tao-color-link-hover: var(--tao-orange-500);
+    /* Plain black links that turn rose on hover; no glow (that one is for the dark theme) */
+    --tao-color-link: #000000;
+    --tao-color-link-hover: var(--tao-pink-400);
+    --tao-color-link-shadow: none;
 
     --tao-color-danger: var(--tao-red-500);
     --tao-color-danger-hover: var(--tao-red-600);
+    --tao-color-on-danger: #ffffff;
     --tao-color-danger-subtle: color-mix(in srgb, var(--tao-red-500) 10%, transparent);
     --tao-color-success: var(--tao-green-500);
     --tao-color-success-hover: var(--tao-green-600);

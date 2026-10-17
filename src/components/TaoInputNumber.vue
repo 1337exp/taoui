@@ -300,6 +300,12 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
 
 .tao-input-number__step {
     flex: 1;
+    /* A small field is only ~24px inside: let each half shrink and clip the glyph instead of overflowing */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 0;
+    overflow: hidden;
     margin: 0;
     padding: 0;
     border: none;
@@ -308,6 +314,10 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
     font: inherit;
     line-height: 1;
     cursor: pointer;
+}
+
+.tao-size-small .tao-input-number__step {
+    font-size: 11px;
 }
 
 .tao-input-number__step + .tao-input-number__step {

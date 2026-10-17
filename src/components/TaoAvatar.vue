@@ -246,7 +246,7 @@ if (props.size === 's' || props.size === 'm' || props.size === 'l') {
     border: 2px solid var(--tao-color-bg);
     border-radius: var(--tao-radius-full);
     background: var(--tao-color-danger);
-    color: var(--tao-color-text-strong);
+    color: var(--tao-color-on-danger);
     font-size: 10px;
     font-weight: 700;
     line-height: 1;

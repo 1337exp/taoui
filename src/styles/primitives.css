@@ -25,6 +25,12 @@
     --tao-orange-500: #ff9500;
     --tao-orange-600: #db8000;
 
+    /* Rose: the light theme's brand colour (from the original 666.io palette) */
+    --tao-pink-400: #dc4679;
+    --tao-pink-500: #ff227a;
+    --tao-pink-600: #e60f66;
+    --tao-pink-700: #c70a55;
+
     --tao-red-400: #e35766;
     --tao-red-500: #dc3545;
     --tao-red-600: #c82333;

@@ -8,5 +8,7 @@ export default defineConfig({
     test: {
         environment: 'happy-dom',
         include: ['tests/**/*.test.ts'],
+        // tests/tokens.test.ts reads the stylesheets as text (?raw); without this vitest returns them empty
+        css: { include: [/src\/styles\/.*\.css/] },
     },
 });

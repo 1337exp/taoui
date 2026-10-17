@@ -90,6 +90,7 @@ function handleClick(event: MouseEvent) {
 .tao-button--primary {
     background-color: var(--tao-color-accent);
     color: var(--tao-color-on-accent);
+    text-shadow: var(--tao-button-primary-text-shadow, none);
 }
 
 .tao-button--primary:hover:not(.tao-button--disabled) {
@@ -130,7 +131,7 @@ function handleClick(event: MouseEvent) {
 
 .tao-button--danger {
     background-color: var(--tao-color-danger);
-    color: var(--tao-color-text-strong);
+    color: var(--tao-color-on-danger);
 }
 
 .tao-button--danger:hover:not(.tao-button--disabled) {
@@ -194,7 +195,7 @@ function handleClick(event: MouseEvent) {
 .tao-button--primary.tao-button--tone-danger,
 .tao-button--danger.tao-button--tone-danger {
     background-color: var(--tao-color-danger);
-    color: var(--tao-color-text-strong);
+    color: var(--tao-color-on-danger);
 }
 
 .tao-button--primary.tao-button--tone-danger:hover:not(.tao-button--disabled),

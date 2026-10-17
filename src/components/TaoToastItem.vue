@@ -163,7 +163,7 @@ onBeforeUnmount(() => {
     color: var(--tao-color-text);
     border: 1px solid var(--tao-color-border);
     border-radius: var(--tao-radius-panel);
-    box-shadow: var(--tao-shadow-overlay);
+    box-shadow: var(--tao-toast-shadow, 0 2px 8px rgb(0 0 0 / 0.12));
     pointer-events: auto;
 }
 
@@ -171,7 +171,7 @@ onBeforeUnmount(() => {
 .tao-toast.tao-surface-glass {
     --tao-surface-fill: color-mix(in srgb, var(--tao-toast-tone) 10%, var(--tao-glass-fill));
     border-color: var(--tao-glass-border);
-    box-shadow: var(--tao-shadow-overlay);
+    box-shadow: var(--tao-toast-shadow, 0 2px 8px rgb(0 0 0 / 0.12));
 }
 
 .tao-toast--success {

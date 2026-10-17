@@ -133,7 +133,7 @@ function onKeydown(event: KeyboardEvent) {
                     </div>
 
                     <div class="tao-confirm__actions">
-                        <TaoButton data-tao-confirm-cancel variant="secondary" @click="answer(false)">
+                        <TaoButton data-tao-confirm-cancel variant="ghost" @click="answer(false)">
                             {{ currentConfirm.cancelLabel }}
                         </TaoButton>
                         <TaoButton

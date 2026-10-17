@@ -1,5 +1,41 @@
 # Changelog
 
+## 3.3.0
+
+### Presentation
+
+- **Showcase in English and Russian:** language switch in the header, `?lang=`, built-in component texts follow the page. English is the default.
+- **Static showcase build** with relative paths (`npm run showcase:build`), ready for any folder such as `/sandbox/taoui/`.
+- Repository polish: `LICENSE` (MIT), `CONTRIBUTING.md` (with the colour-token rules), `SECURITY.md`, CI, issue / PR templates, a media pipeline (`npm run media`) that captures the screenshots and clips in `docs/media`.
+
+### Light theme
+
+- **Light theme has its own palette** (taken from the original 666.io site) instead of a copy of the dark one: rose accent `#ff227a` (hover `#e60f66`, active `#c70a55`), black links that turn `#dc4679` on hover, white text on accent. New primitives `--tao-pink-400 … 700`.
+- **Text on a solid danger fill is white in every theme** (new token `--tao-color-on-danger`); it used to follow `text-strong`, which is near-black in the light theme (danger Button, Avatar count).
+- Light theme: idle text of Segmented and Tabs (`--tao-color-text-subtle`) is darker (`gray-600`).
+- **Fix:** `TaoInputNumber` ± buttons no longer overflow in the `small` size.
+- New optional token `--tao-button-primary-text-shadow` (none by default; the light theme sets a soft one).
+- The light theme no longer inherits the dark theme's glowing link shadow.
+
+### Feedback
+
+- **toast():** a light shadow hugging the edge (hook `--tao-toast-shadow`) instead of the large overlay shadow, which showed as a wide smear on stacked toasts.
+- **confirm():** the cancel button is `ghost`, so the primary action stands out and the dialog feels lighter.
+
+## 3.2.1
+
+- **TaoColorPicker:** the HEX label sits above the field, like the labels over the RGB / HSL channels, so the row keeps its height in every mode.
+
+## 3.2.0
+
+- **TaoPinCode `format`:** `format="#-##-##"` draws visual separators between cells. They are not part of the value; a paste in that shape, or as a clean code, is split into cells.
+- **TaoColorPicker:** fixed width, so switching HEX / RGB / HSL no longer resizes the popover.
+
+## 3.1.1
+
+- **Popovers close on an outside press in the capture phase**, so a component that stops propagation can no longer keep a popover open.
+- **TaoColorPicker:** text is centred in the HEX, RGB and HSL fields.
+
 ## 3.1.0
 
 ### Colour

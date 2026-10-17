@@ -1,9 +1,48 @@
-# Tao UI
+<h1 align="center">Tao UI</h1>
 
-[English](README.md) · **Русский**
+<p align="center">
+  <b>Библиотека Vue 3 компонентов на дизайн-токенах.</b><br>
+  Поменял несколько CSS-переменных — поменялась тема всего набора.
+</p>
 
-Библиотека Vue 3 компонентов для Nuxt/Vue проектов с системой дизайн-токенов:
-поменял несколько CSS-переменных — поменялась тема всего набора компонентов.
+<p align="center">
+[![npm](https://img.shields.io/npm/v/@1337exp/taoui?color=cb3837&logo=npm)](https://www.npmjs.com/package/@1337exp/taoui)
+[![CI](https://github.com/1337exp/taoui/actions/workflows/ci.yml/badge.svg)](https://github.com/1337exp/taoui/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/@1337exp/taoui)](https://github.com/1337exp/taoui/blob/master/LICENSE)
+![Vue 3](https://img.shields.io/badge/Vue-3-42b883?logo=vuedotjs&logoColor=white)
+![TypeScript](https://img.shields.io/badge/types-included-3178c6?logo=typescript&logoColor=white)
+</p>
+
+<p align="center">
+  <a href="https://github.com/1337exp/taoui/blob/master/README.md">English</a> · <b>Русский</b> ·
+  <a href="#установка">Установка</a> ·
+  <a href="#демонстрация">Демонстрация</a> ·
+  <a href="CHANGELOG.md">Список изменений</a>
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/1337exp/taoui/master/docs/media/screenshots/overview-dark.webp" alt="Компоненты Tao UI в тёмной теме" width="860">
+</p>
+
+## Почему Tao UI
+
+- **Сначала токены.** Цвета, радиусы, отступы и шрифты — CSS-переменные в три слоя (примитивы, семантика, тема). Перекрасить набор или одну панель можно, не трогая компоненты.
+- **Одна шкала, один API.** `small` / `medium` / `large` везде, одинаковые правила `v-model` / `change` / `*Text` / `*Label` для всех полей, тона вместо случайных цветов.
+- **Тёмная и светлая темы** из коробки и поверхности (`flat` / `grain` / `glass`) для HUD и лендингов.
+- **Встроенные языки.** Плейсхолдеры, даты и aria-подписи на русском и английском, переключаются на лету без перезагрузки.
+- **Nuxt и чистый Vue.** `TaoLink` сам выбирает `NuxtLink`, `RouterLink` или `<a>`. Полные типы, ES и CJS сборки.
+- **Клавиатура.** Ловушки фокуса, `role` / `aria-*` на контролах.
+
+<table>
+  <tr>
+    <td width="50%"><img src="https://raw.githubusercontent.com/1337exp/taoui/master/docs/media/clips/color-picker.webp" alt="TaoColorPicker: квадрат, полоса тона, режимы HEX / RGB / HSL"><br><sub><b>TaoColorPicker</b> — HEX / RGB / HSL, пипетка, <code>v-model</code> — строка hex</sub></td>
+    <td width="50%"><img src="https://raw.githubusercontent.com/1337exp/taoui/master/docs/media/clips/themes.webp" alt="Переключение тёмной и светлой тем"><br><sub><b>Темы</b> — один атрибут, все компоненты следуют</sub></td>
+  </tr>
+  <tr>
+    <td><img src="https://raw.githubusercontent.com/1337exp/taoui/master/docs/media/clips/slider.webp" alt="TaoRangeSlider с метками"><br><sub><b>TaoSlider / TaoRangeSlider</b> — метки, дискретные шкалы, вертикаль</sub></td>
+    <td><img src="https://raw.githubusercontent.com/1337exp/taoui/master/docs/media/screenshots/surfaces-dark.webp" alt="Поверхности flat, grain и glass"><br><sub><b>Поверхности</b> — flat, grain, glass</sub></td>
+  </tr>
+</table>
 
 ## Компоненты
 
@@ -49,7 +88,9 @@
 - **TaoQuantity** — количество в корзине: `− | поле | +`, целые штуки, сток, минус на минимуме может убрать строку
 - **TaoTextarea** — многострочное поле с авто-высотой. `maxlength` ограничивает ввод, `count` показывает «введено / максимум». `variant`: `bar` (по умолчанию) / `outline` (рамка как у Input) / `filled` / `plain`; `readonly`. `noBorder`, `noBackground`, `borderInverse`, `dummy` устарели
 - **TaoPinCode** — пин-код из N полей. По умолчанию клик стирает ячейку и все справа (`clear-on="focus"`); `clear-on="input"` заменяет цифру только при вводе. `format="#-##-##"` рисует визуальные разделители (в значение не входят; вставка в таком виде или чистым кодом раскладывается по ячейкам). Последняя ячейка снимает фокус и эмитит `complete`
-- **TaoSlider** — слайдер: мышь, тач и стрелки. Опциональный точный ввод по правому клику. `variant="thin"` — тонкий трек для seek / громкости; `size` масштабирует любой трек
+- **TaoSlider** / **TaoRangeSlider** — один бегунок (`v-model` — число) или два (`[от, до]`, `minGap`). Мышь, тач, стрелки. `marks` (деления, числа, `{ value, label }`), `discrete` для ступенчатых шкал, `vertical`, `flat`, `format`; `variant="thin"` — тонкий трек для seek / громкости
+- **TaoColorPicker** — квадрат насыщенности и яркости, полосы тона и прозрачности, образцы, пипетка (где есть `EyeDropper`), режимы ввода HEX / RGB / HSL. `v-model` — строка hex; `colorModel()` подключает ваше собственное хранилище цвета
+- **TaoColorInput** — поле с образцом и hex-текстом; палитра открывается в поповере
 - **TaoFileDrop** — зона загрузки (drag & drop + клик). Список имён под зоной, `v-model` — `File[]`. Очистку всей пачки решает родитель (`clear-request`)
 
 ### Отображение данных
@@ -66,6 +107,7 @@
 - **TaoTag** — тег/бейдж со статусами. `#prefix` (аватар), `closable` убирает чип, `flat` — без рамки
 - **TaoAlert** — инлайн-баннер страницы или ошибки формы (success / error / warning / info)
 - **TaoProgress** — статичная полоса (`progress` в %). Проценты сверху по центру или `showPercentage="right"` справа; слоты `#left` / `#right` — подписи, тогда процент справа в скобках. `false` прячет. Ширина — `minWidth` / `maxWidth`, не диапазон значения
+- **TaoTimeline** — play / pause, слайдер по времени с метками событий, подпись «время / длина». Время сама не двигает: ведите `v-model` своими часами
 - **TaoLoader** — анимированный лоадер (четыре точки)
 - **TaoImage** — обёртка над `<img>`: fade-in и плейсхолдер. `lazy` включает нативный `loading="lazy"`
 - **TaoIcon** — обёртка для icon-шрифта (см. раздел «Иконки» ниже)
@@ -576,20 +618,19 @@ import '@1337exp/taoui/styles/base.css'
 
 ## Демонстрация
 
-Для просмотра всех компонентов запустите showcase:
+Все компоненты с живыми примерами, таблицами пропсов и готовыми сниппетами. Язык (EN / RU) и тема (dark / light) переключаются в шапке.
 
 ```bash
 cd showcase
 npm install
-npm run dev
+npm run dev        # или из корня репозитория: npm run showcase
 ```
 
-В showcase есть переключатель темы (dark / light) в шапке — так виден
-эффект переопределения токенов без правок кода компонентов.
-
 Showcase смотрит прямо в `src/`, поэтому правки компонентов видны без
-`npm run build`. Сборка `dist/` нужна для публикации и для чужих проектов,
-которые ставят пакет.
+`npm run build`. `npm run showcase:build` собирает статический сайт с относительными
+путями — его можно положить в любую папку (например, `/sandbox/taoui/`).
+
+Скриншоты и ролики в этом README сняты с showcase: см. [docs/media](docs/media/README.md).
 
 ## Разработка
 
@@ -611,11 +652,11 @@ npm test
 
 Публикуется только `dist/` (собранная библиотека) и `src/styles/` (сырые
 токены — чтобы можно было подключить `primitives.css` отдельно при
-кастомной теме). Исходники компонентов (`src/components/*.vue`),
+кастомной теме), плюс `README.md`, `LICENSE` и `CHANGELOG.md`. Исходники компонентов (`src/components/*.vue`),
 конфиги сборки и `showcase/` в пакет не попадают — они остаются в
 репозитории; чтобы их получить, репозиторий клонируют.
 
-`npm publish` **сам** прогоняет проверку типов и полную пересборку перед
+`npm publish` **сам** прогоняет проверку типов, тесты и полную пересборку перед
 публикацией (хук `prepublishOnly` в `package.json`) — так в реестр не
 уедет пакет со старым или отсутствующим `dist/`. Собирать вручную перед
 `npm publish` не нужно.
@@ -626,6 +667,15 @@ npm test
 npm pack --dry-run
 ```
 
+Токен публикации не должен лежать в репозитории: в `.npmrc` ссылайтесь на него как
+`//registry.npmjs.org/:_authToken=${NPM_TOKEN}` и задайте `NPM_TOKEN` в окружении.
+`.npmrc` в любом случае в `.gitignore`.
+
+## Участие в проекте
+
+Issues и pull request'ы приветствуются — см. [CONTRIBUTING.md](CONTRIBUTING.md).
+Об уязвимостях: [SECURITY.md](SECURITY.md).
+
 ## Лицензия
 
-MIT
+[MIT](LICENSE) © 2026 1337exp
