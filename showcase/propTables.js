@@ -20,7 +20,7 @@ export const propTables = {
       rows: [
         r('type', "'button' | 'submit' | 'reset'", "'button'", 'Нативный type кнопки'),
         r('variant', "'primary' | 'secondary' | 'ghost' | 'text' | 'danger'", "'primary'", 'Форма. Залитый красный — danger, не tone'),
-        r('tone', "'danger' | 'success' | 'warning' | 'info' | 'neutral' | ''", "''", 'Красит ghost и text. neutral — без цвета бренда, для тихого действия рядом с основным. Не вместо variant'),
+        r('tone', "'danger' | 'success' | 'warning' | 'info' | 'neutral' | ''", "''", 'Красит ghost и text. neutral — тёмный текст, только подсветка при наведении цветом темы; для тихого действия рядом с основным. Не вместо variant'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер. Без него — размер предков (класс tao-size-* или size у FormField / InputGroup), иначе medium'),
         r('disabled', 'boolean', 'false', 'Неактивна'),
         r('loading', 'boolean', 'false', 'Спиннер, клик глушится'),

@@ -27,7 +27,7 @@ export const propTablesEn = {
       rows: [
         r('type', "'button' | 'submit' | 'reset'", "'button'", 'The native button type'),
         r('variant', "'primary' | 'secondary' | 'ghost' | 'text' | 'danger'", "'primary'", 'Shape. The filled red one is danger, not tone'),
-        r('tone', "'danger' | 'success' | 'warning' | 'info' | 'neutral' | ''", "''", 'Colours ghost and text. neutral has no brand colour: the quiet action next to a primary one. Not a replacement for variant'),
+        r('tone', "'danger' | 'success' | 'warning' | 'info' | 'neutral' | ''", "''", 'Colours ghost and text. neutral keeps the text strong and only the hover wash takes the theme colour: the quiet action next to a primary one. Not a replacement for variant'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size. Without it — the size of the ancestors (the tao-size-* class or size on FormField / InputGroup), otherwise medium'),
         r('disabled', 'boolean', 'false', 'Disabled'),
         r('loading', 'boolean', 'false', 'A spinner, the click is swallowed'),

@@ -182,7 +182,7 @@ function handleClick(event: MouseEvent) {
     background-color: var(--tao-color-info-subtle);
 }
 
-/* neutral: no brand colour, for the quiet action next to a primary one (Cancel, Not now) */
+/* neutral: strong text, only the hover wash takes the theme colour; the quiet action next to a primary one (Cancel, Not now) */
 .tao-button--ghost.tao-button--tone-neutral,
 .tao-button--text.tao-button--tone-neutral {
     color: var(--tao-color-text-strong);
@@ -191,7 +191,7 @@ function handleClick(event: MouseEvent) {
 .tao-button--ghost.tao-button--tone-neutral:hover:not(.tao-button--disabled),
 .tao-button--text.tao-button--tone-neutral:hover:not(.tao-button--disabled) {
     color: var(--tao-color-text-strong);
-    background-color: var(--tao-color-surface-hover);
+    background-color: var(--tao-color-accent-subtle-hover);
 }
 
 .tao-button--secondary.tao-button--tone-danger {
