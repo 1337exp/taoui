@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.3.2
+
+- **Fix:** the focus trap of Modal, Drawer and `confirm()` no longer lets focus escape in Safari on macOS, where Tab skips buttons and links by default. After a Tab the trap checks that focus is still inside the dialog and pulls it back if not.
+
 ## 3.3.0
 
 ### Presentation

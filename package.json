@@ -1,6 +1,6 @@
 {
   "name": "@1337exp/taoui",
-  "version": "3.3.1",
+  "version": "3.3.2",
   "description": "Design-token driven Vue 3 / Nuxt component library: one size scale, dark and light themes, built-in locales.",
   "keywords": [
     "vue",

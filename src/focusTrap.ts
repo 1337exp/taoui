@@ -31,5 +31,18 @@ export function trapTab(event: KeyboardEvent, root: HTMLElement) {
     if (!event.shiftKey && document.activeElement === last) {
         event.preventDefault();
         first.focus();
+        return;
     }
+
+    // Safari on macOS skips buttons and links with Tab by default, so the browser's last stop can differ from
+    // our `last`. Let the browser move focus, then pull it back if it left the root.
+    // Safari на macOS по умолчанию пропускает кнопки и ссылки по Tab, и последняя остановка браузера может
+    // не совпасть с нашим `last`. Даём браузеру сдвинуть фокус и возвращаем, если он вышел за root.
+    const backwards = event.shiftKey;
+    setTimeout(() => {
+        if (!root.isConnected || root.contains(document.activeElement)) {
+            return;
+        }
+        (backwards ? last : first).focus();
+    }, 0);
 }
