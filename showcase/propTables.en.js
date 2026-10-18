@@ -796,7 +796,7 @@ export const propTablesEn = {
         r('variant', "'solid' | 'ghost' | 'text'", "'solid'", 'The look: a filled circle, a light circle or a caption with an arrow'),
         r('side', "'left' | 'right'", "'right'", 'Which edge of the page the button sits on'),
         r('offset', 'number | string', '24', 'The offset from that edge (older name: right)'),
-        r('label', 'string', '—', 'The caption: on mouse hover (not touch) for solid / ghost, always visible for text'),
+        r('label', 'string', '—', 'The caption: on mouse hover (not touch) for solid / ghost, always visible for text (the locale text by default); an empty string hides it'),
         r('labelSide', "'left' | 'right'", '—', 'Which side the caption goes; opposite to side by default'),
         r('boundary', 'number', '300', 'The threshold in px: it appears on a reverse scroll after it'),
         r('size', 'number', '40', 'The button size in px'),

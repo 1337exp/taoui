@@ -208,7 +208,7 @@ onBeforeUnmount(() => {
       :boundary="200"
       :variant="scrollTopDemo.variant"
       :side="scrollTopDemo.side"
-      :label="scrollTopDemo.label === 'on' ? tr('Back to top', 'Наверх') : undefined"
+      :label="scrollTopDemo.label === 'on' ? tr('Back to top', 'Наверх') : ''"
     />
   </div>
 </template>

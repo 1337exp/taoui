@@ -80,3 +80,16 @@ describe('TaoScrollTop', () => {
         expect(wrapper.find('.tao-scroll-top-wrap').attributes('data-test')).toBeUndefined();
     });
 });
+
+describe('TaoScrollTop: empty label', () => {
+    it('hides the caption of the text variant, leaving just the arrow button with a name', async () => {
+        const wrapper = await shown({ variant: 'text', label: '' });
+        expect(wrapper.find('.tao-scroll-top__text').exists()).toBe(false);
+        expect(wrapper.find('svg').exists()).toBe(true);
+        expect(wrapper.find('button').attributes('aria-label')).toBe('Back to top');
+    });
+
+    it('shows no hover caption for solid either', async () => {
+        expect((await shown({ label: '' })).find('.tao-scroll-top__label').exists()).toBe(false);
+    });
+});

@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.4.1
+
+- **Fix:** `TaoScrollTop` `variant="text"` could not be shown without a caption: `label=""` now hides it, leaving just the arrow button (the accessible name stays).
+
 ## 3.4.0
 
 ### TaoScrollTop

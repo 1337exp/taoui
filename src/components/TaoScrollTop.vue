@@ -19,9 +19,9 @@ interface Props {
     offset?: string | number;
     /**
      * Caption: beside the button on mouse hover (and keyboard focus) for `solid` / `ghost`, always visible for `text`
-     * (the locale text by default there).
+     * (the locale text by default there; an empty string hides it).
      * Подпись: рядом с кнопкой при наведении мыши (и фокусе с клавиатуры) у `solid` / `ghost`, у `text` видна всегда
-     * (по умолчанию — текст локали).
+     * (по умолчанию — текст локали; пустая строка скрывает).
      */
     label?: string;
     /**
@@ -82,7 +82,7 @@ const mainStyle = computed(() => ({
 
 const captionSide = computed(() => props.labelSide ?? (props.side === 'right' ? 'left' : 'right'));
 const caption = computed(() => props.label ?? (isText.value ? l10n.value.ariaLabel : undefined));
-const accessibleName = computed(() => props.ariaLabel ?? props.label ?? l10n.value.ariaLabel);
+const accessibleName = computed(() => props.ariaLabel || props.label || l10n.value.ariaLabel);
 
 const rippleStyle = reactive({
     top: fmtProp(-1 * props.size),
@@ -192,7 +192,7 @@ warnDeprecated('TaoScrollTop', {
                         :style="rippleStyle"
                         class="tao-scroll-top__ripple"
                     />
-                    <span v-if="isText" class="tao-scroll-top__text" aria-hidden="true">{{ caption }}</span>
+                    <span v-if="isText && caption" class="tao-scroll-top__text" aria-hidden="true">{{ caption }}</span>
                     <slot>
                         <svg class="tao-scroll-top__icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
                             <path d="M12 6l-7 7 1.4 1.4L12 8.8l5.6 5.6L19 13z" />
