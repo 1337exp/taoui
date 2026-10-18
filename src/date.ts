@@ -103,7 +103,7 @@ export function isTaoDateInRange(iso: string, min?: string, max?: string): boole
     return true;
 }
 
-export function formatTaoDateLabel(iso: string, locale = 'ru-RU'): string {
+export function formatTaoDateLabel(iso: string, locale = 'en-US'): string {
     const parts = parseTaoDate(iso);
     if (!parts) {
         return '';
@@ -134,7 +134,7 @@ export function parseTaoDateRange(value: TaoDateRangeValue | null | undefined): 
     return sortTaoDateRange(formatTaoDateIso(start), formatTaoDateIso(end));
 }
 
-export function formatTaoDateRangeLabel(start: string, end: string, locale = 'ru-RU'): string {
+export function formatTaoDateRangeLabel(start: string, end: string, locale = 'en-US'): string {
     const fromParts = parseTaoDate(start);
     const toParts = parseTaoDate(end);
     if (!fromParts || !toParts) {
@@ -154,7 +154,7 @@ export function formatTaoDateRangeLabel(start: string, end: string, locale = 'ru
     return `${from} — ${formatTaoDateLabel(end, locale)}`;
 }
 
-export function formatTaoMonthLabel(year: number, month: number, locale = 'ru-RU'): string {
+export function formatTaoMonthLabel(year: number, month: number, locale = 'en-US'): string {
     const label = new Date(year, month - 1, 1).toLocaleDateString(locale, {
         month: 'long',
         year: 'numeric',
@@ -171,7 +171,7 @@ export function taoDateWeekdayIndex(iso: string): number {
     return (new Date(parts.y, parts.m - 1, parts.d).getDay() + 6) % 7;
 }
 
-export function taoWeekdayLabels(locale = 'ru-RU'): string[] {
+export function taoWeekdayLabels(locale = 'en-US'): string[] {
     return Array.from({ length: 7 }, (_, index) => {
         const label = new Date(2026, 0, 5 + index).toLocaleDateString(locale, { weekday: 'short' });
         return label.replace(/\.$/, '');

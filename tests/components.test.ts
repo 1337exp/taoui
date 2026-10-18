@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import TaoAlert from '../src/components/TaoAlert.vue';
 import TaoBlock from '../src/components/TaoBlock.vue';
+import TaoButton from '../src/components/TaoButton.vue';
 import TaoCard from '../src/components/TaoCard.vue';
 import TaoCheckbox from '../src/components/TaoCheckbox.vue';
 import TaoCopy from '../src/components/TaoCopy.vue';
@@ -11,6 +12,7 @@ import TaoInput from '../src/components/TaoInput.vue';
 import TaoInputNumber from '../src/components/TaoInputNumber.vue';
 import TaoPagination from '../src/components/TaoPagination.vue';
 import TaoPinCode from '../src/components/TaoPinCode.vue';
+import TaoSegmented from '../src/components/TaoSegmented.vue';
 import TaoSelect from '../src/components/TaoSelect.vue';
 import TaoTimeline from '../src/components/TaoTimeline.vue';
 import TaoSlider from '../src/components/TaoSlider.vue';
@@ -200,12 +202,12 @@ describe('Textarea noSpace', () => {
 });
 
 describe('locale in components', () => {
-    afterEach(() => setTaoLocale(localeRu));
+    afterEach(() => setTaoLocale(localeEn));
 
     it('prop defaults come from the locale, a passed prop wins', async () => {
-        expect(mount(TaoSelect).find('.tao-select__value').text()).toBe('Выберите');
-        setTaoLocale(localeEn);
         expect(mount(TaoSelect).find('.tao-select__value').text()).toBe('Select');
+        setTaoLocale(localeRu);
+        expect(mount(TaoSelect).find('.tao-select__value').text()).toBe('Выберите');
         expect(mount(TaoSelect, { props: { placeholder: 'Own' } }).find('.tao-select__value').text()).toBe('Own');
     });
 
@@ -213,22 +215,22 @@ describe('locale in components', () => {
         const select = mount(TaoSelect);
         const own = mount(TaoSelect, { props: { placeholder: 'Own' } });
         const pagination = mount(TaoPagination, { props: { page: 1, total: 42, pageSize: 10 } });
-        expect(select.find('.tao-select__value').text()).toBe('Выберите');
+        expect(select.find('.tao-select__value').text()).toBe('Select');
 
-        setTaoLocale(localeEn);
+        setTaoLocale(localeRu);
         await nextTick();
 
-        expect(select.find('.tao-select__value').text()).toBe('Select');
+        expect(select.find('.tao-select__value').text()).toBe('Выберите');
         expect(own.find('.tao-select__value').text()).toBe('Own');
-        expect(pagination.find('.tao-pagination__btn').attributes('aria-label')).toBe('Previous');
-        expect(pagination.find('.tao-pagination__total').text()).toBe('1–10 of 42');
+        expect(pagination.find('.tao-pagination__btn').attributes('aria-label')).toBe('Назад');
+        expect(pagination.find('.tao-pagination__total').text()).toBe('1–10 из 42');
     });
 
     it('texts built in templates follow the locale', async () => {
-        setTaoLocale(localeEn);
+        setTaoLocale(localeRu);
         const w = mount(TaoPagination, { props: { page: 1, total: 42, pageSize: 10 } });
         await nextTick();
-        expect(w.find('.tao-pagination__total').text()).toBe('1–10 of 42');
+        expect(w.find('.tao-pagination__total').text()).toBe('1–10 из 42');
     });
 });
 
@@ -326,12 +328,12 @@ describe('Timeline', () => {
         const w = mountTimeline();
         expect(w.find('.tao-timeline__time').text()).toBe('1.25 / 8.00');
         const play = w.find('.tao-timeline__controls button');
-        expect(play.attributes('aria-label')).toBe('Играть');
+        expect(play.attributes('aria-label')).toBe('Play');
         await play.trigger('click');
         expect(w.emitted('update:playing')).toEqual([[true]]);
 
         await w.setProps({ playing: true });
-        expect(w.find('.tao-timeline__controls button').attributes('aria-label')).toBe('Пауза');
+        expect(w.find('.tao-timeline__controls button').attributes('aria-label')).toBe('Pause');
         await w.find('.tao-timeline__controls button').trigger('click');
         expect(last(w.emitted('update:playing')!)).toEqual([false]);
     });
@@ -364,5 +366,18 @@ describe('Timeline', () => {
         expect(w.findAll('.tao-slider__mark').map((m) => m.text())).toEqual(['0 с', '2 с', '4 с']);
         expect(w.find('.custom').text()).toBe('2 с / 8 с');
         expect(w.find('.tao-timeline__controls button').attributes('aria-label')).toBe('Go');
+    });
+});
+
+describe('minWidth', () => {
+    it('Button: the prop sets --tao-button-min-width, a number means px, nothing by default', () => {
+        expect((mount(TaoButton).element as HTMLElement).style.getPropertyValue('--tao-button-min-width')).toBe('');
+        expect((mount(TaoButton, { props: { minWidth: 120 } }).element as HTMLElement).style.getPropertyValue('--tao-button-min-width')).toBe('120px');
+        expect((mount(TaoButton, { props: { minWidth: '8rem' } }).element as HTMLElement).style.getPropertyValue('--tao-button-min-width')).toBe('8rem');
+    });
+
+    it('Segmented: the prop sets --tao-segmented-option-min-width on the group', () => {
+        expect((mount(TaoSegmented).element as HTMLElement).style.getPropertyValue('--tao-segmented-option-min-width')).toBe('');
+        expect((mount(TaoSegmented, { props: { minWidth: 96 } }).element as HTMLElement).style.getPropertyValue('--tao-segmented-option-min-width')).toBe('96px');
     });
 });

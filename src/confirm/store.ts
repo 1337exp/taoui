@@ -1,10 +1,10 @@
 import { ref } from 'vue';
-import { localeRu } from '../locale/ru';
+import { localeEn } from '../locale/en';
 import type { TaoConfirmDefaults, TaoConfirmRecord } from './types';
 
 export const confirmDefaults: TaoConfirmDefaults = {
-    ok: localeRu.confirm.ok,
-    cancel: localeRu.confirm.cancel,
+    ok: localeEn.confirm.ok,
+    cancel: localeEn.confirm.cancel,
     surface: 'glass',
 };
 

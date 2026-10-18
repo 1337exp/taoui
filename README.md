@@ -222,12 +222,12 @@ app.mount('#app')
 
 ### Language
 
-Built-in texts (placeholders, “Clear”, aria labels, dates) are Russian by default. English ships with the library:
+Built-in texts (placeholders, “Clear”, aria labels, dates) are English by default. Russian ships with the library:
 
 ```javascript
-import TaoUI, { localeEn } from '@1337exp/taoui'
+import TaoUI, { localeRu } from '@1337exp/taoui'
 
-app.use(TaoUI, { locale: localeEn })
+app.use(TaoUI, { locale: localeRu })
 ```
 
 Change single texts — the rest stays from the default:
@@ -236,7 +236,7 @@ Change single texts — the rest stays from the default:
 app.use(TaoUI, { locale: { select: { placeholder: 'Pick one' } } })
 ```
 
-Another language: copy `localeEn`, translate, pass it the same way (type `TaoLocale`). Keys repeat prop names —
+Another language: copy `localeEn` (or `localeRu`), translate, pass it the same way (type `TaoLocale`). Keys repeat prop names —
 `locale.select.placeholder` is the default of TaoSelect `placeholder`, and a prop passed by hand always wins.
 
 Switch the language at any moment — from your settings, a language picker, a route. Components already on the page
@@ -246,11 +246,17 @@ update at once, without a reload and without losing what users typed:
 import { setTaoLocale, localeEn, localeRu } from '@1337exp/taoui'
 
 function onLanguageChange(lang) {
-  setTaoLocale(lang === 'en' ? localeEn : localeRu)
+  setTaoLocale(lang === 'ru' ? localeRu : localeEn)
 }
 ```
 
 Without the plugin (individual components) `setTaoLocale()` is the only call you need.
+
+### Upgrading from 3.x
+
+4.0 changes one default: the built-in texts are now English (they were Russian). To stay on Russian, pass the locale
+once — `app.use(TaoUI, { locale: localeRu })`, or `setTaoLocale(localeRu)` without the plugin. The date helpers and
+the date components follow the locale and default to `en-US` as well.
 
 ### Upgrading from 1.x
 

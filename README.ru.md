@@ -224,12 +224,12 @@ app.mount('#app')
 
 ### Язык
 
-Встроенные тексты (плейсхолдеры, «Очистить», aria-подписи, даты) по умолчанию русские. Английский идёт в комплекте:
+Встроенные тексты (плейсхолдеры, «Очистить», aria-подписи, даты) по умолчанию английские. Русский идёт в комплекте:
 
 ```javascript
-import TaoUI, { localeEn } from '@1337exp/taoui'
+import TaoUI, { localeRu } from '@1337exp/taoui'
 
-app.use(TaoUI, { locale: localeEn })
+app.use(TaoUI, { locale: localeRu })
 ```
 
 Поменять отдельные тексты — остальное останется от локали по умолчанию:
@@ -238,7 +238,7 @@ app.use(TaoUI, { locale: localeEn })
 app.use(TaoUI, { locale: { select: { placeholder: 'Выберите город' } } })
 ```
 
-Другой язык: скопируйте `localeEn`, переведите и передайте так же (тип `TaoLocale`). Ключи повторяют имена пропсов —
+Другой язык: скопируйте `localeEn` (или `localeRu`), переведите и передайте так же (тип `TaoLocale`). Ключи повторяют имена пропсов —
 `locale.select.placeholder` — значение по умолчанию для `placeholder` у TaoSelect, а переданный руками проп всегда главнее.
 
 Язык можно переключать в любой момент — из настроек, переключателя языка, по маршруту. Уже показанные компоненты
@@ -248,11 +248,17 @@ app.use(TaoUI, { locale: { select: { placeholder: 'Выберите город' 
 import { setTaoLocale, localeEn, localeRu } from '@1337exp/taoui'
 
 function onLanguageChange(lang) {
-  setTaoLocale(lang === 'en' ? localeEn : localeRu)
+  setTaoLocale(lang === 'ru' ? localeRu : localeEn)
 }
 ```
 
 Без плагина (отдельные компоненты) достаточно одного вызова `setTaoLocale()`.
+
+### Переход с 3.x
+
+В 4.0 поменялся один умолчательный параметр: встроенные тексты теперь английские (раньше были русские). Чтобы остаться
+на русском, передайте локаль один раз: `app.use(TaoUI, { locale: localeRu })`, а без плагина — `setTaoLocale(localeRu)`.
+Хелперы дат и компоненты дат следуют локали и по умолчанию тоже `en-US`.
 
 ### Переход с 1.x
 

@@ -84,26 +84,27 @@ describe('carousel glide', () => {
 });
 
 describe('locale', () => {
-    afterEach(() => setTaoLocale(localeRu));
+    afterEach(() => setTaoLocale(localeEn));
 
-    it('is Russian by default', () => {
-        expect(taoLocale().select.placeholder).toBe('Выберите');
-        expect(taoLocale().code).toBe('ru-RU');
+    it('is English by default', () => {
+        expect(taoLocale().select.placeholder).toBe('Select');
+        expect(taoLocale().code).toBe('en-US');
     });
 
     it('switches to a whole locale and to toast / confirm defaults', () => {
-        setTaoLocale(localeEn);
-        expect(taoLocale().select.placeholder).toBe('Select');
-        expect(toastDefaults.closeLabel).toBe(localeEn.toast.closeLabel);
-        expect(confirmDefaults.ok).toBe('OK');
+        setTaoLocale(localeRu);
+        expect(taoLocale().select.placeholder).toBe('Выберите');
+        expect(taoLocale().code).toBe('ru-RU');
+        expect(toastDefaults.closeLabel).toBe(localeRu.toast.closeLabel);
+        expect(confirmDefaults.ok).toBe(localeRu.confirm.ok);
     });
 
     it('merges a few keys on top of the base', () => {
         setTaoLocale({ select: { placeholder: 'Pick one' }, avatar: { dotLabels: { success: 'here' } } });
         expect(taoLocale().select.placeholder).toBe('Pick one');
-        expect(taoLocale().select.clearText).toBe('Очистить');
+        expect(taoLocale().select.clearText).toBe('Clear');
         expect(taoLocale().avatar.dotLabels.success).toBe('here');
-        expect(taoLocale().avatar.dotLabels.danger).toBe('занят');
+        expect(taoLocale().avatar.dotLabels.danger).toBe('busy');
     });
 
     it('fills {placeholders}', () => {

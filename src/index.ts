@@ -144,8 +144,8 @@ const components = [
 
 export interface TaoUIOptions {
     /**
-     * Language of built-in texts: `localeEn`, or a few keys on top of Russian (the default).
-     * Язык встроенных текстов: `localeEn` или несколько ключей поверх русской (по умолчанию).
+     * Language of built-in texts: `localeRu` (or any other), or a few keys on top of English (the default).
+     * Язык встроенных текстов: `localeRu` (или любая другая) или несколько ключей поверх английской (по умолчанию).
      */
     locale?: TaoLocale | TaoLocaleOverrides;
 }

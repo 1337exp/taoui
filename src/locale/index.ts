@@ -1,14 +1,14 @@
 import { computed, shallowRef, type ComputedRef } from 'vue';
 import { configureConfirmDefaults } from '../confirm/store';
 import { configureToastDefaults } from '../toast/store';
-import { localeRu } from './ru';
+import { localeEn } from './en';
 import type { TaoLocale, TaoLocaleOverrides } from './types';
 
 export { localeRu } from './ru';
 export { localeEn } from './en';
 export type { TaoLocale, TaoLocaleOverrides } from './types';
 
-const current = shallowRef<TaoLocale>(localeRu);
+const current = shallowRef<TaoLocale>(localeEn);
 
 /** The active locale. / Активная локаль. */
 export function taoLocale(): TaoLocale {
@@ -33,13 +33,13 @@ function merge<T>(base: T, overrides: unknown): T {
 }
 
 /**
- * Sets the language of built-in texts: a whole locale (`localeEn`) or a few keys on top of `base`
- * (Russian by default). Works at any moment: components already on the page switch at once.
+ * Sets the language of built-in texts: a whole locale (`localeRu`) or a few keys on top of `base`
+ * (English by default). Works at any moment: components already on the page switch at once.
  *
- * Задаёт язык встроенных текстов: целую локаль (`localeEn`) или несколько ключей поверх `base`
- * (по умолчанию русской). Работает в любой момент: уже показанные компоненты переключаются сразу.
+ * Задаёт язык встроенных текстов: целую локаль (`localeRu`) или несколько ключей поверх `base`
+ * (по умолчанию английской). Работает в любой момент: уже показанные компоненты переключаются сразу.
  */
-export function setTaoLocale(locale: TaoLocaleOverrides, base: TaoLocale = localeRu) {
+export function setTaoLocale(locale: TaoLocaleOverrides, base: TaoLocale = localeEn) {
     current.value = merge(base, locale);
     configureToastDefaults({ closeLabel: current.value.toast.closeLabel });
     configureConfirmDefaults({ ok: current.value.confirm.ok, cancel: current.value.confirm.cancel });

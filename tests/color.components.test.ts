@@ -91,7 +91,7 @@ describe('ColorPicker', () => {
 
     it('labels come from the locale and from props', () => {
         const w = mountPicker({ hueLabel: 'Hue!' });
-        expect(area(w).attributes('aria-label')).toBe('Насыщенность и яркость');
+        expect(area(w).attributes('aria-label')).toBe('Saturation and brightness');
         expect(w.find('.tao-color-picker__hue .tao-slider__thumb').attributes('aria-label')).toBe('Hue!');
     });
 });
@@ -101,7 +101,7 @@ describe('ColorInput', () => {
         const w = mount(TaoColorInput, { props: { modelValue: '#ff8800' }, attachTo: document.body });
         const trigger = w.find('.tao-color-input');
         expect(trigger.text()).toBe('#ff8800');
-        expect(trigger.attributes('aria-label')).toBe('Выбрать цвет: #ff8800');
+        expect(trigger.attributes('aria-label')).toBe('Choose color: #ff8800');
         expect(document.querySelector('.tao-popover__panel')).toBeNull();
 
         await trigger.trigger('click');

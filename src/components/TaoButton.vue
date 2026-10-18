@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { computed } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoButton' });
@@ -14,6 +15,8 @@ interface Props {
     loading?: boolean;
     block?: boolean;
     icon?: string;
+    /** Minimum width (number = px). Same as the `--tao-button-min-width` variable. / Минимальная ширина (число = px). То же, что переменная `--tao-button-min-width`. */
+    minWidth?: number | string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -24,7 +27,14 @@ const props = withDefaults(defineProps<Props>(), {
     loading: false,
     block: false,
     icon: '',
+    minWidth: undefined,
 });
+
+const minWidthStyle = computed(() =>
+    props.minWidth === undefined
+        ? undefined
+        : { '--tao-button-min-width': typeof props.minWidth === 'number' ? `${props.minWidth}px` : props.minWidth },
+);
 
 const emit = defineEmits(['click']);
 
@@ -49,6 +59,7 @@ function handleClick(event: MouseEvent) {
                 [`tao-button--tone-${tone}`]: !!tone,
             },
         ]"
+        :style="minWidthStyle"
         :type="type"
         :disabled="disabled || loading"
         @click="handleClick"
@@ -66,6 +77,7 @@ function handleClick(event: MouseEvent) {
     justify-content: center;
     gap: var(--tao-space-2);
     height: var(--tao-control-height);
+    min-width: var(--tao-button-min-width, 0);
     padding: 0 var(--tao-button-padding-x);
 
     border: none;

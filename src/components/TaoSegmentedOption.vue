@@ -114,7 +114,7 @@ function onChange() {
     display: inline-flex;
     flex: 0 0 auto;
     align-items: center;
-    min-width: 0;
+    min-width: var(--tao-segmented-option-min-width, 0);
     cursor: pointer;
     user-select: none;
     color: var(--tao-color-text-subtle);

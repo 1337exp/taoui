@@ -1,5 +1,18 @@
 # Changelog
 
+## 4.0.0
+
+### Breaking: English is the default language
+
+- **Built-in texts are English by default** (they were Russian): placeholders, “Clear”, aria labels, `toast` / `confirm()` defaults, calendar captions. The date helpers (`formatTaoDateLabel` and friends) default to `en-US` instead of `ru-RU`, and `TaoDate` / `TaoDateRange` follow the active locale as before.
+- **To stay on Russian**, pass the locale once: `app.use(TaoUI, { locale: localeRu })`, or `setTaoLocale(localeRu)` without the plugin. `localeRu` and `localeEn` are both still exported, nothing else changed in the locale API.
+- `setTaoLocale(overrides)` now merges on top of English (it merged on top of Russian). Pass `setTaoLocale(overrides, localeRu)` to keep the old base.
+
+### Minimum width
+
+- **`TaoButton` `minWidth`** (number = px, or any CSS length) and the **`--tao-button-min-width`** variable; default `0`, so nothing changes until you set it. Set the variable on one button, on a container or on `:root`.
+- **`TaoSegmented` `minWidth`** and **`--tao-segmented-option-min-width`**: the minimum width of every option, including in `block` mode.
+
 ## 3.4.1
 
 - **Fix:** `TaoScrollTop` `variant="text"` could not be shown without a caption: `label=""` now hides it, leaving just the arrow button (the accessible name stays).

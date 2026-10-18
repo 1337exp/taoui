@@ -18,6 +18,8 @@ const props = withDefaults(
         /** Without it the group takes the size of its ancestors. / Без него — размер предков. */
         size?: TaoSize;
         block?: boolean;
+        /** Minimum width of every option (number = px). Same as the `--tao-segmented-option-min-width` variable. / Минимальная ширина каждого варианта (число = px). То же, что переменная `--tao-segmented-option-min-width`. */
+        minWidth?: number | string;
     }>(),
     {
         disabled: false,
@@ -38,6 +40,11 @@ const model = computed(() => props.modelValue);
 const groupDisabled = computed(() => props.disabled);
 const invalid = computed(() => props.error || Boolean(field?.invalid.value));
 const describedBy = computed(() => field?.describedBy.value);
+const minWidthStyle = computed(() =>
+    props.minWidth === undefined
+        ? undefined
+        : { '--tao-segmented-option-min-width': typeof props.minWidth === 'number' ? `${props.minWidth}px` : props.minWidth },
+);
 
 const trackRef = ref<HTMLElement | null>(null);
 const thumbStyle = ref<Record<string, string>>({ opacity: '0' });
@@ -141,6 +148,7 @@ onBeforeUnmount(() => {
             },
         ]"
         :disabled="disabled"
+        :style="minWidthStyle"
         :aria-describedby="describedBy"
         :aria-invalid="invalid || undefined"
         :aria-labelledby="legend ? undefined : (field ? `${field.id}-label` : undefined)"
@@ -200,7 +208,7 @@ onBeforeUnmount(() => {
 
 .tao-segmented--block .tao-segmented__track > :deep(.tao-segmented-option) {
     flex: 1 1 0;
-    min-width: 0;
+    min-width: var(--tao-segmented-option-min-width, 0);
 }
 
 .tao-segmented--block .tao-segmented__track > :deep(.tao-segmented-option__label) {
