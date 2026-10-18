@@ -793,9 +793,14 @@ export const propTablesEn = {
     {
       title: 'TaoScrollTop',
       rows: [
+        r('variant', "'solid' | 'ghost' | 'text'", "'solid'", 'The look: a filled circle, a light circle or a caption with an arrow'),
+        r('side', "'left' | 'right'", "'right'", 'Which edge of the page the button sits on'),
+        r('offset', 'number | string', '24', 'The offset from that edge (older name: right)'),
+        r('label', 'string', '—', 'The caption: on mouse hover (not touch) for solid / ghost, always visible for text'),
+        r('labelSide', "'left' | 'right'", '—', 'Which side the caption goes; opposite to side by default'),
         r('boundary', 'number', '300', 'The threshold in px: it appears on a reverse scroll after it'),
         r('size', 'number', '40', 'The button size in px'),
-        r('right / bottom', 'number | string', '24', 'The offset from the edge'),
+        r('bottom', 'number | string', '24', 'The offset from the bottom edge'),
         r('zIndex', 'number', '1000', 'The layer'),
         r('ariaLabel', 'string', "'Back to top'", 'The accessible name'),
         r('outline', 'boolean', 'true', 'The focus outline'),

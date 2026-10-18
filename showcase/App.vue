@@ -4,6 +4,7 @@ import { TaoScrollTop } from '@1337exp/taoui'
 import { navGroups } from './nav.js'
 import { demoById } from './sections.js'
 import { lang, LANGS, tr } from './i18n.js'
+import { scrollTopDemo } from './scrollTopDemo.js'
 
 // Search looks through both languages, whichever is on screen.
 const both = (text) => (text && typeof text === 'object' ? `${text.en ?? ''} ${text.ru ?? ''}` : (text ?? ''))
@@ -203,6 +204,11 @@ onBeforeUnmount(() => {
       <p>Tao UI · MIT · 2026 · <a href="https://github.com/1337exp/taoui">GitHub</a> · <a href="https://www.npmjs.com/package/@1337exp/taoui">npm</a></p>
     </footer>
 
-    <TaoScrollTop :boundary="200" />
+    <TaoScrollTop
+      :boundary="200"
+      :variant="scrollTopDemo.variant"
+      :side="scrollTopDemo.side"
+      :label="scrollTopDemo.label === 'on' ? tr('Back to top', 'Наверх') : undefined"
+    />
   </div>
 </template>

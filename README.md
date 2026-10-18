@@ -117,7 +117,7 @@
 - **TaoLink** — `<NuxtLink>` in Nuxt, `<RouterLink>` with vue-router, otherwise a plain `<a>` — no extra setup
 - **TaoBreadcrumb** — crumbs: the last item is the current page
 - **TaoDropdownMenu** — dropdown that flips at the viewport edge
-- **TaoScrollTop** — floating “back to top” with a ripple. Appears on reverse scroll after `boundary`
+- **TaoScrollTop** — floating “back to top”: `solid` / `ghost` / `text` looks, `side`, a mouse-hover `label`. Appears on reverse scroll after `boundary`
 
 ### Feedback
 

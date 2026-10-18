@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.4.0
+
+### TaoScrollTop
+
+- **`variant`:** `solid` (default, as before), `ghost` (a light circle on a raised surface with a hairline border) and `text` (a bare uppercase caption with an arrow, always visible).
+- **`label`:** a caption that appears beside the button on mouse hover (`@media (hover: hover) and (pointer: fine)`, so never on touch) and on keyboard focus. For `text` it is always shown and defaults to the locale text.
+- **`side`** (`left` / `right`) picks the page edge, **`offset`** is the distance from it (`right` stays as its older name). **`labelSide`** puts the caption left or right of the button; by default it is the side opposite to `side`, so it opens towards the page, and an explicit value wins.
+- **Fix:** the button had no accessible name unless `ariaLabel` was passed; it now falls back to `label`, then to the locale text.
+- **Fix:** `size`, `bottom` and `zIndex` react to prop changes (they were read once at setup).
+- The root is now a positioning wrapper around the button: fall-through attributes (`class`, `data-*`, …) still land on the button, but a `style` that moves the button should go to `bottom` / `offset` props instead.
+
 ## 3.3.2
 
 - **Fix:** the focus trap of Modal, Drawer and `confirm()` no longer lets focus escape in Safari on macOS, where Tab skips buttons and links by default. After a Tab the trap checks that focus is still inside the dialog and pulls it back if not.

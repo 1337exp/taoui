@@ -786,9 +786,14 @@ export const propTables = {
     {
       title: 'TaoScrollTop',
       rows: [
+        r('variant', "'solid' | 'ghost' | 'text'", "'solid'", 'Вид: круг-заливка, лёгкий круг или подпись со стрелкой'),
+        r('side', "'left' | 'right'", "'right'", 'У какого края страницы стоит кнопка'),
+        r('offset', 'number | string', '24', 'Отступ от этого края (прежнее имя — right)'),
+        r('label', 'string', '—', 'Подпись: при наведении мыши (не на таче) у solid / ghost, всегда видна у text'),
+        r('labelSide', "'left' | 'right'", '—', 'С какой стороны подпись; по умолчанию противоположная side'),
         r('boundary', 'number', '300', 'Порог в px: появляется при обратном скролле после него'),
         r('size', 'number', '40', 'Размер кнопки в px'),
-        r('right / bottom', 'number | string', '24', 'Отступ от края'),
+        r('bottom', 'number | string', '24', 'Отступ от нижнего края'),
         r('zIndex', 'number', '1000', 'Слой'),
         r('ariaLabel', 'string', "'Наверх'", 'Доступное имя'),
         r('outline', 'boolean', 'true', 'Обводка фокуса'),
