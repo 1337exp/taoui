@@ -57,7 +57,6 @@ describe('TaoScrollTop', () => {
         const wrapper = await shown({ variant: 'text' });
         expect(wrapper.find('.tao-scroll-top__text').text()).toBe('Back to top');
         expect(wrapper.find('.tao-scroll-top__label').exists()).toBe(false);
-        expect(wrapper.find('.tao-scroll-top__ripple').exists()).toBe(false);
         expect((wrapper.find('button').element as HTMLElement).style.width).toBe('');
     });
 

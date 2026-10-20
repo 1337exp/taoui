@@ -1,5 +1,9 @@
 # Changelog
 
+## 4.0.1
+
+- **TaoScrollTop:** the ripple is gone. It painted the wave in a tint that disappeared on the accent fill, so it was practically invisible and cost a DOM node, a timer and an `overflow: hidden` clip. The button now has the same 1px press as `TaoButton`.
+
 ## 4.0.0
 
 ### Breaking: English is the default language

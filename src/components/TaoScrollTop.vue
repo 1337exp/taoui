@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, reactive, onBeforeMount, onBeforeUnmount } from 'vue';
+import { computed, ref, onBeforeMount, onBeforeUnmount } from 'vue';
 import { warnDeprecated } from '../deprecate';
 import { useLocaleText } from '../locale';
 
@@ -61,7 +61,6 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const l10n = useLocaleText(props, 'scrollTop');
 
-const RIPPLE_DURATION = 750;
 const fmtProp = (value: number | string, unit = 'px') => (typeof value === 'number' ? value + unit : value);
 
 let prevPos = 0;
@@ -84,15 +83,7 @@ const captionSide = computed(() => props.labelSide ?? (props.side === 'right' ? 
 const caption = computed(() => props.label ?? (isText.value ? l10n.value.ariaLabel : undefined));
 const accessibleName = computed(() => props.ariaLabel || props.label || l10n.value.ariaLabel);
 
-const rippleStyle = reactive({
-    top: fmtProp(-1 * props.size),
-    left: fmtProp(-1 * props.size),
-    width: '200%',
-    height: '200%',
-});
-
 const isActive = ref(false);
-const isRippleActive = ref(false);
 
 function getScrollValue() {
     if (typeof window.pageYOffset !== 'undefined') {
@@ -134,26 +125,6 @@ function onScroll() {
     isActive.value = tooFar && activeBack;
 }
 
-function onClick(e: MouseEvent) {
-    if (!isText.value && !isRippleActive.value) {
-        const elTarget = e.currentTarget as HTMLElement;
-        if (elTarget) {
-            const rect = elTarget.getBoundingClientRect();
-            const top = e.clientY - rect.top;
-            const left = e.clientX - rect.left;
-            rippleStyle.top = fmtProp(top - props.size);
-            rippleStyle.left = fmtProp(left - props.size);
-        }
-
-        isRippleActive.value = true;
-        setTimeout(() => {
-            isRippleActive.value = false;
-        }, RIPPLE_DURATION);
-    }
-
-    goToTop();
-}
-
 onBeforeMount(() => {
     window.addEventListener('scroll', onScroll);
 });
@@ -183,15 +154,9 @@ warnDeprecated('TaoScrollTop', {
                     isText && `tao-scroll-top--caption-${captionSide}`,
                 ]"
                 :aria-label="accessibleName"
-                @click.prevent="onClick"
+                @click.prevent="goToTop"
             >
                 <span class="tao-scroll-top__content">
-                    <span
-                        v-if="!isText"
-                        :class="{ 'tao-scroll-top__ripple--active': isRippleActive }"
-                        :style="rippleStyle"
-                        class="tao-scroll-top__ripple"
-                    />
                     <span v-if="isText && caption" class="tao-scroll-top__text" aria-hidden="true">{{ caption }}</span>
                     <slot>
                         <svg class="tao-scroll-top__icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
@@ -268,6 +233,11 @@ warnDeprecated('TaoScrollTop', {
     color: var(--tao-color-accent);
 }
 
+/* the same tactile press as TaoButton / такое же вжатие, как у TaoButton */
+.tao-scroll-top:active {
+    transform: translateY(1px);
+}
+
 .tao-scroll-top--no-outline {
     outline: none;
 }
@@ -280,13 +250,6 @@ warnDeprecated('TaoScrollTop', {
     align-items: center;
     justify-content: center;
     gap: var(--tao-space-2);
-    /* clips the ripple to the circle / обрезает ripple по кругу */
-    overflow: hidden;
-    border-radius: inherit;
-}
-
-.tao-scroll-top--text .tao-scroll-top__content {
-    overflow: visible;
 }
 
 .tao-scroll-top--caption-right .tao-scroll-top__content {
@@ -351,19 +314,6 @@ warnDeprecated('TaoScrollTop', {
     transform: translate(0, -50%);
 }
 
-.tao-scroll-top__ripple {
-    position: absolute;
-    border-radius: var(--tao-radius-full);
-    background-color: var(--tao-color-accent-subtle-hover);
-    transform: scale(0);
-    opacity: 0;
-    pointer-events: none;
-}
-
-.tao-scroll-top__ripple--active {
-    animation: tao-scroll-top-ripple 0.75s ease-out;
-}
-
 .tao-scroll-top-fade-enter-active,
 .tao-scroll-top-fade-leave-active {
     transition: opacity var(--tao-duration-base) var(--tao-ease-base),
@@ -374,15 +324,5 @@ warnDeprecated('TaoScrollTop', {
 .tao-scroll-top-fade-leave-to {
     opacity: 0;
     transform: translateY(40px);
-}
-
-@keyframes tao-scroll-top-ripple {
-    from {
-        opacity: 1;
-    }
-    to {
-        transform: scale(2);
-        opacity: 0;
-    }
 }
 </style>
