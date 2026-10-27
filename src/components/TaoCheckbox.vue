@@ -17,8 +17,6 @@ const props = withDefaults(
         error?: boolean;
         /** Частично выбран: черта вместо квадрата. Клик ставит checked — indeterminate снимает родитель. */
         indeterminate?: boolean;
-        /** `square` inside or a `check` tick; without it the mark of ancestors (`.tao-mark-*`). / Квадрат или галочка; без него — как у предков. */
-        mark?: 'square' | 'check';
     }>(),
     {
         checked: undefined,
@@ -27,7 +25,6 @@ const props = withDefaults(
         disabled: false,
         error: false,
         indeterminate: false,
-        mark: undefined,
     },
 );
 
@@ -79,7 +76,7 @@ watch(
 </script>
 
 <template>
-    <label class="tao-checkbox" :class="[sizeClass(size), mark && `tao-mark-${mark}`, { 'tao-checkbox--disabled': disabled }]" :for="controlId">
+    <label class="tao-checkbox" :class="[sizeClass(size), { 'tao-checkbox--disabled': disabled }]" :for="controlId">
         <slot name="pre" :text="label" />
 
         <input
@@ -133,13 +130,13 @@ watch(
     content: '';
     display: block;
     box-sizing: border-box;
-    /* the shape comes from the mark context (contexts/mark.css): a square or a tick / форма из контекста отметки */
-    width: var(--_tao-mark-width);
-    height: var(--_tao-mark-height);
-    background-color: transparent;
-    border: 0 solid var(--tao-color-on-accent);
-    border-radius: var(--_tao-mark-radius);
-    transform: scale(0);
+    /* a tick: the bottom and right borders of a narrow box, turned; percentages, so every size gets the same shape
+       галочка: нижняя и правая граница узкой коробки, повёрнутая; в процентах — у всех размеров одна форма */
+    width: 30%;
+    height: 58%;
+    border: solid var(--tao-color-on-accent);
+    border-width: 0 2px 2px 0;
+    transform: translateY(-12%) rotate(45deg) scale(0);
     transition: var(--tao-transition-base);
 }
 
@@ -161,9 +158,7 @@ watch(
 }
 
 .tao-checkbox__input:checked + .tao-checkbox__box::after {
-    background-color: var(--_tao-mark-fill);
-    border-width: var(--_tao-mark-border);
-    transform: var(--_tao-mark-transform);
+    transform: translateY(-12%) rotate(45deg) scale(1);
 }
 
 .tao-checkbox__input:indeterminate + .tao-checkbox__box::after {
@@ -172,7 +167,7 @@ watch(
     border-width: 0;
     border-radius: 1px;
     background-color: var(--tao-color-on-accent);
-    transform: scale(1);
+    transform: none;
 }
 
 .tao-checkbox__input:focus-visible + .tao-checkbox__box {

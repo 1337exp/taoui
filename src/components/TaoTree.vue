@@ -487,18 +487,15 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
     background: var(--tao-color-accent);
 }
 
-/* the same marks as TaoCheckbox, from the mark context: a square or a tick when checked, a dash when mixed
-   те же знаки, что у TaoCheckbox, из контекста отметки: квадрат или галочка, черта для mixed */
+/* the same marks as TaoCheckbox: a tick when checked, a dash when mixed / те же знаки, что у TaoCheckbox */
 .tao-tree__check--checked::after {
     content: '';
     box-sizing: border-box;
-    width: var(--_tao-mark-width);
-    height: var(--_tao-mark-height);
+    width: 30%;
+    height: 58%;
     border: solid var(--tao-color-on-accent);
-    border-width: var(--_tao-mark-border);
-    border-radius: var(--_tao-mark-radius);
-    background: var(--_tao-mark-fill);
-    transform: var(--_tao-mark-transform);
+    border-width: 0 2px 2px 0;
+    transform: translateY(-12%) rotate(45deg);
 }
 
 .tao-tree__check--mixed::after {
