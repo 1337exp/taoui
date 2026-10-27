@@ -2,7 +2,7 @@
  * Tao UI — Light theme
  *
  * Пример того, как выглядит альтернативная тема: переопределяются
- * ТОЛЬКО семантические токены из semantic.css, ничего в компонентах
+ * ТОЛЬКО цветовые роли из dark.css, ничего в компонентах
  * менять не нужно.
  *
  * Подключение: <html data-tao-theme="light">
@@ -10,11 +10,14 @@
 [data-tao-theme="light"] {
     color-scheme: light;
 
-    --tao-color-accent: var(--tao-pink-500);
-    --tao-color-accent-hover: var(--tao-pink-600);
-    --tao-color-accent-active: var(--tao-pink-700);
+    /* pink-600, not the brand pink-500: white on it reaches 4.54:1 (AA); on pink-500 it was 3.64:1 */
+    --tao-color-accent: var(--tao-pink-600);
+    --tao-color-accent-hover: var(--tao-pink-700);
+    --tao-color-accent-active: var(--tao-pink-800);
     --tao-color-accent-subtle: color-mix(in srgb, var(--tao-color-accent) 10%, transparent);
     --tao-color-accent-subtle-hover: color-mix(in srgb, var(--tao-color-accent) 16%, transparent);
+    --tao-color-accent-text: var(--tao-pink-700);
+    --tao-color-accent-text-hover: var(--tao-pink-800);
     --tao-color-on-accent: #ffffff;
     --tao-button-primary-text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
     --tao-color-selection: var(--tao-color-accent);
@@ -33,7 +36,6 @@
     --tao-color-text-strong: var(--tao-gray-950);
     --tao-color-text-subtle: var(--tao-gray-600);
     --tao-color-text-muted: var(--tao-gray-400);
-    --tao-color-text-on-accent: var(--tao-color-on-accent);
     --tao-color-text-disabled: var(--tao-gray-300);
 
     /* Plain black links that turn rose on hover; no glow (that one is for the dark theme) */
@@ -45,6 +47,9 @@
     --tao-color-danger-hover: var(--tao-red-600);
     --tao-color-on-danger: #ffffff;
     --tao-color-danger-subtle: color-mix(in srgb, var(--tao-red-500) 10%, transparent);
+    --tao-color-on-success: var(--tao-gray-950);
+    --tao-color-on-warning: var(--tao-gray-950);
+    --tao-color-on-info: var(--tao-gray-950);
     --tao-color-success: var(--tao-green-500);
     --tao-color-success-hover: var(--tao-green-600);
     --tao-color-success-subtle: color-mix(in srgb, var(--tao-color-success) 10%, transparent);

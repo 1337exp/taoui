@@ -1,6 +1,10 @@
 <script lang="ts" setup>
-import { computed, inject, nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
-import { formFieldKey } from '../formField';
+import { computed, nextTick, ref, watch } from 'vue';
+import { useDismiss } from '../dismiss';
+import { useFloating } from '../floating';
+import { useLayer } from '../layers';
+import { useListNav } from '../listNav';
+import { useField } from '../formField';
 import type { TaoSelectOption } from '../select';
 import { resolveSize, sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
@@ -41,51 +45,35 @@ const emit = defineEmits<{
     change: [value: string | number | null];
 }>();
 
-const field = inject(formFieldKey, null);
-const localId = useId();
+const { field, controlId, invalid, describedBy, localId } = useField(props);
 const listId = `${localId}-list`;
-const controlId = computed(() => field?.id ?? localId);
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
-const describedBy = computed(() => field?.describedBy.value);
 
 const open = ref(false);
 const activeIndex = ref(-1);
 const triggerRef = ref<HTMLButtonElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
 const listRef = ref<HTMLElement | null>(null);
-const listStyle = ref({ top: '0px', left: '0px', width: '0px' });
 /** The panel is teleported to body, so it gets the size resolved at the trigger. / Панель в body — размер берём у триггера. */
 const panelSize = ref<TaoSize>('medium');
 
 const selected = computed(() => props.options.find((option) => option.value === props.modelValue) ?? null);
-const enabledIndexes = computed(() =>
-    props.options.map((option, index) => (option.disabled ? -1 : index)).filter((index) => index >= 0),
-);
+const enabled = computed(() => props.options.map((option) => !option.disabled));
+const enabledIndexes = computed(() => enabled.value.flatMap((on, index) => (on ? [index] : [])));
 
-function updatePosition() {
-    const trigger = triggerRef.value;
-    const panel = panelRef.value;
-
-    if (!trigger || !panel) {
-        return;
-    }
-
-    const rect = trigger.getBoundingClientRect();
-    const panelHeight = panel.offsetHeight;
-    const panelWidth = panel.offsetWidth || rect.width;
-    const gap = 4;
-    const pad = 8;
-    const spaceBelow = window.innerHeight - rect.bottom - gap;
-    const openUp = spaceBelow < panelHeight && rect.top > spaceBelow;
-    const maxLeft = Math.max(pad, window.innerWidth - panelWidth - pad);
-    const left = Math.min(Math.max(rect.left, pad), maxLeft);
-
-    listStyle.value = {
-        top: `${openUp ? rect.top - panelHeight - gap : rect.bottom + gap}px`,
-        left: `${left}px`,
-        width: `${rect.width}px`,
-    };
-}
+const { style: listStyle, update: updatePosition } = useFloating(triggerRef, panelRef, open, { placement: 'bottom-start', matchWidth: true });
+useDismiss(open, () => [triggerRef.value, panelRef.value], close);
+useLayer(open, {
+    onEscape: () => {
+        close();
+        triggerRef.value?.focus();
+    },
+});
+const nav = useListNav({
+    enabled: () => enabled.value,
+    active: activeIndex,
+    labels: () => props.options.map((option) => option.label),
+    onMove: () => scrollActiveIntoView(),
+});
 
 async function setOpen(next: boolean) {
     if (props.disabled) {
@@ -135,19 +123,6 @@ function clear() {
     triggerRef.value?.focus();
 }
 
-function moveActive(delta: number) {
-    const enabled = enabledIndexes.value;
-
-    if (!enabled.length) {
-        return;
-    }
-
-    const currentPos = enabled.indexOf(activeIndex.value);
-    const nextPos = currentPos < 0 ? 0 : (currentPos + delta + enabled.length) % enabled.length;
-    activeIndex.value = enabled[nextPos];
-    scrollActiveIntoView();
-}
-
 function scrollActiveIntoView() {
     const list = listRef.value;
 
@@ -177,36 +152,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
 }
 
 function onListKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
-        event.preventDefault();
-        close();
-        triggerRef.value?.focus();
-        return;
-    }
-
-    if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        moveActive(1);
-        return;
-    }
-
-    if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        moveActive(-1);
-        return;
-    }
-
-    if (event.key === 'Home') {
-        event.preventDefault();
-        activeIndex.value = enabledIndexes.value[0] ?? -1;
-        scrollActiveIntoView();
-        return;
-    }
-
-    if (event.key === 'End') {
-        event.preventDefault();
-        activeIndex.value = enabledIndexes.value[enabledIndexes.value.length - 1] ?? -1;
-        scrollActiveIntoView();
+    if (nav.onKeydown(event)) {
         return;
     }
 
@@ -228,40 +174,10 @@ function onListKeydown(event: KeyboardEvent) {
     }
 }
 
-function onDocumentPointer(event: PointerEvent) {
-    const target = event.target as Node;
-
-    if (triggerRef.value?.contains(target) || panelRef.value?.contains(target)) {
-        return;
-    }
-
-    close();
-}
-
-function onViewportChange() {
-    if (open.value) {
-        updatePosition();
-    }
-}
-
 watch(open, (isOpen) => {
     if (isOpen) {
         panelSize.value = resolveSize(triggerRef.value, props.size);
-        document.addEventListener('pointerdown', onDocumentPointer, true);
-        window.addEventListener('resize', onViewportChange);
-        window.addEventListener('scroll', onViewportChange, true);
-        return;
     }
-
-    document.removeEventListener('pointerdown', onDocumentPointer, true);
-    window.removeEventListener('resize', onViewportChange);
-    window.removeEventListener('scroll', onViewportChange, true);
-});
-
-onBeforeUnmount(() => {
-    document.removeEventListener('pointerdown', onDocumentPointer, true);
-    window.removeEventListener('resize', onViewportChange);
-    window.removeEventListener('scroll', onViewportChange, true);
 });
 </script>
 
@@ -347,7 +263,7 @@ onBeforeUnmount(() => {
 
 <style>
 .tao-select__panel {
-    z-index: 1050;
+    z-index: var(--tao-z-popup);
     position: fixed;
     overflow: hidden;
     background: var(--tao-color-surface-raised);

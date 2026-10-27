@@ -15,6 +15,7 @@ export const localeEn: TaoLocale = {
         },
     },
     breadcrumb: { ariaLabel: 'Breadcrumb' },
+    card: { closeLabel: 'Close' },
     carousel: {
         ariaLabel: 'Carousel',
         prevLabel: 'Previous',
@@ -86,6 +87,6 @@ export const localeEn: TaoLocale = {
         eyedropperLabel: 'Eyedropper',
         chooseLabel: 'Choose color',
     },
-    timeline: { playLabel: 'Play', pauseLabel: 'Pause', restartLabel: 'Restart' },
+    scrubber: { playLabel: 'Play', pauseLabel: 'Pause', restartLabel: 'Restart' },
     toast: { closeLabel: 'Close notification' },
 };

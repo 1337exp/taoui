@@ -19,14 +19,15 @@ export const propTables = {
       title: 'TaoButton',
       rows: [
         r('type', "'button' | 'submit' | 'reset'", "'button'", 'Нативный type кнопки'),
-        r('variant', "'primary' | 'secondary' | 'ghost' | 'text' | 'danger'", "'primary'", 'Форма. Залитый красный — danger, не tone'),
-        r('tone', "'danger' | 'success' | 'warning' | 'info' | 'neutral' | ''", "''", 'Красит ghost и text. neutral — тёмный текст, только подсветка при наведении цветом темы; для тихого действия рядом с основным. Не вместо variant'),
+        r('variant', "'primary' | 'secondary' | 'ghost' | 'text'", "'primary'", 'Форма. Цвет — tone'),
+        r('tone', "'accent' | 'neutral' | 'success' | 'danger' | 'warning' | 'info'", "'accent'", 'Цвет на любом variant. accent — акцент темы. neutral — тёмный текст, только подсветка при наведении цветом темы; для тихого действия рядом с основным'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер. Без него — размер предков (класс tao-size-* или size у FormField / InputGroup), иначе medium'),
         r('disabled', 'boolean', 'false', 'Неактивна'),
         r('loading', 'boolean', 'false', 'Спиннер, клик глушится'),
         r('block', 'boolean', 'false', 'Ширина 100%'),
         r('minWidth', 'number | string', '—', 'Минимальная ширина (число = px); переменная --tao-button-min-width'),
-        r('icon', 'string', "''", 'Символ слева от текста'),
+        r('icon', 'string', "''", 'Иконка перед текстом: имя для TaoIcon (tao-plus, своя или из шрифта). Без текста и слота кнопка — квадрат высотой с контрол, нужен aria-label'),
+        r('iconEnd', 'string', "''", 'Иконка после текста'),
       ],
       slots: 'default — подпись кнопки.',
     },
@@ -47,17 +48,19 @@ export const propTables = {
     {
       title: 'TaoCard',
       rows: [
-        r('padding', 'number | string | (…)[]', '20', 'Отступ тела карточки. Число — px, строка — CSS. У flush — 0'),
-        r('radius', 'number | string', '8', 'Скругление. Число — px, строка — CSS'),
+        r('padding', 'number | string | (…)[]', 'var(--tao-space-5)', 'Отступ тела карточки. Число — px, строка — CSS. У flush — 0. Публикуется как --tao-pad'),
+        r('radius', 'number | string', 'var(--tao-radius-panel)', 'Скругление. Число — px, строка — CSS. Публикуется как --tao-radius; вложенным — --tao-radius-inner'),
         r('shadow', 'boolean', 'true', 'Обычная тень. У flush выключена'),
         r('shadowBottomOnly', 'boolean', 'false', 'Линия снизу карточки, не scrim на фото'),
         r('flush', 'boolean', 'false', 'Плитка: без padding и тени, cover/body на всю ячейку'),
         r('hover', 'boolean', 'false', 'Обводка акцентом при наведении'),
         r('surface', "'flat' | 'grain' | 'glass'", "'flat'", 'Из чего сделана карточка: заливка / зерно / стекло. См. «Поверхности»'),
         r('active', 'boolean', 'false', 'Выделенное состояние'),
-        r('overflow', 'boolean', 'false', 'Не обрезать содержимое (cover/карусель)'),
+        r('overflow', 'boolean', 'false', 'Не обрезать содержимое (media/карусель)'),
+        r('closable', 'boolean', 'false', 'Кнопка закрытия в правом верхнем углу; карточку убирает родитель по событию close'),
+        r('closeLabel', 'string', "'Закрыть'", 'aria-label кнопки закрытия'),
       ],
-      slots: 'default — тело. #cover, #overlay (scrim поверх cover или всей плитки), #header, #title, #sub, #footer.',
+      slots: 'default — тело. #media (фото или карусель сверху), #overlay (scrim поверх media или всей плитки), #header (верхняя строка: раскладка ваша), #title, #sub, #footer, #corner (правый верхний угол: тег, кнопка меню; заголовок оставляет ему место, ширина — переменная --tao-card-corner-size). Событие close — нажали крестик.',
     },
   ],
   copy: [
@@ -66,7 +69,6 @@ export const propTables = {
       rows: [
         r('text', 'string', '—', 'Строка в буфер. Обязательный'),
         r('successText', 'string', "'Скопировано!'", 'Текст тултипа после клика'),
-        r('successMessage', 'string', '—', 'Устарел: successText (видимые тексты — *Text, aria — *Label)'),
         r('copyLabel', 'string', "'Копировать'", 'aria-label кнопки'),
         r('tip', 'boolean', 'true', 'Показать тултип над кнопкой после копирования'),
       ],
@@ -79,11 +81,9 @@ export const propTables = {
         r('v-model', 'string | number', "''", 'Значение поля'),
         r('type', "'text' | 'password' | 'email' | 'number' | 'tel'", "'text'", 'Тип native input'),
         r('placeholder', 'string', "''", 'Подсказка внутри'),
-        r('label', 'string', "''", 'Устарел: подпись — label у TaoFormField, как у всех полей'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер, шкала как у TaoButton. Без него — размер предков (tao-size-* или size у FormField / InputGroup), иначе medium'),
         r('disabled', 'boolean', 'false', 'Неактивно'),
         r('error', 'boolean', 'false', 'Красная рамка. Текст ошибки — error у TaoFormField'),
-        r('errorMessage', 'string', "''", 'Устарел: текст ошибки — error у TaoFormField'),
         r('id', 'string', 'auto', 'id инпута; иначе из FormField или useId'),
       ],
       slots: '#prefix и #suffix — внутри рамки слева/справа (иконка, текст).',
@@ -142,12 +142,9 @@ export const propTables = {
         r('variant', "'bar' | 'outline' | 'filled' | 'plain'", "'bar'", 'Полоса слева / рамка как у TaoInput / только заливка / ничего'),
         r('readonly', 'boolean', 'false', 'Читается и выделяется, но не правится'),
         r('noSpace', 'boolean', 'false', 'Пробел не вводится — ни с клавиатуры, ни вставкой'),
-        r('noBorder / noBackground / borderInverse', 'boolean', 'false', 'Устарели: variant="filled" / variant="plain" / полоса справа'),
-        r('dummy', 'boolean', 'false', 'Устарел: readonly'),
         r('align', "'start' | 'center' | 'end'", "'start'", 'Выравнивание текста'),
         r('autofocus', 'boolean', 'false', 'Фокус при монтировании'),
         r('blurOnEnter', 'boolean', 'false', 'Enter снимает фокус вместо переноса (Shift+Enter переносит); keydown уходит раньше'),
-        r('textCenter / autoFocus / submitOnEnter', 'boolean', 'false', 'Устарели: align="center" / autofocus / blurOnEnter'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер, шкала как у TaoButton. Без него — размер предков (tao-size-* или size у FormField / InputGroup), иначе medium'),
         r('disabled', 'boolean', 'false', 'Неактивно'),
         r('error', 'boolean', 'false', 'Красная рамка'),
@@ -160,7 +157,6 @@ export const propTables = {
       rows: [
         r('v-model', 'boolean', '—', 'Отмечен / нет'),
         r('checked', 'boolean', '—', 'Состояние без v-model'),
-        r('value', 'boolean', '—', 'Устарел: checked. value станет значением опции, как у TaoRadio'),
         r('label', 'string', "''", 'Подпись справа'),
         r('indeterminate', 'boolean', 'false', 'Черта вместо галочки. Клик ставит checked, смешанное считает родитель'),
         r('disabled', 'boolean', 'false', 'Неактивен'),
@@ -238,7 +234,7 @@ export const propTables = {
       rows: [
         r('value', 'string | number | boolean', '—', 'Значение опции. Обязательный'),
         r('label', 'string', "''", 'Текст. Или слот default'),
-        r('icon', 'string', "''", 'Символ слева'),
+        r('icon', 'string', "''", 'Имя иконки для TaoIcon слева'),
         r('count', 'number | string', '—', 'Цифра справа (бейдж)'),
         r('disabled', 'boolean', 'false', 'Эта опция'),
       ],
@@ -306,7 +302,6 @@ export const propTables = {
         r('v-model', 'string', "''", 'Склеенная строка из ячеек'),
         r('numbersOnly', 'boolean', 'false', 'Только цифры'),
         r('masked', 'boolean', 'false', 'Точки вместо символов'),
-        r('hidden', 'boolean', 'false', 'Устарел: masked (hidden — нативный атрибут)'),
         r('disabled', 'boolean', 'false', 'Неактивно'),
         r('error', 'boolean', 'false', 'Красная рамка. Текст ошибки — error у TaoFormField'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Ячейки 40×46 / 50×56 / 58×64. Без него — размер предков'),
@@ -359,7 +354,7 @@ export const propTables = {
       ],
     },
     {
-      title: 'TaoTimeline',
+      title: 'TaoScrubber',
       rows: [
         r('v-model', 'number', '—', 'Текущее время. Обязательный'),
         r('v-model:playing', 'boolean', 'false', 'Идёт ли воспроизведение (вид кнопки). Время компонент сам не ведёт'),
@@ -401,7 +396,7 @@ export const propTables = {
       rows: [
         r('v-model', 'string', '—', 'Цвет строкой hex. Обязательный'),
         r('alpha / swatches / modes / v-model:mode / eyedropper / size', '', '', 'Как у TaoColorPicker'),
-        r('position', "'top' | 'bottom' | 'left' | 'right'", "'bottom'", 'С какой стороны открывается палитра'),
+        r('placement', 'TaoPlacement', "'bottom-start'", 'Сторона и выравнивание: top / bottom / left / right и -start / -end. У края экрана переворачивается'),
         r('error', 'boolean', 'false', 'Красная рамка. Текст ошибки — error у TaoFormField'),
         r('disabled', 'boolean', 'false', 'Неактивно'),
       ],
@@ -429,7 +424,7 @@ export const propTables = {
         r('list', 'boolean', 'true', 'Имена под зоной. Снять файл — сразу в v-model'),
         r('showClear', 'boolean', 'false', 'Кнопка «очистить всё». Сама не чистит — шлёт clear-request'),
       ],
-      slots: 'default — текст зоны. Событие change — добавили или убрали файлы (files — устаревший алиас). clear-request: родитель решает, обнулить сразу или после confirm().',
+      slots: 'default — текст зоны. Событие change — добавили или убрали файлы. clear-request: родитель решает, обнулить сразу или после confirm().',
     },
   ],
   table: [
@@ -444,14 +439,13 @@ export const propTables = {
         r('striped', "boolean | 'odd' | 'even'", 'false', 'Зебра. true/odd — с первой строки, even — со второй'),
         r('hover', 'boolean', 'true', 'Подсветка ряда при наведении'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Отступы и текст ячеек (small = бывший compact), заодно размер контролов в ячейках'),
-        r('compact', 'boolean', 'false', 'Устарел: то же, что size="small"'),
         r('head', 'boolean', 'true', 'Подсветка шапки'),
         r('lines', 'boolean', 'true', 'Линии между рядами'),
         r('sticky', 'boolean', 'false', 'Липкая шапка (нужен maxHeight)'),
         r('rowKey', 'string | fn', "'id'", 'Ключ ряда'),
         r('maxHeight', 'number | string', '—', 'Скролл. Число — px'),
       ],
-      slots: 'Ячейка: #cell-{key}="{ row, value }". События: change — сменили сортировку (sort — устаревший алиас), row-click, если clickable.',
+      slots: 'Ячейка: #cell-{key}="{ row, value }". События: change — сменили сортировку, row-click, если clickable.',
     },
   ],
   pagination: [
@@ -512,7 +506,6 @@ export const propTables = {
       rows: [
         r('items', 'TaoStageItem[]', '[]', '{ key, label?, status?: wait | work | ok | bad }'),
         r('direction', "'row' | 'column'", "'column'", 'column — сверху вниз, row — в ряд. Как у TaoFlex'),
-        r('vertical', 'boolean', '—', 'Устарел: direction'),
         r('ariaLabel', 'string', "'Стадии'", 'Имя списка'),
       ],
       slots: 'default / #icon="{ item, index, status }" — подменить текст или иконку шага.',
@@ -557,7 +550,6 @@ export const propTables = {
       title: 'TaoContainer',
       rows: [
         r('width', "'wide' | 'slim' | 'ultra-slim'", "'wide'", 'max-width: 1120 / 500 / 400'),
-        r('size', "'wide' | 'slim' | 'ultra-slim'", '—', 'Устарел: то же, что width'),
         r('free', 'boolean', 'false', 'Без авто-центровки по горизонтали'),
       ],
       slots: 'default — контент.',
@@ -579,7 +571,6 @@ export const propTables = {
       title: 'TaoSpace',
       rows: [
         r('direction', "'row' | 'column'", "'row'", 'Как у TaoFlex'),
-        r('vertical', 'boolean', 'false', 'Устарел: direction="column"'),
         r('block', 'boolean', 'false', 'display: flex без wrap'),
         r('expand', 'boolean', 'false', 'Ширина 100%'),
       ],
@@ -612,7 +603,7 @@ export const propTables = {
         r('variant', "'solid' | 'dashed' | 'colored' | 'gap'", "'solid'", 'solid — обычный border, dashed — пунктир, colored — акцент, gap — отступ'),
         r('text', 'string', "''", 'Опциональная подпись посередине. Работает с любым variant'),
         r('fade', 'boolean', 'false', 'Плавные края линии. Не влияет на gap'),
-        r('size', "'small' | 'medium' | 'large'", "'medium'", 'Только для gap — высота отступа. Не наследуется. big — устаревший алиас large'),
+        r('size', "'small' | 'medium' | 'large'", "'medium'", 'Только для gap — высота отступа. Не наследуется.'),
       ],
       slots: 'default — то же, что text. Если есть слот, он важнее пропа.',
     },
@@ -648,12 +639,16 @@ export const propTables = {
     {
       title: 'TaoAnimatedBorder',
       rows: [
+        r('variant', "'rainbow' | 'tone'", "'rainbow'", 'Из чего рамка: радуга или цвета тона'),
+        r('tone', 'TaoToneName', "'accent'", 'Тон для variant="tone"; без него акцент темы'),
+        r('colors', 'string[]', '—', 'Свои цвета (любые CSS-цвета), главнее variant'),
+        r('radius', 'number | string', 'var(--tao-radius-panel)', 'Скругление содержимого; рамка снаружи — оно плюс толщина'),
         r('borderWidth', 'number', '3', 'Толщина контура в px'),
         r('speed', 'number', '6', 'Длительность оборота в секундах'),
         r('light', 'boolean', 'false', 'Мягкое свечение вокруг рамки'),
         r('glow', 'number', '16', 'Радиус glow в px. Имеет смысл при light'),
       ],
-      slots: 'default — содержимое внутри рамки.',
+      slots: 'default — содержимое внутри рамки. При prefers-reduced-motion градиент стоит на месте.',
     },
   ],
   modal: [
@@ -700,7 +695,7 @@ export const propTables = {
       title: 'TaoTooltip',
       rows: [
         r('content', 'string', '—', 'Текст подсказки. Обязательный'),
-        r('position', "'top' | 'bottom' | 'left' | 'right'", "'top'", 'Сторона. У края экрана переворачивается'),
+        r('placement', 'TaoPlacement', "'top'", 'Сторона и выравнивание: top / bottom / left / right и -start / -end. У края экрана переворачивается'),
       ],
       slots: 'default — триггер (кнопка, иконка…).',
     },
@@ -710,7 +705,7 @@ export const propTables = {
       title: 'TaoPopover',
       rows: [
         r('v-model', 'boolean', 'uncontrolled', 'Открытость. Без v-model живёт сам'),
-        r('position', "'top' | 'bottom' | 'left' | 'right'", "'bottom'", 'Сторона панели, у края переворачивается'),
+        r('placement', 'TaoPlacement', "'bottom-start'", 'Сторона и выравнивание панели: top / bottom / left / right и -start / -end. У края переворачивается'),
         r('disabled', 'boolean', 'false', 'Не открывается'),
       ],
       slots: '#trigger — кнопка. default — содержимое панели. Не тултип и не меню действий.',
@@ -720,10 +715,22 @@ export const propTables = {
     {
       title: 'TaoDropdownMenu',
       rows: [
-        r('actions', '{ id, name, ico? }[]', '[]', 'Пункты меню'),
-        r('menuLabel', 'string', "'Меню'", 'aria-label кнопки'),
+        r('items', 'TaoMenuItem[]', '[]', 'Пункты: обычные { id, label, icon?, shortcut?, disabled?, items? }, чекбоксы { type: "checkbox", checked }, радио { type: "radio", group, checked }, { type: "label" }, { type: "separator" }. items внутри пункта — подменю'),
+        r('placement', 'TaoPlacement', "'bottom-end'", 'Где открывается список. У края экрана переворачивается'),
+        r('menuLabel', 'string', "'Меню'", 'aria-label кнопки и меню'),
       ],
-      slots: '#icon — иконка триггера. Событие select — id пункта (selected — устаревший алиас).',
+      slots: '#icon — иконка триггера, #button — всё содержимое кнопки, #item="{ item, id, label, icon }" — свой вид пункта. Событие select — id пункта. shortcut — готовая строка для показа, меню её не разбирает и не слушает.',
+    },
+    {
+      title: 'TaoMenu',
+      rows: [
+        r('items', 'TaoMenuItem[]', '', 'Те же пункты'),
+        r('open', 'boolean', '', 'Открыто ли. Закрывает владелец по событию close'),
+        r('anchor', 'HTMLElement | null', '', 'К чему крепится панель'),
+        r('placement', 'TaoPlacement', "'bottom-end'", 'Сторона и выравнивание'),
+        r('label', 'string', '—', 'Имя меню для скринридера'),
+      ],
+      slots: 'Событие select — id пункта, close(reason) — меню просит закрыть себя (escape / select / outside / tab). Панель меню для своих оболочек: кнопка, контекстное меню, полоса меню.',
     },
   ],
   spoiler: [
@@ -753,10 +760,9 @@ export const propTables = {
       rows: [
         r('v-model', 'string', '—', 'value активной вкладки. Обязательный'),
         r('items', 'TaoTabItem[]', '—', '{ value, label, disabled? } — как опции Select'),
-        r('tabs', '{ key, label, disabled? }[]', '—', 'Устарел: items, key → value'),
         r('@change', 'value', '—', 'Пользователь выбрал другую вкладку'),
 
-        r('justify', 'string', "''", 'CSS justify-content для выравнивания вкладок (center, flex-end, space-between и т.д.)'),
+        r('justify', 'TaoJustify', '—', 'Где вкладки в ряду, как у TaoFlex: flex-start, center, flex-end, space-between, space-around, space-evenly. Без него слева'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Высота вкладки как у TaoButton (26 / 36 / 44). Без него — размер предков'),
       ],
       slots: 'default="{ key }" — содержимое активной панели.',
@@ -777,7 +783,6 @@ export const propTables = {
       rows: [
         r('to', 'string | object', '—', 'Адрес. NuxtLink → RouterLink → <a>'),
         r('newTab', 'boolean', 'false', 'target=_blank + rel=noopener'),
-        r('asNewTab', 'boolean', 'false', 'Устарел: newTab'),
         r('private', 'boolean', 'false', 'rel=noopener noreferrer'),
         r('exactPath', 'boolean', 'false', 'Точное совпадение пути для active (vue-router)'),
       ],
@@ -799,7 +804,6 @@ export const propTables = {
         r('zIndex', 'number', '1000', 'Слой'),
         r('ariaLabel', 'string', "'Наверх'", 'Доступное имя'),
         r('outline', 'boolean', 'true', 'Обводка фокуса'),
-        r('hasOutline / tabindex', '—', '—', 'Устарели: outline / tabindex как обычный атрибут'),
       ],
     },
   ],
@@ -810,7 +814,7 @@ export const propTables = {
       rows: [
         r('toast()', '() => builder', '', 'Цепочка в одном тике, показ на следующем'),
         r('toast.success(msg)', '(string, options?) => builder', '', 'Короткий вызов. Также error / warning / info / show'),
-        r('.success() / .error() / …', '() => builder', '', 'Тип. show() — нейтральный'),
+        r('.success() / .danger() / …', '() => builder', '', 'Тип. show() — нейтральный'),
         r('.title / .message', '(string) => builder', '', 'Заголовок и текст'),
         r('.short() / .timeout(ms)', '() => builder', '', '1 с или своё время'),
         r('.byBottomRight() / …', '() => builder', '', 'Угол: top/bottom + left/right/center'),
@@ -823,8 +827,7 @@ export const propTables = {
     {
       title: 'TaoAlert',
       rows: [
-        r('tone', "'success' | 'danger' | 'warning' | 'info' | 'neutral'", "'info'", 'Цвет статуса, как у TaoButton. error = danger'),
-        r('type', '—', '—', 'Устарел: tone'),
+        r('tone', "'success' | 'danger' | 'warning' | 'info' | 'neutral'", "'info'", 'Цвет статуса, как у TaoButton'),
         r('title', 'string', "''", 'Заголовок. Можно без него'),
         r('closable', 'boolean', 'false', 'Крестик. Сам не размонтируется — шлёт close'),
         r('closeLabel', 'string', "'Закрыть'", 'aria-label крестика'),
@@ -836,13 +839,11 @@ export const propTables = {
     {
       title: 'TaoTag',
       rows: [
-        r('tone', "'neutral' | 'success' | 'danger' | 'warning' | 'info' | ''", "''", 'Цвет статуса, как у TaoButton. error = danger'),
-        r('type', '—', '—', 'Устарел: tone'),
+        r('tone', "'neutral' | 'success' | 'danger' | 'warning' | 'info' | ''", "''", 'Цвет статуса, как у TaoButton'),
         r('flat', 'boolean', 'false', 'Без рамки, заливка остаётся'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Высота 18 / 20 / 24. Без него — размер предков'),
         r('closable', 'boolean', 'false', 'Крестик. Шлёт close, сам массив не трогает'),
         r('clickable', 'boolean', 'false', 'Курсор pointer (кликабельный чип), как у TaoListItem / TaoTable'),
-        r('pointer', 'boolean', 'false', 'Устарел: clickable'),
         r('color / background / borderColor', 'string', '—', 'Перебить токены вручную'),
       ],
       slots: 'default — текст. #prefix — аватар или иконка слева.',
@@ -876,7 +877,7 @@ export const propTables = {
       rows: [
         r('src', 'string', "''", 'Фото. Пусто — инициалы из name'),
         r('name', 'string', "''", 'Для инициалов и alt'),
-        r('size', "'small' | 'medium' | 'large'", "'medium'", '24 / 32 / 48px. Контент, не наследует размер предков. s / m / l устарели'),
+        r('size', "'small' | 'medium' | 'large'", "'medium'", '24 / 32 / 48px. Контент, не наследует размер предков.'),
         r('dot', 'boolean | tone', 'false', 'Точка статуса. true = success'),
         r('count', 'number | string', '—', 'Бейдж. 0 и пустое не рисуются, >99 → 99+'),
       ],
@@ -886,12 +887,12 @@ export const propTables = {
     {
       title: 'TaoIcon',
       rows: [
-        r('name', 'string', '—', 'Класс icon-{name}. Шрифт подключаете сами. Обязательный'),
-        r('size', 'number', '—', 'font-size в px'),
+        r('name', 'string', '—', 'tao-… — встроенный SVG; имя из registerTaoIcons; любое другое — класс icon-{name} вашего шрифта. Обязательный'),
+        r('size', 'number', '—', 'Пиксели. Без него SVG-иконка 1em (по размеру шрифта)'),
         r('margin', 'string', "'0px'", 'Внешний отступ'),
         r('invert', 'boolean', 'false', 'Инвертировать цвет'),
       ],
-      slots: '#prefix / #postfix — рядом с глифом.',
+      slots: '#prefix / #postfix — рядом с иконкой. registerTaoIcons({ имя: { body, viewBox? } }) добавляет свои SVG; приставка tao- зарезервирована.',
     },
   ],
 }

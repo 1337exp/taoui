@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed } from 'vue';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
@@ -6,7 +7,7 @@ import type { TaoSliderMark } from '../slider';
 import TaoButton from './TaoButton.vue';
 import TaoSlider from './TaoSlider.vue';
 
-defineOptions({ name: 'TaoTimeline' });
+defineOptions({ name: 'TaoScrubber' });
 
 // Таймлайн: кнопки «играть» и «в начало», слайдер по времени с метками событий и подпись «время / длина».
 // Компонент только показывает и отдаёт действия пользователя: сам время не ведёт. Вести его можно чем угодно
@@ -71,7 +72,7 @@ defineSlots<{
     time?(props: { time: number; length: number; text: string }): unknown;
 }>();
 
-const l10n = useLocaleText(props, 'timeline');
+const l10n = useLocaleText(props, 'scrubber');
 const text = (t: number) => (props.format ? props.format(t) : t.toFixed(2));
 const label = computed(() => `${text(props.modelValue)} / ${text(props.length)}`);
 
@@ -88,10 +89,10 @@ function onRestart() {
 
 <template>
     <div
-        class="tao-timeline"
-        :class="[sizeClass(size), `tao-timeline--${variant}`, { 'tao-timeline--marks-start': marksSide === 'start', 'tao-timeline--disabled': disabled }]"
+        class="tao-scrubber"
+        :class="[sizeClass(size), `tao-scrubber--${variant}`, { 'tao-scrubber--marks-start': marksSide === 'start', 'tao-scrubber--disabled': disabled }]"
     >
-        <div class="tao-timeline__controls">
+        <div class="tao-scrubber__controls">
             <TaoButton
                 size="small"
                 variant="secondary"
@@ -100,12 +101,12 @@ function onRestart() {
                 :aria-pressed="playing"
                 @click="emit('update:playing', !playing)"
             >
-                {{ playing ? '❚❚' : '▶' }}
+                <TaoIcon :name="playing ? 'tao-pause' : 'tao-play'" />
             </TaoButton>
-            <TaoButton v-if="showRestart" size="small" variant="ghost" :disabled="disabled" :aria-label="l10n.restartLabel" @click="onRestart">⏮</TaoButton>
+            <TaoButton v-if="showRestart" size="small" variant="ghost" :disabled="disabled" :aria-label="l10n.restartLabel" @click="onRestart"><TaoIcon name="tao-skip-back" /></TaoButton>
         </div>
 
-        <div class="tao-timeline__track">
+        <div class="tao-scrubber__track">
             <TaoSlider
                 :model-value="modelValue"
                 :min="0"
@@ -124,17 +125,17 @@ function onRestart() {
             </TaoSlider>
         </div>
 
-        <div v-if="showTime" class="tao-timeline__time">
+        <div v-if="showTime" class="tao-scrubber__time">
             <slot name="time" :time="modelValue" :length="length" :text="label">{{ label }}</slot>
         </div>
     </div>
 </template>
 
 <style scoped>
-.tao-timeline {
+.tao-scrubber {
     /* Высота ряда с кнопками; рейка слайдера стоит по её центру, а метки висят ниже (или выше). Те же формулы, что в TaoSlider. */
-    --tao-timeline-hit: calc(var(--tao-indicator-size) - 4px);
-    --tao-timeline-pad: calc((var(--tao-control-height) - var(--tao-timeline-hit)) / 2);
+    --tao-scrubber-hit: calc(var(--tao-indicator-size) - 4px);
+    --tao-scrubber-pad: calc((var(--tao-control-height) - var(--tao-scrubber-hit)) / 2);
 
     display: flex;
     align-items: flex-start;
@@ -142,36 +143,36 @@ function onRestart() {
     width: 100%;
 }
 
-.tao-timeline--thin {
-    --tao-timeline-hit: calc(var(--tao-indicator-size) - 2px);
+.tao-scrubber--thin {
+    --tao-scrubber-hit: calc(var(--tao-indicator-size) - 2px);
 }
 
-.tao-timeline--marks-start {
+.tao-scrubber--marks-start {
     align-items: flex-end;
 }
 
-.tao-timeline--disabled {
+.tao-scrubber--disabled {
     cursor: not-allowed;
 }
 
-.tao-timeline__controls {
+.tao-scrubber__controls {
     display: flex;
     flex: none;
     gap: 4px;
 }
 
-.tao-timeline__track {
+.tao-scrubber__track {
     flex: 1;
     min-width: 0;
-    padding-top: var(--tao-timeline-pad);
+    padding-top: var(--tao-scrubber-pad);
 }
 
-.tao-timeline--marks-start .tao-timeline__track {
+.tao-scrubber--marks-start .tao-scrubber__track {
     padding-top: 0;
-    padding-bottom: var(--tao-timeline-pad);
+    padding-bottom: var(--tao-scrubber-pad);
 }
 
-.tao-timeline__time {
+.tao-scrubber__time {
     flex: none;
     min-width: 7ch;
     height: var(--tao-control-height);

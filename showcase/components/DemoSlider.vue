@@ -1,6 +1,6 @@
 <script setup>
 import { onBeforeUnmount, ref, watch } from 'vue'
-import { TaoProgress, TaoRangeSlider, TaoSlider, TaoTimeline } from '@1337exp/taoui'
+import { TaoProgress, TaoRangeSlider, TaoSlider, TaoScrubber } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { tr } from '../i18n.js'
 import Tr from './Tr.vue'
@@ -13,7 +13,7 @@ const sliderVolume = ref(70)
 const sliderWheel = ref(50)
 const sliderRange = ref([200, 4000])
 const sliderColor = ref(3)
-// The timeline does not keep time itself: here a simple timer drives it (in projects: usePlayback from @1337exp/taoux/playback)
+// The scrubber does not keep time itself: here a simple timer drives it (in projects: usePlayback from @1337exp/taoux/playback)
 const time = ref(1.25)
 const playing = ref(false)
 let timer = 0
@@ -27,7 +27,7 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
 
 <template>
   <ShowcaseSection id="slider" :tables="propTables['slider']">
-    <h2>TaoProgress / TaoSlider / TaoTimeline</h2>
+    <h2>TaoProgress / TaoSlider / TaoScrubber</h2>
           <Tr>
             <template #en><p>A static bar and a slider. The percentage sits on top in the centre or on the right with <code>show-percentage="right"</code>; if <code>#right</code> is present, the percentage goes on the right in brackets. <code>:show-percentage="false"</code> hides it. The slider listens to the arrows, Home/End and PageUp/Down. It is a form control by default; <code>size="small"</code> gives a thin track for seek / volume.</p></template>
             <template #ru><p>Статичная полоса и слайдер. Проценты сверху по центру или <code>show-percentage="right"</code> справа; если есть <code>#right</code>, процент справа в скобках. <code>:show-percentage="false"</code> прячет. Слайдер слушает стрелки, Home/End и PageUp/Down. По умолчанию — форм-контрол; <code>size="small"</code> — тонкий трек для seek / громкости.</p></template>
@@ -68,8 +68,8 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
           <TaoSlider v-model="sliderColor" :min="0" :max="7" :marks="colorMarks" discrete class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">{{ tr('A stepped scale: the value sits only on the marks, a click on a label moves the handle', 'Ступенчатая шкала: значение только на метках, клик по подписи переносит ручку') }}</p>
 
-          <h3>TaoTimeline</h3>
-          <TaoTimeline v-model="time" v-model:playing="playing" :length="8" :marks="[0, 2, 4, 6]" :format="(t) => tr(`${t.toFixed(2)} s`, `${t.toFixed(2)} с`)" class="demo-wide" />
+          <h3>TaoScrubber</h3>
+          <TaoScrubber v-model="time" v-model:playing="playing" :length="8" :marks="[0, 2, 4, 6]" :format="(t) => tr(`${t.toFixed(2)} s`, `${t.toFixed(2)} с`)" class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">{{ tr('Buttons, a slider with event marks and a caption. It does not keep time itself: v-model and v-model:playing', 'Кнопки, слайдер с метками событий и подпись. Время не ведёт сам: v-model и v-model:playing') }}</p>
 
           <div class="code-block">
@@ -95,7 +95,7 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
 &lt;TaoSlider v-model="volume" variant="thin" :wheel="5" /&gt;
 &lt;TaoRangeSlider v-model="range" :min="0" :max="5000" :step="100" marks /&gt;
 &lt;TaoSlider v-model="color" :min="0" :max="7" :marks="colorMarks" discrete /&gt;
-&lt;TaoTimeline v-model="time" v-model:playing="playing" :length="8" :marks="[0, 2, 4, 6]" /&gt;</code></pre>
+&lt;TaoScrubber v-model="time" v-model:playing="playing" :length="8" :marks="[0, 2, 4, 6]" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

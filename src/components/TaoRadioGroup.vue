@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { computed, inject, provide, useId } from 'vue';
-import { formFieldKey } from '../formField';
+import { computed, provide, useId } from 'vue';
+import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { radioGroupKey, type TaoRadioValue } from '../radio';
 
@@ -30,13 +30,11 @@ const emit = defineEmits<{
     change: [value: TaoRadioValue];
 }>();
 
-const field = inject(formFieldKey, null);
+const { field, invalid, describedBy } = useField(props);
 const autoName = useId();
 const groupName = computed(() => props.name || autoName);
 const model = computed(() => props.modelValue);
 const groupDisabled = computed(() => props.disabled);
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
-const describedBy = computed(() => field?.describedBy.value);
 const labelledBy = computed(() => (props.legend || !field ? undefined : `${field.id}-label`));
 
 function setValue(value: TaoRadioValue) {

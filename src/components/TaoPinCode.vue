@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { computed, inject, ref, useId, watch } from 'vue';
-import { formFieldKey } from '../formField';
+import { computed, ref, watch } from 'vue';
+import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
-import { warnDeprecated } from '../deprecate';
 import { parsePinFormat, pinFromPaste, separatorAfter } from '../pinFormat';
 
 defineOptions({ name: 'TaoPinCode' });
@@ -20,8 +19,6 @@ const props = withDefaults(
         format?: string;
         /** Cells show dots instead of characters. / Ячейки показывают точки вместо символов. */
         masked?: boolean;
-        /** @deprecated Use `masked` — `hidden` is a native attribute. / Используйте `masked` — `hidden` это нативный атрибут. */
-        hidden?: boolean;
         placeholder?: string;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
@@ -36,7 +33,6 @@ const props = withDefaults(
     }>(),
     {
         masked: false,
-        hidden: false,
         placeholder: '',
         disabled: false,
         error: false,
@@ -54,12 +50,8 @@ const emit = defineEmits<{
     blur: [];
 }>();
 
-const field = inject(formFieldKey, null);
-const localId = useId();
-const controlId = computed(() => field?.id ?? localId);
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
-const isMasked = computed(() => props.masked || props.hidden);
-const describedBy = computed(() => field?.describedBy.value);
+const { field, controlId, invalid, describedBy } = useField(props);
+const isMasked = computed(() => props.masked);
 
 const layout = computed(() => (props.format === undefined ? null : parsePinFormat(props.format)));
 /** How many cells there are: the mask wins over `length`. / Сколько ячеек: маска главнее `length`. */
@@ -258,10 +250,6 @@ watch(
     },
     { immediate: true },
 );
-
-warnDeprecated('TaoPinCode', {
-    hidden: 'use `masked`',
-});
 </script>
 
 <template>

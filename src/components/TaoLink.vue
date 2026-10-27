@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { computed, getCurrentInstance } from 'vue';
-import { warnDeprecated } from '../deprecate';
 
 defineOptions({ name: 'TaoLink' });
 
@@ -8,8 +7,6 @@ interface Props {
     to?: string | Record<string, unknown>;
     /** Open in a new tab. / Открыть в новой вкладке. */
     newTab?: boolean;
-    /** @deprecated Use `newTab`. / Используйте `newTab`. */
-    asNewTab?: boolean;
     private?: boolean;
     exactPath?: boolean;
 }
@@ -17,7 +14,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     to: undefined,
     newTab: false,
-    asNewTab: false,
     private: false,
     exactPath: false,
 });
@@ -33,7 +29,7 @@ const linkComponent =
     linkKind === 'nuxt' ? globals.NuxtLink : linkKind === 'router' ? globals.RouterLink : 'a';
 
 const linkProps = computed(() => {
-    const newTab = props.newTab || props.asNewTab;
+    const newTab = props.newTab;
     const target = newTab ? '_blank' : undefined;
     const rel = (props.private && 'noopener noreferrer') || (newTab && 'noopener') || undefined;
 
@@ -51,10 +47,6 @@ const linkProps = computed(() => {
         rel,
         ...(linkKind === 'nuxt' ? { exactPath: props.exactPath } : {}),
     };
-});
-
-warnDeprecated('TaoLink', {
-    asNewTab: 'use `newTab`',
 });
 </script>
 

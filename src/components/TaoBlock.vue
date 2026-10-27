@@ -17,23 +17,31 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    padding: 16,
-    radius: 8,
+    padding: undefined,
+    radius: undefined,
     shadow: true,
     hover: false,
     surface: 'flat',
 });
 
-const paddingStyle = computed(() => ({ padding: toCssBox(props.padding) }));
-
-const radiusStyle = computed(() => ({ borderRadius: toCssLength(props.radius) }));
+// Only what the user passed goes inline; the defaults come from tokens (see .tao-panel in styles/contexts/surface.css).
+// В inline уходит только то, что передал пользователь; значения по умолчанию — из токенов.
+const panelStyle = computed(() => {
+    const pad = props.padding;
+    const first = Array.isArray(pad) ? pad[0] : pad;
+    return {
+        padding: pad === undefined ? undefined : toCssBox(pad),
+        '--tao-pad': first === undefined ? undefined : toCssLength(first),
+        '--tao-radius': toCssLength(props.radius),
+    };
+});
 </script>
 
 <template>
     <div
-        class="tao-block"
+        class="tao-block tao-panel"
         :class="[surfaceClass(surface), { 'tao-block--shadow': shadow, 'tao-block--hover': hover }]"
-        :style="[paddingStyle, radiusStyle]"
+        :style="panelStyle"
     >
         <slot />
     </div>
@@ -41,6 +49,7 @@ const radiusStyle = computed(() => ({ borderRadius: toCssLength(props.radius) })
 
 <style scoped>
 .tao-block {
+    padding: var(--tao-pad);
     background-color: var(--tao-surface-fill, var(--tao-color-surface));
     background-image: var(--tao-surface-image, none);
     background-size: var(--tao-surface-image-size, auto);

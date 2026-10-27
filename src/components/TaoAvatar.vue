@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
 import type { TaoSize } from '../size';
-import { deprecationWarning } from '../deprecate';
-import { taoLocale, useLocaleText } from '../locale';
+import { toneClass, type TaoTone } from '../tone';
+import { useLocaleText, useTaoLocale } from '../locale';
 
 defineOptions({ name: 'TaoAvatar' });
 
-type TaoAvatarDot = 'success' | 'danger' | 'warning' | 'info' | 'neutral' | 'error';
+const appLocale = useTaoLocale();
+
+type TaoAvatarDot = TaoTone;
 
 const props = withDefaults(
     defineProps<{
@@ -14,10 +16,10 @@ const props = withDefaults(
         name?: string;
         alt?: string;
         /**
-         * 24 / 32 / 48px. Content, not a control: does not inherit the size of ancestors. `s` / `m` / `l` are deprecated.
+         * 24 / 32 / 48px. Content, not a control: does not inherit the size of ancestors.
          * Контент, не контрол: размер предков не наследует. `s` / `m` / `l` устарели.
          */
-        size?: TaoSize | 's' | 'm' | 'l';
+        size?: TaoSize;
         /** Точка статуса. `true` = success (в сети). */
         dot?: boolean | TaoAvatarDot;
         /** Счётчик в углу. 0 и пустое не рисуются, больше 99 — «99+». */
@@ -25,7 +27,7 @@ const props = withDefaults(
         fallbackLabel?: string;
         /** `{count}` — число в бейдже. */
         notificationsLabel?: string;
-        dotLabels?: Partial<Record<Exclude<TaoAvatarDot, 'error'>, string>>;
+        dotLabels?: Partial<Record<TaoAvatarDot, string>>;
     }>(),
     {
         src: '',
@@ -40,10 +42,10 @@ const props = withDefaults(
 const l10n = useLocaleText(props, 'avatar');
 
 const sizeClass = computed(() => {
-    if (props.size === 'small' || props.size === 's') {
+    if (props.size === 'small') {
         return 's';
     }
-    if (props.size === 'large' || props.size === 'l') {
+    if (props.size === 'large') {
         return 'l';
     }
     return 'm';
@@ -60,14 +62,14 @@ const initials = computed(() => {
     return `${parts[0][0] ?? ''}${parts[1][0] ?? ''}`.toUpperCase();
 });
 
-const dotTone = computed((): Exclude<TaoAvatarDot, 'error'> | null => {
+const dotTone = computed((): TaoAvatarDot | null => {
     if (!props.dot) {
         return null;
     }
     if (props.dot === true) {
         return 'success';
     }
-    return props.dot === 'error' ? 'danger' : props.dot;
+    return props.dot;
 });
 
 const badge = computed(() => {
@@ -88,7 +90,7 @@ const label = computed(() => {
     const base = props.alt || props.name || l10n.value.fallbackLabel;
     const extra: string[] = [];
     if (dotTone.value) {
-        extra.push(props.dotLabels[dotTone.value] ?? taoLocale().avatar.dotLabels[dotTone.value]);
+        extra.push(props.dotLabels[dotTone.value] ?? appLocale.value.avatar.dotLabels[dotTone.value]);
     }
     if (badge.value) {
         extra.push(l10n.value.notificationsLabel.replace('{count}', badge.value));
@@ -110,9 +112,6 @@ function onImgError() {
     imgFailed.value = true;
 }
 
-if (props.size === 's' || props.size === 'm' || props.size === 'l') {
-    deprecationWarning('TaoAvatar', `size "${props.size}"`, 'use small / medium / large');
-}
 </script>
 
 <template>
@@ -124,7 +123,7 @@ if (props.size === 's' || props.size === 'm' || props.size === 'l') {
         <span
             v-if="dotTone"
             class="tao-avatar__dot"
-            :class="`tao-avatar__dot--${dotTone}`"
+            :class="toneClass(dotTone)"
             aria-hidden="true"
         ></span>
         <span v-if="badge" class="tao-avatar__badge" aria-hidden="true">{{ badge }}</span>
@@ -192,7 +191,7 @@ if (props.size === 's' || props.size === 'm' || props.size === 'l') {
     box-sizing: border-box;
     border: 2px solid var(--tao-color-bg);
     border-radius: var(--tao-radius-full);
-    background: var(--tao-color-success);
+    background: var(--tao-tone);
 }
 
 .tao-avatar--s .tao-avatar__dot {
@@ -209,26 +208,6 @@ if (props.size === 's' || props.size === 'm' || props.size === 'l') {
 .tao-avatar--l .tao-avatar__dot {
     width: 12px;
     height: 12px;
-}
-
-.tao-avatar__dot--success {
-    background: var(--tao-color-success);
-}
-
-.tao-avatar__dot--danger {
-    background: var(--tao-color-danger);
-}
-
-.tao-avatar__dot--warning {
-    background: var(--tao-color-warning);
-}
-
-.tao-avatar__dot--info {
-    background: var(--tao-color-info);
-}
-
-.tao-avatar__dot--neutral {
-    background: var(--tao-color-text-muted);
 }
 
 .tao-avatar__badge {

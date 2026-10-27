@@ -58,6 +58,17 @@
     --tao-glass-border: rgb(0 0 0 / 0.08);
 }
 
+/* ---------- Panel contract / Контракт панели ----------
+   A panel (Block, Card, or your own element with `.tao-panel`) publishes its radius and padding, and its children can
+   round their corners concentrically: outer radius = inner radius + padding.
+   Панель публикует радиус и отступ, и вложенные могут скруглять углы концентрично: внешний радиус = внутренний + отступ. */
+.tao-panel {
+    --tao-radius: var(--tao-radius-panel);
+    --tao-pad: var(--tao-space-4);
+    --tao-radius-inner: max(0px, calc(var(--tao-radius) - var(--tao-pad)));
+    border-radius: var(--tao-radius);
+}
+
 /* ---------- Classes / Классы ---------- */
 .tao-surface-grain {
     --tao-surface-image: var(--tao-surface-grain-image);

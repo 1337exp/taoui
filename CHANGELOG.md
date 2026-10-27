@@ -1,5 +1,64 @@
 # Changelog
 
+## 5.0.0
+
+A foundation release: shared mechanisms instead of per-component copies, and a clean API. Everything deprecated since 2.0 is removed, so read [MIGRATION-5.md](MIGRATION-5.md) first. Why and how: `docs/v5-plan.md`.
+
+In numbers: the tarball is 329 KB (560 KB before the ESM-only build), 451 tests (183 before), one floating-panel engine instead of eight copies, 27 built-in icons instead of three icon mechanisms, one tone mechanism instead of six. TaoUX 0.2.0 and taofx follow it.
+
+### Breaking
+
+- **Every name deprecated since 2.0 is removed**, with the tone alias `error` (Alert, Tag, Avatar `dot`, `toast`). The table old → new is in [MIGRATION-5.md](MIGRATION-5.md).
+- `TaoTabItem` is a plain `{ value, label, disabled? }`; `TaoSegmentedSize` and `TaoListSize` are gone (use `TaoSize`); `--tao-field-height` and `--tao-color-text-on-accent` are gone.
+
+### Packaging
+
+- **ESM only.** The CommonJS build and its source map are gone (`dist/index.js`, `index.d.ts`, `styles.css`, one map): the tarball is smaller and there is one way to load the library. `require()` users switch to `import()`.
+- `package.json`: `exports` with `types` + `default`, `sideEffects: ["**/*.css"]`, `files` include `MIGRATION-5.md`, `browserslist` (Chrome / Edge 111, Safari 16.4, Firefox 128; the build targets the same), the unused `nuxt` peer is removed.
+- **Style files are laid out by layer:** `tokens/` (primitives, theme-independent semantic roles), `themes/` (`dark.css` holds the colour roles, `light.css`), `contexts/` (size, tone, surface), `base.css`. `styles.css` is the same bundle (dark and light).
+- `npm run lint:package` (`publint` + `attw`) and the consumer smoke test run in CI; README has a "Browser support" section.
+
+### Components
+
+- **`TaoTimeline` → `TaoScrubber`** (play / pause + a time slider). The name `TaoTimeline` is kept for a vertical event feed later.
+- **`TaoCalendar`**: an inline month calendar, one date or a range, with the keyboard of `TaoDate`. `TaoDate` and `TaoDateRange` are now a field plus a popup around it (they shared 13 of 13 functions; ~1000 lines became ~460 + the calendar).
+- **`TaoCard`**: slots `media` (was `cover`), `header`, `title`, `sub`, `footer`, `overlay` and the new `corner`; `closable` + `close`. `headerTitle` and `headerSecondary` are gone (use `header`).
+- **`TaoAnimatedBorder`**: `variant="tone"` + `tone` follows the theme, `colors` for your own list, `radius` with concentric corners, a still gradient with `prefers-reduced-motion`. The rainbow is the token `--tao-gradient-rainbow`.
+- **`TaoTabs` `justify`** is typed (`TaoJustify`, as in `TaoFlex`). The `TaoGrid` breakpoint lives in one file.
+- **Language is SSR-safe:** on the server `app.use(TaoUI, { locale })` no longer changes the process-wide language, so one request cannot leak its language into another. `provideTaoLocale(locale)` gives a subtree its own language.
+- **`useField`**: the plumbing every form control took from `TaoFormField` (id, `aria-describedby`, invalid) was copied into 15 components; it is one function now, covered by tests.
+
+### Icons
+
+- **27 built-in SVG icons** (`tao-check`, `tao-close`, `tao-chevron-*`, `tao-play`, …) on `currentColor`, under the reserved prefix `tao-`. `registerTaoIcons()` adds your own; any other name is still the `icon-<name>` class of an external font. `taoIconNames` lists the built-ins.
+- Every text glyph (`× ✕ ‹ › ▶ ❚❚ ⏮ ⋮ + −`) and every hand-drawn inline `<svg>` in the components is replaced by `TaoIcon`: one look, the same on every platform (`▶` and `⏮` can turn into colour emoji on some). A test keeps new glyphs and inline svgs out.
+- **`TaoButton`:** `icon` is an icon name now (it was a text node), new `iconEnd`; a button with only an icon is a square and asks for `aria-label` in development. `TaoSegmentedOption` `icon` likewise.
+
+### Overlays: one engine
+
+- **One positioning, dismiss and layer engine** instead of eight copies: `computePosition` (pure, tested) and `useFloating` (follows scroll and resize), `useDismiss` (outside press, capture phase), `useLayer` (a stack of open layers: **Escape goes to the top one only**, page scroll lock, focus return), `useListNav` (arrows, Home / End, type-ahead, disabled items skipped). Popover, Tooltip, Select, Combobox, Date, DateRange, the Copy tip, Modal, Drawer and `confirm()` use them.
+- **New `TaoMenu`** and a rebuilt **`TaoDropdownMenu`** on it: a data tree `items` with submenus, checkboxes, radios, group labels, separators, shortcuts (a ready string to show), disabled items; `aria-activedescendant`, type-ahead, `→` / `←`, Tab closes. Types `TaoMenuItem`, `TaoPlacement`.
+- **`placement`** (`top` / `bottom` / `left` / `right` plus `-start` / `-end`) replaces `position` on Popover, Tooltip and ColorInput.
+- A Select inside a Modal no longer closes the Modal on Escape.
+
+### Tone
+
+- **One mechanism for every status colour.** `.tao-tone-<name>` (accent, neutral, success, danger, warning, info) sets `--tao-tone`, `-hover`, `-on`, `-text`, `-text-hover`, `-subtle`, `-wash`; Button, Alert, Tag, toast, confirm and the Avatar dot read only those. The tokens do not inherit, so a Button inside a red Alert stays an accent button. New `toneClass()` helper and `TaoToneName` type.
+- **`TaoButton`: `tone` works on every `variant`** (it only painted ghost and text before); `variant="danger"` is gone (use `tone="danger"`); about 30 hand-written selectors became 8.
+- New role tokens: `--tao-color-accent-text(-hover)` and `--tao-color-on-success|warning|info`. The light theme's ghost / text Button label is now readable (5.8:1 instead of 3.6:1).
+- Tests hold every `on-*` colour to 4.5:1 (the light accent's white-on-rose, 3.64:1, is the one documented exception) and every tone's text to 4.5:1.
+
+### Tokens
+
+- **z-index scale** `--tao-z-modal | popup | tooltip | toast | confirm`; no component writes a literal any more.
+- **`--tao-transition-base` no longer animates `all`**: colours, shadow, opacity and transform only.
+- **Panel contract:** Card / Block default radius and padding come from tokens; a panel (class `.tao-panel`) publishes `--tao-radius`, `--tao-pad` and `--tao-radius-inner` for concentric corners.
+
+### Internal
+
+- `deprecationWarning` / `warnDeprecated` take the version that removes the name (`removeIn`), no longer a hard-coded "3.0".
+- New tests: behaviour of the overlay family, server-side rendering of every component, public entry and token contract; `npm run smoke` installs the packed tarball into a clean Vite project.
+
 ## 4.0.1
 
 - **TaoScrollTop:** the ripple is gone. It painted the wave in a tint that disappeared on the accent fill, so it was practically invisible and cost a DOM node, a timer and an `overflow: hidden` clip. The button now has the same 1px press as `TaoButton`.

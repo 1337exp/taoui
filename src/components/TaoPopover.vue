@@ -1,19 +1,21 @@
 <script lang="ts" setup>
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
+import { useDismiss } from '../dismiss';
+import { useFloating, type TaoPlacement } from '../floating';
+import { useLayer } from '../layers';
 
 defineOptions({ name: 'TaoPopover' });
-
-type TaoPopoverPosition = 'top' | 'bottom' | 'left' | 'right';
 
 const props = withDefaults(
     defineProps<{
         modelValue?: boolean;
-        position?: TaoPopoverPosition;
+        /** Side and alignment against the trigger; flips when there is no room. / Сторона и выравнивание; при нехватке места переворачивается. */
+        placement?: TaoPlacement;
         disabled?: boolean;
     }>(),
     {
         modelValue: undefined,
-        position: 'bottom',
+        placement: 'bottom-start',
         disabled: false,
     },
 );
@@ -26,7 +28,6 @@ const emit = defineEmits<{
 const triggerRef = ref<HTMLElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
 const internal = ref(false);
-const panelStyle = ref({ top: '0px', left: '0px' });
 const isControlled = computed(() => props.modelValue !== undefined);
 const open = computed(() => (isControlled.value ? Boolean(props.modelValue) : internal.value));
 
@@ -43,38 +44,11 @@ function setOpen(next: boolean) {
 }
 
 function toggle() {
-    void applyOpen(!open.value);
+    setOpen(!open.value);
 }
 
 function close() {
-    void applyOpen(false);
-}
-
-function bindDismiss() {
-    if (typeof document === 'undefined') {
-        return;
-    }
-
-    // Фаза перехвата: иначе приложение, которое гасит pointerdown у своей панели (stopPropagation), не закроет окно кликом по ней
-    document.addEventListener('pointerdown', onDocumentPointer, true);
-    document.addEventListener('keydown', onDocumentKey);
-    window.addEventListener('resize', onViewportChange);
-    window.addEventListener('scroll', onViewportChange, true);
-}
-
-function unbindDismiss() {
-    if (typeof document === 'undefined') {
-        return;
-    }
-
-    document.removeEventListener('pointerdown', onDocumentPointer, true);
-    document.removeEventListener('keydown', onDocumentKey);
-    window.removeEventListener('resize', onViewportChange);
-    window.removeEventListener('scroll', onViewportChange, true);
-}
-
-function applyOpen(next: boolean) {
-    setOpen(next);
+    setOpen(false);
 }
 
 function focusTrigger() {
@@ -85,127 +59,25 @@ function focusTrigger() {
     (focusable ?? root)?.focus?.();
 }
 
-function updatePosition() {
-    const trigger = triggerRef.value;
-    const panel = panelRef.value;
-    if (typeof window === 'undefined' || !trigger || !panel) {
-        return;
-    }
-
-    const rect = trigger.getBoundingClientRect();
-    const width = panel.offsetWidth;
-    const height = panel.offsetHeight;
-    const gap = 4;
-    const pad = 8;
-    const viewW = window.innerWidth;
-    const viewH = window.innerHeight;
-
-    const space = {
-        bottom: viewH - rect.bottom - gap - pad,
-        top: rect.top - gap - pad,
-        right: viewW - rect.right - gap - pad,
-        left: rect.left - gap - pad,
-    };
-    const opposite: Record<TaoPopoverPosition, TaoPopoverPosition> = {
-        bottom: 'top',
-        top: 'bottom',
-        left: 'right',
-        right: 'left',
-    };
-
-    let side = props.position;
-    const need = side === 'top' || side === 'bottom' ? height : width;
-    if (space[side] < need && space[opposite[side]] > space[side]) {
-        side = opposite[side];
-    }
-
-    let top = 0;
-    let left = 0;
-    if (side === 'bottom') {
-        top = rect.bottom + gap;
-        left = rect.left;
-    } else if (side === 'top') {
-        top = rect.top - height - gap;
-        left = rect.left;
-    } else if (side === 'right') {
-        top = rect.top;
-        left = rect.right + gap;
-    } else {
-        top = rect.top;
-        left = rect.left - width - gap;
-    }
-
-    if (left + width > viewW - pad) {
-        left = viewW - pad - width;
-    }
-    if (left < pad) {
-        left = pad;
-    }
-    if (top + height > viewH - pad) {
-        top = viewH - pad - height;
-    }
-    if (top < pad) {
-        top = pad;
-    }
-
-    panelStyle.value = { top: `${top}px`, left: `${left}px` };
-}
-
-function onTriggerClick() {
-    if (props.disabled) {
-        return;
-    }
-    toggle();
-}
-
-function onDocumentPointer(event: PointerEvent) {
-    const target = event.target as Node;
-    if (triggerRef.value?.contains(target) || panelRef.value?.contains(target)) {
-        return;
-    }
-    close();
-}
-
-function onDocumentKey(event: KeyboardEvent) {
-    if (event.key !== 'Escape') {
-        return;
-    }
-    event.preventDefault();
-    close();
-    focusTrigger();
-}
-
-function onViewportChange() {
-    if (open.value) {
-        updatePosition();
-    }
-}
-
-watch(
-    open,
-    (isOpen) => {
-        if (isOpen) {
-            bindDismiss();
-            void nextTick(() => {
-                updatePosition();
-                panelRef.value?.focus();
-            });
-            return;
-        }
-
-        unbindDismiss();
+const { style: panelStyle } = useFloating(triggerRef, panelRef, open, { placement: () => props.placement });
+useDismiss(open, () => [triggerRef.value, panelRef.value], close);
+useLayer(open, {
+    onEscape: () => {
+        close();
+        focusTrigger();
     },
-    { immediate: true },
-);
+});
 
-onBeforeUnmount(() => {
-    unbindDismiss();
+watch(open, (isOpen) => {
+    if (isOpen) {
+        void nextTick(() => panelRef.value?.focus());
+    }
 });
 </script>
 
 <template>
     <div class="tao-popover">
-        <div ref="triggerRef" class="tao-popover__trigger" @click="onTriggerClick">
+        <div ref="triggerRef" class="tao-popover__trigger" @click="toggle">
             <slot name="trigger" :open="open" :toggle="toggle" />
         </div>
 
@@ -226,7 +98,7 @@ onBeforeUnmount(() => {
 
 <style>
 .tao-popover__panel {
-    z-index: 1050;
+    z-index: var(--tao-z-popup);
     position: fixed;
     min-width: 200px;
     max-width: min(360px, calc(100vw - 16px));

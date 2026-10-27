@@ -22,8 +22,6 @@
     --tao-tag-height: var(--tao-tag-height-medium);
     --tao-tag-padding-x: var(--tao-tag-padding-x-medium);
     --tao-tag-font-size: var(--tao-tag-font-size-medium);
-    /* Deprecated alias, follows the current size. / Устаревший алиас, следует текущему размеру. */
-    --tao-field-height: var(--tao-control-height);
 }
 
 .tao-size-small {
@@ -38,7 +36,6 @@
     --tao-tag-height: var(--tao-tag-height-small);
     --tao-tag-padding-x: var(--tao-tag-padding-x-small);
     --tao-tag-font-size: var(--tao-tag-font-size-small);
-    --tao-field-height: var(--tao-control-height);
 }
 
 .tao-size-large {
@@ -53,5 +50,4 @@
     --tao-tag-height: var(--tao-tag-height-large);
     --tao-tag-padding-x: var(--tao-tag-padding-x-large);
     --tao-tag-font-size: var(--tao-tag-font-size-large);
-    --tao-field-height: var(--tao-control-height);
 }

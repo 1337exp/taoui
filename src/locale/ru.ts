@@ -16,6 +16,7 @@ export const localeRu: TaoLocale = {
         },
     },
     breadcrumb: { ariaLabel: 'Хлебные крошки' },
+    card: { closeLabel: 'Закрыть' },
     carousel: {
         ariaLabel: 'Лента',
         prevLabel: 'Назад',
@@ -87,6 +88,6 @@ export const localeRu: TaoLocale = {
         eyedropperLabel: 'Пипетка',
         chooseLabel: 'Выбрать цвет',
     },
-    timeline: { playLabel: 'Играть', pauseLabel: 'Пауза', restartLabel: 'В начало' },
+    scrubber: { playLabel: 'Играть', pauseLabel: 'Пауза', restartLabel: 'В начало' },
     toast: { closeLabel: 'Закрыть уведомление' },
 };

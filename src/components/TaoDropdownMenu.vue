@@ -1,157 +1,67 @@
 <script lang="ts" setup>
-import { nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
-import type { TaoDropdownAction } from '../dropdown';
-import { warnDeprecated } from '../deprecate';
+import { ref } from 'vue';
+import type { TaoPlacement } from '../floating';
 import { useLocaleText } from '../locale';
+import type { TaoMenuCloseReason, TaoMenuItem } from '../menu';
+import TaoIcon from './TaoIcon.vue';
+import TaoMenu from './TaoMenu.vue';
 
 defineOptions({ name: 'TaoDropdownMenu' });
 
 const props = withDefaults(
     defineProps<{
-        actions?: TaoDropdownAction[];
+        /** Entries: items, submenus, checkboxes, radios, separators (see TaoMenuItem). / Пункты: обычные, подменю, чекбоксы, радио, разделители. */
+        items?: TaoMenuItem[];
+        /** Where the list opens against the button; flips when there is no room. / Где открывается список; при нехватке места переворачивается. */
+        placement?: TaoPlacement;
         menuLabel?: string;
     }>(),
     {
-        actions: () => [],
+        items: () => [],
+        placement: 'bottom-end',
     },
 );
 const l10n = useLocaleText(props, 'dropdownMenu');
 
 const emit = defineEmits<{
-    /** Action id. / id действия. */
+    /** The id of the picked item. / id выбранного пункта. */
     select: [id: string];
-    /** @deprecated Use `select`. / Используйте `select`. */
-    selected: [id: string];
 }>();
 
-const menuRef = ref<HTMLElement | null>(null);
-const listRef = ref<HTMLElement | null>(null);
+defineSlots<{
+    /** The whole trigger content, replaces the button face. / Всё содержимое кнопки. */
+    button?(): unknown;
+    /** The default button face (three dots). / Вид кнопки по умолчанию. */
+    icon?(): unknown;
+    /** Replaces the text of one item. / Заменяет содержимое пункта. */
+    item?(props: { item: TaoMenuItem; id: string; label: string; icon?: string }): unknown;
+}>();
+
 const triggerRef = ref<HTMLButtonElement | null>(null);
 const isOpen = ref(false);
-const activeIndex = ref(0);
-const listPosition = reactive({ top: '0', left: '0' });
-
-function updatePosition() {
-    const trigger = triggerRef.value;
-    const list = listRef.value;
-    if (!trigger || !list || !isOpen.value) {
-        return;
-    }
-
-    const rect = trigger.getBoundingClientRect();
-    const listWidth = list.offsetWidth;
-    const listHeight = list.offsetHeight;
-    let left = rect.right - listWidth;
-    let top = rect.bottom + 4;
-
-    if (left < 8) {
-        left = rect.left;
-    }
-    if (left + listWidth > window.innerWidth - 8) {
-        left = Math.max(8, window.innerWidth - listWidth - 8);
-    }
-    if (top + listHeight > window.innerHeight - 8 && rect.top > listHeight) {
-        top = rect.top - listHeight - 4;
-    }
-
-    listPosition.top = `${top}px`;
-    listPosition.left = `${left}px`;
-}
-
-async function setOpen(next: boolean) {
-    isOpen.value = next;
-    if (!next) {
-        return;
-    }
-    activeIndex.value = 0;
-    await nextTick();
-    updatePosition();
-    listRef.value?.focus();
-}
 
 function toggleMenu() {
-    void setOpen(!isOpen.value);
+    isOpen.value = !isOpen.value;
 }
 
-function closeMenu() {
-    if (!isOpen.value) {
-        return;
-    }
+function onClose(reason: TaoMenuCloseReason) {
     isOpen.value = false;
-    triggerRef.value?.focus();
-}
-
-function emitAction(id: string) {
-    isOpen.value = false;
-    emit('select', id);
-    emit('selected', id);
-    triggerRef.value?.focus();
-}
-
-function onDocumentPointer(event: PointerEvent) {
-    const target = event.target as Node;
-    if (menuRef.value?.contains(target) || listRef.value?.contains(target)) {
-        return;
-    }
-    isOpen.value = false;
-}
-
-function onWinScroll() {
-    if (isOpen.value) {
-        updatePosition();
+    // a press elsewhere leaves the focus where the user put it / нажатие в другом месте оставляет фокус там, куда его поставили
+    if (reason !== 'outside') {
+        triggerRef.value?.focus();
     }
 }
 
-function onListKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
+function onTriggerKeydown(event: KeyboardEvent) {
+    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
         event.preventDefault();
-        closeMenu();
-        return;
-    }
-    if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        if (!props.actions.length) {
-            return;
-        }
-        activeIndex.value = (activeIndex.value + 1) % props.actions.length;
-        return;
-    }
-    if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        if (!props.actions.length) {
-            return;
-        }
-        activeIndex.value = (activeIndex.value - 1 + props.actions.length) % props.actions.length;
-        return;
-    }
-    if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        const action = props.actions[activeIndex.value];
-        if (action) {
-            emitAction(action.id);
-        }
+        isOpen.value = true;
     }
 }
-
-onMounted(() => {
-    document.addEventListener('pointerdown', onDocumentPointer, true);
-    window.addEventListener('scroll', onWinScroll, true);
-    window.addEventListener('resize', updatePosition);
-});
-
-onBeforeUnmount(() => {
-    document.removeEventListener('pointerdown', onDocumentPointer, true);
-    window.removeEventListener('scroll', onWinScroll, true);
-    window.removeEventListener('resize', updatePosition);
-});
-
-warnDeprecated('TaoDropdownMenu', {
-    onSelected: 'listen to "select"',
-});
 </script>
 
 <template>
-    <div ref="menuRef" class="tao-dropdown-menu">
+    <div class="tao-dropdown-menu">
         <button
             ref="triggerRef"
             type="button"
@@ -160,92 +70,29 @@ warnDeprecated('TaoDropdownMenu', {
             :aria-expanded="isOpen"
             :aria-label="$slots.button ? undefined : l10n.menuLabel"
             @click="toggleMenu"
+            @keydown="onTriggerKeydown"
         >
             <slot v-if="$slots.button" name="button" />
             <span v-else aria-hidden="true">
-                <slot name="icon">⋮</slot>
+                <slot name="icon"><TaoIcon name="tao-more-vertical" /></slot>
             </span>
         </button>
 
-        <Teleport to="body">
-            <div
-                v-if="isOpen"
-                ref="listRef"
-                class="tao-dropdown-menu__list"
-                role="menu"
-                tabindex="-1"
-                :style="listPosition"
-                @keydown="onListKeydown"
-            >
-                <button
-                    v-for="(action, index) in actions"
-                    :key="action.id"
-                    type="button"
-                    class="tao-dropdown-menu__item"
-                    :class="{ 'tao-dropdown-menu__item--active': index === activeIndex }"
-                    role="menuitem"
-                    @click="emitAction(action.id)"
-                    @mouseenter="activeIndex = index"
-                >
-                    <slot v-if="$slots.item" name="item" :id="action.id" :ico="action.ico" :text="action.name" />
-                    <span v-else>{{ action.name }}</span>
-                </button>
-            </div>
-        </Teleport>
+        <TaoMenu
+            :items="items"
+            :open="isOpen"
+            :anchor="triggerRef"
+            :placement="placement"
+            :label="menuLabel ?? l10n.menuLabel"
+            @select="emit('select', $event)"
+            @close="onClose"
+        >
+            <template v-if="$slots.item" #item="slotProps">
+                <slot name="item" v-bind="slotProps" />
+            </template>
+        </TaoMenu>
     </div>
 </template>
-
-<style>
-.tao-dropdown-menu__list {
-    z-index: 1050;
-    position: fixed;
-    min-width: 120px;
-    display: flex;
-    flex-direction: column;
-    font-size: var(--tao-font-size-md);
-    color: var(--tao-color-text);
-    background-color: var(--tao-color-surface-raised);
-    border: 1px solid var(--tao-color-border);
-    border-radius: var(--tao-radius-control);
-    box-shadow: var(--tao-shadow-md);
-}
-
-.tao-dropdown-menu__list:focus {
-    outline: none;
-}
-
-.tao-dropdown-menu__list .tao-dropdown-menu__item {
-    position: relative;
-    padding: var(--tao-space-2) var(--tao-space-4);
-    border: none;
-    border-radius: 0;
-    background: none;
-    color: inherit;
-    font: inherit;
-    text-align: left;
-    white-space: nowrap;
-    cursor: pointer;
-    user-select: none;
-    transition: var(--tao-transition-base);
-}
-
-.tao-dropdown-menu__list .tao-dropdown-menu__item:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    right: var(--tao-space-2);
-    bottom: 0;
-    left: var(--tao-space-2);
-    height: 1px;
-    background: var(--tao-color-border);
-    pointer-events: none;
-}
-
-.tao-dropdown-menu__list .tao-dropdown-menu__item:hover,
-.tao-dropdown-menu__list .tao-dropdown-menu__item--active {
-    color: var(--tao-color-accent);
-    background-color: var(--tao-color-surface-hover);
-}
-</style>
 
 <style scoped>
 .tao-dropdown-menu {

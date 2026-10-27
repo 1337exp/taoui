@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed, inject, useId, useSlots } from 'vue';
 import { type TaoRadioValue } from '../radio';
 import { segmentedKey } from '../segmented';
@@ -96,7 +97,7 @@ function onChange() {
         />
         <span class="tao-segmented-option__face">
             <span v-if="icon || $slots.icon" class="tao-segmented-option__icon" aria-hidden="true">
-                <slot name="icon">{{ icon }}</slot>
+                <slot name="icon"><TaoIcon :name="icon" /></slot>
             </span>
             <span v-if="hasLabel" class="tao-segmented-option__label">
                 <slot>{{ label }}</slot>

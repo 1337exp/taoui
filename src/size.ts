@@ -4,7 +4,7 @@ export type TaoSize = 'small' | 'medium' | 'large';
 const sizes: readonly string[] = ['small', 'medium', 'large'];
 
 /**
- * Class that sets the size tokens on an element and its subtree (see styles/size.css).
+ * Class that sets the size tokens on an element and its subtree (see styles/contexts/size.css).
  * No size → no class: the control takes the size of its ancestors.
  * Класс с токенами размера для элемента и его поддерева. Без size класса нет — контрол наследует размер предков.
  */

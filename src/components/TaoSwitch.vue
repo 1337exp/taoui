@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { computed, inject, useId } from 'vue';
-import { formFieldKey } from '../formField';
+import {  } from 'vue';
+import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoSwitch' });
@@ -28,11 +28,7 @@ const emit = defineEmits<{
     change: [value: boolean];
 }>();
 
-const field = inject(formFieldKey, null);
-const localId = useId();
-const controlId = computed(() => field?.id ?? localId);
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
-const describedBy = computed(() => field?.describedBy.value);
+const { field, controlId, invalid, describedBy } = useField(props);
 
 function toggle() {
     if (props.disabled) {

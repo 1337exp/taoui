@@ -42,11 +42,4 @@ const itemStyle = computed(() => ({
     min-height: 0;
     width: 100%;
 }
-
-@container (max-width: 560px) {
-    .tao-grid-item {
-        grid-column: span 1;
-        grid-row: span 1;
-    }
-}
 </style>

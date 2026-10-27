@@ -49,7 +49,7 @@
 ### Basics
 
 - **TaoBlock** — container with padding and radius
-- **TaoButton** — `primary` / `secondary` / `ghost` / `text` / `danger`. `tone` tints ghost and text (danger, success, warning, info, neutral)
+- **TaoButton** — `variant`: `primary` / `secondary` / `ghost` / `text`; `tone` colours any of them (accent by default, neutral, success, danger, warning, info)
 - **TaoCard** — card with cover / header / footer slots. `#cover` can be a photo or `TaoCarousel`. `flush` is a tile (no padding/shadow, fills the cell); `#overlay` is a scrim on the cover
 - **TaoCopy** — clipboard icon. After a click, a “Copied” tooltip; if the trigger is gone, the tooltip is too
 - **TaoInput** — text field with v-model, validation, and `#prefix` / `#suffix` slots (icon or text inside the frame)
@@ -59,8 +59,8 @@
 - **TaoSpoiler** — disclosure. `v-model` and `aria-expanded`. Neighbours do not close each other
 - **TaoSpoilerGroup** — accordion: `v-model` is the open panel key (`null` = all closed); spoilers take `name`. Without `v-model` the group keeps that key itself
 - **TaoTabs** — tabbed sections
-- **TaoTooltip** — hover hint. `top` / `bottom` / `left` / `right`, flips at the viewport edge
-- **TaoPopover** — click panel with any slot content, Esc and outside click. Not a tooltip, not an action menu
+- **TaoTooltip** — hover hint. `placement`: `top` / `bottom` / `left` / `right`, each with `-start` / `-end`; flips at the viewport edge
+- **TaoPopover** — click panel with any slot content, Esc and outside click; `placement` as Tooltip. Not a tooltip, not an action menu
 
 ### Layout
 
@@ -71,7 +71,7 @@
 - **TaoDivider** — `solid` (plain border) / `dashed` / `colored` (accent) / `gap`. Optional `text` sits in the middle of any of them; `fade` softens the line ends; `size` is for `gap` (small / medium / large)
 - **TaoSplit** — two panes and a gutter. `row` / `column` like Flex. `v-model` is the start size in `%` or `px`; `resizable="false"` locks the gutter. Not Divider.
 - **TaoFieldset** — grouped frame: `legend` sits on the top border, `align` is start / center / end
-- **TaoAnimatedBorder** — rainbow border wrapper (decorative, not tied to the theme)
+- **TaoAnimatedBorder** — animated border wrapper: the rainbow, the colours of a `tone` (follows the theme) or your own `colors`; a still gradient with `prefers-reduced-motion`
 
 ### Forms
 
@@ -83,10 +83,11 @@
 - **TaoCombobox** — Select with a field: type to filter, `allow-create` writes a custom value into `v-model`, `create` lets the parent append the list. Takes the same `size`, `clearable` and `#clear` as `TaoSelect`
 - **TaoDate** — a single day: `YYYY-MM-DD`, no time, no timezone. Calendar popup like Select
 - **TaoDateRange** — a period: `v-model` is `{ start, end }` or `null`. First click is start, second is end (they swap if end is earlier). An incomplete pick is not written to the model
+- **TaoCalendar** — the month calendar itself, inline (no popup): `mode="single"` (`YYYY-MM-DD`) or `"range"` (`{ start, end }`), `min` / `max`, arrows / PageUp / PageDown / Home / End. `TaoDate` and `TaoDateRange` are a field with this calendar in a popup
 - **TaoFormField** — shared label / hint / error for form controls
 - **TaoInputNumber** — number with min/max/step and ± on the right. Empty value is `null`. `@commit` fires once when an edit is finished (blur, Enter, ±, arrow), unlike `v-model`, which updates on every keystroke
 - **TaoQuantity** — cart quantity: `− | field | +`, integers, stock; minus at the minimum can remove the row
-- **TaoTextarea** — autosizing multiline. `maxlength` caps input, `count` shows “entered / max”. `variant`: `bar` (default) / `outline` (frame like Input) / `filled` / `plain`; `readonly`. `noBorder`, `noBackground`, `borderInverse`, `dummy` are deprecated
+- **TaoTextarea** — autosizing multiline. `maxlength` caps input, `count` shows “entered / max”. `variant`: `bar` (default) / `outline` (frame like Input) / `filled` / `plain`; `readonly`; `align`; `blurOnEnter`
 - **TaoPinCode** — N cells. By default a click clears the cell and everything to the right (`clear-on="focus"`); `clear-on="input"` replaces the digit only when typing. `format="#-##-##"` draws visual separators (not part of the value; a paste in that shape or as a clean code is split into cells). The last cell blurs and emits `complete`
 - **TaoSlider** / **TaoRangeSlider** — one thumb (`v-model` is a number) or two (`[from, to]`, `minGap`). Mouse, touch, arrows. `marks` (ticks, numbers, `{ value, label }`), `discrete` for stepped scales, `vertical`, `flat`, `format`; `variant="thin"` is a thin track for seek / volume
 - **TaoColorPicker** — saturation / brightness square, hue and opacity strips, swatches, eyedropper (where the browser has `EyeDropper`), HEX / RGB / HSL input modes. `v-model` is a hex string; `colorModel()` adapts your own colour storage
@@ -107,16 +108,16 @@
 - **TaoTag** — badge with tones. `#prefix` (avatar), `closable` dismisses the chip, `flat` drops the border
 - **TaoAlert** — inline page/form banner (success / error / warning / info)
 - **TaoProgress** — static bar (`progress` in %). Percent centered on top, or `showPercentage="right"`; `#left` / `#right` slots are captions, then the percent sits in parentheses on the right. `false` hides it. Width is `minWidth` / `maxWidth`, not the value domain
-- **TaoTimeline** — play / pause, a slider over time with event marks, a “time / length” label. Does not advance time by itself: drive `v-model` with your own clock
+- **TaoScrubber** — play / pause, a slider over time with event marks, a “time / length” label. Does not advance time by itself: drive `v-model` with your own clock
 - **TaoLoader** — four-dot spinner
 - **TaoImage** — `<img>` wrapper: fade-in and placeholder. `lazy` turns on native `loading="lazy"`
-- **TaoIcon** — icon-font wrapper (see Icons below)
+- **TaoIcon** — SVG icons (27 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)
 
 ### Navigation
 
 - **TaoLink** — `<NuxtLink>` in Nuxt, `<RouterLink>` with vue-router, otherwise a plain `<a>` — no extra setup
 - **TaoBreadcrumb** — crumbs: the last item is the current page
-- **TaoDropdownMenu** — dropdown that flips at the viewport edge
+- **TaoDropdownMenu** / **TaoMenu** — a menu from a plain data tree `items`: submenus, checkboxes, radios, separators, group labels, shortcuts to show, disabled items. Arrows, Home / End, type-ahead, `→` / `←` for submenus, Esc closes the top level first. `TaoMenu` is the panel itself, for your own shells (a menu bar, a context menu); flips at the viewport edge
 - **TaoScrollTop** — floating “back to top”: `solid` / `ghost` / `text` looks, `side`, a mouse-hover `label`. Appears on reverse scroll after `boundary`
 
 ### Feedback
@@ -127,11 +128,10 @@
 
 ## Conventions
 
-Visual tones: `success` | `danger` | `warning` | `info` | `neutral` (type `TaoTone`), always the `tone` prop: Button, Alert, Tag. `type` on Alert / Tag is a deprecated alias.
-`error` on Alert, Tag, and `toast()` is an alias of `danger`. Button already uses `danger`.
+Visual tones: `success` | `danger` | `warning` | `info` | `neutral` (type `TaoTone`), always the `tone` prop: Button, Alert, Tag (`toast.danger()` for toasts). The accent is a tone too and the default one. A tone is a context class like a size: `.tao-tone-danger` on any element sets `--tao-tone`, `--tao-tone-on`, `--tao-tone-text`, … (see `styles/tone.css`). Unlike a size it does **not** inherit, so a button inside a red alert stays an accent button.
 Stages describe a process, not a tone: `wait` / `work` / `ok` / `bad` (`danger` is accepted as `bad`).
 
-Control sizes: `small` | `medium` | `large` (type `TaoSize`). One scale for Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup and FormField — controls of one size line up in a row. Checkbox, Radio / RadioGroup and Switch scale the indicator (14 / 18 / 22px) and the label; Tag scales its height (18 / 20 / 24px); Tabs, Pagination buttons and List rows take the Button height; Table scales cell padding (`size="small"` replaces `compact`); FileDrop scales the zone and file rows; Slider scales the track and thumb.
+Control sizes: `small` | `medium` | `large` (type `TaoSize`). One scale for Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup and FormField — controls of one size line up in a row. Checkbox, Radio / RadioGroup and Switch scale the indicator (14 / 18 / 22px) and the label; Tag scales its height (18 / 20 / 24px); Tabs, Pagination buttons and List rows take the Button height; Table scales cell padding (`size="small"` for the dense one); FileDrop scales the zone and file rows; Slider scales the track and thumb.
 Without `size` a control takes the size of its ancestors, `medium` at the root. Set it for a whole block with the class `tao-size-small` / `-medium` / `-large` on any element, or with `size` on `TaoFormField` / `TaoInputGroup`. An explicit `size` on a control wins.
 
 ```vue
@@ -141,8 +141,8 @@ Without `size` a control takes the size of its ancestors, `medium` at the root. 
 </div>
 ```
 
-Content and layout keep their own scale and do not inherit: Avatar (24 / 32 / 48px; `s` / `m` / `l` are deprecated), Divider `gap` (`big` is a deprecated alias of `large`), Loader / Icon / ScrollTop (pixels).
-Container lives on another axis — width: `width="wide" | "slim" | "ultra-slim"` (`size` is a deprecated alias).
+Content and layout keep their own scale and do not inherit: Avatar (24 / 32 / 48px), Divider `gap`, Loader / Icon / ScrollTop (pixels).
+Container lives on another axis — width: `width="wide" | "slim" | "ultra-slim"`.
 
 Surfaces — what a panel is made of: `flat` fill (default), `grain` (static film grain), `glass` (translucent, blurs what is
 behind). Use `surface` on TaoCard / TaoBlock or the class `tao-surface-grain` / `-glass` on any element — a game HUD, a
@@ -156,7 +156,7 @@ and `confirm.defaults({ surface: 'flat' })` turn it off, `.surface('flat')` does
 Font size scale (primitives): `xs` 12 … `xl` 18 for controls; `2xl` 24, `3xl` 32, `4xl` 36 for titles and prose.
 There is no heading component — use `h1 { font-size: var(--tao-font-size-3xl) }`.
 
-API rules — every component follows them; old names stay as deprecated aliases:
+API rules — every component follows them:
 
 - **Fields** take `v-model`, `disabled`, `error` (red frame) and `size`. Label, hint and error text come from `TaoFormField`.
 - **Events**: `update:X` for v-model plus `change` when the user finished a change (Slider, Split — on release). Other events are verbs in the present tense: `select`, `close`, `create`.
@@ -167,15 +167,41 @@ API rules — every component follows them; old names stay as deprecated aliases
 
 ## Icons
 
-`TaoIcon` does not ship its own set — it renders `icon-<name>`
-for an external icon font (IcoMoon / Fontello and the like). Connect a font
-with classes such as `.icon-arrow-up { ... }` in the host app.
+The library ships **27 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,
+skip-back, copy, calendar, info, alert, circles). They draw on `currentColor`, so an icon takes the text colour and the
+font size, and live under the reserved prefix `tao-`: `<TaoIcon name="tao-check" />`, the list is `taoIconNames`.
+
+```vue
+<TaoIcon name="tao-check" />            <!-- built-in -->
+<TaoIcon name="rocket" />               <!-- registered with registerTaoIcons, or `icon-rocket` of your own font -->
+<TaoButton icon="tao-plus">Add</TaoButton>
+<TaoButton icon="tao-close" aria-label="Close" />   <!-- only an icon: a square, aria-label is required -->
+```
+
+```ts
+registerTaoIcons({ rocket: { body: '<path d="M12 3l4 8-4 10-4-10z"/>' } }); // 24x24 grid unless you pass viewBox
+```
+
+A name without the `tao-` prefix is looked up among the icons you registered, and then rendered as the class
+`icon-<name>` for an external icon font (IcoMoon / Fontello and the like) that the host app connects itself. All
+built-in parts (close buttons, steppers, pagination arrows, toasts…) use the built-in icons and their `#…-icon` slots
+let you replace them with anything.
 
 ## Install
 
 ```bash
 npm install @1337exp/taoui
 ```
+
+Requires Vue 3.4+. The package is **ESM-only** (Vite, Nuxt 3, webpack 5 and Node 18+ with `import` all work; a plain `require('@1337exp/taoui')` does not: use `import()`).
+
+### Browser support
+
+The CSS uses `color-mix()`, container queries and registered custom properties (`@property`), so the floor is
+**Chrome / Edge 111, Safari 16.4, Firefox 128**: the browsers of 2023–2024. Firefox 128 is the limiting one (`@property`).
+On an older browser everything stays readable; what you lose is small: a registered property is what keeps a tone
+(`.tao-tone-*`) and a surface from leaking into the children, so without it a Button inside a red Alert may turn red.
+The same list is the `browserslist` field of the package and the build target.
 
 From a local folder:
 
@@ -252,6 +278,10 @@ function onLanguageChange(lang) {
 
 Without the plugin (individual components) `setTaoLocale()` is the only call you need.
 
+### Upgrading to 5.0
+
+5.0 deletes every name that 2.0 deprecated (plus the `error` tone alias), see [MIGRATION-5.md](MIGRATION-5.md) for the table old → new.
+
 ### Upgrading from 3.x
 
 4.0 changes one default: the built-in texts are now English (they were Russian). To stay on Russian, pass the locale
@@ -260,8 +290,7 @@ the date components follow the locale and default to `en-US` as well.
 
 ### Upgrading from 1.x
 
-See [CHANGELOG.md](CHANGELOG.md): what broke, and a table of old names → new ones. Old names still work in 2.x and
-warn in the console during development.
+See the 2.0.0 entry of [CHANGELOG.md](CHANGELOG.md) for what broke. Old names were removed in 5.0.
 
 ### Individual components
 
@@ -307,7 +336,7 @@ The chain runs in the same tick; `setTimeout(0)` actually shows the toast.
 import { toast } from '@1337exp/taoui'
 
 toast().success().message('Saved')
-toast().error().title('Network').timeout(5000).message('No connection')
+toast().danger().title('Network').timeout(5000).message('No connection')
 toast.success('Saved')
 toast.warning('Draft', { timeout: 1000 })
 ```
@@ -395,7 +424,7 @@ When `null` is not a valid value (a grid step, a sort order), pass `:clearable="
 
 `TaoCombobox` is the same menu with a field. Typing filters options. `allow-create` writes the typed string into `v-model` when there is no exact match. The list does not mutate itself: listen to `create` and append an option from the parent.
 
-Label, hint and error text always come from `TaoFormField`; `label` / `error-message` on `TaoInput` are deprecated. `TaoFormField` also wraps `TaoTextarea`, `TaoCheckbox`, `TaoSwitch`, `TaoRadioGroup`, and `TaoSegmented` — id, hint, and error are forwarded for you.
+Label, hint and error text always come from `TaoFormField`. `TaoFormField` also wraps `TaoTextarea`, `TaoCheckbox`, `TaoSwitch`, `TaoRadioGroup`, and `TaoSegmented` — id, hint, and error are forwarded for you.
 
 `TaoTag` can be a chip: `#prefix` on the left (usually `TaoAvatar`), `closable` draws a cross and emits `close`. The close click does not bubble. `flat` drops the border and keeps the fill.
 
@@ -536,27 +565,29 @@ The `cell-<key>` slot replaces a cell. `loading` shows an overlay; an empty list
 
 ## Design tokens and theming
 
-Library styles are three layers. Components **never** touch raw colors or sizes —
-only semantic variables. That is the theming mechanism: override 20–30 variables
+Library styles are layers. Components **never** touch raw colors or sizes: they read semantic roles, and
+the contexts built on them (size, tone, surface). That is the theming mechanism: override 20–30 variables
 and every component follows, with no edits inside the components themselves.
 
 ```
-primitives.css   →   semantic.css   →   themes/*.css (optional)
-  raw colors          public theming     ready-made themes on top
-  and scales,         API: this is       of semantic — light is
-  leave them alone    what you change    the example
+tokens/primitives.css → tokens/semantic.css → themes/*.css → contexts/*.css → base.css
+  raw colors, scales    radii, shadows,       colour roles     size, tone,       reset
+  leave them alone      type, motion          per theme        surface classes
 ```
 
 ### Layers
 
-| File | Role | Touch it? |
+| File (in `src/styles/`) | Role | Touch it? |
 |---|---|---|
-| `primitives.css` | Raw palette, space / radius / shadow scales (`--tao-orange-400`, `--tao-space-3`…) | Usually no |
-| `semantic.css` | Default (dark) theme tokens: `--tao-color-accent`, `--tao-color-surface`, `--tao-color-danger`, etc. | **Yes — this is the theming API** |
-| `themes/light.css` | Alternate theme via `[data-tao-theme="light"]` | Yes, as a sample |
+| `tokens/primitives.css` | Raw palette, space / radius / shadow scales (`--tao-orange-400`, `--tao-space-3`…) | Usually no |
+| `tokens/semantic.css` | Theme-independent roles: radii, shadows, type, motion | Rarely |
+| `themes/dark.css` | The colour roles of the default (dark) theme: `--tao-color-accent`, `--tao-color-surface`, … | **Yes — this is the theming API** |
+| `themes/light.css` | The same roles under `[data-tao-theme="light"]` | Yes, as a sample |
+| `contexts/size.css`, `tone.css`, `surface.css` | `.tao-size-*`, `.tao-tone-*`, `.tao-surface-*`: what a control reads to know its size, colour and material | Rarely |
 | `base.css` | Global reset (scrollbar, links, box-sizing) | Rarely |
 
-All four come in through `@1337exp/taoui/styles.css`.
+Everything comes in through `@1337exp/taoui/styles.css` (dark and light both: light turns on with `data-tao-theme="light"`).
+The raw files are importable as `@1337exp/taoui/styles/tokens/primitives.css` and so on.
 
 ### Your own theme
 
@@ -573,7 +604,7 @@ Nothing in the components needs to change:
     --tao-color-surface-raised: #1a1a2e;
     --tao-color-text: #d6d6e8;
     --tao-color-text-strong: #ffffff;
-    /* remaining tokens: see semantic.css */
+    /* remaining roles: see themes/dark.css */
 }
 ```
 
@@ -595,7 +626,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 ### Token groups
 
 - `--tao-color-accent*` — brand/accent (primary buttons, active tabs, links)
-- `--tao-color-on-accent` — text on the accent (`--tao-color-text-on-accent` is an alias)
+- `--tao-color-on-accent` — text on the accent
 - `--tao-color-selection`, `--tao-color-selection-text` — text selection (`::selection`)
 - `--tao-color-surface*` — container backgrounds (default / raised / sunken / hover)
 - `--tao-color-border*` — borders
@@ -605,16 +636,20 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-radius-control`, `--tao-radius-panel` — radii (small controls vs large panels)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — shadows
 - `--tao-font-size-*` — type scale in `primitives.css`: `xs`–`xl` controls, `2xl`–`4xl` titles / prose
-- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — the size scale in `primitives.css`. Components read the current values from `size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Use them in your own controls to match the size around them. `--tao-field-height` is a deprecated alias of `--tao-control-height`
+- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — the size scale in `primitives.css`. Components read the current values from `contexts/size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Use them in your own controls to match the size around them.
 
-The full list lives in `src/styles/semantic.css` — the only file worth opening
+The full list of colour roles lives in `src/styles/themes/dark.css` — the file worth opening
 to see the whole theming API.
 
 ### A theme from scratch, without primitives
 
 ```javascript
-import '@1337exp/taoui/styles/primitives.css' // keep the scales if you want
-import './my-semantic.css'              // your semantic layer instead of @1337exp/taoui/styles/semantic.css
+import '@1337exp/taoui/styles/tokens/primitives.css'   // keep the scales if you want
+import '@1337exp/taoui/styles/tokens/semantic.css'     // radii, shadows, type, motion
+import './my-colour-roles.css'                         // your colour roles instead of themes/dark.css
+import '@1337exp/taoui/styles/contexts/size.css'       // the contexts the components read
+import '@1337exp/taoui/styles/contexts/tone.css'
+import '@1337exp/taoui/styles/contexts/surface.css'
 import '@1337exp/taoui/styles/base.css'
 ```
 
@@ -653,8 +688,8 @@ npm test
 ## Publishing to npm
 
 Only `dist/` (the built library) and `src/styles/` (raw tokens, so you can
-import `primitives.css` on its own for a custom theme) are published, plus
-`README.md`, `LICENSE` and `CHANGELOG.md`.
+import `tokens/primitives.css` on its own for a custom theme) are published, plus
+`README.md`, `LICENSE`, `CHANGELOG.md` and `MIGRATION-5.md`.
 Component sources (`src/components/*.vue`), build configs, and `showcase/`
 stay in the repo — clone it to get them.
 
@@ -662,10 +697,13 @@ stay in the repo — clone it to get them.
 (`prepublishOnly` in `package.json`), so a stale or missing `dist/` cannot
 reach the registry. You do not need to build by hand before `npm publish`.
 
-See what would go into the tarball, without publishing:
+See what would go into the tarball, without publishing, and check the package the way a consumer meets it
+(`publint` for the manifest, `attw` for the type resolution):
 
 ```bash
 npm pack --dry-run
+npm run lint:package
+npm run smoke      # installs the packed tarball into a clean Vite project and builds it
 ```
 
 Keep the publish token out of the repository: reference it from `.npmrc` as

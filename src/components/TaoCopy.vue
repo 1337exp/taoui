@@ -1,24 +1,24 @@
 <script lang="ts" setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { warnDeprecated } from '../deprecate';
-import { taoLocale, useLocaleText } from '../locale';
+import TaoIcon from './TaoIcon.vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useFloating } from '../floating';
+import { useLocaleText, useTaoLocale } from '../locale';
 
 defineOptions({ name: 'TaoCopy' });
+
+const appLocale = useTaoLocale();
 
 const props = withDefaults(
     defineProps<{
         text: string;
         /** Visible text after copying. / Видимый текст после копирования. */
         successText?: string;
-        /** @deprecated Use `successText`: visible texts are `*Text`, aria texts are `*Label`. / Используйте `successText`. */
-        successMessage?: string;
         copyLabel?: string;
         /** Показать подсказку над кнопкой после копирования. */
         tip?: boolean;
     }>(),
     {
         successText: undefined,
-        successMessage: undefined,
         tip: true,
     },
 );
@@ -27,7 +27,7 @@ const l10n = useLocaleText(props, 'copy');
 const copied = ref(false);
 const triggerRef = ref<HTMLElement | null>(null);
 const tipRef = ref<HTMLElement | null>(null);
-const tipStyle = ref({ top: '0px', left: '0px' });
+const { style: tipStyle } = useFloating(triggerRef, tipRef, () => copied.value && props.tip, { placement: 'top', gap: 8 });
 
 let hideTimer = 0;
 let visibleObserver: IntersectionObserver | null = null;
@@ -36,49 +36,6 @@ function hideTip() {
     copied.value = false;
     window.clearTimeout(hideTimer);
     hideTimer = 0;
-}
-
-function updateTipPosition() {
-    const trigger = triggerRef.value;
-    const tip = tipRef.value;
-    if (!trigger || !tip) {
-        return;
-    }
-
-    const rect = trigger.getBoundingClientRect();
-    if (rect.width === 0 && rect.height === 0) {
-        hideTip();
-        return;
-    }
-
-    const gap = 8;
-    const pad = 8;
-    const width = tip.offsetWidth;
-    const height = tip.offsetHeight;
-    let left = rect.left + rect.width / 2 - width / 2;
-    let top = rect.top - height - gap;
-
-    if (left < pad) {
-        left = pad;
-    }
-    if (left + width > window.innerWidth - pad) {
-        left = window.innerWidth - pad - width;
-    }
-    if (top < pad) {
-        top = rect.bottom + gap;
-    }
-
-    tipStyle.value = { top: `${top}px`, left: `${left}px` };
-}
-
-function bindTipGuards() {
-    window.addEventListener('scroll', updateTipPosition, true);
-    window.addEventListener('resize', updateTipPosition);
-}
-
-function unbindTipGuards() {
-    window.removeEventListener('scroll', updateTipPosition, true);
-    window.removeEventListener('resize', updateTipPosition);
 }
 
 async function copy() {
@@ -93,18 +50,6 @@ async function copy() {
     }
 }
 
-watch(copied, async (isCopied) => {
-    if (!isCopied || !props.tip) {
-        unbindTipGuards();
-        return;
-    }
-
-    await nextTick();
-    await nextTick();
-    updateTipPosition();
-    bindTipGuards();
-});
-
 onMounted(() => {
     visibleObserver = new IntersectionObserver((entries) => {
         if (entries.some((entry) => !entry.isIntersecting)) {
@@ -118,16 +63,11 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     hideTip();
-    unbindTipGuards();
     visibleObserver?.disconnect();
     visibleObserver = null;
 });
 
-const doneText = computed(() => props.successText ?? props.successMessage ?? taoLocale().copy.successText);
-
-warnDeprecated('TaoCopy', {
-    successMessage: 'use `successText`',
-});
+const doneText = computed(() => props.successText ?? appLocale.value.copy.successText);
 </script>
 
 <template>
@@ -140,24 +80,7 @@ warnDeprecated('TaoCopy', {
                 :aria-label="copied ? doneText : l10n.copyLabel"
                 @click="copy"
             >
-                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
-                    <rect
-                        x="8"
-                        y="7"
-                        width="12"
-                        height="14"
-                        rx="2"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    />
-                    <path
-                        d="M16 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    />
-                </svg>
+                <TaoIcon name="tao-copy" :size="16" />
             </button>
         </slot>
 
@@ -177,7 +100,7 @@ warnDeprecated('TaoCopy', {
 
 <style>
 .tao-copy__tip {
-    z-index: 1060;
+    z-index: var(--tao-z-tooltip);
     position: fixed;
     padding: var(--tao-space-2) var(--tao-space-3);
     overflow: visible;
@@ -232,7 +155,7 @@ warnDeprecated('TaoCopy', {
     transition: var(--tao-transition-base);
 }
 
-.tao-copy__button svg {
+.tao-copy__button .tao-icon {
     display: block;
 }
 

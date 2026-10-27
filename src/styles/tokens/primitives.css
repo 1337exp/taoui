@@ -2,7 +2,7 @@
  * Tao UI — Primitive tokens
  *
  * Сырые значения без смысловой привязки. Ничего отсюда не используется
- * напрямую в компонентах — только через семантический слой (semantic.css).
+ * напрямую в компонентах — только через семантический слой (tokens/semantic.css, themes/*.css).
  * Пользователи библиотеки обычно НЕ трогают этот файл.
  */
 :root {
@@ -30,6 +30,7 @@
     --tao-pink-500: #ff227a;
     --tao-pink-600: #e60f66;
     --tao-pink-700: #c70a55;
+    --tao-pink-800: #a8083f;
 
     --tao-red-400: #e35766;
     --tao-red-500: #dc3545;
@@ -52,7 +53,7 @@
 
     /* ---------- Control size scale / Шкала размеров контролов ----------
        One scale (small / medium / large) for every control with `size`. Components read the current values
-       from size.css (--tao-control-height etc.), never these directly.
+       from contexts/size.css (--tao-control-height etc.), never these directly.
        Единая шкала для всех контролов с `size`. Компоненты читают текущие значения из size.css, не эти. */
     --tao-control-height-small: 26px;
     --tao-control-height-medium: 36px;
@@ -127,6 +128,19 @@
     --tao-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
     --tao-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
     --tao-shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.3);
+
+    /* The colour list of TaoAnimatedBorder variant="rainbow", the one gradient that is not a theme colour.
+       Список цветов радужной рамки: единственный градиент, который не цвет темы. */
+    --tao-gradient-rainbow: #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82;
+
+    /* ---------- Layers / Слои ----------
+       One scale for everything that floats; components never write a literal z-index above content.
+       Одна шкала для всего, что плавает; компоненты не пишут литералы z-index выше контента. */
+    --tao-z-modal: 1000; /* Modal, Drawer */
+    --tao-z-popup: 1050; /* Select, Combobox, Date, Popover, DropdownMenu */
+    --tao-z-tooltip: 1060; /* Tooltip, Copy tip */
+    --tao-z-toast: 1100;
+    --tao-z-confirm: 1200; /* above toasts: it asks for an answer */
 
     /* ---------- Motion ---------- */
     --tao-duration-fast: 0.15s;

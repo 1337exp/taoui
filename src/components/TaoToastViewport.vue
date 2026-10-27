@@ -50,7 +50,7 @@ function enterName(position: TaoToastPosition) {
 <style scoped>
 .tao-toast-viewport {
     position: fixed;
-    z-index: 1100;
+    z-index: var(--tao-z-toast);
     display: flex;
     pointer-events: none;
     padding: var(--tao-space-4);

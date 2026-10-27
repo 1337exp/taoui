@@ -26,14 +26,15 @@ export const propTablesEn = {
       title: 'TaoButton',
       rows: [
         r('type', "'button' | 'submit' | 'reset'", "'button'", 'The native button type'),
-        r('variant', "'primary' | 'secondary' | 'ghost' | 'text' | 'danger'", "'primary'", 'Shape. The filled red one is danger, not tone'),
-        r('tone', "'danger' | 'success' | 'warning' | 'info' | 'neutral' | ''", "''", 'Colours ghost and text. neutral keeps the text strong and only the hover wash takes the theme colour: the quiet action next to a primary one. Not a replacement for variant'),
+        r('variant', "'primary' | 'secondary' | 'ghost' | 'text'", "'primary'", 'Shape. The colour is tone'),
+        r('tone', "'accent' | 'neutral' | 'success' | 'danger' | 'warning' | 'info'", "'accent'", 'The colour, on any variant. accent is the theme accent. neutral keeps the text strong and only the hover wash takes the theme colour: the quiet action next to a primary one'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size. Without it — the size of the ancestors (the tao-size-* class or size on FormField / InputGroup), otherwise medium'),
         r('disabled', 'boolean', 'false', 'Disabled'),
         r('loading', 'boolean', 'false', 'A spinner, the click is swallowed'),
         r('block', 'boolean', 'false', '100% width'),
         r('minWidth', 'number | string', '—', 'Minimum width (number = px); the --tao-button-min-width variable'),
-        r('icon', 'string', "''", 'A symbol to the left of the text'),
+        r('icon', 'string', "''", 'An icon before the text: a name for TaoIcon (tao-plus, your own or a font one). Without text and slot the button is a square of the control height and needs aria-label'),
+        r('iconEnd', 'string', "''", 'An icon after the text'),
       ],
       slots: 'default — the button caption.',
     },
@@ -54,17 +55,19 @@ export const propTablesEn = {
     {
       title: 'TaoCard',
       rows: [
-        r('padding', 'number | string | (…)[]', '20', 'Padding of the card body. A number is px, a string is CSS. With flush — 0'),
-        r('radius', 'number | string', '8', 'Corner radius. A number is px, a string is CSS'),
+        r('padding', 'number | string | (…)[]', 'var(--tao-space-5)', 'Padding of the card body. A number is px, a string is CSS. With flush — 0. Published as --tao-pad'),
+        r('radius', 'number | string', 'var(--tao-radius-panel)', 'Corner radius. A number is px, a string is CSS. Published as --tao-radius; children get --tao-radius-inner'),
         r('shadow', 'boolean', 'true', 'The regular shadow. Off with flush'),
         r('shadowBottomOnly', 'boolean', 'false', 'A line at the bottom of the card, not a scrim over the photo'),
         r('flush', 'boolean', 'false', 'A tile: no padding and no shadow, cover/body fill the whole cell'),
         r('hover', 'boolean', 'false', 'An accent outline on hover'),
         r('surface', "'flat' | 'grain' | 'glass'", "'flat'", 'What the card is made of: fill / grain / glass. See “Surfaces”'),
         r('active', 'boolean', 'false', 'The selected state'),
-        r('overflow', 'boolean', 'false', 'Do not clip the content (cover / carousel)'),
+        r('overflow', 'boolean', 'false', 'Do not clip the content (media / carousel)'),
+        r('closable', 'boolean', 'false', 'A close button in the top right corner; the parent removes the card on the close event'),
+        r('closeLabel', 'string', "'Close'", 'aria-label of the close button'),
       ],
-      slots: 'default — the body. #cover, #overlay (a scrim over the cover or the whole tile), #header, #title, #sub, #footer.',
+      slots: 'default — the body. #media (a photo or a carousel on top), #overlay (a scrim over the media or the whole tile), #header (the top row: laid out as you like), #title, #sub, #footer, #corner (the top right corner: a tag, a menu button; the title leaves room for it, the width is the variable --tao-card-corner-size). The close event — the cross was pressed.',
     },
   ],
   copy: [
@@ -73,7 +76,6 @@ export const propTablesEn = {
       rows: [
         r('text', 'string', '—', 'The string for the clipboard. Required'),
         r('successText', 'string', "'Copied!'", 'The tooltip text after the click'),
-        r('successMessage', 'string', '—', 'Deprecated: successText (visible texts are *Text, aria ones are *Label)'),
         r('copyLabel', 'string', "'Copy'", 'aria-label of the button'),
         r('tip', 'boolean', 'true', 'Show a tooltip above the button after copying'),
       ],
@@ -86,11 +88,9 @@ export const propTablesEn = {
         r('v-model', 'string | number', "''", 'The field value'),
         r('type', "'text' | 'password' | 'email' | 'number' | 'tel'", "'text'", 'The native input type'),
         r('placeholder', 'string', "''", 'The hint inside'),
-        r('label', 'string', "''", 'Deprecated: the caption is label on TaoFormField, as for all fields'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium'),
         r('disabled', 'boolean', 'false', 'Disabled'),
         r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
-        r('errorMessage', 'string', "''", 'Deprecated: the error text is error on TaoFormField'),
         r('id', 'string', 'auto', 'The input id; otherwise taken from FormField or useId'),
       ],
       slots: '#prefix and #suffix — inside the frame, left/right (an icon, text).',
@@ -149,12 +149,9 @@ export const propTablesEn = {
         r('variant', "'bar' | 'outline' | 'filled' | 'plain'", "'bar'", 'A stripe on the left / a frame like TaoInput / a fill only / nothing'),
         r('readonly', 'boolean', 'false', 'Can be read and selected, but not edited'),
         r('noSpace', 'boolean', 'false', 'A space cannot be typed — neither from the keyboard nor by pasting'),
-        r('noBorder / noBackground / borderInverse', 'boolean', 'false', 'Deprecated: variant="filled" / variant="plain" / a stripe on the right'),
-        r('dummy', 'boolean', 'false', 'Deprecated: readonly'),
         r('align', "'start' | 'center' | 'end'", "'start'", 'Text alignment'),
         r('autofocus', 'boolean', 'false', 'Focus on mount'),
         r('blurOnEnter', 'boolean', 'false', 'Enter drops the focus instead of inserting a line break (Shift+Enter inserts it); keydown goes out first'),
-        r('textCenter / autoFocus / submitOnEnter', 'boolean', 'false', 'Deprecated: align="center" / autofocus / blurOnEnter'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium'),
         r('disabled', 'boolean', 'false', 'Disabled'),
         r('error', 'boolean', 'false', 'A red border'),
@@ -167,7 +164,6 @@ export const propTablesEn = {
       rows: [
         r('v-model', 'boolean', '—', 'Checked / not'),
         r('checked', 'boolean', '—', 'The state without v-model'),
-        r('value', 'boolean', '—', 'Deprecated: checked. value will become the option value, as with TaoRadio'),
         r('label', 'string', "''", 'The caption on the right'),
         r('indeterminate', 'boolean', 'false', 'A dash instead of a tick. A click sets checked, the parent works out the mixed state'),
         r('disabled', 'boolean', 'false', 'Disabled'),
@@ -245,7 +241,7 @@ export const propTablesEn = {
       rows: [
         r('value', 'string | number | boolean', '—', 'The option value. Required'),
         r('label', 'string', "''", 'The text. Or the default slot'),
-        r('icon', 'string', "''", 'A symbol on the left'),
+        r('icon', 'string', "''", 'A TaoIcon name on the left'),
         r('count', 'number | string', '—', 'A number on the right (a badge)'),
         r('disabled', 'boolean', 'false', 'This option'),
       ],
@@ -313,7 +309,6 @@ export const propTablesEn = {
         r('v-model', 'string', "''", 'The cells glued into a string'),
         r('numbersOnly', 'boolean', 'false', 'Digits only'),
         r('masked', 'boolean', 'false', 'Dots instead of characters'),
-        r('hidden', 'boolean', 'false', 'Deprecated: masked (hidden is a native attribute)'),
         r('disabled', 'boolean', 'false', 'Disabled'),
         r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Cells 40×46 / 50×56 / 58×64. Without it — the size of the ancestors'),
@@ -366,7 +361,7 @@ export const propTablesEn = {
       ],
     },
     {
-      title: 'TaoTimeline',
+      title: 'TaoScrubber',
       rows: [
         r('v-model', 'number', '—', 'The current time. Required'),
         r('v-model:playing', 'boolean', 'false', 'Whether playback is running (the look of the button). The component does not keep time itself'),
@@ -408,7 +403,7 @@ export const propTablesEn = {
       rows: [
         r('v-model', 'string', '—', 'The colour as a hex string. Required'),
         r('alpha / swatches / modes / v-model:mode / eyedropper / size', '', '', 'As in TaoColorPicker'),
-        r('position', "'top' | 'bottom' | 'left' | 'right'", "'bottom'", 'The side the palette opens on'),
+        r('placement', 'TaoPlacement', "'bottom-start'", 'Side and alignment: top / bottom / left / right and -start / -end. Flips at the screen edge'),
         r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
         r('disabled', 'boolean', 'false', 'Disabled'),
       ],
@@ -436,7 +431,7 @@ export const propTablesEn = {
         r('list', 'boolean', 'true', 'Names under the zone. Removing a file goes straight to v-model'),
         r('showClear', 'boolean', 'false', 'The “clear all” button. It does not clear by itself — it fires clear-request'),
       ],
-      slots: 'default — the zone text. The change event — files were added or removed (files is a deprecated alias). clear-request: the parent decides whether to reset at once or after confirm().',
+      slots: 'default — the zone text. The change event — files were added or removed. clear-request: the parent decides whether to reset at once or after confirm().',
     },
   ],
   table: [
@@ -451,14 +446,13 @@ export const propTablesEn = {
         r('striped', "boolean | 'odd' | 'even'", 'false', 'Zebra. true/odd — from the first row, even — from the second'),
         r('hover', 'boolean', 'true', 'Highlight the row on hover'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Paddings and text of cells (small = the former compact), and the size of controls in cells too'),
-        r('compact', 'boolean', 'false', 'Deprecated: the same as size="small"'),
         r('head', 'boolean', 'true', 'Highlight the header'),
         r('lines', 'boolean', 'true', 'Lines between rows'),
         r('sticky', 'boolean', 'false', 'A sticky header (needs maxHeight)'),
         r('rowKey', 'string | fn', "'id'", 'The row key'),
         r('maxHeight', 'number | string', '—', 'Scroll. A number is px'),
       ],
-      slots: 'Cell: #cell-{key}="{ row, value }". Events: change — the sorting changed (sort is a deprecated alias), row-click, if clickable.',
+      slots: 'Cell: #cell-{key}="{ row, value }". Events: change — the sorting changed, row-click, if clickable.',
     },
   ],
   pagination: [
@@ -519,7 +513,6 @@ export const propTablesEn = {
       rows: [
         r('items', 'TaoStageItem[]', '[]', '{ key, label?, status?: wait | work | ok | bad }'),
         r('direction', "'row' | 'column'", "'column'", 'column — top to bottom, row — in a row. As in TaoFlex'),
-        r('vertical', 'boolean', '—', 'Deprecated: direction'),
         r('ariaLabel', 'string', "'Stages'", 'The list name'),
       ],
       slots: 'default / #icon="{ item, index, status }" — replace the step text or icon.',
@@ -564,7 +557,6 @@ export const propTablesEn = {
       title: 'TaoContainer',
       rows: [
         r('width', "'wide' | 'slim' | 'ultra-slim'", "'wide'", 'max-width: 1120 / 500 / 400'),
-        r('size', "'wide' | 'slim' | 'ultra-slim'", '—', 'Deprecated: the same as width'),
         r('free', 'boolean', 'false', 'No horizontal auto-centring'),
       ],
       slots: 'default — the content.',
@@ -586,7 +578,6 @@ export const propTablesEn = {
       title: 'TaoSpace',
       rows: [
         r('direction', "'row' | 'column'", "'row'", 'As in TaoFlex'),
-        r('vertical', 'boolean', 'false', 'Deprecated: direction="column"'),
         r('block', 'boolean', 'false', 'display: flex without wrap'),
         r('expand', 'boolean', 'false', '100% width'),
       ],
@@ -619,7 +610,7 @@ export const propTablesEn = {
         r('variant', "'solid' | 'dashed' | 'colored' | 'gap'", "'solid'", 'solid — a regular border, dashed — dashes, colored — accent, gap — a gap'),
         r('text', 'string', "''", 'An optional caption in the middle. Works with any variant'),
         r('fade', 'boolean', 'false', 'Soft line edges. Does not affect gap'),
-        r('size', "'small' | 'medium' | 'large'", "'medium'", 'For gap only — the height of the gap. Not inherited. big is a deprecated alias of large'),
+        r('size', "'small' | 'medium' | 'large'", "'medium'", 'For gap only — the height of the gap. Not inherited.'),
       ],
       slots: 'default — the same as text. If there is a slot, it wins over the prop.',
     },
@@ -655,12 +646,16 @@ export const propTablesEn = {
     {
       title: 'TaoAnimatedBorder',
       rows: [
+        r('variant', "'rainbow' | 'tone'", "'rainbow'", 'What the border is made of: the rainbow or the colours of a tone'),
+        r('tone', 'TaoToneName', "'accent'", 'The tone for variant="tone"; the theme accent without it'),
+        r('colors', 'string[]', '—', 'Your own colours (any CSS colour), they win over variant'),
+        r('radius', 'number | string', 'var(--tao-radius-panel)', 'Corner radius of the content; the border outside is that plus its width'),
         r('borderWidth', 'number', '3', 'The outline thickness in px'),
         r('speed', 'number', '6', 'The duration of one turn in seconds'),
         r('light', 'boolean', 'false', 'A soft glow around the frame'),
         r('glow', 'number', '16', 'The glow radius in px. Makes sense with light'),
       ],
-      slots: 'default — the content inside the frame.',
+      slots: 'default — the content inside the frame. With prefers-reduced-motion the gradient stands still.',
     },
   ],
   modal: [
@@ -707,7 +702,7 @@ export const propTablesEn = {
       title: 'TaoTooltip',
       rows: [
         r('content', 'string', '—', 'The hint text. Required'),
-        r('position', "'top' | 'bottom' | 'left' | 'right'", "'top'", 'The side. Flips at the screen edge'),
+        r('placement', 'TaoPlacement', "'top'", 'Side and alignment: top / bottom / left / right and -start / -end. Flips at the screen edge'),
       ],
       slots: 'default — the trigger (a button, an icon…).',
     },
@@ -717,7 +712,7 @@ export const propTablesEn = {
       title: 'TaoPopover',
       rows: [
         r('v-model', 'boolean', 'uncontrolled', 'Open state. Without v-model it holds its own'),
-        r('position', "'top' | 'bottom' | 'left' | 'right'", "'bottom'", 'The panel side, flips at the edge'),
+        r('placement', 'TaoPlacement', "'bottom-start'", 'Side and alignment of the panel: top / bottom / left / right and -start / -end. Flips at the edge'),
         r('disabled', 'boolean', 'false', 'Does not open'),
       ],
       slots: '#trigger — the button. default — the panel content. Not a tooltip and not an action menu.',
@@ -727,10 +722,22 @@ export const propTablesEn = {
     {
       title: 'TaoDropdownMenu',
       rows: [
-        r('actions', '{ id, name, ico? }[]', '[]', 'The menu items'),
-        r('menuLabel', 'string', "'Menu'", 'aria-label of the button'),
+        r('items', 'TaoMenuItem[]', '[]', 'Entries: plain { id, label, icon?, shortcut?, disabled?, items? }, checkboxes { type: "checkbox", checked }, radios { type: "radio", group, checked }, { type: "label" }, { type: "separator" }. items inside an entry is a submenu'),
+        r('placement', 'TaoPlacement', "'bottom-end'", 'Where the list opens. Flips at the screen edge'),
+        r('menuLabel', 'string', "'Menu'", 'aria-label of the button and of the menu'),
       ],
-      slots: '#icon — the trigger icon. The select event — the item id (selected is a deprecated alias).',
+      slots: '#icon — the trigger icon, #button — the whole button content, #item="{ item, id, label, icon }" — your own item face. The select event — the item id. shortcut is a ready string to show: the menu neither parses nor listens to it.',
+    },
+    {
+      title: 'TaoMenu',
+      rows: [
+        r('items', 'TaoMenuItem[]', '', 'The same entries'),
+        r('open', 'boolean', '', 'Whether it is open. The owner closes it on the close event'),
+        r('anchor', 'HTMLElement | null', '', 'What the panel hangs from'),
+        r('placement', 'TaoPlacement', "'bottom-end'", 'Side and alignment'),
+        r('label', 'string', '—', 'Accessible name of the menu'),
+      ],
+      slots: 'Event select — the item id, close(reason) — the menu asks to be closed (escape / select / outside / tab). The panel for your own shells: a button, a context menu, a menu bar.',
     },
   ],
   spoiler: [
@@ -760,10 +767,9 @@ export const propTablesEn = {
       rows: [
         r('v-model', 'string', '—', 'value of the active tab. Required'),
         r('items', 'TaoTabItem[]', '—', '{ value, label, disabled? } — like Select options'),
-        r('tabs', '{ key, label, disabled? }[]', '—', 'Deprecated: items, key → value'),
         r('@change', 'value', '—', 'The user picked another tab'),
 
-        r('justify', 'string', "''", 'CSS justify-content for aligning tabs (center, flex-end, space-between, etc.)'),
+        r('justify', 'TaoJustify', '—', 'Where the tabs sit in the row, as in TaoFlex: flex-start, center, flex-end, space-between, space-around, space-evenly. Without it, at the left'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'The tab height as TaoButton (26 / 36 / 44). Without it — the size of the ancestors'),
       ],
       slots: 'default="{ key }" — the content of the active panel.',
@@ -784,7 +790,6 @@ export const propTablesEn = {
       rows: [
         r('to', 'string | object', '—', 'The address. NuxtLink → RouterLink → <a>'),
         r('newTab', 'boolean', 'false', 'target=_blank + rel=noopener'),
-        r('asNewTab', 'boolean', 'false', 'Deprecated: newTab'),
         r('private', 'boolean', 'false', 'rel=noopener noreferrer'),
         r('exactPath', 'boolean', 'false', 'An exact path match for active (vue-router)'),
       ],
@@ -806,7 +811,6 @@ export const propTablesEn = {
         r('zIndex', 'number', '1000', 'The layer'),
         r('ariaLabel', 'string', "'Back to top'", 'The accessible name'),
         r('outline', 'boolean', 'true', 'The focus outline'),
-        r('hasOutline / tabindex', '—', '—', 'Deprecated: outline / tabindex as a plain attribute'),
       ],
     },
   ],
@@ -817,7 +821,7 @@ export const propTablesEn = {
       rows: [
         r('toast()', '() => builder', '', 'A chain in a single tick, shown on the next one'),
         r('toast.success(msg)', '(string, options?) => builder', '', 'A short call. Also error / warning / info / show'),
-        r('.success() / .error() / …', '() => builder', '', 'The type. show() is neutral'),
+        r('.success() / .danger() / …', '() => builder', '', 'The type. show() is neutral'),
         r('.title / .message', '(string) => builder', '', 'The title and text'),
         r('.short() / .timeout(ms)', '() => builder', '', '1 s or your own time'),
         r('.byBottomRight() / …', '() => builder', '', 'The corner: top/bottom + left/right/center'),
@@ -830,8 +834,7 @@ export const propTablesEn = {
     {
       title: 'TaoAlert',
       rows: [
-        r('tone', "'success' | 'danger' | 'warning' | 'info' | 'neutral'", "'info'", 'The status colour, as TaoButton. error = danger'),
-        r('type', '—', '—', 'Deprecated: tone'),
+        r('tone', "'success' | 'danger' | 'warning' | 'info' | 'neutral'", "'info'", 'The status colour, as TaoButton'),
         r('title', 'string', "''", 'The title. Can be omitted'),
         r('closable', 'boolean', 'false', 'The cross. It does not unmount itself — it fires close'),
         r('closeLabel', 'string', "'Close'", 'aria-label of the cross'),
@@ -843,13 +846,11 @@ export const propTablesEn = {
     {
       title: 'TaoTag',
       rows: [
-        r('tone', "'neutral' | 'success' | 'danger' | 'warning' | 'info' | ''", "''", 'The status colour, as TaoButton. error = danger'),
-        r('type', '—', '—', 'Deprecated: tone'),
+        r('tone', "'neutral' | 'success' | 'danger' | 'warning' | 'info' | ''", "''", 'The status colour, as TaoButton'),
         r('flat', 'boolean', 'false', 'No border, the fill stays'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Height 18 / 20 / 24. Without it — the size of the ancestors'),
         r('closable', 'boolean', 'false', 'The cross. Fires close, does not touch the array itself'),
         r('clickable', 'boolean', 'false', 'A pointer cursor (a clickable chip), as TaoListItem / TaoTable'),
-        r('pointer', 'boolean', 'false', 'Deprecated: clickable'),
         r('color / background / borderColor', 'string', '—', 'Override the tokens by hand'),
       ],
       slots: 'default — the text. #prefix — an avatar or an icon on the left.',
@@ -883,7 +884,7 @@ export const propTablesEn = {
       rows: [
         r('src', 'string', "''", 'A photo. If empty — initials from name'),
         r('name', 'string', "''", 'For the initials and alt'),
-        r('size', "'small' | 'medium' | 'large'", "'medium'", '24 / 32 / 48px. Content, does not inherit the size of ancestors. s / m / l are deprecated'),
+        r('size', "'small' | 'medium' | 'large'", "'medium'", '24 / 32 / 48px. Content, does not inherit the size of ancestors.'),
         r('dot', 'boolean | tone', 'false', 'The status dot. true = success'),
         r('count', 'number | string', '—', 'A badge. 0 and empty are not drawn, >99 → 99+'),
       ],
@@ -893,12 +894,12 @@ export const propTablesEn = {
     {
       title: 'TaoIcon',
       rows: [
-        r('name', 'string', '—', 'The class icon-{name}. You add the font yourself. Required'),
-        r('size', 'number', '—', 'font-size in px'),
+        r('name', 'string', '—', 'tao-… is a built-in SVG; a name from registerTaoIcons; any other name is the class icon-{name} of your font. Required'),
+        r('size', 'number', '—', 'Pixels. Without it an SVG icon is 1em (follows the font size)'),
         r('margin', 'string', "'0px'", 'The outer margin'),
         r('invert', 'boolean', 'false', 'Invert the colour'),
       ],
-      slots: '#prefix / #postfix — next to the glyph.',
+      slots: '#prefix / #postfix — next to the icon. registerTaoIcons({ name: { body, viewBox? } }) adds your own SVGs; the prefix tao- is reserved.',
     },
   ],
 }

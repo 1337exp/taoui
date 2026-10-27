@@ -1,11 +1,13 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
 import { sizeClass, type TaoSize } from '../size';
-import { warnDeprecated } from '../deprecate';
-import { taoLocale, useLocaleText } from '../locale';
+import { useLocaleText, useTaoLocale } from '../locale';
 
 defineOptions({ name: 'TaoFileDrop' });
+
+const appLocale = useTaoLocale();
 
 interface Props {
     /** Текущий список файлов — компонент сам не хранит состояние
@@ -39,8 +41,6 @@ const emit = defineEmits<{
     'update:modelValue': [files: File[]];
     /** The user added or removed files. / Пользователь добавил или убрал файлы. */
     change: [files: File[]];
-    /** @deprecated Use `change`. / Используйте `change`. */
-    files: [files: File[]];
     /** Запрос на очистку — компонент НЕ очищает себя сам. Родитель решает:
      * очистить сразу (emit → v-model = []) или сперва показать модалку
      * подтверждения и очистить только после ответа пользователя. */
@@ -86,7 +86,6 @@ function fileMatchesAccept(file: File, accept: string) {
 function commit(files: File[]) {
     emit('update:modelValue', files);
     emit('change', files);
-    emit('files', files);
 }
 
 function handleDragOver(event: DragEvent) {
@@ -155,7 +154,7 @@ function processFiles(fileList: FileList) {
 }
 
 function defaultFormatSize(bytes: number) {
-    const { units, decimalSeparator } = taoLocale().fileDrop;
+    const { units, decimalSeparator } = appLocale.value.fileDrop;
     if (bytes < 1024) {
         return `${bytes} ${units[0]}`;
     }
@@ -184,10 +183,6 @@ onMounted(() => {
     });
 });
 onBeforeUnmount(() => stopFocusLoss?.());
-
-warnDeprecated('TaoFileDrop', {
-    onFiles: 'listen to "change"',
-});
 </script>
 
 <template>
@@ -201,7 +196,7 @@ warnDeprecated('TaoFileDrop', {
                 @click="requestClear"
             >
                 <span aria-hidden="true">
-                    <slot name="clear-icon">✕</slot>
+                    <slot name="clear-icon"><TaoIcon name="tao-close" /></slot>
                 </span>
             </button>
 
@@ -212,7 +207,7 @@ warnDeprecated('TaoFileDrop', {
                 @dragleave="handleDragLeave"
                 @drop="handleDrop"
             >
-                <slot>{{ taoLocale().fileDrop.zoneText }}</slot>
+                <slot>{{ appLocale.fileDrop.zoneText }}</slot>
 
                 <input
                     ref="fileInput"
@@ -237,7 +232,7 @@ warnDeprecated('TaoFileDrop', {
                     @click="removeAt(index)"
                 >
                     <span aria-hidden="true">
-                        <slot name="remove-icon">✕</slot>
+                        <slot name="remove-icon"><TaoIcon name="tao-close" /></slot>
                     </span>
                 </button>
             </li>

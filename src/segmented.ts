@@ -2,9 +2,6 @@ import type { ComputedRef, InjectionKey } from 'vue';
 import type { TaoRadioValue } from './radio';
 import type { TaoSize } from './size';
 
-/** @deprecated Use TaoSize. / Используйте TaoSize. */
-export type TaoSegmentedSize = TaoSize;
-
 export interface TaoSegmentedContext {
     name: ComputedRef<string>;
     model: ComputedRef<TaoRadioValue | undefined>;

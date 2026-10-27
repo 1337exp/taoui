@@ -39,7 +39,7 @@ async function fireConfirm(kind) {
     
           <div class="button-row">
             <TaoButton variant="primary" @click="fireConfirm('save')">{{ tr('regular', 'обычный') }}</TaoButton>
-            <TaoButton variant="danger" @click="fireConfirm('danger')">{{ tr('dangerous', 'опасный') }}</TaoButton>
+            <TaoButton tone="danger" @click="fireConfirm('danger')">{{ tr('dangerous', 'опасный') }}</TaoButton>
           </div>
           <p v-if="confirmResult" style="margin-top: 8px; font-size: 13px;">{{ tr('Answer', 'Ответ') }}: {{ confirmResultText[confirmResult]() }}</p>
     

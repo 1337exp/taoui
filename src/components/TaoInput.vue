@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { computed, inject, ref, useId } from 'vue';
-import { formFieldKey } from '../formField';
+import { ref } from 'vue';
+import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
-import { warnDeprecated } from '../deprecate';
 
 defineOptions({ name: 'TaoInput' });
 
@@ -15,10 +14,6 @@ interface Props {
     size?: TaoSize;
     /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
     error?: boolean;
-    /** @deprecated Use TaoFormField `error` — same as every other field. / Используйте `error` у TaoFormField — как у всех полей. */
-    errorMessage?: string;
-    /** @deprecated Use TaoFormField `label` — same as every other field. / Используйте `label` у TaoFormField — как у всех полей. */
-    label?: string;
     id?: string;
 }
 
@@ -28,15 +23,9 @@ const props = withDefaults(defineProps<Props>(), {
     placeholder: '',
     disabled: false,
     error: false,
-    errorMessage: '',
-    label: '',
 });
 
-const field = inject(formFieldKey, null);
-const localId = useId();
-const controlId = computed(() => props.id || field?.id || localId);
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
-const describedBy = computed(() => field?.describedBy.value);
+const { field, controlId, invalid, describedBy } = useField(props);
 const focused = ref(false);
 
 const emit = defineEmits(['update:modelValue', 'blur', 'focus']);
@@ -55,16 +44,10 @@ function handleFocus(event: FocusEvent) {
     focused.value = true;
     emit('focus', event);
 }
-
-warnDeprecated('TaoInput', {
-    label: 'use `label` of TaoFormField',
-    errorMessage: 'use `error` of TaoFormField',
-});
 </script>
 
 <template>
     <div class="tao-input-wrapper" :class="sizeClass(size)">
-        <label v-if="label && !field" class="tao-input__label" :for="controlId">{{ label }}</label>
         <div
             class="tao-input-shell"
             :class="{
@@ -96,7 +79,6 @@ warnDeprecated('TaoInput', {
                 <slot name="suffix" />
             </span>
         </div>
-        <span v-if="error && errorMessage" class="tao-input__error">{{ errorMessage }}</span>
     </div>
 </template>
 

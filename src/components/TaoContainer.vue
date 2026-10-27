@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { warnDeprecated } from '../deprecate';
 
 defineOptions({ name: 'TaoContainer' });
 
@@ -9,8 +8,6 @@ type TaoContainerWidth = 'wide' | 'slim' | 'ultra-slim';
 interface Props {
     /** max-width: 1120 / 500 / 400px. */
     width?: TaoContainerWidth;
-    /** @deprecated Use `width` — this is a width, not a size. / Используйте `width` — это ширина, не размер. */
-    size?: TaoContainerWidth;
     /** "свободно" болтается в разметке, без авто-центровки по горизонтали */
     free?: boolean;
 }
@@ -19,11 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
     free: false,
 });
 
-const resolvedWidth = computed(() => props.width ?? props.size ?? 'wide');
-
-warnDeprecated('TaoContainer', {
-    size: 'use `width`',
-});
+const resolvedWidth = computed(() => props.width ?? 'wide');
 </script>
 
 <template>

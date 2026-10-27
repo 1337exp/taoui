@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { computed, inject, ref, useId, watch } from 'vue';
-import { formFieldKey } from '../formField';
+import TaoIcon from './TaoIcon.vue';
+import { computed, ref, watch } from 'vue';
+import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
 
@@ -46,11 +47,7 @@ const emit = defineEmits<{
     focus: [event: FocusEvent];
 }>();
 
-const field = inject(formFieldKey, null);
-const localId = useId();
-const controlId = computed(() => field?.id ?? localId);
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
-const describedBy = computed(() => field?.describedBy.value);
+const { field, controlId, invalid, describedBy } = useField(props);
 
 const focused = ref(false);
 const draft = ref(toDraft(props.modelValue));
@@ -218,7 +215,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
                 @click="bump(1)"
             >
                 <span aria-hidden="true">
-                    <slot name="increment-icon">+</slot>
+                    <slot name="increment-icon"><TaoIcon name="tao-plus" /></slot>
                 </span>
             </button>
             <button
@@ -230,7 +227,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
                 @click="bump(-1)"
             >
                 <span aria-hidden="true">
-                    <slot name="decrement-icon">−</slot>
+                    <slot name="decrement-icon"><TaoIcon name="tao-minus" /></slot>
                 </span>
             </button>
         </div>

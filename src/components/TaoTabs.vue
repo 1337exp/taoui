@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { computed, nextTick, useId } from 'vue';
+import type { TaoJustify } from '../layout';
 import { sizeClass, type TaoSize } from '../size';
-import { tabValue, type TaoTabItem } from '../tabs';
-import { deprecationWarning, warnDeprecated } from '../deprecate';
+import type { TaoTabItem } from '../tabs';
 
 defineOptions({ name: 'TaoTabs' });
 
@@ -10,18 +10,15 @@ const props = withDefaults(
     defineProps<{
         /** Tabs: `{ value, label, disabled? }`, same shape as Select options. / Вкладки, как опции Select. */
         items?: TaoTabItem[];
-        /** @deprecated Use `items`, same as TaoBreadcrumb / TaoStages. / Используйте `items`. */
-        tabs?: TaoTabItem[];
         modelValue: string;
-        /** Выравнивание вкладок по горизонтали (CSS justify-content). */
-        justify?: string;
+        /** Where the tabs sit along the row, as in TaoFlex; without it they start at the left. / Где вкладки стоят в ряду, как у TaoFlex; без него — слева. */
+        justify?: TaoJustify;
         /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
     }>(),
     {
         items: undefined,
-        tabs: undefined,
-        justify: '',
+        justify: undefined,
     },
 );
 
@@ -32,7 +29,7 @@ const emit = defineEmits<{
 }>();
 const uid = useId();
 
-const list = computed(() => props.items ?? props.tabs ?? []);
+const list = computed(() => props.items ?? []);
 const enabledTabs = computed(() => list.value.filter((tab) => !tab.disabled));
 
 function tabId(key: string) {
@@ -44,7 +41,7 @@ function panelId(key: string) {
 }
 
 function selectTab(key: string, focus = false) {
-    const tab = list.value.find((item) => tabValue(item) === key);
+    const tab = list.value.find((item) => item.value === key);
     if (tab && !tab.disabled) {
         emit('update:modelValue', key);
         if (key !== props.modelValue) {
@@ -61,9 +58,9 @@ function move(delta: number) {
     if (!enabled.length) {
         return;
     }
-    const current = enabled.findIndex((tab) => tabValue(tab) === props.modelValue);
+    const current = enabled.findIndex((tab) => tab.value === props.modelValue);
     const next = enabled[(current + delta + enabled.length) % enabled.length];
-    selectTab(tabValue(next), true);
+    selectTab(next.value, true);
 }
 
 function onKeydown(event: KeyboardEvent) {
@@ -80,42 +77,34 @@ function onKeydown(event: KeyboardEvent) {
     if (event.key === 'Home') {
         event.preventDefault();
         const first = enabledTabs.value[0];
-        selectTab(first ? tabValue(first) : props.modelValue, true);
+        selectTab(first ? first.value : props.modelValue, true);
         return;
     }
     if (event.key === 'End') {
         event.preventDefault();
         const last = enabledTabs.value[enabledTabs.value.length - 1];
-        selectTab(last ? tabValue(last) : props.modelValue, true);
+        selectTab(last ? last.value : props.modelValue, true);
     }
-}
-
-warnDeprecated('TaoTabs', {
-    tabs: 'use `items` (with `value` instead of `key`)',
-});
-
-if (list.value.some((tab) => tab.key !== undefined)) {
-    deprecationWarning('TaoTabs', 'item `key`', 'use item `value`');
 }
 </script>
 
 <template>
     <div class="tao-tabs" :class="sizeClass(size)">
-        <div class="tao-tabs__list" :style="{ justifyContent: justify || undefined }" role="tablist" @keydown="onKeydown">
+        <div class="tao-tabs__list" :style="{ justifyContent: justify }" role="tablist" @keydown="onKeydown">
             <button
                 v-for="tab in list"
-                :key="tabValue(tab)"
+                :key="tab.value"
                 type="button"
                 class="tao-tabs__tab"
                 role="tab"
-                :id="tabId(tabValue(tab))"
-                :aria-selected="tabValue(tab) === modelValue"
-                :aria-controls="panelId(tabValue(tab))"
-                :tabindex="tabValue(tab) === modelValue ? 0 : -1"
+                :id="tabId(tab.value)"
+                :aria-selected="tab.value === modelValue"
+                :aria-controls="panelId(tab.value)"
+                :tabindex="tab.value === modelValue ? 0 : -1"
                 :disabled="tab.disabled"
-                @click="selectTab(tabValue(tab))"
+                @click="selectTab(tab.value)"
             >
-                <slot v-if="$slots.label" name="label" :text="tab.label" :value="tabValue(tab)" />
+                <slot v-if="$slots.label" name="label" :text="tab.label" :value="tab.value" />
                 <template v-else>{{ tab.label }}</template>
             </button>
         </div>

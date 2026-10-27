@@ -1,23 +1,20 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed } from 'vue';
-import type { TaoTone } from '../tone';
-import { warnDeprecated } from '../deprecate';
+import { toneClass, type TaoTone } from '../tone';
 import { useLocaleText } from '../locale';
 defineOptions({ name: 'TaoAlert' });
 
 const props = withDefaults(
     defineProps<{
-        /** Status color; `error` is an alias of `danger`. / Цвет статуса; `error` — алиас `danger`. */
-        tone?: TaoTone | 'error';
-        /** @deprecated Use `tone`, same as TaoButton. / Используйте `tone`, как у TaoButton. */
-        type?: TaoTone | 'error';
+        /** Status color. / Цвет статуса. */
+        tone?: TaoTone;
         title?: string;
         closable?: boolean;
         closeLabel?: string;
     }>(),
     {
-        tone: undefined,
-        type: undefined,
+        tone: 'info',
         title: '',
         closable: false,
     },
@@ -28,25 +25,15 @@ const emit = defineEmits<{
     close: [];
 }>();
 
-const resolvedTone = computed(() => {
-    const value = props.tone ?? props.type ?? 'info';
-    return value === 'danger' ? 'error' : value;
-});
-const live = computed(() =>
-    resolvedTone.value === 'error' || resolvedTone.value === 'warning' ? 'assertive' : 'polite',
-);
-
-warnDeprecated('TaoAlert', {
-    type: 'use `tone`',
-});
+const isUrgent = computed(() => props.tone === 'danger' || props.tone === 'warning');
 </script>
 
 <template>
     <div
         class="tao-alert"
-        :class="`tao-alert--${resolvedTone}`"
-        :role="resolvedTone === 'error' ? 'alert' : 'status'"
-        :aria-live="live"
+        :class="toneClass(tone)"
+        :role="tone === 'danger' ? 'alert' : 'status'"
+        :aria-live="isUrgent ? 'assertive' : 'polite'"
     >
         <div class="tao-alert__body">
             <strong v-if="title" class="tao-alert__title">{{ title }}</strong>
@@ -60,7 +47,7 @@ warnDeprecated('TaoAlert', {
             @click="emit('close')"
         >
             <span aria-hidden="true">
-                <slot name="close-icon">&times;</slot>
+                <slot name="close-icon"><TaoIcon name="tao-close" /></slot>
             </span>
         </button>
     </div>
@@ -68,7 +55,7 @@ warnDeprecated('TaoAlert', {
 
 <style scoped>
 .tao-alert {
-    --tao-alert-tone: var(--tao-color-info);
+    --tao-alert-tone: var(--tao-tone);
 
     display: flex;
     align-items: flex-start;
@@ -79,27 +66,6 @@ warnDeprecated('TaoAlert', {
     color: var(--tao-color-text);
     border: 1px solid color-mix(in srgb, var(--tao-alert-tone) 35%, var(--tao-color-border));
     border-radius: var(--tao-radius-panel);
-}
-
-.tao-alert--success {
-    --tao-alert-tone: var(--tao-color-success);
-}
-
-.tao-alert--error,
-.tao-alert--danger {
-    --tao-alert-tone: var(--tao-color-danger);
-}
-
-.tao-alert--warning {
-    --tao-alert-tone: var(--tao-color-warning);
-}
-
-.tao-alert--info {
-    --tao-alert-tone: var(--tao-color-info);
-}
-
-.tao-alert--neutral {
-    --tao-alert-tone: var(--tao-color-text-muted);
 }
 
 .tao-alert__body {

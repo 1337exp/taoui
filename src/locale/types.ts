@@ -18,6 +18,7 @@ export interface TaoLocale {
         dotLabels: Record<'success' | 'danger' | 'warning' | 'info' | 'neutral', string>;
     };
     breadcrumb: { ariaLabel: string };
+    card: { closeLabel: string };
     carousel: {
         ariaLabel: string;
         prevLabel: string;
@@ -92,7 +93,7 @@ export interface TaoLocale {
         /** Trigger of TaoColorInput. / Кнопка TaoColorInput. */
         chooseLabel: string;
     };
-    timeline: { playLabel: string; pauseLabel: string; restartLabel: string };
+    scrubber: { playLabel: string; pauseLabel: string; restartLabel: string };
     toast: { closeLabel: string };
 }
 

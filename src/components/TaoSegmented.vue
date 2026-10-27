@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { computed, inject, nextTick, onBeforeUnmount, onMounted, provide, ref, useId, watch } from 'vue';
-import { formFieldKey } from '../formField';
+import { computed, nextTick, onBeforeUnmount, onMounted, provide, ref, useId, watch } from 'vue';
+import { useField } from '../formField';
 import { type TaoRadioValue } from '../radio';
 import { segmentedKey } from '../segmented';
 import { sizeClass, type TaoSize } from '../size';
@@ -33,13 +33,11 @@ const emit = defineEmits<{
     change: [value: TaoRadioValue];
 }>();
 
-const field = inject(formFieldKey, null);
+const { field, invalid, describedBy } = useField(props);
 const autoName = useId();
 const groupName = computed(() => props.name || autoName);
 const model = computed(() => props.modelValue);
 const groupDisabled = computed(() => props.disabled);
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
-const describedBy = computed(() => field?.describedBy.value);
 const minWidthStyle = computed(() =>
     props.minWidth === undefined
         ? undefined

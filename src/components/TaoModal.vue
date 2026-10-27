@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
+import TaoIcon from './TaoIcon.vue';
+import { nextTick, ref, useId, watch } from 'vue';
 import { getFocusable, trapTab } from '../focusTrap';
-import { isBrowser, lockBodyScroll, unlockBodyScroll } from '../bodyScroll';
+import { useLayer } from '../layers';
 import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoModal' });
@@ -23,8 +24,6 @@ const emit = defineEmits(['update:modelValue', 'close']);
 
 const panelRef = ref<HTMLElement | null>(null);
 const titleId = useId();
-let previousFocus: HTMLElement | null = null;
-let scrollHeld = false;
 let pointerDownOnOverlay = false;
 
 function close() {
@@ -33,27 +32,6 @@ function close() {
     }
     emit('update:modelValue', false);
     emit('close');
-}
-
-function holdScroll() {
-    if (scrollHeld || !isBrowser()) {
-        return;
-    }
-    lockBodyScroll();
-    scrollHeld = true;
-}
-
-function releaseScroll() {
-    if (!scrollHeld) {
-        return;
-    }
-    unlockBodyScroll();
-    scrollHeld = false;
-}
-
-function restoreFocus() {
-    previousFocus?.focus?.();
-    previousFocus = null;
 }
 
 async function focusPanel() {
@@ -67,14 +45,6 @@ async function focusPanel() {
 }
 
 function onKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
-        if (!props.closable) {
-            return;
-        }
-        event.preventDefault();
-        close();
-        return;
-    }
 
     if (panelRef.value) {
         trapTab(event, panelRef.value);
@@ -92,29 +62,18 @@ function onOverlayPointerUp(event: PointerEvent) {
     pointerDownOnOverlay = false;
 }
 
+// Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
+useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscape: close });
+
 watch(
     () => props.modelValue,
     (isOpen) => {
-        if (!isBrowser()) {
-            return;
-        }
-
         if (isOpen) {
-            previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-            holdScroll();
             void focusPanel();
-            return;
         }
-        releaseScroll();
-        restoreFocus();
     },
     { immediate: true },
 );
-
-onBeforeUnmount(() => {
-    releaseScroll();
-    restoreFocus();
-});
 </script>
 
 <template>
@@ -148,7 +107,7 @@ onBeforeUnmount(() => {
                             @click="close"
                         >
                             <span aria-hidden="true">
-                                <slot name="close-icon">&times;</slot>
+                                <slot name="close-icon"><TaoIcon name="tao-close" /></slot>
                             </span>
                         </button>
                     </div>
@@ -172,7 +131,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: var(--tao-z-modal);
     padding: var(--tao-space-5);
 }
 

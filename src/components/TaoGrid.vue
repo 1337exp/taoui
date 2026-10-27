@@ -54,9 +54,16 @@ const gridStyle = computed(() => ({
     grid-template-columns: repeat(var(--tao-grid-cols), minmax(0, 1fr));
 }
 
+/* The one place that knows the breakpoint (a container query cannot read a CSS variable): a narrow grid becomes
+   one column and every item drops its span. / Единственное место, где известна точка перелома. */
 @container (max-width: 560px) {
     .tao-grid--fixed {
         grid-template-columns: minmax(0, 1fr);
+    }
+
+    .tao-grid--fixed > :deep(.tao-grid-item) {
+        grid-column: auto;
+        grid-row: auto;
     }
 }
 </style>

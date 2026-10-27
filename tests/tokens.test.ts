@@ -1,10 +1,14 @@
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error Vite `?raw` imports: the stylesheets as text
-import primitivesCss from '../src/styles/primitives.css?raw';
+import primitivesCss from '../src/styles/tokens/primitives.css?raw';
 // @ts-expect-error Vite `?raw` import
-import semanticCss from '../src/styles/semantic.css?raw';
+import semanticCss from '../src/styles/tokens/semantic.css?raw';
+// @ts-expect-error Vite `?raw` import
+import darkCss from '../src/styles/themes/dark.css?raw';
 // @ts-expect-error Vite `?raw` import
 import lightCss from '../src/styles/themes/light.css?raw';
+// @ts-expect-error Vite `?raw` import
+import toneCss from '../src/styles/contexts/tone.css?raw';
 
 /**
  * Guards for the token layers (see CONTRIBUTING.md, "Colour tokens"):
@@ -21,7 +25,8 @@ function declarations(css: string): Map<string, string> {
 }
 
 const primitives = declarations(primitivesCss);
-const semantic = declarations(semanticCss);
+// the roles: the theme-independent semantic tokens plus the colour roles of the default (dark) theme
+const semantic = new Map([...declarations(semanticCss), ...declarations(darkCss)]);
 const light = declarations(lightCss);
 
 /** Hooks a theme may set without them being part of semantic.css (read with a fallback by one component). */
@@ -37,7 +42,7 @@ describe('theme overrides', () => {
         const colours = [...semantic.keys()].filter((name) => name.startsWith('--tao-color-'));
         const missing = colours.filter((name) => !light.has(name));
         // tokens the light theme deliberately inherits
-        const inherited = new Set(['--tao-color-text-on-accent']);
+        const inherited = new Set<string>();
         expect(missing.filter((name) => !inherited.has(name))).toEqual([]);
     });
 });
@@ -76,14 +81,18 @@ const pairs = [...semantic.keys()]
     .filter(({ fill }) => semantic.has(fill));
 
 describe('on-* text colours', () => {
-    it('finds the accent and danger pairs', () => {
-        expect(pairs.map((pair) => pair.fill)).toEqual(expect.arrayContaining(['--tao-color-accent', '--tao-color-danger']));
+    it('finds a pair for the accent and for every status', () => {
+        expect(pairs.map((pair) => pair.fill)).toEqual(
+            expect.arrayContaining(['--tao-color-accent', '--tao-color-danger', '--tao-color-success', '--tao-color-warning', '--tao-color-info']),
+        );
     });
 
     for (const [theme, scope] of Object.entries(themes)) {
         for (const { on, fill } of pairs) {
-            it(`${theme}: ${on} on ${fill} has at least 3:1 contrast (large / bold text)`, () => {
-                expect(contrast(resolveValue(on, scope), resolveValue(fill, scope))).toBeGreaterThanOrEqual(3);
+            // Every fill / on-fill pair reaches AA for normal text.
+            const floor = 4.5;
+            it(`${theme}: ${on} on ${fill} has at least ${floor}:1 contrast`, () => {
+                expect(contrast(resolveValue(on, scope), resolveValue(fill, scope))).toBeGreaterThanOrEqual(floor);
             });
         }
     }
@@ -102,4 +111,91 @@ describe('status text colours', () => {
             }
         }
     }
+});
+
+// The accent as TEXT (ghost / text Button, tone text): the plain accent is picked for a fill, this one for reading.
+describe('accent text colour', () => {
+    for (const [theme, scope] of Object.entries(themes)) {
+        for (const token of ['--tao-color-accent-text', '--tao-color-accent-text-hover']) {
+            for (const surface of ['--tao-color-bg', '--tao-color-surface-raised']) {
+                it(`${theme}: ${token} on ${surface} has at least 4.5:1 contrast`, () => {
+                    expect(contrast(resolveValue(token, scope), resolveValue(surface, scope))).toBeGreaterThanOrEqual(4.5);
+                });
+            }
+        }
+    }
+});
+
+// styles/tone.css: `.tao-tone-<name>` sets the `--tao-tone*` tokens, and a component reads only those.
+const TONE_TOKENS = ['', '-hover', '-on', '-text', '-text-hover', '-subtle', '-wash'].map((suffix) => `--tao-tone${suffix}`);
+const toneBlocks = new Map<string, Map<string, string>>(
+    [...(toneCss as string).replace(/\/\*[\s\S]*?\*\//g, '').matchAll(/\.tao-tone-([a-z]+)\s*\{([^}]*)\}/g)].map((m) => [m[1]!, declarations(m[2]!)]),
+);
+
+describe('tone context', () => {
+    it('has the accent and every status tone', () => {
+        expect([...toneBlocks.keys()].sort()).toEqual(['accent', 'danger', 'info', 'neutral', 'success', 'warning']);
+    });
+
+    for (const [name, block] of toneBlocks) {
+        it(`${name} sets every --tao-tone* token`, () => {
+            expect(TONE_TOKENS.filter((token) => !block.has(token))).toEqual([]);
+        });
+
+        it(`${name} points only at tokens that semantic.css defines`, () => {
+            const refs = [...block.values()].flatMap((value) => [...value.matchAll(/var\((--tao-[a-z0-9-]+)\)/g)].map((m) => m[1]!));
+            expect(refs.filter((ref) => !semantic.has(ref))).toEqual([]);
+        });
+    }
+
+    for (const [theme, scope] of Object.entries(themes)) {
+        for (const [name, block] of toneBlocks) {
+            for (const surface of ['--tao-color-bg', '--tao-color-surface-raised']) {
+                it(`${theme}: ${name} text reads at 4.5:1 on ${surface}`, () => {
+                    const text = resolveValue(block.get('--tao-tone-text')!.replace(/^var\((.*)\)$/, '$1'), scope);
+                    expect(contrast(text, resolveValue(surface, scope))).toBeGreaterThanOrEqual(4.5);
+                });
+            }
+        }
+    }
+});
+
+// Components take layers and transitions from tokens, not literals.
+const componentSources = (import.meta as unknown as { glob: (p: string, o: object) => unknown }).glob('../src/components/*.vue', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+
+describe('component styles use tokens', () => {
+    it('no component writes a literal z-index above content', () => {
+        const offenders = Object.entries(componentSources)
+            .filter(([, source]) => /z-index:\s*\d{3,}/.test(source))
+            .map(([file]) => file);
+        expect(offenders).toEqual([]);
+    });
+
+    it('floating panels use the engine: no own outside-press listener or updatePosition', () => {
+        const offenders = Object.entries(componentSources)
+            .filter(([, source]) => /addEventListener\('pointerdown'|function updatePosition/.test(source))
+            .map(([file]) => file);
+        expect(offenders).toEqual([]);
+    });
+
+    it('icons come from TaoIcon: no inline svg and no glyph icons in component templates', () => {
+        const glyphs = /[✕‹›▶▾▸⋮⏮❚]|&times;/;
+        const offenders = Object.entries(componentSources)
+            .filter(([file, source]) => !file.endsWith('TaoIcon.vue') && (/<svg/.test(source) || glyphs.test(source.replace(/\/\*[\s\S]*?\*\//g, ''))))
+            .map(([file]) => file);
+        expect(offenders).toEqual([]);
+    });
+
+    it('--tao-transition-base does not animate `all`', () => {
+        expect(semanticCss).toMatch(/--tao-transition-base:/);
+        const value = (semantic.get('--tao-transition-base') ?? '').trim();
+        expect(value).not.toMatch(/^all/);
+    });
+
+    it('no component transitions `all`', () => {
+        const offenders = Object.entries(componentSources)
+            .filter(([, source]) => /transition:\s*all/.test(source))
+            .map(([file]) => file);
+        expect(offenders).toEqual([]);
+    });
 });

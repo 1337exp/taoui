@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { normalizeHex, type ColorMode } from '../color';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
+import type { TaoPlacement } from '../floating';
 import TaoColorPicker from './TaoColorPicker.vue';
 import TaoPopover from './TaoPopover.vue';
 
@@ -24,12 +25,12 @@ const props = withDefaults(
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
         error?: boolean;
-        position?: 'top' | 'bottom' | 'left' | 'right';
+        placement?: TaoPlacement;
         /** Without it the size of ancestors. / Без него — размер предков. */
         size?: TaoSize;
         chooseLabel?: string;
     }>(),
-    { alpha: false, modes: () => ['hex', 'rgb', 'hsl'], eyedropper: true, disabled: false, error: false, position: 'bottom' },
+    { alpha: false, modes: () => ['hex', 'rgb', 'hsl'], eyedropper: true, disabled: false, error: false, placement: 'bottom-start' },
 );
 
 const emit = defineEmits<{
@@ -43,7 +44,7 @@ const shown = computed(() => normalizeHex(props.modelValue, props.alpha) ?? prop
 </script>
 
 <template>
-    <TaoPopover :position="position" :disabled="disabled" class="tao-color-input-root">
+    <TaoPopover :placement="placement" :disabled="disabled" class="tao-color-input-root">
         <template #trigger="{ open }">
             <button
                 type="button"

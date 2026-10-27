@@ -1,6 +1,6 @@
 import type { TaoSurface } from '../surface';
 
-export type TaoToastType = 'success' | 'error' | 'danger' | 'warning' | 'info' | 'neutral';
+export type TaoToastType = 'success' | 'danger' | 'warning' | 'info' | 'neutral';
 
 export type TaoToastPosition =
     | 'topRight'

@@ -1,41 +1,35 @@
 <script lang="ts" setup>
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import TaoButton from './TaoButton.vue';
+import TaoIcon from './TaoIcon.vue';
 import { currentConfirm, registerConfirmHost, resolveConfirm, unregisterConfirmHost } from '../confirm/store';
 import { trapTab } from '../focusTrap';
-import { isBrowser, lockBodyScroll, unlockBodyScroll } from '../bodyScroll';
+import { toneClass } from '../tone';
+import { useLayer } from '../layers';
 import { surfaceClass } from '../surface';
 
 defineOptions({ name: 'TaoConfirmHost' });
 
 const panelRef = ref<HTMLElement | null>(null);
-let previousFocus: HTMLElement | null = null;
-let scrollHeld = false;
 
 onMounted(() => {
     registerConfirmHost();
 });
 
 onBeforeUnmount(() => {
-    releaseScroll();
     unregisterConfirmHost();
 });
+
+// Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
+useLayer(() => Boolean(currentConfirm.value), { lockScroll: true, restoreFocus: true, onEscape: () => answer(false) });
 
 watch(
     () => currentConfirm.value?.id,
     async (id) => {
         if (!id) {
-            releaseScroll();
-            restoreFocus();
             return;
         }
 
-        if (!isBrowser()) {
-            return;
-        }
-
-        previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-        holdScroll();
         await nextTick();
         queryButton(currentConfirm.value?.danger ? 'cancel' : 'ok')?.focus();
     },
@@ -43,27 +37,6 @@ watch(
 
 function queryButton(which: 'ok' | 'cancel') {
     return panelRef.value?.querySelector<HTMLButtonElement>(`[data-tao-confirm-${which}]`) ?? null;
-}
-
-function holdScroll() {
-    if (scrollHeld || !isBrowser()) {
-        return;
-    }
-    lockBodyScroll();
-    scrollHeld = true;
-}
-
-function releaseScroll() {
-    if (!scrollHeld) {
-        return;
-    }
-    unlockBodyScroll();
-    scrollHeld = false;
-}
-
-function restoreFocus() {
-    previousFocus?.focus?.();
-    previousFocus = null;
 }
 
 function answer(value: boolean) {
@@ -75,12 +48,6 @@ function onOverlayClick() {
 }
 
 function onKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
-        event.preventDefault();
-        answer(false);
-        return;
-    }
-
     if (panelRef.value) {
         trapTab(event, panelRef.value);
     }
@@ -102,7 +69,7 @@ function onKeydown(event: KeyboardEvent) {
                 <div
                     ref="panelRef"
                     class="tao-confirm__panel"
-                    :class="[surfaceClass(currentConfirm.surface), { 'tao-confirm__panel--danger': currentConfirm.danger }]"
+                    :class="[surfaceClass(currentConfirm.surface), toneClass(currentConfirm.danger ? 'danger' : 'warning')]"
                     role="alertdialog"
                     aria-modal="true"
                     :aria-labelledby="currentConfirm.title ? 'tao-confirm-title' : undefined"
@@ -112,15 +79,7 @@ function onKeydown(event: KeyboardEvent) {
                     <span class="tao-confirm__accent" aria-hidden="true"></span>
 
                     <span class="tao-confirm__icon" aria-hidden="true">
-                        <svg v-if="currentConfirm.danger" viewBox="0 0 20 20" width="22" height="22" fill="none">
-                            <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.6" />
-                            <path d="M7 7l6 6M13 7l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-                        </svg>
-                        <svg v-else viewBox="0 0 20 20" width="22" height="22" fill="none">
-                            <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.6" />
-                            <path d="M10 9v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-                            <circle cx="10" cy="6.4" r="0.8" fill="currentColor" />
-                        </svg>
+                        <TaoIcon :name="currentConfirm.danger ? 'tao-x-circle' : 'tao-info'" :size="22" />
                     </span>
 
                     <div class="tao-confirm__body">
@@ -138,7 +97,7 @@ function onKeydown(event: KeyboardEvent) {
                         </TaoButton>
                         <TaoButton
                             data-tao-confirm-ok
-                            :variant="currentConfirm.danger ? 'danger' : 'primary'"
+                            :tone="currentConfirm.danger ? 'danger' : undefined"
                             @click="answer(true)"
                         >
                             {{ currentConfirm.okLabel }}
@@ -154,7 +113,7 @@ function onKeydown(event: KeyboardEvent) {
 .tao-confirm {
     position: fixed;
     inset: 0;
-    z-index: 1200;
+    z-index: var(--tao-z-confirm);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -173,7 +132,7 @@ function onKeydown(event: KeyboardEvent) {
 }
 
 .tao-confirm__panel {
-    --tao-confirm-tone: var(--tao-color-warning);
+    --tao-confirm-tone: var(--tao-tone);
 
     position: relative;
     z-index: 1;
@@ -201,10 +160,6 @@ function onKeydown(event: KeyboardEvent) {
     --tao-surface-fill: color-mix(in srgb, var(--tao-confirm-tone) 10%, var(--tao-glass-fill));
     border-color: var(--tao-glass-border);
     box-shadow: var(--tao-shadow-overlay);
-}
-
-.tao-confirm__panel--danger {
-    --tao-confirm-tone: var(--tao-color-danger);
 }
 
 .tao-confirm__accent {
