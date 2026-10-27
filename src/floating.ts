@@ -103,6 +103,39 @@ export interface UseFloatingOptions {
 }
 
 /**
+ * Is the anchor pinned to the screen (itself or an ancestor `fixed` / `sticky`)? Then the panel is `fixed` too.
+ * Otherwise the panel is `absolute` in document coordinates: the browser scrolls the page on its compositor thread and
+ * the `scroll` event comes a frame later, so a `fixed` panel moved from JS trails behind a smooth scroll; an absolute
+ * one scrolls together with the page. Scroll containers inside the page still go through `update()`.
+ * Прибит ли якорь к экрану (сам или предок `fixed` / `sticky`)? Тогда и панель `fixed`. Иначе панель `absolute`
+ * в координатах документа: браузер прокручивает страницу в потоке компоновщика, а `scroll` приходит кадром позже,
+ * поэтому `fixed`-панель, которую двигает JS, отстаёт от плавной прокрутки; абсолютная едет вместе со страницей.
+ */
+function pinnedToScreen(el: HTMLElement): boolean {
+    for (let node: Element | null = el; node && node !== document.documentElement; node = node.parentElement) {
+        const position = getComputedStyle(node).position;
+        if (position === 'fixed' || position === 'sticky') {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
+ * Where viewport (0, 0) is for an absolute child of `body` (panels are teleported there): the page scroll for a static
+ * body, the body padding box for a positioned one.
+ * Где точка (0, 0) окна для абсолютного ребёнка `body` (панели телепортированы туда).
+ */
+function documentOrigin(): { x: number; y: number } {
+    const body = document.body;
+    if (!['relative', 'absolute', 'fixed', 'sticky'].includes(getComputedStyle(body).position)) {
+        return { x: window.scrollX, y: window.scrollY };
+    }
+    const rect = body.getBoundingClientRect();
+    return { x: -(rect.left + body.clientLeft), y: -(rect.top + body.clientTop) };
+}
+
+/**
  * Keeps a teleported panel next to its anchor while `open`: measures after render, then follows scroll and resize
  * (one capturing listener pair, removed on close). Returns the inline style, the side in use and `update()`.
  * Держит телепортированную панель рядом с якорем, пока `open`: меряет после рендера и следит за scroll и resize.
@@ -118,6 +151,7 @@ export function useFloating(
     const anchorOffset = ref({ x: 0, y: 0 });
     /** False until the first measurement: a panel can stay invisible until then. / Пока нет первого замера — false. */
     const placed = ref(false);
+    let strategy: 'fixed' | 'absolute' = 'absolute';
 
     function update() {
         const anchorEl = anchor.value;
@@ -137,11 +171,13 @@ export function useFloating(
             flip: options.flip,
         });
 
+        const origin = strategy === 'absolute' ? documentOrigin() : { x: 0, y: 0 };
         side.value = result.side;
         anchorOffset.value = result.anchorOffset;
         style.value = {
-            top: `${result.top}px`,
-            left: `${result.left}px`,
+            position: strategy,
+            top: `${result.top + origin.y}px`,
+            left: `${result.left + origin.x}px`,
             ...(options.matchWidth ? { width: `${rect.width}px` } : {}),
         };
         placed.value = true;
@@ -168,6 +204,7 @@ export function useFloating(
             window.addEventListener('resize', onViewportChange);
             window.addEventListener('scroll', onViewportChange, true);
             await nextTick();
+            strategy = anchor.value && pinnedToScreen(anchor.value) ? 'fixed' : 'absolute';
             update();
         },
         { immediate: true },
