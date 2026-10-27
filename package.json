@@ -38,6 +38,7 @@
       "default": "./dist/index.js"
     },
     "./styles.css": "./dist/styles.css",
+    "./palettes.css": "./src/styles/palettes/index.css",
     "./styles/*": "./src/styles/*",
     "./package.json": "./package.json"
   },
@@ -73,7 +74,8 @@
     "media": "node scripts/media.mjs",
     "smoke": "node scripts/consumer-smoke.mjs",
     "prepublishOnly": "npm run type-check && npm run test && npm run build && npm run lint:package",
-    "lint:package": "publint && attw --pack . --profile esm-only --exclude-entrypoints styles.css"
+    "lint:package": "publint && attw --pack . --profile esm-only --exclude-entrypoints styles.css palettes.css",
+    "palettes": "node scripts/generate-palettes.mjs"
   },
   "peerDependencies": {
     "vue": "^3.4.0"

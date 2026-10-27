@@ -39,7 +39,8 @@
 
 /* ---------- Theme tokens: dark (default) / Токены темы: тёмная ---------- */
 :root,
-[data-tao-theme="dark"] {
+[data-tao-theme="dark"],
+[data-tao-mode="dark"] {
     /* static film grain, light specks; replace with your own image / статичное зерно, светлые крапинки */
     --tao-surface-grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0.07 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     --tao-surface-grain-size: 160px;
@@ -51,7 +52,8 @@
 /* ---------- Theme tokens: light / Токены темы: светлая ----------
    After the dark block on purpose: :root and [data-tao-theme] weigh the same, the later one wins.
    Специально после тёмной: :root и [data-tao-theme] весят одинаково, побеждает поздний. */
-[data-tao-theme="light"] {
+[data-tao-theme="light"],
+[data-tao-mode="light"] {
     /* dark specks / тёмные крапинки */
     --tao-surface-grain-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.035 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     --tao-glass-fill: color-mix(in srgb, var(--tao-color-surface) 60%, transparent);
@@ -96,14 +98,16 @@
    Сплошным становится сам токен — за ним идут и компоненты, которые подкрашивают стекло (toast, confirm). */
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
     :root,
-    [data-tao-theme] {
+    [data-tao-theme],
+    [data-tao-mode] {
         --tao-glass-fill: var(--tao-color-surface-raised);
     }
 }
 
 @media (prefers-reduced-transparency: reduce) {
     :root,
-    [data-tao-theme] {
+    [data-tao-theme],
+    [data-tao-mode] {
         --tao-glass-fill: var(--tao-color-surface-raised);
     }
 

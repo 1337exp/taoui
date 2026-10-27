@@ -71,6 +71,7 @@ Rules:
 7. A component takes its colour from the **tone context** (`styles/contexts/tone.css`): put `toneClass(tone)` on the root and read
    `--tao-tone`, `--tao-tone-on`, `--tao-tone-text`, … Never map `success` / `danger` to colours inside a component.
 8. Accent or status colour as **text** uses the `-text` token (`accent-text`, `danger-text`, …), as a fill the plain one; the tests hold both to 4.5:1.
+13. A palette is four colours in `src/palettes.ts`; the files in `src/styles/palettes/` are generated (`npm run palettes`), never edited by hand, and `tests/palette.test.ts` fails when they differ. A new colour role goes into `themes/dark.css`, `themes/light.css` and, when a palette must decide it, into `buildPaletteRoles()`.
 12. A form control gets its id, `aria-describedby` and invalid state from `useField(props)` (`formField.ts`); do not inject the field by hand. A text that has a default in the locale is read through `useLocaleText` / `useTaoLocale`, never through the global `taoLocale()` inside a component (the server shares that one between requests).
 11. Icons are `<TaoIcon name="tao-…">` (add the path to `src/icons.ts`, keep the 24x24 grid, a 2px round stroke, `currentColor`); no inline `<svg>` and no text glyphs in components; a button with only an icon needs `aria-label`.
 10. A floating panel (popup, menu, tooltip) positions itself with `useFloating`, closes with `useDismiss` / `useLayer`, and moves with `useListNav`; never with its own `getBoundingClientRect` and listeners.

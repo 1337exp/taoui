@@ -10,7 +10,8 @@
  * переопределяет каждую роль под `[data-tao-theme="light"]`, ваша тема делает то же под своим именем.
  */
 :root,
-[data-tao-theme="dark"] {
+[data-tao-theme="dark"],
+[data-tao-mode="dark"] {
     color-scheme: dark;
 
     /* ---------- Brand / accent ---------- */
@@ -22,6 +23,11 @@
     --tao-color-accent-text: var(--tao-color-accent); /* accent as TEXT on the page (>= 4.5:1); the plain accent is for fills */
     --tao-color-accent-text-hover: var(--tao-color-accent-hover);
     --tao-color-on-accent: var(--tao-gray-950); /* текст поверх accent-фона */
+    /* the second accent, the glow behind the page and the gradient: a palette fills them from its stops */
+    --tao-color-accent-2: var(--tao-orange-500);
+    --tao-glow: var(--tao-color-accent);
+    --tao-gradient: linear-gradient(90deg, var(--tao-color-accent), var(--tao-color-accent-2));
+    --tao-bg-atmosphere: radial-gradient(ellipse 70% 50% at 75% 0%, color-mix(in srgb, var(--tao-glow) 18%, transparent), transparent 70%), radial-gradient(ellipse 60% 45% at 5% 100%, color-mix(in srgb, var(--tao-glow) 10%, transparent), transparent 70%);
     --tao-color-selection: var(--tao-color-accent);
     --tao-color-selection-text: var(--tao-color-on-accent);
 

@@ -1,0 +1,29 @@
+/**
+ * Tao UI — Atmosphere / Атмосфера
+ *
+ * `.tao-atmosphere` on the page (<body> or the app root) paints the soft glow of the theme behind everything:
+ * `--tao-bg-atmosphere`, two radial gradients of `--tao-glow`. A palette sets the glow colour; the default themes
+ * use the accent. The glow is a fixed layer of the window (it does not stretch over a long page and does not scroll),
+ * a static background with no blur filter, so it costs nothing while you scroll. Glass panels over it pick the colour up.
+ * What goes behind the glow (a picture, a pattern) is yours: put it under the layer with your own `background`.
+ *
+ * `.tao-atmosphere` на странице (<body> или корень приложения) рисует за всем мягкое свечение темы. Это фиксированный
+ * слой окна (не растягивается на длинную страницу и не прокручивается), статичный фон без blur-фильтра, поэтому не
+ * стоит ничего при прокрутке. Стеклянные панели поверх него подхватывают цвет. Что лежит под свечением (картинка,
+ * узор) — решаете вы.
+ */
+.tao-atmosphere {
+    position: relative;
+    isolation: isolate;
+    background-color: var(--tao-color-bg);
+}
+
+.tao-atmosphere::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image: var(--tao-bg-atmosphere, none);
+    background-repeat: no-repeat;
+    pointer-events: none;
+}

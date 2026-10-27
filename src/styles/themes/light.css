@@ -5,9 +5,10 @@
  * ТОЛЬКО цветовые роли из dark.css, ничего в компонентах
  * менять не нужно.
  *
- * Подключение: <html data-tao-theme="light">
+ * Подключение: <html data-tao-theme="light"> (или data-tao-mode="light": тот же режим под палитрой)
  */
-[data-tao-theme="light"] {
+[data-tao-theme="light"],
+[data-tao-mode="light"] {
     color-scheme: light;
 
     /* pink-600, not the brand pink-500: white on it reaches 4.54:1 (AA); on pink-500 it was 3.64:1 */
@@ -20,6 +21,10 @@
     --tao-color-accent-text-hover: var(--tao-pink-800);
     --tao-color-on-accent: #ffffff;
     --tao-button-primary-text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.12);
+    --tao-color-accent-2: var(--tao-pink-400);
+    --tao-glow: var(--tao-color-accent);
+    --tao-gradient: linear-gradient(90deg, var(--tao-color-accent), var(--tao-color-accent-2));
+    --tao-bg-atmosphere: radial-gradient(ellipse 70% 50% at 75% 0%, color-mix(in srgb, var(--tao-glow) 10%, transparent), transparent 70%), radial-gradient(ellipse 60% 45% at 5% 100%, color-mix(in srgb, var(--tao-glow) 6%, transparent), transparent 70%);
     --tao-color-selection: var(--tao-color-accent);
     --tao-color-selection-text: var(--tao-color-on-accent);
 

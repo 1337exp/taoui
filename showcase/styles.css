@@ -205,7 +205,8 @@
 }
 
 .theme-switcher__btn {
-  padding: 6px 14px;
+  height: 32px;
+  padding: 0 14px;
   border-radius: var(--tao-radius-control);
   border: 1px solid var(--tao-color-border-strong);
   background: var(--tao-color-surface-sunken);
@@ -339,4 +340,28 @@
 .showcase-footer a {
   color: inherit;
   text-decoration: underline;
+}
+
+/* the palette picker in the header / выбор палитры в шапке */
+/* A fixed width, so the header does not jump when the chosen name is longer or shorter; the same height as the buttons
+   next to it (the select reads the control height from here). */
+.palette-select {
+  --tao-control-height: 32px;
+  --tao-control-font-size: 13px;
+  display: block;
+  width: 168px;
+}
+
+.palette-swatches {
+  display: inline-flex;
+  gap: 4px;
+  /* the room of four circles is kept even when there are none (the default palette) */
+  min-width: 68px;
+}
+
+.palette-swatches i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18);
 }
