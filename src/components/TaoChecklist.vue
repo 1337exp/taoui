@@ -211,8 +211,9 @@ function setAll() {
     color: var(--tao-color-text-muted);
 }
 
-/* a look only: the checkbox still tells the state / только вид: состояние говорит чекбокс */
-.tao-checklist__label {
+/* a look only: the checkbox still tells the state. The whole text of the item is done, its second line too
+   только вид: состояние говорит чекбокс. Выполнен весь пункт, вторая строка тоже */
+.tao-checklist__text {
     text-decoration-line: none;
     text-decoration-thickness: 1.5px;
     transition:
@@ -220,14 +221,14 @@ function setAll() {
         text-decoration-color var(--tao-duration-base) var(--tao-ease-base);
 }
 
-.tao-checklist--strike .tao-checklist__item--checked .tao-checklist__label {
+.tao-checklist--strike .tao-checklist__item--checked .tao-checklist__text {
     color: var(--tao-color-text-muted);
     text-decoration-line: line-through;
     text-decoration-color: var(--tao-color-text-muted);
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .tao-checklist__label {
+    .tao-checklist__text {
         transition: none;
     }
 }
