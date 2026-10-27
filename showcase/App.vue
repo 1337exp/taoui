@@ -91,7 +91,7 @@ function itemMatchesQuery(item, needle) {
 function itemVisibleInNav(group, item) {
   const needle = query.value.trim().toLowerCase()
   if (!needle) return true
-  if (group.title.toLowerCase().includes(needle)) return true
+  if (both(group.title).toLowerCase().includes(needle)) return true
   return itemMatchesQuery(item, needle)
 }
 
@@ -159,15 +159,10 @@ onBeforeUnmount(() => {
       </div>
       <div class="theme-switcher">
         <span class="theme-switcher__label">{{ tr('Palette:', 'Палитра:') }}</span>
-        <TaoSelect
-          :model-value="palette"
-          :options="paletteOptions"
-          :clearable="false"
-          size="small"
-          class="palette-select"
-          @update:model-value="setPalette"
-        />
-        <span v-if="swatches.length" class="palette-swatches" aria-hidden="true">
+        <span class="palette-select">
+          <TaoSelect :model-value="palette" :options="paletteOptions" :clearable="false" @update:model-value="setPalette" />
+        </span>
+        <span class="palette-swatches" aria-hidden="true">
           <i v-for="color in swatches" :key="color" :style="{ background: color }" />
         </span>
       </div>
