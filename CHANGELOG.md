@@ -71,6 +71,7 @@ In numbers: the tarball is 329 KB (560 KB before the ESM-only build), 451 tests 
 
 ### Tokens
 
+- **Check mark context:** `.tao-mark-check` / `.tao-mark-square` on any container (or `<html>`) marks every checked box inside with a tick or with the square (the default) — TaoCheckbox, TaoChecklist, TaoTree; `mark` on `TaoCheckbox` sets it for one. The nearest class wins; the shape is in percentages of the box, so every size gets the same one. Menus keep their tick.
 - **Density, a second axis of the controls:** `.tao-density-compact` / `-comfortable` / `-auto` (and `-default` to reset) on any container change the height and the padding of every size, not the font: comfortable 34 / 44 / 52px, compact 22 / 32 / 40px, auto = comfortable on `pointer: coarse`. Size and density combine anywhere in the tree (the current tokens are recomputed wherever either changes); Select and Combobox carry the density into their teleported panels. Tokens `--tao-density-*`, type `TaoDensity`; the showcase header has a switch.
 - **Dark theme: `--tao-color-text-disabled` is `gray-500`** (it was `gray-300`, brighter than `text-muted`, so disabled items stood out instead of fading).
 - **z-index scale** `--tao-z-modal | popup | tooltip | toast | confirm`; no component writes a literal any more.

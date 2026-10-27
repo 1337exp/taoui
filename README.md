@@ -155,6 +155,8 @@ Container lives on another axis — width: `width="wide" | "slim" | "ultra-slim"
 <html class="tao-density-auto">
 ```
 
+**Check mark:** a checked box is a square inside by default; the class `tao-mark-check` on a container (or on `<html>`) gives a tick to every checkbox inside, the tree and the checklist too, and `mark="check"` gives it to one `TaoCheckbox`.
+
 Surfaces — what a panel is made of: `flat` fill (default), `grain` (static film grain), `glass` (translucent, blurs what is
 behind). Use `surface` on TaoCard / TaoBlock or the class `tao-surface-grain` / `-glass` on any element — a game HUD, a
 landing section, a sidebar. Tune the look once with theme tokens (`--tao-surface-grain-image` / `-size`, `--tao-glass-fill`

@@ -17,6 +17,8 @@ const props = withDefaults(
         error?: boolean;
         /** Частично выбран: черта вместо квадрата. Клик ставит checked — indeterminate снимает родитель. */
         indeterminate?: boolean;
+        /** `square` inside or a `check` tick; without it the mark of ancestors (`.tao-mark-*`). / Квадрат или галочка; без него — как у предков. */
+        mark?: 'square' | 'check';
     }>(),
     {
         checked: undefined,
@@ -25,6 +27,7 @@ const props = withDefaults(
         disabled: false,
         error: false,
         indeterminate: false,
+        mark: undefined,
     },
 );
 
@@ -76,7 +79,7 @@ watch(
 </script>
 
 <template>
-    <label class="tao-checkbox" :class="[sizeClass(size), { 'tao-checkbox--disabled': disabled }]" :for="controlId">
+    <label class="tao-checkbox" :class="[sizeClass(size), mark && `tao-mark-${mark}`, { 'tao-checkbox--disabled': disabled }]" :for="controlId">
         <slot name="pre" :text="label" />
 
         <input
@@ -129,10 +132,13 @@ watch(
 .tao-checkbox__box::after {
     content: '';
     display: block;
-    width: calc(var(--tao-indicator-size) - 6px);
-    height: calc(var(--tao-indicator-size) - 6px);
+    box-sizing: border-box;
+    /* the shape comes from the mark context (contexts/mark.css): a square or a tick / форма из контекста отметки */
+    width: var(--_tao-mark-width);
+    height: var(--_tao-mark-height);
     background-color: transparent;
-    border-radius: 2px;
+    border: 0 solid var(--tao-color-on-accent);
+    border-radius: var(--_tao-mark-radius);
     transform: scale(0);
     transition: var(--tao-transition-base);
 }
@@ -155,13 +161,15 @@ watch(
 }
 
 .tao-checkbox__input:checked + .tao-checkbox__box::after {
-    background-color: var(--tao-color-on-accent);
-    transform: scale(1);
+    background-color: var(--_tao-mark-fill);
+    border-width: var(--_tao-mark-border);
+    transform: var(--_tao-mark-transform);
 }
 
 .tao-checkbox__input:indeterminate + .tao-checkbox__box::after {
     width: calc(var(--tao-indicator-size) - 8px);
     height: 2px;
+    border-width: 0;
     border-radius: 1px;
     background-color: var(--tao-color-on-accent);
     transform: scale(1);
