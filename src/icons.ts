@@ -49,6 +49,8 @@ const builtin: Record<string, TaoIconDef> = {
     circle: { body: '<circle cx="12" cy="12" r="7.5"/>' },
     'circle-dashed': { body: '<circle cx="12" cy="12" r="7.5" stroke-dasharray="24 12"/>' },
     'check-circle': { body: '<circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.8 2.8L16 9.5"/>' },
+    folder: { body: '<path d="M3.5 7a2 2 0 012-2h4l2 2.5h7a2 2 0 012 2V17a2 2 0 01-2 2h-13a2 2 0 01-2-2z"/>' },
+    file: { body: '<path d="M14 3.5H7.5A1.5 1.5 0 006 5v14a1.5 1.5 0 001.5 1.5h9A1.5 1.5 0 0018 19V7.5z"/><path d="M14 3.5v4h4"/>' },
 };
 
 /** Icons registered by the app, by any name that does not start with `tao-`. / Иконки приложения под любым именем без `tao-`. */

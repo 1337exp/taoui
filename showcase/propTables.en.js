@@ -479,6 +479,24 @@ export const propTablesEn = {
       slots: 'default — an explanation. #icon — a picture/icon. #action — a button.',
     },
   ],
+  tree: [
+    {
+      title: 'TaoTree',
+      rows: [
+        r('nodes', 'TaoTreeNode[]', '—', '{ id, label, icon?, children?, hasChildren?, disabled? }. hasChildren without children — the children come from load when it opens'),
+        r('v-model:expanded', 'string[]', 'own', 'Ids of the expanded nodes. Without a model the tree keeps them itself'),
+        r('selection', "'none' | 'single' | 'multiple'", "'single'", 'Selection mode. none — a click on a folder toggles it'),
+        r('v-model:selected', 'string | string[] | null', 'own', 'An id (single) or a list of ids (multiple)'),
+        r('checkable', 'boolean', 'false', 'Checkboxes. A parent is checked, unchecked or mixed by its leaves; a click on a parent toggles the whole branch'),
+        r('v-model:checked', 'string[]', 'own', 'Ids of the checked nodes without children (leaves and folders not loaded yet). A checked lazy folder hands its check to its children once loaded'),
+        r('load', '(node) => Promise<TaoTreeNode[]>', '—', 'Loads the children of a node with hasChildren; a spinner and aria-busy meanwhile'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Row height, as for the controls; the density works too'),
+        r('ariaLabel', 'string', "'Tree'", 'Accessible name of the tree'),
+        r('loadingLabel', 'string', "'Loading…'", 'The hint of the spinner'),
+      ],
+      slots: '#icon, #label, #actions — { node, level, expanded, selected }; the actions show on hover and focus (always on a touch screen). Events: update:expanded / selected / checked, select(node) — a click, Enter, Space without checkboxes; load-error(node, error) — the node stays closed. Keys: ↑ ↓, → opens or goes in, ← closes or goes to the parent, Home / End, * opens the siblings, letters search, Enter selects, Space checks.',
+    },
+  ],
   list: [
     {
       title: 'TaoList',

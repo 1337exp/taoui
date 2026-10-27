@@ -472,6 +472,24 @@ export const propTables = {
       slots: 'default — пояснение. #icon — картинка/иконка. #action — кнопка.',
     },
   ],
+  tree: [
+    {
+      title: 'TaoTree',
+      rows: [
+        r('nodes', 'TaoTreeNode[]', '—', '{ id, label, icon?, children?, hasChildren?, disabled? }. hasChildren без children — дети подгрузятся через load при раскрытии'),
+        r('v-model:expanded', 'string[]', 'свой', 'id раскрытых узлов. Без модели дерево хранит их само'),
+        r('selection', "'none' | 'single' | 'multiple'", "'single'", 'Режим выбора. none — клик по папке раскрывает её'),
+        r('v-model:selected', 'string | string[] | null', 'свой', 'id (single) или список id (multiple)'),
+        r('checkable', 'boolean', 'false', 'Чекбоксы. Родитель отмечен, снят или в промежуточном состоянии по своим листьям; клик по родителю переключает всю ветку'),
+        r('v-model:checked', 'string[]', 'свой', 'id отмеченных узлов без детей (листья и ещё не загруженные папки). Отмеченная ленивая папка после загрузки передаёт отметку детям'),
+        r('load', '(node) => Promise<TaoTreeNode[]>', '—', 'Подгрузка детей узла с hasChildren; пока ждём — спиннер и aria-busy'),
+        r('size', "'small' | 'medium' | 'large'", 'наследуется', 'Высота строк, как у контролов; плотность тоже действует'),
+        r('ariaLabel', 'string', "'Дерево'", 'Имя дерева для скринридера'),
+        r('loadingLabel', 'string', "'Загрузка…'", 'Подсказка у спиннера'),
+      ],
+      slots: '#icon, #label, #actions — { node, level, expanded, selected }; действия видны при наведении и фокусе (на тач-экране всегда). События: update:expanded / selected / checked, select(node) — клик, Enter, Space без чекбоксов; load-error(node, error) — узел остаётся закрытым. Клавиши: ↑ ↓, → раскрывает или входит, ← сворачивает или к родителю, Home / End, * раскрывает соседей, буквы — поиск, Enter выбирает, Space отмечает.',
+    },
+  ],
   list: [
     {
       title: 'TaoList',

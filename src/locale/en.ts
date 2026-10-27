@@ -51,6 +51,7 @@ export const localeEn: TaoLocale = {
     dropdownMenu: { menuLabel: 'Menu' },
     menubar: { ariaLabel: 'Menu bar' },
     nav: { ariaLabel: 'Navigation', moreLabel: 'More' },
+    tree: { ariaLabel: 'Tree', loadingLabel: 'Loading…' },
     contextMenu: { menuLabel: 'Context menu' },
     empty: { title: 'Nothing here' },
     fileDrop: {

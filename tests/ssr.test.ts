@@ -32,6 +32,7 @@ const props: Record<string, Record<string, unknown>> = {
     TaoSpoilerGroup: {},
     TaoMenu: { items: [], open: false, anchor: null },
     TaoMenubar: { items: [{ id: 'file', label: 'File', items: [{ id: 'n', label: 'New' }] }] },
+    TaoTree: { nodes: [{ id: 'a', label: 'A', children: [{ id: 'b', label: 'B' }] }, { id: 'c', label: 'C', hasChildren: true }], expanded: ['a'], checkable: true, checked: ['b'] },
     TaoNav: { items: [{ id: 'a', label: 'A', icon: 'tao-circle' }, { id: 'b', label: 'B', href: '/b', badge: 2 }], modelValue: 'a' },
     TaoContextMenu: { items: [] },
     TaoBreadcrumb: { items: [{ label: 'Home', to: '/' }] },
