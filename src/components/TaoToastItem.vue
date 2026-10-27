@@ -91,24 +91,10 @@ onBeforeUnmount(() => {
 
         <span class="tao-toast__icon" aria-hidden="true">
             <TaoIcon v-if="toast.icon" :name="toast.icon" :size="18" />
-            <svg v-else-if="toast.type === 'success'" viewBox="0 0 20 20" width="18" height="18" fill="none">
-                <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.6" />
-                <path d="M6 10.2 8.6 12.8 14 7.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-            <svg v-else-if="toast.type === 'danger'" viewBox="0 0 20 20" width="18" height="18" fill="none">
-                <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.6" />
-                <path d="M7 7l6 6M13 7l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-            </svg>
-            <svg v-else-if="toast.type === 'warning'" viewBox="0 0 20 20" width="18" height="18" fill="none">
-                <path d="M10 3.5 17.5 16.5H2.5L10 3.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
-                <path d="M10 8.2v4.2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-                <circle cx="10" cy="14.4" r="0.8" fill="currentColor" />
-            </svg>
-            <svg v-else viewBox="0 0 20 20" width="18" height="18" fill="none">
-                <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.6" />
-                <path d="M10 9v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-                <circle cx="10" cy="6.4" r="0.8" fill="currentColor" />
-            </svg>
+            <TaoIcon v-else-if="toast.type === 'success'" name="tao-check-circle" :size="18" />
+            <TaoIcon v-else-if="toast.type === 'danger'" name="tao-x-circle" :size="18" />
+            <TaoIcon v-else-if="toast.type === 'warning'" name="tao-alert-triangle" :size="18" />
+            <TaoIcon v-else name="tao-info" :size="18" />
         </span>
 
         <div class="tao-toast__body">
@@ -134,7 +120,7 @@ onBeforeUnmount(() => {
             :aria-label="toastDefaults.closeLabel"
             @click="close"
         >
-            &times;
+            <TaoIcon name="tao-close" />
         </button>
 
         <span

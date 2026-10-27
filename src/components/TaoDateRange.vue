@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 import { useDismiss } from '../dismiss';
 import { useFloating } from '../floating';
@@ -323,19 +324,7 @@ onBeforeUnmount(() => {
             <span class="tao-date-range__value">{{ displayLabel || l10n.placeholder }}</span>
             <span class="tao-date-range__icon" aria-hidden="true">
                 <slot name="icon">
-                    <svg viewBox="0 0 16 16" width="16" height="16" focusable="false">
-                        <rect
-                            x="2"
-                            y="3"
-                            width="12"
-                            height="11"
-                            rx="1.5"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.4"
-                        />
-                        <path d="M5 1.5v3M11 1.5v3M2 6.5h12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
-                    </svg>
+                    <TaoIcon name="tao-calendar" :size="16" />
                 </slot>
             </span>
         </button>
@@ -356,16 +345,7 @@ onBeforeUnmount(() => {
                     <button type="button" class="tao-date__nav" :aria-label="l10n.prevMonthLabel" @click="goMonth(-1)">
                         <span aria-hidden="true">
                             <slot name="prev-icon">
-                                <svg viewBox="0 0 24 24" width="14" height="14" focusable="false">
-                                    <path
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2.2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M14.5 5 8 12l6.5 7"
-                                    />
-                                </svg>
+                                <TaoIcon name="tao-chevron-left" :size="14" />
                             </slot>
                         </span>
                     </button>
@@ -373,16 +353,7 @@ onBeforeUnmount(() => {
                     <button type="button" class="tao-date__nav" :aria-label="l10n.nextMonthLabel" @click="goMonth(1)">
                         <span aria-hidden="true">
                             <slot name="next-icon">
-                                <svg viewBox="0 0 24 24" width="14" height="14" focusable="false">
-                                    <path
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2.2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M9.5 5 16 12l-6.5 7"
-                                    />
-                                </svg>
+                                <TaoIcon name="tao-chevron-right" :size="14" />
                             </slot>
                         </span>
                     </button>

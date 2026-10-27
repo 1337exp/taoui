@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed, inject, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
@@ -218,7 +219,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
                 @click="bump(1)"
             >
                 <span aria-hidden="true">
-                    <slot name="increment-icon">+</slot>
+                    <slot name="increment-icon"><TaoIcon name="tao-plus" /></slot>
                 </span>
             </button>
             <button
@@ -230,7 +231,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
                 @click="bump(-1)"
             >
                 <span aria-hidden="true">
-                    <slot name="decrement-icon">−</slot>
+                    <slot name="decrement-icon"><TaoIcon name="tao-minus" /></slot>
                 </span>
             </button>
         </div>

@@ -47,6 +47,21 @@ Everything that 2.0 deprecated is deleted, together with its warnings.
 
 New: `TaoMenu` (the menu panel with submenus, checkbox and radio items, type-ahead, `aria-activedescendant`), types `TaoMenuItem` and friends, `TaoPlacement`; composables behind them (`useFloating`, `useDismiss`, `useLayer`, `useListNav`) are internal for now.
 
+## Icons
+
+| What | Before | Now |
+|---|---|---|
+| Close / clear / remove buttons (Alert, Drawer, Modal, Tag, FileDrop, toast) | the text `×` / `✕` | `<TaoIcon name="tao-close">`; the `#close-icon`, `#clear-icon`, `#remove-icon` slots still replace it |
+| InputNumber / Quantity steppers, Pagination arrows, Spoiler arrow, Timeline buttons, dropdown trigger | the text `+` `−` `‹` `›` `▶` `❚❚` `⏮` `⋮` | built-in icons (`tao-plus`, `tao-chevron-right`, `tao-play`, …) |
+| Carousel, Date / DateRange, Copy, ScrollTop, Stages, toast, confirm | hand-drawn inline `<svg>` | the same icons through `TaoIcon`; ScrollTop's arrow is now `tao-chevron-up` |
+| `TaoButton` `icon` | a text node (an emoji or a symbol) | **a name for `TaoIcon`** (`tao-plus`, a registered or a font icon); an emoji there now renders as a missing font icon: use the default slot instead |
+| `TaoSegmentedOption` `icon` | a text node | a name for `TaoIcon`, or the `#icon` slot |
+| `TaoIcon` `name` | always the class `icon-<name>` | `tao-…` is a built-in SVG, a name from `registerTaoIcons` is your SVG, **any other name is the class `icon-<name>` as before**: your icon font keeps working |
+| `TaoIcon` size | `size` set `font-size` | an SVG icon is `1em` or `size` px; a font icon keeps the `font-size` behaviour |
+| styling hooks | `.tao-copy__button svg`, `.tao-carousel__nav svg` | the icon root is `.tao-icon` (a span around the svg) |
+
+New: `TaoButton` `iconEnd`; an icon-only button (an icon and no text) is a square of the control height and warns in development without `aria-label`; `registerTaoIcons`, `taoIconNames`, type `TaoIconDef`; the prefix `tao-` is reserved for the built-in set.
+
 ## Changed
 
 | What | Before | Now |

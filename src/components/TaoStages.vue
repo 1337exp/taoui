@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed } from 'vue';
 import type { TaoStageItem, TaoStageStatus } from '../stage';
 import { taoLocale, useLocaleText } from '../locale';
@@ -53,31 +54,10 @@ const isRow = computed(() => props.direction === 'row');
         >
             <span class="tao-stages__ico" aria-hidden="true">
                 <slot name="icon" :item="item" :index="index" :status="statusOf(item)">
-                    <svg v-if="statusOf(item) === 'ok'" class="tao-stages__mark" viewBox="0 0 16 16" width="14" height="14">
-                        <path
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M3.5 8.5 6.5 11.5 12.5 4.5"
-                        />
-                    </svg>
-                    <svg v-else-if="statusOf(item) === 'bad'" class="tao-stages__mark" viewBox="0 0 16 16" width="14" height="14">
-                        <path
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.8"
-                            stroke-linecap="round"
-                            d="M4.5 4.5 11.5 11.5M11.5 4.5 4.5 11.5"
-                        />
-                    </svg>
-                    <svg v-else-if="statusOf(item) === 'work'" class="tao-stages__mark" viewBox="0 0 16 16" width="14" height="14">
-                        <circle cx="8" cy="8" r="5.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-dasharray="20 10" stroke-linecap="round" />
-                    </svg>
-                    <svg v-else class="tao-stages__mark" viewBox="0 0 16 16" width="14" height="14">
-                        <circle cx="8" cy="8" r="5.2" fill="none" stroke="currentColor" stroke-width="1.6" />
-                    </svg>
+                    <TaoIcon v-if="statusOf(item) === 'ok'" class="tao-stages__mark" name="tao-check" :size="14" />
+                    <TaoIcon v-else-if="statusOf(item) === 'bad'" class="tao-stages__mark" name="tao-close" :size="14" />
+                    <TaoIcon v-else-if="statusOf(item) === 'work'" class="tao-stages__mark" name="tao-circle-dashed" :size="14" />
+                    <TaoIcon v-else class="tao-stages__mark" name="tao-circle" :size="14" />
                 </slot>
             </span>
             <span class="tao-stages__label">

@@ -33,7 +33,8 @@ export const propTablesEn = {
         r('loading', 'boolean', 'false', 'A spinner, the click is swallowed'),
         r('block', 'boolean', 'false', '100% width'),
         r('minWidth', 'number | string', '—', 'Minimum width (number = px); the --tao-button-min-width variable'),
-        r('icon', 'string', "''", 'A symbol to the left of the text'),
+        r('icon', 'string', "''", 'An icon before the text: a name for TaoIcon (tao-plus, your own or a font one). Without text and slot the button is a square of the control height and needs aria-label'),
+        r('iconEnd', 'string', "''", 'An icon after the text'),
       ],
       slots: 'default — the button caption.',
     },
@@ -238,7 +239,7 @@ export const propTablesEn = {
       rows: [
         r('value', 'string | number | boolean', '—', 'The option value. Required'),
         r('label', 'string', "''", 'The text. Or the default slot'),
-        r('icon', 'string', "''", 'A symbol on the left'),
+        r('icon', 'string', "''", 'A TaoIcon name on the left'),
         r('count', 'number | string', '—', 'A number on the right (a badge)'),
         r('disabled', 'boolean', 'false', 'This option'),
       ],
@@ -887,12 +888,12 @@ export const propTablesEn = {
     {
       title: 'TaoIcon',
       rows: [
-        r('name', 'string', '—', 'The class icon-{name}. You add the font yourself. Required'),
-        r('size', 'number', '—', 'font-size in px'),
+        r('name', 'string', '—', 'tao-… is a built-in SVG; a name from registerTaoIcons; any other name is the class icon-{name} of your font. Required'),
+        r('size', 'number', '—', 'Pixels. Without it an SVG icon is 1em (follows the font size)'),
         r('margin', 'string', "'0px'", 'The outer margin'),
         r('invert', 'boolean', 'false', 'Invert the colour'),
       ],
-      slots: '#prefix / #postfix — next to the glyph.',
+      slots: '#prefix / #postfix — next to the icon. registerTaoIcons({ name: { body, viewBox? } }) adds your own SVGs; the prefix tao- is reserved.',
     },
   ],
 }

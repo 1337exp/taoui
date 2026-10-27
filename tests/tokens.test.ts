@@ -175,6 +175,14 @@ describe('component styles use tokens', () => {
         expect(offenders).toEqual([]);
     });
 
+    it('icons come from TaoIcon: no inline svg and no glyph icons in component templates', () => {
+        const glyphs = /[✕‹›▶▾▸⋮⏮❚]|&times;/;
+        const offenders = Object.entries(componentSources)
+            .filter(([file, source]) => !file.endsWith('TaoIcon.vue') && (/<svg/.test(source) || glyphs.test(source.replace(/\/\*[\s\S]*?\*\//g, ''))))
+            .map(([file]) => file);
+        expect(offenders).toEqual([]);
+    });
+
     it('--tao-transition-base does not animate `all`', () => {
         expect(semanticCss).toMatch(/--tao-transition-base:/);
         const value = (semantic.get('--tao-transition-base') ?? '').trim();

@@ -110,7 +110,7 @@
 - **TaoTimeline** — play / pause, a slider over time with event marks, a “time / length” label. Does not advance time by itself: drive `v-model` with your own clock
 - **TaoLoader** — four-dot spinner
 - **TaoImage** — `<img>` wrapper: fade-in and placeholder. `lazy` turns on native `loading="lazy"`
-- **TaoIcon** — icon-font wrapper (see Icons below)
+- **TaoIcon** — SVG icons (27 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)
 
 ### Navigation
 
@@ -166,9 +166,25 @@ API rules — every component follows them:
 
 ## Icons
 
-`TaoIcon` does not ship its own set — it renders `icon-<name>`
-for an external icon font (IcoMoon / Fontello and the like). Connect a font
-with classes such as `.icon-arrow-up { ... }` in the host app.
+The library ships **27 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,
+skip-back, copy, calendar, info, alert, circles). They draw on `currentColor`, so an icon takes the text colour and the
+font size, and live under the reserved prefix `tao-`: `<TaoIcon name="tao-check" />`, the list is `taoIconNames`.
+
+```vue
+<TaoIcon name="tao-check" />            <!-- built-in -->
+<TaoIcon name="rocket" />               <!-- registered with registerTaoIcons, or `icon-rocket` of your own font -->
+<TaoButton icon="tao-plus">Add</TaoButton>
+<TaoButton icon="tao-close" aria-label="Close" />   <!-- only an icon: a square, aria-label is required -->
+```
+
+```ts
+registerTaoIcons({ rocket: { body: '<path d="M12 3l4 8-4 10-4-10z"/>' } }); // 24x24 grid unless you pass viewBox
+```
+
+A name without the `tao-` prefix is looked up among the icons you registered, and then rendered as the class
+`icon-<name>` for an external icon font (IcoMoon / Fontello and the like) that the host app connects itself. All
+built-in parts (close buttons, steppers, pagination arrows, toasts…) use the built-in icons and their `#…-icon` slots
+let you replace them with anything.
 
 ## Install
 

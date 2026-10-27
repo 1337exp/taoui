@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue';
 import { glideDuration, glideTarget as snapTarget } from '../carousel';
 import { useLocaleText } from '../locale';
@@ -562,16 +563,7 @@ onBeforeUnmount(() => {
                 >
                     <span aria-hidden="true">
                         <slot name="prev-icon">
-                            <svg viewBox="0 0 24 24" width="16" height="16" focusable="false">
-                                <path
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2.2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M14.5 5 8 12l6.5 7"
-                                />
-                            </svg>
+                            <TaoIcon name="tao-chevron-left" :size="16" />
                         </slot>
                     </span>
                 </button>
@@ -610,16 +602,7 @@ onBeforeUnmount(() => {
                 >
                     <span aria-hidden="true">
                         <slot name="next-icon">
-                            <svg viewBox="0 0 24 24" width="16" height="16" focusable="false">
-                                <path
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2.2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M9.5 5 16 12l-6.5 7"
-                                />
-                            </svg>
+                            <TaoIcon name="tao-chevron-right" :size="16" />
                         </slot>
                     </span>
                 </button>
@@ -738,7 +721,7 @@ onBeforeUnmount(() => {
     transition: var(--tao-transition-base);
 }
 
-.tao-carousel__nav svg {
+.tao-carousel__nav .tao-icon {
     display: block;
 }
 

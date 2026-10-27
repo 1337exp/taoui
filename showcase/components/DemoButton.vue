@@ -71,8 +71,12 @@ const buttonSizes = ['small', 'medium', 'large']
     
           <h3>{{ tr('With an icon', 'С иконкой') }}</h3>
           <div class="button-row">
-            <TaoButton variant="primary" icon="★">{{ tr('With an icon', 'С иконкой') }}</TaoButton>
-            <TaoButton variant="secondary" icon="⚡">{{ tr('Action', 'Действие') }}</TaoButton>
+            <TaoButton variant="primary" icon="tao-plus">{{ tr('Add', 'Добавить') }}</TaoButton>
+            <TaoButton variant="secondary" icon-end="tao-chevron-right">{{ tr('Next', 'Далее') }}</TaoButton>
+            <TaoButton variant="ghost" icon="tao-copy">{{ tr('Copy', 'Копировать') }}</TaoButton>
+            <TaoButton variant="primary" icon="tao-plus" aria-label="Add" />
+            <TaoButton variant="secondary" icon="tao-search" aria-label="Search" />
+            <TaoButton variant="ghost" tone="danger" icon="tao-close" aria-label="Remove" />
           </div>
     
           <div class="code-block">
@@ -88,9 +92,10 @@ const buttonSizes = ['small', 'medium', 'large']
   {{ tr('Delete', 'Удалить') }}
 &lt;/TaoButton&gt;
 
-&lt;TaoButton variant="primary" icon="★"&gt;
-  {{ tr('With an icon', 'С иконкой') }}
-&lt;/TaoButton&gt;</code></pre>
+&lt;TaoButton icon="tao-plus"&gt;{{ tr('Add', 'Добавить') }}&lt;/TaoButton&gt;
+
+&lt;!-- {{ tr('only an icon: a square, and it needs aria-label', 'только иконка: квадрат, нужен aria-label') }} --&gt;
+&lt;TaoButton icon="tao-close" aria-label="Close" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

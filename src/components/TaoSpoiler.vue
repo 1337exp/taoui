@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed, inject, ref, useId } from 'vue';
 import { spoilerGroupKey } from '../spoiler';
 
@@ -85,7 +86,7 @@ function onLeave(el: Element) {
             :aria-controls="panelId"
             @click="toggle"
         >
-            <span class="tao-spoiler__icon" :class="{ 'tao-spoiler__icon--open': isOpen }">▶</span>
+            <TaoIcon class="tao-spoiler__icon" :class="{ 'tao-spoiler__icon--open': isOpen }" name="tao-chevron-right" />
             <span v-if="title || $slots.title" class="tao-spoiler__title">
                 <slot name="title">{{ title }}</slot>
             </span>

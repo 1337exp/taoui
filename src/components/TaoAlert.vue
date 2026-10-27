@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed } from 'vue';
 import { toneClass, type TaoTone } from '../tone';
 import { useLocaleText } from '../locale';
@@ -46,7 +47,7 @@ const isUrgent = computed(() => props.tone === 'danger' || props.tone === 'warni
             @click="emit('close')"
         >
             <span aria-hidden="true">
-                <slot name="close-icon">&times;</slot>
+                <slot name="close-icon"><TaoIcon name="tao-close" /></slot>
             </span>
         </button>
     </div>

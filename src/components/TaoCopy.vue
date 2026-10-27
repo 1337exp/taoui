@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useFloating } from '../floating';
 import { taoLocale, useLocaleText } from '../locale';
@@ -77,24 +78,7 @@ const doneText = computed(() => props.successText ?? taoLocale().copy.successTex
                 :aria-label="copied ? doneText : l10n.copyLabel"
                 @click="copy"
             >
-                <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false">
-                    <rect
-                        x="8"
-                        y="7"
-                        width="12"
-                        height="14"
-                        rx="2"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    />
-                    <path
-                        d="M16 7V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                    />
-                </svg>
+                <TaoIcon name="tao-copy" :size="16" />
             </button>
         </slot>
 
@@ -169,7 +153,7 @@ const doneText = computed(() => props.successText ?? taoLocale().copy.successTex
     transition: var(--tao-transition-base);
 }
 
-.tao-copy__button svg {
+.tao-copy__button .tao-icon {
     display: block;
 }
 

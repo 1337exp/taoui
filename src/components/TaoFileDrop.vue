@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
 import { sizeClass, type TaoSize } from '../size';
@@ -193,7 +194,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
                 @click="requestClear"
             >
                 <span aria-hidden="true">
-                    <slot name="clear-icon">✕</slot>
+                    <slot name="clear-icon"><TaoIcon name="tao-close" /></slot>
                 </span>
             </button>
 
@@ -229,7 +230,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
                     @click="removeAt(index)"
                 >
                     <span aria-hidden="true">
-                        <slot name="remove-icon">✕</slot>
+                        <slot name="remove-icon"><TaoIcon name="tao-close" /></slot>
                     </span>
                 </button>
             </li>

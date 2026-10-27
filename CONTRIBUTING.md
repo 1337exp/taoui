@@ -71,6 +71,7 @@ Rules:
 7. A component takes its colour from the **tone context** (`styles/tone.css`): put `toneClass(tone)` on the root and read
    `--tao-tone`, `--tao-tone-on`, `--tao-tone-text`, … Never map `success` / `danger` to colours inside a component.
 8. Accent or status colour as **text** uses the `-text` token (`accent-text`, `danger-text`, …), as a fill the plain one; the tests hold both to 4.5:1.
+11. Icons are `<TaoIcon name="tao-…">` (add the path to `src/icons.ts`, keep the 24x24 grid, a 2px round stroke, `currentColor`); no inline `<svg>` and no text glyphs in components; a button with only an icon needs `aria-label`.
 10. A floating panel (popup, menu, tooltip) positions itself with `useFloating`, closes with `useDismiss` / `useLayer`, and moves with `useListNav`; never with its own `getBoundingClientRect` and listeners.
 9. Layers and transitions come from tokens (`--tao-z-*`, `--tao-transition-base`): no literal `z-index` above content, no `transition: all`.
 

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import TaoButton from './TaoButton.vue';
+import TaoIcon from './TaoIcon.vue';
 import { currentConfirm, registerConfirmHost, resolveConfirm, unregisterConfirmHost } from '../confirm/store';
 import { trapTab } from '../focusTrap';
 import { toneClass } from '../tone';
@@ -78,15 +79,7 @@ function onKeydown(event: KeyboardEvent) {
                     <span class="tao-confirm__accent" aria-hidden="true"></span>
 
                     <span class="tao-confirm__icon" aria-hidden="true">
-                        <svg v-if="currentConfirm.danger" viewBox="0 0 20 20" width="22" height="22" fill="none">
-                            <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.6" />
-                            <path d="M7 7l6 6M13 7l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-                        </svg>
-                        <svg v-else viewBox="0 0 20 20" width="22" height="22" fill="none">
-                            <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.6" />
-                            <path d="M10 9v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
-                            <circle cx="10" cy="6.4" r="0.8" fill="currentColor" />
-                        </svg>
+                        <TaoIcon :name="currentConfirm.danger ? 'tao-x-circle' : 'tao-info'" :size="22" />
                     </span>
 
                     <div class="tao-confirm__body">

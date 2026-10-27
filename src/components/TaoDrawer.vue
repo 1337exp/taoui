@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { nextTick, ref, useId, watch } from 'vue';
 import { getFocusable, trapTab } from '../focusTrap';
 import { useLayer } from '../layers';
@@ -89,7 +90,7 @@ watch(
                             @click="close"
                         >
                             <span aria-hidden="true">
-                                <slot name="close-icon">&times;</slot>
+                                <slot name="close-icon"><TaoIcon name="tao-close" /></slot>
                             </span>
                         </button>
                     </div>

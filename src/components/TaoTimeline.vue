@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed } from 'vue';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
@@ -100,9 +101,9 @@ function onRestart() {
                 :aria-pressed="playing"
                 @click="emit('update:playing', !playing)"
             >
-                {{ playing ? '❚❚' : '▶' }}
+                <TaoIcon :name="playing ? 'tao-pause' : 'tao-play'" />
             </TaoButton>
-            <TaoButton v-if="showRestart" size="small" variant="ghost" :disabled="disabled" :aria-label="l10n.restartLabel" @click="onRestart">⏮</TaoButton>
+            <TaoButton v-if="showRestart" size="small" variant="ghost" :disabled="disabled" :aria-label="l10n.restartLabel" @click="onRestart"><TaoIcon name="tao-skip-back" /></TaoButton>
         </div>
 
         <div class="tao-timeline__track">

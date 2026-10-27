@@ -26,7 +26,8 @@ export const propTables = {
         r('loading', 'boolean', 'false', 'Спиннер, клик глушится'),
         r('block', 'boolean', 'false', 'Ширина 100%'),
         r('minWidth', 'number | string', '—', 'Минимальная ширина (число = px); переменная --tao-button-min-width'),
-        r('icon', 'string', "''", 'Символ слева от текста'),
+        r('icon', 'string', "''", 'Иконка перед текстом: имя для TaoIcon (tao-plus, своя или из шрифта). Без текста и слота кнопка — квадрат высотой с контрол, нужен aria-label'),
+        r('iconEnd', 'string', "''", 'Иконка после текста'),
       ],
       slots: 'default — подпись кнопки.',
     },
@@ -231,7 +232,7 @@ export const propTables = {
       rows: [
         r('value', 'string | number | boolean', '—', 'Значение опции. Обязательный'),
         r('label', 'string', "''", 'Текст. Или слот default'),
-        r('icon', 'string', "''", 'Символ слева'),
+        r('icon', 'string', "''", 'Имя иконки для TaoIcon слева'),
         r('count', 'number | string', '—', 'Цифра справа (бейдж)'),
         r('disabled', 'boolean', 'false', 'Эта опция'),
       ],
@@ -880,12 +881,12 @@ export const propTables = {
     {
       title: 'TaoIcon',
       rows: [
-        r('name', 'string', '—', 'Класс icon-{name}. Шрифт подключаете сами. Обязательный'),
-        r('size', 'number', '—', 'font-size в px'),
+        r('name', 'string', '—', 'tao-… — встроенный SVG; имя из registerTaoIcons; любое другое — класс icon-{name} вашего шрифта. Обязательный'),
+        r('size', 'number', '—', 'Пиксели. Без него SVG-иконка 1em (по размеру шрифта)'),
         r('margin', 'string', "'0px'", 'Внешний отступ'),
         r('invert', 'boolean', 'false', 'Инвертировать цвет'),
       ],
-      slots: '#prefix / #postfix — рядом с глифом.',
+      slots: '#prefix / #postfix — рядом с иконкой. registerTaoIcons({ имя: { body, viewBox? } }) добавляет свои SVG; приставка tao- зарезервирована.',
     },
   ],
 }

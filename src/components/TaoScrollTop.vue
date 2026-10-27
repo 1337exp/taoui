@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed, ref, onBeforeMount, onBeforeUnmount } from 'vue';
 import { useLocaleText } from '../locale';
 
@@ -146,9 +147,7 @@ onBeforeUnmount(() => {
                 <span class="tao-scroll-top__content">
                     <span v-if="isText && caption" class="tao-scroll-top__text" aria-hidden="true">{{ caption }}</span>
                     <slot>
-                        <svg class="tao-scroll-top__icon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-                            <path d="M12 6l-7 7 1.4 1.4L12 8.8l5.6 5.6L19 13z" />
-                        </svg>
+                        <TaoIcon class="tao-scroll-top__icon" name="tao-chevron-up" :size="16" />
                     </slot>
                 </span>
             </button>

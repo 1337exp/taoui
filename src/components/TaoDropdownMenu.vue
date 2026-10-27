@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import type { TaoPlacement } from '../floating';
 import { useLocaleText } from '../locale';
 import type { TaoMenuCloseReason, TaoMenuItem } from '../menu';
+import TaoIcon from './TaoIcon.vue';
 import TaoMenu from './TaoMenu.vue';
 
 defineOptions({ name: 'TaoDropdownMenu' });
@@ -30,7 +31,7 @@ const emit = defineEmits<{
 defineSlots<{
     /** The whole trigger content, replaces the button face. / Всё содержимое кнопки. */
     button?(): unknown;
-    /** The default button face (the ⋮). / Вид кнопки по умолчанию. */
+    /** The default button face (three dots). / Вид кнопки по умолчанию. */
     icon?(): unknown;
     /** Replaces the text of one item. / Заменяет содержимое пункта. */
     item?(props: { item: TaoMenuItem; id: string; label: string; icon?: string }): unknown;
@@ -73,7 +74,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
         >
             <slot v-if="$slots.button" name="button" />
             <span v-else aria-hidden="true">
-                <slot name="icon">⋮</slot>
+                <slot name="icon"><TaoIcon name="tao-more-vertical" /></slot>
             </span>
         </button>
 

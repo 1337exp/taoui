@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, useAttrs, useSlots } from 'vue';
+import { devWarning } from '../deprecate';
 import { sizeClass, type TaoSize } from '../size';
 import { toneClass, type TaoToneName } from '../tone';
+import TaoIcon from './TaoIcon.vue';
 
 defineOptions({ name: 'TaoButton' });
 
@@ -15,7 +17,10 @@ interface Props {
     disabled?: boolean;
     loading?: boolean;
     block?: boolean;
+    /** Icon before the text: a name for TaoIcon (`tao-plus`, a registered or font icon). Without text the button is a square. / Иконка перед текстом: имя для TaoIcon. Без текста кнопка квадратная. */
     icon?: string;
+    /** Icon after the text. / Иконка после текста. */
+    iconEnd?: string;
     /** Minimum width (number = px). Same as the `--tao-button-min-width` variable. / Минимальная ширина (число = px). То же, что переменная `--tao-button-min-width`. */
     minWidth?: number | string;
 }
@@ -28,6 +33,7 @@ const props = withDefaults(defineProps<Props>(), {
     loading: false,
     block: false,
     icon: '',
+    iconEnd: '',
     minWidth: undefined,
 });
 
@@ -38,6 +44,14 @@ const minWidthStyle = computed(() =>
 );
 
 const emit = defineEmits(['click']);
+
+const slots = useSlots();
+const attrs = useAttrs();
+// no text, only an icon: a square of the control height, and it needs a name for screen readers
+const iconOnly = computed(() => Boolean(props.icon || props.iconEnd) && !slots.default);
+if (iconOnly.value && !attrs['aria-label'] && !attrs['aria-labelledby'] && !attrs.title) {
+    devWarning('button:icon-only', 'TaoButton: a button with only an icon needs aria-label (or aria-labelledby / title).');
+}
 
 function handleClick(event: MouseEvent) {
     if (!props.disabled && !props.loading) {
@@ -57,7 +71,7 @@ function handleClick(event: MouseEvent) {
                 'tao-button--disabled': disabled,
                 'tao-button--loading': loading,
                 'tao-button--block': block,
-                'tao-button--icon': !!icon,
+                'tao-button--icon-only': iconOnly,
                 'tao-button--toned': !!tone && tone !== 'accent',
             },
         ]"
@@ -67,8 +81,9 @@ function handleClick(event: MouseEvent) {
         @click="handleClick"
     >
         <span v-if="loading" class="tao-button__loader"></span>
-        <span v-if="icon" class="tao-button__icon">{{ icon }}</span>
-        <span class="tao-button__content"><slot /></span>
+        <TaoIcon v-if="icon" class="tao-button__icon" :name="icon" />
+        <span v-if="$slots.default" class="tao-button__content"><slot /></span>
+        <TaoIcon v-if="iconEnd" class="tao-button__icon" :name="iconEnd" />
     </button>
 </template>
 
@@ -157,6 +172,12 @@ function handleClick(event: MouseEvent) {
 
 .tao-button--block {
     width: 100%;
+}
+
+/* an icon-only button is a square of the control height / кнопка только с иконкой — квадрат высотой с контрол */
+.tao-button--icon-only:not(.tao-button--text) {
+    width: var(--tao-control-height);
+    padding: 0;
 }
 
 .tao-button--loading .tao-button__content {

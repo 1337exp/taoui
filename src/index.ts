@@ -267,6 +267,8 @@ export type { TaoLocale, TaoLocaleOverrides } from './locale';
 export type { TaoSize } from './size';
 export type { TaoTone, TaoToneName } from './tone';
 export { toneClass } from './tone';
+export { registerTaoIcons, taoIconNames } from './icons';
+export type { TaoIconDef } from './icons';
 export type { TaoSurface } from './surface';
 export type { TaoLength } from './length';
 export type { TaoSelectOption } from './select';

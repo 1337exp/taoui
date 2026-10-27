@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed, inject, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
@@ -184,7 +185,7 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value
             @click="onDec"
         >
             <span aria-hidden="true">
-                <slot name="decrement-icon">−</slot>
+                <slot name="decrement-icon"><TaoIcon name="tao-minus" /></slot>
             </span>
         </button>
         <input
@@ -215,7 +216,7 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value
             @click="onInc"
         >
             <span aria-hidden="true">
-                <slot name="increment-icon">+</slot>
+                <slot name="increment-icon"><TaoIcon name="tao-plus" /></slot>
             </span>
         </button>
     </div>

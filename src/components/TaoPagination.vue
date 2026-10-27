@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed, watch } from 'vue';
 import { buildPaginationItems } from '../pagination';
 import { sizeClass, type TaoSize } from '../size';
@@ -94,7 +95,7 @@ function goTo(next: number) {
                 @click="goTo(current - 1)"
             >
                 <span aria-hidden="true">
-                    <slot name="prev-icon">‹</slot>
+                    <slot name="prev-icon"><TaoIcon name="tao-chevron-left" /></slot>
                 </span>
             </button>
 
@@ -132,7 +133,7 @@ function goTo(next: number) {
                 @click="goTo(current + 1)"
             >
                 <span aria-hidden="true">
-                    <slot name="next-icon">›</slot>
+                    <slot name="next-icon"><TaoIcon name="tao-chevron-right" /></slot>
                 </span>
             </button>
         </div>

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import TaoIcon from './TaoIcon.vue';
 import { computed, useSlots } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
 import { toneClass, type TaoTone } from '../tone';
@@ -73,7 +74,7 @@ function onClose(event: MouseEvent) {
             @click.stop="onClose"
         >
             <span aria-hidden="true">
-                <slot name="close-icon">✕</slot>
+                <slot name="close-icon"><TaoIcon name="tao-close" /></slot>
             </span>
         </button>
     </span>
