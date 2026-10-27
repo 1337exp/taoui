@@ -146,6 +146,12 @@ Without `size` a control takes the size of its ancestors, `medium` at the root. 
 Content and layout keep their own scale and do not inherit: Avatar (24 / 32 / 48px), Divider `gap`, Loader / Icon / ScrollTop (pixels).
 Container lives on another axis — width: `width="wide" | "slim" | "ultra-slim"`.
 
+**Density** is the second axis of the controls, on top of the size: the class `tao-density-compact` / `-comfortable` / `-auto` on a container (or on `<html>`) changes the height and the padding of every size in it, not the font. `comfortable` gives 34 / 44 / 52px (touch-sized rows), `compact` 22 / 32 / 40px (dense tools and tables), `auto` is comfortable on a touch screen (`pointer: coarse`) and the default with a mouse. Select and Combobox carry it into their panels. Type `TaoDensity`; the steps are tokens `--tao-density-height-*` / `--tao-density-padding-x-*` / `-y-*`.
+
+```html
+<html class="tao-density-auto">
+```
+
 Surfaces — what a panel is made of: `flat` fill (default), `grain` (static film grain), `glass` (translucent, blurs what is
 behind). Use `surface` on TaoCard / TaoBlock or the class `tao-surface-grain` / `-glass` on any element — a game HUD, a
 landing section, a sidebar. Tune the look once with theme tokens (`--tao-surface-grain-image` / `-size`, `--tao-glass-fill`
@@ -585,7 +591,7 @@ tokens/primitives.css → tokens/semantic.css → themes/*.css → contexts/*.cs
 | `tokens/semantic.css` | Theme-independent roles: radii, shadows, type, motion | Rarely |
 | `themes/dark.css` | The colour roles of the default (dark) theme: `--tao-color-accent`, `--tao-color-surface`, … | **Yes — this is the theming API** |
 | `themes/light.css` | The same roles under `[data-tao-theme="light"]` | Yes, as a sample |
-| `contexts/size.css`, `tone.css`, `surface.css` | `.tao-size-*`, `.tao-tone-*`, `.tao-surface-*`: what a control reads to know its size, colour and material | Rarely |
+| `contexts/size.css`, `tone.css`, `surface.css` | `.tao-size-*` and `.tao-density-*`, `.tao-tone-*`, `.tao-surface-*`: what a control reads to know its size, colour and material | Rarely |
 | `base.css` | Global reset (scrollbar, links, box-sizing) | Rarely |
 
 Everything comes in through `@1337exp/taoui/styles.css` (dark and light both: light turns on with `data-tao-theme="light"`).

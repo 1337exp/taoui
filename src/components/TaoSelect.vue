@@ -6,6 +6,7 @@ import { useLayer } from '../layers';
 import { useListNav } from '../listNav';
 import { useField } from '../formField';
 import type { TaoSelectOption } from '../select';
+import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
 import { resolveSize, sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
 
@@ -55,6 +56,7 @@ const panelRef = ref<HTMLElement | null>(null);
 const listRef = ref<HTMLElement | null>(null);
 /** The panel is teleported to body, so it gets the size resolved at the trigger. / Панель в body — размер берём у триггера. */
 const panelSize = ref<TaoSize>('medium');
+const panelDensity = ref<TaoResolvedDensity>('default');
 
 const selected = computed(() => props.options.find((option) => option.value === props.modelValue) ?? null);
 const enabled = computed(() => props.options.map((option) => !option.disabled));
@@ -177,6 +179,7 @@ function onListKeydown(event: KeyboardEvent) {
 watch(open, (isOpen) => {
     if (isOpen) {
         panelSize.value = resolveSize(triggerRef.value, props.size);
+        panelDensity.value = resolveDensity(triggerRef.value);
     }
 });
 </script>
@@ -214,7 +217,7 @@ watch(open, (isOpen) => {
                 v-if="open"
                 ref="panelRef"
                 class="tao-select__panel"
-                :class="sizeClass(panelSize)"
+                :class="[sizeClass(panelSize), densityClass(panelDensity)]"
                 :style="listStyle"
             >
                 <ul
