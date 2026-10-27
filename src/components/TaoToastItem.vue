@@ -6,6 +6,7 @@ import { listenFocusLoss } from '../focusLoss';
 import { removeToast, toastDefaults } from '../toast/store';
 import type { TaoToastRecord } from '../toast/types';
 import { surfaceClass } from '../surface';
+import { toneClass } from '../tone';
 
 defineOptions({ name: 'TaoToastItem' });
 
@@ -80,7 +81,7 @@ onBeforeUnmount(() => {
 <template>
     <div
         class="tao-toast"
-        :class="[`tao-toast--${toast.type}`, surfaceClass(toast.surface), { 'tao-toast--paused': paused }]"
+        :class="[toneClass(toast.type === 'neutral' ? undefined : toast.type), surfaceClass(toast.surface), { 'tao-toast--paused': paused }]"
         :role="toast.type === 'danger' || toast.type === 'warning' ? 'alert' : 'status'"
         aria-live="polite"
         @mouseenter="pause"
@@ -146,7 +147,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .tao-toast {
-    --tao-toast-tone: var(--tao-color-accent);
+    --tao-toast-tone: var(--tao-tone);
 
     position: relative;
     display: flex;
@@ -172,22 +173,6 @@ onBeforeUnmount(() => {
     --tao-surface-fill: color-mix(in srgb, var(--tao-toast-tone) 10%, var(--tao-glass-fill));
     border-color: var(--tao-glass-border);
     box-shadow: var(--tao-toast-shadow, 0 2px 8px rgb(0 0 0 / 0.12));
-}
-
-.tao-toast--success {
-    --tao-toast-tone: var(--tao-color-success);
-}
-
-.tao-toast--danger {
-    --tao-toast-tone: var(--tao-color-danger);
-}
-
-.tao-toast--warning {
-    --tao-toast-tone: var(--tao-color-warning);
-}
-
-.tao-toast--info {
-    --tao-toast-tone: var(--tao-color-info);
 }
 
 .tao-toast__accent {

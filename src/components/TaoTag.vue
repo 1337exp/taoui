@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, useSlots } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
-import type { TaoTone } from '../tone';
+import { toneClass, type TaoTone } from '../tone';
 import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoTag' });
@@ -35,7 +35,6 @@ const emit = defineEmits<{
 }>();
 
 const slots = useSlots();
-const resolvedTone = computed(() => props.tone ?? '');
 const style = computed(() => ({
     color: props.color || '',
     background: props.background || '',
@@ -51,7 +50,7 @@ function onClose(event: MouseEvent) {
     <span
         class="tao-tag"
         :class="[
-            resolvedTone ? `tao-tag--${resolvedTone}` : '',
+            props.tone ? [toneClass(props.tone), 'tao-tag--toned'] : '',
             sizeClass(size),
             {
                 'tao-tag--pointer': clickable,
@@ -165,44 +164,21 @@ function onClose(event: MouseEvent) {
     outline-offset: 1px;
 }
 
-.tao-tag--neutral {
+.tao-tag--toned {
+    color: var(--tao-tone-text);
+    background: var(--tao-tone-subtle);
+    border-color: color-mix(in srgb, var(--tao-tone) 30%, transparent);
+}
+
+/* Neutral keeps its own quiet frame: the muted fill would be too faint. / У нейтрального своя тихая рамка. */
+.tao-tag--toned.tao-tone-neutral {
     color: var(--tao-color-text);
     background: var(--tao-color-surface-sunken);
     border-color: var(--tao-color-border-strong);
 }
 
-.tao-tag--success {
-    color: var(--tao-color-success-text);
-    background: color-mix(in srgb, var(--tao-color-success) 12%, transparent);
-    border-color: color-mix(in srgb, var(--tao-color-success) 30%, transparent);
-}
-
-.tao-tag--danger,
-.tao-tag--error {
-    color: var(--tao-color-danger-text);
-    background: var(--tao-color-danger-subtle);
-    border-color: color-mix(in srgb, var(--tao-color-danger) 30%, transparent);
-}
-
-.tao-tag--warning {
-    color: var(--tao-color-warning-text);
-    background: var(--tao-color-warning-subtle);
-    border-color: color-mix(in srgb, var(--tao-color-warning) 30%, transparent);
-}
-
-.tao-tag--info {
-    color: var(--tao-color-info-text);
-    background: var(--tao-color-info-subtle);
-    border-color: color-mix(in srgb, var(--tao-color-info) 30%, transparent);
-}
-
 .tao-tag--flat,
-.tao-tag--flat.tao-tag--neutral,
-.tao-tag--flat.tao-tag--success,
-.tao-tag--flat.tao-tag--danger,
-.tao-tag--flat.tao-tag--error,
-.tao-tag--flat.tao-tag--warning,
-.tao-tag--flat.tao-tag--info {
+.tao-tag--flat.tao-tag--toned {
     border-color: transparent;
 }
 </style>

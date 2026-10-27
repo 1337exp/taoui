@@ -566,7 +566,7 @@ onBeforeUnmount(() => {
 
 <style>
 .tao-combobox__panel {
-    z-index: 1050;
+    z-index: var(--tao-z-popup);
     position: fixed;
     overflow: hidden;
     background: var(--tao-color-surface-raised);

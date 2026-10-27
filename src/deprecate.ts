@@ -16,6 +16,18 @@ function isDev(): boolean {
 const warned = new Set<string>();
 
 /**
+ * One console warning per key, dev builds only (a value the library does not know, a missing required label).
+ * Одно предупреждение на ключ, только в dev-сборке (неизвестное значение, пропущенная обязательная подпись).
+ */
+export function devWarning(key: string, message: string) {
+    if (!isDev() || warned.has(key)) {
+        return;
+    }
+    warned.add(key);
+    console.warn(`[TaoUI] ${message}`);
+}
+
+/**
  * One console warning per component + name, dev builds only.
  * Одно предупреждение на компонент + имя, только в dev-сборке.
  */

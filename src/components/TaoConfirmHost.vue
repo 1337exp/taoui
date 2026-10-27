@@ -3,6 +3,7 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import TaoButton from './TaoButton.vue';
 import { currentConfirm, registerConfirmHost, resolveConfirm, unregisterConfirmHost } from '../confirm/store';
 import { trapTab } from '../focusTrap';
+import { toneClass } from '../tone';
 import { isBrowser, lockBodyScroll, unlockBodyScroll } from '../bodyScroll';
 import { surfaceClass } from '../surface';
 
@@ -102,7 +103,7 @@ function onKeydown(event: KeyboardEvent) {
                 <div
                     ref="panelRef"
                     class="tao-confirm__panel"
-                    :class="[surfaceClass(currentConfirm.surface), { 'tao-confirm__panel--danger': currentConfirm.danger }]"
+                    :class="[surfaceClass(currentConfirm.surface), toneClass(currentConfirm.danger ? 'danger' : 'warning')]"
                     role="alertdialog"
                     aria-modal="true"
                     :aria-labelledby="currentConfirm.title ? 'tao-confirm-title' : undefined"
@@ -138,7 +139,7 @@ function onKeydown(event: KeyboardEvent) {
                         </TaoButton>
                         <TaoButton
                             data-tao-confirm-ok
-                            :variant="currentConfirm.danger ? 'danger' : 'primary'"
+                            :tone="currentConfirm.danger ? 'danger' : undefined"
                             @click="answer(true)"
                         >
                             {{ currentConfirm.okLabel }}
@@ -154,7 +155,7 @@ function onKeydown(event: KeyboardEvent) {
 .tao-confirm {
     position: fixed;
     inset: 0;
-    z-index: 1200;
+    z-index: var(--tao-z-confirm);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -173,7 +174,7 @@ function onKeydown(event: KeyboardEvent) {
 }
 
 .tao-confirm__panel {
-    --tao-confirm-tone: var(--tao-color-warning);
+    --tao-confirm-tone: var(--tao-tone);
 
     position: relative;
     z-index: 1;
@@ -201,10 +202,6 @@ function onKeydown(event: KeyboardEvent) {
     --tao-surface-fill: color-mix(in srgb, var(--tao-confirm-tone) 10%, var(--tao-glass-fill));
     border-color: var(--tao-glass-border);
     box-shadow: var(--tao-shadow-overlay);
-}
-
-.tao-confirm__panel--danger {
-    --tao-confirm-tone: var(--tao-color-danger);
 }
 
 .tao-confirm__accent {

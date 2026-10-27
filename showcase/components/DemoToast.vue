@@ -12,7 +12,7 @@ function fireToast(kind) {
     return
   }
   if (kind === 'error') {
-    toast().error().title(tr('Network', 'Сеть')).message(tr('No connection', 'Нет соединения'))
+    toast().danger().title(tr('Network', 'Сеть')).message(tr('No connection', 'Нет соединения'))
     return
   }
   if (kind === 'warning') {
@@ -42,7 +42,7 @@ function fireToast(kind) {
     
           <div class="button-row">
             <TaoButton variant="primary" @click="fireToast('success')">success</TaoButton>
-            <TaoButton variant="danger" @click="fireToast('error')">error</TaoButton>
+            <TaoButton tone="danger" @click="fireToast('error')">danger</TaoButton>
             <TaoButton variant="secondary" @click="fireToast('warning')">warning</TaoButton>
             <TaoButton variant="ghost" @click="fireToast('info')">info</TaoButton>
             <TaoButton variant="secondary" @click="fireToast('action')">{{ tr('with a button', 'с кнопкой') }}</TaoButton>
@@ -51,7 +51,7 @@ function fireToast(kind) {
     
           <div class="code-block">
             <pre><code>toast().success().message('{{ tr('Saved', 'Сохранено') }}')
-toast().error().title('{{ tr('Network', 'Сеть') }}').message('{{ tr('No connection', 'Нет соединения') }}')
+toast().danger().title('{{ tr('Network', 'Сеть') }}').message('{{ tr('No connection', 'Нет соединения') }}')
 toast.success('{{ tr('Saved', 'Сохранено') }}')
 
 toast.defaults({ closeLabel: 'Dismiss notification' })</code></pre>

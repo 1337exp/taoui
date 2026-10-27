@@ -49,7 +49,7 @@
 ### Basics
 
 - **TaoBlock** — container with padding and radius
-- **TaoButton** — `primary` / `secondary` / `ghost` / `text` / `danger`. `tone` tints ghost and text (danger, success, warning, info, neutral)
+- **TaoButton** — `variant`: `primary` / `secondary` / `ghost` / `text`; `tone` colours any of them (accent by default, neutral, success, danger, warning, info)
 - **TaoCard** — card with cover / header / footer slots. `#cover` can be a photo or `TaoCarousel`. `flush` is a tile (no padding/shadow, fills the cell); `#overlay` is a scrim on the cover
 - **TaoCopy** — clipboard icon. After a click, a “Copied” tooltip; if the trigger is gone, the tooltip is too
 - **TaoInput** — text field with v-model, validation, and `#prefix` / `#suffix` slots (icon or text inside the frame)
@@ -127,7 +127,7 @@
 
 ## Conventions
 
-Visual tones: `success` | `danger` | `warning` | `info` | `neutral` (type `TaoTone`), always the `tone` prop: Button, Alert, Tag (`toast.danger()` for toasts).
+Visual tones: `success` | `danger` | `warning` | `info` | `neutral` (type `TaoTone`), always the `tone` prop: Button, Alert, Tag (`toast.danger()` for toasts). The accent is a tone too and the default one. A tone is a context class like a size: `.tao-tone-danger` on any element sets `--tao-tone`, `--tao-tone-on`, `--tao-tone-text`, … (see `styles/tone.css`). Unlike a size it does **not** inherit, so a button inside a red alert stays an accent button.
 Stages describe a process, not a tone: `wait` / `work` / `ok` / `bad` (`danger` is accepted as `bad`).
 
 Control sizes: `small` | `medium` | `large` (type `TaoSize`). One scale for Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup and FormField — controls of one size line up in a row. Checkbox, Radio / RadioGroup and Switch scale the indicator (14 / 18 / 22px) and the label; Tag scales its height (18 / 20 / 24px); Tabs, Pagination buttons and List rows take the Button height; Table scales cell padding (`size="small"` for the dense one); FileDrop scales the zone and file rows; Slider scales the track and thumb.
@@ -309,7 +309,7 @@ The chain runs in the same tick; `setTimeout(0)` actually shows the toast.
 import { toast } from '@1337exp/taoui'
 
 toast().success().message('Saved')
-toast().error().title('Network').timeout(5000).message('No connection')
+toast().danger().title('Network').timeout(5000).message('No connection')
 toast.success('Saved')
 toast.warning('Draft', { timeout: 1000 })
 ```

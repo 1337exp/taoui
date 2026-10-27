@@ -17,7 +17,7 @@ const showAlert = ref(true)
 
           <div style="display: flex; flex-direction: column; gap: 12px; max-width: 520px;">
             <TaoAlert tone="success" :title="tr('Saved', 'Сохранено')">{{ tr('Profile updated.', 'Профиль обновлён.') }}</TaoAlert>
-            <TaoAlert tone="error" :title="tr('Error', 'Ошибка')">{{ tr('Could not reach the server.', 'Не удалось связаться с сервером.') }}</TaoAlert>
+            <TaoAlert tone="danger" :title="tr('Error', 'Ошибка')">{{ tr('Could not reach the server.', 'Не удалось связаться с сервером.') }}</TaoAlert>
             <TaoAlert v-if="showAlert" tone="warning" :title="tr('Draft', 'Черновик')" closable @close="showAlert = false">
               {{ tr('Save before you leave.', 'Сохраните, прежде чем уйти.') }}
             </TaoAlert>

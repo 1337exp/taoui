@@ -30,6 +30,7 @@
     --tao-pink-500: #ff227a;
     --tao-pink-600: #e60f66;
     --tao-pink-700: #c70a55;
+    --tao-pink-800: #a8083f;
 
     --tao-red-400: #e35766;
     --tao-red-500: #dc3545;
@@ -127,6 +128,15 @@
     --tao-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
     --tao-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
     --tao-shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.3);
+
+    /* ---------- Layers / Слои ----------
+       One scale for everything that floats; components never write a literal z-index above content.
+       Одна шкала для всего, что плавает; компоненты не пишут литералы z-index выше контента. */
+    --tao-z-modal: 1000; /* Modal, Drawer */
+    --tao-z-popup: 1050; /* Select, Combobox, Date, Popover, DropdownMenu */
+    --tao-z-tooltip: 1060; /* Tooltip, Copy tip */
+    --tao-z-toast: 1100;
+    --tao-z-confirm: 1200; /* above toasts: it asks for an answer */
 
     /* ---------- Motion ---------- */
     --tao-duration-fast: 0.15s;

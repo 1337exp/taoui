@@ -22,8 +22,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    padding: 20,
-    radius: 8,
+    padding: undefined,
+    radius: undefined,
     shadow: true,
     shadowBottomOnly: false,
     hover: false,
@@ -48,20 +48,24 @@ const hasContent = computed(
 
 const coverOnly = computed(() => Boolean(slots.cover) && !hasContent.value);
 
-const paddingStyle = computed(() => {
-    if (props.flush) {
-        return { padding: '0' };
-    }
-    return { padding: toCssBox(props.padding) };
-});
+// Only what the user passed goes inline; the defaults come from tokens (see .tao-panel in surface.css).
+// В inline уходит только то, что передал пользователь; значения по умолчанию — из токенов.
+const paddingStyle = computed(() => (props.padding === undefined || props.flush ? undefined : { padding: toCssBox(props.padding) }));
 
-const radiusStyle = computed(() => ({ borderRadius: toCssLength(props.radius) }));
+const radiusStyle = computed(() => {
+    const pad = props.padding;
+    const first = Array.isArray(pad) ? pad[0] : pad;
+    return {
+        '--tao-radius': toCssLength(props.radius),
+        '--tao-pad': first === undefined ? undefined : toCssLength(first),
+    };
+});
 const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly && !props.flush);
 </script>
 
 <template>
     <div
-        class="tao-card"
+        class="tao-card tao-panel"
         :class="[surfaceClass(surface), {
             'tao-card--shadow': showPanelShadow,
             'tao-card--shadow-bottom': shadowBottomOnly,
@@ -107,6 +111,8 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
 
 <style scoped>
 .tao-card {
+    --tao-pad: var(--tao-space-5);
+
     position: relative;
     display: flex;
     flex-direction: column;
@@ -172,11 +178,16 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
 }
 
 .tao-card__content {
+    padding: var(--tao-pad);
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
     gap: var(--tao-space-3);
     min-height: 0;
+}
+
+.tao-card--flush {
+    --tao-pad: 0px;
 }
 
 .tao-card--flush .tao-card__content {

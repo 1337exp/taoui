@@ -151,7 +151,7 @@ onBeforeUnmount(() => {
 .tao-drawer {
     position: fixed;
     inset: 0;
-    z-index: 1000;
+    z-index: var(--tao-z-modal);
     display: flex;
 }
 

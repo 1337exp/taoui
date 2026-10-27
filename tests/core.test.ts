@@ -168,3 +168,18 @@ describe('slider logic', () => {
         expect(normalizeMarks(true, 0, 10)[0]).toEqual({ value: 0, label: '0' });
     });
 });
+
+describe('tone', () => {
+    it('toneClass gives the accent without a tone and warns once about an unknown one', async () => {
+        const { toneClass } = await import('../src/tone');
+        const { vi } = await import('vitest');
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        expect(toneClass()).toBe('tao-tone-accent');
+        expect(toneClass('danger')).toBe('tao-tone-danger');
+        expect(warn).not.toHaveBeenCalled();
+        toneClass('error' as never);
+        toneClass('error' as never);
+        expect(warn).toHaveBeenCalledTimes(1);
+        warn.mockRestore();
+    });
+});

@@ -169,7 +169,7 @@ const doneText = computed(() => props.successText ?? taoLocale().copy.successTex
 
 <style>
 .tao-copy__tip {
-    z-index: 1060;
+    z-index: var(--tao-z-tooltip);
     position: fixed;
     padding: var(--tao-space-2) var(--tao-space-3);
     overflow: visible;

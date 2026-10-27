@@ -1,0 +1,118 @@
+/**
+ * Tao UI — Tone context / Контекст тона
+ *
+ * One mechanism for every status colour: `.tao-tone-<name>` on an element sets the tokens below, and the component
+ * reads ONLY them (Button, Alert, Tag, toast, confirm, Avatar dot). The accent is a tone too, and the default one.
+ *
+ *   --tao-tone              the solid fill
+ *   --tao-tone-hover        the fill under the pointer
+ *   --tao-tone-on           text on the fill (>= 3:1, see tests/tokens.test.ts)
+ *   --tao-tone-text         the colour as text on the page (>= 4.5:1)
+ *   --tao-tone-text-hover   the same, under the pointer
+ *   --tao-tone-subtle       a quiet tint (alert / tag background)
+ *   --tao-tone-wash         the hover wash behind a ghost / text control
+ *
+ * The tokens are not inherited (like the surface tokens): a Button inside a red Alert stays an accent button.
+ * To tone your own element put the class on it. A theme or a palette changes the roles in semantic.css; this file
+ * never needs to know.
+ *
+ * Один механизм для всех статусных цветов: `.tao-tone-<имя>` на элементе выставляет токены ниже, компонент читает
+ * ТОЛЬКО их. Акцент — тоже тон, и тон по умолчанию. Токены не наследуются: Button внутри красного Alert остаётся
+ * акцентным.
+ */
+@property --tao-tone {
+    syntax: '*';
+    inherits: false;
+}
+
+@property --tao-tone-hover {
+    syntax: '*';
+    inherits: false;
+}
+
+@property --tao-tone-on {
+    syntax: '*';
+    inherits: false;
+}
+
+@property --tao-tone-text {
+    syntax: '*';
+    inherits: false;
+}
+
+@property --tao-tone-text-hover {
+    syntax: '*';
+    inherits: false;
+}
+
+@property --tao-tone-subtle {
+    syntax: '*';
+    inherits: false;
+}
+
+@property --tao-tone-wash {
+    syntax: '*';
+    inherits: false;
+}
+
+.tao-tone-accent {
+    --tao-tone: var(--tao-color-accent);
+    --tao-tone-hover: var(--tao-color-accent-hover);
+    --tao-tone-on: var(--tao-color-on-accent);
+    --tao-tone-text: var(--tao-color-accent-text);
+    --tao-tone-text-hover: var(--tao-color-accent-text-hover);
+    --tao-tone-subtle: var(--tao-color-accent-subtle);
+    --tao-tone-wash: var(--tao-color-accent-subtle-hover);
+}
+
+/* Neutral: the quiet action next to a primary one. Strong text, only the wash takes the theme colour.
+   Нейтральный: тихое действие рядом с главным. Сильный текст, цвет темы — только у подложки при наведении. */
+.tao-tone-neutral {
+    --tao-tone: var(--tao-color-text-muted);
+    --tao-tone-hover: var(--tao-color-text);
+    --tao-tone-on: var(--tao-color-bg);
+    --tao-tone-text: var(--tao-color-text-strong);
+    --tao-tone-text-hover: var(--tao-color-text-strong);
+    --tao-tone-subtle: color-mix(in srgb, var(--tao-color-text-muted) 15%, transparent);
+    --tao-tone-wash: var(--tao-color-accent-subtle-hover);
+}
+
+.tao-tone-success {
+    --tao-tone: var(--tao-color-success);
+    --tao-tone-hover: var(--tao-color-success-hover);
+    --tao-tone-on: var(--tao-color-on-success);
+    --tao-tone-text: var(--tao-color-success-text);
+    --tao-tone-text-hover: var(--tao-color-success-text-hover);
+    --tao-tone-subtle: var(--tao-color-success-subtle);
+    --tao-tone-wash: var(--tao-color-success-subtle);
+}
+
+.tao-tone-danger {
+    --tao-tone: var(--tao-color-danger);
+    --tao-tone-hover: var(--tao-color-danger-hover);
+    --tao-tone-on: var(--tao-color-on-danger);
+    --tao-tone-text: var(--tao-color-danger-text);
+    --tao-tone-text-hover: var(--tao-color-danger-text-hover);
+    --tao-tone-subtle: var(--tao-color-danger-subtle);
+    --tao-tone-wash: var(--tao-color-danger-subtle);
+}
+
+.tao-tone-warning {
+    --tao-tone: var(--tao-color-warning);
+    --tao-tone-hover: var(--tao-color-warning-hover);
+    --tao-tone-on: var(--tao-color-on-warning);
+    --tao-tone-text: var(--tao-color-warning-text);
+    --tao-tone-text-hover: var(--tao-color-warning-text-hover);
+    --tao-tone-subtle: var(--tao-color-warning-subtle);
+    --tao-tone-wash: var(--tao-color-warning-subtle);
+}
+
+.tao-tone-info {
+    --tao-tone: var(--tao-color-info);
+    --tao-tone-hover: var(--tao-color-info-hover);
+    --tao-tone-on: var(--tao-color-on-info);
+    --tao-tone-text: var(--tao-color-info-text);
+    --tao-tone-text-hover: var(--tao-color-info-text-hover);
+    --tao-tone-subtle: var(--tao-color-info-subtle);
+    --tao-tone-wash: var(--tao-color-info-subtle);
+}

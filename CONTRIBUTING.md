@@ -61,13 +61,17 @@ Rules:
 1. **A role with a solid fill has an `on-<role>` partner** (`accent` / `on-accent`, `danger` / `on-danger`): the text colour for that fill.
    Never put `text`, `text-strong` or any other text token on a coloured fill: in another theme it can turn dark on dark.
    (This is why a danger button once showed black text on red in the light theme.)
-2. Do not add `on-success` / `on-warning` / `on-info` until a component really puts text on such a fill. Warning is yellow and
-   wants dark text, which is exactly why one shared "text on fill" token does not work.
+2. Every status has its `on-<status>` (`on-success`, `on-warning`, `on-info`, `on-danger`): a toned Button puts text on any of
+   them. Warning is yellow and wants dark text, which is exactly why one shared "text on fill" token does not work.
 3. Text roles keep their order in every theme: `text-strong` ≥ `text` ≥ `text-subtle` ≥ `text-muted` ≥ `text-disabled` in emphasis.
    `subtle` is for idle controls (Segmented, Tabs), `muted` for captions and hints.
 4. **Status colour as text uses `<status>-text`, as a fill uses `<status>`.** One shade cannot do both: the fill is picked for white text on top of it, the text for contrast against the page.
 5. A theme file sets every colour role explicitly, even when the value equals the dark one. It must not invent roles.
 6. No literal colours in components (the rainbow border is the one deliberate exception).
+7. A component takes its colour from the **tone context** (`styles/tone.css`): put `toneClass(tone)` on the root and read
+   `--tao-tone`, `--tao-tone-on`, `--tao-tone-text`, … Never map `success` / `danger` to colours inside a component.
+8. Accent or status colour as **text** uses the `-text` token (`accent-text`, `danger-text`, …), as a fill the plain one; the tests hold both to 4.5:1.
+9. Layers and transitions come from tokens (`--tao-z-*`, `--tao-transition-base`): no literal `z-index` above content, no `transition: all`.
 
 `tests/tokens.test.ts` enforces the mechanical part: a theme only overrides roles that exist, sets every colour role, and every
 `on-*` colour has at least 3:1 contrast on its fill in both themes. Adding a role? Add it to `semantic.css` **and** every file in `themes/`.

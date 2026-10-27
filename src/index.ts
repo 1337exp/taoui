@@ -262,7 +262,8 @@ export {
 export { localeRu, localeEn, setTaoLocale, taoLocale } from './locale';
 export type { TaoLocale, TaoLocaleOverrides } from './locale';
 export type { TaoSize } from './size';
-export type { TaoTone } from './tone';
+export type { TaoTone, TaoToneName } from './tone';
+export { toneClass } from './tone';
 export type { TaoSurface } from './surface';
 export type { TaoLength } from './length';
 export type { TaoSelectOption } from './select';

@@ -26,8 +26,8 @@ export const propTablesEn = {
       title: 'TaoButton',
       rows: [
         r('type', "'button' | 'submit' | 'reset'", "'button'", 'The native button type'),
-        r('variant', "'primary' | 'secondary' | 'ghost' | 'text' | 'danger'", "'primary'", 'Shape. The filled red one is danger, not tone'),
-        r('tone', "'danger' | 'success' | 'warning' | 'info' | 'neutral' | ''", "''", 'Colours ghost and text. neutral keeps the text strong and only the hover wash takes the theme colour: the quiet action next to a primary one. Not a replacement for variant'),
+        r('variant', "'primary' | 'secondary' | 'ghost' | 'text'", "'primary'", 'Shape. The colour is tone'),
+        r('tone', "'accent' | 'neutral' | 'success' | 'danger' | 'warning' | 'info'", "'accent'", 'The colour, on any variant. accent is the theme accent. neutral keeps the text strong and only the hover wash takes the theme colour: the quiet action next to a primary one'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size. Without it — the size of the ancestors (the tao-size-* class or size on FormField / InputGroup), otherwise medium'),
         r('disabled', 'boolean', 'false', 'Disabled'),
         r('loading', 'boolean', 'false', 'A spinner, the click is swallowed'),
@@ -802,7 +802,7 @@ export const propTablesEn = {
       rows: [
         r('toast()', '() => builder', '', 'A chain in a single tick, shown on the next one'),
         r('toast.success(msg)', '(string, options?) => builder', '', 'A short call. Also error / warning / info / show'),
-        r('.success() / .error() / …', '() => builder', '', 'The type. show() is neutral'),
+        r('.success() / .danger() / …', '() => builder', '', 'The type. show() is neutral'),
         r('.title / .message', '(string) => builder', '', 'The title and text'),
         r('.short() / .timeout(ms)', '() => builder', '', '1 s or your own time'),
         r('.byBottomRight() / …', '() => builder', '', 'The corner: top/bottom + left/right/center'),
@@ -815,7 +815,7 @@ export const propTablesEn = {
     {
       title: 'TaoAlert',
       rows: [
-        r('tone', "'success' | 'danger' | 'warning' | 'info' | 'neutral'", "'info'", 'The status colour, as TaoButton. error = danger'),
+        r('tone', "'success' | 'danger' | 'warning' | 'info' | 'neutral'", "'info'", 'The status colour, as TaoButton'),
         r('title', 'string', "''", 'The title. Can be omitted'),
         r('closable', 'boolean', 'false', 'The cross. It does not unmount itself — it fires close'),
         r('closeLabel', 'string', "'Close'", 'aria-label of the cross'),
@@ -827,7 +827,7 @@ export const propTablesEn = {
     {
       title: 'TaoTag',
       rows: [
-        r('tone', "'neutral' | 'success' | 'danger' | 'warning' | 'info' | ''", "''", 'The status colour, as TaoButton. error = danger'),
+        r('tone', "'neutral' | 'success' | 'danger' | 'warning' | 'info' | ''", "''", 'The status colour, as TaoButton'),
         r('flat', 'boolean', 'false', 'No border, the fill stays'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Height 18 / 20 / 24. Without it — the size of the ancestors'),
         r('closable', 'boolean', 'false', 'The cross. Fires close, does not touch the array itself'),

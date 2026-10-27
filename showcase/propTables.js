@@ -19,8 +19,8 @@ export const propTables = {
       title: 'TaoButton',
       rows: [
         r('type', "'button' | 'submit' | 'reset'", "'button'", 'Нативный type кнопки'),
-        r('variant', "'primary' | 'secondary' | 'ghost' | 'text' | 'danger'", "'primary'", 'Форма. Залитый красный — danger, не tone'),
-        r('tone', "'danger' | 'success' | 'warning' | 'info' | 'neutral' | ''", "''", 'Красит ghost и text. neutral — тёмный текст, только подсветка при наведении цветом темы; для тихого действия рядом с основным. Не вместо variant'),
+        r('variant', "'primary' | 'secondary' | 'ghost' | 'text'", "'primary'", 'Форма. Цвет — tone'),
+        r('tone', "'accent' | 'neutral' | 'success' | 'danger' | 'warning' | 'info'", "'accent'", 'Цвет на любом variant. accent — акцент темы. neutral — тёмный текст, только подсветка при наведении цветом темы; для тихого действия рядом с основным'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер. Без него — размер предков (класс tao-size-* или size у FormField / InputGroup), иначе medium'),
         r('disabled', 'boolean', 'false', 'Неактивна'),
         r('loading', 'boolean', 'false', 'Спиннер, клик глушится'),
@@ -795,7 +795,7 @@ export const propTables = {
       rows: [
         r('toast()', '() => builder', '', 'Цепочка в одном тике, показ на следующем'),
         r('toast.success(msg)', '(string, options?) => builder', '', 'Короткий вызов. Также error / warning / info / show'),
-        r('.success() / .error() / …', '() => builder', '', 'Тип. show() — нейтральный'),
+        r('.success() / .danger() / …', '() => builder', '', 'Тип. show() — нейтральный'),
         r('.title / .message', '(string) => builder', '', 'Заголовок и текст'),
         r('.short() / .timeout(ms)', '() => builder', '', '1 с или своё время'),
         r('.byBottomRight() / …', '() => builder', '', 'Угол: top/bottom + left/right/center'),
@@ -808,7 +808,7 @@ export const propTables = {
     {
       title: 'TaoAlert',
       rows: [
-        r('tone', "'success' | 'danger' | 'warning' | 'info' | 'neutral'", "'info'", 'Цвет статуса, как у TaoButton. error = danger'),
+        r('tone', "'success' | 'danger' | 'warning' | 'info' | 'neutral'", "'info'", 'Цвет статуса, как у TaoButton'),
         r('title', 'string', "''", 'Заголовок. Можно без него'),
         r('closable', 'boolean', 'false', 'Крестик. Сам не размонтируется — шлёт close'),
         r('closeLabel', 'string', "'Закрыть'", 'aria-label крестика'),
@@ -820,7 +820,7 @@ export const propTables = {
     {
       title: 'TaoTag',
       rows: [
-        r('tone', "'neutral' | 'success' | 'danger' | 'warning' | 'info' | ''", "''", 'Цвет статуса, как у TaoButton. error = danger'),
+        r('tone', "'neutral' | 'success' | 'danger' | 'warning' | 'info' | ''", "''", 'Цвет статуса, как у TaoButton'),
         r('flat', 'boolean', 'false', 'Без рамки, заливка остаётся'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Высота 18 / 20 / 24. Без него — размер предков'),
         r('closable', 'boolean', 'false', 'Крестик. Шлёт close, сам массив не трогает'),

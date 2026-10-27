@@ -49,7 +49,7 @@
 ### Базовые
 
 - **TaoBlock** — базовый контейнер с настраиваемыми отступами и скруглением
-- **TaoButton** — кнопка: `primary` / `secondary` / `ghost` / `text` / `danger`. `tone` красит ghost и text (danger, success, warning, info, neutral)
+- **TaoButton** — кнопка. `variant`: `primary` / `secondary` / `ghost` / `text`; `tone` красит любой из них (по умолчанию акцент, neutral, success, danger, warning, info)
 - **TaoCard** — карточка со слотами cover / header / footer. В `#cover` — фото или `TaoCarousel`. `flush` — плитка без padding/тени на всю ячейку; `#overlay` — scrim на обложке
 - **TaoCopy** — иконка копирования в буфер. После клика сверху тултип «Скопировано»; если кнопку убрали — тултип тоже
 - **TaoInput** — поле ввода с поддержкой v-model, валидации и слотов `#prefix` / `#suffix` (иконка или текст внутри рамки)
@@ -127,7 +127,7 @@
 
 ## Соглашения
 
-Тоны визуала: `success` | `danger` | `warning` | `info` | `neutral` (тип `TaoTone`), всегда через проп `tone`: Button, Alert, Tag (`toast.danger()` для тостов).
+Тоны визуала: `success` | `danger` | `warning` | `info` | `neutral` (тип `TaoTone`), всегда через проп `tone`: Button, Alert, Tag (`toast.danger()` для тостов). Акцент — тоже тон и тон по умолчанию. Тон — контекстный класс, как размер: `.tao-tone-danger` на любом элементе выставляет `--tao-tone`, `--tao-tone-on`, `--tao-tone-text`, … (см. `styles/tone.css`). В отличие от размера, он **не** наследуется: кнопка внутри красного alert остаётся акцентной.
 Stages — это процесс, не тон: `wait` / `work` / `ok` / `bad` (`danger` принимается как `bad`).
 
 Размеры контролов: `small` | `medium` | `large` (тип `TaoSize`). Одна шкала для Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup и FormField — контролы одного размера встают в ряд ровно. Checkbox, Radio / RadioGroup и Switch масштабируют индикатор (14 / 18 / 22px) и подпись; Tag — высоту (18 / 20 / 24px); Tabs, кнопки Pagination и строки List берут высоту Button; Table масштабирует отступы ячеек (`size="small"` для плотной); FileDrop — зону и строки файлов; Slider — трек и бегунок.
@@ -311,7 +311,7 @@ import '@1337exp/taoui/styles.css'
 import { toast } from '@1337exp/taoui'
 
 toast().success().message('Сохранено')
-toast().error().title('Сеть').timeout(5000).message('Нет соединения')
+toast().danger().title('Сеть').timeout(5000).message('Нет соединения')
 toast.success('Сохранено')
 toast.warning('Черновик', { timeout: 1000 })
 ```

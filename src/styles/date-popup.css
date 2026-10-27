@@ -1,5 +1,5 @@
 .tao-date__panel {
-    z-index: 1050;
+    z-index: var(--tao-z-popup);
     position: fixed;
     box-sizing: border-box;
     width: 280px;

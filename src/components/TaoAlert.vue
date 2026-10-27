@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import type { TaoTone } from '../tone';
+import { toneClass, type TaoTone } from '../tone';
 import { useLocaleText } from '../locale';
 defineOptions({ name: 'TaoAlert' });
 
@@ -24,20 +24,15 @@ const emit = defineEmits<{
     close: [];
 }>();
 
-const resolvedTone = computed(() => {
-    return props.tone === 'danger' ? 'error' : props.tone;
-});
-const live = computed(() =>
-    resolvedTone.value === 'error' || resolvedTone.value === 'warning' ? 'assertive' : 'polite',
-);
+const isUrgent = computed(() => props.tone === 'danger' || props.tone === 'warning');
 </script>
 
 <template>
     <div
         class="tao-alert"
-        :class="`tao-alert--${resolvedTone}`"
-        :role="resolvedTone === 'error' ? 'alert' : 'status'"
-        :aria-live="live"
+        :class="toneClass(tone)"
+        :role="tone === 'danger' ? 'alert' : 'status'"
+        :aria-live="isUrgent ? 'assertive' : 'polite'"
     >
         <div class="tao-alert__body">
             <strong v-if="title" class="tao-alert__title">{{ title }}</strong>
@@ -59,7 +54,7 @@ const live = computed(() =>
 
 <style scoped>
 .tao-alert {
-    --tao-alert-tone: var(--tao-color-info);
+    --tao-alert-tone: var(--tao-tone);
 
     display: flex;
     align-items: flex-start;
@@ -70,27 +65,6 @@ const live = computed(() =>
     color: var(--tao-color-text);
     border: 1px solid color-mix(in srgb, var(--tao-alert-tone) 35%, var(--tao-color-border));
     border-radius: var(--tao-radius-panel);
-}
-
-.tao-alert--success {
-    --tao-alert-tone: var(--tao-color-success);
-}
-
-.tao-alert--error,
-.tao-alert--danger {
-    --tao-alert-tone: var(--tao-color-danger);
-}
-
-.tao-alert--warning {
-    --tao-alert-tone: var(--tao-color-warning);
-}
-
-.tao-alert--info {
-    --tao-alert-tone: var(--tao-color-info);
-}
-
-.tao-alert--neutral {
-    --tao-alert-tone: var(--tao-color-text-muted);
 }
 
 .tao-alert__body {

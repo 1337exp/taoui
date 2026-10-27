@@ -172,7 +172,7 @@ onBeforeUnmount(() => {
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    z-index: var(--tao-z-modal);
     padding: var(--tao-space-5);
 }
 

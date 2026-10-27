@@ -226,7 +226,7 @@ onBeforeUnmount(() => {
 
 <style>
 .tao-popover__panel {
-    z-index: 1050;
+    z-index: var(--tao-z-popup);
     position: fixed;
     min-width: 200px;
     max-width: min(360px, calc(100vw - 16px));

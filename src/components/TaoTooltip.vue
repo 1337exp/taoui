@@ -181,7 +181,7 @@ onBeforeUnmount(() => {
 
 <style>
 .tao-tooltip {
-    z-index: 1060;
+    z-index: var(--tao-z-tooltip);
     position: fixed;
     box-sizing: border-box;
     width: max-content;

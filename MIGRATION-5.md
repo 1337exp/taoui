@@ -34,4 +34,19 @@ Everything that 2.0 deprecated is deleted, together with its warnings.
 | CSS | `--tao-field-height` | `--tao-control-height` |
 | CSS | `--tao-color-text-on-accent` | `--tao-color-on-accent` |
 
+## Changed
+
+| What | Before | Now |
+|---|---|---|
+| Button `variant="danger"` | the filled red button | `tone="danger"` (a `variant` is only the shape: `primary` / `secondary` / `ghost` / `text`) |
+| Button `tone` | painted `ghost` and `text` only (and `secondary` for danger) | works on every variant; `tone=""` is gone, leave it out for the accent; `tone="accent"` is allowed |
+| `.tao-button--danger`, `.tao-button--tone-*` classes | styling hooks | gone: the root carries `tao-tone-<name>` and `tao-button--toned` |
+| `.tao-alert--<tone>`, `.tao-tag--<tone>`, `.tao-toast--<type>`, `.tao-avatar__dot--<tone>`, `.tao-confirm__panel--danger` | styling hooks | gone: `tao-tone-<name>` on the same element (Tag: plus `tao-tag--toned`) |
+| `--tao-transition-base` | `all <duration> <ease>` | colour, shadow, opacity, transform only (size, padding and the glass backdrop no longer animate) |
+| Card / Block `radius` and `padding` defaults | numbers 8 / 16 / 20 inline | tokens `--tao-radius-panel`, `--tao-space-4` / `-5`; the panel publishes `--tao-radius`, `--tao-pad`, `--tao-radius-inner` (class `.tao-panel`) |
+| z-index of floating things | literals 1000 … 1200 | `--tao-z-modal`, `-popup`, `-tooltip`, `-toast`, `-confirm` |
+| Light theme, accent as text (ghost / text Button) | `#ff227a`, 3.6:1 | `--tao-color-accent-text` (`pink-700`), 5.8:1 |
+
+New: `.tao-tone-*` classes and `--tao-tone*` tokens (not inherited), `toneClass()`, type `TaoToneName`, tokens `--tao-color-accent-text(-hover)`, `--tao-color-on-success|warning|info`, `--tao-pink-800`. A dev-only warning names an unknown tone.
+
 `src/deprecate.ts` stays as machinery: the next removals can be announced in a minor release with a warning that names the version.

@@ -7,8 +7,8 @@ import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoButton' })
 
-const buttonVariants = ['primary', 'secondary', 'ghost', 'text', 'danger']
-const buttonTones = ['danger', 'success', 'warning', 'info']
+const buttonVariants = ['primary', 'secondary', 'ghost', 'text']
+const buttonTones = ['accent', 'neutral', 'success', 'danger', 'warning', 'info']
 const buttonSizes = ['small', 'medium', 'large']
 </script>
 
@@ -19,15 +19,15 @@ const buttonSizes = ['small', 'medium', 'large']
             <template #en>
               <p>
                 Shape — <code>variant</code>, colour — <code>tone</code>.
-                A red text button: <code>variant="text" tone="danger"</code>, not <code>:deep</code>.
-                The filled red one is still <code>variant="danger"</code>.
+                The tone works on every variant: <code>variant="primary" tone="danger"</code> is the filled red one,
+                <code>variant="text" tone="danger"</code> the red text one. Without a tone the button takes the theme accent.
               </p>
             </template>
             <template #ru>
               <p>
                 Форма — <code>variant</code>, цвет — <code>tone</code>.
-                Красная текстовая кнопка: <code>variant="text" tone="danger"</code>, не <code>:deep</code>.
-                Залитый красный — по-прежнему <code>variant="danger"</code>.
+                Тон работает на любом варианте: <code>variant="primary" tone="danger"</code> — залитый красный,
+                <code>variant="text" tone="danger"</code> — красный текстовый. Без тона кнопка берёт акцент темы.
               </p>
             </template>
           </Tr>
@@ -55,18 +55,11 @@ const buttonSizes = ['small', 'medium', 'large']
             </TaoButton>
           </div>
     
-          <h3>{{ tr('Text and tone', 'Текст и тон') }}</h3>
-          <div class="button-row" style="align-items: center;">
-            <TaoButton variant="text">{{ tr('Cancel', 'Отмена') }}</TaoButton>
-            <TaoButton
-              v-for="tone in buttonTones"
-              :key="tone"
-              variant="text"
-              :tone="tone"
-            >
+          <h3>{{ tr('Tone (tone) on every variant', 'Тон (tone) на каждом варианте') }}</h3>
+          <div v-for="variant in buttonVariants" :key="variant" class="button-row" style="align-items: center;">
+            <TaoButton v-for="tone in buttonTones" :key="tone" :variant="variant" :tone="tone">
               {{ tone }}
             </TaoButton>
-            <TaoButton variant="ghost" tone="danger">{{ tr('Delete', 'Удалить') }}</TaoButton>
           </div>
     
           <h3>{{ tr('States', 'Состояния') }}</h3>

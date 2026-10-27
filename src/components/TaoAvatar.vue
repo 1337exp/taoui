@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
 import type { TaoSize } from '../size';
-import type { TaoTone } from '../tone';
+import { toneClass, type TaoTone } from '../tone';
 import { taoLocale, useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoAvatar' });
@@ -121,7 +121,7 @@ function onImgError() {
         <span
             v-if="dotTone"
             class="tao-avatar__dot"
-            :class="`tao-avatar__dot--${dotTone}`"
+            :class="toneClass(dotTone)"
             aria-hidden="true"
         ></span>
         <span v-if="badge" class="tao-avatar__badge" aria-hidden="true">{{ badge }}</span>
@@ -189,7 +189,7 @@ function onImgError() {
     box-sizing: border-box;
     border: 2px solid var(--tao-color-bg);
     border-radius: var(--tao-radius-full);
-    background: var(--tao-color-success);
+    background: var(--tao-tone);
 }
 
 .tao-avatar--s .tao-avatar__dot {
@@ -206,26 +206,6 @@ function onImgError() {
 .tao-avatar--l .tao-avatar__dot {
     width: 12px;
     height: 12px;
-}
-
-.tao-avatar__dot--success {
-    background: var(--tao-color-success);
-}
-
-.tao-avatar__dot--danger {
-    background: var(--tao-color-danger);
-}
-
-.tao-avatar__dot--warning {
-    background: var(--tao-color-warning);
-}
-
-.tao-avatar__dot--info {
-    background: var(--tao-color-info);
-}
-
-.tao-avatar__dot--neutral {
-    background: var(--tao-color-text-muted);
 }
 
 .tao-avatar__badge {

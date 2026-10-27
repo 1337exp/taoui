@@ -189,7 +189,7 @@ onBeforeUnmount(() => {
 
 <style>
 .tao-dropdown-menu__list {
-    z-index: 1050;
+    z-index: var(--tao-z-popup);
     position: fixed;
     min-width: 120px;
     display: flex;

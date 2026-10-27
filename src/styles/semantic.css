@@ -17,6 +17,8 @@
     --tao-color-accent-active: var(--tao-orange-500);
     --tao-color-accent-subtle: color-mix(in srgb, var(--tao-color-accent) 8%, transparent);
     --tao-color-accent-subtle-hover: color-mix(in srgb, var(--tao-color-accent) 14%, transparent);
+    --tao-color-accent-text: var(--tao-color-accent); /* accent as TEXT on the page (>= 4.5:1); the plain accent is for fills */
+    --tao-color-accent-text-hover: var(--tao-color-accent-hover);
     --tao-color-on-accent: var(--tao-gray-950); /* текст поверх accent-фона */
     --tao-color-selection: var(--tao-color-accent);
     --tao-color-selection-text: var(--tao-color-on-accent);
@@ -50,6 +52,9 @@
     --tao-color-danger-hover: var(--tao-red-600);
     --tao-color-on-danger: var(--tao-gray-0); /* текст поверх danger-фона */
     --tao-color-danger-subtle: color-mix(in srgb, var(--tao-red-500) 15%, transparent);
+    --tao-color-on-success: var(--tao-gray-950);
+    --tao-color-on-warning: var(--tao-gray-950);
+    --tao-color-on-info: var(--tao-gray-950);
     --tao-color-success: var(--tao-green-500);
     --tao-color-success-hover: var(--tao-green-600);
     --tao-color-success-subtle: color-mix(in srgb, var(--tao-color-success) 15%, transparent);
@@ -88,5 +93,16 @@
 
     /* ---------- Typography / motion passthrough ---------- */
     --tao-font-family: var(--tao-font-family-base);
-    --tao-transition-base: all var(--tao-duration-base) var(--tao-ease-base);
+    /* Colours, shadow, opacity and transform only: `all` would also animate size, padding and the glass backdrop.
+       Только цвета, тень, прозрачность и transform: `all` анимировал бы ещё размеры, отступы и размытие стекла. */
+    --tao-transition-base:
+        color var(--tao-duration-base) var(--tao-ease-base),
+        background-color var(--tao-duration-base) var(--tao-ease-base),
+        border-color var(--tao-duration-base) var(--tao-ease-base),
+        outline-color var(--tao-duration-base) var(--tao-ease-base),
+        box-shadow var(--tao-duration-base) var(--tao-ease-base),
+        opacity var(--tao-duration-base) var(--tao-ease-base),
+        transform var(--tao-duration-base) var(--tao-ease-base),
+        fill var(--tao-duration-base) var(--tao-ease-base),
+        stroke var(--tao-duration-base) var(--tao-ease-base);
 }

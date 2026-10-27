@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
+import { toneClass, type TaoToneName } from '../tone';
 
 defineOptions({ name: 'TaoButton' });
 
@@ -8,9 +9,9 @@ interface Props {
     type?: 'button' | 'submit' | 'reset';
     /** Without it the button takes the size of its ancestors (medium by default). / Без него — размер предков (по умолчанию medium). */
     size?: TaoSize;
-    variant?: 'primary' | 'secondary' | 'ghost' | 'text' | 'danger';
-    /** Красит кнопку: danger / success / warning / info. Не вместо variant. */
-    tone?: 'danger' | 'success' | 'warning' | 'info' | 'neutral' | '';
+    variant?: 'primary' | 'secondary' | 'ghost' | 'text';
+    /** Colour of the button, on any `variant`: `danger` / `success` / `warning` / `info` / `neutral`; without it the theme accent. / Цвет кнопки на любом `variant`; без него — акцент темы. */
+    tone?: TaoToneName;
     disabled?: boolean;
     loading?: boolean;
     block?: boolean;
@@ -22,7 +23,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     type: 'button',
     variant: 'primary',
-    tone: '',
+    tone: undefined,
     disabled: false,
     loading: false,
     block: false,
@@ -50,13 +51,14 @@ function handleClick(event: MouseEvent) {
         class="tao-button"
         :class="[
             sizeClass(size),
+            toneClass(tone),
             `tao-button--${variant}`,
             {
                 'tao-button--disabled': disabled,
                 'tao-button--loading': loading,
                 'tao-button--block': block,
                 'tao-button--icon': !!icon,
-                [`tao-button--tone-${tone}`]: !!tone,
+                'tao-button--toned': !!tone && tone !== 'accent',
             },
         ]"
         :style="minWidthStyle"
@@ -100,13 +102,13 @@ function handleClick(event: MouseEvent) {
 }
 
 .tao-button--primary {
-    background-color: var(--tao-color-accent);
-    color: var(--tao-color-on-accent);
+    background-color: var(--tao-tone);
+    color: var(--tao-tone-on);
     text-shadow: var(--tao-button-primary-text-shadow, none);
 }
 
 .tao-button--primary:hover:not(.tao-button--disabled) {
-    background-color: var(--tao-color-accent-hover);
+    background-color: var(--tao-tone-hover);
 }
 
 .tao-button--secondary {
@@ -120,111 +122,32 @@ function handleClick(event: MouseEvent) {
     color: var(--tao-color-text-strong);
 }
 
-.tao-button--ghost {
-    background-color: transparent;
-    color: var(--tao-color-accent);
+/* A toned secondary: the tone as text and frame, its tint under the pointer. / Secondary с тоном: цвет тона в тексте и рамке. */
+.tao-button--secondary.tao-button--toned {
+    color: var(--tao-tone-text);
+    border-color: color-mix(in srgb, var(--tao-tone) 40%, transparent);
 }
 
-.tao-button--ghost:hover:not(.tao-button--disabled) {
-    background-color: var(--tao-color-accent-subtle-hover);
+.tao-button--secondary.tao-button--toned:hover:not(.tao-button--disabled) {
+    color: var(--tao-tone-text-hover);
+    background-color: var(--tao-tone-subtle);
+}
+
+.tao-button--ghost,
+.tao-button--text {
+    background-color: transparent;
+    color: var(--tao-tone-text);
+}
+
+.tao-button--ghost:hover:not(.tao-button--disabled),
+.tao-button--text:hover:not(.tao-button--disabled) {
+    color: var(--tao-tone-text-hover);
+    background-color: var(--tao-tone-wash);
 }
 
 .tao-button--text {
     height: auto;
     padding: 2px 4px;
-    background: transparent;
-    color: var(--tao-color-accent);
-}
-
-.tao-button--text:hover:not(.tao-button--disabled) {
-    color: var(--tao-color-accent-hover);
-    background-color: var(--tao-color-accent-subtle-hover);
-}
-
-.tao-button--danger {
-    background-color: var(--tao-color-danger);
-    color: var(--tao-color-on-danger);
-}
-
-.tao-button--danger:hover:not(.tao-button--disabled) {
-    background-color: var(--tao-color-danger-hover);
-}
-
-.tao-button--ghost.tao-button--tone-danger,
-.tao-button--text.tao-button--tone-danger {
-    color: var(--tao-color-danger-text);
-}
-
-.tao-button--ghost.tao-button--tone-danger:hover:not(.tao-button--disabled),
-.tao-button--text.tao-button--tone-danger:hover:not(.tao-button--disabled) {
-    color: var(--tao-color-danger-text-hover);
-    background-color: var(--tao-color-danger-subtle);
-}
-
-.tao-button--ghost.tao-button--tone-success,
-.tao-button--text.tao-button--tone-success {
-    color: var(--tao-color-success-text);
-}
-
-.tao-button--ghost.tao-button--tone-success:hover:not(.tao-button--disabled),
-.tao-button--text.tao-button--tone-success:hover:not(.tao-button--disabled) {
-    color: var(--tao-color-success-text-hover);
-    background-color: var(--tao-color-success-subtle);
-}
-
-.tao-button--ghost.tao-button--tone-warning,
-.tao-button--text.tao-button--tone-warning {
-    color: var(--tao-color-warning-text);
-}
-
-.tao-button--ghost.tao-button--tone-warning:hover:not(.tao-button--disabled),
-.tao-button--text.tao-button--tone-warning:hover:not(.tao-button--disabled) {
-    color: var(--tao-color-warning-text-hover);
-    background-color: var(--tao-color-warning-subtle);
-}
-
-.tao-button--ghost.tao-button--tone-info,
-.tao-button--text.tao-button--tone-info {
-    color: var(--tao-color-info-text);
-}
-
-.tao-button--ghost.tao-button--tone-info:hover:not(.tao-button--disabled),
-.tao-button--text.tao-button--tone-info:hover:not(.tao-button--disabled) {
-    color: var(--tao-color-info-text-hover);
-    background-color: var(--tao-color-info-subtle);
-}
-
-/* neutral: strong text, only the hover wash takes the theme colour; the quiet action next to a primary one (Cancel, Not now) */
-.tao-button--ghost.tao-button--tone-neutral,
-.tao-button--text.tao-button--tone-neutral {
-    color: var(--tao-color-text-strong);
-}
-
-.tao-button--ghost.tao-button--tone-neutral:hover:not(.tao-button--disabled),
-.tao-button--text.tao-button--tone-neutral:hover:not(.tao-button--disabled) {
-    color: var(--tao-color-text-strong);
-    background-color: var(--tao-color-accent-subtle-hover);
-}
-
-.tao-button--secondary.tao-button--tone-danger {
-    color: var(--tao-color-danger-text);
-    border-color: color-mix(in srgb, var(--tao-color-danger) 40%, transparent);
-}
-
-.tao-button--secondary.tao-button--tone-danger:hover:not(.tao-button--disabled) {
-    color: var(--tao-color-danger-text-hover);
-    background-color: var(--tao-color-danger-subtle);
-}
-
-.tao-button--primary.tao-button--tone-danger,
-.tao-button--danger.tao-button--tone-danger {
-    background-color: var(--tao-color-danger);
-    color: var(--tao-color-on-danger);
-}
-
-.tao-button--primary.tao-button--tone-danger:hover:not(.tao-button--disabled),
-.tao-button--danger.tao-button--tone-danger:hover:not(.tao-button--disabled) {
-    background-color: var(--tao-color-danger-hover);
 }
 
 .tao-button--disabled {
