@@ -325,6 +325,7 @@ export { menuReturnsFocus } from './menu';
 export type { TaoNavItem, TaoNavLayout } from './nav';
 export type { TaoTreeCheckState, TaoTreeNode, TaoTreeSelection } from './tree';
 export type { TaoChecklistItem } from './checklist';
+export type { TaoStripe, TaoStripeTone } from './stripe';
 export type { TaoTimelineAlign, TaoTimelineItem, TaoTimelineState } from './timeline';
 export type { TaoQuantityChangeSource } from './quantity';
 export type { TaoStageItem, TaoStageStatus } from './stage';

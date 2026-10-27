@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoCard, TaoButton, TaoCarousel, TaoTag } from '@1337exp/taoui'
+import { TaoBlock, TaoCard, TaoButton, TaoCarousel, TaoTag } from '@1337exp/taoui'
 import { stubPhoto } from '../stubPhoto.js'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { tr } from '../i18n.js'
@@ -64,6 +64,37 @@ const closed = ref(false)
               {{ tr('Press the cross.', 'Нажмите на крестик.') }}
             </TaoCard>
             <TaoButton v-else variant="secondary" @click="closed = false">{{ tr('Bring the cards back', 'Вернуть карточки') }}</TaoButton>
+          </div>
+
+          <h3>{{ tr('Stripe', 'Полоса') }}</h3>
+          <p class="card-stripe-note">{{ tr('stripe="top | left | bottom" with a role colour: the accent, a status tone or the palette gradient. The corners of the card clip it, over a picture too. A colour alone is not a message: say the status in the text as well.', 'stripe="top | left | bottom" цветом из роли: акцент, тон статуса или градиент палитры. Углы карточки её обрезают, поверх картинки тоже. Один цвет — не сообщение: статус стоит сказать и текстом.') }}</p>
+          <div style="display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+            <TaoCard stripe="top">
+              <template #title>{{ tr('Accent', 'Акцент') }}</template>
+              <template #sub>stripe="top"</template>
+            </TaoCard>
+            <TaoCard stripe="left" stripe-tone="success">
+              <template #title>{{ tr('Paid', 'Оплачено') }}</template>
+              <template #sub>stripe="left" stripe-tone="success"</template>
+            </TaoCard>
+            <TaoCard stripe="left" stripe-tone="danger" surface="glass">
+              <template #title>{{ tr('Payment failed', 'Оплата не прошла') }}</template>
+              <template #sub>stripe-tone="danger", glass</template>
+            </TaoCard>
+            <TaoCard stripe="top" stripe-tone="gradient" :radius="16">
+              <template #title>{{ tr('Gradient', 'Градиент') }}</template>
+              <template #sub>stripe-tone="gradient", radius 16</template>
+            </TaoCard>
+            <TaoCard stripe="top" stripe-tone="warning" :padding="0">
+              <template #media>
+                <img class="product-card__photo" :src="cardPhotos[0]" alt="" />
+              </template>
+              <template #title><span style="padding: 0 12px;">{{ tr('Over the media', 'Поверх media') }}</span></template>
+            </TaoCard>
+            <TaoBlock stripe="bottom" stripe-tone="info">
+              <b>TaoBlock</b>
+              <div style="color: var(--tao-color-text-muted); font-size: 13px;">stripe="bottom" stripe-tone="info"</div>
+            </TaoBlock>
           </div>
 
           <h3>{{ tr('Product', 'Товар') }}</h3>
@@ -187,5 +218,10 @@ const closed = ref(false)
   bottom: 8px;
   left: 0;
   z-index: 1;
+}
+.card-stripe-note {
+  margin: -4px 0 12px;
+  font-size: 13px;
+  color: var(--tao-color-text-muted);
 }
 </style>
