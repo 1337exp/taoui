@@ -8,6 +8,7 @@ import { propTables } from '../propTables.js'
 defineOptions({ name: 'DemoPagination' })
 
 const pagerPage = ref(12)
+const bigPage = ref(1)
 </script>
 
 <template>
@@ -32,10 +33,13 @@ const pagerPage = ref(12)
     
           <TaoPagination v-model:page="pagerPage" :total="500" :page-size="10" />
           <TaoPagination v-model:page="pagerPage" :total="500" :page-size="10" :jump="3" size="small" style="margin-top: 12px;" />
+          <TaoPagination v-model:page="bigPage" :total="3400" :page-size="10" :page-input="20" style="margin-top: 12px;" />
     
           <div class="code-block">
             <pre><code>&lt;TaoPagination v-model:page="page" :total="500" :page-size="10" /&gt;
 &lt;TaoPagination v-model:page="page" :total="500" :page-size="10" :jump="3" /&gt;
+&lt;!-- 340 pages: a field to type one in (from 20 pages on) --&gt;
+&lt;TaoPagination v-model:page="page" :total="3400" :page-size="10" :page-input="20" /&gt;
 
 &lt;TaoPagination
   v-model:page="page"

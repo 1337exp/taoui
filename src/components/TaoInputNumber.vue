@@ -316,6 +316,21 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
     cursor: pointer;
 }
 
+/*
+ * A 24-grid icon squeezed to 10px gets a 0.8px line between two pixels: soft edges.
+ * TaoIcon icons here keep a 1.5px line on the screen whatever their size, snapped to the pixel grid.
+ * Иконка на сетке 24, ужатая до 10px, получает линию 0.8px между пикселями: мыльные края.
+ * TaoIcon здесь держат линию 1.5px на экране при любом размере, привязанную к пикселям.
+ */
+.tao-input-number__step :deep(.tao-icon__svg) {
+    shape-rendering: crispEdges;
+}
+
+.tao-input-number__step :deep(.tao-icon__svg *) {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 1.5px;
+}
+
 .tao-input-number__step + .tao-input-number__step {
     border-top: 1px solid var(--tao-color-border);
 }

@@ -463,6 +463,7 @@ export const propTablesEn = {
         r('total', 'number', '0', 'Total records (not pages)'),
         r('pageSize', 'number', '10', 'Records per page'),
         r('jump', 'number', '5', 'A click on “…” jumps this many pages. 0 — “…” is decorative'),
+        r('pageInput', 'boolean | number', 'false', 'A field to type a page in: true — always, a number — from this many pages on. Enter or leaving the field goes there (clamped to the range), Esc drops it'),
         r('siblingCount', 'number', '1', 'How many numbers around the current one'),
         r('showTotal', 'boolean', 'true', 'The “1–10 of N” caption'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Buttons 26 / 36 / 44, like TaoButton. Without it — the size of the ancestors'),

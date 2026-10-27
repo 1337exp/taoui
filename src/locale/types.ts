@@ -75,6 +75,10 @@ export interface TaoLocale {
         /** `{n}` — pages skipped by «…». / сколько страниц перескакивает «…». */
         jumpPrevLabel: string;
         jumpNextLabel: string;
+        /** The text before the page field. / Текст перед полем страницы. */
+        goToText: string;
+        /** `{count}` — the number of pages. / число страниц. */
+        goToLabel: string;
         /** `{from}`, `{to}`, `{total}`. */
         totalText: string;
         /** When there are no rows. / Когда строк нет. */

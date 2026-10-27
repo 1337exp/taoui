@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
-import { computed, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { buildPaginationItems } from '../pagination';
 import { sizeClass, type TaoSize } from '../size';
 import { formatText, useLocaleText, useTaoLocale } from '../locale';
@@ -21,6 +21,13 @@ const props = withDefaults(
         size?: TaoSize;
         /** Click ellipsis to skip this many pages. 0 keeps … decorative. */
         jump?: number;
+        /**
+         * A field to type a page in: `true` always, a number — from this many pages on (hundreds of pages are not
+         * walked by clicks), `false` never.
+         * Поле для ввода страницы: `true` всегда, число — начиная с такого числа страниц (сотни страниц кликами
+         * не пролистать), `false` никогда.
+         */
+        pageInput?: boolean | number;
         ariaLabel?: string;
         prevLabel?: string;
         nextLabel?: string;
@@ -29,6 +36,8 @@ const props = withDefaults(
         /** `{n}` — сколько страниц перескакивает «…». */
         jumpPrevLabel?: string;
         jumpNextLabel?: string;
+        goToText?: string;
+        goToLabel?: string;
     }>(),
     {
         page: 1,
@@ -38,6 +47,7 @@ const props = withDefaults(
         disabled: false,
         showTotal: true,
         jump: 5,
+        pageInput: false,
     },
 );
 const l10n = useLocaleText(props, 'pagination');
@@ -63,6 +73,25 @@ watch(
     },
     { immediate: true },
 );
+
+const showInput = computed(() =>
+    typeof props.pageInput === 'number' ? pageCount.value >= props.pageInput : props.pageInput,
+);
+const typed = ref('');
+// as wide as the longest page number / шириной в самый длинный номер
+const inputWidth = computed(() => `${String(pageCount.value).length + 1}ch`);
+
+/**
+ * Enter (or leaving the field) goes to the typed page, clamped to 1…count; anything that is not a number is dropped.
+ * Enter (или уход из поля) переходит на набранную страницу в пределах 1…count; не число просто сбрасывается.
+ */
+function submitTyped() {
+    const value = Number.parseInt(typed.value.trim(), 10);
+    typed.value = '';
+    if (Number.isFinite(value)) {
+        goTo(value);
+    }
+}
 
 function goTo(next: number) {
     if (props.disabled) {
@@ -138,6 +167,25 @@ function goTo(next: number) {
                     <slot name="next-icon"><TaoIcon name="tao-chevron-right" /></slot>
                 </span>
             </button>
+
+            <label v-if="showInput" class="tao-pagination__goto">
+                <span class="tao-pagination__goto-text" aria-hidden="true">{{ l10n.goToText }}</span>
+                <input
+                    v-model="typed"
+                    class="tao-pagination__input"
+                    type="text"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    enterkeyhint="go"
+                    :placeholder="String(current)"
+                    :aria-label="formatText(l10n.goToLabel, { count: pageCount })"
+                    :disabled="disabled"
+                    :style="{ width: inputWidth }"
+                    @keydown.enter.prevent="submitTyped"
+                    @keydown.esc="typed = ''"
+                    @blur="submitTyped"
+                />
+            </label>
         </div>
     </nav>
 </template>
@@ -211,6 +259,46 @@ function goTo(next: number) {
 }
 
 .tao-pagination__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.tao-pagination__goto {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tao-space-2);
+    margin-inline-start: var(--tao-space-2);
+    font-size: var(--tao-control-font-size-secondary);
+    color: var(--tao-color-text-muted);
+}
+
+.tao-pagination__input {
+    box-sizing: content-box;
+    min-width: 2ch;
+    height: calc(var(--tao-control-height) - 2px);
+    padding: 0 var(--tao-space-2);
+    border: 1px solid var(--tao-color-border-strong);
+    border-radius: var(--tao-radius-control);
+    background: var(--tao-color-surface-sunken);
+    color: var(--tao-color-text);
+    font-family: inherit;
+    font-size: var(--tao-control-font-size);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    transition: var(--tao-transition-base);
+}
+
+.tao-pagination__input::placeholder {
+    color: var(--tao-color-text-muted);
+}
+
+.tao-pagination__input:focus-visible {
+    outline: none;
+    border-color: var(--tao-color-accent);
+    box-shadow: 0 0 0 2px var(--tao-color-accent-subtle-hover);
+}
+
+.tao-pagination__input:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
