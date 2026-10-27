@@ -1,7 +1,18 @@
 # Migrating to 5.0
 
-5.0 is a deliberate breaking release. This page grows with every phase; **what is listed here is already done on the `v5` branch**.
-Everything that 2.0 deprecated is deleted, together with its warnings.
+5.0 is a deliberate breaking release: shared mechanisms instead of per-component copies (one tone, one floating-panel
+engine, one icon set), and everything that 2.0 deprecated is deleted. Nothing is hidden behind a warning any more, so
+go through this page once. The reasons are in `docs/v5-plan.md`; the short list is in [CHANGELOG.md](CHANGELOG.md).
+
+## The quick pass
+
+1. **Load it as ESM.** `require('@1337exp/taoui')` no longer works; `import` does. Vite, Nuxt 3, webpack 5 are unaffected.
+2. **Search your code for these** (each has its row below): `TaoTimeline`, `variant="danger"`, `tone="error"` / `type="…"`, `:actions` / `@selected` on `TaoDropdownMenu`, `position=` on Popover / Tooltip / ColorInput, `#cover` / `#headerTitle` / `#headerSecondary` on Card, `icon="…"` with an emoji or a symbol on Button, the deprecated names in the first table.
+3. **Search your CSS for** `.tao-button--danger`, `.tao-timeline`, `.tao-dropdown-menu__list`, `.tao-card__cover`, `--tao-field-height`, `--tao-color-text-on-accent`, and imports of `@1337exp/taoui/styles/primitives.css` / `semantic.css`.
+4. **Texts are English by default since 4.0**; pass `locale: localeRu` once if you want Russian.
+5. **Run the app in development**: an unknown tone, a missing `aria-label` on an icon-only button and a mistyped `tao-…` icon name warn in the console.
+
+The ecosystem moves together: **TaoUX 0.2.0** and **taofx** already follow 5.0 (taofx needed one rename, `TaoTimeline` → `TaoScrubber`).
 
 ## Removed names → what to use
 
@@ -93,7 +104,7 @@ New: `TaoCalendar` (an inline month calendar: `mode="single"` or `"range"`, keyb
 
 New: `TaoButton` `iconEnd`; an icon-only button (an icon and no text) is a square of the control height and warns in development without `aria-label`; `registerTaoIcons`, `taoIconNames`, type `TaoIconDef`; the prefix `tao-` is reserved for the built-in set.
 
-## Changed
+## Colour, tone and tokens
 
 | What | Before | Now |
 |---|---|---|

@@ -1,8 +1,10 @@
 # Changelog
 
-## 5.0.0 (in progress, branch `v5`)
+## 5.0.0
 
-A foundation release: shared mechanisms instead of per-component copies, and a clean API. Plan: `docs/v5-plan.md`. Migration: [MIGRATION-5.md](MIGRATION-5.md).
+A foundation release: shared mechanisms instead of per-component copies, and a clean API. Everything deprecated since 2.0 is removed, so read [MIGRATION-5.md](MIGRATION-5.md) first. Why and how: `docs/v5-plan.md`.
+
+In numbers: the tarball is 329 KB (560 KB before the ESM-only build), 451 tests (183 before), one floating-panel engine instead of eight copies, 27 built-in icons instead of three icon mechanisms, one tone mechanism instead of six. TaoUX 0.2.0 and taofx follow it.
 
 ### Breaking
 
