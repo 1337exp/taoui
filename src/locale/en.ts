@@ -2,7 +2,7 @@ import type { TaoLocale } from './types';
 
 export const localeEn: TaoLocale = {
     code: 'en-US',
-    alert: { closeLabel: 'Close' },
+    alert: { closeLabel: 'Close', detailsLabel: 'Details' },
     avatar: {
         fallbackLabel: 'Avatar',
         notificationsLabel: '{count} notifications',
