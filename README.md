@@ -110,7 +110,7 @@
 - **TaoCarousel** — strip: full slide with `autoplay`, card with `peek`, row with `per-view`. Arrows via `controls` or `#prev` / `#next`; marks under the strip via `indicator` (`dots`, `bars` or `progress`). With `autoplay` the current mark fills over the interval and the slide changes when it is full; hover, keyboard focus, touch, a hidden tab and the pause button stop it, `prefers-reduced-motion` turns it off
 - **TaoAvatar** — photo or initials, sizes `small` / `medium` / `large`. Status `dot` and `count`
 - **TaoTag** — badge with tones. `#prefix` (avatar), `closable` dismisses the chip, `flat` drops the border
-- **TaoAlert** — inline page/form banner (success / error / warning / info)
+- **TaoAlert** — inline page/form banner (success / error / warning / info); `collapsible` folds the body under the title (find-in-page still finds it)
 - **TaoProgress** — static bar (`progress` in %). Percent centered on top, or `showPercentage="right"`; `#left` / `#right` slots are captions, then the percent sits in parentheses on the right. `false` hides it. Width is `minWidth` / `maxWidth`, not the value domain
 - **TaoScrubber** — play / pause, a slider over time with event marks, a “time / length” label. Does not advance time by itself: drive `v-model` with your own clock
 - **TaoLoader** — four-dot spinner

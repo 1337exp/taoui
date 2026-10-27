@@ -10,7 +10,7 @@ import type { TaoStageStatus } from '../stage';
 export interface TaoLocale {
     /** BCP 47 tag for dates (Intl), e.g. `ru-RU`, `en-US`. / Тег языка для дат. */
     code: string;
-    alert: { closeLabel: string };
+    alert: { closeLabel: string; detailsLabel: string };
     avatar: {
         fallbackLabel: string;
         /** `{count}` — the number in the badge. / число в бейдже. */

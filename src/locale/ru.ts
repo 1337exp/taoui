@@ -3,7 +3,7 @@ import type { TaoLocale } from './types';
 /** Default locale. / Локаль по умолчанию. */
 export const localeRu: TaoLocale = {
     code: 'ru-RU',
-    alert: { closeLabel: 'Закрыть' },
+    alert: { closeLabel: 'Закрыть', detailsLabel: 'Подробнее' },
     avatar: {
         fallbackLabel: 'Аватар',
         notificationsLabel: '{count} уведомлений',
