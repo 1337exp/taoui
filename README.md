@@ -59,6 +59,7 @@
 - **TaoSpoiler** — disclosure. `v-model` and `aria-expanded`. Neighbours do not close each other
 - **TaoSpoilerGroup** — accordion: `v-model` is the open panel key (`null` = all closed); spoilers take `name`. Without `v-model` the group keeps that key itself
 - **TaoTabs** — tabbed sections
+- **TaoNav** — navigation between the sections of an app: one list of items (`icon`, `href`, `badge`), three looks. `layout="auto"` picks by the width of TaoNav itself (container queries, no JS): a bottom bar below 600px (more than five items: «More» with a menu), a rail with icons below 840px, a side panel with labels from 840px. With the page in its slot it lays the page out: the bar sticks to the bottom (safe area kept), the side list to the top. `select(id, event)` lets a router take over a link
 - **TaoTooltip** — hover hint. `placement`: `top` / `bottom` / `left` / `right`, each with `-start` / `-end`; flips at the viewport edge
 - **TaoPopover** — click panel with any slot content, Esc and outside click; `placement` as Tooltip. Not a tooltip, not an action menu
 

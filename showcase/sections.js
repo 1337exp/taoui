@@ -39,6 +39,7 @@ import DemoTooltip from './components/DemoTooltip.vue'
 import DemoPopover from './components/DemoPopover.vue'
 import DemoDropdown from './components/DemoDropdown.vue'
 import DemoMenubar from './components/DemoMenubar.vue'
+import DemoNav from './components/DemoNav.vue'
 import DemoSpoiler from './components/DemoSpoiler.vue'
 import DemoTabs from './components/DemoTabs.vue'
 import DemoBreadcrumb from './components/DemoBreadcrumb.vue'
@@ -95,6 +96,7 @@ export const demoById = {
   'dropdown': DemoDropdown,
   'menubar': DemoMenubar,
   'spoiler': DemoSpoiler,
+  'tao-nav': DemoNav,
   'tabs': DemoTabs,
   'breadcrumb': DemoBreadcrumb,
   'link': DemoLink,

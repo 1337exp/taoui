@@ -29,6 +29,7 @@ In numbers: the tarball is 329 KB (560 KB before the ESM-only build), 451 tests 
 
 ### Components
 
+- **New `TaoNav`**: navigation between the sections of an app (`TaoNavItem`: `id`, `label`, `icon`, `href`, `badge`, `disabled`; `v-model`). Three looks from one list: `bar` (bottom bar, «More» with a menu over `maxBarItems`), `rail`, `drawer`; `auto` chooses by the width of TaoNav itself with container queries, so it is right on the server and inside a `TaoSplit` pane. The default slot holds the page, TaoNav lays it out (sticky bar with `env(safe-area-inset-bottom)`, sticky side list). Links carry `aria-current="page"`; `select(id, event)` can `preventDefault()` for a router.
 - **`TaoTimeline` → `TaoScrubber`** (play / pause + a time slider). The name `TaoTimeline` is kept for a vertical event feed later.
 - **`TaoCalendar`**: an inline month calendar, one date or a range, with the keyboard of `TaoDate`. `TaoDate` and `TaoDateRange` are now a field plus a popup around it (they shared 13 of 13 functions; ~1000 lines became ~460 + the calendar).
 - **`TaoCarousel`: a filling mark for autoplay.** `indicator="dots" | "bars" | "progress"` replaces the boolean `dots`; with `autoplay` the current mark fills over the interval and the slide changes when it is full. The fill is a CSS animation and the only clock (no JS timer), so what you see is what counts. It pauses on hover, keyboard focus, touch / drag, a hidden tab and a pause button (`pausable`, with `pauseLabel` / `playLabel`: autoplay that moves for more than 5 seconds must be stoppable); with `prefers-reduced-motion` autoplay is off. Without autoplay `progress` shows the position. A custom `#dots` slot still gets its time from an invisible fill.
@@ -64,6 +65,7 @@ In numbers: the tarball is 329 KB (560 KB before the ESM-only build), 451 tests 
 
 ### Tokens
 
+- **Dark theme: `--tao-color-text-disabled` is `gray-500`** (it was `gray-300`, brighter than `text-muted`, so disabled items stood out instead of fading).
 - **z-index scale** `--tao-z-modal | popup | tooltip | toast | confirm`; no component writes a literal any more.
 - **`--tao-transition-base` no longer animates `all`**: colours, shadow, opacity and transform only.
 - **Panel contract:** Card / Block default radius and padding come from tokens; a panel (class `.tao-panel`) publishes `--tao-radius`, `--tao-pad` and `--tao-radius-inner` for concentric corners.

@@ -47,7 +47,7 @@
     --tao-color-text-strong: var(--tao-gray-0);
     --tao-color-text-subtle: var(--tao-gray-300); /* idle-контролы: segmented, tabs. Подписи остаются muted */
     --tao-color-text-muted: var(--tao-gray-400);
-    --tao-color-text-disabled: var(--tao-gray-300);
+    --tao-color-text-disabled: var(--tao-gray-500); /* dimmer than muted: a disabled item must not stand out / тусклее muted */
 
     /* ---------- Links ---------- */
     --tao-color-link: var(--tao-orange-300);

@@ -777,6 +777,20 @@ export const propTables = {
       slots: 'default — набор TaoSpoiler с name.',
     },
   ],
+  'tao-nav': [
+    {
+      title: 'TaoNav',
+      rows: [
+        r('items', 'TaoNavItem[]', '—', '{ id, label, icon?, href?, badge?, disabled? }. С href пункт — ссылка <a>, без него кнопка. badge: число или строка — счётчик, true — точка'),
+        r('v-model', 'string', '—', 'id текущего раздела: aria-current="page" и активный вид'),
+        r('layout', "'auto' | 'bar' | 'rail' | 'drawer'", "'auto'", 'bar — нижняя панель, rail — рейка с иконками, drawer — боковая панель с подписями. auto — по ширине самого TaoNav: bar до 600px, rail до 840px, drawer от 840px (container queries, без JS)'),
+        r('maxBarItems', 'number', '5', 'Сколько помещается в bar. Если пунктов больше, остаются maxBarItems − 1, остальные уходят в «Ещё» с меню'),
+        r('ariaLabel', 'string', "'Навигация'", 'Имя навигации для скринридера'),
+        r('moreLabel', 'string', "'Ещё'", 'Подпись пункта «Ещё»'),
+      ],
+      slots: 'default — страница: TaoNav раскладывает её рядом с навигацией (bar прилипает к низу, сбоку к верху прилипает список; учтён env(safe-area-inset-bottom)). Без слота — отдельная панель с рамкой. #label — своя подпись пункта ({ item, active }). События: update:modelValue, select(id, event) — event.preventDefault() не даёт ссылке перейти, чтобы маршрутизировать самим.',
+    },
+  ],
   tabs: [
     {
       title: 'TaoTabs',
