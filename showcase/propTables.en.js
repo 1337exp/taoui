@@ -742,6 +742,26 @@ export const propTablesEn = {
       slots: 'Event select — the item id, close(reason) — the menu asks to be closed (escape / select / outside / tab). The panel for your own shells: a button, a context menu, a menu bar.',
     },
   ],
+  menubar: [
+    {
+      title: 'TaoMenubar',
+      rows: [
+        r('items', 'TaoMenuItem[]', '—', 'The top entries: { id, label, items } is a menu, { id, label } a plain action. Inside a menu, everything TaoMenu can do (submenus, checkboxes, radios, shortcuts). Separators and labels at the top level are ignored'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'The height of the bar, as for the controls'),
+        r('ariaLabel', 'string', "'Menu bar'", 'Accessible name of the bar'),
+      ],
+      slots: 'The select event — the id of the picked item (in a menu or a plain top entry). #item — your own item face in the menus. Keys: Tab enters the bar, ← → walk it, Home / End, ↓ / Enter / Space open, with a menu open ← → move to the neighbour menu, Esc closes and gives the focus back. No folding of entries into “…” on a narrow bar yet.',
+    },
+    {
+      title: 'TaoContextMenu',
+      rows: [
+        r('items', 'TaoMenuItem[]', '—', 'The entries, as in TaoMenu'),
+        r('disabled', 'boolean', 'false', 'Leave the browser menu alone'),
+        r('menuLabel', 'string', "'Context menu'", 'Accessible name of the menu'),
+      ],
+      slots: 'default — the area where the right click (or the Menu key / Shift+F10) opens the menu; the wrapper does not take part in the layout (display: contents). #item — your own item face. Events select — the item id, open({ x, y }) — where it opened. On iOS a long press sends no contextmenu: give it a button there.',
+    },
+  ],
   spoiler: [
     {
       title: 'TaoSpoiler',

@@ -118,6 +118,7 @@
 - **TaoLink** — `<NuxtLink>` in Nuxt, `<RouterLink>` with vue-router, otherwise a plain `<a>` — no extra setup
 - **TaoBreadcrumb** — crumbs: the last item is the current page
 - **TaoDropdownMenu** / **TaoMenu** — a menu from a plain data tree `items`: submenus, checkboxes, radios, separators, group labels, shortcuts to show, disabled items. Arrows, Home / End, type-ahead, `→` / `←` for submenus, Esc closes the top level first. `TaoMenu` is the panel itself, for your own shells (a menu bar, a context menu); flips at the viewport edge
+- **TaoMenubar** / **TaoContextMenu** — the menu bar of an editor and the menu on the right click, on `TaoMenu`. The bar is one tab stop (`role="menubar"`): `←` / `→` walk it, `↓` / Enter open, with a menu open `←` / `→` and the pointer move to the neighbour menu; an entry without `items` is a plain action. The context menu opens at the pointer (or at the element for the Menu key / Shift+F10) and wraps its content without a box of its own
 - **TaoScrollTop** — floating “back to top”: `solid` / `ghost` / `text` looks, `side`, a mouse-hover `label`. Appears on reverse scroll after `boundary`
 
 ### Feedback
