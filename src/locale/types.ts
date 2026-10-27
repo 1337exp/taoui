@@ -50,6 +50,7 @@ export interface TaoLocale {
     dropdownMenu: { menuLabel: string };
     menubar: { ariaLabel: string };
     nav: { ariaLabel: string; moreLabel: string };
+    tree: { ariaLabel: string; loadingLabel: string };
     contextMenu: { menuLabel: string };
     empty: { title: string };
     fileDrop: {

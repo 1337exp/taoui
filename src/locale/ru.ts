@@ -52,6 +52,7 @@ export const localeRu: TaoLocale = {
     dropdownMenu: { menuLabel: 'Меню' },
     menubar: { ariaLabel: 'Строка меню' },
     nav: { ariaLabel: 'Навигация', moreLabel: 'Ещё' },
+    tree: { ariaLabel: 'Дерево', loadingLabel: 'Загрузка…' },
     contextMenu: { menuLabel: 'Контекстное меню' },
     empty: { title: 'Ничего нет' },
     fileDrop: {

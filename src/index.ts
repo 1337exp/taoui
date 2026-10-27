@@ -39,6 +39,7 @@ import TaoContextMenu from './components/TaoContextMenu.vue';
 import TaoMenu from './components/TaoMenu.vue';
 import TaoMenubar from './components/TaoMenubar.vue';
 import TaoNav from './components/TaoNav.vue';
+import TaoTree from './components/TaoTree.vue';
 import TaoPinCode from './components/TaoPinCode.vue';
 import TaoLink from './components/TaoLink.vue';
 import TaoFormField from './components/TaoFormField.vue';
@@ -119,6 +120,7 @@ const components = [
     TaoMenu,
     TaoMenubar,
     TaoNav,
+    TaoTree,
     TaoContextMenu,
     TaoPinCode,
     TaoLink,
@@ -216,6 +218,7 @@ export {
     TaoMenu,
     TaoMenubar,
     TaoNav,
+    TaoTree,
     TaoContextMenu,
     TaoPinCode,
     TaoLink,
@@ -314,6 +317,7 @@ export type {
 } from './menu';
 export { menuReturnsFocus } from './menu';
 export type { TaoNavItem, TaoNavLayout } from './nav';
+export type { TaoTreeCheckState, TaoTreeNode, TaoTreeSelection } from './tree';
 export type { TaoQuantityChangeSource } from './quantity';
 export type { TaoStageItem, TaoStageStatus } from './stage';
 export type { TaoSplitDirection, TaoSplitUnit } from './split';

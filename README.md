@@ -101,6 +101,7 @@
 - **TaoPagination** — pages with ellipsis. Clicking “…” jumps `jump` pages (5 by default)
 - **TaoEmpty** — empty list, no results, no access
 - **TaoList** / **TaoListItem** — list row: icon, title, caption, hover action. Not Select, not a table
+- **TaoTree** — files or objects as a tree: `v-model:expanded`, selection `none | single | multiple` (`v-model:selected`), checkboxes with mixed parents (`checkable`, `v-model:checked`), lazy children (`hasChildren` + `load`). ARIA tree: one tab stop, arrows, `→` / `←` in and out, Home / End, `*`, type-ahead. Slots `#icon`, `#label`, `#actions`; rows on the control tokens (size and density)
 - **TaoStages** — stage list: `wait` / `work` / `ok` / `bad`. Not a linear stepper
 - **TaoSkeleton** — loading placeholder (text / title / circle / rect)
 - **TaoCounter** — flipping digits (not an input)
@@ -112,7 +113,7 @@
 - **TaoScrubber** — play / pause, a slider over time with event marks, a “time / length” label. Does not advance time by itself: drive `v-model` with your own clock
 - **TaoLoader** — four-dot spinner
 - **TaoImage** — `<img>` wrapper: fade-in and placeholder. `lazy` turns on native `loading="lazy"`
-- **TaoIcon** — SVG icons (27 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)
+- **TaoIcon** — SVG icons (29 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)
 
 ### Navigation
 
@@ -175,8 +176,8 @@ API rules — every component follows them:
 
 ## Icons
 
-The library ships **27 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,
-skip-back, copy, calendar, info, alert, circles). They draw on `currentColor`, so an icon takes the text colour and the
+The library ships **29 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,
+skip-back, copy, calendar, info, alert, circles, folder, file). They draw on `currentColor`, so an icon takes the text colour and the
 font size, and live under the reserved prefix `tao-`: `<TaoIcon name="tao-check" />`, the list is `taoIconNames`.
 
 ```vue
