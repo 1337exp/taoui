@@ -50,6 +50,7 @@ export const localeEn: TaoLocale = {
     drawer: { closeLabel: 'Close' },
     dropdownMenu: { menuLabel: 'Menu' },
     menubar: { ariaLabel: 'Menu bar' },
+    nav: { ariaLabel: 'Navigation', moreLabel: 'More' },
     contextMenu: { menuLabel: 'Context menu' },
     empty: { title: 'Nothing here' },
     fileDrop: {

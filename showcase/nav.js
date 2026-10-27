@@ -75,6 +75,7 @@ export const navGroups = [
     id: 'nav',
     title: { en: 'Navigation', ru: 'Навигация' },
     items: [
+      { id: 'tao-nav', label: 'TaoNav', aliases: ['tab bar', 'rail', 'drawer', 'navigation', 'навигация', 'нижняя панель'] },
       { id: 'tabs', label: 'TaoTabs' },
       { id: 'breadcrumb', label: 'TaoBreadcrumb' },
       { id: 'link', label: 'TaoLink' },

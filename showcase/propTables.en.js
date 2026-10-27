@@ -784,6 +784,20 @@ export const propTablesEn = {
       slots: 'default — a set of TaoSpoiler with name.',
     },
   ],
+  'tao-nav': [
+    {
+      title: 'TaoNav',
+      rows: [
+        r('items', 'TaoNavItem[]', '—', '{ id, label, icon?, href?, badge?, disabled? }. With href the item is an <a> link, without it a button. badge: a number or a string is a count, true a dot'),
+        r('v-model', 'string', '—', 'The id of the current section: aria-current="page" and the active look'),
+        r('layout', "'auto' | 'bar' | 'rail' | 'drawer'", "'auto'", 'bar — a bottom bar, rail — a rail with icons, drawer — a side panel with labels. auto — by the width of TaoNav itself: bar below 600px, rail below 840px, drawer from 840px (container queries, no JS)'),
+        r('maxBarItems', 'number', '5', 'How many fit the bar. With more items maxBarItems − 1 stay, the rest go into «More» with a menu'),
+        r('ariaLabel', 'string', "'Navigation'", 'Accessible name of the navigation'),
+        r('moreLabel', 'string', "'More'", 'The label of «More»'),
+      ],
+      slots: 'default — the page: TaoNav lays it out next to the navigation (the bar sticks to the bottom, on the side the list sticks to the top; env(safe-area-inset-bottom) is kept). Without the slot it is a standalone panel with a border. #label — your own item label ({ item, active }). Events: update:modelValue, select(id, event) — event.preventDefault() keeps a link from navigating, to route it yourself.',
+    },
+  ],
   tabs: [
     {
       title: 'TaoTabs',
