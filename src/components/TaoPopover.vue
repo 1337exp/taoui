@@ -107,7 +107,7 @@ watch(open, (isOpen) => {
     background: var(--tao-color-surface-raised);
     color: var(--tao-color-text);
     border: 1px solid var(--tao-color-border);
-    border-radius: var(--tao-radius-control);
+    border-radius: var(--tao-radius-panel);
     box-shadow: var(--tao-shadow-overlay);
 }
 

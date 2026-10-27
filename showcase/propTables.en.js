@@ -758,6 +758,7 @@ export const propTablesEn = {
         r('items', 'TaoMenuItem[]', '—', 'The entries, as in TaoMenu'),
         r('disabled', 'boolean', 'false', 'Leave the browser menu alone'),
         r('menuLabel', 'string', "'Context menu'", 'Accessible name of the menu'),
+        r('closeOnScroll', 'boolean', 'true', 'Close when the page or a scroll container scrolls (the point moves away from under the menu). false keeps it at the screen point. Scrolling inside the menu never closes it'),
       ],
       slots: 'default — the area where the right click (or the Menu key / Shift+F10) opens the menu; the wrapper does not take part in the layout (display: contents). #item — your own item face. Events select — the item id, open({ x, y }) — where it opened. On iOS a long press sends no contextmenu: give it a button there.',
     },

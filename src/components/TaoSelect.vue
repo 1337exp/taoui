@@ -269,7 +269,7 @@ watch(open, (isOpen) => {
     background: var(--tao-color-surface-raised);
     color: var(--tao-color-text);
     border: 1px solid var(--tao-color-border);
-    border-radius: var(--tao-radius-control);
+    border-radius: var(--tao-radius-panel);
     box-shadow: var(--tao-shadow-overlay);
 }
 
@@ -307,7 +307,8 @@ watch(open, (isOpen) => {
 
 .tao-select__option {
     padding: var(--tao-control-padding-y) var(--tao-control-padding-x);
-    border-radius: var(--tao-radius-sm);
+    /* concentric corners: the panel radius minus the list padding / концентричные углы */
+    border-radius: max(0px, calc(var(--tao-radius-panel) - var(--tao-space-1)));
     font-size: var(--tao-control-font-size);
     cursor: pointer;
     user-select: none;

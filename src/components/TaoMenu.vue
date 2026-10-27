@@ -279,7 +279,7 @@ onBeforeUnmount(() => clearTimeout(closeSubTimer));
     color: var(--tao-color-text);
     background-color: var(--tao-color-surface-raised);
     border: 1px solid var(--tao-color-border);
-    border-radius: var(--tao-radius-control);
+    border-radius: var(--tao-radius-panel);
     box-shadow: var(--tao-shadow-md);
 }
 
@@ -293,7 +293,7 @@ onBeforeUnmount(() => clearTimeout(closeSubTimer));
     gap: var(--tao-space-2);
     padding: var(--tao-space-2) var(--tao-space-3);
     /* concentric corners: the panel radius minus its padding / концентричные углы */
-    border-radius: max(0px, calc(var(--tao-radius-control) - var(--tao-space-1)));
+    border-radius: max(0px, calc(var(--tao-radius-panel) - var(--tao-space-1)));
     white-space: nowrap;
     cursor: pointer;
     user-select: none;

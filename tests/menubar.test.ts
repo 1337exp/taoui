@@ -248,6 +248,25 @@ describe('TaoContextMenu', () => {
         expect(menus()).toHaveLength(0);
     });
 
+    it('the page scrolling closes it and leaves the focus alone; its own list scrolling does not', async () => {
+        await area();
+        await rightClick(document.getElementById('inside')!);
+        menus()[0]!.dispatchEvent(new Event('scroll'));
+        await nextTick();
+        expect(menus()).toHaveLength(1);
+        document.dispatchEvent(new Event('scroll'));
+        await nextTick();
+        expect(menus()).toHaveLength(0);
+    });
+
+    it('closeOnScroll: false keeps it at the screen point', async () => {
+        await area({ closeOnScroll: false });
+        await rightClick(document.getElementById('inside')!);
+        document.dispatchEvent(new Event('scroll'));
+        await nextTick();
+        expect(menus()).toHaveLength(1);
+    });
+
     it('a press outside closes it', async () => {
         await area();
         await rightClick(document.getElementById('inside')!);

@@ -54,6 +54,7 @@ The ecosystem moves together: **TaoUX 0.2.0** and **taofx** already follow 5.0 (
 | `TaoDropdownMenu` DOM | `.tao-dropdown-menu__list`, `__item` (buttons) | `.tao-menu`, `.tao-menu__item` (`role="menuitem"` divs); the trigger button keeps its classes |
 | `TaoPopover`, `TaoTooltip`, `TaoColorInput` | `position="top" \| "bottom" \| "left" \| "right"` | `placement` (same four plus `-start` / `-end`); Popover and ColorInput default `bottom-start`, Tooltip `top`, DropdownMenu `bottom-end` |
 | Escape in Modal, Drawer, `confirm()`, popups | handled on the dialog, only with focus inside | one document listener, **top layer only**: a Select inside a Modal closes first, the Modal on the next press |
+| Floating panel corners | `--tao-radius-control` (4px), options `--tao-radius-sm` | `--tao-radius-panel` (8px) for Menu, Select, Combobox, Popover, the date panel; items `panel − padding` (4px). Tooltip keeps the control radius |
 | Popup keyboard | Select had Home / End, the others did not | the arrows skip disabled items, Home / End and type-ahead where it is a list (Select, menus) |
 
 New: `TaoMenu` (the menu panel with submenus, checkbox and radio items, type-ahead, `aria-activedescendant`), `TaoMenubar` and `TaoContextMenu` on it, types `TaoMenuItem` and friends, `TaoPlacement`; composables behind them (`useFloating`, `useDismiss`, `useLayer`, `useListNav`) are internal for now.

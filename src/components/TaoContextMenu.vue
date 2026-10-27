@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { nextTick, ref } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import { useLocaleText } from '../locale';
 import type { TaoMenuCloseReason, TaoMenuItem } from '../menu';
 import TaoMenu from './TaoMenu.vue';
@@ -17,10 +17,18 @@ const props = withDefaults(
         disabled?: boolean;
         /** Accessible name of the menu. / Имя меню для скринридера. */
         menuLabel?: string;
+        /**
+         * Close when the page (or a scroll container) scrolls: the point the menu was opened for moves away under it.
+         * false keeps it at the screen point. Scrolling inside the menu never closes it.
+         * Закрывать при прокрутке страницы (или контейнера): точка, для которой открыли меню, уезжает из-под него.
+         * false оставляет его в точке экрана. Прокрутка внутри самого меню его не закрывает.
+         */
+        closeOnScroll?: boolean;
     }>(),
     {
         disabled: false,
         menuLabel: undefined,
+        closeOnScroll: true,
     },
 );
 const l10n = useLocaleText(props, 'contextMenu');
@@ -68,6 +76,22 @@ function onClose(reason: TaoMenuCloseReason) {
     }
     returnTo = null;
 }
+
+watch(isOpen, (open, _was, onCleanup) => {
+    if (!open || !props.closeOnScroll || typeof window === 'undefined') {
+        return;
+    }
+    const onScroll = (event: Event) => {
+        // the long menu scrolls its own list: that is not the page moving away
+        // длинное меню прокручивает свой список: это не уезжающая страница
+        if (event.target instanceof Element && event.target.closest('.tao-menu')) {
+            return;
+        }
+        onClose('outside');
+    };
+    window.addEventListener('scroll', onScroll, { capture: true, passive: true });
+    onCleanup(() => window.removeEventListener('scroll', onScroll, true));
+});
 </script>
 
 <template>

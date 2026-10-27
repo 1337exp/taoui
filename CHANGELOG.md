@@ -46,9 +46,11 @@ In numbers: the tarball is 329 KB (560 KB before the ESM-only build), 451 tests 
 
 ### Overlays: one engine
 
+- **One shape for every floating panel:** Menu, Select, Combobox, Popover and the date panel take `--tao-radius-panel` (8px), their items the concentric radius `panel − padding` (4px), the same as the entries of `TaoMenubar`. Before, the menu items came out square (4 − 4) and the Select options stuck out of their panel corners.
+
 - **One positioning, dismiss and layer engine** instead of eight copies: `computePosition` (pure, tested) and `useFloating` (follows scroll and resize), `useDismiss` (outside press, capture phase), `useLayer` (a stack of open layers: **Escape goes to the top one only**, page scroll lock, focus return), `useListNav` (arrows, Home / End, type-ahead, disabled items skipped). Popover, Tooltip, Select, Combobox, Date, DateRange, the Copy tip, Modal, Drawer and `confirm()` use them.
 - **New `TaoMenu`** and a rebuilt **`TaoDropdownMenu`** on it: a data tree `items` with submenus, checkboxes, radios, group labels, separators, shortcuts (a ready string to show), disabled items; `aria-activedescendant`, type-ahead, `→` / `←`, Tab closes. Types `TaoMenuItem`, `TaoPlacement`.
-- **New `TaoMenubar`** (an ARIA menubar: one tab stop, `←` / `→` with wrap, Home / End, `↓` / Enter / Space open, with a menu open `←` / `→` and the pointer switch to the neighbour menu, Esc gives the focus back to the entry; a top entry without `items` is a plain action) and **`TaoContextMenu`** (a menu at the pointer on the right click, the Menu key / Shift+F10 open it at the element; `display: contents`, so the layout does not change). `TaoMenu` emits `edge` for `←` / `→` that have nowhere to go inside it.
+- **New `TaoMenubar`** (an ARIA menubar: one tab stop, `←` / `→` with wrap, Home / End, `↓` / Enter / Space open, with a menu open `←` / `→` and the pointer switch to the neighbour menu, Esc gives the focus back to the entry; a top entry without `items` is a plain action) and **`TaoContextMenu`** (a menu at the pointer on the right click, the Menu key / Shift+F10 open it at the element; `display: contents`, so the layout does not change; closes when the page scrolls, `closeOnScroll`). `TaoMenu` emits `edge` for `←` / `→` that have nowhere to go inside it.
 - **`placement`** (`top` / `bottom` / `left` / `right` plus `-start` / `-end`) replaces `position` on Popover, Tooltip and ColorInput.
 - A Select inside a Modal no longer closes the Modal on Escape.
 
