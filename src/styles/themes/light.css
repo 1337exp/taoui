@@ -33,7 +33,6 @@
     --tao-color-text-strong: var(--tao-gray-950);
     --tao-color-text-subtle: var(--tao-gray-600);
     --tao-color-text-muted: var(--tao-gray-400);
-    --tao-color-text-on-accent: var(--tao-color-on-accent);
     --tao-color-text-disabled: var(--tao-gray-300);
 
     /* Plain black links that turn rose on hover; no glow (that one is for the dark theme) */

@@ -37,7 +37,7 @@ describe('theme overrides', () => {
         const colours = [...semantic.keys()].filter((name) => name.startsWith('--tao-color-'));
         const missing = colours.filter((name) => !light.has(name));
         // tokens the light theme deliberately inherits
-        const inherited = new Set(['--tao-color-text-on-accent']);
+        const inherited = new Set<string>();
         expect(missing.filter((name) => !inherited.has(name))).toEqual([]);
     });
 });

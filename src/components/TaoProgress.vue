@@ -7,10 +7,6 @@ const props = withDefaults(
     defineProps<{
         minWidth?: number;
         maxWidth?: number;
-        /** @deprecated используйте minWidth */
-        min?: number;
-        /** @deprecated используйте maxWidth */
-        max?: number;
         progress?: number;
         height?: number;
         /** `true` / `top` — по центру над полосой, `right` — справа. Если есть `#right`, процент справа в скобках. `false` — скрыть. */
@@ -20,8 +16,6 @@ const props = withDefaults(
     {
         minWidth: undefined,
         maxWidth: undefined,
-        min: undefined,
-        max: undefined,
         progress: 0,
         height: 8,
         showPercentage: true,
@@ -30,8 +24,8 @@ const props = withDefaults(
 );
 
 const slots = useSlots();
-const minW = computed(() => props.minWidth ?? props.min ?? 200);
-const maxW = computed(() => props.maxWidth ?? props.max ?? 400);
+const minW = computed(() => props.minWidth ?? 200);
+const maxW = computed(() => props.maxWidth ?? 400);
 const hasRight = computed(() => Boolean(slots.right));
 const percentPlace = computed((): 'top' | 'right' | null => {
     if (!props.showPercentage) {

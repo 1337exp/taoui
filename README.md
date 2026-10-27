@@ -86,7 +86,7 @@
 - **TaoFormField** — shared label / hint / error for form controls
 - **TaoInputNumber** — number with min/max/step and ± on the right. Empty value is `null`. `@commit` fires once when an edit is finished (blur, Enter, ±, arrow), unlike `v-model`, which updates on every keystroke
 - **TaoQuantity** — cart quantity: `− | field | +`, integers, stock; minus at the minimum can remove the row
-- **TaoTextarea** — autosizing multiline. `maxlength` caps input, `count` shows “entered / max”. `variant`: `bar` (default) / `outline` (frame like Input) / `filled` / `plain`; `readonly`. `noBorder`, `noBackground`, `borderInverse`, `dummy` are deprecated
+- **TaoTextarea** — autosizing multiline. `maxlength` caps input, `count` shows “entered / max”. `variant`: `bar` (default) / `outline` (frame like Input) / `filled` / `plain`; `readonly`; `align`; `blurOnEnter`
 - **TaoPinCode** — N cells. By default a click clears the cell and everything to the right (`clear-on="focus"`); `clear-on="input"` replaces the digit only when typing. `format="#-##-##"` draws visual separators (not part of the value; a paste in that shape or as a clean code is split into cells). The last cell blurs and emits `complete`
 - **TaoSlider** / **TaoRangeSlider** — one thumb (`v-model` is a number) or two (`[from, to]`, `minGap`). Mouse, touch, arrows. `marks` (ticks, numbers, `{ value, label }`), `discrete` for stepped scales, `vertical`, `flat`, `format`; `variant="thin"` is a thin track for seek / volume
 - **TaoColorPicker** — saturation / brightness square, hue and opacity strips, swatches, eyedropper (where the browser has `EyeDropper`), HEX / RGB / HSL input modes. `v-model` is a hex string; `colorModel()` adapts your own colour storage
@@ -127,11 +127,10 @@
 
 ## Conventions
 
-Visual tones: `success` | `danger` | `warning` | `info` | `neutral` (type `TaoTone`), always the `tone` prop: Button, Alert, Tag. `type` on Alert / Tag is a deprecated alias.
-`error` on Alert, Tag, and `toast()` is an alias of `danger`. Button already uses `danger`.
+Visual tones: `success` | `danger` | `warning` | `info` | `neutral` (type `TaoTone`), always the `tone` prop: Button, Alert, Tag (`toast.danger()` for toasts).
 Stages describe a process, not a tone: `wait` / `work` / `ok` / `bad` (`danger` is accepted as `bad`).
 
-Control sizes: `small` | `medium` | `large` (type `TaoSize`). One scale for Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup and FormField — controls of one size line up in a row. Checkbox, Radio / RadioGroup and Switch scale the indicator (14 / 18 / 22px) and the label; Tag scales its height (18 / 20 / 24px); Tabs, Pagination buttons and List rows take the Button height; Table scales cell padding (`size="small"` replaces `compact`); FileDrop scales the zone and file rows; Slider scales the track and thumb.
+Control sizes: `small` | `medium` | `large` (type `TaoSize`). One scale for Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup and FormField — controls of one size line up in a row. Checkbox, Radio / RadioGroup and Switch scale the indicator (14 / 18 / 22px) and the label; Tag scales its height (18 / 20 / 24px); Tabs, Pagination buttons and List rows take the Button height; Table scales cell padding (`size="small"` for the dense one); FileDrop scales the zone and file rows; Slider scales the track and thumb.
 Without `size` a control takes the size of its ancestors, `medium` at the root. Set it for a whole block with the class `tao-size-small` / `-medium` / `-large` on any element, or with `size` on `TaoFormField` / `TaoInputGroup`. An explicit `size` on a control wins.
 
 ```vue
@@ -141,8 +140,8 @@ Without `size` a control takes the size of its ancestors, `medium` at the root. 
 </div>
 ```
 
-Content and layout keep their own scale and do not inherit: Avatar (24 / 32 / 48px; `s` / `m` / `l` are deprecated), Divider `gap` (`big` is a deprecated alias of `large`), Loader / Icon / ScrollTop (pixels).
-Container lives on another axis — width: `width="wide" | "slim" | "ultra-slim"` (`size` is a deprecated alias).
+Content and layout keep their own scale and do not inherit: Avatar (24 / 32 / 48px), Divider `gap`, Loader / Icon / ScrollTop (pixels).
+Container lives on another axis — width: `width="wide" | "slim" | "ultra-slim"`.
 
 Surfaces — what a panel is made of: `flat` fill (default), `grain` (static film grain), `glass` (translucent, blurs what is
 behind). Use `surface` on TaoCard / TaoBlock or the class `tao-surface-grain` / `-glass` on any element — a game HUD, a
@@ -156,7 +155,7 @@ and `confirm.defaults({ surface: 'flat' })` turn it off, `.surface('flat')` does
 Font size scale (primitives): `xs` 12 … `xl` 18 for controls; `2xl` 24, `3xl` 32, `4xl` 36 for titles and prose.
 There is no heading component — use `h1 { font-size: var(--tao-font-size-3xl) }`.
 
-API rules — every component follows them; old names stay as deprecated aliases:
+API rules — every component follows them:
 
 - **Fields** take `v-model`, `disabled`, `error` (red frame) and `size`. Label, hint and error text come from `TaoFormField`.
 - **Events**: `update:X` for v-model plus `change` when the user finished a change (Slider, Split — on release). Other events are verbs in the present tense: `select`, `close`, `create`.
@@ -252,6 +251,10 @@ function onLanguageChange(lang) {
 
 Without the plugin (individual components) `setTaoLocale()` is the only call you need.
 
+### Upgrading to 5.0
+
+5.0 deletes every name that 2.0 deprecated (plus the `error` tone alias), see [MIGRATION-5.md](MIGRATION-5.md) for the table old → new.
+
 ### Upgrading from 3.x
 
 4.0 changes one default: the built-in texts are now English (they were Russian). To stay on Russian, pass the locale
@@ -260,8 +263,7 @@ the date components follow the locale and default to `en-US` as well.
 
 ### Upgrading from 1.x
 
-See [CHANGELOG.md](CHANGELOG.md): what broke, and a table of old names → new ones. Old names still work in 2.x and
-warn in the console during development.
+See the 2.0.0 entry of [CHANGELOG.md](CHANGELOG.md) for what broke. Old names were removed in 5.0.
 
 ### Individual components
 
@@ -395,7 +397,7 @@ When `null` is not a valid value (a grid step, a sort order), pass `:clearable="
 
 `TaoCombobox` is the same menu with a field. Typing filters options. `allow-create` writes the typed string into `v-model` when there is no exact match. The list does not mutate itself: listen to `create` and append an option from the parent.
 
-Label, hint and error text always come from `TaoFormField`; `label` / `error-message` on `TaoInput` are deprecated. `TaoFormField` also wraps `TaoTextarea`, `TaoCheckbox`, `TaoSwitch`, `TaoRadioGroup`, and `TaoSegmented` — id, hint, and error are forwarded for you.
+Label, hint and error text always come from `TaoFormField`. `TaoFormField` also wraps `TaoTextarea`, `TaoCheckbox`, `TaoSwitch`, `TaoRadioGroup`, and `TaoSegmented` — id, hint, and error are forwarded for you.
 
 `TaoTag` can be a chip: `#prefix` on the left (usually `TaoAvatar`), `closable` draws a cross and emits `close`. The close click does not bubble. `flat` drops the border and keeps the fill.
 
@@ -595,7 +597,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 ### Token groups
 
 - `--tao-color-accent*` — brand/accent (primary buttons, active tabs, links)
-- `--tao-color-on-accent` — text on the accent (`--tao-color-text-on-accent` is an alias)
+- `--tao-color-on-accent` — text on the accent
 - `--tao-color-selection`, `--tao-color-selection-text` — text selection (`::selection`)
 - `--tao-color-surface*` — container backgrounds (default / raised / sunken / hover)
 - `--tao-color-border*` — borders
@@ -605,7 +607,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-radius-control`, `--tao-radius-panel` — radii (small controls vs large panels)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — shadows
 - `--tao-font-size-*` — type scale in `primitives.css`: `xs`–`xl` controls, `2xl`–`4xl` titles / prose
-- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — the size scale in `primitives.css`. Components read the current values from `size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Use them in your own controls to match the size around them. `--tao-field-height` is a deprecated alias of `--tao-control-height`
+- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — the size scale in `primitives.css`. Components read the current values from `size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Use them in your own controls to match the size around them.
 
 The full list lives in `src/styles/semantic.css` — the only file worth opening
 to see the whole theming API.

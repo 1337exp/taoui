@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { computed, ref, onBeforeMount, onBeforeUnmount } from 'vue';
-import { warnDeprecated } from '../deprecate';
 import { useLocaleText } from '../locale';
 
 // Attributes go to the button, the root is a positioning wrapper.
@@ -37,10 +36,6 @@ interface Props {
     boundary?: number;
     /** Focus outline. / Обводка фокуса. */
     outline?: boolean;
-    /** @deprecated Use `outline`. / Используйте `outline`. */
-    hasOutline?: boolean;
-    /** @deprecated Pass `tabindex` as a plain attribute: it lands on the button anyway. / Передавайте как обычный атрибут — он и так попадёт на кнопку. */
-    tabindex?: number;
     ariaLabel?: string;
 }
 
@@ -56,8 +51,6 @@ const props = withDefaults(defineProps<Props>(), {
     zIndex: 1000,
     boundary: 300,
     outline: undefined,
-    hasOutline: undefined,
-    tabindex: 0,
 });
 const l10n = useLocaleText(props, 'scrollTop');
 
@@ -132,11 +125,6 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
     window.removeEventListener('scroll', onScroll);
 });
-
-warnDeprecated('TaoScrollTop', {
-    hasOutline: 'use `outline`',
-    tabindex: 'pass `tabindex` as a plain attribute',
-});
 </script>
 
 <template>
@@ -146,11 +134,10 @@ warnDeprecated('TaoScrollTop', {
                 v-bind="$attrs"
                 type="button"
                 :style="mainStyle"
-                :tabindex="props.tabindex"
                 class="tao-scroll-top"
                 :class="[
                     `tao-scroll-top--${props.variant}`,
-                    { 'tao-scroll-top--no-outline': (props.outline ?? props.hasOutline) === false },
+                    { 'tao-scroll-top--no-outline': props.outline === false },
                     isText && `tao-scroll-top--caption-${captionSide}`,
                 ]"
                 :aria-label="accessibleName"

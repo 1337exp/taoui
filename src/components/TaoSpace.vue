@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { warnDeprecated } from '../deprecate';
 
 defineOptions({ name: 'TaoSpace' });
 
@@ -9,22 +8,15 @@ interface Props {
     expand?: boolean;
     /** Same as TaoFlex / TaoRadioGroup. / Как у TaoFlex / TaoRadioGroup. */
     direction?: 'row' | 'column';
-    /** @deprecated Use `direction="column"`. / Используйте `direction="column"`. */
-    vertical?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     block: false,
     expand: false,
-    direction: undefined,
-    vertical: false,
+    direction: 'row',
 });
 
-const isColumn = computed(() => (props.direction ?? (props.vertical ? 'column' : 'row')) === 'column');
-
-warnDeprecated('TaoSpace', {
-    vertical: 'use direction="column"',
-});
+const isColumn = computed(() => props.direction === 'column');
 </script>
 
 <template>

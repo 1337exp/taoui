@@ -81,7 +81,7 @@ onBeforeUnmount(() => {
     <div
         class="tao-toast"
         :class="[`tao-toast--${toast.type}`, surfaceClass(toast.surface), { 'tao-toast--paused': paused }]"
-        :role="toast.type === 'error' || toast.type === 'danger' || toast.type === 'warning' ? 'alert' : 'status'"
+        :role="toast.type === 'danger' || toast.type === 'warning' ? 'alert' : 'status'"
         aria-live="polite"
         @mouseenter="pause"
         @mouseleave="resume"
@@ -94,7 +94,7 @@ onBeforeUnmount(() => {
                 <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.6" />
                 <path d="M6 10.2 8.6 12.8 14 7.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
-            <svg v-else-if="toast.type === 'error' || toast.type === 'danger'" viewBox="0 0 20 20" width="18" height="18" fill="none">
+            <svg v-else-if="toast.type === 'danger'" viewBox="0 0 20 20" width="18" height="18" fill="none">
                 <circle cx="10" cy="10" r="8.5" stroke="currentColor" stroke-width="1.6" />
                 <path d="M7 7l6 6M13 7l-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
             </svg>
@@ -178,7 +178,6 @@ onBeforeUnmount(() => {
     --tao-toast-tone: var(--tao-color-success);
 }
 
-.tao-toast--error,
 .tao-toast--danger {
     --tao-toast-tone: var(--tao-color-danger);
 }

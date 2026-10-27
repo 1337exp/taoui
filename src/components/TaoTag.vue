@@ -2,23 +2,18 @@
 import { computed, useSlots } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
 import type { TaoTone } from '../tone';
-import { warnDeprecated } from '../deprecate';
 import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoTag' });
 
 interface Props {
-    /** Status color; `error` is an alias of `danger`. / Цвет статуса; `error` — алиас `danger`. */
-    tone?: TaoTone | 'error' | '';
-    /** @deprecated Use `tone`, same as TaoButton. / Используйте `tone`, как у TaoButton. */
-    type?: TaoTone | 'error' | '';
+    /** Status color. / Цвет статуса. */
+    tone?: TaoTone;
     color?: string;
     background?: string;
     borderColor?: string;
     /** Pointer cursor, same as TaoListItem / TaoTable. / Курсор-рука, как у TaoListItem / TaoTable. */
     clickable?: boolean;
-    /** @deprecated Use `clickable`. / Используйте `clickable`. */
-    pointer?: boolean;
     closable?: boolean;
     closeLabel?: string;
     /** Без рамки, заливка остаётся. Высота как у обычного тега. */
@@ -29,9 +24,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
     tone: undefined,
-    type: undefined,
     clickable: false,
-    pointer: false,
     closable: false,
     flat: false,
 });
@@ -42,10 +35,7 @@ const emit = defineEmits<{
 }>();
 
 const slots = useSlots();
-const resolvedTone = computed(() => {
-    const value = props.tone ?? props.type ?? '';
-    return value === 'error' ? 'danger' : value;
-});
+const resolvedTone = computed(() => props.tone ?? '');
 const style = computed(() => ({
     color: props.color || '',
     background: props.background || '',
@@ -55,11 +45,6 @@ const style = computed(() => ({
 function onClose(event: MouseEvent) {
     emit('close', event);
 }
-
-warnDeprecated('TaoTag', {
-    type: 'use `tone`',
-    pointer: 'use `clickable`',
-});
 </script>
 
 <template>
@@ -69,7 +54,7 @@ warnDeprecated('TaoTag', {
             resolvedTone ? `tao-tag--${resolvedTone}` : '',
             sizeClass(size),
             {
-                'tao-tag--pointer': clickable || pointer,
+                'tao-tag--pointer': clickable,
                 'tao-tag--closable': closable,
                 'tao-tag--prefix': Boolean(slots.prefix),
                 'tao-tag--flat': flat,

@@ -269,7 +269,6 @@ export type { TaoSelectOption } from './select';
 export type { TaoTabItem } from './tabs';
 export type { TaoDateCell, TaoDateParts, TaoDateRangeValue } from './date';
 export type { TaoRadioValue } from './radio';
-export type { TaoSegmentedSize } from './segmented';
 export type { TaoSpoilerName } from './spoiler';
 export type { TaoFormFieldContext } from './formField';
 export type { TaoTableAlign, TaoTableColumn, TaoTableSort } from './table';
@@ -282,6 +281,5 @@ export type { TaoSplitDirection, TaoSplitUnit } from './split';
 export type { TaoSliderMark, TaoSliderValue } from './slider';
 export { colorModel, type ColorModelOptions } from './colorModel';
 export { hslToRgb, hsvaToRgba, rgbToHsl, type ColorMode, linearToSrgb, normalizeHex, parseColor, rgbaToHsva, srgbToLinear, toHex, type Hsva, type Rgba } from './color';
-export type { TaoListSize } from './list';
 
 export default TaoUI;

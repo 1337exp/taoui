@@ -4,7 +4,6 @@ import TaoLoader from './TaoLoader.vue';
 import { sizeClass, type TaoSize } from '../size';
 import { toCssLength, type TaoLength } from '../length';
 import type { TaoTableColumn, TaoTableSort } from '../table';
-import { warnDeprecated } from '../deprecate';
 import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoTable' });
@@ -20,8 +19,6 @@ const props = withDefaults(
         striped?: boolean | 'odd' | 'even';
         /** Cell padding and text; also the size of controls inside cells. Without it — the size of ancestors. / Отступы и текст ячеек, заодно размер контролов в ячейках. Без него — размер предков. */
         size?: TaoSize;
-        /** @deprecated Use size="small". / Используйте size="small". */
-        compact?: boolean;
         hover?: boolean;
         /** Подсветка шапки. */
         head?: boolean;
@@ -39,7 +36,6 @@ const props = withDefaults(
         rowKey: 'id',
         loading: false,
         striped: false,
-        compact: false,
         hover: true,
         head: true,
         lines: true,
@@ -56,8 +52,6 @@ const emit = defineEmits<{
     'update:sort': [value: TaoTableSort | null];
     /** The user changed the sort. / Пользователь сменил сортировку. */
     change: [value: TaoTableSort | null];
-    /** @deprecated Use `change` (or v-model:sort). / Используйте `change` (или v-model:sort). */
-    sort: [value: TaoTableSort | null];
     'row-click': [row: Record<string, unknown>, index: number];
 }>();
 
@@ -113,7 +107,6 @@ function toggleSort(column: TaoTableColumn) {
 
     emit('update:sort', next);
     emit('change', next);
-    emit('sort', next);
 }
 
 function onRowClick(row: Record<string, unknown>, index: number) {
@@ -122,18 +115,13 @@ function onRowClick(row: Record<string, unknown>, index: number) {
     }
     emit('row-click', row, index);
 }
-
-warnDeprecated('TaoTable', {
-    compact: 'use size="small"',
-    onSort: 'listen to "change" (or v-model:sort)',
-});
 </script>
 
 <template>
     <div
         class="tao-table-wrap"
         :class="[
-            sizeClass(size ?? (compact ? 'small' : undefined)),
+            sizeClass(size),
             {
                 'tao-table-wrap--sticky': sticky,
                 'tao-table-wrap--loading': loading,

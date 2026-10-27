@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { warnDeprecated } from '../deprecate';
 import { taoLocale, useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoCopy' });
@@ -10,15 +9,12 @@ const props = withDefaults(
         text: string;
         /** Visible text after copying. / Видимый текст после копирования. */
         successText?: string;
-        /** @deprecated Use `successText`: visible texts are `*Text`, aria texts are `*Label`. / Используйте `successText`. */
-        successMessage?: string;
         copyLabel?: string;
         /** Показать подсказку над кнопкой после копирования. */
         tip?: boolean;
     }>(),
     {
         successText: undefined,
-        successMessage: undefined,
         tip: true,
     },
 );
@@ -123,11 +119,7 @@ onBeforeUnmount(() => {
     visibleObserver = null;
 });
 
-const doneText = computed(() => props.successText ?? props.successMessage ?? taoLocale().copy.successText);
-
-warnDeprecated('TaoCopy', {
-    successMessage: 'use `successText`',
-});
+const doneText = computed(() => props.successText ?? taoLocale().copy.successText);
 </script>
 
 <template>

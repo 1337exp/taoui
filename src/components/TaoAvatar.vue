@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
 import type { TaoSize } from '../size';
-import { deprecationWarning } from '../deprecate';
+import type { TaoTone } from '../tone';
 import { taoLocale, useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoAvatar' });
 
-type TaoAvatarDot = 'success' | 'danger' | 'warning' | 'info' | 'neutral' | 'error';
+type TaoAvatarDot = TaoTone;
 
 const props = withDefaults(
     defineProps<{
@@ -14,10 +14,10 @@ const props = withDefaults(
         name?: string;
         alt?: string;
         /**
-         * 24 / 32 / 48px. Content, not a control: does not inherit the size of ancestors. `s` / `m` / `l` are deprecated.
+         * 24 / 32 / 48px. Content, not a control: does not inherit the size of ancestors.
          * Контент, не контрол: размер предков не наследует. `s` / `m` / `l` устарели.
          */
-        size?: TaoSize | 's' | 'm' | 'l';
+        size?: TaoSize;
         /** Точка статуса. `true` = success (в сети). */
         dot?: boolean | TaoAvatarDot;
         /** Счётчик в углу. 0 и пустое не рисуются, больше 99 — «99+». */
@@ -25,7 +25,7 @@ const props = withDefaults(
         fallbackLabel?: string;
         /** `{count}` — число в бейдже. */
         notificationsLabel?: string;
-        dotLabels?: Partial<Record<Exclude<TaoAvatarDot, 'error'>, string>>;
+        dotLabels?: Partial<Record<TaoAvatarDot, string>>;
     }>(),
     {
         src: '',
@@ -40,10 +40,10 @@ const props = withDefaults(
 const l10n = useLocaleText(props, 'avatar');
 
 const sizeClass = computed(() => {
-    if (props.size === 'small' || props.size === 's') {
+    if (props.size === 'small') {
         return 's';
     }
-    if (props.size === 'large' || props.size === 'l') {
+    if (props.size === 'large') {
         return 'l';
     }
     return 'm';
@@ -60,14 +60,14 @@ const initials = computed(() => {
     return `${parts[0][0] ?? ''}${parts[1][0] ?? ''}`.toUpperCase();
 });
 
-const dotTone = computed((): Exclude<TaoAvatarDot, 'error'> | null => {
+const dotTone = computed((): TaoAvatarDot | null => {
     if (!props.dot) {
         return null;
     }
     if (props.dot === true) {
         return 'success';
     }
-    return props.dot === 'error' ? 'danger' : props.dot;
+    return props.dot;
 });
 
 const badge = computed(() => {
@@ -110,9 +110,6 @@ function onImgError() {
     imgFailed.value = true;
 }
 
-if (props.size === 's' || props.size === 'm' || props.size === 'l') {
-    deprecationWarning('TaoAvatar', `size "${props.size}"`, 'use small / medium / large');
-}
 </script>
 
 <template>

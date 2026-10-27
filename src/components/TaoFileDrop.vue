@@ -2,7 +2,6 @@
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
 import { sizeClass, type TaoSize } from '../size';
-import { warnDeprecated } from '../deprecate';
 import { taoLocale, useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoFileDrop' });
@@ -39,8 +38,6 @@ const emit = defineEmits<{
     'update:modelValue': [files: File[]];
     /** The user added or removed files. / Пользователь добавил или убрал файлы. */
     change: [files: File[]];
-    /** @deprecated Use `change`. / Используйте `change`. */
-    files: [files: File[]];
     /** Запрос на очистку — компонент НЕ очищает себя сам. Родитель решает:
      * очистить сразу (emit → v-model = []) или сперва показать модалку
      * подтверждения и очистить только после ответа пользователя. */
@@ -86,7 +83,6 @@ function fileMatchesAccept(file: File, accept: string) {
 function commit(files: File[]) {
     emit('update:modelValue', files);
     emit('change', files);
-    emit('files', files);
 }
 
 function handleDragOver(event: DragEvent) {
@@ -184,10 +180,6 @@ onMounted(() => {
     });
 });
 onBeforeUnmount(() => stopFocusLoss?.());
-
-warnDeprecated('TaoFileDrop', {
-    onFiles: 'listen to "change"',
-});
 </script>
 
 <template>

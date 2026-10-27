@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'vue';
 import type { TaoDropdownAction } from '../dropdown';
-import { warnDeprecated } from '../deprecate';
 import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoDropdownMenu' });
@@ -20,8 +19,6 @@ const l10n = useLocaleText(props, 'dropdownMenu');
 const emit = defineEmits<{
     /** Action id. / id действия. */
     select: [id: string];
-    /** @deprecated Use `select`. / Используйте `select`. */
-    selected: [id: string];
 }>();
 
 const menuRef = ref<HTMLElement | null>(null);
@@ -84,7 +81,6 @@ function closeMenu() {
 function emitAction(id: string) {
     isOpen.value = false;
     emit('select', id);
-    emit('selected', id);
     triggerRef.value?.focus();
 }
 
@@ -143,10 +139,6 @@ onBeforeUnmount(() => {
     document.removeEventListener('pointerdown', onDocumentPointer, true);
     window.removeEventListener('scroll', onWinScroll, true);
     window.removeEventListener('resize', updatePosition);
-});
-
-warnDeprecated('TaoDropdownMenu', {
-    onSelected: 'listen to "select"',
 });
 </script>
 

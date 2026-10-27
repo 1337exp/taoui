@@ -18,7 +18,6 @@
     --tao-color-accent-subtle: color-mix(in srgb, var(--tao-color-accent) 8%, transparent);
     --tao-color-accent-subtle-hover: color-mix(in srgb, var(--tao-color-accent) 14%, transparent);
     --tao-color-on-accent: var(--tao-gray-950); /* текст поверх accent-фона */
-    --tao-color-text-on-accent: var(--tao-color-on-accent);
     --tao-color-selection: var(--tao-color-accent);
     --tao-color-selection-text: var(--tao-color-on-accent);
 

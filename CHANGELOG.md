@@ -1,5 +1,19 @@
 # Changelog
 
+## 5.0.0 (in progress, branch `v5`)
+
+A foundation release: shared mechanisms instead of per-component copies, and a clean API. Plan: `docs/v5-plan.md`. Migration: [MIGRATION-5.md](MIGRATION-5.md).
+
+### Breaking
+
+- **Every name deprecated since 2.0 is removed**, with the tone alias `error` (Alert, Tag, Avatar `dot`, `toast`). The table old → new is in [MIGRATION-5.md](MIGRATION-5.md).
+- `TaoTabItem` is a plain `{ value, label, disabled? }`; `TaoSegmentedSize` and `TaoListSize` are gone (use `TaoSize`); `--tao-field-height` and `--tao-color-text-on-accent` are gone.
+
+### Internal
+
+- `deprecationWarning` / `warnDeprecated` take the version that removes the name (`removeIn`), no longer a hard-coded "3.0".
+- New tests: behaviour of the overlay family, server-side rendering of every component, public entry and token contract; `npm run smoke` installs the packed tarball into a clean Vite project.
+
 ## 4.0.1
 
 - **TaoScrollTop:** the ripple is gone. It painted the wave in a tint that disappeared on the accent fill, so it was practically invisible and cost a DOM node, a timer and an `overflow: hidden` clip. The button now has the same 1px press as `TaoButton`.

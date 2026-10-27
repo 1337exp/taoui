@@ -19,7 +19,7 @@ const warned = new Set<string>();
  * One console warning per component + name, dev builds only.
  * Одно предупреждение на компонент + имя, только в dev-сборке.
  */
-export function deprecationWarning(component: string, what: string, instead: string) {
+export function deprecationWarning(component: string, what: string, instead: string, removeIn = 'the next major version') {
     if (!isDev()) {
         return;
     }
@@ -29,18 +29,18 @@ export function deprecationWarning(component: string, what: string, instead: str
         return;
     }
     warned.add(key);
-    console.warn(`[TaoUI] ${component}: ${what} is deprecated — ${instead}. It will be removed in 3.0.`);
+    console.warn(`[TaoUI] ${component}: ${what} is deprecated — ${instead}. It will be removed in ${removeIn}.`);
 }
 
 /**
  * Warns about deprecated props and listeners the parent actually passed (defaults do not count).
  * Keys are camelCase prop names or `onEvent` listener names; values say what to use instead.
- * Call from `setup`.
+ * `removeIn` names the version that drops them ("5.0"). Call from `setup`. Nothing is deprecated in 5.0 itself: this is the machinery for the next removals.
  *
  * Предупреждает об устаревших пропсах и обработчиках, которые родитель реально передал (дефолты не считаются).
  * Ключи — имена пропсов в camelCase или `onEvent`; значения — чем заменить. Вызывать из `setup`.
  */
-export function warnDeprecated(component: string, replacements: Record<string, string>) {
+export function warnDeprecated(component: string, replacements: Record<string, string>, removeIn?: string) {
     if (!isDev()) {
         return;
     }
@@ -57,6 +57,6 @@ export function warnDeprecated(component: string, replacements: Record<string, s
         }
         const isListener = /^on[A-Z]/.test(name);
         const label = isListener ? `event "${name[2]!.toLowerCase()}${name.slice(3)}"` : `prop "${name}"`;
-        deprecationWarning(component, label, instead);
+        deprecationWarning(component, label, instead, removeIn);
     }
 }

@@ -2,17 +2,11 @@
 import { computed, inject, ref, useId, watch } from 'vue';
 import { formFieldKey } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
-import { warnDeprecated } from '../deprecate';
 
 defineOptions({ name: 'TaoCheckbox' });
 
 const props = withDefaults(
     defineProps<{
-        /**
-         * @deprecated Use `checked` (or v-model). `value` will mean the option value, as in TaoRadio.
-         * Используйте `checked` (или v-model). `value` станет значением опции, как у TaoRadio.
-         */
-        value?: boolean;
         /** Checked state without v-model. / Состояние без v-model. */
         checked?: boolean;
         modelValue?: boolean;
@@ -25,7 +19,6 @@ const props = withDefaults(
         indeterminate?: boolean;
     }>(),
     {
-        value: undefined,
         checked: undefined,
         modelValue: undefined,
         label: '',
@@ -54,7 +47,7 @@ const isChecked = computed({
         if (props.checked !== undefined) {
             return props.checked;
         }
-        return Boolean(props.value);
+        return false;
     },
     set: (next) => {
         emit('update:modelValue', next);
@@ -84,10 +77,6 @@ watch(
     },
     { flush: 'post' },
 );
-
-warnDeprecated('TaoCheckbox', {
-    value: 'use `checked` or v-model',
-});
 </script>
 
 <template>

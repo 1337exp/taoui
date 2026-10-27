@@ -86,7 +86,7 @@
 - **TaoFormField** — общие label / hint / error для полей формы
 - **TaoInputNumber** — число с min/max/step и кнопками ± справа. Пустое значение — `null`. `@commit` срабатывает один раз, когда правка закончена (blur, Enter, ±, стрелка), в отличие от `v-model`, который обновляется на каждую клавишу
 - **TaoQuantity** — количество в корзине: `− | поле | +`, целые штуки, сток, минус на минимуме может убрать строку
-- **TaoTextarea** — многострочное поле с авто-высотой. `maxlength` ограничивает ввод, `count` показывает «введено / максимум». `variant`: `bar` (по умолчанию) / `outline` (рамка как у Input) / `filled` / `plain`; `readonly`. `noBorder`, `noBackground`, `borderInverse`, `dummy` устарели
+- **TaoTextarea** — многострочное поле с авто-высотой. `maxlength` ограничивает ввод, `count` показывает «введено / максимум». `variant`: `bar` (по умолчанию) / `outline` (рамка как у Input) / `filled` / `plain`; `readonly`; `align`; `blurOnEnter`
 - **TaoPinCode** — пин-код из N полей. По умолчанию клик стирает ячейку и все справа (`clear-on="focus"`); `clear-on="input"` заменяет цифру только при вводе. `format="#-##-##"` рисует визуальные разделители (в значение не входят; вставка в таком виде или чистым кодом раскладывается по ячейкам). Последняя ячейка снимает фокус и эмитит `complete`
 - **TaoSlider** / **TaoRangeSlider** — один бегунок (`v-model` — число) или два (`[от, до]`, `minGap`). Мышь, тач, стрелки. `marks` (деления, числа, `{ value, label }`), `discrete` для ступенчатых шкал, `vertical`, `flat`, `format`; `variant="thin"` — тонкий трек для seek / громкости
 - **TaoColorPicker** — квадрат насыщенности и яркости, полосы тона и прозрачности, образцы, пипетка (где есть `EyeDropper`), режимы ввода HEX / RGB / HSL. `v-model` — строка hex; `colorModel()` подключает ваше собственное хранилище цвета
@@ -127,11 +127,10 @@
 
 ## Соглашения
 
-Тоны визуала: `success` | `danger` | `warning` | `info` | `neutral` (тип `TaoTone`), всегда через проп `tone`: Button, Alert, Tag. `type` у Alert / Tag — устаревший алиас.
-`error` у Alert, Tag и `toast()` — синоним `danger`. Button уже `danger`.
+Тоны визуала: `success` | `danger` | `warning` | `info` | `neutral` (тип `TaoTone`), всегда через проп `tone`: Button, Alert, Tag (`toast.danger()` для тостов).
 Stages — это процесс, не тон: `wait` / `work` / `ok` / `bad` (`danger` принимается как `bad`).
 
-Размеры контролов: `small` | `medium` | `large` (тип `TaoSize`). Одна шкала для Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup и FormField — контролы одного размера встают в ряд ровно. Checkbox, Radio / RadioGroup и Switch масштабируют индикатор (14 / 18 / 22px) и подпись; Tag — высоту (18 / 20 / 24px); Tabs, кнопки Pagination и строки List берут высоту Button; Table масштабирует отступы ячеек (`size="small"` вместо `compact`); FileDrop — зону и строки файлов; Slider — трек и бегунок.
+Размеры контролов: `small` | `medium` | `large` (тип `TaoSize`). Одна шкала для Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup и FormField — контролы одного размера встают в ряд ровно. Checkbox, Radio / RadioGroup и Switch масштабируют индикатор (14 / 18 / 22px) и подпись; Tag — высоту (18 / 20 / 24px); Tabs, кнопки Pagination и строки List берут высоту Button; Table масштабирует отступы ячеек (`size="small"` для плотной); FileDrop — зону и строки файлов; Slider — трек и бегунок.
 Без `size` контрол берёт размер предков, в корне — `medium`. На целый блок размер задаётся классом `tao-size-small` / `-medium` / `-large` на любом элементе или `size` у `TaoFormField` / `TaoInputGroup`. Явный `size` у контрола главнее.
 
 ```vue
@@ -141,8 +140,8 @@ Stages — это процесс, не тон: `wait` / `work` / `ok` / `bad` (`
 </div>
 ```
 
-Контент и раскладка держат свою шкалу и не наследуют: Avatar (24 / 32 / 48px; `s` / `m` / `l` устарели), Divider `gap` (`big` — устаревший алиас `large`), Loader / Icon / ScrollTop (пиксели).
-Container живёт на другой оси — ширина: `width="wide" | "slim" | "ultra-slim"` (`size` — устаревший алиас).
+Контент и раскладка держат свою шкалу и не наследуют: Avatar (24 / 32 / 48px), Divider `gap`, Loader / Icon / ScrollTop (пиксели).
+Container живёт на другой оси — ширина: `width="wide" | "slim" | "ultra-slim"`.
 
 Поверхности — из чего «сделана» панель: `flat` — заливка (по умолчанию), `grain` — статичное плёночное зерно, `glass` —
 полупрозрачное стекло с размытием того, что позади. Проп `surface` у TaoCard / TaoBlock или класс `tao-surface-grain` /
@@ -157,7 +156,7 @@ Container живёт на другой оси — ширина: `width="wide" | 
 Шкала кегля (примитивы): `xs` 12 … `xl` 18 для контролов; `2xl` 24, `3xl` 32, `4xl` 36 для заголовков и прозы.
 Отдельного компонента заголовка нет — `h1 { font-size: var(--tao-font-size-3xl) }`.
 
-Правила API — им следуют все компоненты; старые имена остаются устаревшими алиасами:
+Правила API — им следуют все компоненты:
 
 - **Поля** принимают `v-model`, `disabled`, `error` (красная рамка) и `size`. Подпись, подсказка и текст ошибки — через `TaoFormField`.
 - **События**: `update:X` для v-model плюс `change`, когда пользователь закончил изменение (Slider, Split — по отпусканию). Остальные события — глаголы в настоящем времени: `select`, `close`, `create`.
@@ -254,6 +253,10 @@ function onLanguageChange(lang) {
 
 Без плагина (отдельные компоненты) достаточно одного вызова `setTaoLocale()`.
 
+### Переход на 5.0
+
+5.0 удаляет все имена, которые устарели в 2.0 (и алиас тона `error`), таблица «старое → новое» в [MIGRATION-5.md](MIGRATION-5.md).
+
 ### Переход с 3.x
 
 В 4.0 поменялся один умолчательный параметр: встроенные тексты теперь английские (раньше были русские). Чтобы остаться
@@ -262,8 +265,7 @@ function onLanguageChange(lang) {
 
 ### Переход с 1.x
 
-Смотрите [CHANGELOG.md](CHANGELOG.md): что сломалось и таблица «старое имя → новое». В 2.x старые имена ещё работают
-и в режиме разработки пишут предупреждение в консоль.
+Смотрите запись 2.0.0 в [CHANGELOG.md](CHANGELOG.md): что сломалось. Старые имена удалены в 5.0.
 
 ### Использование отдельных компонентов
 
@@ -397,7 +399,7 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 
 `TaoCombobox` — то же меню, но с полем. Печатаете — варианты режутся. `allow-create` пишет введённое в `v-model`, если точного совпадения нет. Список сам не меняется: слушайте `create` и добавьте option снаружи.
 
-Подпись, подсказка и текст ошибки всегда идут через `TaoFormField`; `label` / `error-message` у `TaoInput` устарели. `TaoFormField` также оборачивает `TaoTextarea`, `TaoCheckbox`, `TaoSwitch`, `TaoRadioGroup` и `TaoSegmented` — id, hint и error прокидываются сами.
+Подпись, подсказка и текст ошибки всегда идут через `TaoFormField`. `TaoFormField` также оборачивает `TaoTextarea`, `TaoCheckbox`, `TaoSwitch`, `TaoRadioGroup` и `TaoSegmented` — id, hint и error прокидываются сами.
 
 `TaoTag` может быть чипом: `#prefix` слева (обычно `TaoAvatar`), `closable` рисует крестик и эмитит `close`. Клик по крестику наружу не всплывает. `flat` снимает рамку, заливка остаётся.
 
@@ -599,7 +601,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 ### Ключевые группы токенов
 
 - `--tao-color-accent*` — акцентный/брендовый цвет (кнопки primary, активные вкладки, ссылки)
-- `--tao-color-on-accent` — текст на акцентном фоне (`--tao-color-text-on-accent` — алиас)
+- `--tao-color-on-accent` — текст на акцентном фоне
 - `--tao-color-selection`, `--tao-color-selection-text` — выделение текста (`::selection`)
 - `--tao-color-surface*` — фоны контейнеров (обычный / приподнятый / утопленный / hover)
 - `--tao-color-border*` — границы
@@ -609,7 +611,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-radius-control`, `--tao-radius-panel` — скругления (мелкие контролы vs крупные панели)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — тени
 - `--tao-font-size-*` — шкала кегля в `primitives.css`: `xs`–`xl` контролы, `2xl`–`4xl` заголовки / проза
-- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — шкала размеров в `primitives.css`. Компоненты читают текущие значения из `size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Используйте их в своих контролах, чтобы попасть в размер окружения. `--tao-field-height` — устаревший алиас `--tao-control-height`
+- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — шкала размеров в `primitives.css`. Компоненты читают текущие значения из `size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Используйте их в своих контролах, чтобы попасть в размер окружения.
 
 Полный список — в `src/styles/semantic.css`, он же единственный файл,
 который стоит открыть, чтобы понять весь доступный API темизации.

@@ -38,8 +38,8 @@ component should look like its neighbours.
 
 - Colours, radii and spacing come from design tokens (`src/styles/`), never literals.
 - Built-in texts go to `src/locale/` (both `en` and `ru`).
-- A renamed prop keeps its old name as a deprecated alias for one major version
-  (see `src/deprecate.ts`).
+- A renamed prop may keep its old name as a deprecated alias until the next major (`src/deprecate.ts` warns in
+  development and names the version that removes it); the major deletes it. Do not leave aliases behind.
 - Put logic that can be pure into a `src/*.ts` file with a unit test.
 
 ## Colour tokens

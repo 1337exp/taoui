@@ -1,6 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { nextTick } from 'vue';
+import { defineComponent, h, nextTick } from 'vue';
+import { warnDeprecated } from '../src/deprecate';
 import TaoAlert from '../src/components/TaoAlert.vue';
 import TaoBlock from '../src/components/TaoBlock.vue';
 import TaoButton from '../src/components/TaoButton.vue';
@@ -53,56 +54,55 @@ describe('fields: error', () => {
     });
 });
 
-describe('deprecated aliases still work', () => {
-    // they use old names on purpose; warnings have their own tests / старые имена намеренно, у предупреждений свои тесты
-    beforeEach(() => {
-        vi.spyOn(console, 'warn').mockImplementation(() => {});
-    });
-    afterEach(() => vi.restoreAllMocks());
+describe('names removed in 5.0 stay removed', () => {
+    // component → props / events that 2.0 deprecated and 5.0 deleted; the 5.0 names are covered by the tests around them
+    const removed: [string, object, string[]][] = [
+        ['TaoAlert', TaoAlert, ['type']],
+        ['TaoTag', TaoTag, ['type', 'pointer']],
+        ['TaoTabs', TaoTabs, ['tabs']],
+        ['TaoCheckbox', TaoCheckbox, ['value']],
+        ['TaoPinCode', TaoPinCode, ['hidden']],
+        ['TaoSpace', TaoSpace, ['vertical']],
+        ['TaoStages', TaoStages, ['vertical']],
+        ['TaoCopy', TaoCopy, ['successMessage']],
+        ['TaoInput', TaoInput, ['label', 'errorMessage']],
+        ['TaoTextarea', TaoTextarea, ['noBorder', 'noBackground', 'dummy', 'textCenter', 'autoFocus', 'submitOnEnter', 'borderInverse']],
+        ['TaoTable', TaoTable, ['compact']],
+    ];
 
-    it('Alert / Tag: type → tone, pointer → clickable', () => {
-        expect(cls(mount(TaoAlert, { props: { type: 'success' } }).element)).toContain('tao-alert--success');
-        const tag = mount(TaoTag, { props: { type: 'error', pointer: true } });
-        expect(cls(tag.element)).toContain('tao-tag--danger');
-        expect(cls(tag.element)).toContain('tao-tag--pointer');
+    it.each(removed)('%s has none of the removed props', (_name, component, names) => {
+        const props = Object.keys(((component as { props?: object }).props ?? {}));
+        expect(names.filter((name) => props.includes(name))).toEqual([]);
     });
 
-    it('Tabs: tabs + key', async () => {
-        const w = mount(TaoTabs, {
-            props: { tabs: [{ key: 'a', label: 'A' }, { key: 'b', label: 'B' }], modelValue: 'a' },
-        });
-        await w.findAll('.tao-tabs__tab')[1]!.trigger('click');
-        expect(w.emitted('update:modelValue')).toEqual([['b']]);
-    });
-
-    it('Checkbox value, PinCode hidden, Space / Stages vertical, Textarea flags', () => {
-        expect((mount(TaoCheckbox, { props: { value: true } }).find('input').element as HTMLInputElement).checked).toBe(true);
-        expect(mount(TaoPinCode, { props: { length: 2, hidden: true } }).find('input').attributes('type')).toBe('password');
-        expect(cls(mount(TaoSpace, { props: { vertical: true } }).element)).toContain('tao-space--vertical');
-        expect(cls(mount(TaoStages, { props: { vertical: false, items: [] } }).element)).toContain('tao-stages--horizontal');
-        const ta = mount(TaoTextarea, { props: { noBorder: true, noBackground: true, textCenter: true } }).find('textarea');
-        expect(cls(ta.element)).toContain('tao-textarea--plain');
-        expect(cls(ta.element)).toContain('tao-textarea--align-center');
+    it('removed events are not emitted any more', async () => {
+        const table = mount(TaoTable, { props: { columns: [{ key: 'name', label: 'Name', sortable: true }], rows: [] } });
+        await table.find('.tao-table__sort-btn').trigger('click');
+        expect(table.emitted('sort')).toBeUndefined();
+        expect(table.emitted('change')).toHaveLength(1);
     });
 });
 
-describe('deprecation warnings', () => {
+describe('deprecation machinery', () => {
+    // nothing is deprecated right now; this keeps the helper alive for the next removals
     afterEach(() => vi.restoreAllMocks());
 
-    it('warns once about a passed deprecated prop, never about the new one', () => {
-        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        mount(TaoTag, { props: { tone: 'success' } });
-        expect(warn).not.toHaveBeenCalled();
-        mount(TaoCopy, { props: { text: 'x', successMessage: 'Done' } });
-        mount(TaoCopy, { props: { text: 'x', successMessage: 'Done' } });
-        expect(warn).toHaveBeenCalledTimes(1);
-        expect(warn.mock.calls[0]![0]).toContain('TaoCopy: prop "successMessage" is deprecated');
+    const Probe = defineComponent({
+        props: { oldName: { type: String, default: undefined }, newName: { type: String, default: undefined } },
+        setup() {
+            warnDeprecated('Probe', { oldName: 'use `newName`' }, '9.0');
+            return () => h('i');
+        },
     });
 
-    it('warns about a deprecated listener', () => {
+    it('warns once about a passed old prop, never about the new one, and names the version', () => {
         const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-        mount(TaoTable, { props: { columns: [] }, attrs: { onSort: () => {} } });
-        expect(warn.mock.calls.some(([text]) => String(text).includes('TaoTable: event "sort"'))).toBe(true);
+        mount(Probe, { props: { newName: 'x' } });
+        expect(warn).not.toHaveBeenCalled();
+        mount(Probe, { props: { oldName: 'x' } });
+        mount(Probe, { props: { oldName: 'x' } });
+        expect(warn).toHaveBeenCalledTimes(1);
+        expect(String(warn.mock.calls[0]![0])).toContain('Probe: prop "oldName" is deprecated — use `newName`. It will be removed in 9.0.');
     });
 });
 
@@ -124,23 +124,21 @@ describe('events', () => {
         expect(w.emitted('change')).toEqual([[true]]);
     });
 
-    it('Table: change and the deprecated sort on header click', async () => {
+    it('Table: change and update:sort on header click', async () => {
         const w = mount(TaoTable, {
             props: { columns: [{ key: 'name', label: 'Name', sortable: true }], rows: [] },
         });
         await w.find('.tao-table__sort-btn').trigger('click');
         expect(w.emitted('change')?.[0]).toEqual(w.emitted('update:sort')?.[0]);
-        expect(w.emitted('sort')?.[0]).toEqual(w.emitted('change')?.[0]);
     });
 
-    it('DropdownMenu: select and the deprecated selected', async () => {
+    it('DropdownMenu: select', async () => {
         const w = mount(TaoDropdownMenu, { props: { actions: [{ id: 'edit', name: 'Edit' }] }, attachTo: document.body });
         await w.find('.tao-dropdown-menu__button').trigger('click');
         await nextTick();
         // the list is teleported to body / список телепортирован в body
         document.querySelector<HTMLButtonElement>('.tao-dropdown-menu__item')!.click();
         expect(w.emitted('select')).toEqual([['edit']]);
-        expect(w.emitted('selected')).toEqual([['edit']]);
         w.unmount();
     });
 

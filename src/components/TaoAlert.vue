@@ -1,23 +1,19 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import type { TaoTone } from '../tone';
-import { warnDeprecated } from '../deprecate';
 import { useLocaleText } from '../locale';
 defineOptions({ name: 'TaoAlert' });
 
 const props = withDefaults(
     defineProps<{
-        /** Status color; `error` is an alias of `danger`. / Цвет статуса; `error` — алиас `danger`. */
-        tone?: TaoTone | 'error';
-        /** @deprecated Use `tone`, same as TaoButton. / Используйте `tone`, как у TaoButton. */
-        type?: TaoTone | 'error';
+        /** Status color. / Цвет статуса. */
+        tone?: TaoTone;
         title?: string;
         closable?: boolean;
         closeLabel?: string;
     }>(),
     {
-        tone: undefined,
-        type: undefined,
+        tone: 'info',
         title: '',
         closable: false,
     },
@@ -29,16 +25,11 @@ const emit = defineEmits<{
 }>();
 
 const resolvedTone = computed(() => {
-    const value = props.tone ?? props.type ?? 'info';
-    return value === 'danger' ? 'error' : value;
+    return props.tone === 'danger' ? 'error' : props.tone;
 });
 const live = computed(() =>
     resolvedTone.value === 'error' || resolvedTone.value === 'warning' ? 'assertive' : 'polite',
 );
-
-warnDeprecated('TaoAlert', {
-    type: 'use `tone`',
-});
 </script>
 
 <template>

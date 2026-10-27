@@ -24,7 +24,6 @@ export type {
 
 const TYPE_TIMEOUT: Record<TaoToastType, number> = {
     success: 3000,
-    error: 5000,
     danger: 5000,
     warning: 4000,
     info: 3000,
@@ -119,7 +118,6 @@ function createDraft(): Draft {
 
 export interface TaoToastBuilder {
     success(): TaoToastBuilder;
-    error(): TaoToastBuilder;
     danger(): TaoToastBuilder;
     warning(): TaoToastBuilder;
     info(): TaoToastBuilder;
@@ -155,11 +153,6 @@ function createBuilder(): TaoToastBuilder {
         success() {
             draft.type = 'success';
             draft.timeout = TYPE_TIMEOUT.success;
-            return ctx;
-        },
-        error() {
-            draft.type = 'error';
-            draft.timeout = TYPE_TIMEOUT.error;
             return ctx;
         },
         danger() {
@@ -328,7 +321,6 @@ function shortcut(type: TaoToastType, message: string, options?: TaoToastShortcu
 export interface TaoToastApi {
     (): TaoToastBuilder;
     success(message: string, options?: TaoToastShortcutOptions): TaoToastBuilder;
-    error(message: string, options?: TaoToastShortcutOptions): TaoToastBuilder;
     danger(message: string, options?: TaoToastShortcutOptions): TaoToastBuilder;
     warning(message: string, options?: TaoToastShortcutOptions): TaoToastBuilder;
     info(message: string, options?: TaoToastShortcutOptions): TaoToastBuilder;
@@ -344,9 +336,6 @@ export interface TaoToastApi {
 export const toast: TaoToastApi = Object.assign(createBuilder, {
     success(message: string, options?: TaoToastShortcutOptions) {
         return shortcut('success', message, options);
-    },
-    error(message: string, options?: TaoToastShortcutOptions) {
-        return shortcut('error', message, options);
     },
     danger(message: string, options?: TaoToastShortcutOptions) {
         return shortcut('danger', message, options);

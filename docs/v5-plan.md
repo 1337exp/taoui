@@ -255,3 +255,4 @@ Tarball: 528.7 КБ. Тестов: 305 (было 183), из них новые: o
 ## 10. Статус
 
 - **Фаза 0: готова** (ветка `v5`): `tests/overlays.test.ts`, `tests/ssr.test.ts`, `tests/exports.test.ts`, `tests/contract.tokens.test.ts`, `scripts/consumer-smoke.mjs`, `@types/node` в dev-зависимостях.
+- **Фаза 1: готова** (ветка `v5`): удалены все устаревшие алиасы (список в `MIGRATION-5.md`), вместе с тестами на алиасы и строками в таблицах пропсов и README. Вместо них тесты «удалённые имена не вернулись» и тест механизма `deprecate.ts`. Проверка: `grep -i deprecated src` находит только `deprecate.ts`; тестов 313, `type-check`, сборка и шоукейс чистые.

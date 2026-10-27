@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { computed, useSlots } from 'vue';
 import type { TaoSize } from '../size';
-import { deprecationWarning } from '../deprecate';
 
 defineOptions({ name: 'TaoDivider' });
 
@@ -9,8 +8,8 @@ const props = withDefaults(
     defineProps<{
         /** `solid` — обычная линия. `dashed` — пунктир. `colored` — акцент. `gap` — пустой отступ. */
         variant?: 'solid' | 'dashed' | 'colored' | 'gap';
-        /** Height of `gap`. Spacing, not a control: does not inherit. `big` is a deprecated alias of `large`. / Высота `gap`. Отступ, не контрол: не наследуется. `big` — устаревший алиас `large`. */
-        size?: TaoSize | 'big';
+        /** Height of `gap`. Spacing, not a control: does not inherit. / Высота `gap`. Отступ, не контрол: не наследуется. */
+        size?: TaoSize;
         /** Подпись посередине. Не меняет стиль линии — для этого `variant`. */
         text?: string;
         /** Плавные края линии. У `gap` ничего не делает. */
@@ -25,12 +24,8 @@ const props = withDefaults(
 );
 
 const slots = useSlots();
-const gapSize = computed(() => (props.size === 'big' ? 'large' : props.size));
+const gapSize = computed(() => props.size);
 const hasLabel = computed(() => Boolean(props.text) || Boolean(slots.default));
-
-if (props.size === 'big') {
-    deprecationWarning('TaoDivider', 'size "big"', 'use size="large"');
-}
 </script>
 
 <template>

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import type { TaoStageItem, TaoStageStatus } from '../stage';
-import { warnDeprecated } from '../deprecate';
 import { taoLocale, useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoStages' });
@@ -11,15 +10,12 @@ const props = withDefaults(
         items?: TaoStageItem[];
         /** `column` (default) — steps top to bottom, `row` — left to right. / `column` — сверху вниз, `row` — слева направо. */
         direction?: 'row' | 'column';
-        /** @deprecated Use `direction`. / Используйте `direction`. */
-        vertical?: boolean;
         ariaLabel?: string;
         statusLabels?: Partial<Record<TaoStageStatus, string>>;
     }>(),
     {
         items: () => [],
-        direction: undefined,
-        vertical: undefined,
+        direction: 'column',
         statusLabels: () => ({}),
     },
 );
@@ -31,9 +27,6 @@ defineSlots<{
 }>();
 
 function statusOf(item: TaoStageItem): TaoStageStatus {
-    if (item.status === 'danger') {
-        return 'bad';
-    }
     return item.status ?? 'wait';
 }
 
@@ -42,11 +35,7 @@ function itemLabel(item: TaoStageItem): string {
     return `${item.label ?? item.key}, ${props.statusLabels[status] ?? taoLocale().stages.statusLabels[status]}`;
 }
 
-const isRow = computed(() => (props.direction ?? (props.vertical === false ? 'row' : 'column')) === 'row');
-
-warnDeprecated('TaoStages', {
-    vertical: 'use `direction`',
-});
+const isRow = computed(() => props.direction === 'row');
 </script>
 
 <template>
