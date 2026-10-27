@@ -545,6 +545,18 @@ export const propTablesEn = {
       slots: 'default — the title. #prefix, #description, #suffix, #action (on hover; always on touch).',
     },
   ],
+  timeline: [
+    {
+      title: 'TaoTimeline',
+      rows: [
+        r('items', 'TaoTimelineItem[]', '—', '{ id, title, time?, datetime?, description?, icon?, tone? }. time is shown, datetime goes to <time datetime>'),
+        r('active', 'string', '—', 'The id of the current event: the line is filled up to it, the next ones wait, it gets aria-current="step". Without active the feed is a log of the past'),
+        r('align', "'start' | 'alternate'", "'start'", 'alternate — the events on both sides of the line; below 480px of its own width it folds into start'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'The marker and the text on the control scale; the density works too'),
+      ],
+      slots: '#marker, #title, #content — { item, index, state, active }; state: done / current / upcoming. A marker tone: success / danger / warning / info / neutral, the accent without one. An <ol>: a screen reader hears the order, the line and the markers are hidden from it.',
+    },
+  ],
   stages: [
     {
       title: 'TaoStages',

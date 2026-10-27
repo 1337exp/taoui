@@ -538,6 +538,18 @@ export const propTables = {
       slots: 'default — заголовок. #prefix, #description, #suffix, #action (по ховеру; на таче всегда).',
     },
   ],
+  timeline: [
+    {
+      title: 'TaoTimeline',
+      rows: [
+        r('items', 'TaoTimelineItem[]', '—', '{ id, title, time?, datetime?, description?, icon?, tone? }. time — для показа, datetime — для <time datetime>'),
+        r('active', 'string', '—', 'id текущего события: линия залита до него, следующие ждут, у него aria-current="step". Без active лента — журнал прошедшего'),
+        r('align', "'start' | 'alternate'", "'start'", 'alternate — события по обе стороны линии; уже 480px своей ширины складывается в start'),
+        r('size', "'small' | 'medium' | 'large'", 'наследуется', 'Маркер и текст по шкале контролов; плотность тоже действует'),
+      ],
+      slots: '#marker, #title, #content — { item, index, state, active }; state: done / current / upcoming. tone маркера: success / danger / warning / info / neutral, без него акцент. Это <ol>: порядок событий слышен скринридеру, линия и маркеры скрыты от него.',
+    },
+  ],
   stages: [
     {
       title: 'TaoStages',

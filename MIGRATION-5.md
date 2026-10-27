@@ -58,7 +58,7 @@ The ecosystem moves together: **TaoUX 0.2.0** and **taofx** already follow 5.0 (
 | Floating panel corners | `--tao-radius-control` (4px), options `--tao-radius-sm` | `--tao-radius-panel` (8px) for Menu, Select, Combobox, Popover, the date panel; items `panel − padding` (4px). Tooltip keeps the control radius |
 | Popup keyboard | Select had Home / End, the others did not | the arrows skip disabled items, Home / End and type-ahead where it is a list (Select, menus) |
 
-New: `TaoChecklist`, `TaoTree`, icons `tao-folder` / `tao-file`. Density (`.tao-density-compact | comfortable | auto`, nothing to migrate: the default is the 4.x density). `TaoNav` (bottom bar / rail / drawer from one list, `layout="auto"` by its own width). `TaoMenu` (the menu panel with submenus, checkbox and radio items, type-ahead, `aria-activedescendant`), `TaoMenubar` and `TaoContextMenu` on it, types `TaoMenuItem` and friends, `TaoPlacement`; composables behind them (`useFloating`, `useDismiss`, `useLayer`, `useListNav`) are internal for now.
+New: `TaoTimeline` (the event feed), `TaoChecklist`, `TaoTree`, icons `tao-folder` / `tao-file`. Density (`.tao-density-compact | comfortable | auto`, nothing to migrate: the default is the 4.x density). `TaoNav` (bottom bar / rail / drawer from one list, `layout="auto"` by its own width). `TaoMenu` (the menu panel with submenus, checkbox and radio items, type-ahead, `aria-activedescendant`), `TaoMenubar` and `TaoContextMenu` on it, types `TaoMenuItem` and friends, `TaoPlacement`; composables behind them (`useFloating`, `useDismiss`, `useLayer`, `useListNav`) are internal for now.
 
 ## Packaging and styles
 
@@ -79,7 +79,7 @@ The light theme stays in the core stylesheet: it is 3 KB, and a second import to
 
 | What | Before | Now |
 |---|---|---|
-| `TaoTimeline` | the play / pause + time slider | **`TaoScrubber`** (the name `TaoTimeline` is free for a vertical event feed). Classes `.tao-timeline*` → `.tao-scrubber*`; locale section `timeline` → `scrubber`. API unchanged |
+| `TaoTimeline` | the play / pause + time slider | **`TaoScrubber`**. The name `TaoTimeline` now belongs to a new component, a vertical event feed (`items`, `active`): an old `<TaoTimeline v-model :duration>` does not fail, it renders an empty feed, so rename it. Classes `.tao-timeline*` → `.tao-scrubber*`; locale section `timeline` → `scrubber`. API unchanged |
 | `TaoCard` slots | `cover`, `headerTitle`, `headerSecondary`, `header` | `media` (was `cover`), `header` (a free row: lay out left and right yourself, replaces `headerTitle` / `headerSecondary`), `title`, `sub`, default, `footer`, `overlay`, and the new `corner` (top right: a tag, a menu button) |
 | `TaoCard` classes | `.tao-card__cover`, `--cover-only`, `__header-title`, `__header--between` | `.tao-card__media`, `--media-only`; the others are gone |
 | `TaoCard` | no way to close | `closable` + event `close` (+ `closeLabel`, locale section `card`); `--tao-card-corner-size` reserves room for the corner |

@@ -104,6 +104,7 @@
 - **TaoList** / **TaoListItem** — list row: icon, title, caption, hover action. Not Select, not a table
 - **TaoTree** — files or objects as a tree: `v-model:expanded`, selection `none | single | multiple` (`v-model:selected`), checkboxes with mixed parents (`checkable`, `v-model:checked`), lazy children (`hasChildren` + `load`). ARIA tree: one tab stop, arrows, `→` / `←` in and out, Home / End, `*`, type-ahead. Slots `#icon`, `#label`, `#actions`; rows on the control tokens (size and density)
 - **TaoStages** — stage list: `wait` / `work` / `ok` / `bad`. Not a linear stepper
+- **TaoTimeline** — a vertical feed of events: order steps, releases, a log. `active` fills the line up to the current event (`aria-current="step"`), without it the feed is a log of the past; `tone` and `icon` per marker, `#marker` / `#title` / `#content` slots; `align="alternate"` puts events on both sides and folds into one below 480px of its own width
 - **TaoSkeleton** — loading placeholder (text / title / circle / rect)
 - **TaoCounter** — flipping digits (not an input)
 - **TaoCarousel** — strip: full slide with `autoplay`, card with `peek`, row with `per-view`. Arrows via `controls` or `#prev` / `#next`; marks under the strip via `indicator` (`dots`, `bars` or `progress`). With `autoplay` the current mark fills over the interval and the slide changes when it is full; hover, keyboard focus, touch, a hidden tab and the pause button stop it, `prefers-reduced-motion` turns it off
