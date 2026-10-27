@@ -56,6 +56,7 @@ describe('package.json', () => {
     it('exports the stylesheet and the raw style files, and ships them', () => {
         expect(pkg.exports['./styles.css']).toBe('./dist/styles.css');
         expect(pkg.exports['./styles/*']).toBe('./src/styles/*');
+        expect(pkg.exports['./palettes.css']).toBe('./src/styles/palettes/index.css');
         expect(pkg.files).toEqual(expect.arrayContaining(['dist', 'src/styles', 'CHANGELOG.md']));
     });
 
@@ -83,7 +84,8 @@ describe('package.json', () => {
         const base = join(root, 'src/styles');
         const files = walk(base).map((f) => f.slice(base.length + 1).split('\\').join('/'));
         // date-popup.css belongs to the date components, the entry itself is not imported by itself
-        const layers = files.filter((f) => f !== 'index.css' && f !== 'date-popup.css');
+        // palettes/ are opt-in files (`@1337exp/taoui/palettes.css`), not part of the core stylesheet
+        const layers = files.filter((f) => f !== 'index.css' && f !== 'date-popup.css' && !f.startsWith('palettes/'));
         expect(layers.filter((f) => !index.includes(`./${f}`))).toEqual([]);
     });
 });

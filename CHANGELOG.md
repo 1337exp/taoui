@@ -11,6 +11,15 @@ In numbers: the tarball is 329 KB (560 KB before the ESM-only build), 451 tests 
 - **Every name deprecated since 2.0 is removed**, with the tone alias `error` (Alert, Tag, Avatar `dot`, `toast`). The table old → new is in [MIGRATION-5.md](MIGRATION-5.md).
 - `TaoTabItem` is a plain `{ value, label, disabled? }`; `TaoSegmentedSize` and `TaoListSize` are gone (use `TaoSize`); `--tao-field-height` and `--tao-color-text-on-accent` are gone.
 
+### Palettes
+
+- **Seven ready palettes** (`sunset`, `marple`, `violet-dusk`, `ocean-blue`, `pinheiro`, `tokyo-night`, `lagoon`), each with a dark and a light mode: `import '@1337exp/taoui/palettes.css'`, then `data-tao-theme="sunset"` (+ `data-tao-mode="light"`). They are separate opt-in files, the core stylesheet did not grow.
+- **A palette is four colours.** The accent is picked by lightness and moved only along lightness until it is seen (3:1), carries text (4.5:1) and reads as text (4.5:1); the surfaces are a tint of the palette's deepest hue; the statuses keep their hue sector but share the palette's lightness and chroma, and are pushed away from the accent when they would be mistaken for it. A palette can name its accent stop or a status colour when the automatic choice is not right.
+- **`applyTaoPalette(def, mode, el?)`** puts the same roles on the page (or an element) at run time, for your own palette or a colour a user picked; `taoPaletteCss(def)` returns the CSS; `taoPalettes` is the list for a picker. The code is `src/palette.ts` (OKLCH maths, no dependencies); the preset files are generated from it (`npm run palettes`) and a test keeps them equal.
+- **New roles** in both default themes: `--tao-color-accent-2`, `--tao-glow`, `--tao-gradient`, `--tao-bg-atmosphere`, and the class `.tao-atmosphere` (a static glow behind the page, no blur). `data-tao-mode="light" | "dark"` works next to `data-tao-theme`.
+- 150 palette tests: contrast of the accent, its text and every status in both modes of every palette, statuses told apart from the accent, hue sectors, no invented roles, the files equal the generator.
+- The showcase has a palette picker (with the four colours of the chosen one) next to the dark / light switch; the choice is remembered.
+
 ### Packaging
 
 - **ESM only.** The CommonJS build and its source map are gone (`dist/index.js`, `index.d.ts`, `styles.css`, one map): the tarball is smaller and there is one way to load the library. `require()` users switch to `import()`.

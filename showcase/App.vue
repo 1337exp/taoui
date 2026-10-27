@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
-import { TaoScrollTop } from '@1337exp/taoui'
+import { TaoScrollTop, TaoSelect, taoPalettes } from '@1337exp/taoui'
 import { navGroups } from './nav.js'
 import { demoById } from './sections.js'
 import { lang, LANGS, tr } from './i18n.js'
@@ -9,11 +9,50 @@ import { scrollTopDemo } from './scrollTopDemo.js'
 // Search looks through both languages, whichever is on screen.
 const both = (text) => (text && typeof text === 'object' ? `${text.en ?? ''} ${text.ru ?? ''}` : (text ?? ''))
 
-const theme = ref('dark')
+// Theme = a palette (a list of ready-made ones, or the default) x a mode (dark / light). The choice is remembered.
+// The default palette keeps the old attribute (data-tao-theme="dark" / "light"); a palette is data-tao-theme="<name>"
+// plus data-tao-mode for its light twin.
+const STORE = 'tao-showcase-theme'
+const saved = (() => {
+  try {
+    return JSON.parse(localStorage.getItem(STORE) ?? '{}')
+  } catch {
+    return {}
+  }
+})()
+const known = new Set(['default', ...taoPalettes.map((p) => p.name)])
+const palette = ref(known.has(saved.palette) ? saved.palette : 'default')
+const theme = ref(saved.mode === 'light' ? 'light' : 'dark')
+
+const paletteOptions = computed(() => [
+  { value: 'default', label: tr('Default', 'По умолчанию') },
+  ...taoPalettes.map((p) => ({ value: p.name, label: p.label })),
+])
+const swatches = computed(() => taoPalettes.find((p) => p.name === palette.value)?.stops ?? [])
+
+function applyTheme() {
+  const el = document.documentElement
+  el.setAttribute('data-tao-theme', palette.value === 'default' ? theme.value : palette.value)
+  el.setAttribute('data-tao-mode', theme.value)
+  document.body.classList.add('tao-atmosphere')
+  try {
+    localStorage.setItem(STORE, JSON.stringify({ palette: palette.value, mode: theme.value }))
+  } catch {
+    // a private window: the choice is just not remembered
+  }
+}
+
 function setTheme(value) {
   theme.value = value
-  document.documentElement.setAttribute('data-tao-theme', value)
+  applyTheme()
 }
+
+function setPalette(value) {
+  palette.value = value ?? 'default'
+  applyTheme()
+}
+
+applyTheme()
 
 const activeGroup = ref('all')
 const query = ref('')
@@ -119,7 +158,21 @@ onBeforeUnmount(() => {
         </button>
       </div>
       <div class="theme-switcher">
-        <span class="theme-switcher__label">{{ tr('Theme:', 'Тема:') }}</span>
+        <span class="theme-switcher__label">{{ tr('Palette:', 'Палитра:') }}</span>
+        <TaoSelect
+          :model-value="palette"
+          :options="paletteOptions"
+          :clearable="false"
+          size="small"
+          class="palette-select"
+          @update:model-value="setPalette"
+        />
+        <span v-if="swatches.length" class="palette-swatches" aria-hidden="true">
+          <i v-for="color in swatches" :key="color" :style="{ background: color }" />
+        </span>
+      </div>
+      <div class="theme-switcher">
+        <span class="theme-switcher__label">{{ tr('Mode:', 'Режим:') }}</span>
         <button
           v-for="t in ['dark', 'light']"
           :key="t"

@@ -641,6 +641,44 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 The full list of colour roles lives in `src/styles/themes/dark.css` — the file worth opening
 to see the whole theming API.
 
+### Palettes
+
+A palette is four colours, from the darkest to the lightest: a whole set of roles comes out, for a dark and a light mode.
+Seven are ready (`sunset`, `marple`, `violet-dusk`, `ocean-blue`, `pinheiro`, `tokyo-night`, `lagoon`; the list is `taoPalettes`).
+
+```javascript
+import '@1337exp/taoui/styles.css'
+import '@1337exp/taoui/palettes.css'          // all of them, or '@1337exp/taoui/styles/palettes/sunset.css' for one
+```
+
+```html
+<html data-tao-theme="sunset">                            <!-- dark -->
+<html data-tao-theme="sunset" data-tao-mode="light">      <!-- its light twin -->
+```
+
+`data-tao-mode="light" | "dark"` also works on its own, with the default colours; `data-tao-theme="light"` is the old spelling of the same.
+Put it on `<html>` (so modals and tooltips teleported to `body` follow) or on any element for a part of the page.
+
+What a palette decides, so you do not have to:
+
+- **The accent** is the stop whose lightness suits the mode (name it with `accent: 1` when the automatic choice is not the one you meant), moved along lightness only until it is seen on the page (3:1), carries a readable text (4.5:1) and reads as text itself (`--tao-color-accent-text`, 4.5:1).
+- **The page and the surfaces** are a very dark (or very light) tint of the palette's deepest hue.
+- **The statuses** (`danger`, `warning`, `success`, `info`) keep their recognisable hue sector but share the lightness and the chroma of the palette, and a status that would be mistaken for the accent is pushed away (a palette may name its own colour: `status: { success: '#7fbf2f' }`). Every status keeps 4.5:1 for its text, as a fill and as text.
+- **`--tao-color-accent-2`, `--tao-glow`, `--tao-gradient`, `--tao-bg-atmosphere`:** the second accent, the glow colour, a gradient through the four stops, and the soft glow behind the page (`class="tao-atmosphere"` on `<body>` or the app root paints it; a static layer, no blur).
+
+The contrast is not a promise in the README: `tests/palette.test.ts` holds every palette in both modes to these numbers.
+
+A palette of your own, at run time (a theme editor, a colour the user picked):
+
+```javascript
+import { applyTaoPalette } from '@1337exp/taoui'
+
+const stop = applyTaoPalette({ name: 'mine', label: 'Mine', stops: ['#102030', '#306090', '#60c0f0', '#e0f4ff'] }, 'dark')
+stop()   // takes it off again; a third argument puts it on one element instead of the page
+```
+
+or as a file: `taoPaletteCss(def)` returns the CSS the preset files are made of. To add a preset to the library, add it to `src/palettes.ts` and run `npm run palettes`.
+
 ### A theme from scratch, without primitives
 
 ```javascript

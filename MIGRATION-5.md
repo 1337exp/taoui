@@ -105,6 +105,10 @@ New: `TaoCalendar` (an inline month calendar: `mode="single"` or `"range"`, keyb
 
 New: `TaoButton` `iconEnd`; an icon-only button (an icon and no text) is a square of the control height and warns in development without `aria-label`; `registerTaoIcons`, `taoIconNames`, type `TaoIconDef`; the prefix `tao-` is reserved for the built-in set.
 
+## Palettes (new, nothing to migrate)
+
+Added in this release, off until you ask: `@1337exp/taoui/palettes.css` with seven palettes (`data-tao-theme="sunset"`, plus `data-tao-mode="light"` for the light twin), `applyTaoPalette()` for your own, and `taoPalettes` for a picker. New roles in both default themes: `--tao-color-accent-2`, `--tao-glow`, `--tao-gradient`, `--tao-bg-atmosphere`; new class `.tao-atmosphere`. The mode attribute `data-tao-mode="light" | "dark"` works with the default colours too; `data-tao-theme="light"` is unchanged.
+
 ## Colour, tone and tokens
 
 | What | Before | Now |

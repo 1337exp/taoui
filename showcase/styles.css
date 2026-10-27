@@ -340,3 +340,20 @@
   color: inherit;
   text-decoration: underline;
 }
+
+/* the palette picker in the header / выбор палитры в шапке */
+.palette-select {
+  width: 150px;
+}
+
+.palette-swatches {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.palette-swatches i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.18);
+}
