@@ -50,6 +50,8 @@ export const localeRu: TaoLocale = {
     },
     drawer: { closeLabel: 'Закрыть' },
     dropdownMenu: { menuLabel: 'Меню' },
+    menubar: { ariaLabel: 'Строка меню' },
+    contextMenu: { menuLabel: 'Контекстное меню' },
     empty: { title: 'Ничего нет' },
     fileDrop: {
         clearLabel: 'Очистить файлы',

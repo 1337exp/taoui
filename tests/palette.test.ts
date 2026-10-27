@@ -151,7 +151,8 @@ describe('what every palette sets', () => {
 
 describe('the pinned files', () => {
     it.each(taoPalettes.map((p) => [p.name, p] as const))('%s.css is exactly what the generator writes (run `npm run palettes`)', (name, def) => {
-        expect(files[`../src/styles/palettes/${name}.css`]).toBe(paletteCss(def));
+        // git may check the files out with CRLF on Windows: the content is what is pinned, not the line ending
+        expect(files[`../src/styles/palettes/${name}.css`]!.split('\r\n').join('\n')).toBe(paletteCss(def));
     });
 
     it('index.css imports every palette', () => {

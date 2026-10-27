@@ -49,6 +49,8 @@ export const localeEn: TaoLocale = {
     },
     drawer: { closeLabel: 'Close' },
     dropdownMenu: { menuLabel: 'Menu' },
+    menubar: { ariaLabel: 'Menu bar' },
+    contextMenu: { menuLabel: 'Context menu' },
     empty: { title: 'Nothing here' },
     fileDrop: {
         clearLabel: 'Clear files',

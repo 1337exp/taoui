@@ -67,6 +67,7 @@ export const navGroups = [
       { id: 'tooltip', label: 'TaoTooltip' },
       { id: 'popover', label: 'TaoPopover' },
       { id: 'dropdown', label: 'TaoDropdownMenu' },
+      { id: 'menubar', label: 'Menubar / Context menu', aliases: ['TaoMenubar', 'TaoContextMenu', 'menu bar', 'context', 'меню', 'контекстное'] },
       { id: 'spoiler', label: 'Spoiler / Group', aliases: ['TaoSpoiler', 'TaoSpoilerGroup'] },
     ],
   },

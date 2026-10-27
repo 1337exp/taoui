@@ -56,7 +56,7 @@ The ecosystem moves together: **TaoUX 0.2.0** and **taofx** already follow 5.0 (
 | Escape in Modal, Drawer, `confirm()`, popups | handled on the dialog, only with focus inside | one document listener, **top layer only**: a Select inside a Modal closes first, the Modal on the next press |
 | Popup keyboard | Select had Home / End, the others did not | the arrows skip disabled items, Home / End and type-ahead where it is a list (Select, menus) |
 
-New: `TaoMenu` (the menu panel with submenus, checkbox and radio items, type-ahead, `aria-activedescendant`), types `TaoMenuItem` and friends, `TaoPlacement`; composables behind them (`useFloating`, `useDismiss`, `useLayer`, `useListNav`) are internal for now.
+New: `TaoMenu` (the menu panel with submenus, checkbox and radio items, type-ahead, `aria-activedescendant`), `TaoMenubar` and `TaoContextMenu` on it, types `TaoMenuItem` and friends, `TaoPlacement`; composables behind them (`useFloating`, `useDismiss`, `useLayer`, `useListNav`) are internal for now.
 
 ## Packaging and styles
 
