@@ -13,11 +13,23 @@ const props = withDefaults(
         /** How many slides fit in the viewport. 5 = product strip. 1 = one card. */
         perView?: number;
         controls?: boolean;
-        /** Interval in ms. 0 — off. Pauses on hover, keyboard focus, drag, and reduced motion. */
+        /**
+         * Time per slide in ms. 0 — off. The current indicator fills over this time and the slide changes when it is full.
+         * Pauses on hover, keyboard focus, touch / drag and a hidden tab; off with reduced motion.
+         * Время на слайд в мс. 0 — выключено. Текущий индикатор заливается за это время, по заполнении слайд меняется.
+         */
         autoplay?: number;
         loop?: boolean;
-        /** Pips under the track: one per snap. Inactive are dots, the current one stretches into a pill. */
-        dots?: boolean;
+        /**
+         * Under the track, one mark per snap: `dots` (the current one stretches into a pill), `bars` (equal bars),
+         * `progress` (one bar: the fill of the current slide, or the position when there is no autoplay).
+         * Под лентой, по метке на каждую позицию: `dots`, `bars` (полоски), `progress` (одна полоска).
+         */
+        indicator?: 'dots' | 'bars' | 'progress';
+        /** With autoplay: a button that stops and resumes it (autoplay that moves for more than 5 s must be stoppable). / С autoplay: кнопка остановки и запуска. */
+        pausable?: boolean;
+        pauseLabel?: string;
+        playLabel?: string;
         ariaLabel?: string;
         prevLabel?: string;
         nextLabel?: string;
@@ -32,7 +44,8 @@ const props = withDefaults(
         controls: true,
         autoplay: 0,
         loop: false,
-        dots: false,
+        indicator: undefined,
+        pausable: true,
     },
 );
 const l10n = useLocaleText(props, 'carousel');
@@ -60,6 +73,13 @@ const dragging = ref(false);
 const gliding = ref(false);
 const hoverPaused = ref(false);
 const focusPaused = ref(false);
+/** The user pressed the pause button. / Нажата кнопка паузы. */
+const userPaused = ref(false);
+const pageHidden = ref(false);
+const mounted = ref(false);
+const reducedMotion = ref(false);
+/** Restarts the fill: a new key for every slide. / Перезапускает заливку: новый ключ на каждый слайд. */
+const fillEpoch = ref(0);
 
 let dragStartX = 0;
 let dragStartScroll = 0;
@@ -71,7 +91,6 @@ let settleTimer = 0;
 /** Recent pointer positions for the release speed. / Последние позиции указателя — для скорости при отпускании. */
 let samples: { x: number; t: number }[] = [];
 let focusFrame = 0;
-let autoplayTimer = 0;
 
 const step = computed(() => Math.max(1, Math.round(props.perView)));
 const lastIndex = computed(() => Math.max(count.value - step.value, 0));
@@ -79,7 +98,24 @@ const atStart = computed(() => !props.loop && index.value <= 0);
 const atEnd = computed(() => !props.loop && index.value >= lastIndex.value);
 const snapCount = computed(() => (count.value <= 0 ? 0 : lastIndex.value + 1));
 const showControls = computed(() => props.controls && count.value > step.value);
-const showDots = computed(() => props.dots && snapCount.value > 1);
+const showIndicator = computed(() => Boolean(props.indicator) && snapCount.value > 1);
+// the fill exists while there is somewhere to go (after mount: the server cannot know about reduced motion)
+const armed = computed(
+    () =>
+        mounted.value &&
+        props.autoplay > 0 &&
+        !reducedMotion.value &&
+        count.value > step.value &&
+        (props.loop || index.value < lastIndex.value),
+);
+const paused = computed(
+    () => hoverPaused.value || focusPaused.value || dragging.value || gliding.value || userPaused.value || pageHidden.value,
+);
+const showToggle = computed(() => props.pausable && mounted.value && props.autoplay > 0 && !reducedMotion.value && count.value > step.value);
+// the built-in indicator draws the fill; without one a hidden timer element keeps the time
+const fillVisible = computed(() => showIndicator.value);
+const fillStyle = computed(() => ({ animationDuration: `${props.autoplay}ms` }));
+const progressRatio = computed(() => (snapCount.value > 0 ? (index.value + 1) / snapCount.value : 0));
 
 const trackStyle = computed(() => ({
     '--tao-carousel-peek': `${Math.max(props.peek, 0)}px`,
@@ -165,52 +201,19 @@ function goTo(next: number, instant = false) {
     setIndex(page);
 }
 
-function stopAutoplay() {
-    window.clearInterval(autoplayTimer);
-    autoplayTimer = 0;
-}
-
-function canAutoplay() {
-    return (
-        props.autoplay > 0 &&
-        count.value > step.value &&
-        !hoverPaused.value &&
-        !focusPaused.value &&
-        !dragging.value &&
-        !gliding.value &&
-        typeof document !== 'undefined' &&
-        !document.hidden &&
-        !prefersReducedMotion() &&
-        (props.loop || index.value < lastIndex.value)
-    );
-}
-
-function tickAutoplay() {
-    if (!canAutoplay()) {
-        stopAutoplay();
-        return;
+/** The fill animation ended: time for the next slide. / Заливка закончилась: пора на следующий слайд. */
+function onFillEnd() {
+    if (armed.value && !paused.value) {
+        goTo(index.value + step.value);
     }
-
-    goTo(index.value + step.value);
-}
-
-function syncAutoplay() {
-    stopAutoplay();
-    if (!canAutoplay()) {
-        return;
-    }
-
-    autoplayTimer = window.setInterval(tickAutoplay, props.autoplay);
 }
 
 function onMouseEnter() {
     hoverPaused.value = true;
-    stopAutoplay();
 }
 
 function onMouseLeave() {
     hoverPaused.value = false;
-    syncAutoplay();
 }
 
 function hasKeyboardFocus(root: HTMLElement) {
@@ -234,14 +237,7 @@ function scheduleFocusPause(event: FocusEvent) {
             return;
         }
 
-        const next = hasKeyboardFocus(root);
-        focusPaused.value = next;
-        if (next) {
-            stopAutoplay();
-            return;
-        }
-
-        syncAutoplay();
+        focusPaused.value = hasKeyboardFocus(root);
     });
 }
 
@@ -339,7 +335,6 @@ function finishGlide() {
     glideFrame = 0;
     gliding.value = false;
     setIndex(nearestIndex());
-    syncAutoplay();
 }
 
 /**
@@ -360,7 +355,6 @@ function glideTo(target: number, velocity: number) {
 
     if (Math.abs(distance) < 1 || prefersReducedMotion()) {
         el.scrollLeft = target;
-        syncAutoplay();
         return;
     }
 
@@ -417,7 +411,6 @@ function endDrag(keepClickGuard = false) {
         glideTo(glideTarget(el.scrollLeft, velocity), velocity);
         return;
     }
-    syncAutoplay();
 }
 
 function onPointerDown(event: PointerEvent) {
@@ -470,15 +463,14 @@ function onLostPointerCapture() {
 function onWindowBlur() {
     endDrag();
     hoverPaused.value = false;
-    syncAutoplay();
 }
 
 function onVisibilityChange() {
+    pageHidden.value = document.hidden;
     if (document.hidden) {
         endDrag();
         hoverPaused.value = false;
     }
-    syncAutoplay();
 }
 
 function onClickCapture(event: MouseEvent) {
@@ -511,16 +503,21 @@ watch(
     },
 );
 
+// any change of slide (by hand, by a key, by the fill) starts the fill again
 watch(
-    () => [props.autoplay, props.loop, count.value, dragging.value, gliding.value, index.value] as const,
-    () => syncAutoplay(),
+    () => [index.value, props.autoplay] as const,
+    () => {
+        fillEpoch.value += 1;
+    },
 );
 
 onMounted(() => {
     refreshCount();
+    mounted.value = true;
+    reducedMotion.value = prefersReducedMotion();
+    pageHidden.value = document.hidden;
     nextTick(() => {
         goTo(props.modelValue);
-        syncAutoplay();
     });
     document.addEventListener('visibilitychange', onVisibilityChange);
     window.addEventListener('blur', onWindowBlur);
@@ -535,7 +532,6 @@ onBeforeUnmount(() => {
     window.clearTimeout(settleTimer);
     cancelAnimationFrame(scrollFrame);
     cancelAnimationFrame(focusFrame);
-    stopAutoplay();
     document.removeEventListener('visibilitychange', onVisibilityChange);
     window.removeEventListener('blur', onWindowBlur);
     window.removeEventListener('pagehide', onWindowBlur);
@@ -609,24 +605,70 @@ onBeforeUnmount(() => {
             </slot>
         </div>
 
-        <slot name="dots" :index="index" :count="snapCount" :go="goTo">
-            <div v-if="showDots" class="tao-carousel__dots" role="group" :aria-label="l10n.dotsLabel">
-                <button
-                    v-for="n in snapCount"
-                    :key="n"
-                    type="button"
-                    class="tao-carousel__dot"
-                    :class="{ 'tao-carousel__dot--active': n - 1 === index }"
-                    :aria-label="l10n.slideLabel.replace('{n}', String(n)).replace('{count}', String(snapCount))"
-                    :aria-current="n - 1 === index ? 'true' : undefined"
-                    @click="goTo(n - 1)"
-                >
-                    <slot name="dot" :active="n - 1 === index" :index="n - 1" :go="() => goTo(n - 1)">
-                        <span class="tao-carousel__pip" />
-                    </slot>
-                </button>
-            </div>
-        </slot>
+        <div v-if="showIndicator || showToggle || armed" class="tao-carousel__footer">
+            <slot name="dots" :index="index" :count="snapCount" :go="goTo">
+                <div v-if="showIndicator" class="tao-carousel__indicator" :class="`tao-carousel__indicator--${indicator}`" role="group" :aria-label="l10n.dotsLabel">
+                    <div v-if="indicator === 'progress'" class="tao-carousel__bar">
+                        <span
+                            v-if="armed"
+                            :key="fillEpoch"
+                            class="tao-carousel__fill"
+                            :class="{ 'tao-carousel__fill--paused': paused }"
+                            :style="fillStyle"
+                            @animationend="onFillEnd"
+                        />
+                        <span v-else class="tao-carousel__position" :style="{ transform: `scaleX(${progressRatio})` }" />
+                    </div>
+                    <template v-else>
+                        <button
+                            v-for="n in snapCount"
+                            :key="n"
+                            type="button"
+                            class="tao-carousel__dot"
+                            :class="{ 'tao-carousel__dot--active': n - 1 === index }"
+                            :aria-label="l10n.slideLabel.replace('{n}', String(n)).replace('{count}', String(snapCount))"
+                            :aria-current="n - 1 === index ? 'true' : undefined"
+                            @click="goTo(n - 1)"
+                        >
+                            <slot name="dot" :active="n - 1 === index" :index="n - 1" :go="() => goTo(n - 1)">
+                                <span class="tao-carousel__pip" :class="{ 'tao-carousel__pip--filling': n - 1 === index && armed }">
+                                    <span
+                                        v-if="n - 1 === index && armed"
+                                        :key="fillEpoch"
+                                        class="tao-carousel__fill"
+                                        :class="{ 'tao-carousel__fill--paused': paused }"
+                                        :style="fillStyle"
+                                        @animationend="onFillEnd"
+                                    />
+                                </span>
+                            </slot>
+                        </button>
+                    </template>
+                </div>
+            </slot>
+
+            <button
+                v-if="showToggle"
+                type="button"
+                class="tao-carousel__toggle"
+                :aria-label="userPaused ? l10n.playLabel : l10n.pauseLabel"
+                :aria-pressed="userPaused"
+                @click="userPaused = !userPaused"
+            >
+                <TaoIcon :name="userPaused ? 'tao-play' : 'tao-pause'" :size="12" />
+            </button>
+
+            <!-- no built-in indicator to fill (none, or your own `dots` slot): an invisible one keeps the time -->
+            <span v-if="armed && (!fillVisible || $slots.dots)" class="tao-carousel__timer" aria-hidden="true">
+                <span
+                    :key="fillEpoch"
+                    class="tao-carousel__fill"
+                    :class="{ 'tao-carousel__fill--paused': paused }"
+                    :style="fillStyle"
+                    @animationend="onFillEnd"
+                />
+            </span>
+        </div>
     </div>
 </template>
 
@@ -740,7 +782,14 @@ onBeforeUnmount(() => {
     cursor: not-allowed;
 }
 
-.tao-carousel__dots {
+.tao-carousel__footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--tao-space-2);
+}
+
+.tao-carousel__indicator {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -763,9 +812,11 @@ onBeforeUnmount(() => {
 }
 
 .tao-carousel__pip {
+    position: relative;
     display: block;
     width: 6px;
     height: 6px;
+    overflow: hidden;
     border-radius: var(--tao-radius-full);
     background: var(--tao-color-border-strong);
     transition: width var(--tao-duration-base) var(--tao-ease-base), background var(--tao-duration-base) var(--tao-ease-base);
@@ -774,6 +825,11 @@ onBeforeUnmount(() => {
 .tao-carousel__dot--active .tao-carousel__pip {
     width: 18px;
     background: var(--tao-color-accent);
+}
+
+/* with autoplay the current mark is the empty track and the fill runs over it */
+.tao-carousel__dot--active .tao-carousel__pip--filling {
+    background: var(--tao-color-border-strong);
 }
 
 .tao-carousel__dot:hover:not(.tao-carousel__dot--active) .tao-carousel__pip {
@@ -786,12 +842,115 @@ onBeforeUnmount(() => {
     border-radius: var(--tao-radius-full);
 }
 
+/* bars: equal wide marks */
+.tao-carousel__indicator--bars {
+    gap: var(--tao-space-1);
+}
+
+.tao-carousel__indicator--bars .tao-carousel__dot {
+    width: 32px;
+    height: 20px;
+}
+
+.tao-carousel__indicator--bars .tao-carousel__pip,
+.tao-carousel__indicator--bars .tao-carousel__dot--active .tao-carousel__pip {
+    width: 100%;
+    height: 4px;
+}
+
+.tao-carousel__indicator--bars .tao-carousel__dot:hover:not(.tao-carousel__dot--active) .tao-carousel__pip {
+    background: var(--tao-color-text-muted);
+}
+
+/* progress: one bar */
+.tao-carousel__indicator--progress {
+    flex: 1 1 auto;
+}
+
+.tao-carousel__bar {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    overflow: hidden;
+    border-radius: var(--tao-radius-full);
+    background: var(--tao-color-border-strong);
+}
+
+.tao-carousel__position {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--tao-color-accent);
+    transform-origin: left;
+    transition: transform var(--tao-duration-slow) var(--tao-ease-base);
+}
+
+/* The fill is the only clock of autoplay: it runs for the interval, and its end moves to the next slide.
+   Заливка — единственные часы autoplay: идёт весь интервал, по её окончании — следующий слайд. */
+.tao-carousel__fill {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--tao-color-accent);
+    transform-origin: left;
+    transform: scaleX(0);
+    animation-name: tao-carousel-fill;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+}
+
+.tao-carousel__fill--paused {
+    animation-play-state: paused;
+}
+
+@keyframes tao-carousel-fill {
+    to {
+        transform: scaleX(1);
+    }
+}
+
+.tao-carousel__timer {
+    position: relative;
+    display: block;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.tao-carousel__toggle {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: var(--tao-radius-full);
+    background: transparent;
+    color: var(--tao-color-text-muted);
+    cursor: pointer;
+    transition: var(--tao-transition-base);
+}
+
+.tao-carousel__toggle:hover {
+    color: var(--tao-color-text-strong);
+    background: var(--tao-color-surface-hover);
+}
+
+.tao-carousel__toggle:focus-visible {
+    outline: 2px solid var(--tao-color-accent);
+    outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: reduce) {
     .tao-carousel__track {
         scroll-behavior: auto;
     }
 
-    .tao-carousel__pip {
+    .tao-carousel__pip,
+    .tao-carousel__position {
         transition: none;
     }
 }

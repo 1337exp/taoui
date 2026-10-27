@@ -95,7 +95,7 @@ const closed = ref(false)
             <div class="product-card product-card--gallery">
               <TaoCard :padding="12" :radius="12">
                 <template #media>
-                  <TaoCarousel v-model="cardGallery" :controls="false" dots :aria-label="tr('Product photos', 'Фото товара')">
+                  <TaoCarousel v-model="cardGallery" :controls="false" indicator="dots" :aria-label="tr('Product photos', 'Фото товара')">
                     <img
                       v-for="(src, index) in cardPhotos"
                       :key="index"
@@ -125,7 +125,7 @@ const closed = ref(false)
 
 &lt;TaoCard :padding="12" :radius="12"&gt;
   &lt;template #media&gt;
-    &lt;TaoCarousel :controls="false" dots&gt;
+    &lt;TaoCarousel :controls="false" indicator="dots"&gt;
       &lt;img v-for="src in photos" :src="src" draggable="false" /&gt;
     &lt;/TaoCarousel&gt;
   &lt;/template&gt;
@@ -181,7 +181,7 @@ const closed = ref(false)
   gap: 0;
 }
 
-.product-card--gallery :deep(.tao-carousel__dots) {
+.product-card--gallery :deep(.tao-carousel__footer) {
   position: absolute;
   right: 0;
   bottom: 8px;

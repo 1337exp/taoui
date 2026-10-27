@@ -50,7 +50,7 @@
 
 - **TaoBlock** — container with padding and radius
 - **TaoButton** — `variant`: `primary` / `secondary` / `ghost` / `text`; `tone` colours any of them (accent by default, neutral, success, danger, warning, info)
-- **TaoCard** — card with cover / header / footer slots. `#cover` can be a photo or `TaoCarousel`. `flush` is a tile (no padding/shadow, fills the cell); `#overlay` is a scrim on the cover
+- **TaoCard** — card with media / header / title / footer slots and a `#corner` (a tag, a menu button). `#media` can be a photo or `TaoCarousel`; `closable` adds a cross and the `close` event. `flush` is a tile (no padding/shadow, fills the cell); `#overlay` is a scrim on the media
 - **TaoCopy** — clipboard icon. After a click, a “Copied” tooltip; if the trigger is gone, the tooltip is too
 - **TaoInput** — text field with v-model, validation, and `#prefix` / `#suffix` slots (icon or text inside the frame)
 - **TaoInputGroup** — outer glue: `#before` | field | `#after` (protocol, unit, button)
@@ -103,7 +103,7 @@
 - **TaoStages** — stage list: `wait` / `work` / `ok` / `bad`. Not a linear stepper
 - **TaoSkeleton** — loading placeholder (text / title / circle / rect)
 - **TaoCounter** — flipping digits (not an input)
-- **TaoCarousel** — strip: full slide with `autoplay`, card with `peek`, row with `per-view`. Arrows via `controls` or `#prev` / `#next`, dots via `dots`
+- **TaoCarousel** — strip: full slide with `autoplay`, card with `peek`, row with `per-view`. Arrows via `controls` or `#prev` / `#next`; marks under the strip via `indicator` (`dots`, `bars` or `progress`). With `autoplay` the current mark fills over the interval and the slide changes when it is full; hover, keyboard focus, touch, a hidden tab and the pause button stop it, `prefers-reduced-motion` turns it off
 - **TaoAvatar** — photo or initials, sizes `small` / `medium` / `large`. Status `dot` and `count`
 - **TaoTag** — badge with tones. `#prefix` (avatar), `closable` dismisses the chip, `flat` drops the border
 - **TaoAlert** — inline page/form banner (success / error / warning / info)
@@ -539,13 +539,13 @@ The `cell-<key>` slot replaces a cell. `loading` shows an overlay; an empty list
 
 <TaoCounter :value="score" :max-digits="6" />
 
-<TaoCarousel :autoplay="4000" loop dots>
+<TaoCarousel :autoplay="4000" loop indicator="bars">
   <article v-for="item in banners" :key="item.id" class="hero">
     <strong>{{ item.title }}</strong>
     <span>{{ item.text }}</span>
   </article>
 </TaoCarousel>
-<TaoCarousel :peek="72" :controls="false" dots>…</TaoCarousel>
+<TaoCarousel :peek="72" :controls="false" indicator="dots">…</TaoCarousel>
 <TaoCarousel v-model="slide" :per-view="5" :peek="28">
   <template #prev></template>
   <template #next="{ go, disabled }">
