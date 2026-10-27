@@ -43,6 +43,8 @@ const emit = defineEmits<{
     close: [reason: TaoMenuCloseReason];
     /** The pointer entered a submenu panel (its parent stops a pending close). / Указатель вошёл в панель подменю. */
     enter: [];
+    /** ← / → on the top level with nothing to open or close: the owner (a menu bar) moves to the neighbour menu. / ← / → на верхнем уровне: владелец (полоса меню) переходит к соседнему меню. */
+    edge: [direction: 'prev' | 'next'];
 }>();
 
 defineSlots<{
@@ -149,6 +151,9 @@ function onKeydown(event: KeyboardEvent) {
     } else if (event.key === 'ArrowLeft' && isSub) {
         event.preventDefault();
         emit('close', 'escape');
+    } else if ((event.key === 'ArrowLeft' || event.key === 'ArrowRight') && !isSub) {
+        event.preventDefault();
+        emit('edge', event.key === 'ArrowLeft' ? 'prev' : 'next');
     } else if (event.key === 'Tab') {
         event.preventDefault();
         tree.closeAll('tab');

@@ -35,7 +35,9 @@ import TaoSlider from './components/TaoSlider.vue';
 import TaoRangeSlider from './components/TaoRangeSlider.vue';
 import TaoFileDrop from './components/TaoFileDrop.vue';
 import TaoDropdownMenu from './components/TaoDropdownMenu.vue';
+import TaoContextMenu from './components/TaoContextMenu.vue';
 import TaoMenu from './components/TaoMenu.vue';
+import TaoMenubar from './components/TaoMenubar.vue';
 import TaoPinCode from './components/TaoPinCode.vue';
 import TaoLink from './components/TaoLink.vue';
 import TaoFormField from './components/TaoFormField.vue';
@@ -114,6 +116,8 @@ const components = [
     TaoFileDrop,
     TaoDropdownMenu,
     TaoMenu,
+    TaoMenubar,
+    TaoContextMenu,
     TaoPinCode,
     TaoLink,
     TaoFormField,
@@ -208,6 +212,8 @@ export {
     TaoFileDrop,
     TaoDropdownMenu,
     TaoMenu,
+    TaoMenubar,
+    TaoContextMenu,
     TaoPinCode,
     TaoLink,
     TaoFormField,

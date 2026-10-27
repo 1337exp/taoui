@@ -48,6 +48,8 @@ export interface TaoLocale {
     };
     drawer: { closeLabel: string };
     dropdownMenu: { menuLabel: string };
+    menubar: { ariaLabel: string };
+    contextMenu: { menuLabel: string };
     empty: { title: string };
     fileDrop: {
         clearLabel: string;
