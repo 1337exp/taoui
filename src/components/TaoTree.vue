@@ -470,13 +470,15 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
 /* the checkbox is drawn, not a TaoCheckbox: a control inside a treeitem would be a second tab stop */
 .tao-tree__check {
     flex: none;
-    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: var(--tao-indicator-size);
     height: var(--tao-indicator-size);
     box-sizing: border-box;
-    border: 1.5px solid var(--tao-color-border-strong);
+    border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-sm);
-    background: var(--tao-color-surface);
+    background: var(--tao-color-surface-raised);
 }
 
 .tao-tree__check--checked,
@@ -485,24 +487,18 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
     background: var(--tao-color-accent);
 }
 
+/* the same marks as TaoCheckbox: a square inside when checked, a dash when mixed / те же знаки, что у TaoCheckbox */
 .tao-tree__check--checked::after {
     content: '';
-    position: absolute;
-    left: 50%;
-    top: 45%;
-    width: 30%;
-    height: 55%;
-    border: solid var(--tao-color-on-accent);
-    border-width: 0 2px 2px 0;
-    transform: translate(-50%, -50%) rotate(45deg);
+    width: calc(var(--tao-indicator-size) - 6px);
+    height: calc(var(--tao-indicator-size) - 6px);
+    border-radius: 2px;
+    background: var(--tao-color-on-accent);
 }
 
 .tao-tree__check--mixed::after {
     content: '';
-    position: absolute;
-    left: 22%;
-    right: 22%;
-    top: calc(50% - 1px);
+    width: calc(var(--tao-indicator-size) - 8px);
     height: 2px;
     border-radius: 1px;
     background: var(--tao-color-on-accent);

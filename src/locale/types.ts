@@ -51,6 +51,8 @@ export interface TaoLocale {
     menubar: { ariaLabel: string };
     nav: { ariaLabel: string; moreLabel: string };
     tree: { ariaLabel: string; loadingLabel: string };
+    /** `counterText`: `{checked}`, `{total}`. */
+    checklist: { selectAllLabel: string; counterText: string };
     contextMenu: { menuLabel: string };
     empty: { title: string };
     fileDrop: {
