@@ -26,7 +26,7 @@ export const navGroups = [
       { id: 'date', label: 'TaoDate / Range', aliases: ['TaoDate', 'TaoDateRange', 'DateRange'] },
       { id: 'pincode', label: 'TaoPinCode' },
       { id: 'color', label: 'TaoColorPicker / Input', aliases: ['TaoColorPicker', 'TaoColorInput', 'colorModel', 'палитра', 'цвет'] },
-      { id: 'slider', label: 'Progress / Slider / Timeline', aliases: ['TaoProgress', 'TaoSlider', 'TaoRangeSlider', 'TaoTimeline'] },
+      { id: 'slider', label: 'Progress / Slider / Scrubber', aliases: ['TaoProgress', 'TaoSlider', 'TaoRangeSlider', 'TaoScrubber', 'TaoTimeline', 'timeline'] },
       { id: 'filedrop', label: 'TaoFileDrop' },
     ],
   },

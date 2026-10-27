@@ -2,9 +2,11 @@
 import TaoIcon from './TaoIcon.vue';
 import { computed } from 'vue';
 import type { TaoStageItem, TaoStageStatus } from '../stage';
-import { taoLocale, useLocaleText } from '../locale';
+import { useLocaleText, useTaoLocale } from '../locale';
 
 defineOptions({ name: 'TaoStages' });
+
+const appLocale = useTaoLocale();
 
 const props = withDefaults(
     defineProps<{
@@ -33,7 +35,7 @@ function statusOf(item: TaoStageItem): TaoStageStatus {
 
 function itemLabel(item: TaoStageItem): string {
     const status = statusOf(item);
-    return `${item.label ?? item.key}, ${props.statusLabels[status] ?? taoLocale().stages.statusLabels[status]}`;
+    return `${item.label ?? item.key}, ${props.statusLabels[status] ?? appLocale.value.stages.statusLabels[status]}`;
 }
 
 const isRow = computed(() => props.direction === 'row');

@@ -129,6 +129,10 @@
     --tao-shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
     --tao-shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.3);
 
+    /* The colour list of TaoAnimatedBorder variant="rainbow", the one gradient that is not a theme colour.
+       Список цветов радужной рамки: единственный градиент, который не цвет темы. */
+    --tao-gradient-rainbow: #f79533, #f37055, #ef4e7b, #a166ab, #5073b8, #1098ad, #07b39b, #6fba82;
+
     /* ---------- Layers / Слои ----------
        One scale for everything that floats; components never write a literal z-index above content.
        Одна шкала для всего, что плавает; компоненты не пишут литералы z-index выше контента. */

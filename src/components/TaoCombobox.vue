@@ -1,16 +1,18 @@
 <script lang="ts" setup>
-import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useDismiss } from '../dismiss';
 import { useFloating } from '../floating';
-import { formFieldKey } from '../formField';
+import { useField } from '../formField';
 import { useLayer } from '../layers';
 import { stepEnabled } from '../listNav';
 import { listenFocusLoss } from '../focusLoss';
 import type { TaoSelectOption } from '../select';
 import { resolveSize, sizeClass, type TaoSize } from '../size';
-import { formatText, taoLocale, useLocaleText } from '../locale';
+import { formatText, useLocaleText, useTaoLocale } from '../locale';
 
 defineOptions({ name: 'TaoCombobox' });
+
+const appLocale = useTaoLocale();
 
 const props = withDefaults(
     defineProps<{
@@ -49,12 +51,8 @@ const emit = defineEmits<{
 
 type ComboRow = { kind: 'option'; option: TaoSelectOption } | { kind: 'create'; text: string };
 
-const field = inject(formFieldKey, null);
-const localId = useId();
+const { field, controlId, invalid, describedBy, localId } = useField(props);
 const listId = `${localId}-list`;
-const controlId = computed(() => field?.id ?? localId);
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
-const describedBy = computed(() => field?.describedBy.value);
 
 const open = ref(false);
 const focused = ref(false);
@@ -489,7 +487,7 @@ onBeforeUnmount(() => {
                         @mouseenter="!(row.kind === 'option' && row.option.disabled) && (activeIndex = index)"
                     >
                         <template v-if="row.kind === 'create'">
-                            <slot name="create" :text="row.text">{{ formatText(taoLocale().combobox.createText, { text: row.text }) }}</slot>
+                            <slot name="create" :text="row.text">{{ formatText(appLocale.combobox.createText, { text: row.text }) }}</slot>
                         </template>
                         <template v-else>{{ row.option.label }}</template>
                     </li>

@@ -63,7 +63,7 @@ const gridNotes = computed(() => [
     </Tr>
     <TaoGrid min="220px">
       <TaoCard v-for="item in gridProducts" :key="item.id" :padding="12" :radius="12">
-        <template #cover>
+        <template #media>
           <img class="product-card__photo" :src="stubPhoto(item.id)" :alt="item.title" />
         </template>
         <template #title>{{ item.title }}</template>
@@ -108,7 +108,7 @@ const gridNotes = computed(() => [
     <TaoGrid :cols="4">
       <TaoGridItem :col="2" :row="2">
         <TaoCard :padding="12" :radius="12">
-          <template #cover>
+          <template #media>
             <img class="product-card__photo" :src="stubPhoto('1')" alt="Gel Shine" />
           </template>
           <template #title>Gel Shine</template>
@@ -153,7 +153,7 @@ const gridNotes = computed(() => [
     <TaoGrid class="mosaic" :cols="4" gap="12px">
       <TaoGridItem :col="2" :row="3">
         <TaoCard flush :radius="6">
-          <template #cover>
+          <template #media>
             <img :src="stubPhoto('A', '#5c5346')" alt="" />
           </template>
           <template #overlay>
@@ -164,7 +164,7 @@ const gridNotes = computed(() => [
       </TaoGridItem>
       <TaoGridItem :col="2">
         <TaoCard flush :radius="6">
-          <template #cover>
+          <template #media>
             <img :src="stubPhoto('D', '#4a4558')" alt="" />
           </template>
           <template #overlay>
@@ -174,7 +174,7 @@ const gridNotes = computed(() => [
       </TaoGridItem>
       <TaoGridItem>
         <TaoCard flush :radius="6">
-          <template #cover>
+          <template #media>
             <img :src="stubPhoto('B', '#6a4a3a')" alt="" />
           </template>
           <template #overlay>
@@ -203,7 +203,7 @@ const gridNotes = computed(() => [
       </TaoGridItem>
       <TaoGridItem>
         <TaoCard flush :radius="6">
-          <template #cover>
+          <template #media>
             <img :src="stubPhoto('C', '#3f4a55')" alt="" />
           </template>
           <template #overlay>
@@ -233,7 +233,7 @@ const gridNotes = computed(() => [
     <div class="code-block">
       <pre><code>&lt;TaoGrid min="220px"&gt;
   &lt;TaoCard v-for="item in products" :key="item.id" :padding="12" :radius="12"&gt;
-    &lt;template #cover&gt;&lt;img :src="item.photo" alt="" /&gt;&lt;/template&gt;
+    &lt;template #media&gt;&lt;img :src="item.photo" alt="" /&gt;&lt;/template&gt;
     &lt;template #title&gt;Gel Shine&lt;/template&gt;
     &lt;template #footer&gt;490 ₽&lt;/template&gt;
   &lt;/TaoCard&gt;
@@ -245,7 +245,7 @@ const gridNotes = computed(() => [
 &lt;/TaoGrid&gt;
 
 &lt;TaoCard flush :radius="6"&gt;
-  &lt;template #cover&gt;&lt;img src="cover.jpg" alt="" /&gt;&lt;/template&gt;
+  &lt;template #media&gt;&lt;img src="cover.jpg" alt="" /&gt;&lt;/template&gt;
   &lt;template #overlay&gt;
     &lt;div class="mosaic-mega-gradient" /&gt;
     &lt;span class="mosaic-caption"&gt;North Paper Mill&lt;/span&gt;

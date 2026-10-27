@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, nextTick, useId } from 'vue';
+import type { TaoJustify } from '../layout';
 import { sizeClass, type TaoSize } from '../size';
 import type { TaoTabItem } from '../tabs';
 
@@ -10,14 +11,14 @@ const props = withDefaults(
         /** Tabs: `{ value, label, disabled? }`, same shape as Select options. / Вкладки, как опции Select. */
         items?: TaoTabItem[];
         modelValue: string;
-        /** Выравнивание вкладок по горизонтали (CSS justify-content). */
-        justify?: string;
+        /** Where the tabs sit along the row, as in TaoFlex; without it they start at the left. / Где вкладки стоят в ряду, как у TaoFlex; без него — слева. */
+        justify?: TaoJustify;
         /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
     }>(),
     {
         items: undefined,
-        justify: '',
+        justify: undefined,
     },
 );
 
@@ -89,7 +90,7 @@ function onKeydown(event: KeyboardEvent) {
 
 <template>
     <div class="tao-tabs" :class="sizeClass(size)">
-        <div class="tao-tabs__list" :style="{ justifyContent: justify || undefined }" role="tablist" @keydown="onKeydown">
+        <div class="tao-tabs__list" :style="{ justifyContent: justify }" role="tablist" @keydown="onKeydown">
             <button
                 v-for="tab in list"
                 :key="tab.value"

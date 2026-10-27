@@ -55,17 +55,19 @@ export const propTablesEn = {
     {
       title: 'TaoCard',
       rows: [
-        r('padding', 'number | string | (…)[]', '20', 'Padding of the card body. A number is px, a string is CSS. With flush — 0'),
-        r('radius', 'number | string', '8', 'Corner radius. A number is px, a string is CSS'),
+        r('padding', 'number | string | (…)[]', 'var(--tao-space-5)', 'Padding of the card body. A number is px, a string is CSS. With flush — 0. Published as --tao-pad'),
+        r('radius', 'number | string', 'var(--tao-radius-panel)', 'Corner radius. A number is px, a string is CSS. Published as --tao-radius; children get --tao-radius-inner'),
         r('shadow', 'boolean', 'true', 'The regular shadow. Off with flush'),
         r('shadowBottomOnly', 'boolean', 'false', 'A line at the bottom of the card, not a scrim over the photo'),
         r('flush', 'boolean', 'false', 'A tile: no padding and no shadow, cover/body fill the whole cell'),
         r('hover', 'boolean', 'false', 'An accent outline on hover'),
         r('surface', "'flat' | 'grain' | 'glass'", "'flat'", 'What the card is made of: fill / grain / glass. See “Surfaces”'),
         r('active', 'boolean', 'false', 'The selected state'),
-        r('overflow', 'boolean', 'false', 'Do not clip the content (cover / carousel)'),
+        r('overflow', 'boolean', 'false', 'Do not clip the content (media / carousel)'),
+        r('closable', 'boolean', 'false', 'A close button in the top right corner; the parent removes the card on the close event'),
+        r('closeLabel', 'string', "'Close'", 'aria-label of the close button'),
       ],
-      slots: 'default — the body. #cover, #overlay (a scrim over the cover or the whole tile), #header, #title, #sub, #footer.',
+      slots: 'default — the body. #media (a photo or a carousel on top), #overlay (a scrim over the media or the whole tile), #header (the top row: laid out as you like), #title, #sub, #footer, #corner (the top right corner: a tag, a menu button; the title leaves room for it, the width is the variable --tao-card-corner-size). The close event — the cross was pressed.',
     },
   ],
   copy: [
@@ -359,7 +361,7 @@ export const propTablesEn = {
       ],
     },
     {
-      title: 'TaoTimeline',
+      title: 'TaoScrubber',
       rows: [
         r('v-model', 'number', '—', 'The current time. Required'),
         r('v-model:playing', 'boolean', 'false', 'Whether playback is running (the look of the button). The component does not keep time itself'),
@@ -644,12 +646,16 @@ export const propTablesEn = {
     {
       title: 'TaoAnimatedBorder',
       rows: [
+        r('variant', "'rainbow' | 'tone'", "'rainbow'", 'What the border is made of: the rainbow or the colours of a tone'),
+        r('tone', 'TaoToneName', "'accent'", 'The tone for variant="tone"; the theme accent without it'),
+        r('colors', 'string[]', '—', 'Your own colours (any CSS colour), they win over variant'),
+        r('radius', 'number | string', 'var(--tao-radius-panel)', 'Corner radius of the content; the border outside is that plus its width'),
         r('borderWidth', 'number', '3', 'The outline thickness in px'),
         r('speed', 'number', '6', 'The duration of one turn in seconds'),
         r('light', 'boolean', 'false', 'A soft glow around the frame'),
         r('glow', 'number', '16', 'The glow radius in px. Makes sense with light'),
       ],
-      slots: 'default — the content inside the frame.',
+      slots: 'default — the content inside the frame. With prefers-reduced-motion the gradient stands still.',
     },
   ],
   modal: [
@@ -763,7 +769,7 @@ export const propTablesEn = {
         r('items', 'TaoTabItem[]', '—', '{ value, label, disabled? } — like Select options'),
         r('@change', 'value', '—', 'The user picked another tab'),
 
-        r('justify', 'string', "''", 'CSS justify-content for aligning tabs (center, flex-end, space-between, etc.)'),
+        r('justify', 'TaoJustify', '—', 'Where the tabs sit in the row, as in TaoFlex: flex-start, center, flex-end, space-between, space-around, space-evenly. Without it, at the left'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'The tab height as TaoButton (26 / 36 / 44). Without it — the size of the ancestors'),
       ],
       slots: 'default="{ key }" — the content of the active panel.',

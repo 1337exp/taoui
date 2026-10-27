@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoCard, TaoButton, TaoCarousel } from '@1337exp/taoui'
+import { TaoCard, TaoButton, TaoCarousel, TaoTag } from '@1337exp/taoui'
 import { stubPhoto } from '../stubPhoto.js'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { tr } from '../i18n.js'
@@ -11,6 +11,7 @@ defineOptions({ name: 'DemoCard' })
 
 const cardPhotos = [stubPhoto('1'), stubPhoto('2'), stubPhoto('3')]
 const cardGallery = ref(0)
+const closed = ref(false)
 </script>
 
 <template>
@@ -19,14 +20,14 @@ const cardGallery = ref(0)
           <Tr>
             <template #en>
               <p>
-                A card with cover / header / footer slots. The cover is any content: a photo or a carousel.
+                A card with media / header / title / footer slots and a corner. The media is any content: a photo or a carousel; the corner takes a tag or a menu button, <code>closable</code> adds a cross.
                 The <code>hover</code> prop gives an accent outline on hover — it is off for the products below.
                 For a tile in a grid — <code>flush</code> and the <code>#overlay</code> slot (a gradient over the photo).
               </p>
             </template>
             <template #ru>
               <p>
-                Карточка со слотами cover / header / footer. Обложка — любой контент: фото или карусель.
+                Карточка со слотами media / header / title / footer и углом. Media — любой контент: фото или карусель; в угол — тег или кнопка меню, <code>closable</code> добавляет крестик.
                 Проп <code>hover</code> даёт обводку акцентом при наведении — у товаров ниже он выключен.
                 Для плитки в сетке — <code>flush</code> и слот <code>#overlay</code> (градиент поверх фото).
               </p>
@@ -34,7 +35,7 @@ const cardGallery = ref(0)
           </Tr>
           
           <TaoCard :padding="20" :radius="12">
-            <template #cover>
+            <template #media>
               <div class="card-cover"></div>
             </template>
             <template #header>
@@ -49,17 +50,33 @@ const cardGallery = ref(0)
             </template>
           </TaoCard>
     
+          <h3>{{ tr('Corner and closable', 'Угол и closable') }}</h3>
+          <div style="display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+            <TaoCard v-if="!closed">
+              <template #corner><TaoTag tone="info">{{ tr('new', 'новое') }}</TaoTag></template>
+              <template #title>{{ tr('A tag in the corner', 'Тег в углу') }}</template>
+              <template #sub>{{ tr('The title keeps out of its way', 'Заголовок обходит его') }}</template>
+              {{ tr('Long titles do not run under the tag.', 'Длинные заголовки не заезжают под тег.') }}
+            </TaoCard>
+            <TaoCard v-if="!closed" closable @close="closed = true">
+              <template #title>{{ tr('Closable', 'Закрываемая') }}</template>
+              <template #sub>{{ tr('The parent removes it on close', 'Убирает родитель по close') }}</template>
+              {{ tr('Press the cross.', 'Нажмите на крестик.') }}
+            </TaoCard>
+            <TaoButton v-else variant="secondary" @click="closed = false">{{ tr('Bring the cards back', 'Вернуть карточки') }}</TaoButton>
+          </div>
+
           <h3>{{ tr('Product', 'Товар') }}</h3>
           <Tr>
             <template #en>
               <p class="carousel-note">
-                220px wide is the showcase wrapper; the Card itself is 100%. One photo — a <code>TaoImage</code> in <code>#cover</code>.
+                220px wide is the showcase wrapper; the Card itself is 100%. One photo — a <code>TaoImage</code> in <code>#media</code>.
                 Several — a <code>TaoCarousel</code> in the same slot: no arrows, dots, swipe.
               </p>
             </template>
             <template #ru>
               <p class="carousel-note">
-                Ширина 220px — в витрине, сам Card на 100%. Одно фото — <code>TaoImage</code> в <code>#cover</code>.
+                Ширина 220px — в витрине, сам Card на 100%. Одно фото — <code>TaoImage</code> в <code>#media</code>.
                 Несколько — <code>TaoCarousel</code> туда же: без стрелок, точки, свайп.
               </p>
             </template>
@@ -67,7 +84,7 @@ const cardGallery = ref(0)
           <div class="product-cards">
             <div class="product-card">
               <TaoCard :padding="12" :radius="12">
-                <template #cover>
+                <template #media>
                   <img class="product-card__photo" :src="cardPhotos[0]" :alt="tr('Nova sneakers', 'Кроссовки Nova')" />
                 </template>
                 <template #title>Nova</template>
@@ -77,7 +94,7 @@ const cardGallery = ref(0)
             </div>
             <div class="product-card product-card--gallery">
               <TaoCard :padding="12" :radius="12">
-                <template #cover>
+                <template #media>
                   <TaoCarousel v-model="cardGallery" :controls="false" dots :aria-label="tr('Product photos', 'Фото товара')">
                     <img
                       v-for="(src, index) in cardPhotos"
@@ -98,7 +115,7 @@ const cardGallery = ref(0)
     
           <div class="code-block">
             <pre><code>&lt;TaoCard :padding="12" :radius="12"&gt;
-  &lt;template #cover&gt;
+  &lt;template #media&gt;
     &lt;img src="photo.jpg" alt="{{ tr('Product', 'Товар') }}" /&gt;
   &lt;/template&gt;
   &lt;template #title&gt;Nova&lt;/template&gt;
@@ -107,7 +124,7 @@ const cardGallery = ref(0)
 &lt;/TaoCard&gt;
 
 &lt;TaoCard :padding="12" :radius="12"&gt;
-  &lt;template #cover&gt;
+  &lt;template #media&gt;
     &lt;TaoCarousel :controls="false" dots&gt;
       &lt;img v-for="src in photos" :src="src" draggable="false" /&gt;
     &lt;/TaoCarousel&gt;

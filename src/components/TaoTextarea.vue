@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { computed, inject, nextTick, onMounted, ref, useId, watch } from 'vue';
-import { formFieldKey } from '../formField';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoTextarea' });
@@ -66,10 +66,7 @@ const props = withDefaults(
 
 const emit = defineEmits(['update:modelValue', 'change', 'focus', 'blur', 'keydown']);
 
-const field = inject(formFieldKey, null);
-const localId = useId();
-const controlId = computed(() => props.id || field?.id || localId);
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
+const { field, controlId, invalid } = useField(props);
 const counterId = computed(() => `${controlId.value}-count`);
 const alignClass = computed(() => (props.align === 'start' ? undefined : `tao-textarea--align-${props.align}`));
 const variantClasses = computed(() => `tao-textarea--${props.variant}`);

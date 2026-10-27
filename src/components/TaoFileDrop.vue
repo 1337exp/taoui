@@ -3,9 +3,11 @@ import TaoIcon from './TaoIcon.vue';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
 import { sizeClass, type TaoSize } from '../size';
-import { taoLocale, useLocaleText } from '../locale';
+import { useLocaleText, useTaoLocale } from '../locale';
 
 defineOptions({ name: 'TaoFileDrop' });
+
+const appLocale = useTaoLocale();
 
 interface Props {
     /** Текущий список файлов — компонент сам не хранит состояние
@@ -152,7 +154,7 @@ function processFiles(fileList: FileList) {
 }
 
 function defaultFormatSize(bytes: number) {
-    const { units, decimalSeparator } = taoLocale().fileDrop;
+    const { units, decimalSeparator } = appLocale.value.fileDrop;
     if (bytes < 1024) {
         return `${bytes} ${units[0]}`;
     }
@@ -205,7 +207,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
                 @dragleave="handleDragLeave"
                 @drop="handleDrop"
             >
-                <slot>{{ taoLocale().fileDrop.zoneText }}</slot>
+                <slot>{{ appLocale.fileDrop.zoneText }}</slot>
 
                 <input
                     ref="fileInput"

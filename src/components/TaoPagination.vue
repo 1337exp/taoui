@@ -3,9 +3,11 @@ import TaoIcon from './TaoIcon.vue';
 import { computed, watch } from 'vue';
 import { buildPaginationItems } from '../pagination';
 import { sizeClass, type TaoSize } from '../size';
-import { formatText, taoLocale, useLocaleText } from '../locale';
+import { formatText, useLocaleText, useTaoLocale } from '../locale';
 
 defineOptions({ name: 'TaoPagination' });
+
+const appLocale = useTaoLocale();
 
 const props = withDefaults(
     defineProps<{
@@ -81,8 +83,8 @@ function goTo(next: number) {
     <nav class="tao-pagination" :class="sizeClass(size)" :aria-label="l10n.ariaLabel">
         <p v-if="showTotal" class="tao-pagination__total">
             <slot name="total" :from="from" :to="to" :total="total">
-                <template v-if="total === 0">{{ taoLocale().pagination.emptyTotalText }}</template>
-                <template v-else>{{ formatText(taoLocale().pagination.totalText, { from, to, total }) }}</template>
+                <template v-if="total === 0">{{ appLocale.pagination.emptyTotalText }}</template>
+                <template v-else>{{ formatText(appLocale.pagination.totalText, { from, to, total }) }}</template>
             </slot>
         </p>
 

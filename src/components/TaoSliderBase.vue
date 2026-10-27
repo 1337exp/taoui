@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed, inject, onBeforeUnmount, onMounted, ref, useId } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
-import { formFieldKey } from '../formField';
+import { useField } from '../formField';
 import { sizeClass } from '../size';
 import {
     isMarkActive,
@@ -50,11 +50,7 @@ defineSlots<{
     'post-value'?(): unknown;
 }>();
 
-const field = inject(formFieldKey, null);
-const localId = useId();
-const controlId = computed(() => field?.id ?? localId);
-const describedBy = computed(() => field?.describedBy.value);
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
+const { field, controlId, invalid, describedBy } = useField(props);
 
 const isRange = computed(() => Array.isArray(props.modelValue));
 const values = computed(() => normalizeValue(props.modelValue, props.min, props.max));

@@ -3,6 +3,7 @@ import { createSSRApp, h } from 'vue';
 import { renderToString } from '@vue/server-renderer';
 import { describe, expect, it } from 'vitest';
 import * as lib from '../src/index';
+import { localeRu, taoLocale } from '../src/locale';
 
 // Nuxt is a first-class target (README), so every component must render on the server
 // without touching window / document. This runs in a plain Node environment on purpose.
@@ -16,7 +17,7 @@ const skip = new Set([
 
 // props that are required to mount at all / обязательные пропсы
 const props: Record<string, Record<string, unknown>> = {
-    TaoTimeline: { modelValue: 0, length: 10 },
+    TaoScrubber: { modelValue: 0, length: 10 },
     TaoTabs: { modelValue: 'a', items: [{ value: 'a', label: 'A' }] },
     TaoModal: { modelValue: true },
     TaoDrawer: { modelValue: true },
@@ -51,5 +52,20 @@ describe('server-side rendering', () => {
         // components that read optional injections are mounted standalone, as a user would
         const html = await renderToString(app);
         expect(typeof html).toBe('string');
+    });
+});
+
+describe('language on the server', () => {
+    const render = async (options?: { locale: typeof localeRu }) => {
+        const app = createSSRApp({ render: () => h(lib.TaoSelect as never, { options: [] }) });
+        app.use(lib.TaoUI, options);
+        return renderToString(app);
+    };
+
+    it('a locale given to one app does not leak into the next request', async () => {
+        expect(await render({ locale: localeRu })).toContain('Выберите');
+        expect(await render()).toContain('Select');
+        expect(await render()).not.toContain('Выберите');
+        expect(taoLocale().code).toBe('en-US'); // the global locale of the process stays English
     });
 });

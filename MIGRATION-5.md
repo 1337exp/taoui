@@ -47,6 +47,22 @@ Everything that 2.0 deprecated is deleted, together with its warnings.
 
 New: `TaoMenu` (the menu panel with submenus, checkbox and radio items, type-ahead, `aria-activedescendant`), types `TaoMenuItem` and friends, `TaoPlacement`; composables behind them (`useFloating`, `useDismiss`, `useLayer`, `useListNav`) are internal for now.
 
+## Components
+
+| What | Before | Now |
+|---|---|---|
+| `TaoTimeline` | the play / pause + time slider | **`TaoScrubber`** (the name `TaoTimeline` is free for a vertical event feed). Classes `.tao-timeline*` → `.tao-scrubber*`; locale section `timeline` → `scrubber`. API unchanged |
+| `TaoCard` slots | `cover`, `headerTitle`, `headerSecondary`, `header` | `media` (was `cover`), `header` (a free row: lay out left and right yourself, replaces `headerTitle` / `headerSecondary`), `title`, `sub`, default, `footer`, `overlay`, and the new `corner` (top right: a tag, a menu button) |
+| `TaoCard` classes | `.tao-card__cover`, `--cover-only`, `__header-title`, `__header--between` | `.tao-card__media`, `--media-only`; the others are gone |
+| `TaoCard` | no way to close | `closable` + event `close` (+ `closeLabel`, locale section `card`); `--tao-card-corner-size` reserves room for the corner |
+| `TaoTabs` `justify` | any CSS string | the `TaoJustify` keywords (`flex-start`, `center`, `flex-end`, `space-between`, `space-around`, `space-evenly`, `normal`), as in `TaoFlex` |
+| `TaoGrid` / `TaoGridItem` | the 560px rule in both files | in `TaoGrid` only (one place); same behaviour |
+| `TaoDate` / `TaoDateRange` DOM | the panel holds the month header, grid, footer itself | the panel holds a **`TaoCalendar`** (`.tao-calendar`, a group labelled with the month); the day / header / footer classes `.tao-date__*` are unchanged. The popup is `role="dialog"` labelled with the field text |
+| `TaoAnimatedBorder` | the rainbow only, radius `2 × width` | `variant` (`rainbow` / `tone`), `tone`, `colors`, `radius` (default `--tao-radius-panel`; the border outside is radius + width); still gradient with `prefers-reduced-motion`; the rainbow list is the token `--tao-gradient-rainbow` |
+| language on the server | one global value shared by every request | `app.use(TaoUI, { locale })` on the server gives **that app** its language and leaves the global one alone; in the browser it is `setTaoLocale` as before |
+
+New: `TaoCalendar` (an inline month calendar: `mode="single"` or `"range"`, keyboard, min / max), `provideTaoLocale()` (another language for a subtree), `TaoJustify`; internal: `useField` (what every form control takes from `TaoFormField`).
+
 ## Icons
 
 | What | Before | Now |

@@ -48,17 +48,19 @@ export const propTables = {
     {
       title: 'TaoCard',
       rows: [
-        r('padding', 'number | string | (…)[]', '20', 'Отступ тела карточки. Число — px, строка — CSS. У flush — 0'),
-        r('radius', 'number | string', '8', 'Скругление. Число — px, строка — CSS'),
+        r('padding', 'number | string | (…)[]', 'var(--tao-space-5)', 'Отступ тела карточки. Число — px, строка — CSS. У flush — 0. Публикуется как --tao-pad'),
+        r('radius', 'number | string', 'var(--tao-radius-panel)', 'Скругление. Число — px, строка — CSS. Публикуется как --tao-radius; вложенным — --tao-radius-inner'),
         r('shadow', 'boolean', 'true', 'Обычная тень. У flush выключена'),
         r('shadowBottomOnly', 'boolean', 'false', 'Линия снизу карточки, не scrim на фото'),
         r('flush', 'boolean', 'false', 'Плитка: без padding и тени, cover/body на всю ячейку'),
         r('hover', 'boolean', 'false', 'Обводка акцентом при наведении'),
         r('surface', "'flat' | 'grain' | 'glass'", "'flat'", 'Из чего сделана карточка: заливка / зерно / стекло. См. «Поверхности»'),
         r('active', 'boolean', 'false', 'Выделенное состояние'),
-        r('overflow', 'boolean', 'false', 'Не обрезать содержимое (cover/карусель)'),
+        r('overflow', 'boolean', 'false', 'Не обрезать содержимое (media/карусель)'),
+        r('closable', 'boolean', 'false', 'Кнопка закрытия в правом верхнем углу; карточку убирает родитель по событию close'),
+        r('closeLabel', 'string', "'Закрыть'", 'aria-label кнопки закрытия'),
       ],
-      slots: 'default — тело. #cover, #overlay (scrim поверх cover или всей плитки), #header, #title, #sub, #footer.',
+      slots: 'default — тело. #media (фото или карусель сверху), #overlay (scrim поверх media или всей плитки), #header (верхняя строка: раскладка ваша), #title, #sub, #footer, #corner (правый верхний угол: тег, кнопка меню; заголовок оставляет ему место, ширина — переменная --tao-card-corner-size). Событие close — нажали крестик.',
     },
   ],
   copy: [
@@ -352,7 +354,7 @@ export const propTables = {
       ],
     },
     {
-      title: 'TaoTimeline',
+      title: 'TaoScrubber',
       rows: [
         r('v-model', 'number', '—', 'Текущее время. Обязательный'),
         r('v-model:playing', 'boolean', 'false', 'Идёт ли воспроизведение (вид кнопки). Время компонент сам не ведёт'),
@@ -637,12 +639,16 @@ export const propTables = {
     {
       title: 'TaoAnimatedBorder',
       rows: [
+        r('variant', "'rainbow' | 'tone'", "'rainbow'", 'Из чего рамка: радуга или цвета тона'),
+        r('tone', 'TaoToneName', "'accent'", 'Тон для variant="tone"; без него акцент темы'),
+        r('colors', 'string[]', '—', 'Свои цвета (любые CSS-цвета), главнее variant'),
+        r('radius', 'number | string', 'var(--tao-radius-panel)', 'Скругление содержимого; рамка снаружи — оно плюс толщина'),
         r('borderWidth', 'number', '3', 'Толщина контура в px'),
         r('speed', 'number', '6', 'Длительность оборота в секундах'),
         r('light', 'boolean', 'false', 'Мягкое свечение вокруг рамки'),
         r('glow', 'number', '16', 'Радиус glow в px. Имеет смысл при light'),
       ],
-      slots: 'default — содержимое внутри рамки.',
+      slots: 'default — содержимое внутри рамки. При prefers-reduced-motion градиент стоит на месте.',
     },
   ],
   modal: [
@@ -756,7 +762,7 @@ export const propTables = {
         r('items', 'TaoTabItem[]', '—', '{ value, label, disabled? } — как опции Select'),
         r('@change', 'value', '—', 'Пользователь выбрал другую вкладку'),
 
-        r('justify', 'string', "''", 'CSS justify-content для выравнивания вкладок (center, flex-end, space-between и т.д.)'),
+        r('justify', 'TaoJustify', '—', 'Где вкладки в ряду, как у TaoFlex: flex-start, center, flex-end, space-between, space-around, space-evenly. Без него слева'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Высота вкладки как у TaoButton (26 / 36 / 44). Без него — размер предков'),
       ],
       slots: 'default="{ key }" — содержимое активной панели.',

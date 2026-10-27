@@ -71,7 +71,7 @@
 - **TaoDivider** — `solid` (plain border) / `dashed` / `colored` (accent) / `gap`. Optional `text` sits in the middle of any of them; `fade` softens the line ends; `size` is for `gap` (small / medium / large)
 - **TaoSplit** — two panes and a gutter. `row` / `column` like Flex. `v-model` is the start size in `%` or `px`; `resizable="false"` locks the gutter. Not Divider.
 - **TaoFieldset** — grouped frame: `legend` sits on the top border, `align` is start / center / end
-- **TaoAnimatedBorder** — rainbow border wrapper (decorative, not tied to the theme)
+- **TaoAnimatedBorder** — animated border wrapper: the rainbow, the colours of a `tone` (follows the theme) or your own `colors`; a still gradient with `prefers-reduced-motion`
 
 ### Forms
 
@@ -83,6 +83,7 @@
 - **TaoCombobox** — Select with a field: type to filter, `allow-create` writes a custom value into `v-model`, `create` lets the parent append the list. Takes the same `size`, `clearable` and `#clear` as `TaoSelect`
 - **TaoDate** — a single day: `YYYY-MM-DD`, no time, no timezone. Calendar popup like Select
 - **TaoDateRange** — a period: `v-model` is `{ start, end }` or `null`. First click is start, second is end (they swap if end is earlier). An incomplete pick is not written to the model
+- **TaoCalendar** — the month calendar itself, inline (no popup): `mode="single"` (`YYYY-MM-DD`) or `"range"` (`{ start, end }`), `min` / `max`, arrows / PageUp / PageDown / Home / End. `TaoDate` and `TaoDateRange` are a field with this calendar in a popup
 - **TaoFormField** — shared label / hint / error for form controls
 - **TaoInputNumber** — number with min/max/step and ± on the right. Empty value is `null`. `@commit` fires once when an edit is finished (blur, Enter, ±, arrow), unlike `v-model`, which updates on every keystroke
 - **TaoQuantity** — cart quantity: `− | field | +`, integers, stock; minus at the minimum can remove the row
@@ -107,7 +108,7 @@
 - **TaoTag** — badge with tones. `#prefix` (avatar), `closable` dismisses the chip, `flat` drops the border
 - **TaoAlert** — inline page/form banner (success / error / warning / info)
 - **TaoProgress** — static bar (`progress` in %). Percent centered on top, or `showPercentage="right"`; `#left` / `#right` slots are captions, then the percent sits in parentheses on the right. `false` hides it. Width is `minWidth` / `maxWidth`, not the value domain
-- **TaoTimeline** — play / pause, a slider over time with event marks, a “time / length” label. Does not advance time by itself: drive `v-model` with your own clock
+- **TaoScrubber** — play / pause, a slider over time with event marks, a “time / length” label. Does not advance time by itself: drive `v-model` with your own clock
 - **TaoLoader** — four-dot spinner
 - **TaoImage** — `<img>` wrapper: fade-in and placeholder. `lazy` turns on native `loading="lazy"`
 - **TaoIcon** — SVG icons (27 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)

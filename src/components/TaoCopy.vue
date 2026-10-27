@@ -2,9 +2,11 @@
 import TaoIcon from './TaoIcon.vue';
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useFloating } from '../floating';
-import { taoLocale, useLocaleText } from '../locale';
+import { useLocaleText, useTaoLocale } from '../locale';
 
 defineOptions({ name: 'TaoCopy' });
+
+const appLocale = useTaoLocale();
 
 const props = withDefaults(
     defineProps<{
@@ -65,7 +67,7 @@ onBeforeUnmount(() => {
     visibleObserver = null;
 });
 
-const doneText = computed(() => props.successText ?? taoLocale().copy.successText);
+const doneText = computed(() => props.successText ?? appLocale.value.copy.successText);
 </script>
 
 <template>

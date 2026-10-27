@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
-import { computed, inject, ref, useId, watch } from 'vue';
-import { formFieldKey } from '../formField';
+import { computed, ref, watch } from 'vue';
+import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import type { TaoQuantityChangeSource } from '../quantity';
 import { useLocaleText } from '../locale';
@@ -46,11 +46,7 @@ const emit = defineEmits<{
     focus: [event: FocusEvent];
 }>();
 
-const field = inject(formFieldKey, null);
-const localId = useId();
-const controlId = computed(() => field?.id ?? localId);
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
-const describedBy = computed(() => field?.describedBy.value);
+const { field, controlId, invalid, describedBy } = useField(props);
 
 const focused = ref(false);
 const draft = ref(String(props.modelValue));

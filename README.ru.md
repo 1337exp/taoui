@@ -71,7 +71,7 @@
 - **TaoDivider** — `solid` (обычный border) / `dashed` / `colored` (акцент) / `gap`. Подпись — опциональный `text` на любом варианте; `fade` — плавные края линии; `size` только у `gap` (small / medium / large)
 - **TaoSplit** — две панели и полоса. `row` / `column` как у Flex. `v-model` — размер start в `%` или `px`; `resizable="false"` фиксирует полосу. Не Divider.
 - **TaoFieldset** — рамка-группа: `legend` сидит на верхней границе, `align` — start / center / end
-- **TaoAnimatedBorder** — контейнер с анимированной радужной рамкой (декоративный, не завязан на тему)
+- **TaoAnimatedBorder** — контейнер с анимированной рамкой: радуга, цвета `tone` (следует теме) или свои `colors`; при `prefers-reduced-motion` градиент стоит на месте
 
 ### Формы и ввод
 
@@ -83,6 +83,7 @@
 - **TaoCombobox** — Select с полем: фильтр по вводу, `allow-create` пишет своё в `v-model`, `create` — чтобы родитель дополнил список. Те же `size`, `clearable` и `#clear`, что у `TaoSelect`
 - **TaoDate** — один день: `YYYY-MM-DD`, без часов и пояса. Календарь как у Select
 - **TaoDateRange** — период: `v-model` — `{ start, end }` или `null`. Первый клик — начало, второй — конец (если конец раньше — меняются местами). Неполный выбор в модель не пишется
+- **TaoCalendar** — сам календарь на месяц, встроенный (без всплывающего окна): `mode="single"` (`YYYY-MM-DD`) или `"range"` (`{ start, end }`), `min` / `max`, стрелки / PageUp / PageDown / Home / End. `TaoDate` и `TaoDateRange` — поле с этим календарём во всплывающем окне
 - **TaoFormField** — общие label / hint / error для полей формы
 - **TaoInputNumber** — число с min/max/step и кнопками ± справа. Пустое значение — `null`. `@commit` срабатывает один раз, когда правка закончена (blur, Enter, ±, стрелка), в отличие от `v-model`, который обновляется на каждую клавишу
 - **TaoQuantity** — количество в корзине: `− | поле | +`, целые штуки, сток, минус на минимуме может убрать строку
@@ -107,7 +108,7 @@
 - **TaoTag** — тег/бейдж со статусами. `#prefix` (аватар), `closable` убирает чип, `flat` — без рамки
 - **TaoAlert** — инлайн-баннер страницы или ошибки формы (success / error / warning / info)
 - **TaoProgress** — статичная полоса (`progress` в %). Проценты сверху по центру или `showPercentage="right"` справа; слоты `#left` / `#right` — подписи, тогда процент справа в скобках. `false` прячет. Ширина — `minWidth` / `maxWidth`, не диапазон значения
-- **TaoTimeline** — play / pause, слайдер по времени с метками событий, подпись «время / длина». Время сама не двигает: ведите `v-model` своими часами
+- **TaoScrubber** — play / pause, слайдер по времени с метками событий, подпись «время / длина». Время сама не двигает: ведите `v-model` своими часами
 - **TaoLoader** — анимированный лоадер (четыре точки)
 - **TaoImage** — обёртка над `<img>`: fade-in и плейсхолдер. `lazy` включает нативный `loading="lazy"`
 - **TaoIcon** — SVG-иконки (27 встроенных, свои через `registerTaoIcons`) или icon-шрифт (см. раздел «Иконки» ниже)

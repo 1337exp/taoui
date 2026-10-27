@@ -2,9 +2,11 @@
 import { computed } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
 import { toCssLength, type TaoLength } from '../length';
-import { taoLocale } from '../locale';
+import { useTaoLocale } from '../locale';
 
 defineOptions({ name: 'TaoList' });
+
+const appLocale = useTaoLocale();
 
 const props = withDefaults(
     defineProps<{
@@ -51,7 +53,7 @@ const listStyle = computed(() => {
         :aria-label="ariaLabel || undefined"
     >
         <li v-if="empty" class="tao-list__empty">
-            <slot name="empty">{{ taoLocale().list.emptyText }}</slot>
+            <slot name="empty">{{ appLocale.list.emptyText }}</slot>
         </li>
         <slot v-else />
     </ul>

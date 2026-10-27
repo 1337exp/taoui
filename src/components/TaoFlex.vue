@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { toCssLength, type TaoLength } from '../length';
+import type { TaoJustify } from '../layout';
 
 defineOptions({ name: 'TaoFlex' });
 
 interface Props {
     tag?: string;
-    justify?: 'flex-start' | 'flex-end' | 'center' | 'normal' | 'space-between' | 'space-around' | 'space-evenly';
+    justify?: TaoJustify;
     align?: 'stretch' | 'flex-start' | 'center' | 'flex-end' | 'baseline';
     direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
     wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';

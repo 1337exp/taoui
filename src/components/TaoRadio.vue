@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, inject, useId } from 'vue';
-import { formFieldKey } from '../formField';
+import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { radioGroupKey, type TaoRadioValue } from '../radio';
 
@@ -31,10 +31,9 @@ const emit = defineEmits<{
 }>();
 
 const group = inject(radioGroupKey, null);
-const field = inject(formFieldKey, null);
+const { field, invalid } = useField(props);
 const localId = useId();
 const controlId = computed(() => (group ? localId : (field?.id ?? localId)));
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
 const describedBy = computed(() => (group ? undefined : field?.describedBy.value));
 
 const isDisabled = computed(() => props.disabled || Boolean(group?.disabled.value));

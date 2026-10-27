@@ -8,7 +8,7 @@ import TaoQuantity from './components/TaoQuantity.vue';
 import TaoCard from './components/TaoCard.vue';
 import TaoModal from './components/TaoModal.vue';
 import TaoTabs from './components/TaoTabs.vue';
-import TaoTimeline from './components/TaoTimeline.vue';
+import TaoScrubber from './components/TaoScrubber.vue';
 import TaoTooltip from './components/TaoTooltip.vue';
 import TaoPopover from './components/TaoPopover.vue';
 import TaoSpoiler from './components/TaoSpoiler.vue';
@@ -43,6 +43,7 @@ import TaoSelect from './components/TaoSelect.vue';
 import TaoColorInput from './components/TaoColorInput.vue';
 import TaoColorPicker from './components/TaoColorPicker.vue';
 import TaoCombobox from './components/TaoCombobox.vue';
+import TaoCalendar from './components/TaoCalendar.vue';
 import TaoDate from './components/TaoDate.vue';
 import TaoDateRange from './components/TaoDateRange.vue';
 import TaoSwitch from './components/TaoSwitch.vue';
@@ -67,7 +68,7 @@ import TaoToastViewport from './components/TaoToastViewport.vue';
 import TaoConfirmHost from './components/TaoConfirmHost.vue';
 import { toast } from './toast';
 import { confirm } from './confirm';
-import { setTaoLocale, type TaoLocale, type TaoLocaleOverrides } from './locale';
+import { createTaoLocale, localeKey, setTaoLocale, type TaoLocale, type TaoLocaleOverrides } from './locale';
 
 // Импорт нужен только для того, чтобы Vite подхватил CSS в сборку
 // styles.css. Сам JS-бандл эти стили в рантайме НЕ применяет —
@@ -85,7 +86,7 @@ const components = [
     TaoCard,
     TaoModal,
     TaoTabs,
-    TaoTimeline,
+    TaoScrubber,
     TaoTooltip,
     TaoPopover,
     TaoSpoiler,
@@ -120,6 +121,7 @@ const components = [
     TaoColorInput,
     TaoColorPicker,
     TaoCombobox,
+    TaoCalendar,
     TaoDate,
     TaoDateRange,
     TaoSwitch,
@@ -155,7 +157,12 @@ export interface TaoUIOptions {
 export const TaoUI: Plugin<[TaoUIOptions?]> = {
     install(app, options: TaoUIOptions = {}) {
         if (options.locale) {
-            setTaoLocale(options.locale);
+            if (typeof window === 'undefined') {
+                // on the server the process is shared by every request: the language belongs to this app only
+                app.provide(localeKey, createTaoLocale(options.locale));
+            } else {
+                setTaoLocale(options.locale);
+            }
         }
         components.forEach(component => {
             app.component(component.name!, component);
@@ -173,7 +180,7 @@ export {
     TaoCard,
     TaoModal,
     TaoTabs,
-    TaoTimeline,
+    TaoScrubber,
     TaoTooltip,
     TaoPopover,
     TaoSpoiler,
@@ -208,6 +215,7 @@ export {
     TaoColorInput,
     TaoColorPicker,
     TaoCombobox,
+    TaoCalendar,
     TaoDate,
     TaoDateRange,
     TaoSwitch,
@@ -262,7 +270,7 @@ export {
     formatTaoDateLabel,
     formatTaoDateRangeLabel,
 } from './date';
-export { localeRu, localeEn, setTaoLocale, taoLocale } from './locale';
+export { localeRu, localeEn, setTaoLocale, taoLocale, provideTaoLocale } from './locale';
 export type { TaoLocale, TaoLocaleOverrides } from './locale';
 export type { TaoSize } from './size';
 export type { TaoTone, TaoToneName } from './tone';
@@ -271,6 +279,7 @@ export { registerTaoIcons, taoIconNames } from './icons';
 export type { TaoIconDef } from './icons';
 export type { TaoSurface } from './surface';
 export type { TaoLength } from './length';
+export type { TaoJustify } from './layout';
 export type { TaoSelectOption } from './select';
 export type { TaoPlacement } from './floating';
 export type { TaoTabItem } from './tabs';

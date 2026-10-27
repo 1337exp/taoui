@@ -15,7 +15,7 @@ import TaoPagination from '../src/components/TaoPagination.vue';
 import TaoPinCode from '../src/components/TaoPinCode.vue';
 import TaoSegmented from '../src/components/TaoSegmented.vue';
 import TaoSelect from '../src/components/TaoSelect.vue';
-import TaoTimeline from '../src/components/TaoTimeline.vue';
+import TaoScrubber from '../src/components/TaoScrubber.vue';
 import TaoSlider from '../src/components/TaoSlider.vue';
 import TaoRangeSlider from '../src/components/TaoRangeSlider.vue';
 import TaoSpace from '../src/components/TaoSpace.vue';
@@ -319,51 +319,51 @@ describe('marksSide', () => {
     });
 });
 
-describe('Timeline', () => {
-    const mountTimeline = (props: Record<string, unknown> = {}) => mount(TaoTimeline, { props: { modelValue: 1.25, length: 8, ...props } });
+describe('Scrubber', () => {
+    const mountScrubber = (props: Record<string, unknown> = {}) => mount(TaoScrubber, { props: { modelValue: 1.25, length: 8, ...props } });
 
     it('shows time / length, the play button toggles and is labelled from the locale', async () => {
-        const w = mountTimeline();
-        expect(w.find('.tao-timeline__time').text()).toBe('1.25 / 8.00');
-        const play = w.find('.tao-timeline__controls button');
+        const w = mountScrubber();
+        expect(w.find('.tao-scrubber__time').text()).toBe('1.25 / 8.00');
+        const play = w.find('.tao-scrubber__controls button');
         expect(play.attributes('aria-label')).toBe('Play');
         await play.trigger('click');
         expect(w.emitted('update:playing')).toEqual([[true]]);
 
         await w.setProps({ playing: true });
-        expect(w.find('.tao-timeline__controls button').attributes('aria-label')).toBe('Pause');
-        await w.find('.tao-timeline__controls button').trigger('click');
+        expect(w.find('.tao-scrubber__controls button').attributes('aria-label')).toBe('Pause');
+        await w.find('.tao-scrubber__controls button').trigger('click');
         expect(last(w.emitted('update:playing')!)).toEqual([false]);
     });
 
     it('restart sets the time to 0 and tells about it, it can be hidden', async () => {
-        const w = mountTimeline();
-        await w.findAll('.tao-timeline__controls button')[1]!.trigger('click');
+        const w = mountScrubber();
+        await w.findAll('.tao-scrubber__controls button')[1]!.trigger('click');
         expect(last(w.emitted('update:modelValue')!)).toEqual([0]);
         expect(w.emitted('restart')).toHaveLength(1);
-        expect(mountTimeline({ showRestart: false }).findAll('.tao-timeline__controls button')).toHaveLength(1);
+        expect(mountScrubber({ showRestart: false }).findAll('.tao-scrubber__controls button')).toHaveLength(1);
     });
 
-    it('scrubbing sends the time and pauses a playing timeline (unless pauseOnScrub is off)', async () => {
-        const w = mountTimeline({ playing: true });
+    it('scrubbing sends the time and pauses a playing scrubber (unless pauseOnScrub is off)', async () => {
+        const w = mountScrubber({ playing: true });
         await w.find('.tao-slider__thumb').trigger('keydown', { key: 'ArrowRight' });
         expect(last(w.emitted('update:modelValue')!)).toEqual([1.26]);
         expect(last(w.emitted('update:playing')!)).toEqual([false]);
         expect(last(w.emitted('seek')!)).toEqual([1.26]);
 
-        const still = mountTimeline({ playing: true, pauseOnScrub: false });
+        const still = mountScrubber({ playing: true, pauseOnScrub: false });
         await still.find('.tao-slider__thumb').trigger('keydown', { key: 'ArrowRight' });
         expect(still.emitted('update:playing')).toBeUndefined();
     });
 
     it('marks, format, the time slot and own texts', () => {
-        const w = mount(TaoTimeline, {
+        const w = mount(TaoScrubber, {
             props: { modelValue: 2, length: 8, marks: [0, 2, 4], format: (t: number) => `${t} с`, playLabel: 'Go' },
             slots: { time: '<b class="custom">{{ params.text }}</b>' },
         });
         expect(w.findAll('.tao-slider__mark').map((m) => m.text())).toEqual(['0 с', '2 с', '4 с']);
         expect(w.find('.custom').text()).toBe('2 с / 8 с');
-        expect(w.find('.tao-timeline__controls button').attributes('aria-label')).toBe('Go');
+        expect(w.find('.tao-scrubber__controls button').attributes('aria-label')).toBe('Go');
     });
 });
 
@@ -377,5 +377,22 @@ describe('minWidth', () => {
     it('Segmented: the prop sets --tao-segmented-option-min-width on the group', () => {
         expect((mount(TaoSegmented).element as HTMLElement).style.getPropertyValue('--tao-segmented-option-min-width')).toBe('');
         expect((mount(TaoSegmented, { props: { minWidth: 96 } }).element as HTMLElement).style.getPropertyValue('--tao-segmented-option-min-width')).toBe('96px');
+    });
+});
+
+describe('provideTaoLocale', () => {
+    it('gives the components below another language without touching the global one', async () => {
+        const { provideTaoLocale, taoLocale } = await import('../src/locale');
+        const { defineComponent, h: hh } = await import('vue');
+        const Ru = defineComponent({
+            setup(_, { slots }) {
+                provideTaoLocale(localeRu);
+                return () => hh('div', slots.default?.());
+            },
+        });
+        const w = mount({ render: () => hh('div', [hh(TaoSelect, { options: [] }), hh(Ru, null, { default: () => hh(TaoSelect, { options: [] }) })]) });
+        const texts = w.findAll('.tao-select__value').map((el) => el.text());
+        expect(texts).toEqual(['Select', 'Выберите']);
+        expect(taoLocale().code).toBe('en-US');
     });
 });

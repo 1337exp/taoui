@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { computed, inject, ref, useId } from 'vue';
-import { formFieldKey } from '../formField';
+import { ref } from 'vue';
+import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoInput' });
@@ -25,11 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
     error: false,
 });
 
-const field = inject(formFieldKey, null);
-const localId = useId();
-const controlId = computed(() => props.id || field?.id || localId);
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
-const describedBy = computed(() => field?.describedBy.value);
+const { field, controlId, invalid, describedBy } = useField(props);
 const focused = ref(false);
 
 const emit = defineEmits(['update:modelValue', 'blur', 'focus']);

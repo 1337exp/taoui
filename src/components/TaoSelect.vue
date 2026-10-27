@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { computed, inject, nextTick, ref, useId, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useDismiss } from '../dismiss';
 import { useFloating } from '../floating';
 import { useLayer } from '../layers';
 import { useListNav } from '../listNav';
-import { formFieldKey } from '../formField';
+import { useField } from '../formField';
 import type { TaoSelectOption } from '../select';
 import { resolveSize, sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
@@ -45,12 +45,8 @@ const emit = defineEmits<{
     change: [value: string | number | null];
 }>();
 
-const field = inject(formFieldKey, null);
-const localId = useId();
+const { field, controlId, invalid, describedBy, localId } = useField(props);
 const listId = `${localId}-list`;
-const controlId = computed(() => field?.id ?? localId);
-const invalid = computed(() => props.error || Boolean(field?.invalid.value));
-const describedBy = computed(() => field?.describedBy.value);
 
 const open = ref(false);
 const activeIndex = ref(-1);

@@ -2,9 +2,11 @@
 import { computed, ref, watch } from 'vue';
 import type { TaoSize } from '../size';
 import { toneClass, type TaoTone } from '../tone';
-import { taoLocale, useLocaleText } from '../locale';
+import { useLocaleText, useTaoLocale } from '../locale';
 
 defineOptions({ name: 'TaoAvatar' });
+
+const appLocale = useTaoLocale();
 
 type TaoAvatarDot = TaoTone;
 
@@ -88,7 +90,7 @@ const label = computed(() => {
     const base = props.alt || props.name || l10n.value.fallbackLabel;
     const extra: string[] = [];
     if (dotTone.value) {
-        extra.push(props.dotLabels[dotTone.value] ?? taoLocale().avatar.dotLabels[dotTone.value]);
+        extra.push(props.dotLabels[dotTone.value] ?? appLocale.value.avatar.dotLabels[dotTone.value]);
     }
     if (badge.value) {
         extra.push(l10n.value.notificationsLabel.replace('{count}', badge.value));
