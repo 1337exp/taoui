@@ -146,6 +146,12 @@ Stages — это процесс, не тон: `wait` / `work` / `ok` / `bad` (`
 Контент и раскладка держат свою шкалу и не наследуют: Avatar (24 / 32 / 48px), Divider `gap`, Loader / Icon / ScrollTop (пиксели).
 Container живёт на другой оси — ширина: `width="wide" | "slim" | "ultra-slim"`.
 
+**Плотность** — вторая ось контролов поверх размера: класс `tao-density-compact` / `-comfortable` / `-auto` на контейнере (или на `<html>`) меняет высоту и отступы любого размера в нём, но не шрифт. `comfortable` даёт 34 / 44 / 52px (строки под палец), `compact` 22 / 32 / 40px (плотные инструменты и таблицы), `auto` — comfortable на сенсорном экране (`pointer: coarse`) и обычная с мышью. Select и Combobox переносят её в свои панели. Тип `TaoDensity`; шаги — токены `--tao-density-height-*` / `--tao-density-padding-x-*` / `-y-*`.
+
+```html
+<html class="tao-density-auto">
+```
+
 Поверхности — из чего «сделана» панель: `flat` — заливка (по умолчанию), `grain` — статичное плёночное зерно, `glass` —
 полупрозрачное стекло с размытием того, что позади. Проп `surface` у TaoCard / TaoBlock или класс `tao-surface-grain` /
 `-glass` на любом элементе — HUD в игре, секция лендинга, сайдбар. Вид настраивается один раз токенами темы
@@ -586,7 +592,7 @@ tokens/primitives.css → tokens/semantic.css → themes/*.css → contexts/*.cs
 | `tokens/semantic.css` | Роли, не зависящие от темы: скругления, тени, шрифт, движение | Редко |
 | `themes/dark.css` | Цветовые роли темы по умолчанию (dark): `--tao-color-accent`, `--tao-color-surface`, ... | **Да — это и есть API темизации** |
 | `themes/light.css` | Те же роли под `[data-tao-theme="light"]` | Да, как образец |
-| `contexts/size.css`, `tone.css`, `surface.css` | `.tao-size-*`, `.tao-tone-*`, `.tao-surface-*`: что контрол читает, чтобы знать размер, цвет и материал | Редко |
+| `contexts/size.css`, `tone.css`, `surface.css` | `.tao-size-*` и `.tao-density-*`, `.tao-tone-*`, `.tao-surface-*`: что контрол читает, чтобы знать размер, цвет и материал | Редко |
 | `base.css` | Глобальный reset (скроллбар, ссылки, box-sizing) | Редко |
 
 Всё подключается одним файлом `@1337exp/taoui/styles.css` (и dark, и light: light включается атрибутом `data-tao-theme="light"`).

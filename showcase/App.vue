@@ -23,6 +23,9 @@ const saved = (() => {
 const known = new Set(['default', ...taoPalettes.map((p) => p.name)])
 const palette = ref(known.has(saved.palette) ? saved.palette : 'default')
 const theme = ref(saved.mode === 'light' ? 'light' : 'dark')
+// density is a second axis next to the size: one class on <html> changes every control on the page
+const DENSITIES = ['compact', 'default', 'comfortable', 'auto']
+const density = ref(DENSITIES.includes(saved.density) ? saved.density : 'default')
 
 const paletteOptions = computed(() => [
   { value: 'default', label: tr('Default', 'По умолчанию') },
@@ -35,8 +38,9 @@ function applyTheme() {
   el.setAttribute('data-tao-theme', palette.value === 'default' ? theme.value : palette.value)
   el.setAttribute('data-tao-mode', theme.value)
   document.body.classList.add('tao-atmosphere')
+  DENSITIES.forEach((d) => el.classList.toggle(`tao-density-${d}`, d === density.value && d !== 'default'))
   try {
-    localStorage.setItem(STORE, JSON.stringify({ palette: palette.value, mode: theme.value }))
+    localStorage.setItem(STORE, JSON.stringify({ palette: palette.value, mode: theme.value, density: density.value }))
   } catch {
     // a private window: the choice is just not remembered
   }
@@ -44,6 +48,11 @@ function applyTheme() {
 
 function setTheme(value) {
   theme.value = value
+  applyTheme()
+}
+
+function setDensity(value) {
+  density.value = value
   applyTheme()
 }
 
@@ -177,6 +186,19 @@ onBeforeUnmount(() => {
           @click="setTheme(t)"
         >
           {{ t }}
+        </button>
+      </div>
+      <div class="theme-switcher">
+        <span class="theme-switcher__label">{{ tr('Density:', 'Плотность:') }}</span>
+        <button
+          v-for="d in DENSITIES"
+          :key="d"
+          type="button"
+          class="theme-switcher__btn"
+          :class="{ active: density === d }"
+          @click="setDensity(d)"
+        >
+          {{ d }}
         </button>
       </div>
       </div>

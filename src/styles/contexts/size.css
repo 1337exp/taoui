@@ -1,23 +1,34 @@
 /**
- * Tao UI — Size context / Контекст размера
+ * Tao UI — Size and density context / Контекст размера и плотности
  *
- * Controls never read the per-size primitives directly — only the "current" tokens below.
- * :root is medium; `.tao-size-small` / `-medium` / `-large` on any element switches its whole subtree.
- * A control with an explicit `size` prop adds the same class to itself; without the prop it inherits.
+ * Controls never read the per-size primitives directly — only the "current" tokens at the bottom.
+ * :root is medium and default density. `.tao-size-small` / `-medium` / `-large` on any element switches its subtree;
+ * a control with an explicit `size` prop adds the same class to itself, without the prop it inherits.
  *
- * Контролы читают только «текущие» токены ниже, не примитивы по размерам.
- * :root — medium; класс `.tao-size-*` на любом элементе переключает всё поддерево.
- * Контрол с явным `size` вешает этот же класс на себя, без prop — наследует.
+ * Density is the other axis: `.tao-density-compact` / `-comfortable` / `-default` on a container changes the height and
+ * the padding of every size in it (not the font). `comfortable` gives 34 / 44 / 52, a touch-sized row; `compact`
+ * 22 / 32 / 40 for dense tools and tables. `.tao-density-auto` is comfortable on a touch screen (`pointer: coarse`)
+ * and default with a mouse.
+ *
+ * Контролы читают только «текущие» токены внизу, не примитивы по размерам.
+ * :root — medium и обычная плотность. `.tao-size-*` на любом элементе переключает поддерево; контрол с явным `size`
+ * вешает этот же класс на себя, без prop — наследует.
+ * Плотность — вторая ось: `.tao-density-*` на контейнере меняет высоту и отступы любого размера в нём (не шрифт).
+ * `comfortable` даёт 34 / 44 / 52 (под палец), `compact` 22 / 32 / 40 (плотные инструменты, таблицы).
+ * `.tao-density-auto` — comfortable на сенсорном экране (`pointer: coarse`), обычная с мышью.
  */
+
+/* ---------- size: the base of each token / размер: основа каждого токена ---------- */
+
 :root,
 .tao-size-medium {
     --tao-size: medium;
-    --tao-control-height: var(--tao-control-height-medium);
-    --tao-control-padding-x: var(--tao-control-padding-x-medium);
-    --tao-control-padding-y: var(--tao-control-padding-y-medium);
+    --_tao-height: var(--tao-control-height-medium);
+    --_tao-padding-x: var(--tao-control-padding-x-medium);
+    --_tao-padding-y: var(--tao-control-padding-y-medium);
+    --_tao-button-padding-x: var(--tao-button-padding-x-medium);
     --tao-control-font-size: var(--tao-control-font-size-medium);
     --tao-control-font-size-secondary: var(--tao-control-font-size-secondary-medium);
-    --tao-button-padding-x: var(--tao-button-padding-x-medium);
     --tao-indicator-size: var(--tao-indicator-size-medium);
     --tao-tag-height: var(--tao-tag-height-medium);
     --tao-tag-padding-x: var(--tao-tag-padding-x-medium);
@@ -26,12 +37,12 @@
 
 .tao-size-small {
     --tao-size: small;
-    --tao-control-height: var(--tao-control-height-small);
-    --tao-control-padding-x: var(--tao-control-padding-x-small);
-    --tao-control-padding-y: var(--tao-control-padding-y-small);
+    --_tao-height: var(--tao-control-height-small);
+    --_tao-padding-x: var(--tao-control-padding-x-small);
+    --_tao-padding-y: var(--tao-control-padding-y-small);
+    --_tao-button-padding-x: var(--tao-button-padding-x-small);
     --tao-control-font-size: var(--tao-control-font-size-small);
     --tao-control-font-size-secondary: var(--tao-control-font-size-secondary-small);
-    --tao-button-padding-x: var(--tao-button-padding-x-small);
     --tao-indicator-size: var(--tao-indicator-size-small);
     --tao-tag-height: var(--tao-tag-height-small);
     --tao-tag-padding-x: var(--tao-tag-padding-x-small);
@@ -40,14 +51,75 @@
 
 .tao-size-large {
     --tao-size: large;
-    --tao-control-height: var(--tao-control-height-large);
-    --tao-control-padding-x: var(--tao-control-padding-x-large);
-    --tao-control-padding-y: var(--tao-control-padding-y-large);
+    --_tao-height: var(--tao-control-height-large);
+    --_tao-padding-x: var(--tao-control-padding-x-large);
+    --_tao-padding-y: var(--tao-control-padding-y-large);
+    --_tao-button-padding-x: var(--tao-button-padding-x-large);
     --tao-control-font-size: var(--tao-control-font-size-large);
     --tao-control-font-size-secondary: var(--tao-control-font-size-secondary-large);
-    --tao-button-padding-x: var(--tao-button-padding-x-large);
     --tao-indicator-size: var(--tao-indicator-size-large);
     --tao-tag-height: var(--tao-tag-height-large);
     --tao-tag-padding-x: var(--tao-tag-padding-x-large);
     --tao-tag-font-size: var(--tao-tag-font-size-large);
+}
+
+/* ---------- density: what it adds to every size / плотность: что она добавляет к любому размеру ---------- */
+
+:root,
+.tao-density-default {
+    --tao-density: default;
+    --_tao-density-height: 0px;
+    --_tao-density-padding-x: 0px;
+    --_tao-density-padding-y: 0px;
+}
+
+.tao-density-compact {
+    --tao-density: compact;
+    --_tao-density-height: var(--tao-density-height-compact);
+    --_tao-density-padding-x: var(--tao-density-padding-x-compact);
+    --_tao-density-padding-y: var(--tao-density-padding-y-compact);
+}
+
+.tao-density-comfortable {
+    --tao-density: comfortable;
+    --_tao-density-height: var(--tao-density-height-comfortable);
+    --_tao-density-padding-x: var(--tao-density-padding-x-comfortable);
+    --_tao-density-padding-y: var(--tao-density-padding-y-comfortable);
+}
+
+.tao-density-auto {
+    --tao-density: default;
+    --_tao-density-height: 0px;
+    --_tao-density-padding-x: 0px;
+    --_tao-density-padding-y: 0px;
+}
+
+@media (pointer: coarse) {
+    .tao-density-auto {
+        --tao-density: comfortable;
+        --_tao-density-height: var(--tao-density-height-comfortable);
+        --_tao-density-padding-x: var(--tao-density-padding-x-comfortable);
+        --_tao-density-padding-y: var(--tao-density-padding-y-comfortable);
+    }
+}
+
+/*
+ * ---------- the current tokens / текущие токены ----------
+ * Recomputed wherever either axis changes: a custom property is resolved where it is declared, so a density class
+ * deep in the tree must compute the tokens again from the inherited size base, and the other way round.
+ * Пересчитываются везде, где меняется любая из осей: переменная вычисляется там, где объявлена, поэтому класс
+ * плотности в глубине дерева заново считает токены из унаследованной основы размера, и наоборот.
+ */
+:root,
+.tao-size-small,
+.tao-size-medium,
+.tao-size-large,
+.tao-density-default,
+.tao-density-compact,
+.tao-density-comfortable,
+.tao-density-auto {
+    --tao-control-height: calc(var(--_tao-height) + var(--_tao-density-height));
+    --tao-control-padding-x: calc(var(--_tao-padding-x) + var(--_tao-density-padding-x));
+    --tao-control-padding-y: max(0px, calc(var(--_tao-padding-y) + var(--_tao-density-padding-y)));
+    --tao-button-padding-x: calc(var(--_tao-button-padding-x) + 2 * var(--_tao-density-padding-x));
 }

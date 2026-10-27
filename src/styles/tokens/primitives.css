@@ -80,6 +80,15 @@
     --tao-button-padding-x-medium: var(--tao-space-4);
     --tao-button-padding-x-large: var(--tao-space-6);
 
+    /* Density: added to every size by contexts/size.css (comfortable 34 / 44 / 52, compact 22 / 32 / 40).
+       Плотность: добавляется к любому размеру в contexts/size.css. */
+    --tao-density-height-compact: -4px;
+    --tao-density-height-comfortable: 8px;
+    --tao-density-padding-x-compact: -2px;
+    --tao-density-padding-x-comfortable: 4px;
+    --tao-density-padding-y-compact: -2px;
+    --tao-density-padding-y-comfortable: 2px;
+
     /* Choice indicators: Checkbox box, Radio circle; Switch track is 2px taller.
        Индикаторы выбора: квадрат Checkbox, круг Radio; дорожка Switch на 2px выше. */
     --tao-indicator-size-small: 14px;

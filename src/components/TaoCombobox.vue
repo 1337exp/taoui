@@ -7,6 +7,7 @@ import { useLayer } from '../layers';
 import { stepEnabled } from '../listNav';
 import { listenFocusLoss } from '../focusLoss';
 import type { TaoSelectOption } from '../select';
+import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
 import { resolveSize, sizeClass, type TaoSize } from '../size';
 import { formatText, useLocaleText, useTaoLocale } from '../locale';
 
@@ -65,6 +66,7 @@ const inputRef = ref<HTMLInputElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
 /** The panel is teleported to body, so it gets the size resolved at the field. / Панель в body — размер берём у поля. */
 const panelSize = ref<TaoSize>('medium');
+const panelDensity = ref<TaoResolvedDensity>('default');
 const listRef = ref<HTMLElement | null>(null);
 
 const selected = computed((): TaoSelectOption | null => {
@@ -401,6 +403,7 @@ watch(rows, () => {
 watch(open, (isOpen) => {
     if (isOpen) {
         panelSize.value = resolveSize(fieldRef.value, props.size);
+        panelDensity.value = resolveDensity(fieldRef.value);
     }
 });
 
@@ -461,7 +464,7 @@ onBeforeUnmount(() => {
         </div>
 
         <Teleport to="body">
-            <div v-if="open" ref="panelRef" class="tao-combobox__panel" :class="sizeClass(panelSize)" :style="listStyle">
+            <div v-if="open" ref="panelRef" class="tao-combobox__panel" :class="[sizeClass(panelSize), densityClass(panelDensity)]" :style="listStyle">
                 <ul :id="listId" ref="listRef" class="tao-combobox__list" role="listbox">
                     <li v-if="!rows.length" class="tao-combobox__empty">
                         <slot name="empty">{{ l10n.emptyText }}</slot>
