@@ -174,12 +174,18 @@ export function useFloating(
         const origin = strategy === 'absolute' ? documentOrigin() : { x: 0, y: 0 };
         side.value = result.side;
         anchorOffset.value = result.anchorOffset;
-        style.value = {
+        const next: Record<string, string> = {
             position: strategy,
             top: `${result.top + origin.y}px`,
             left: `${result.left + origin.x}px`,
             ...(options.matchWidth ? { width: `${rect.width}px` } : {}),
         };
+        // Write to the element now as well: the owner often calls focus() or scrollIntoView() right after update(),
+        // before Vue patches the style, and the browser would scroll to where the panel stood last time.
+        // Пишем в элемент сразу: владелец часто зовёт focus() или scrollIntoView() сразу после update(), раньше,
+        // чем Vue применит стиль, и браузер прокрутил бы туда, где панель стояла в прошлый раз.
+        Object.assign(panelEl.style, next);
+        style.value = next;
         placed.value = true;
     }
 
@@ -197,6 +203,9 @@ export function useFloating(
             }
             if (!isOpen) {
                 placed.value = false;
+                // a closed panel forgets where it stood: the page may change before it opens again
+                // закрытая панель забывает своё место: страница может измениться до следующего открытия
+                style.value = { top: '0px', left: '0px' };
                 window.removeEventListener('resize', onViewportChange);
                 window.removeEventListener('scroll', onViewportChange, true);
                 return;

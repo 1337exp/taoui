@@ -70,7 +70,7 @@ useLayer(open, {
 
 watch(open, (isOpen) => {
     if (isOpen) {
-        void nextTick(() => panelRef.value?.focus());
+        void nextTick(() => panelRef.value?.focus({ preventScroll: true }));
     }
 });
 </script>

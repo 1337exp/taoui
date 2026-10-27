@@ -188,7 +188,7 @@ function onItemEnter(index: number) {
 
 function onSubClose() {
     closeSub();
-    panelRef.value?.focus();
+    panelRef.value?.focus({ preventScroll: true });
 }
 
 function role(item: TaoMenuItem) {
@@ -205,7 +205,7 @@ watch(
         activeIndex.value = enabled.value.indexOf(true);
         density.value = resolveDensity(props.anchor);
         await nextTick();
-        panelRef.value?.focus();
+        panelRef.value?.focus({ preventScroll: true });
     },
     { immediate: true },
 );

@@ -309,12 +309,11 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
     background: transparent;
     color: var(--tao-color-text-muted);
     font: inherit;
+    /* the icon follows the height of the field, not its text: 10px at medium, it grows with the size and the density
+       иконка следует высоте поля, а не тексту: 10px в medium, растёт вместе с размером и плотностью */
+    font-size: max(8px, calc(var(--tao-control-height) * 0.28));
     line-height: 1;
     cursor: pointer;
-}
-
-.tao-size-small .tao-input-number__step {
-    font-size: 11px;
 }
 
 .tao-input-number__step + .tao-input-number__step {

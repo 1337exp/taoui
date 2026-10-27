@@ -95,7 +95,7 @@ async function setOpen(next: boolean) {
             : (enabledIndexes.value[0] ?? -1);
     await nextTick();
     updatePosition();
-    listRef.value?.focus();
+    listRef.value?.focus({ preventScroll: true });
     scrollActiveIntoView();
 }
 

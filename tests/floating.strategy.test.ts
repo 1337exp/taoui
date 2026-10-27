@@ -54,6 +54,16 @@ describe('useFloating: positioning strategy', () => {
         expect((await float('position: fixed')).style.value.position).toBe('fixed');
     });
 
+    it('update() puts the position on the element at once: a focus() right after it must not scroll to an old place', async () => {
+        Object.defineProperty(window, 'scrollY', { value: 300, configurable: true });
+        const { update } = await float();
+        const panel = document.body.lastElementChild as HTMLElement;
+        panel.style.top = '99999px';
+        update();
+        expect(panel.style.top).toBe(`${234 + 300}px`);
+        expect(panel.style.position).toBe('absolute');
+    });
+
     it('a positioned body: relative to its box, not to the page scroll', async () => {
         document.body.style.position = 'relative';
         Object.defineProperty(window, 'scrollY', { value: 500, configurable: true });

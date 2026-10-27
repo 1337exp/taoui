@@ -29,6 +29,7 @@ In numbers: the tarball is 329 KB (560 KB before the ESM-only build), 451 tests 
 
 ### Components
 
+- **`TaoInputNumber` stepper icons** follow the height of the field (`0.28 ×` the control height: 10px at medium), instead of the text size that almost touched the border.
 - **New `TaoNav`**: navigation between the sections of an app (`TaoNavItem`: `id`, `label`, `icon`, `href`, `badge`, `disabled`; `v-model`). Three looks from one list: `bar` (bottom bar, «More» with a menu over `maxBarItems`), `rail`, `drawer`; `auto` chooses by the width of TaoNav itself with container queries, so it is right on the server and inside a `TaoSplit` pane. The default slot holds the page, TaoNav lays it out (sticky bar with `env(safe-area-inset-bottom)`, sticky side list). Links carry `aria-current="page"`; `select(id, event)` can `preventDefault()` for a router.
 - **`TaoTimeline` → `TaoScrubber`** (play / pause + a time slider). The name `TaoTimeline` is kept for a vertical event feed later.
 - **`TaoCalendar`**: an inline month calendar, one date or a range, with the keyboard of `TaoDate`. `TaoDate` and `TaoDateRange` are now a field plus a popup around it (they shared 13 of 13 functions; ~1000 lines became ~460 + the calendar).
@@ -47,6 +48,7 @@ In numbers: the tarball is 329 KB (560 KB before the ESM-only build), 451 tests 
 
 ### Overlays: one engine
 
+- **Opening a menu never scrolls the page:** the position is written to the panel at once (a `focus()` right after it used to see the panel where it stood the previous time, and after the page layout changed the browser scrolled there), a closed panel forgets its place, and panels take the focus with `preventScroll`.
 - **Floating panels no longer trail a smooth scroll:** a panel is `position: absolute` in document coordinates and scrolls together with the page; `fixed` only when its anchor is pinned to the screen (a `fixed` / `sticky` ancestor, the context menu point). Before, a `fixed` panel was moved from the `scroll` event, which comes a frame after the page has moved.
 - **One shape for every floating panel:** Menu, Select, Combobox, Popover and the date panel take `--tao-radius-panel` (8px), their items the concentric radius `panel − padding` (4px), the same as the entries of `TaoMenubar`. Before, the menu items came out square (4 − 4) and the Select options stuck out of their panel corners.
 
