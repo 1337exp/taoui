@@ -47,6 +47,14 @@ const fruitsMixed = computed(
               <TaoCheckbox v-model="checkedB" :label="tr('Checked', 'Отмечен')" />
               <TaoCheckbox :model-value="false" label="Disabled" disabled />
             </div>
+            <h3>{{ tr('Mark: a square or a tick', 'Отметка: квадрат или галочка') }}</h3>
+            <p class="checkbox-demo__note">{{ tr('The class tao-mark-check on a container (or on <html>) switches every checkbox inside, the tree and the checklist too; mark on one checkbox sets it for that one.', 'Класс tao-mark-check на контейнере (или на <html>) переключает все чекбоксы внутри, дерево и чеклист тоже; mark у одного чекбокса задаёт его только ему.') }}</p>
+            <div style="display: flex; gap: 20px;">
+              <TaoCheckbox :model-value="true" mark="square" label="square" />
+              <TaoCheckbox :model-value="true" mark="check" label="check" />
+              <TaoCheckbox :model-value="true" mark="check" size="small" label="small" />
+              <TaoCheckbox :model-value="true" mark="check" size="large" label="large" />
+            </div>
             <TaoFormField :error="tr('Consent is required', 'Нужно согласие')">
               <TaoCheckbox v-model="checkedA" :label="tr('I accept the terms', 'Принимаю условия')" />
             </TaoFormField>
@@ -69,3 +77,11 @@ const fruitsMixed = computed(
           </div>
   </ShowcaseSection>
 </template>
+
+<style scoped>
+.checkbox-demo__note {
+  margin: -4px 0 0;
+  font-size: 13px;
+  color: var(--tao-color-text-muted);
+}
+</style>
