@@ -312,6 +312,7 @@ export type {
     TaoMenuRadioItem,
     TaoMenuSeparatorItem,
 } from './menu';
+export { menuReturnsFocus } from './menu';
 export type { TaoNavItem, TaoNavLayout } from './nav';
 export type { TaoQuantityChangeSource } from './quantity';
 export type { TaoStageItem, TaoStageStatus } from './stage';

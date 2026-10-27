@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref } from 'vue';
 import { useLocaleText } from '../locale';
-import { isMenuSelectable, type TaoMenuActionItem, type TaoMenuCloseReason, type TaoMenuItem } from '../menu';
+import { isMenuSelectable, menuReturnsFocus, type TaoMenuActionItem, type TaoMenuCloseReason, type TaoMenuItem } from '../menu';
 import { sizeClass, type TaoSize } from '../size';
 import TaoMenu from './TaoMenu.vue';
 
@@ -21,10 +21,13 @@ const props = withDefaults(
         size?: TaoSize;
         /** Accessible name of the bar. / Имя полосы для скринридера. */
         ariaLabel?: string;
+        /** Close an open menu when the page scrolls (otherwise it follows its entry). / Закрывать меню при прокрутке (иначе оно едет за пунктом). */
+        closeOnScroll?: boolean;
     }>(),
     {
         size: undefined,
         ariaLabel: undefined,
+        closeOnScroll: false,
     },
 );
 const l10n = useLocaleText(props, 'menubar');
@@ -135,7 +138,7 @@ function onMenuClose(reason: TaoMenuCloseReason) {
     const index = openIndex.value;
     close();
     // a press elsewhere leaves the focus where the user put it
-    if (reason !== 'outside' && index >= 0) {
+    if (menuReturnsFocus(reason) && index >= 0) {
         focusEntry(index);
     }
 }
@@ -174,6 +177,7 @@ function onEdge(direction: 'prev' | 'next') {
                 :anchor="buttons[index] ?? null"
                 placement="bottom-start"
                 :label="entry.label"
+                :close-on-scroll="closeOnScroll"
                 @select="emit('select', $event)"
                 @close="onMenuClose"
                 @edge="onEdge"

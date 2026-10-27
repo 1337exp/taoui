@@ -65,8 +65,19 @@ export function menuItemLabel(item: TaoMenuItem): string {
     return 'label' in item ? item.label : '';
 }
 
-/** Why a menu closed: `outside` is a press elsewhere (focus stays where the user put it). / Почему меню закрылось. */
-export type TaoMenuCloseReason = 'escape' | 'select' | 'outside' | 'tab';
+/**
+ * Why a menu closed: `outside` is a press elsewhere, `scroll` the page scrolled (`closeOnScroll`).
+ * Почему меню закрылось: `outside` — нажатие в другом месте, `scroll` — прокрутка страницы (`closeOnScroll`).
+ */
+export type TaoMenuCloseReason = 'escape' | 'select' | 'outside' | 'tab' | 'scroll';
+
+/**
+ * Should the owner give the focus back to its trigger? Not when the user went elsewhere (a press, a scroll).
+ * Возвращать ли фокус на кнопку? Нет, если пользователь ушёл в другое место (нажатие, прокрутка).
+ */
+export function menuReturnsFocus(reason: TaoMenuCloseReason): boolean {
+    return reason !== 'outside' && reason !== 'scroll';
+}
 
 /** What a submenu shares with the root menu it hangs from. / Что подменю делит с корневым меню. */
 export interface TaoMenuTree {

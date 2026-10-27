@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, useSlots } from 'vue';
 import { useLocaleText } from '../locale';
-import type { TaoMenuCloseReason, TaoMenuItem } from '../menu';
+import { menuReturnsFocus, type TaoMenuCloseReason, type TaoMenuItem } from '../menu';
 import type { TaoNavItem, TaoNavLayout } from '../nav';
 import TaoIcon from './TaoIcon.vue';
 import TaoMenu from './TaoMenu.vue';
@@ -99,7 +99,7 @@ function onMoreSelect(id: string) {
 
 function onMoreClose(reason: TaoMenuCloseReason) {
     moreOpen.value = false;
-    if (reason !== 'outside') {
+    if (menuReturnsFocus(reason)) {
         void nextTick(() => moreButton.value?.focus());
     }
 }

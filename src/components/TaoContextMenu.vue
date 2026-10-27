@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { nextTick, ref, watch } from 'vue';
+import { nextTick, ref } from 'vue';
 import { useLocaleText } from '../locale';
-import type { TaoMenuCloseReason, TaoMenuItem } from '../menu';
+import { menuReturnsFocus, type TaoMenuCloseReason, type TaoMenuItem } from '../menu';
 import TaoMenu from './TaoMenu.vue';
 
 defineOptions({ name: 'TaoContextMenu' });
@@ -70,28 +70,13 @@ async function onContextMenu(event: MouseEvent) {
 
 function onClose(reason: TaoMenuCloseReason) {
     isOpen.value = false;
-    // a press elsewhere leaves the focus where the user put it / нажатие в другом месте оставляет фокус там, куда его поставили
-    if (reason !== 'outside') {
+    // a press elsewhere or a scroll leaves the focus where the user put it / нажатие в другом месте или прокрутка оставляют фокус там, где он есть
+    if (menuReturnsFocus(reason)) {
         returnTo?.focus?.();
     }
     returnTo = null;
 }
 
-watch(isOpen, (open, _was, onCleanup) => {
-    if (!open || !props.closeOnScroll || typeof window === 'undefined') {
-        return;
-    }
-    const onScroll = (event: Event) => {
-        // the long menu scrolls its own list: that is not the page moving away
-        // длинное меню прокручивает свой список: это не уезжающая страница
-        if (event.target instanceof Element && event.target.closest('.tao-menu')) {
-            return;
-        }
-        onClose('outside');
-    };
-    window.addEventListener('scroll', onScroll, { capture: true, passive: true });
-    onCleanup(() => window.removeEventListener('scroll', onScroll, true));
-});
 </script>
 
 <template>
@@ -110,6 +95,7 @@ watch(isOpen, (open, _was, onCleanup) => {
             :anchor="anchor"
             placement="bottom-start"
             :label="menuLabel ?? l10n.menuLabel"
+            :close-on-scroll="closeOnScroll"
             @select="emit('select', $event)"
             @close="onClose"
         >

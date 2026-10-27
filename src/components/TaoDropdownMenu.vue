@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import type { TaoPlacement } from '../floating';
 import { useLocaleText } from '../locale';
-import type { TaoMenuCloseReason, TaoMenuItem } from '../menu';
+import { menuReturnsFocus, type TaoMenuCloseReason, type TaoMenuItem } from '../menu';
 import TaoIcon from './TaoIcon.vue';
 import TaoMenu from './TaoMenu.vue';
 
@@ -15,10 +15,13 @@ const props = withDefaults(
         /** Where the list opens against the button; flips when there is no room. / Где открывается список; при нехватке места переворачивается. */
         placement?: TaoPlacement;
         menuLabel?: string;
+        /** Close when the page scrolls (the menu otherwise follows its button). / Закрывать при прокрутке страницы (иначе меню едет за кнопкой). */
+        closeOnScroll?: boolean;
     }>(),
     {
         items: () => [],
         placement: 'bottom-end',
+        closeOnScroll: false,
     },
 );
 const l10n = useLocaleText(props, 'dropdownMenu');
@@ -47,7 +50,7 @@ function toggleMenu() {
 function onClose(reason: TaoMenuCloseReason) {
     isOpen.value = false;
     // a press elsewhere leaves the focus where the user put it / нажатие в другом месте оставляет фокус там, куда его поставили
-    if (reason !== 'outside') {
+    if (menuReturnsFocus(reason)) {
         triggerRef.value?.focus();
     }
 }
@@ -84,6 +87,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
             :anchor="triggerRef"
             :placement="placement"
             :label="menuLabel ?? l10n.menuLabel"
+            :close-on-scroll="closeOnScroll"
             @select="emit('select', $event)"
             @close="onClose"
         >

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, inject, nextTick, onBeforeUnmount, provide, ref, useId, watch } from 'vue';
+import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
 import { useDismiss } from '../dismiss';
 import { useFloating, type TaoPlacement } from '../floating';
 import { useLayer } from '../layers';
@@ -29,10 +30,16 @@ const props = withDefaults(
         placement?: TaoPlacement;
         /** Accessible name of the menu. / Имя меню для скринридера. */
         label?: string;
+        /**
+         * Close when the page (or a scroll container) scrolls; scrolling inside the menu does not count. A root menu only.
+         * Закрывать при прокрутке страницы (или контейнера); прокрутка внутри меню не считается. Только корневое меню.
+         */
+        closeOnScroll?: boolean;
     }>(),
     {
         placement: 'bottom-end',
         label: undefined,
+        closeOnScroll: false,
     },
 );
 
@@ -72,6 +79,8 @@ const itemRefs = ref<(HTMLElement | null)[]>([]);
 const activeIndex = ref(-1);
 const openSub = ref(-1);
 const menuId = useId();
+/** The density where the menu hangs from: in body the panel would not inherit it. / Плотность в точке якоря. */
+const density = ref<TaoResolvedDensity>('default');
 let closeSubTimer: ReturnType<typeof setTimeout> | undefined;
 
 const enabled = computed(() => props.items.map(isMenuSelectable));
@@ -194,8 +203,29 @@ watch(
             return;
         }
         activeIndex.value = enabled.value.indexOf(true);
+        density.value = resolveDensity(props.anchor);
         await nextTick();
         panelRef.value?.focus();
+    },
+    { immediate: true },
+);
+
+watch(
+    () => props.open && props.closeOnScroll && !isSub,
+    (listen, _was, onCleanup) => {
+        if (!listen || typeof window === 'undefined') {
+            return;
+        }
+        const onScroll = (event: Event) => {
+            // a long menu scrolls its own list: that is not the page moving away
+            // длинное меню прокручивает свой список: это не уезжающая страница
+            if (event.target instanceof Element && event.target.closest('.tao-menu')) {
+                return;
+            }
+            tree.closeAll('scroll');
+        };
+        window.addEventListener('scroll', onScroll, { capture: true, passive: true });
+        onCleanup(() => window.removeEventListener('scroll', onScroll, true));
     },
     { immediate: true },
 );
@@ -209,6 +239,7 @@ onBeforeUnmount(() => clearTimeout(closeSubTimer));
             v-if="open"
             ref="panelRef"
             class="tao-menu"
+            :class="densityClass(density)"
             role="menu"
             tabindex="-1"
             :aria-label="label"
@@ -291,7 +322,8 @@ onBeforeUnmount(() => clearTimeout(closeSubTimer));
     display: flex;
     align-items: center;
     gap: var(--tao-space-2);
-    padding: var(--tao-space-2) var(--tao-space-3);
+    /* the control padding: the density (comfortable rows for a finger) reaches the menus too */
+    padding: var(--tao-control-padding-y) var(--tao-control-padding-x);
     /* concentric corners: the panel radius minus its padding / концентричные углы */
     border-radius: max(0px, calc(var(--tao-radius-panel) - var(--tao-space-1)));
     white-space: nowrap;

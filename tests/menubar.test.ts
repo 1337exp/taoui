@@ -2,6 +2,7 @@ import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import { h, nextTick } from 'vue';
 import TaoContextMenu from '../src/components/TaoContextMenu.vue';
+import TaoDropdownMenu from '../src/components/TaoDropdownMenu.vue';
 import TaoMenubar from '../src/components/TaoMenubar.vue';
 import type { TaoMenuItem } from '../src/menu';
 
@@ -173,11 +174,54 @@ describe('TaoMenubar', () => {
         expect(tops(w).map((t) => t.text())).toEqual(['File']);
     });
 
+    it('by default an open menu stays on a page scroll (it follows its entry)', async () => {
+        const w = await bar();
+        await tops(w)[0]!.trigger('click');
+        document.dispatchEvent(new Event('scroll'));
+        await nextTick();
+        expect(menus()).toHaveLength(1);
+    });
+
+    it('closeOnScroll closes it on a page scroll and leaves the focus alone', async () => {
+        const w = mount(TaoMenubar, { props: { items: menu, closeOnScroll: true }, attachTo: document.body });
+        wrappers.push(w);
+        const outside = document.body.appendChild(document.createElement('button'));
+        await tops(w)[0]!.trigger('click');
+        outside.focus();
+        document.dispatchEvent(new Event('scroll'));
+        await nextTick();
+        expect(menus()).toHaveLength(0);
+        expect(tops(w)[0]!.attributes('aria-expanded')).toBe('false');
+        expect(document.activeElement).toBe(outside);
+    });
+
+    it('the menus take the density of the bar (a teleported panel would not inherit it)', async () => {
+        const w = await bar();
+        (tops(w)[0]!.element as HTMLElement).style.setProperty('--tao-density', 'comfortable');
+        await tops(w)[0]!.trigger('click');
+        expect(menus()[0]!.classList.contains('tao-density-comfortable')).toBe(true);
+    });
+
     it('size and ariaLabel', async () => {
         const w = mount(TaoMenubar, { props: { items: menu, size: 'small', ariaLabel: 'Main' }, attachTo: document.body });
         wrappers.push(w);
         expect(w.classes()).toContain('tao-size-small');
         expect(w.attributes('aria-label')).toBe('Main');
+    });
+});
+
+describe('TaoDropdownMenu closeOnScroll', () => {
+    it('off by default, on when asked', async () => {
+        for (const [closeOnScroll, left] of [[false, 1], [true, 0]] as const) {
+            const w = mount(TaoDropdownMenu, { props: { items: [{ id: 'a', label: 'A' }], closeOnScroll }, attachTo: document.body });
+            wrappers.push(w);
+            await w.find('button').trigger('click');
+            document.dispatchEvent(new Event('scroll'));
+            await nextTick();
+            expect(menus(), String(closeOnScroll)).toHaveLength(left);
+            w.unmount();
+            wrappers.pop();
+        }
     });
 });
 
