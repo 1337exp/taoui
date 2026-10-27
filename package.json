@@ -64,6 +64,7 @@
     "showcase": "npm --prefix showcase run dev",
     "showcase:build": "npm --prefix showcase run build",
     "media": "node scripts/media.mjs",
+    "smoke": "node scripts/consumer-smoke.mjs",
     "prepublishOnly": "npm run type-check && npm run test && npm run build"
   },
   "peerDependencies": {
@@ -76,6 +77,7 @@
     }
   },
   "devDependencies": {
+    "@types/node": "^20.19.43",
     "@vitejs/plugin-vue": "^5.0.0",
     "@vue/test-utils": "^2.5.1",
     "happy-dom": "^15.11.7",
