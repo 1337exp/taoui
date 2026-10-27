@@ -19,6 +19,7 @@ export const navGroups = [
       { id: 'quantity', label: 'TaoQuantity' },
       { id: 'textarea', label: 'TaoTextarea' },
       { id: 'checkbox', label: 'TaoCheckbox' },
+      { id: 'checklist', label: 'TaoChecklist', aliases: ['todo', 'checklist', 'select all', 'чеклист', 'список дел'] },
       { id: 'select', label: 'Select / Switch / Radio', aliases: ['TaoSelect', 'TaoSwitch', 'TaoRadio', 'TaoFormField', 'FormField'] },
       { id: 'segmented', label: 'TaoSegmented', aliases: ['TaoSegmentedOption', 'Segmented'] },
       { id: 'combobox', label: 'TaoCombobox' },

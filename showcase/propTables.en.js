@@ -158,6 +158,25 @@ export const propTablesEn = {
       ],
     },
   ],
+  checklist: [
+    {
+      title: 'TaoChecklist',
+      rows: [
+        r('items', 'TaoChecklistItem[]', '—', '{ value, label, description?, disabled? }'),
+        r('v-model', '(string | number)[]', '[]', 'The checked values, in the order of the items'),
+        r('legend', 'string', '—', 'The group caption (legend). In a TaoFormField the field gives it'),
+        r('selectAll', 'boolean', 'false', '«Select all» on top: mixed when some are checked; toggles every enabled item'),
+        r('counter', 'boolean', 'false', '«3 of 5» next to the caption, announced politely'),
+        r('strike', 'boolean', 'false', 'Strike the checked items through (a to-do list). A look only: the checkbox tells the state'),
+        r('disabled', 'boolean', 'false', 'The whole group is disabled'),
+        r('error', 'boolean', 'false', 'Red frames; the message goes to error of TaoFormField'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size of the checkboxes'),
+        r('selectAllLabel', 'string', "'Select all'", 'The «Select all» label'),
+        r('counterText', 'string', "'{checked} of {total}'", 'The counter text'),
+      ],
+      slots: '#item — { item, checked }: your own item text. Events update:modelValue, change. «Select all» leaves a disabled item alone. A fieldset: in a TaoFormField the group takes the id, the label and the error of the field, the checkboxes inside keep ids of their own.',
+    },
+  ],
   checkbox: [
     {
       title: 'TaoCheckbox',

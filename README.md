@@ -77,6 +77,7 @@
 ### Forms
 
 - **TaoCheckbox** — checkbox with v-model, pre/post slots, and `indeterminate`
+- **TaoChecklist** — checkboxes with one model (the checked values): `select-all` with a mixed state, a `counter` «3 of 5», `strike` for a to-do list (a look only, the checkbox tells the state), `description` per item. A fieldset: in a `TaoFormField` the group takes the label and the error
 - **TaoSwitch** — boolean toggle (`role="switch"`)
 - **TaoRadio** / **TaoRadioGroup** — classic radios: longer labels, can stack vertically
 - **TaoSegmented** / **TaoSegmentedOption** — compact exclusive choice among 2–5 short options. Not tabs

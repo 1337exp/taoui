@@ -8,6 +8,7 @@ import DemoInputNumber from './components/DemoInputNumber.vue'
 import DemoQuantity from './components/DemoQuantity.vue'
 import DemoTextarea from './components/DemoTextarea.vue'
 import DemoCheckbox from './components/DemoCheckbox.vue'
+import DemoChecklist from './components/DemoChecklist.vue'
 import DemoSelect from './components/DemoSelect.vue'
 import DemoSegmented from './components/DemoSegmented.vue'
 import DemoCombobox from './components/DemoCombobox.vue'
@@ -65,6 +66,7 @@ export const demoById = {
   'quantity': DemoQuantity,
   'textarea': DemoTextarea,
   'checkbox': DemoCheckbox,
+  'checklist': DemoChecklist,
   'select': DemoSelect,
   'segmented': DemoSegmented,
   'combobox': DemoCombobox,

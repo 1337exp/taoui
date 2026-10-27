@@ -151,6 +151,25 @@ export const propTables = {
       ],
     },
   ],
+  checklist: [
+    {
+      title: 'TaoChecklist',
+      rows: [
+        r('items', 'TaoChecklistItem[]', '—', '{ value, label, description?, disabled? }'),
+        r('v-model', '(string | number)[]', '[]', 'Отмеченные значения, в порядке пунктов'),
+        r('legend', 'string', '—', 'Подпись группы (legend). В TaoFormField её даёт поле'),
+        r('selectAll', 'boolean', 'false', '«Выбрать всё» сверху: промежуточное состояние, когда отмечена часть; переключает все доступные пункты'),
+        r('counter', 'boolean', 'false', '«3 из 5» рядом с подписью, объявляется скринридеру вежливо'),
+        r('strike', 'boolean', 'false', 'Зачёркивать отмеченные (список дел). Только вид: состояние говорит чекбокс'),
+        r('disabled', 'boolean', 'false', 'Вся группа недоступна'),
+        r('error', 'boolean', 'false', 'Красные рамки; текст ошибки — в error у TaoFormField'),
+        r('size', "'small' | 'medium' | 'large'", 'наследуется', 'Размер чекбоксов'),
+        r('selectAllLabel', 'string', "'Выбрать всё'", 'Подпись «Выбрать всё»'),
+        r('counterText', 'string', "'{checked} из {total}'", 'Текст счётчика'),
+      ],
+      slots: '#item — { item, checked }: свой текст пункта. События update:modelValue, change. Недоступный пункт «Выбрать всё» не трогает. Это fieldset: в TaoFormField группа берёт id, подпись и ошибку поля, а чекбоксы внутри — свои id.',
+    },
+  ],
   checkbox: [
     {
       title: 'TaoCheckbox',
