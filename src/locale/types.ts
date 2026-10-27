@@ -24,6 +24,8 @@ export interface TaoLocale {
         prevLabel: string;
         nextLabel: string;
         dotsLabel: string;
+        pauseLabel: string;
+        playLabel: string;
         /** `{n}`, `{count}`. */
         slideLabel: string;
     };

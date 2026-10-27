@@ -21,6 +21,8 @@ export const localeRu: TaoLocale = {
         ariaLabel: 'Лента',
         prevLabel: 'Назад',
         nextLabel: 'Вперёд',
+        pauseLabel: 'Остановить автопрокрутку',
+        playLabel: 'Запустить автопрокрутку',
         dotsLabel: 'Слайды',
         slideLabel: 'Слайд {n} из {count}',
     },

@@ -20,6 +20,8 @@ export const localeEn: TaoLocale = {
         ariaLabel: 'Carousel',
         prevLabel: 'Previous',
         nextLabel: 'Next',
+        pauseLabel: 'Pause autoplay',
+        playLabel: 'Start autoplay',
         dotsLabel: 'Slides',
         slideLabel: 'Slide {n} of {count}',
     },

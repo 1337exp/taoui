@@ -50,7 +50,7 @@
 
 - **TaoBlock** — базовый контейнер с настраиваемыми отступами и скруглением
 - **TaoButton** — кнопка. `variant`: `primary` / `secondary` / `ghost` / `text`; `tone` красит любой из них (по умолчанию акцент, neutral, success, danger, warning, info)
-- **TaoCard** — карточка со слотами cover / header / footer. В `#cover` — фото или `TaoCarousel`. `flush` — плитка без padding/тени на всю ячейку; `#overlay` — scrim на обложке
+- **TaoCard** — карточка со слотами media / header / title / footer и `#corner` (тег, кнопка меню). В `#media` — фото или `TaoCarousel`; `closable` добавляет крестик и событие `close`. `flush` — плитка без padding/тени на всю ячейку; `#overlay` — scrim на media
 - **TaoCopy** — иконка копирования в буфер. После клика сверху тултип «Скопировано»; если кнопку убрали — тултип тоже
 - **TaoInput** — поле ввода с поддержкой v-model, валидации и слотов `#prefix` / `#suffix` (иконка или текст внутри рамки)
 - **TaoInputGroup** — склейка снаружи: `#before` | поле | `#after` (протокол, единица, кнопка)
@@ -103,7 +103,7 @@
 - **TaoStages** — список стадий: `wait` / `work` / `ok` / `bad`. Не линейный степпер
 - **TaoSkeleton** — плейсхолдер загрузки (text / title / circle / rect)
 - **TaoCounter** — витрина числа с переворотом цифр (не инпут)
-- **TaoCarousel** — лента: целый слайд с `autoplay`, карточка с `peek`, полоса с `per-view`. Стрелки через `controls` или `#prev` / `#next`, точки — `dots`
+- **TaoCarousel** — лента: целый слайд с `autoplay`, карточка с `peek`, полоса с `per-view`. Стрелки через `controls` или `#prev` / `#next`; метки под лентой — `indicator` (`dots`, `bars` или `progress`). С `autoplay` текущая метка заполняется за интервал, по заполнении слайд меняется; hover, фокус с клавиатуры, касание, скрытая вкладка и кнопка паузы останавливают, `prefers-reduced-motion` выключает
 - **TaoAvatar** — фото или инициалы, размеры `small` / `medium` / `large`. Точка `dot` и счётчик `count`
 - **TaoTag** — тег/бейдж со статусами. `#prefix` (аватар), `closable` убирает чип, `flat` — без рамки
 - **TaoAlert** — инлайн-баннер страницы или ошибки формы (success / error / warning / info)
@@ -539,13 +539,13 @@ const columns = [
 
 <TaoCounter :value="score" :max-digits="6" />
 
-<TaoCarousel :autoplay="4000" loop dots>
+<TaoCarousel :autoplay="4000" loop indicator="bars">
   <article v-for="item in banners" :key="item.id" class="hero">
     <strong>{{ item.title }}</strong>
     <span>{{ item.text }}</span>
   </article>
 </TaoCarousel>
-<TaoCarousel :peek="72" :controls="false" dots>…</TaoCarousel>
+<TaoCarousel :peek="72" :controls="false" indicator="dots">…</TaoCarousel>
 <TaoCarousel v-model="slide" :per-view="5" :peek="28">
   <template #prev></template>
   <template #next="{ go, disabled }">

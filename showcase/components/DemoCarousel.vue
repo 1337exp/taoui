@@ -14,7 +14,7 @@ const carouselStrip = ref(0)
 const carouselBare = ref(0)
 const carouselCustom = ref(0)
 const carouselExample = computed(() => [
-  '<TaoCarousel :autoplay="4000" loop dots>',
+  '<TaoCarousel :autoplay="4000" loop indicator="dots">',
   '  <article v-for="item in banners" :key="item.id" class="hero">',
   '    <strong>{{ item.title }}</strong>',
   '    <span>{{ item.text }}</span>',
@@ -85,16 +85,37 @@ const carouselProducts = [
     
           <h3 class="carousel-heading">{{ tr('A whole slide', 'Целый слайд') }}</h3>
           <Tr>
-            <template #en><p class="carousel-note">Moves forward every 4 seconds. Hover — it pauses, leave — it runs again. Tabbing onto the strip pauses it too. <code>loop</code> goes round in a circle. <code>dots</code> — how many slides there are and where you are.</p></template>
-            <template #ru><p class="carousel-note">Каждые 4 секунды вперёд. Наведи курсор — пауза, убери — снова едет. Tab на ленту тоже ставит на паузу. <code>loop</code> крутит по кругу. <code>dots</code> — сколько слайдов и где вы.</p></template>
+            <template #en><p class="carousel-note">Moves forward every 4 seconds: the current bar fills up, and the slide changes when it is full. Hover — it pauses, leave — it runs again; tabbing onto the strip, touching and dragging pause it too, and so does the button on the right (autoplay that moves for more than 5 seconds must be stoppable). <code>loop</code> goes round in a circle. <code>indicator</code> — how many slides there are and where you are.</p></template>
+            <template #ru><p class="carousel-note">Каждые 4 секунды вперёд: текущая полоска заполняется, по заполнении слайд меняется. Наведи курсор — пауза, убери — снова едет; Tab на ленту, касание и перетаскивание тоже ставят на паузу, как и кнопка справа (автодвижение дольше 5 секунд должно останавливаться). <code>loop</code> крутит по кругу. <code>indicator</code> — сколько слайдов и где вы.</p></template>
           </Tr>
-          <TaoCarousel v-model="carouselHero" :autoplay="4000" loop dots :aria-label="tr('Banners', 'Баннеры')">
+          <TaoCarousel v-model="carouselHero" :autoplay="4000" loop indicator="bars" :aria-label="tr('Banners', 'Баннеры')">
             <article v-for="item in carouselBanners" :key="item.id" class="carousel-hero">
               <strong>{{ item.title }}</strong>
               <span>{{ item.text }}</span>
             </article>
           </TaoCarousel>
     
+          <h3 class="carousel-heading">{{ tr('Indicators: dots, bars, progress', 'Индикаторы: точки, полоски, прогресс') }}</h3>
+          <Tr>
+            <template #en><p class="carousel-note">With <code>autoplay</code> the current mark is the clock: it fills over the interval. Without autoplay <code>progress</code> shows the position. The fill is a CSS animation, so the colour, the thickness and the speed are yours to restyle.</p></template>
+            <template #ru><p class="carousel-note">С <code>autoplay</code> текущая метка и есть часы: она заполняется за интервал. Без autoplay <code>progress</code> показывает позицию. Заливка — CSS-анимация, поэтому цвет, толщину и скорость можно переопределить.</p></template>
+          </Tr>
+          <div v-for="kind in ['dots', 'bars', 'progress']" :key="kind" class="carousel-indicator-demo">
+            <code>indicator="{{ kind }}"</code>
+            <TaoCarousel :autoplay="3000" loop :controls="false" :indicator="kind" :aria-label="kind">
+              <article v-for="item in carouselBanners" :key="item.id" class="carousel-hero">
+                <strong>{{ item.title }}</strong>
+                <span>{{ item.text }}</span>
+              </article>
+            </TaoCarousel>
+          </div>
+          <TaoCarousel :controls="false" indicator="progress" :aria-label="tr('Without autoplay', 'Без autoplay')">
+            <article v-for="item in carouselBanners" :key="item.id" class="carousel-hero">
+              <strong>{{ item.title }}</strong>
+              <span>{{ tr('no autoplay: the bar is the position', 'без autoplay: полоска — это позиция') }}</span>
+            </article>
+          </TaoCarousel>
+
           <h3 class="carousel-heading">{{ tr('One card + a peek', 'Одна карточка + краешек') }}</h3>
           <Tr>
             <template #en><p class="carousel-note"><code>per-view="1"</code> and <code>peek</code> — you can see there is another product on the right.</p></template>
@@ -126,17 +147,17 @@ const carouselProducts = [
             <template #en>
               <p class="carousel-note">
                 <code>:controls="false"</code> hides both. An empty <code>#prev</code> or <code>#next</code> — one side only.
-                Here <code>dots</code> stand in for the arrows.
+                Here <code>indicator="dots"</code> stands in for the arrows.
               </p>
             </template>
             <template #ru>
               <p class="carousel-note">
                 <code>:controls="false"</code> прячет обе. Пустой <code>#prev</code> или <code>#next</code> — только одну сторону.
-                Здесь вместо стрелок — <code>dots</code>.
+                Здесь вместо стрелок — <code>indicator="dots"</code>.
               </p>
             </template>
           </Tr>
-          <TaoCarousel v-model="carouselBare" :peek="72" :controls="false" dots :aria-label="tr('No arrows', 'Без стрелок')">
+          <TaoCarousel v-model="carouselBare" :peek="72" :controls="false" indicator="dots" :aria-label="tr('No arrows', 'Без стрелок')">
             <article v-for="item in carouselProducts.slice(0, 8)" :key="item.id" class="carousel-card">
               <div class="carousel-card__cover">{{ item.id }}</div>
               <strong>{{ item.name }}</strong>
@@ -232,5 +253,16 @@ const carouselProducts = [
 .carousel-nav:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.carousel-indicator-demo {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.carousel-indicator-demo code {
+  color: var(--tao-color-text-muted);
+  font-size: 12px;
 }
 </style>
