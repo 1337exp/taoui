@@ -2,7 +2,7 @@
  * Tao UI — Primitive tokens
  *
  * Сырые значения без смысловой привязки. Ничего отсюда не используется
- * напрямую в компонентах — только через семантический слой (semantic.css).
+ * напрямую в компонентах — только через семантический слой (tokens/semantic.css, themes/*.css).
  * Пользователи библиотеки обычно НЕ трогают этот файл.
  */
 :root {
@@ -53,7 +53,7 @@
 
     /* ---------- Control size scale / Шкала размеров контролов ----------
        One scale (small / medium / large) for every control with `size`. Components read the current values
-       from size.css (--tao-control-height etc.), never these directly.
+       from contexts/size.css (--tao-control-height etc.), never these directly.
        Единая шкала для всех контролов с `size`. Компоненты читают текущие значения из size.css, не эти. */
     --tao-control-height-small: 26px;
     --tao-control-height-medium: 36px;

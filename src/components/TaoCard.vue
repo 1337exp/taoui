@@ -75,7 +75,7 @@ const hasContent = computed(
 const mediaOnly = computed(() => Boolean(slots.media) && !hasContent.value);
 const hasCorner = computed(() => Boolean(slots.corner) || props.closable);
 
-// Only what the user passed goes inline; the defaults come from tokens (see .tao-panel in surface.css).
+// Only what the user passed goes inline; the defaults come from tokens (see .tao-panel in styles/contexts/surface.css).
 // В inline уходит только то, что передал пользователь; значения по умолчанию — из токенов.
 const paddingStyle = computed(() => (props.padding === undefined || props.flush ? undefined : { padding: toCssBox(props.padding) }));
 

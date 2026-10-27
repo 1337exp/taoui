@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error Vite `?raw` imports: the stylesheets as text
-import primitivesCss from '../src/styles/primitives.css?raw';
+import primitivesCss from '../src/styles/tokens/primitives.css?raw';
 // @ts-expect-error Vite `?raw` import
-import semanticCss from '../src/styles/semantic.css?raw';
+import semanticCss from '../src/styles/tokens/semantic.css?raw';
+// @ts-expect-error Vite `?raw` import
+import darkCss from '../src/styles/themes/dark.css?raw';
 // @ts-expect-error Vite `?raw` import
 import lightCss from '../src/styles/themes/light.css?raw';
 // @ts-expect-error Vite `?raw` import
-import toneCss from '../src/styles/tone.css?raw';
+import toneCss from '../src/styles/contexts/tone.css?raw';
 
 /**
  * Guards for the token layers (see CONTRIBUTING.md, "Colour tokens"):
@@ -23,7 +25,8 @@ function declarations(css: string): Map<string, string> {
 }
 
 const primitives = declarations(primitivesCss);
-const semantic = declarations(semanticCss);
+// the roles: the theme-independent semantic tokens plus the colour roles of the default (dark) theme
+const semantic = new Map([...declarations(semanticCss), ...declarations(darkCss)]);
 const light = declarations(lightCss);
 
 /** Hooks a theme may set without them being part of semantic.css (read with a fallback by one component). */

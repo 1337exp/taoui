@@ -1,12 +1,16 @@
 /**
  * Tao UI — styles entry point
  *
- * Порядок важен: primitives -> semantic (default theme) -> optional themes -> size context -> surfaces -> base reset.
+ * Layers, in order: primitives -> semantic tokens -> themes (dark is the default, light is opt-in with
+ * data-tao-theme="light") -> contexts (size, tone, surface) -> base reset.
+ * Порядок слоёв: примитивы -> семантические токены -> темы (dark по умолчанию, light включается атрибутом) ->
+ * контексты (размер, тон, поверхность) -> базовый сброс.
  */
-@import "./primitives.css";
-@import "./semantic.css";
+@import "./tokens/primitives.css";
+@import "./tokens/semantic.css";
+@import "./themes/dark.css";
 @import "./themes/light.css";
-@import "./size.css";
-@import "./tone.css";
-@import "./surface.css";
+@import "./contexts/size.css";
+@import "./contexts/tone.css";
+@import "./contexts/surface.css";
 @import "./base.css";

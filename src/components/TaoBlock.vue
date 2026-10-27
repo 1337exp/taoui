@@ -24,7 +24,7 @@ const props = withDefaults(defineProps<Props>(), {
     surface: 'flat',
 });
 
-// Only what the user passed goes inline; the defaults come from tokens (see .tao-panel in surface.css).
+// Only what the user passed goes inline; the defaults come from tokens (see .tao-panel in styles/contexts/surface.css).
 // В inline уходит только то, что передал пользователь; значения по умолчанию — из токенов.
 const panelStyle = computed(() => {
     const pad = props.padding;

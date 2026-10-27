@@ -193,6 +193,16 @@ let you replace them with anything.
 npm install @1337exp/taoui
 ```
 
+Requires Vue 3.4+. The package is **ESM-only** (Vite, Nuxt 3, webpack 5 and Node 18+ with `import` all work; a plain `require('@1337exp/taoui')` does not: use `import()`).
+
+### Browser support
+
+The CSS uses `color-mix()`, container queries and registered custom properties (`@property`), so the floor is
+**Chrome / Edge 111, Safari 16.4, Firefox 128**: the browsers of 2023–2024. Firefox 128 is the limiting one (`@property`).
+On an older browser everything stays readable; what you lose is small: a registered property is what keeps a tone
+(`.tao-tone-*`) and a surface from leaking into the children, so without it a Button inside a red Alert may turn red.
+The same list is the `browserslist` field of the package and the build target.
+
 From a local folder:
 
 ```bash
@@ -555,27 +565,29 @@ The `cell-<key>` slot replaces a cell. `loading` shows an overlay; an empty list
 
 ## Design tokens and theming
 
-Library styles are three layers. Components **never** touch raw colors or sizes —
-only semantic variables. That is the theming mechanism: override 20–30 variables
+Library styles are layers. Components **never** touch raw colors or sizes: they read semantic roles, and
+the contexts built on them (size, tone, surface). That is the theming mechanism: override 20–30 variables
 and every component follows, with no edits inside the components themselves.
 
 ```
-primitives.css   →   semantic.css   →   themes/*.css (optional)
-  raw colors          public theming     ready-made themes on top
-  and scales,         API: this is       of semantic — light is
-  leave them alone    what you change    the example
+tokens/primitives.css → tokens/semantic.css → themes/*.css → contexts/*.css → base.css
+  raw colors, scales    radii, shadows,       colour roles     size, tone,       reset
+  leave them alone      type, motion          per theme        surface classes
 ```
 
 ### Layers
 
-| File | Role | Touch it? |
+| File (in `src/styles/`) | Role | Touch it? |
 |---|---|---|
-| `primitives.css` | Raw palette, space / radius / shadow scales (`--tao-orange-400`, `--tao-space-3`…) | Usually no |
-| `semantic.css` | Default (dark) theme tokens: `--tao-color-accent`, `--tao-color-surface`, `--tao-color-danger`, etc. | **Yes — this is the theming API** |
-| `themes/light.css` | Alternate theme via `[data-tao-theme="light"]` | Yes, as a sample |
+| `tokens/primitives.css` | Raw palette, space / radius / shadow scales (`--tao-orange-400`, `--tao-space-3`…) | Usually no |
+| `tokens/semantic.css` | Theme-independent roles: radii, shadows, type, motion | Rarely |
+| `themes/dark.css` | The colour roles of the default (dark) theme: `--tao-color-accent`, `--tao-color-surface`, … | **Yes — this is the theming API** |
+| `themes/light.css` | The same roles under `[data-tao-theme="light"]` | Yes, as a sample |
+| `contexts/size.css`, `tone.css`, `surface.css` | `.tao-size-*`, `.tao-tone-*`, `.tao-surface-*`: what a control reads to know its size, colour and material | Rarely |
 | `base.css` | Global reset (scrollbar, links, box-sizing) | Rarely |
 
-All four come in through `@1337exp/taoui/styles.css`.
+Everything comes in through `@1337exp/taoui/styles.css` (dark and light both: light turns on with `data-tao-theme="light"`).
+The raw files are importable as `@1337exp/taoui/styles/tokens/primitives.css` and so on.
 
 ### Your own theme
 
@@ -592,7 +604,7 @@ Nothing in the components needs to change:
     --tao-color-surface-raised: #1a1a2e;
     --tao-color-text: #d6d6e8;
     --tao-color-text-strong: #ffffff;
-    /* remaining tokens: see semantic.css */
+    /* remaining roles: see themes/dark.css */
 }
 ```
 
@@ -624,16 +636,20 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-radius-control`, `--tao-radius-panel` — radii (small controls vs large panels)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — shadows
 - `--tao-font-size-*` — type scale in `primitives.css`: `xs`–`xl` controls, `2xl`–`4xl` titles / prose
-- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — the size scale in `primitives.css`. Components read the current values from `size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Use them in your own controls to match the size around them.
+- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — the size scale in `primitives.css`. Components read the current values from `contexts/size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Use them in your own controls to match the size around them.
 
-The full list lives in `src/styles/semantic.css` — the only file worth opening
+The full list of colour roles lives in `src/styles/themes/dark.css` — the file worth opening
 to see the whole theming API.
 
 ### A theme from scratch, without primitives
 
 ```javascript
-import '@1337exp/taoui/styles/primitives.css' // keep the scales if you want
-import './my-semantic.css'              // your semantic layer instead of @1337exp/taoui/styles/semantic.css
+import '@1337exp/taoui/styles/tokens/primitives.css'   // keep the scales if you want
+import '@1337exp/taoui/styles/tokens/semantic.css'     // radii, shadows, type, motion
+import './my-colour-roles.css'                         // your colour roles instead of themes/dark.css
+import '@1337exp/taoui/styles/contexts/size.css'       // the contexts the components read
+import '@1337exp/taoui/styles/contexts/tone.css'
+import '@1337exp/taoui/styles/contexts/surface.css'
 import '@1337exp/taoui/styles/base.css'
 ```
 
@@ -672,8 +688,8 @@ npm test
 ## Publishing to npm
 
 Only `dist/` (the built library) and `src/styles/` (raw tokens, so you can
-import `primitives.css` on its own for a custom theme) are published, plus
-`README.md`, `LICENSE` and `CHANGELOG.md`.
+import `tokens/primitives.css` on its own for a custom theme) are published, plus
+`README.md`, `LICENSE`, `CHANGELOG.md` and `MIGRATION-5.md`.
 Component sources (`src/components/*.vue`), build configs, and `showcase/`
 stay in the repo — clone it to get them.
 
@@ -681,10 +697,13 @@ stay in the repo — clone it to get them.
 (`prepublishOnly` in `package.json`), so a stale or missing `dist/` cannot
 reach the registry. You do not need to build by hand before `npm publish`.
 
-See what would go into the tarball, without publishing:
+See what would go into the tarball, without publishing, and check the package the way a consumer meets it
+(`publint` for the manifest, `attw` for the type resolution):
 
 ```bash
 npm pack --dry-run
+npm run lint:package
+npm run smoke      # installs the packed tarball into a clean Vite project and builds it
 ```
 
 Keep the publish token out of the repository: reference it from `.npmrc` as

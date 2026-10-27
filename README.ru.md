@@ -193,6 +193,16 @@ registerTaoIcons({ rocket: { body: '<path d="M12 3l4 8-4 10-4-10z"/>' } }); // �
 npm install @1337exp/taoui
 ```
 
+Нужен Vue 3.4+. Пакет **только ESM** (Vite, Nuxt 3, webpack 5 и Node 18+ с `import` работают; голый `require('@1337exp/taoui')` — нет: используйте `import()`).
+
+### Поддержка браузеров
+
+CSS использует `color-mix()`, контейнерные запросы и зарегистрированные свойства (`@property`), поэтому планка —
+**Chrome / Edge 111, Safari 16.4, Firefox 128**: браузеры 2023–2024 годов. Ограничивает Firefox 128 (`@property`).
+В более старом браузере всё остаётся читаемым, теряется мелочь: именно зарегистрированное свойство не даёт тону
+(`.tao-tone-*`) и поверхности «протекать» в детей, поэтому без него Button внутри красного Alert может покраснеть.
+Тот же список — поле `browserslist` пакета и целевая платформа сборки.
+
 Или локально из папки:
 
 ```bash
@@ -555,28 +565,30 @@ const columns = [
 
 ## Дизайн-токены и темизация
 
-Стили библиотеки построены в три слоя. Компоненты **никогда** не обращаются
-к цветам/размерам напрямую — только через переменные из семантического слоя.
+Стили библиотеки построены слоями. Компоненты **никогда** не обращаются к цветам/размерам
+напрямую: они читают семантические роли и контексты на них (размер, тон, поверхность).
 Это и есть механизм темизации: переопределяете 20-30 переменных — меняется
 внешний вид всех компонентов сразу, без правок самих компонентов.
 
 ```
-primitives.css   →   semantic.css   →   themes/*.css (опционально)
-   сырые цвета         публичный API      готовые темы поверх
-   и размеры,          темизации:         semantic — пример: light
-   не трогать          вот что менять
+tokens/primitives.css → tokens/semantic.css → themes/*.css → contexts/*.css → base.css
+  сырые цвета, шкалы     скругления, тени,     цветовые роли   классы размера,   сброс
+  не трогать             шрифт, движение       каждой темы     тона, поверхности
 ```
 
 ### Слои
 
-| Файл | Назначение | Трогать? |
+| Файл (в `src/styles/`) | Назначение | Трогать? |
 |---|---|---|
-| `primitives.css` | Сырая палитра, шкалы отступов/радиусов/теней (`--tao-orange-400`, `--tao-space-3`...) | Обычно нет |
-| `semantic.css` | Токены темы по умолчанию (dark): `--tao-color-accent`, `--tao-color-surface`, `--tao-color-danger` и т.д. | **Да — это и есть API темизации** |
-| `themes/light.css` | Пример альтернативной темы через `[data-tao-theme="light"]` | Да, как образец |
+| `tokens/primitives.css` | Сырая палитра, шкалы отступов/радиусов/теней (`--tao-orange-400`, `--tao-space-3`...) | Обычно нет |
+| `tokens/semantic.css` | Роли, не зависящие от темы: скругления, тени, шрифт, движение | Редко |
+| `themes/dark.css` | Цветовые роли темы по умолчанию (dark): `--tao-color-accent`, `--tao-color-surface`, ... | **Да — это и есть API темизации** |
+| `themes/light.css` | Те же роли под `[data-tao-theme="light"]` | Да, как образец |
+| `contexts/size.css`, `tone.css`, `surface.css` | `.tao-size-*`, `.tao-tone-*`, `.tao-surface-*`: что контрол читает, чтобы знать размер, цвет и материал | Редко |
 | `base.css` | Глобальный reset (скроллбар, ссылки, box-sizing) | Редко |
 
-Все четыре подключаются одним файлом `@1337exp/taoui/styles.css`.
+Всё подключается одним файлом `@1337exp/taoui/styles.css` (и dark, и light: light включается атрибутом `data-tao-theme="light"`).
+Сырые файлы доступны как `@1337exp/taoui/styles/tokens/primitives.css` и так далее.
 
 ### Как сделать свою тему
 
@@ -593,7 +605,7 @@ primitives.css   →   semantic.css   →   themes/*.css (опционально
     --tao-color-surface-raised: #1a1a2e;
     --tao-color-text: #d6d6e8;
     --tao-color-text-strong: #ffffff;
-    /* остальные токены см. semantic.css */
+    /* остальные роли см. themes/dark.css */
 }
 ```
 
@@ -626,16 +638,20 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-radius-control`, `--tao-radius-panel` — скругления (мелкие контролы vs крупные панели)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — тени
 - `--tao-font-size-*` — шкала кегля в `primitives.css`: `xs`–`xl` контролы, `2xl`–`4xl` заголовки / проза
-- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — шкала размеров в `primitives.css`. Компоненты читают текущие значения из `size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Используйте их в своих контролах, чтобы попасть в размер окружения.
+- `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — шкала размеров в `primitives.css`. Компоненты читают текущие значения из `contexts/size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Используйте их в своих контролах, чтобы попасть в размер окружения.
 
-Полный список — в `src/styles/semantic.css`, он же единственный файл,
+Полный список цветовых ролей — в `src/styles/themes/dark.css`, это файл,
 который стоит открыть, чтобы понять весь доступный API темизации.
 
 ### Если нужна тема с нуля, без primitives
 
 ```javascript
-import '@1337exp/taoui/styles/primitives.css' // шкалы можно оставить
-import './my-semantic.css'              // свой семантический слой вместо @1337exp/taoui/styles/semantic.css
+import '@1337exp/taoui/styles/tokens/primitives.css'   // шкалы можно оставить
+import '@1337exp/taoui/styles/tokens/semantic.css'     // скругления, тени, шрифт, движение
+import './my-colour-roles.css'                         // ваши цветовые роли вместо themes/dark.css
+import '@1337exp/taoui/styles/contexts/size.css'       // контексты, которые читают компоненты
+import '@1337exp/taoui/styles/contexts/tone.css'
+import '@1337exp/taoui/styles/contexts/surface.css'
 import '@1337exp/taoui/styles/base.css'
 ```
 
@@ -674,8 +690,8 @@ npm test
 ## Публикация в npm
 
 Публикуется только `dist/` (собранная библиотека) и `src/styles/` (сырые
-токены — чтобы можно было подключить `primitives.css` отдельно при
-кастомной теме), плюс `README.md`, `LICENSE` и `CHANGELOG.md`. Исходники компонентов (`src/components/*.vue`),
+токены — чтобы можно было подключить `tokens/primitives.css` отдельно при
+кастомной теме), плюс `README.md`, `LICENSE`, `CHANGELOG.md` и `MIGRATION-5.md`. Исходники компонентов (`src/components/*.vue`),
 конфиги сборки и `showcase/` в пакет не попадают — они остаются в
 репозитории; чтобы их получить, репозиторий клонируют.
 

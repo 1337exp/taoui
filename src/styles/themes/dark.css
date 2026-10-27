@@ -1,11 +1,13 @@
 /**
- * Tao UI — Semantic tokens (default / dark theme)
+ * Tao UI — Dark theme (the default)
  *
- * Это и есть публичный API темизации библиотеки. Компоненты используют
- * ТОЛЬКО эти переменные, никогда — primitives напрямую.
+ * The colour roles of the dark theme: the public API of theming. Components read ONLY roles (and the contexts built on
+ * them: size, tone, surface), never primitives. A theme is a file like this one: `themes/light.css` overrides every
+ * role under `[data-tao-theme="light"]`, your own theme does the same under its own name.
  *
- * Чтобы сделать свою тему — переопредели этот набор в своём CSS
- * (глобально, или через [data-tao-theme="имя"], см. themes/*.css).
+ * Цветовые роли тёмной темы (она же по умолчанию): публичный API темизации. Компоненты читают ТОЛЬКО роли
+ * (и контексты на них: размер, тон, поверхность), никогда не примитивы. Тема — такой же файл: `themes/light.css`
+ * переопределяет каждую роль под `[data-tao-theme="light"]`, ваша тема делает то же под своим именем.
  */
 :root,
 [data-tao-theme="dark"] {
@@ -84,25 +86,4 @@
 
     /* ---------- Overlay ---------- */
     --tao-color-overlay: rgba(0, 0, 0, 0.7);
-
-    /* ---------- Radii / spacing / shadows (aliasable per-theme too) ---------- */
-    --tao-radius-control: var(--tao-radius-sm);
-    --tao-radius-panel: var(--tao-radius-md);
-    --tao-shadow-panel: var(--tao-shadow-md);
-    --tao-shadow-overlay: var(--tao-shadow-xl);
-
-    /* ---------- Typography / motion passthrough ---------- */
-    --tao-font-family: var(--tao-font-family-base);
-    /* Colours, shadow, opacity and transform only: `all` would also animate size, padding and the glass backdrop.
-       Только цвета, тень, прозрачность и transform: `all` анимировал бы ещё размеры, отступы и размытие стекла. */
-    --tao-transition-base:
-        color var(--tao-duration-base) var(--tao-ease-base),
-        background-color var(--tao-duration-base) var(--tao-ease-base),
-        border-color var(--tao-duration-base) var(--tao-ease-base),
-        outline-color var(--tao-duration-base) var(--tao-ease-base),
-        box-shadow var(--tao-duration-base) var(--tao-ease-base),
-        opacity var(--tao-duration-base) var(--tao-ease-base),
-        transform var(--tao-duration-base) var(--tao-ease-base),
-        fill var(--tao-duration-base) var(--tao-ease-base),
-        stroke var(--tao-duration-base) var(--tao-ease-base);
 }

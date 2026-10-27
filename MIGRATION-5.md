@@ -47,6 +47,21 @@ Everything that 2.0 deprecated is deleted, together with its warnings.
 
 New: `TaoMenu` (the menu panel with submenus, checkbox and radio items, type-ahead, `aria-activedescendant`), types `TaoMenuItem` and friends, `TaoPlacement`; composables behind them (`useFloating`, `useDismiss`, `useLayer`, `useListNav`) are internal for now.
 
+## Packaging and styles
+
+| What | Before | Now |
+|---|---|---|
+| Module format | ESM (`index.mjs`) **and** CommonJS (`index.cjs`) | **ESM only**, `dist/index.js`. `require('@1337exp/taoui')` fails: use `import` or `await import()`. Vite, Nuxt 3, webpack 5 and Node 18+ with `import` are unaffected |
+| `package.json` | `main`, `module`, `exports.import` / `exports.require`; `nuxt` as an optional peer | `exports["."] = { types, default }`; `sideEffects: ["**/*.css"]`; the only peer is `vue` |
+| Style files | `src/styles/primitives.css`, `semantic.css`, `size.css`, `tone.css`, `surface.css`, `base.css`, `themes/light.css` | `tokens/primitives.css`, `tokens/semantic.css` (theme-independent roles), `themes/dark.css` (the colour roles), `themes/light.css`, `contexts/size.css`, `contexts/tone.css`, `contexts/surface.css`, `base.css`. The colour roles that lived in `semantic.css` are now in `themes/dark.css` |
+| `@1337exp/taoui/styles/*` imports | `…/styles/primitives.css`, `…/styles/semantic.css` | `…/styles/tokens/primitives.css`, `…/styles/themes/dark.css`, … (`styles.css` with everything is unchanged) |
+| Browsers | not stated | Chrome / Edge 111, Safari 16.4, Firefox 128 (`browserslist`, the build target, README) |
+| Release checks | type-check, tests, build | + `publint`, `attw` (`npm run lint:package`) and the consumer smoke test (`npm run smoke`) in CI |
+
+For TaoUX: its bridge test reads `node_modules/@1337exp/taoui/src/styles/semantic.css`; the same roles are in `themes/dark.css` now (the 13 contract tokens are unchanged).
+
+The light theme stays in the core stylesheet: it is 3 KB, and a second import to turn it on would be a step for nothing. Palettes (5.1) will be separate opt-in files.
+
 ## Components
 
 | What | Before | Now |

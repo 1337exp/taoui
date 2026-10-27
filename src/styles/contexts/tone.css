@@ -13,7 +13,7 @@
  *   --tao-tone-wash         the hover wash behind a ghost / text control
  *
  * The tokens are not inherited (like the surface tokens): a Button inside a red Alert stays an accent button.
- * To tone your own element put the class on it. A theme or a palette changes the roles in semantic.css; this file
+ * To tone your own element put the class on it. A theme or a palette changes the roles in themes/dark.css and tokens/semantic.css; this file
  * never needs to know.
  *
  * Один механизм для всех статусных цветов: `.tao-tone-<имя>` на элементе выставляет токены ниже, компонент читает

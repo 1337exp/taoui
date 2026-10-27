@@ -5,9 +5,9 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 // The public token contract. TaoUX ships a bridge (`@1337exp/taoux/taoui.css`) that points its --tx-* variables at
-// these tokens, and its test reads `src/styles/semantic.css` by path. Changing the list or the file means changing
+// these tokens, and its test reads `src/styles/themes/dark.css` by path. Changing the list or the file means changing
 // TaoUX in the same release.
-// Публичный контракт токенов: на них смотрит мост TaoUX, его тест читает `src/styles/semantic.css` по пути.
+// Публичный контракт токенов: на них смотрит мост TaoUX, его тест читает `src/styles/themes/dark.css` по пути.
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const read = (path: string) => readFileSync(join(root, path), 'utf8');
@@ -29,10 +29,10 @@ export const contractTokens = [
 ];
 
 describe('public token contract', () => {
-    const semantic = read('src/styles/semantic.css');
+    const semantic = read('src/styles/themes/dark.css');
     const light = read('src/styles/themes/light.css');
 
-    it.each(contractTokens)('%s is defined in semantic.css (the file path is part of the contract)', (token) => {
+    it.each(contractTokens)('%s is defined in themes/dark.css (the file path is part of the contract)', (token) => {
         expect(semantic).toContain(`${token}:`);
     });
 
@@ -41,7 +41,7 @@ describe('public token contract', () => {
     });
 
     it('the size and surface context tokens that components rely on exist', () => {
-        const size = read('src/styles/size.css');
+        const size = read('src/styles/contexts/size.css');
         for (const token of ['--tao-control-height', '--tao-control-font-size', '--tao-indicator-size']) {
             expect(size).toContain(`${token}:`);
         }

@@ -19,7 +19,10 @@ jobs:
       - run: npm run type-check
       - run: npm test
       - run: npm run build
-      - run: npm pack --dry-run
+      # the manifest and the type resolution, the way a consumer meets the package
+      - run: npm run lint:package
+      # installs the packed tarball into a clean Vite project and builds it; prints the cost of one component
+      - run: npm run smoke
 
   showcase:
     runs-on: ubuntu-latest

@@ -22,7 +22,7 @@ cd showcase && npm install   # the live showcase
 ## Layout
 
 ```
-src/            the library: components/, styles/ (tokens), locale/, plain .ts helpers
+src/            the library: components/, styles/ (tokens/, themes/, contexts/), locale/, plain .ts helpers
 tests/          Vitest; pure logic lives in src/*.ts so it can be tested without a DOM
 showcase/       the demo app that becomes the public sandbox page
 docs/media/     screenshots and clips used by the READMEs and the website
@@ -48,8 +48,8 @@ Colours come in three layers, and a component reads **only the middle one**:
 
 | Layer | Where | Example | Rule |
 | --- | --- | --- | --- |
-| Primitives | `src/styles/primitives.css` | `--tao-gray-600`, `--tao-pink-500` | raw scales; never used by a component |
-| Semantic roles | `src/styles/semantic.css` (dark) and `themes/*.css` | `--tao-color-danger`, `--tao-color-on-danger` | the public theming API |
+| Primitives | `src/styles/tokens/primitives.css` | `--tao-gray-600`, `--tao-pink-500` | raw scales; never used by a component |
+| Semantic roles | `src/styles/themes/dark.css` and `themes/*.css` (colours), `tokens/semantic.css` (the rest) | `--tao-color-danger`, `--tao-color-on-danger` | the public theming API |
 | Component hooks | the component's own CSS, with a fallback | `var(--tao-button-primary-text-shadow, none)` | one-off tweaks that do not deserve a role |
 
 Why: a theme is one file that re-points roles at primitives, so a new theme (or the light one) can never leave a
@@ -68,7 +68,7 @@ Rules:
 4. **Status colour as text uses `<status>-text`, as a fill uses `<status>`.** One shade cannot do both: the fill is picked for white text on top of it, the text for contrast against the page.
 5. A theme file sets every colour role explicitly, even when the value equals the dark one. It must not invent roles.
 6. No literal colours in components (the rainbow list of the animated border lives in `primitives.css` as `--tao-gradient-rainbow`).
-7. A component takes its colour from the **tone context** (`styles/tone.css`): put `toneClass(tone)` on the root and read
+7. A component takes its colour from the **tone context** (`styles/contexts/tone.css`): put `toneClass(tone)` on the root and read
    `--tao-tone`, `--tao-tone-on`, `--tao-tone-text`, … Never map `success` / `danger` to colours inside a component.
 8. Accent or status colour as **text** uses the `-text` token (`accent-text`, `danger-text`, …), as a fill the plain one; the tests hold both to 4.5:1.
 12. A form control gets its id, `aria-describedby` and invalid state from `useField(props)` (`formField.ts`); do not inject the field by hand. A text that has a default in the locale is read through `useLocaleText` / `useTaoLocale`, never through the global `taoLocale()` inside a component (the server shares that one between requests).
@@ -77,7 +77,7 @@ Rules:
 9. Layers and transitions come from tokens (`--tao-z-*`, `--tao-transition-base`): no literal `z-index` above content, no `transition: all`.
 
 `tests/tokens.test.ts` enforces the mechanical part: a theme only overrides roles that exist, sets every colour role, and every
-`on-*` colour has at least 3:1 contrast on its fill in both themes. Adding a role? Add it to `semantic.css` **and** every file in `themes/`.
+`on-*` colour has at least 3:1 contrast on its fill in both themes. Adding a role? Add it to `themes/dark.css` **and** every other file in `themes/`.
 
 ## Pull requests
 
