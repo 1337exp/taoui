@@ -11,6 +11,8 @@
     /* ---------- Radii / spacing / shadows (aliasable per-theme too) ---------- */
     --tao-radius-control: var(--tao-radius-sm);
     --tao-radius-panel: var(--tao-radius-md);
+    /* The coloured stripe of a panel (Card / Block `stripe`). / Цветная полоса панели. */
+    --tao-stripe-width: 4px;
     --tao-shadow-panel: var(--tao-shadow-md);
     --tao-shadow-overlay: var(--tao-shadow-xl);
 

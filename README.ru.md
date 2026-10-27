@@ -50,7 +50,7 @@
 
 - **TaoBlock** — базовый контейнер с настраиваемыми отступами и скруглением
 - **TaoButton** — кнопка. `variant`: `primary` / `secondary` / `ghost` / `text`; `tone` красит любой из них (по умолчанию акцент, neutral, success, danger, warning, info)
-- **TaoCard** — карточка со слотами media / header / title / footer и `#corner` (тег, кнопка меню). В `#media` — фото или `TaoCarousel`; `closable` добавляет крестик и событие `close`. `flush` — плитка без padding/тени на всю ячейку; `#overlay` — scrim на media
+- **TaoCard** — карточка со слотами media / header / title / footer и `#corner` (тег, кнопка меню). В `#media` — фото или `TaoCarousel`; `closable` добавляет крестик и событие `close`. `flush` — плитка без padding/тени на всю ячейку; `#overlay` — scrim на media; `stripe="top | left | bottom"` со `stripeTone` (тон или `gradient` палитры) рисует цветную полосу, которую обрезают углы
 - **TaoCopy** — иконка копирования в буфер. После клика сверху тултип «Скопировано»; если кнопку убрали — тултип тоже
 - **TaoInput** — поле ввода с поддержкой v-model, валидации и слотов `#prefix` / `#suffix` (иконка или текст внутри рамки)
 - **TaoInputGroup** — склейка снаружи: `#before` | поле | `#after` (протокол, единица, кнопка)

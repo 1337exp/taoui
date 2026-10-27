@@ -71,6 +71,55 @@
     border-radius: var(--tao-radius);
 }
 
+/* ---------- Stripe / Полоса ----------
+   A coloured stripe on one side of a panel (Card / Block `stripe`). It is a layer over the whole panel with the
+   panel's own radius, so the corners clip it, over a picture in the media slot too, with or without overflow.
+   The colour is a role: the tone of the panel (accent by default) or the palette gradient, so it follows the theme.
+   Цветная полоса с одной стороны панели. Это слой поверх всей панели с её же радиусом: углы панели обрезают полосу,
+   поверх картинки в media тоже, с overflow и без. Цвет — роль: тон панели (по умолчанию акцент) или градиент палитры. */
+.tao-stripe-top,
+.tao-stripe-left,
+.tao-stripe-bottom {
+    --_tao-stripe-image: linear-gradient(var(--tao-tone), var(--tao-tone));
+    position: relative;
+}
+
+.tao-stripe-top {
+    --_tao-stripe-position: top;
+    --_tao-stripe-size: 100% var(--tao-stripe-width);
+}
+
+.tao-stripe-left {
+    --_tao-stripe-position: left;
+    --_tao-stripe-size: var(--tao-stripe-width) 100%;
+}
+
+.tao-stripe-bottom {
+    --_tao-stripe-position: bottom;
+    --_tao-stripe-size: 100% var(--tao-stripe-width);
+}
+
+.tao-stripe-gradient {
+    --_tao-stripe-image: var(--tao-gradient);
+}
+
+/* the theme gradient runs across; down a left stripe it has to run along it / вдоль левой полосы — сверху вниз */
+.tao-stripe-gradient.tao-stripe-left {
+    --_tao-stripe-image: linear-gradient(180deg, var(--tao-color-accent), var(--tao-color-accent-2));
+}
+
+.tao-stripe-top::after,
+.tao-stripe-left::after,
+.tao-stripe-bottom::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    background: var(--_tao-stripe-image) var(--_tao-stripe-position) / var(--_tao-stripe-size) no-repeat;
+    pointer-events: none;
+}
+
 /* ---------- Classes / Классы ---------- */
 .tao-surface-grain {
     --tao-surface-image: var(--tao-surface-grain-image);

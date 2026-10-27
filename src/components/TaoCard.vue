@@ -2,6 +2,7 @@
 import { computed, useSlots } from 'vue';
 import { useLocaleText } from '../locale';
 import { toCssBox, toCssLength, type TaoLength } from '../length';
+import { stripeClasses, type TaoStripe, type TaoStripeTone } from '../stripe';
 import { surfaceClass, type TaoSurface } from '../surface';
 import TaoIcon from './TaoIcon.vue';
 
@@ -25,6 +26,10 @@ interface Props {
     closable?: boolean;
     /** Screen-reader name of the close button. / Имя кнопки закрытия для скринридера. */
     closeLabel?: string;
+    /** A coloured stripe on one side, over the media too; the corners clip it. / Цветная полоса с одной стороны, поверх media тоже. */
+    stripe?: TaoStripe;
+    /** The stripe colour: a tone or `gradient`; accent by default. / Цвет полосы: тон или `gradient`. */
+    stripeTone?: TaoStripeTone;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -38,6 +43,8 @@ const props = withDefaults(defineProps<Props>(), {
     flush: false,
     surface: 'flat',
     closable: false,
+    stripe: undefined,
+    stripeTone: 'accent',
 });
 const l10n = useLocaleText(props, 'card');
 
@@ -93,7 +100,7 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
 <template>
     <div
         class="tao-card tao-panel"
-        :class="[surfaceClass(surface), {
+        :class="[surfaceClass(surface), stripeClasses(stripe, stripeTone), {
             'tao-card--shadow': showPanelShadow,
             'tao-card--shadow-bottom': shadowBottomOnly,
             'tao-card--hover': hover,
