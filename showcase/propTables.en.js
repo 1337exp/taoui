@@ -400,7 +400,7 @@ export const propTablesEn = {
       rows: [
         r('v-model', 'string', '—', 'The colour as a hex string. Required'),
         r('alpha / swatches / modes / v-model:mode / eyedropper / size', '', '', 'As in TaoColorPicker'),
-        r('position', "'top' | 'bottom' | 'left' | 'right'", "'bottom'", 'The side the palette opens on'),
+        r('placement', 'TaoPlacement', "'bottom-start'", 'Side and alignment: top / bottom / left / right and -start / -end. Flips at the screen edge'),
         r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
         r('disabled', 'boolean', 'false', 'Disabled'),
       ],
@@ -695,7 +695,7 @@ export const propTablesEn = {
       title: 'TaoTooltip',
       rows: [
         r('content', 'string', '—', 'The hint text. Required'),
-        r('position', "'top' | 'bottom' | 'left' | 'right'", "'top'", 'The side. Flips at the screen edge'),
+        r('placement', 'TaoPlacement', "'top'", 'Side and alignment: top / bottom / left / right and -start / -end. Flips at the screen edge'),
       ],
       slots: 'default — the trigger (a button, an icon…).',
     },
@@ -705,7 +705,7 @@ export const propTablesEn = {
       title: 'TaoPopover',
       rows: [
         r('v-model', 'boolean', 'uncontrolled', 'Open state. Without v-model it holds its own'),
-        r('position', "'top' | 'bottom' | 'left' | 'right'", "'bottom'", 'The panel side, flips at the edge'),
+        r('placement', 'TaoPlacement', "'bottom-start'", 'Side and alignment of the panel: top / bottom / left / right and -start / -end. Flips at the edge'),
         r('disabled', 'boolean', 'false', 'Does not open'),
       ],
       slots: '#trigger — the button. default — the panel content. Not a tooltip and not an action menu.',
@@ -715,10 +715,22 @@ export const propTablesEn = {
     {
       title: 'TaoDropdownMenu',
       rows: [
-        r('actions', '{ id, name, ico? }[]', '[]', 'The menu items'),
-        r('menuLabel', 'string', "'Menu'", 'aria-label of the button'),
+        r('items', 'TaoMenuItem[]', '[]', 'Entries: plain { id, label, icon?, shortcut?, disabled?, items? }, checkboxes { type: "checkbox", checked }, radios { type: "radio", group, checked }, { type: "label" }, { type: "separator" }. items inside an entry is a submenu'),
+        r('placement', 'TaoPlacement', "'bottom-end'", 'Where the list opens. Flips at the screen edge'),
+        r('menuLabel', 'string', "'Menu'", 'aria-label of the button and of the menu'),
       ],
-      slots: '#icon — the trigger icon. The select event — the item id.',
+      slots: '#icon — the trigger icon, #button — the whole button content, #item="{ item, id, label, icon }" — your own item face. The select event — the item id. shortcut is a ready string to show: the menu neither parses nor listens to it.',
+    },
+    {
+      title: 'TaoMenu',
+      rows: [
+        r('items', 'TaoMenuItem[]', '', 'The same entries'),
+        r('open', 'boolean', '', 'Whether it is open. The owner closes it on the close event'),
+        r('anchor', 'HTMLElement | null', '', 'What the panel hangs from'),
+        r('placement', 'TaoPlacement', "'bottom-end'", 'Side and alignment'),
+        r('label', 'string', '—', 'Accessible name of the menu'),
+      ],
+      slots: 'Event select — the item id, close(reason) — the menu asks to be closed (escape / select / outside / tab). The panel for your own shells: a button, a context menu, a menu bar.',
     },
   ],
   spoiler: [

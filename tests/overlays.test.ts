@@ -50,13 +50,13 @@ const options = [
 ];
 
 describe('TaoDropdownMenu', () => {
-    const actions = [
-        { id: 'one', name: 'One' },
-        { id: 'two', name: 'Two' },
+    const items = [
+        { id: 'one', label: 'One' },
+        { id: 'two', label: 'Two' },
     ];
 
     it('opens a menu with items from the trigger', async () => {
-        const w = mountOverlay(TaoDropdownMenu, { props: { actions } });
+        const w = mountOverlay(TaoDropdownMenu, { props: { items } });
         expect($('[role="menu"]')).toBeNull();
         await w.find('button[aria-haspopup="menu"]').trigger('click');
         expect($$('[role="menuitem"]').map((el) => el.textContent?.trim())).toEqual(['One', 'Two']);
@@ -64,7 +64,7 @@ describe('TaoDropdownMenu', () => {
     });
 
     it('Enter picks the active item (first by default), ArrowDown moves it; emits select', async () => {
-        const w = mountOverlay(TaoDropdownMenu, { props: { actions } });
+        const w = mountOverlay(TaoDropdownMenu, { props: { items } });
         await w.find('button').trigger('click');
         await key($('[role="menu"]'), 'ArrowDown');
         await key($('[role="menu"]'), 'Enter');
@@ -73,7 +73,7 @@ describe('TaoDropdownMenu', () => {
     });
 
     it('Escape closes and returns focus to the trigger', async () => {
-        const w = mountOverlay(TaoDropdownMenu, { props: { actions } });
+        const w = mountOverlay(TaoDropdownMenu, { props: { items } });
         const trigger = w.find('button').element as HTMLElement;
         await w.find('button').trigger('click');
         await key($('[role="menu"]'), 'Escape');
@@ -82,7 +82,7 @@ describe('TaoDropdownMenu', () => {
     });
 
     it('a press outside closes it', async () => {
-        const w = mountOverlay(TaoDropdownMenu, { props: { actions } });
+        const w = mountOverlay(TaoDropdownMenu, { props: { items } });
         await w.find('button').trigger('click');
         await pointerOutside();
         expect($('[role="menu"]')).toBeNull();

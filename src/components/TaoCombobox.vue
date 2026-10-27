@@ -1,6 +1,10 @@
 <script lang="ts" setup>
 import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
+import { useDismiss } from '../dismiss';
+import { useFloating } from '../floating';
 import { formFieldKey } from '../formField';
+import { useLayer } from '../layers';
+import { stepEnabled } from '../listNav';
 import { listenFocusLoss } from '../focusLoss';
 import type { TaoSelectOption } from '../select';
 import { resolveSize, sizeClass, type TaoSize } from '../size';
@@ -64,7 +68,6 @@ const panelRef = ref<HTMLElement | null>(null);
 /** The panel is teleported to body, so it gets the size resolved at the field. / Панель в body — размер берём у поля. */
 const panelSize = ref<TaoSize>('medium');
 const listRef = ref<HTMLElement | null>(null);
-const listStyle = ref({ top: '0px', left: '0px', width: '0px' });
 
 const selected = computed((): TaoSelectOption | null => {
     const found = props.options.find((option) => option.value === props.modelValue);
@@ -110,33 +113,13 @@ const enabledIndexes = computed(() =>
 
 const activeId = computed(() => (activeIndex.value >= 0 ? `${listId}-row-${activeIndex.value}` : undefined));
 
+const { style: listStyle, update: updatePosition } = useFloating(fieldRef, panelRef, open, { placement: 'bottom-start', matchWidth: true });
+// a press outside commits (or reverts) the text, as leaving the field does
+useDismiss(open, () => [fieldRef.value, panelRef.value], () => (props.allowCreate ? closeAndCommit() : closeAndRevert()));
+useLayer(open, { onEscape: () => closeAndRevert() });
+
 function syncQueryFromModel() {
     query.value = selected.value?.label ?? '';
-}
-
-function updatePosition() {
-    const trigger = fieldRef.value;
-    const panel = panelRef.value;
-
-    if (!trigger || !panel) {
-        return;
-    }
-
-    const rect = trigger.getBoundingClientRect();
-    const panelHeight = panel.offsetHeight;
-    const panelWidth = panel.offsetWidth || rect.width;
-    const gap = 4;
-    const pad = 8;
-    const spaceBelow = window.innerHeight - rect.bottom - gap;
-    const openUp = spaceBelow < panelHeight && rect.top > spaceBelow;
-    const maxLeft = Math.max(pad, window.innerWidth - panelWidth - pad);
-    const left = Math.min(Math.max(rect.left, pad), maxLeft);
-
-    listStyle.value = {
-        top: `${openUp ? rect.top - panelHeight - gap : rect.bottom + gap}px`,
-        left: `${left}px`,
-        width: `${rect.width}px`,
-    };
 }
 
 function resetActive() {
@@ -261,16 +244,13 @@ function closeAndCommit() {
     revertQuery();
 }
 
-function moveActive(delta: number) {
-    const enabled = enabledIndexes.value;
-    if (!enabled.length) {
-        return;
+function moveActive(delta: 1 | -1) {
+    // no Home / End here: in a text field they move the caret
+    const next = stepEnabled(rows.value.map((row) => !(row.kind === 'option' && row.option.disabled)), activeIndex.value, delta);
+    if (next >= 0) {
+        activeIndex.value = next;
+        scrollActiveIntoView();
     }
-
-    const currentPos = enabled.indexOf(activeIndex.value);
-    const nextPos = currentPos < 0 ? 0 : (currentPos + delta + enabled.length) % enabled.length;
-    activeIndex.value = enabled[nextPos];
-    scrollActiveIntoView();
 }
 
 function scrollActiveIntoView() {
@@ -364,12 +344,6 @@ function onInputKeydown(event: KeyboardEvent) {
         return;
     }
 
-    if (event.key === 'Escape') {
-        event.preventDefault();
-        closeAndRevert();
-        return;
-    }
-
     if (event.key === 'ArrowDown') {
         event.preventDefault();
         if (!open.value) {
@@ -407,25 +381,6 @@ function onInputKeydown(event: KeyboardEvent) {
     }
 }
 
-function onDocumentPointer(event: PointerEvent) {
-    const target = event.target as Node;
-    if (fieldRef.value?.contains(target) || panelRef.value?.contains(target)) {
-        return;
-    }
-
-    if (props.allowCreate) {
-        closeAndCommit();
-        return;
-    }
-    closeAndRevert();
-}
-
-function onViewportChange() {
-    if (open.value) {
-        updatePosition();
-    }
-}
-
 watch(
     () => props.modelValue,
     () => {
@@ -448,15 +403,7 @@ watch(rows, () => {
 watch(open, (isOpen) => {
     if (isOpen) {
         panelSize.value = resolveSize(fieldRef.value, props.size);
-        document.addEventListener('pointerdown', onDocumentPointer, true);
-        window.addEventListener('resize', onViewportChange);
-        window.addEventListener('scroll', onViewportChange, true);
-        return;
     }
-
-    document.removeEventListener('pointerdown', onDocumentPointer, true);
-    window.removeEventListener('resize', onViewportChange);
-    window.removeEventListener('scroll', onViewportChange, true);
 });
 
 let stopFocusLoss: (() => void) | undefined;
@@ -468,9 +415,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     stopFocusLoss?.();
-    document.removeEventListener('pointerdown', onDocumentPointer, true);
-    window.removeEventListener('resize', onViewportChange);
-    window.removeEventListener('scroll', onViewportChange, true);
 });
 </script>
 

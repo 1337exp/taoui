@@ -133,11 +133,11 @@ describe('events', () => {
     });
 
     it('DropdownMenu: select', async () => {
-        const w = mount(TaoDropdownMenu, { props: { actions: [{ id: 'edit', name: 'Edit' }] }, attachTo: document.body });
+        const w = mount(TaoDropdownMenu, { props: { items: [{ id: 'edit', label: 'Edit' }] }, attachTo: document.body });
         await w.find('.tao-dropdown-menu__button').trigger('click');
         await nextTick();
         // the list is teleported to body / список телепортирован в body
-        document.querySelector<HTMLButtonElement>('.tao-dropdown-menu__item')!.click();
+        document.querySelector<HTMLElement>('.tao-menu__item')!.click();
         expect(w.emitted('select')).toEqual([['edit']]);
         w.unmount();
     });

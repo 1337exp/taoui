@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useFloating } from '../floating';
 import { taoLocale, useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoCopy' });
@@ -23,7 +24,7 @@ const l10n = useLocaleText(props, 'copy');
 const copied = ref(false);
 const triggerRef = ref<HTMLElement | null>(null);
 const tipRef = ref<HTMLElement | null>(null);
-const tipStyle = ref({ top: '0px', left: '0px' });
+const { style: tipStyle } = useFloating(triggerRef, tipRef, () => copied.value && props.tip, { placement: 'top', gap: 8 });
 
 let hideTimer = 0;
 let visibleObserver: IntersectionObserver | null = null;
@@ -32,49 +33,6 @@ function hideTip() {
     copied.value = false;
     window.clearTimeout(hideTimer);
     hideTimer = 0;
-}
-
-function updateTipPosition() {
-    const trigger = triggerRef.value;
-    const tip = tipRef.value;
-    if (!trigger || !tip) {
-        return;
-    }
-
-    const rect = trigger.getBoundingClientRect();
-    if (rect.width === 0 && rect.height === 0) {
-        hideTip();
-        return;
-    }
-
-    const gap = 8;
-    const pad = 8;
-    const width = tip.offsetWidth;
-    const height = tip.offsetHeight;
-    let left = rect.left + rect.width / 2 - width / 2;
-    let top = rect.top - height - gap;
-
-    if (left < pad) {
-        left = pad;
-    }
-    if (left + width > window.innerWidth - pad) {
-        left = window.innerWidth - pad - width;
-    }
-    if (top < pad) {
-        top = rect.bottom + gap;
-    }
-
-    tipStyle.value = { top: `${top}px`, left: `${left}px` };
-}
-
-function bindTipGuards() {
-    window.addEventListener('scroll', updateTipPosition, true);
-    window.addEventListener('resize', updateTipPosition);
-}
-
-function unbindTipGuards() {
-    window.removeEventListener('scroll', updateTipPosition, true);
-    window.removeEventListener('resize', updateTipPosition);
 }
 
 async function copy() {
@@ -89,18 +47,6 @@ async function copy() {
     }
 }
 
-watch(copied, async (isCopied) => {
-    if (!isCopied || !props.tip) {
-        unbindTipGuards();
-        return;
-    }
-
-    await nextTick();
-    await nextTick();
-    updateTipPosition();
-    bindTipGuards();
-});
-
 onMounted(() => {
     visibleObserver = new IntersectionObserver((entries) => {
         if (entries.some((entry) => !entry.isIntersecting)) {
@@ -114,7 +60,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     hideTip();
-    unbindTipGuards();
     visibleObserver?.disconnect();
     visibleObserver = null;
 });

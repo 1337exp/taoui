@@ -59,8 +59,8 @@
 - **TaoSpoiler** — disclosure. `v-model` and `aria-expanded`. Neighbours do not close each other
 - **TaoSpoilerGroup** — accordion: `v-model` is the open panel key (`null` = all closed); spoilers take `name`. Without `v-model` the group keeps that key itself
 - **TaoTabs** — tabbed sections
-- **TaoTooltip** — hover hint. `top` / `bottom` / `left` / `right`, flips at the viewport edge
-- **TaoPopover** — click panel with any slot content, Esc and outside click. Not a tooltip, not an action menu
+- **TaoTooltip** — hover hint. `placement`: `top` / `bottom` / `left` / `right`, each with `-start` / `-end`; flips at the viewport edge
+- **TaoPopover** — click panel with any slot content, Esc and outside click; `placement` as Tooltip. Not a tooltip, not an action menu
 
 ### Layout
 
@@ -116,7 +116,7 @@
 
 - **TaoLink** — `<NuxtLink>` in Nuxt, `<RouterLink>` with vue-router, otherwise a plain `<a>` — no extra setup
 - **TaoBreadcrumb** — crumbs: the last item is the current page
-- **TaoDropdownMenu** — dropdown that flips at the viewport edge
+- **TaoDropdownMenu** / **TaoMenu** — a menu from a plain data tree `items`: submenus, checkboxes, radios, separators, group labels, shortcuts to show, disabled items. Arrows, Home / End, type-ahead, `→` / `←` for submenus, Esc closes the top level first. `TaoMenu` is the panel itself, for your own shells (a menu bar, a context menu); flips at the viewport edge
 - **TaoScrollTop** — floating “back to top”: `solid` / `ghost` / `text` looks, `side`, a mouse-hover `label`. Appears on reverse scroll after `boundary`
 
 ### Feedback

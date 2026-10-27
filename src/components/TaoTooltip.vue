@@ -1,34 +1,45 @@
 <script lang="ts" setup>
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { useFloating, type TaoPlacement } from '../floating';
 import { listenFocusLoss } from '../focusLoss';
 
 defineOptions({ name: 'TaoTooltip' });
 
-type TaoTooltipPosition = 'top' | 'bottom' | 'left' | 'right';
-
 const props = withDefaults(
     defineProps<{
         content: string;
-        position?: TaoTooltipPosition;
+        /** Side and alignment against the trigger; flips when there is no room. / Сторона и выравнивание; при нехватке места переворачивается. */
+        placement?: TaoPlacement;
     }>(),
     {
-        position: 'top',
+        placement: 'top',
     },
 );
 
 const wrapperRef = ref<HTMLElement | null>(null);
 const tooltipRef = ref<HTMLElement | null>(null);
 const showTooltip = ref(false);
-const placed = ref<TaoTooltipPosition>(props.position);
-const panelStyle = ref<Record<string, string>>({ visibility: 'hidden' });
-const arrowStyle = ref<Record<string, string>>({});
 
-const opposite: Record<TaoTooltipPosition, TaoTooltipPosition> = {
-    top: 'bottom',
-    bottom: 'top',
-    left: 'right',
-    right: 'left',
-};
+const { style, side, anchorOffset, placed } = useFloating(wrapperRef, tooltipRef, showTooltip, {
+    placement: () => props.placement,
+    gap: 8,
+});
+
+// hidden until the first measurement, so it does not flash in the corner / скрыта до первого замера
+const panelStyle = computed(() => ({ ...style.value, visibility: (placed.value ? 'visible' : 'hidden') as 'visible' | 'hidden' }));
+
+// the arrow points at the middle of the trigger, kept off the rounded corners
+const arrowStyle = computed(() => {
+    const arrowPad = 10;
+    const el = tooltipRef.value;
+    if (!el) {
+        return {};
+    }
+    if (side.value === 'top' || side.value === 'bottom') {
+        return { left: `${Math.min(el.offsetWidth - arrowPad, Math.max(arrowPad, anchorOffset.value.x))}px`, top: '' };
+    }
+    return { top: `${Math.min(el.offsetHeight - arrowPad, Math.max(arrowPad, anchorOffset.value.y))}px`, left: '' };
+});
 
 function hide() {
     showTooltip.value = false;
@@ -38,107 +49,6 @@ function show() {
     showTooltip.value = true;
 }
 
-function updatePosition() {
-    const trigger = wrapperRef.value;
-    const tip = tooltipRef.value;
-    if (!trigger || !tip) {
-        return;
-    }
-
-    const rect = trigger.getBoundingClientRect();
-    const width = tip.offsetWidth;
-    const height = tip.offsetHeight;
-    const gap = 8;
-    const pad = 8;
-    const viewW = window.innerWidth;
-    const viewH = window.innerHeight;
-    const space = {
-        bottom: viewH - rect.bottom - gap - pad,
-        top: rect.top - gap - pad,
-        right: viewW - rect.right - gap - pad,
-        left: rect.left - gap - pad,
-    };
-
-    let side = props.position;
-    const need = side === 'top' || side === 'bottom' ? height : width;
-    if (space[side] < need && space[opposite[side]] > space[side]) {
-        side = opposite[side];
-    }
-
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    let top = 0;
-    let left = 0;
-
-    if (side === 'bottom') {
-        top = rect.bottom + gap;
-        left = cx - width / 2;
-    } else if (side === 'top') {
-        top = rect.top - height - gap;
-        left = cx - width / 2;
-    } else if (side === 'right') {
-        top = cy - height / 2;
-        left = rect.right + gap;
-    } else {
-        top = cy - height / 2;
-        left = rect.left - width - gap;
-    }
-
-    if (left + width > viewW - pad) {
-        left = viewW - pad - width;
-    }
-    if (left < pad) {
-        left = pad;
-    }
-    if (top + height > viewH - pad) {
-        top = viewH - pad - height;
-    }
-    if (top < pad) {
-        top = pad;
-    }
-
-    const arrowPad = 10;
-    if (side === 'top' || side === 'bottom') {
-        const x = Math.min(width - arrowPad, Math.max(arrowPad, cx - left));
-        arrowStyle.value = { left: `${x}px`, top: '' };
-    } else {
-        const y = Math.min(height - arrowPad, Math.max(arrowPad, cy - top));
-        arrowStyle.value = { top: `${y}px`, left: '' };
-    }
-
-    placed.value = side;
-    panelStyle.value = { top: `${top}px`, left: `${left}px`, visibility: 'visible' };
-}
-
-function onViewportChange() {
-    if (showTooltip.value) {
-        updatePosition();
-    }
-}
-
-watch(showTooltip, async (isOpen) => {
-    if (isOpen) {
-        await nextTick();
-        updatePosition();
-        requestAnimationFrame(() => updatePosition());
-        window.addEventListener('resize', onViewportChange);
-        window.addEventListener('scroll', onViewportChange, true);
-        return;
-    }
-
-    window.removeEventListener('resize', onViewportChange);
-    window.removeEventListener('scroll', onViewportChange, true);
-});
-
-watch(
-    () => props.position,
-    () => {
-        if (showTooltip.value) {
-            updatePosition();
-        }
-    },
-);
-
 let stopFocusLoss: (() => void) | undefined;
 onMounted(() => {
     stopFocusLoss = listenFocusLoss(hide);
@@ -146,8 +56,6 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
     stopFocusLoss?.();
-    window.removeEventListener('resize', onViewportChange);
-    window.removeEventListener('scroll', onViewportChange, true);
 });
 </script>
 
@@ -167,7 +75,7 @@ onBeforeUnmount(() => {
                     v-if="showTooltip"
                     ref="tooltipRef"
                     class="tao-tooltip"
-                    :class="`tao-tooltip--${placed}`"
+                    :class="`tao-tooltip--${side}`"
                     role="tooltip"
                     :style="panelStyle"
                 >

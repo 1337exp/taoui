@@ -86,9 +86,8 @@ describe('on-* text colours', () => {
 
     for (const [theme, scope] of Object.entries(themes)) {
         for (const { on, fill } of pairs) {
-            // The light accent is the brand rose (#ff227a) with white text: 3.64:1, an accepted exception for 14px / 500 labels.
-            // Every other pair has to reach AA for normal text.
-            const floor = theme === 'light' && fill === '--tao-color-accent' ? 3.5 : 4.5;
+            // Every fill / on-fill pair reaches AA for normal text.
+            const floor = 4.5;
             it(`${theme}: ${on} on ${fill} has at least ${floor}:1 contrast`, () => {
                 expect(contrast(resolveValue(on, scope), resolveValue(fill, scope))).toBeGreaterThanOrEqual(floor);
             });
@@ -165,6 +164,13 @@ describe('component styles use tokens', () => {
     it('no component writes a literal z-index above content', () => {
         const offenders = Object.entries(componentSources)
             .filter(([, source]) => /z-index:\s*\d{3,}/.test(source))
+            .map(([file]) => file);
+        expect(offenders).toEqual([]);
+    });
+
+    it('floating panels use the engine: no own outside-press listener or updatePosition', () => {
+        const offenders = Object.entries(componentSources)
+            .filter(([, source]) => /addEventListener\('pointerdown'|function updatePosition/.test(source))
             .map(([file]) => file);
         expect(offenders).toEqual([]);
     });

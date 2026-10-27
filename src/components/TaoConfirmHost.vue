@@ -4,39 +4,31 @@ import TaoButton from './TaoButton.vue';
 import { currentConfirm, registerConfirmHost, resolveConfirm, unregisterConfirmHost } from '../confirm/store';
 import { trapTab } from '../focusTrap';
 import { toneClass } from '../tone';
-import { isBrowser, lockBodyScroll, unlockBodyScroll } from '../bodyScroll';
+import { useLayer } from '../layers';
 import { surfaceClass } from '../surface';
 
 defineOptions({ name: 'TaoConfirmHost' });
 
 const panelRef = ref<HTMLElement | null>(null);
-let previousFocus: HTMLElement | null = null;
-let scrollHeld = false;
 
 onMounted(() => {
     registerConfirmHost();
 });
 
 onBeforeUnmount(() => {
-    releaseScroll();
     unregisterConfirmHost();
 });
+
+// Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
+useLayer(() => Boolean(currentConfirm.value), { lockScroll: true, restoreFocus: true, onEscape: () => answer(false) });
 
 watch(
     () => currentConfirm.value?.id,
     async (id) => {
         if (!id) {
-            releaseScroll();
-            restoreFocus();
             return;
         }
 
-        if (!isBrowser()) {
-            return;
-        }
-
-        previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-        holdScroll();
         await nextTick();
         queryButton(currentConfirm.value?.danger ? 'cancel' : 'ok')?.focus();
     },
@@ -44,27 +36,6 @@ watch(
 
 function queryButton(which: 'ok' | 'cancel') {
     return panelRef.value?.querySelector<HTMLButtonElement>(`[data-tao-confirm-${which}]`) ?? null;
-}
-
-function holdScroll() {
-    if (scrollHeld || !isBrowser()) {
-        return;
-    }
-    lockBodyScroll();
-    scrollHeld = true;
-}
-
-function releaseScroll() {
-    if (!scrollHeld) {
-        return;
-    }
-    unlockBodyScroll();
-    scrollHeld = false;
-}
-
-function restoreFocus() {
-    previousFocus?.focus?.();
-    previousFocus = null;
 }
 
 function answer(value: boolean) {
@@ -76,12 +47,6 @@ function onOverlayClick() {
 }
 
 function onKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
-        event.preventDefault();
-        answer(false);
-        return;
-    }
-
     if (panelRef.value) {
         trapTab(event, panelRef.value);
     }

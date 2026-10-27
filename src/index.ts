@@ -35,6 +35,7 @@ import TaoSlider from './components/TaoSlider.vue';
 import TaoRangeSlider from './components/TaoRangeSlider.vue';
 import TaoFileDrop from './components/TaoFileDrop.vue';
 import TaoDropdownMenu from './components/TaoDropdownMenu.vue';
+import TaoMenu from './components/TaoMenu.vue';
 import TaoPinCode from './components/TaoPinCode.vue';
 import TaoLink from './components/TaoLink.vue';
 import TaoFormField from './components/TaoFormField.vue';
@@ -111,6 +112,7 @@ const components = [
     TaoRangeSlider,
     TaoFileDrop,
     TaoDropdownMenu,
+    TaoMenu,
     TaoPinCode,
     TaoLink,
     TaoFormField,
@@ -198,6 +200,7 @@ export {
     TaoRangeSlider,
     TaoFileDrop,
     TaoDropdownMenu,
+    TaoMenu,
     TaoPinCode,
     TaoLink,
     TaoFormField,
@@ -267,6 +270,7 @@ export { toneClass } from './tone';
 export type { TaoSurface } from './surface';
 export type { TaoLength } from './length';
 export type { TaoSelectOption } from './select';
+export type { TaoPlacement } from './floating';
 export type { TaoTabItem } from './tabs';
 export type { TaoDateCell, TaoDateParts, TaoDateRangeValue } from './date';
 export type { TaoRadioValue } from './radio';
@@ -275,7 +279,15 @@ export type { TaoFormFieldContext } from './formField';
 export type { TaoTableAlign, TaoTableColumn, TaoTableSort } from './table';
 export type { TaoPaginationItem } from './pagination';
 export type { TaoBreadcrumbItem } from './breadcrumb';
-export type { TaoDropdownAction } from './dropdown';
+export type {
+    TaoMenuActionItem,
+    TaoMenuCheckboxItem,
+    TaoMenuCloseReason,
+    TaoMenuItem,
+    TaoMenuLabelItem,
+    TaoMenuRadioItem,
+    TaoMenuSeparatorItem,
+} from './menu';
 export type { TaoQuantityChangeSource } from './quantity';
 export type { TaoStageItem, TaoStageStatus } from './stage';
 export type { TaoSplitDirection, TaoSplitUnit } from './split';

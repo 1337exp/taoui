@@ -393,7 +393,7 @@ export const propTables = {
       rows: [
         r('v-model', 'string', '—', 'Цвет строкой hex. Обязательный'),
         r('alpha / swatches / modes / v-model:mode / eyedropper / size', '', '', 'Как у TaoColorPicker'),
-        r('position', "'top' | 'bottom' | 'left' | 'right'", "'bottom'", 'С какой стороны открывается палитра'),
+        r('placement', 'TaoPlacement', "'bottom-start'", 'Сторона и выравнивание: top / bottom / left / right и -start / -end. У края экрана переворачивается'),
         r('error', 'boolean', 'false', 'Красная рамка. Текст ошибки — error у TaoFormField'),
         r('disabled', 'boolean', 'false', 'Неактивно'),
       ],
@@ -688,7 +688,7 @@ export const propTables = {
       title: 'TaoTooltip',
       rows: [
         r('content', 'string', '—', 'Текст подсказки. Обязательный'),
-        r('position', "'top' | 'bottom' | 'left' | 'right'", "'top'", 'Сторона. У края экрана переворачивается'),
+        r('placement', 'TaoPlacement', "'top'", 'Сторона и выравнивание: top / bottom / left / right и -start / -end. У края экрана переворачивается'),
       ],
       slots: 'default — триггер (кнопка, иконка…).',
     },
@@ -698,7 +698,7 @@ export const propTables = {
       title: 'TaoPopover',
       rows: [
         r('v-model', 'boolean', 'uncontrolled', 'Открытость. Без v-model живёт сам'),
-        r('position', "'top' | 'bottom' | 'left' | 'right'", "'bottom'", 'Сторона панели, у края переворачивается'),
+        r('placement', 'TaoPlacement', "'bottom-start'", 'Сторона и выравнивание панели: top / bottom / left / right и -start / -end. У края переворачивается'),
         r('disabled', 'boolean', 'false', 'Не открывается'),
       ],
       slots: '#trigger — кнопка. default — содержимое панели. Не тултип и не меню действий.',
@@ -708,10 +708,22 @@ export const propTables = {
     {
       title: 'TaoDropdownMenu',
       rows: [
-        r('actions', '{ id, name, ico? }[]', '[]', 'Пункты меню'),
-        r('menuLabel', 'string', "'Меню'", 'aria-label кнопки'),
+        r('items', 'TaoMenuItem[]', '[]', 'Пункты: обычные { id, label, icon?, shortcut?, disabled?, items? }, чекбоксы { type: "checkbox", checked }, радио { type: "radio", group, checked }, { type: "label" }, { type: "separator" }. items внутри пункта — подменю'),
+        r('placement', 'TaoPlacement', "'bottom-end'", 'Где открывается список. У края экрана переворачивается'),
+        r('menuLabel', 'string', "'Меню'", 'aria-label кнопки и меню'),
       ],
-      slots: '#icon — иконка триггера. Событие select — id пункта.',
+      slots: '#icon — иконка триггера, #button — всё содержимое кнопки, #item="{ item, id, label, icon }" — свой вид пункта. Событие select — id пункта. shortcut — готовая строка для показа, меню её не разбирает и не слушает.',
+    },
+    {
+      title: 'TaoMenu',
+      rows: [
+        r('items', 'TaoMenuItem[]', '', 'Те же пункты'),
+        r('open', 'boolean', '', 'Открыто ли. Закрывает владелец по событию close'),
+        r('anchor', 'HTMLElement | null', '', 'К чему крепится панель'),
+        r('placement', 'TaoPlacement', "'bottom-end'", 'Сторона и выравнивание'),
+        r('label', 'string', '—', 'Имя меню для скринридера'),
+      ],
+      slots: 'Событие select — id пункта, close(reason) — меню просит закрыть себя (escape / select / outside / tab). Панель меню для своих оболочек: кнопка, контекстное меню, полоса меню.',
     },
   ],
   spoiler: [

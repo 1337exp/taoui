@@ -27,34 +27,34 @@ defineOptions({ name: 'DemoTooltip' })
           </Tr>
           
           <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
-            <TaoTooltip :content="tr('A hint on top', 'Подсказка сверху')" position="top">
+            <TaoTooltip :content="tr('A hint on top', 'Подсказка сверху')" placement="top">
               <TaoButton variant="secondary">Top</TaoButton>
             </TaoTooltip>
     
-            <TaoTooltip :content="tr('A hint below', 'Подсказка снизу')" position="bottom">
+            <TaoTooltip :content="tr('A hint below', 'Подсказка снизу')" placement="bottom">
               <TaoButton variant="secondary">Bottom</TaoButton>
             </TaoTooltip>
     
-            <TaoTooltip :content="tr('A hint on the left', 'Подсказка слева')" position="left">
+            <TaoTooltip :content="tr('A hint on the left', 'Подсказка слева')" placement="left">
               <TaoButton variant="secondary">Left</TaoButton>
             </TaoTooltip>
     
-            <TaoTooltip :content="tr('A hint on the right', 'Подсказка справа')" position="right">
+            <TaoTooltip :content="tr('A hint on the right', 'Подсказка справа')" placement="right">
               <TaoButton variant="secondary">Right</TaoButton>
             </TaoTooltip>
           </div>
     
           <div style="display: flex; justify-content: space-between; margin-top: 16px;">
-            <TaoTooltip :content="tr('No room on the left — it opens on the right', 'Слева некуда — откроется справа')" position="left">
+            <TaoTooltip :content="tr('No room on the left — it opens on the right', 'Слева некуда — откроется справа')" placement="left">
               <TaoButton variant="secondary" size="small">{{ tr('At the left edge', 'У левого края') }}</TaoButton>
             </TaoTooltip>
-            <TaoTooltip :content="tr('No room on the right — it opens on the left', 'Справа некуда — откроется слева')" position="right">
+            <TaoTooltip :content="tr('No room on the right — it opens on the left', 'Справа некуда — откроется слева')" placement="right">
               <TaoButton variant="secondary" size="small">{{ tr('At the right edge', 'У правого края') }}</TaoButton>
             </TaoTooltip>
           </div>
     
           <div class="code-block">
-            <pre><code>&lt;TaoTooltip content="{{ tr('Hint text', 'Текст подсказки') }}" position="top"&gt;
+            <pre><code>&lt;TaoTooltip content="{{ tr('Hint text', 'Текст подсказки') }}" placement="top"&gt;
   &lt;TaoButton&gt;{{ tr('Hover me', 'Наведи на меня') }}&lt;/TaoButton&gt;
 &lt;/TaoTooltip&gt;</code></pre>
           </div>

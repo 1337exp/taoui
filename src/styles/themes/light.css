@@ -10,9 +10,10 @@
 [data-tao-theme="light"] {
     color-scheme: light;
 
-    --tao-color-accent: var(--tao-pink-500);
-    --tao-color-accent-hover: var(--tao-pink-600);
-    --tao-color-accent-active: var(--tao-pink-700);
+    /* pink-600, not the brand pink-500: white on it reaches 4.54:1 (AA); on pink-500 it was 3.64:1 */
+    --tao-color-accent: var(--tao-pink-600);
+    --tao-color-accent-hover: var(--tao-pink-700);
+    --tao-color-accent-active: var(--tao-pink-800);
     --tao-color-accent-subtle: color-mix(in srgb, var(--tao-color-accent) 10%, transparent);
     --tao-color-accent-subtle-hover: color-mix(in srgb, var(--tao-color-accent) 16%, transparent);
     --tao-color-accent-text: var(--tao-pink-700);

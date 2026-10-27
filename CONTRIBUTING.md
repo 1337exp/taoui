@@ -71,6 +71,7 @@ Rules:
 7. A component takes its colour from the **tone context** (`styles/tone.css`): put `toneClass(tone)` on the root and read
    `--tao-tone`, `--tao-tone-on`, `--tao-tone-text`, … Never map `success` / `danger` to colours inside a component.
 8. Accent or status colour as **text** uses the `-text` token (`accent-text`, `danger-text`, …), as a fill the plain one; the tests hold both to 4.5:1.
+10. A floating panel (popup, menu, tooltip) positions itself with `useFloating`, closes with `useDismiss` / `useLayer`, and moves with `useListNav`; never with its own `getBoundingClientRect` and listeners.
 9. Layers and transitions come from tokens (`--tao-z-*`, `--tao-transition-base`): no literal `z-index` above content, no `transition: all`.
 
 `tests/tokens.test.ts` enforces the mechanical part: a theme only overrides roles that exist, sets every colour role, and every

@@ -1,5 +1,8 @@
 <script lang="ts" setup>
-import { computed, inject, nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
+import { computed, inject, nextTick, ref, useId } from 'vue';
+import { useDismiss } from '../dismiss';
+import { useFloating } from '../floating';
+import { useLayer } from '../layers';
 import { formFieldKey } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import {
@@ -66,7 +69,6 @@ const viewMonth = ref(1);
 const cursorIso = ref(todayTaoDate());
 const triggerRef = ref<HTMLButtonElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
-const panelStyle = ref({ top: '0px', left: '0px' });
 
 const valueIso = computed(() => {
     const parsed = parseTaoDate(props.modelValue);
@@ -90,26 +92,14 @@ function syncViewFrom(iso: string) {
     cursorIso.value = iso;
 }
 
-function updatePosition() {
-    const trigger = triggerRef.value;
-    const panel = panelRef.value;
-    if (!trigger || !panel) {
-        return;
-    }
-
-    const rect = trigger.getBoundingClientRect();
-    const height = panel.offsetHeight;
-    const width = panel.offsetWidth;
-    const gap = 4;
-    const spaceBelow = window.innerHeight - rect.bottom - gap;
-    const openUp = spaceBelow < height && rect.top > spaceBelow;
-    const left = Math.min(rect.left, Math.max(8, window.innerWidth - width - 8));
-
-    panelStyle.value = {
-        top: `${openUp ? rect.top - height - gap : rect.bottom + gap}px`,
-        left: `${Math.max(8, left)}px`,
-    };
-}
+const { style: panelStyle, update: updatePosition } = useFloating(triggerRef, panelRef, open, { placement: 'bottom-start' });
+useDismiss(open, () => [triggerRef.value, panelRef.value], close);
+useLayer(open, {
+    onEscape: () => {
+        close();
+        triggerRef.value?.focus();
+    },
+});
 
 async function setOpen(next: boolean) {
     if (props.disabled) {
@@ -180,13 +170,6 @@ function onTriggerKeydown(event: KeyboardEvent) {
 }
 
 function onPanelKeydown(event: KeyboardEvent) {
-    if (event.key === 'Escape') {
-        event.preventDefault();
-        close();
-        triggerRef.value?.focus();
-        return;
-    }
-
     if (event.key === 'ArrowLeft') {
         event.preventDefault();
         moveCursor(-1);
@@ -240,40 +223,6 @@ function onPanelKeydown(event: KeyboardEvent) {
         selectDay(cursorIso.value);
     }
 }
-
-function onDocumentPointer(event: PointerEvent) {
-    const target = event.target as Node;
-    if (triggerRef.value?.contains(target) || panelRef.value?.contains(target)) {
-        return;
-    }
-
-    close();
-}
-
-function onViewportChange() {
-    if (open.value) {
-        updatePosition();
-    }
-}
-
-watch(open, (isOpen) => {
-    if (isOpen) {
-        document.addEventListener('pointerdown', onDocumentPointer, true);
-        window.addEventListener('resize', onViewportChange);
-        window.addEventListener('scroll', onViewportChange, true);
-        return;
-    }
-
-    document.removeEventListener('pointerdown', onDocumentPointer, true);
-    window.removeEventListener('resize', onViewportChange);
-    window.removeEventListener('scroll', onViewportChange, true);
-});
-
-onBeforeUnmount(() => {
-    document.removeEventListener('pointerdown', onDocumentPointer, true);
-    window.removeEventListener('resize', onViewportChange);
-    window.removeEventListener('scroll', onViewportChange, true);
-});
 </script>
 
 <template>
