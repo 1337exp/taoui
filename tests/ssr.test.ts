@@ -33,6 +33,7 @@ const props: Record<string, Record<string, unknown>> = {
     TaoMenu: { items: [], open: false, anchor: null },
     TaoMenubar: { items: [{ id: 'file', label: 'File', items: [{ id: 'n', label: 'New' }] }] },
     TaoChecklist: { items: [{ value: 'a', label: 'A' }, { value: 'b', label: 'B', description: 'b' }], modelValue: ['a'], selectAll: true, counter: true, legend: 'L' },
+    TaoTimeline: { items: [{ id: 'a', title: 'Paid', time: '12:00', datetime: '2026-05-12T12:00', tone: 'success' }, { id: 'b', title: 'Sent', icon: 'tao-check' }], active: 'b', align: 'alternate' },
     TaoTree: { nodes: [{ id: 'a', label: 'A', children: [{ id: 'b', label: 'B' }] }, { id: 'c', label: 'C', hasChildren: true }], expanded: ['a'], checkable: true, checked: ['b'] },
     TaoNav: { items: [{ id: 'a', label: 'A', icon: 'tao-circle' }, { id: 'b', label: 'B', href: '/b', badge: 2 }], modelValue: 'a' },
     TaoContextMenu: { items: [] },

@@ -41,6 +41,7 @@ import TaoMenubar from './components/TaoMenubar.vue';
 import TaoNav from './components/TaoNav.vue';
 import TaoTree from './components/TaoTree.vue';
 import TaoChecklist from './components/TaoChecklist.vue';
+import TaoTimeline from './components/TaoTimeline.vue';
 import TaoPinCode from './components/TaoPinCode.vue';
 import TaoLink from './components/TaoLink.vue';
 import TaoFormField from './components/TaoFormField.vue';
@@ -123,6 +124,7 @@ const components = [
     TaoNav,
     TaoTree,
     TaoChecklist,
+    TaoTimeline,
     TaoContextMenu,
     TaoPinCode,
     TaoLink,
@@ -222,6 +224,7 @@ export {
     TaoNav,
     TaoTree,
     TaoChecklist,
+    TaoTimeline,
     TaoContextMenu,
     TaoPinCode,
     TaoLink,
@@ -322,6 +325,7 @@ export { menuReturnsFocus } from './menu';
 export type { TaoNavItem, TaoNavLayout } from './nav';
 export type { TaoTreeCheckState, TaoTreeNode, TaoTreeSelection } from './tree';
 export type { TaoChecklistItem } from './checklist';
+export type { TaoTimelineAlign, TaoTimelineItem, TaoTimelineState } from './timeline';
 export type { TaoQuantityChangeSource } from './quantity';
 export type { TaoStageItem, TaoStageStatus } from './stage';
 export type { TaoSplitDirection, TaoSplitUnit } from './split';

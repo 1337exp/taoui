@@ -41,6 +41,7 @@ export const navGroups = [
       { id: 'list', label: 'TaoList', aliases: ['TaoListItem', 'ListItem', 'список'] },
       { id: 'tree', label: 'TaoTree', aliases: ['tree', 'files', 'дерево', 'файлы'] },
       { id: 'stages', label: 'TaoStages' },
+      { id: 'timeline', label: 'TaoTimeline', aliases: ['timeline', 'feed', 'history', 'log', 'лента', 'история', 'журнал'] },
       { id: 'skeleton', label: 'TaoSkeleton' },
       { id: 'counter', label: 'TaoCounter' },
       { id: 'carousel', label: 'TaoCarousel' },

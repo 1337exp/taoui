@@ -24,6 +24,7 @@ import DemoEmpty from './components/DemoEmpty.vue'
 import DemoList from './components/DemoList.vue'
 import DemoTree from './components/DemoTree.vue'
 import DemoStages from './components/DemoStages.vue'
+import DemoTimeline from './components/DemoTimeline.vue'
 import DemoSkeleton from './components/DemoSkeleton.vue'
 import DemoCounter from './components/DemoCounter.vue'
 import DemoCarousel from './components/DemoCarousel.vue'
@@ -82,6 +83,7 @@ export const demoById = {
   'list': DemoList,
   'tree': DemoTree,
   'stages': DemoStages,
+  'timeline': DemoTimeline,
   'skeleton': DemoSkeleton,
   'counter': DemoCounter,
   'carousel': DemoCarousel,
