@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.5.0
+
+What a phone interface needs, asked for by an app built on TaoUI (Next Up); nothing to migrate.
+
+- **`TaoDrawer side="bottom"`**: a bottom sheet. It rises from the bottom edge, as wide as the screen up to 640px (centred on a computer), as tall as its content up to 90% of the screen, with rounded top corners, a grip and its last line above the safe area. Esc, the backdrop and the focus trap as before.
+- **`TaoModal fullscreen`**: `true` is the whole screen, square corners, the header and the footer stay while the content scrolls, the safe areas kept; `'narrow'` does that only on a screen narrower than 600px, so one modal is a dialog on a computer and a page on a phone.
+- **Eight app icons**: `tao-settings`, `tao-edit`, `tao-trash`, `tao-bell`, `tao-tag`, `tao-repeat`, `tao-undo`, `tao-redo`. 40 built-in icons now (the docs still said 29, though the alignment icons of 5.2 had made it 32).
+- **Showcase:** on a phone the page no longer scrolls sideways (the carousel demo widened it to its slide track, and the theme switchers did not wrap), so a sheet or a fixed bar is not cut at the edge.
+
 ## 5.4.5
 
 - **The slider has one cursor, the pointing finger**, over the rail, over the thumb and for the whole drag (TaoSlider, TaoRangeSlider, TaoScrubber). It was `grab` over the thumb, `grabbing` while pressed and, once the pointer moved, the rail's finger (the rail holds the pointer capture): three shapes flickered in one gesture, and Opera on Windows draws `grab` / `grabbing` as the four-way move arrows and an up arrow. The finger looks the same in every browser.

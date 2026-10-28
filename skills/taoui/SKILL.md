@@ -84,7 +84,8 @@ choose a text colour, WCAG 2 to promise a number.
 
 ## Overlays and feedback
 
-- `TaoModal`, `TaoDrawer` (v-model; Escape closes the top layer only), `TaoPopover`, `TaoTooltip` (`placement`).
+- `TaoModal` (`fullscreen`, `fullscreen="narrow"` for a page on a phone), `TaoDrawer` (`side="bottom"` is the phone's
+  bottom sheet) — v-model; Escape closes the top layer only. `TaoPopover`, `TaoTooltip` (`placement`).
 - Menus share one engine: `TaoDropdownMenu`, `TaoMenubar`, `TaoContextMenu`, `TaoMenu` (the panel for your own shell).
   Items are a data tree `TaoMenuItem[]`: `{ id, label, icon?, shortcut?, disabled?, items? }`,
   `{ type: 'checkbox' | 'radio', checked }`, `{ type: 'label' | 'separator' }`. `@select="id => …"`. `closeOnScroll`.
@@ -113,7 +114,7 @@ library and feed it `taoChartTheme()` / `watchTaoChartTheme(apply)`; do not buil
 
 ## Icons
 
-`<TaoIcon name="tao-check" />`: 29 built-in SVG icons under the `tao-` prefix (`taoIconNames`). Your own:
+`<TaoIcon name="tao-check" />`: 40 built-in SVG icons under the `tao-` prefix (incl. `tao-settings`, `tao-edit`, `tao-trash`, `tao-bell`, `tao-tag`, `tao-repeat`, `tao-undo`, `tao-redo`) (`taoIconNames`). Your own:
 `registerTaoIcons({ rocket: { body: '<path d="…"/>' } })` on a 24 grid with `currentColor`; add `grid: true` for icons made
 only of straight lines through the middle (a plus), so they stay crisp when small. Any other name renders the class
 `icon-<name>` for an icon font you bring.

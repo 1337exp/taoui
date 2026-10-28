@@ -58,8 +58,8 @@
 - **TaoMarquee** — one line that never wraps: when it does not fit it runs round with fading edges and a pause at the start of every round, when it fits it stands still. Stops on hover, on focus and on a tap (WCAG 2.2.2); wraps with «reduce motion»; a screen reader reads it once. `text` or inline content in the slot, `speed`, `gap`, `fade` (the left fade takes that much room left of the text: give the parent the padding), `paused`
 - **TaoInput** — text field with v-model, validation, and `#prefix` / `#suffix` slots (icon or text inside the frame)
 - **TaoInputGroup** — outer glue: `#before` | field | `#after` (protocol, unit, button)
-- **TaoModal** — modal with animation and slots
-- **TaoDrawer** — side panel (filters, settings). Esc, backdrop click, focus trap — same as the modal
+- **TaoModal** — modal with animation and slots; `fullscreen` (or `fullscreen="narrow"`: a page on a phone, a dialog on a computer)
+- **TaoDrawer** — side panel (filters, settings), or a bottom sheet with `side="bottom"`. Esc, backdrop click, focus trap — same as the modal
 - **TaoSpoiler** — disclosure. `v-model` and `aria-expanded`. Neighbours do not close each other
 - **TaoSpoilerGroup** — accordion: `v-model` is the open panel key (`null` = all closed); spoilers take `name`. Without `v-model` the group keeps that key itself
 - **TaoTabs** — tabbed sections
@@ -120,7 +120,7 @@
 - **TaoScrubber** — play / pause, a slider over time with event marks, a “time / length” label. Does not advance time by itself: drive `v-model` with your own clock
 - **TaoLoader** — four-dot spinner
 - **TaoImage** — `<img>` wrapper: fade-in and placeholder. `lazy` turns on native `loading="lazy"`
-- **TaoIcon** — SVG icons (29 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)
+- **TaoIcon** — SVG icons (40 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)
 
 ### Navigation
 
@@ -210,8 +210,9 @@ The package ships a skill, `skills/taoui/SKILL.md` with `references/components.m
 
 ## Icons
 
-The library ships **29 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,
-skip-back, copy, calendar, info, alert, circles, folder, file). They draw on `currentColor`, so an icon takes the text colour and the
+The library ships **40 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,
+skip-back, copy, calendar, info, alert, circles, folder, file, alignment, and the app actions settings, edit, trash, bell, tag,
+repeat, undo, redo). They draw on `currentColor`, so an icon takes the text colour and the
 font size, and live under the reserved prefix `tao-`: `<TaoIcon name="tao-check" />`, the list is `taoIconNames`.
 
 ```vue

@@ -257,6 +257,8 @@ const carouselProducts = [
 
 .carousel-indicator-demo {
   display: grid;
+  /* minmax(0, …): the slide track scrolls inside, it must not widen the page / лента слайдов не расширяет страницу */
+  grid-template-columns: minmax(0, 1fr);
   gap: 6px;
   margin-bottom: 16px;
 }

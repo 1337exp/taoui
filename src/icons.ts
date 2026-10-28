@@ -60,6 +60,17 @@ const builtin: Record<string, TaoIconDef> = {
     'align-left': { body: '<path d="M4 6.5h16M4 12h10M4 17.5h16"/>', grid: true },
     'align-center': { body: '<path d="M4 6.5h16M7 12h10M4 17.5h16"/>', grid: true },
     'align-right': { body: '<path d="M4 6.5h16M10 12h10M4 17.5h16"/>', grid: true },
+    // app actions / действия приложения
+    settings: {
+        body: '<circle cx="12" cy="12" r="3"/><path d="M12 3l1.6 2.4 2.8-.6.6 2.8L19.4 9 18.6 12l.8 3-2.4 1.4-.6 2.8-2.8-.6L12 21l-1.6-2.4-2.8.6-.6-2.8L4.6 15l.8-3-.8-3 2.4-1.4.6-2.8 2.8.6z"/>',
+    },
+    edit: { body: '<path d="M4 20h4L19.5 8.5a2.1 2.1 0 00-3-3L5 17z"/><path d="M14.5 7.5l2 2"/>' },
+    trash: { body: '<path d="M4 7h16M10 3.5h4"/><path d="M6.5 7l.9 12.6a1.5 1.5 0 001.5 1.4h6.2a1.5 1.5 0 001.5-1.4L17.5 7"/><path d="M10 11v6M14 11v6"/>' },
+    bell: { body: '<path d="M6 16v-5a6 6 0 0112 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 004 0"/>' },
+    tag: { body: '<path d="M3.5 12.6V4.5a1 1 0 011-1h8.1l8 8a1.4 1.4 0 010 2l-7 7a1.4 1.4 0 01-2 0z"/>' + dot(8, 8) },
+    repeat: { body: '<path d="M4 12V9.5A3.5 3.5 0 017.5 6H20M17 3l3 3-3 3"/><path d="M20 12v2.5a3.5 3.5 0 01-3.5 3.5H4M7 21l-3-3 3-3"/>' },
+    undo: { body: '<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/>' },
+    redo: { body: '<path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 000 11H13"/>' },
     file: { body: '<path d="M14 3.5H7.5A1.5 1.5 0 006 5v14a1.5 1.5 0 001.5 1.5h9A1.5 1.5 0 0018 19V7.5z"/><path d="M14 3.5v4h4"/>' },
 };
 

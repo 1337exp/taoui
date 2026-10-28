@@ -795,6 +795,7 @@ export const propTablesEn = {
         r('title', 'string', "''", 'The title in the header'),
         r('closable', 'boolean', 'true', 'The cross, Esc, a click on the backdrop'),
         r('closeLabel', 'string', "'Close'", 'aria-label of the cross'),
+        r('fullscreen', "boolean | 'narrow'", 'false', 'true — the whole screen: square corners, the header and the footer stay while the content scrolls, the safe areas kept. narrow — only on a screen narrower than 600px: a dialog on a computer, a page on a phone'),
       ],
       slots: 'default — the body. #footer — buttons. #close-icon — the cross icon.',
     },
@@ -805,7 +806,7 @@ export const propTablesEn = {
       rows: [
         r('v-model', 'boolean', '—', 'Open. Required'),
         r('title', 'string', "''", 'The title'),
-        r('side', "'left' | 'right'", "'right'", 'Where it slides in from'),
+        r('side', "'left' | 'right' | 'bottom'", "'right'", 'Where it slides in from. bottom is a sheet: as wide as the screen up to 640px, as tall as its content up to 90% of the screen, rounded top, a grip, above the safe area'),
         r('closable', 'boolean', 'true', 'Esc, the backdrop, the cross'),
         r('closeLabel', 'string', "'Close'", 'aria-label of the cross'),
       ],
