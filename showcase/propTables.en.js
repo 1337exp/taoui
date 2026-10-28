@@ -87,6 +87,20 @@ export const propTablesEn = {
       slots: 'default — the body. #media (a photo or a carousel on top), #overlay (a scrim over the media or the whole tile), #header (the top row: laid out as you like), #title, #sub, #footer, #corner (the top right corner: a tag, a menu button; the title leaves room for it, the width is the variable --tao-card-corner-size). The close event — the cross was pressed.',
     },
   ],
+  marquee: [
+    {
+      title: 'TaoMarquee',
+      rows: [
+        r('text', 'string', "''", 'The line; or anything inline in the slot (a link, an icon, bold text)'),
+        r('speed', 'number', '40', 'Speed, pixels per second'),
+        r('gap', 'number', '48', 'The gap between the end of the line and its next round, px'),
+        r('fade', 'number', '22', 'The width of the fading edges, px. The left fade lives in a padding outside the text: at rest the line stands where it would'),
+        r('pauseOnHover', 'boolean', 'true', 'Stop on hover'),
+        r('paused', 'boolean', 'false', 'Stopped by the app'),
+      ],
+      slots: 'default — the content of the line; its copies for the second round are hidden from a screen reader and inert. It runs only when it does not fit; it stops on hover, on focus (a running line is a tab stop) and on a tap; with «reduce motion» it wraps. measure() — measure again by hand.',
+    },
+  ],
   copy: [
     {
       title: 'TaoCopy',
