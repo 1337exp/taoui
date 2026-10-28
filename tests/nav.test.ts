@@ -232,3 +232,10 @@ describe('TaoNav action, round', () => {
         expect(navSource).toMatch(/\.tao-nav__action > :deep\(\*\) \{[^}]*gap: calc\(\(1 - var\(--_compact\)\) \* var\(--tao-space-2\)\)/);
     });
 });
+
+describe('TaoNav fills the height the app gives it', () => {
+    it('the root is a column and the shell grows, so a bottom bar stays at the bottom of a short page', () => {
+        expect(navSource).toMatch(/\.tao-nav \{[^}]*display: flex;[^}]*flex-direction: column;/);
+        expect(navSource).toMatch(/\.tao-nav__shell \{[^}]*flex: 1 1 auto;/);
+    });
+});

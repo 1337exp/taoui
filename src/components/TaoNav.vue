@@ -217,6 +217,12 @@ function onMoreClose(reason: TaoMenuCloseReason) {
  */
 .tao-nav {
     container: tao-nav / inline-size;
+    /* a column, so the shell below can fill a height the app gives TaoNav (`min-height: 100dvh`): on a page shorter than
+       the window the bottom bar then stays at the bottom instead of rising under the content
+       колонка: оболочка ниже занимает высоту, которую приложение дало TaoNav (`min-height: 100dvh`): на странице короче
+       окна нижняя панель остаётся внизу, а не поднимается под контент */
+    display: flex;
+    flex-direction: column;
     color: var(--tao-color-text);
 }
 
@@ -405,6 +411,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
 
 .tao-nav__shell {
     display: grid;
+    flex: 1 1 auto;
     grid-template: var(--_grid);
 }
 

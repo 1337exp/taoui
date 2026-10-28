@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.4.3
+
+- **Fixed: the bottom bar of TaoNav rose under the content on a page shorter than the window** (an empty list, a short settings page). The root had no height of its own and the grid inside only shared the height of the content. The root is now a flex column and the shell fills it, so a min-height / height given to TaoNav (min-height: 100dvh for a whole-window app) keeps the bar at the bottom, and the rail and the side panel run the full height. Nothing to migrate: without a height it behaves as before.
+
 ## 5.4.2
 
 - **Fixed: a toast in a centred position stuck to the left edge.** `topCenter` (the default), `bottomCenter` and `center` span the whole width, and the stack inside was `width: 100%`, so there was nothing to centre. The stack now shrinks to its widest toast in those three positions and `justify-content: center` centres it. Corner positions are unchanged. Nothing to migrate.
