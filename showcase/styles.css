@@ -227,7 +227,8 @@
   border-color: var(--tao-color-accent);
 }
 
-.showcase h1 {
+/* the showcase's own headings stay out of .tao-prose: there the typography layer speaks */
+.showcase h1:not(.tao-prose *) {
   font-size: var(--tao-font-size-4xl);
   font-weight: 700;
   color: var(--tao-color-text-strong);
@@ -241,21 +242,21 @@
   line-height: 1.4;
 }
 
-.showcase-main h2 {
+.showcase-main h2:not(.tao-prose *) {
   font-size: var(--tao-font-size-2xl);
   font-weight: 600;
   color: var(--tao-color-accent);
   margin-bottom: 8px;
 }
 
-.showcase-main h3 {
+.showcase-main h3:not(.tao-prose *) {
   font-size: var(--tao-font-size-lg);
   font-weight: 500;
   color: var(--tao-color-text);
   margin: 24px 0 12px;
 }
 
-.showcase-main p {
+.showcase-main p:not(.tao-prose *) {
   color: var(--tao-color-text);
   line-height: 1.6;
 }

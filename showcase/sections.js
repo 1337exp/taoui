@@ -2,6 +2,7 @@ import DemoBlock from './components/DemoBlock.vue'
 import DemoButton from './components/DemoButton.vue'
 import DemoCard from './components/DemoCard.vue'
 import DemoSurface from './components/DemoSurface.vue'
+import DemoTypography from './components/DemoTypography.vue'
 import DemoCopy from './components/DemoCopy.vue'
 import DemoInput from './components/DemoInput.vue'
 import DemoInputNumber from './components/DemoInputNumber.vue'
@@ -61,6 +62,7 @@ export const demoById = {
   'button': DemoButton,
   'card': DemoCard,
   'surface': DemoSurface,
+  'typography': DemoTypography,
   'copy': DemoCopy,
   'input': DemoInput,
   'input-number': DemoInputNumber,

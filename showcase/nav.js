@@ -8,6 +8,7 @@ export const navGroups = [
       { id: 'card', label: 'TaoCard' },
       { id: 'copy', label: 'TaoCopy' },
       { id: 'surface', label: { en: 'Surfaces', ru: 'Поверхности' }, aliases: ['glass', 'grain', 'lit', 'surface'] },
+      { id: 'typography', label: { en: 'Typography', ru: 'Типографика' }, aliases: ['prose', 'heading', 'tao-prose', 'заголовки', 'текст'] },
     ],
   },
   {
