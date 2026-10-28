@@ -26,12 +26,15 @@
 
 ## Why Tao UI
 
-- **Tokens first.** Colours, radii, spacing and type come from CSS variables in three layers (primitives, semantic, theme). Re-theme the kit, or one panel of it, without touching a component.
-- **One scale, one API.** `small` / `medium` / `large` everywhere, the same `v-model` / `change` / `*Text` / `*Label` rules for every field, tones instead of ad-hoc colours.
-- **Dark and light** out of the box, plus surfaces (`flat` / `grain` / `glass`) for HUDs and landing pages.
+- **Tokens first.** Colours, radii, spacing and type come from CSS variables in three layers (primitives, semantic, theme). Re-theme the kit, or one panel of it, without touching a component. Size and density are contexts too: set them once on a panel and everything inside follows.
+- **Palettes.** Seven ready palettes built from four colours each, or your own at run time (`applyTaoPalette`). The status colours step away from the accent by themselves, and the charts recolour with the theme.
+- **Contrast you can trust.** The colour pairs of the themes and palettes are checked by tests against WCAG 2 (4.5:1 for text, 3:1 for a label on a fill); APCA picks whether a label is dark or white.
+- **Adapts without JS.** `TaoNav` turns from a bottom bar into a rail and a side panel, the bento grid reflows, the main action moves with the navigation — by the width of their own container (container queries), not of the window. Nothing jumps after hydration.
+- **Keyboard and screen readers.** Menus, the menu bar, the toolbar, the tree and the navigation follow the WAI-ARIA patterns: one Tab stop and arrows inside (roving tabindex), `aria-pressed` toggles, `role="meter"`, focus traps in overlays.
+- **Charts the honest way.** Small `TaoSparkline` / `TaoMeter` / `TaoDonut` for cards and lines of text; for real charts `taoChartTheme()` hands the theme colours to Chart.js, ECharts or uPlot.
 - **Built-in languages.** Placeholders, dates and aria labels in English and Russian, switchable at runtime without a reload.
 - **Nuxt and plain Vue.** `TaoLink` picks `NuxtLink`, `RouterLink` or `<a>` by itself. Fully typed ESM, every component tested for server rendering.
-- **Keyboard friendly.** Focus traps, `role` / `aria-*` on the controls.
+- **Ready for AI assistants.** The package ships a skill with a reference of every component, generated from these docs, so an assistant writes Tao UI code instead of guessing.
 
 <table>
   <tr>
