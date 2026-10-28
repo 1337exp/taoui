@@ -30,7 +30,7 @@
 - **One scale, one API.** `small` / `medium` / `large` everywhere, the same `v-model` / `change` / `*Text` / `*Label` rules for every field, tones instead of ad-hoc colours.
 - **Dark and light** out of the box, plus surfaces (`flat` / `grain` / `glass`) for HUDs and landing pages.
 - **Built-in languages.** Placeholders, dates and aria labels in English and Russian, switchable at runtime without a reload.
-- **Nuxt and plain Vue.** `TaoLink` picks `NuxtLink`, `RouterLink` or `<a>` by itself. Fully typed, ES and CJS builds.
+- **Nuxt and plain Vue.** `TaoLink` picks `NuxtLink`, `RouterLink` or `<a>` by itself. Fully typed ESM, every component tested for server rendering.
 - **Keyboard friendly.** Focus traps, `role` / `aria-*` on the controls.
 
 <table>
