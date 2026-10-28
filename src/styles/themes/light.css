@@ -79,7 +79,7 @@
 
     /* ---------- Charts ----------
        The series colours, in order (TaoDonut, TaoSparkline, taoChartTheme). The first is the accent; the status roles
-       follow, so a palette moves them away from its accent; violet and the last one are fixed (pink in the dark theme, teal in the light one: away from each accent). Red is left out on purpose: it reads
+       follow, so a palette moves them away from its accent; violet and the last one are fixed (pink in the dark theme, orange in the light one: away from each accent). Red is left out on purpose: it reads
        as «bad». A palette re-declares the ones built on roles.
        Цвета серий по порядку. Первый — акцент; дальше роли статусов, поэтому палитра отодвигает их от своего акцента;
        фиолетовый и последний постоянны. Красный нарочно не берём: он читается как «плохо». */
@@ -88,8 +88,9 @@
     --tao-color-chart-3: var(--tao-color-success);
     --tao-color-chart-4: var(--tao-violet-600);
     --tao-color-chart-5: var(--tao-color-warning);
-    /* the light accent is pink already: the last series is teal / светлый акцент уже розовый: последняя серия бирюзовая */
-    --tao-color-chart-6: var(--tao-teal-600);
+    /* the light accent is pink already: the last series is orange (teal sat on the dark success green)
+       светлый акцент уже розовый: последняя серия оранжевая (бирюзовая сливалась с тёмно-зелёным success) */
+    --tao-color-chart-6: var(--tao-tangerine-600);
 
     --tao-color-input-bg: var(--tao-gray-0);
     --tao-color-input-text: var(--tao-gray-950);

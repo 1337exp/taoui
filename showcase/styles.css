@@ -35,17 +35,6 @@
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 10px;
-  padding: 8px 10px;
-  border: 1px solid var(--tao-color-border-strong);
-  border-radius: var(--tao-radius-control);
-  background: var(--tao-color-surface-sunken);
-  color: var(--tao-color-text);
-  font-family: inherit;
-  font-size: 13px;
-}
-
-.showcase-nav__search::placeholder {
-  color: var(--tao-color-text-muted);
 }
 
 .showcase-nav__all,
@@ -134,17 +123,6 @@
   font-size: var(--tao-font-size-2xl);
 }
 
-.showcase-banner__reset {
-  flex-shrink: 0;
-  padding: 6px 12px;
-  border: 1px solid var(--tao-color-border-strong);
-  border-radius: var(--tao-radius-control);
-  background: var(--tao-color-surface);
-  color: var(--tao-color-text);
-  font-family: inherit;
-  font-size: 13px;
-  cursor: pointer;
-}
 
 .showcase-section {
   scroll-margin-top: 16px;
@@ -233,6 +211,18 @@
   font-weight: 700;
   color: var(--tao-color-text-strong);
   margin: 0;
+}
+
+/* the title block keeps its width: the controls on the right wrap instead / блок заголовка не сжимается, переносятся контролы */
+.showcase-top > :first-child {
+  flex: none;
+}
+
+.showcase-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
 }
 
 .showcase-lead {

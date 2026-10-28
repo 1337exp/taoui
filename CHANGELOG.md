@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.4.4
+
+Visual fixes, nothing to migrate.
+
+- **TaoNav does not move when the page scrolls.** The side column (the action and the items of the rail and the side panel) stuck at `top: 0` although it stands below the panel's 4px padding, so the first 4px of scrolling lifted it against the edge; it now sticks where it stands. The floating bar jumped up a fraction of a pixel with the content at the very end of the scroll (the page height is often fractional and the scroll end is rounded up): its bottom margin is now 1px short of its sticky offset, so it stays stuck.
+- **TaoAlert folds with a slide**, as TaoSpoiler does: the body's row closes from `1fr` to `0fr`, and the text gets `hidden="until-found"` when the slide has ended, so find-in-page still opens it. With reduced motion it folds at once.
+- **Series colours stand further apart.** In the dark theme chart-4 (violet) sat next to the info blue of chart-2 (colour distance 0.092): it is a deeper violet now (`--tao-violet-400` `#9d5cff`, 0.189). In the light theme chart-4 is a purple (`--tao-violet-600` `#b03ad1`) and chart-6 orange (`--tao-tangerine-600`, new), because teal sat on the dark success green (0.093). A test keeps every pair of both themes at least 0.11 apart and 3:1 on the page. `--tao-teal-600`, added in 5.3.0 for that teal, is gone.
+
 ## 5.4.3
 
 - **Fixed: the bottom bar of TaoNav rose under the content on a page shorter than the window** (an empty list, a short settings page). The root had no height of its own and the grid inside only shared the height of the content. The root is now a flex column and the shell fills it, so a min-height / height given to TaoNav (min-height: 100dvh for a whole-window app) keeps the bar at the bottom, and the rail and the side panel run the full height. Nothing to migrate: without a height it behaves as before.

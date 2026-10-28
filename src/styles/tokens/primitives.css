@@ -27,6 +27,7 @@
     /* the dark theme's warning: an orange clearly apart from the amber accent / warning тёмной темы: апельсиновый, отличный от янтарного акцента */
     --tao-tangerine-400: #ff8f3d;
     --tao-tangerine-500: #f07a2a;
+    --tao-tangerine-600: #d9620f;
 
     /* Rose: the light theme's brand colour (from the original 666.io palette) */
     --tao-pink-400: #dc4679;
@@ -35,11 +36,10 @@
     --tao-pink-700: #c70a55;
     --tao-pink-800: #a8083f;
 
-    /* violet: only a chart series colour / фиолетовый: только цвет серии графика */
-    --tao-violet-400: #a78bfa;
-    --tao-violet-600: #7c4ddb;
-    /* teal: the last series of the light theme, whose accent is pink / бирюзовый: последняя серия светлой темы с розовым акцентом */
-    --tao-teal-600: #0e8a80;
+    /* violet: only a chart series colour, saturated enough to stand apart from the info blue
+       фиолетовый: только цвет серии графика, достаточно насыщенный, чтобы не сливаться с голубым info */
+    --tao-violet-400: #9d5cff;
+    --tao-violet-600: #b03ad1;
 
     --tao-red-400: #e35766;
     --tao-red-500: #dc3545;

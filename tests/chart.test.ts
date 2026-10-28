@@ -3,11 +3,14 @@ import { describe, expect, it } from 'vitest';
 import TaoDonut from '../src/components/TaoDonut.vue';
 import TaoMeter from '../src/components/TaoMeter.vue';
 import TaoSparkline from '../src/components/TaoSparkline.vue';
+import { colourDistance, contrastRatio } from '../src/palette';
 import { donutArcs, fraction, meterTone, sparklineArea, sparklinePath, sparklineRuns, taoChartTheme, toRgb } from '../src/chart';
 // @ts-expect-error Vite `?raw` import: the stylesheet as text
 import darkCss from '../src/styles/themes/dark.css?raw';
 // @ts-expect-error Vite `?raw` import: the stylesheet as text
 import lightCss from '../src/styles/themes/light.css?raw';
+// @ts-expect-error Vite `?raw` import: the stylesheet as text
+import primitivesCss from '../src/styles/tokens/primitives.css?raw';
 // @ts-expect-error Vite `?raw` import: the stylesheet as text
 import lagoonCss from '../src/styles/palettes/lagoon.css?raw';
 
@@ -195,5 +198,37 @@ describe('chart colours', () => {
         expect(theme.colors).toHaveLength(6);
         expect(Object.keys(theme)).toEqual(expect.arrayContaining(['text', 'textMuted', 'grid', 'axis', 'background', 'tooltip', 'fontFamily']));
         expect(document.body.querySelector('span[style*="display: none"]')).toBeNull();
+    });
+});
+
+describe('the series colours of the two themes stand apart', () => {
+    // resolves var() chains down to the hex the theme ends on / разворачивает цепочки var() до итогового hex
+    function resolver(themeCss: string) {
+        const vars = new Map<string, string>();
+        for (const css of [primitivesCss as string, themeCss]) {
+            for (const [, name, value] of css.matchAll(/(--tao-[\w-]+):\s*([^;]+);/g)) {
+                vars.set(name, value.trim());
+            }
+        }
+        const resolve = (value: string): string => {
+            const ref = /^var\((--tao-[\w-]+)\)$/.exec(value);
+            return ref ? resolve(vars.get(ref[1]) ?? '') : value;
+        };
+        return (name: string) => resolve(`var(${name})`);
+    }
+
+    it.each([
+        ['dark', darkCss, '--tao-gray-900'],
+        ['light', lightCss, '--tao-gray-0'],
+    ])('%s: every pair at least as far apart as the accent and warning (0.11), each 3:1 on the page', (_, css, bg) => {
+        const color = resolver(css as string);
+        const series = [1, 2, 3, 4, 5, 6].map((i) => color(`--tao-color-chart-${i}`));
+        series.forEach((hex) => expect(hex).toMatch(/^#[0-9a-f]{6}$/i));
+        for (let i = 0; i < series.length; i++) {
+            expect(contrastRatio(series[i], color(bg))).toBeGreaterThanOrEqual(3);
+            for (let j = i + 1; j < series.length; j++) {
+                expect(colourDistance(series[i], series[j]), `chart-${i + 1} / chart-${j + 1}`).toBeGreaterThanOrEqual(0.11);
+            }
+        }
     });
 });

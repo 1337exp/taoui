@@ -239,3 +239,13 @@ describe('TaoNav fills the height the app gives it', () => {
         expect(navSource).toMatch(/\.tao-nav__shell \{[^}]*flex: 1 1 auto;/);
     });
 });
+describe('TaoNav stays still while the page scrolls', () => {
+    it('the side column sticks below the panel padding, where it already stands', () => {
+        expect(navSource).toMatch(/\.tao-nav__column \{[^}]*top: var\(--tao-space-1\);/);
+    });
+
+    it('the floating bar keeps its bottom margin 1px short of its sticky offset', () => {
+        expect(navSource).toContain('calc(var(--_bar) * (var(--tao-space-3) + var(--_safe-bottom) - 1px))');
+        expect(navSource).toContain('bottom: calc(var(--_bar) * (var(--tao-space-3) + var(--_safe-bottom)));');
+    });
+});

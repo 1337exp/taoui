@@ -461,8 +461,13 @@ function onMoreClose(reason: TaoMenuCloseReason) {
  */
 .tao-nav--floating .tao-nav__panel {
     bottom: calc(var(--_bar) * (var(--tao-space-3) + var(--_safe-bottom)));
+    /* the bottom margin is 1px short of the sticky offset: the page height is often fractional and the scroll end is
+       rounded up, so at the very end the bar would stand at its own place a fraction higher than where it sticks and
+       jump up with the content; 1px less keeps it stuck to the end
+       нижний отступ на 1px меньше смещения sticky: высота страницы часто дробная, а конец прокрутки округляется вверх,
+       и в самом конце панель встала бы на своё место на долю пикселя выше, чем липнет, и подпрыгнула бы с контентом */
     margin: 0 calc(var(--_bar) * max(var(--tao-space-3), (100% - 520px) / 2))
-        calc(var(--_bar) * (var(--tao-space-3) + var(--_safe-bottom)));
+        calc(var(--_bar) * (var(--tao-space-3) + var(--_safe-bottom) - 1px));
     padding-bottom: calc(var(--tao-space-1) + (1 - var(--_bar)) * var(--_safe-bottom));
     border-top-width: max(var(--_border-top), calc(var(--_bar) * 1px));
     border-bottom-width: calc(var(--_bar) * 1px);
@@ -481,8 +486,12 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     /* the bar sticks as a whole; on the side the panel runs the full height and only the column (action + list) sticks
        панель снизу прилипает целиком; сбоку панель во всю высоту, а прилипает только колонка (действие + список) */
     position: var(--_list-position);
-    top: 0;
-    max-height: var(--_panel-height);
+    /* sticks where it already stands, below the panel padding, so scrolling never moves it; in the bar look
+       --_panel-height is none, the calc is invalid there and max-height stays none
+       прилипает там, где уже стоит, под отступом панели, поэтому прокрутка его не сдвигает; в виде нижней панели
+       --_panel-height равен none, calc там недействителен и max-height остаётся none */
+    top: var(--tao-space-1);
+    max-height: calc(var(--_panel-height) - 2 * var(--tao-space-1));
     display: flex;
     flex-direction: column;
 }

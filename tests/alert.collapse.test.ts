@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+import { nextTick } from 'vue';
 import TaoAlert from '../src/components/TaoAlert.vue';
 
 // A collapsible alert: the title and the tone stay, the body folds; folded text stays in the DOM for find-in-page.
@@ -70,5 +71,33 @@ describe('TaoAlert collapsible', () => {
         await w.find('.tao-alert__close').trigger('click');
         expect(w.emitted('close')).toHaveLength(1);
         expect(w.emitted('update:collapsed')).toBeUndefined();
+    });
+});
+
+describe('TaoAlert folds with a slide, like TaoSpoiler', () => {
+    it('the row closes first; the text is hidden until found only when the slide ends, and opens at once', async () => {
+        const real = window.getComputedStyle;
+        const spy = vi.spyOn(window, 'getComputedStyle').mockImplementation(
+            (el: Element) => ({ ...real(el), transitionDuration: '0.3s' }) as CSSStyleDeclaration,
+        );
+        const w = mount(TaoAlert, { props: { collapsible: true, title: 'Details' }, slots: { default: 'Body' }, attachTo: document.body });
+        const fold = w.find('.tao-alert__fold');
+        await w.find('.tao-alert__toggle').trigger('click');
+        expect(fold.classes()).toContain('tao-alert__fold--closed');
+        expect(w.find('.tao-alert__message').attributes('hidden')).toBeUndefined();
+        fold.element.dispatchEvent(new Event('transitionend'));
+        await nextTick();
+        expect(w.find('.tao-alert__message').attributes('hidden')).toBe('until-found');
+        await w.find('.tao-alert__toggle').trigger('click');
+        expect(fold.classes()).not.toContain('tao-alert__fold--closed');
+        expect(w.find('.tao-alert__message').attributes('hidden')).toBeUndefined();
+        spy.mockRestore();
+        w.unmount();
+    });
+
+    it('an alert that does not fold has no fold wrapper', () => {
+        const w = mount(TaoAlert, { props: { title: 'Note' }, slots: { default: 'Body' } });
+        expect(w.find('.tao-alert__fold').exists()).toBe(false);
+        expect(w.find('.tao-alert__message').exists()).toBe(true);
     });
 });
