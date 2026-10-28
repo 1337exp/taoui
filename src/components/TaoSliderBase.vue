@@ -266,6 +266,7 @@ onBeforeUnmount(() => {
         <div
             ref="railRef"
             class="tao-slider__rail"
+            :class="{ 'tao-slider__rail--dragging': isDragging }"
             @pointerdown="onPointerDown"
             @pointermove="onPointerMove"
             @pointerup="onPointerEnd"
@@ -370,6 +371,15 @@ onBeforeUnmount(() => {
 
 .tao-slider--disabled .tao-slider__rail {
     cursor: not-allowed;
+}
+
+/* two cursors per gesture: an open hand over the thumb, a closed one for the whole drag. The rail holds the pointer
+   capture, so without this the browser shows the rail's own cursor (a finger) as soon as the pointer moves
+   два курсора на жест: открытая рука над бегунком, сжатая на всё перетаскивание. Захват указателя у рельса, и без
+   этого браузер показал бы его собственный курсор (палец), как только указатель сдвинется */
+.tao-slider__rail--dragging,
+.tao-slider__rail--dragging * {
+    cursor: grabbing;
 }
 
 .tao-slider__track,

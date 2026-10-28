@@ -45,3 +45,11 @@ describe('TaoSlider thumb', () => {
         expect(sliderSource).toContain('outline-offset: calc(var(--_tao-halo) + 2px)');
     });
 });
+
+describe('TaoSlider cursor', () => {
+    it('two cursors per gesture: grab over the thumb, grabbing on the whole rail while dragging', () => {
+        expect(sliderSource).toMatch(/\.tao-slider__thumb \{[^}]*cursor: grab;/);
+        expect(sliderSource).toMatch(/\.tao-slider__rail--dragging,\s*\.tao-slider__rail--dragging \* \{[^}]*cursor: grabbing;/);
+        expect(sliderSource).toContain(":class=\"{ 'tao-slider__rail--dragging': isDragging }\"");
+    });
+});

@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.4.5
+
+- **The slider cursor has two states per gesture**: an open hand over the thumb, a closed hand for the whole drag (TaoSlider, TaoRangeSlider, TaoScrubber). The rail holds the pointer capture, so as soon as the pointer moved the browser showed the rail's own cursor, a pointing finger: hand, grab, finger flickered. Some browsers (Opera on Windows) draw `grab` as the four-way move arrows; that is their drawing of the same cursor.
+
 ## 5.4.4
 
 Visual fixes, nothing to migrate.
