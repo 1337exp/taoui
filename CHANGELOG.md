@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.4.1
+
+- **Fixed: a striped `TaoCard` / `TaoBlock` painted over a sticky `TaoNav` bar.** The stripe layer (`::after`) and the Card `#corner` use `z-index: 1`, but a panel did not form a stacking context, so they joined the page's layer and tied with the bar (`z-index: 1`, earlier in the DOM): the coloured stripe ran across the bottom bar while a card scrolled under it. `.tao-panel` is now `isolation: isolate`. Nothing to migrate.
+
 ## 5.4.0
 
 One slot, nothing to migrate.

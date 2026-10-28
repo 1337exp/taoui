@@ -63,12 +63,18 @@
 /* ---------- Panel contract / Контракт панели ----------
    A panel (Block, Card, or your own element with `.tao-panel`) publishes its radius and padding, and its children can
    round their corners concentrically: outer radius = inner radius + padding.
-   Панель публикует радиус и отступ, и вложенные могут скруглять углы концентрично: внешний радиус = внутренний + отступ. */
+   Панель публикует радиус и отступ, и вложенные могут скруглять углы концентрично: внешний радиус = внутренний + отступ.
+
+   A panel is also a stacking context: the stripe layer and the Card corner use `z-index: 1`, and without isolation
+   they would join the page's layer and paint over any sticky bar with the same `z-index` (TaoNav's bottom bar).
+   Панель — ещё и контекст наложения: слой полосы и угол Card имеют `z-index: 1`, и без изоляции они попадали бы в слой
+   страницы и рисовались бы поверх любой закреплённой панели с тем же `z-index` (нижняя панель TaoNav). */
 .tao-panel {
     --tao-radius: var(--tao-radius-panel);
     --tao-pad: var(--tao-space-4);
     --tao-radius-inner: max(0px, calc(var(--tao-radius) - var(--tao-pad)));
     border-radius: var(--tao-radius);
+    isolation: isolate;
 }
 
 /* ---------- Stripe / Полоса ----------

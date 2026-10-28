@@ -43,6 +43,11 @@ describe('the stripe in the stylesheet', () => {
         expect(layer).toContain('no-repeat');
     });
 
+    it('stays inside the panel: the panel is a stacking context, so the stripe z-index cannot beat a sticky TaoNav bar', () => {
+        expect(rule('.tao-stripe-top::after')).toContain('z-index: 1');
+        expect(rule('.tao-panel')).toContain('isolation: isolate');
+    });
+
     it('takes its colour from roles: the panel tone, or the theme gradient (along a left stripe, top to bottom)', () => {
         expect(rule('.tao-stripe-top')).not.toContain('#');
         expect(css).toMatch(/--_tao-stripe-image:\s*linear-gradient\(var\(--tao-tone\), var\(--tao-tone\)\)/);
