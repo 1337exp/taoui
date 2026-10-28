@@ -44,6 +44,7 @@ import DemoTooltip from './components/DemoTooltip.vue'
 import DemoPopover from './components/DemoPopover.vue'
 import DemoDropdown from './components/DemoDropdown.vue'
 import DemoMenubar from './components/DemoMenubar.vue'
+import DemoToolbar from './components/DemoToolbar.vue'
 import DemoNav from './components/DemoNav.vue'
 import DemoSpoiler from './components/DemoSpoiler.vue'
 import DemoTabs from './components/DemoTabs.vue'
@@ -105,6 +106,7 @@ export const demoById = {
   'popover': DemoPopover,
   'dropdown': DemoDropdown,
   'menubar': DemoMenubar,
+  'toolbar': DemoToolbar,
   'spoiler': DemoSpoiler,
   'tao-nav': DemoNav,
   'tabs': DemoTabs,

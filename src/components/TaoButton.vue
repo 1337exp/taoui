@@ -23,6 +23,13 @@ interface Props {
     iconEnd?: string;
     /** Minimum width (number = px). Same as the `--tao-button-min-width` variable. / Минимальная ширина (число = px). То же, что переменная `--tao-button-min-width`. */
     minWidth?: number | string;
+    /**
+     * A toggle button (Bold, Italic, a filter): `v-model:pressed`. With it the button says `aria-pressed` and shows its
+     * state; without it the button is an ordinary one.
+     * Кнопка-переключатель (Жирный, Курсив, фильтр): `v-model:pressed`. С ним кнопка говорит `aria-pressed` и показывает
+     * своё состояние; без него — обычная кнопка.
+     */
+    pressed?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -35,6 +42,7 @@ const props = withDefaults(defineProps<Props>(), {
     icon: '',
     iconEnd: '',
     minWidth: undefined,
+    pressed: undefined,
 });
 
 const minWidthStyle = computed(() =>
@@ -43,7 +51,10 @@ const minWidthStyle = computed(() =>
         : { '--tao-button-min-width': typeof props.minWidth === 'number' ? `${props.minWidth}px` : props.minWidth },
 );
 
-const emit = defineEmits(['click']);
+const emit = defineEmits<{
+    click: [event: MouseEvent];
+    'update:pressed': [value: boolean];
+}>();
 
 const slots = useSlots();
 const attrs = useAttrs();
@@ -56,6 +67,9 @@ if (iconOnly.value && !attrs['aria-label'] && !attrs['aria-labelledby'] && !attr
 function handleClick(event: MouseEvent) {
     if (!props.disabled && !props.loading) {
         emit('click', event);
+        if (props.pressed !== undefined) {
+            emit('update:pressed', !props.pressed);
+        }
     }
 }
 </script>
@@ -73,10 +87,12 @@ function handleClick(event: MouseEvent) {
                 'tao-button--block': block,
                 'tao-button--icon-only': iconOnly,
                 'tao-button--toned': !!tone && tone !== 'accent',
+                'tao-button--pressed': pressed === true,
             },
         ]"
         :style="minWidthStyle"
         :type="type"
+        :aria-pressed="pressed === undefined ? undefined : pressed"
         :disabled="disabled || loading"
         @click="handleClick"
     >
@@ -160,6 +176,20 @@ function handleClick(event: MouseEvent) {
 .tao-button--text:hover:not(.tao-button--disabled) {
     color: var(--tao-tone-text-hover);
     background-color: var(--tao-tone-wash);
+}
+
+/* a pressed toggle: a wash of the tone's text colour behind that colour, on every variant but primary (already filled).
+   Mixed from the text colour, not the subtle fill: the neutral subtle fill is too faint on a dark surface.
+   нажатый переключатель: подложка из цвета текста тона под этим же цветом, на всех вариантах, кроме залитого primary.
+   Смешиваем из цвета текста, а не из subtle: нейтральный subtle на тёмной поверхности почти не виден */
+.tao-button--pressed:not(.tao-button--primary) {
+    background-color: color-mix(in srgb, var(--tao-tone-text) 16%, transparent);
+    color: var(--tao-tone-text);
+}
+
+.tao-button--pressed:not(.tao-button--primary):hover:not(.tao-button--disabled) {
+    background-color: color-mix(in srgb, var(--tao-tone-text) 22%, transparent);
+    color: var(--tao-tone-text);
 }
 
 .tao-button--text {

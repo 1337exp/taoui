@@ -49,7 +49,7 @@
 ### Basics
 
 - **TaoBlock** — container with padding and radius
-- **TaoButton** — `variant`: `primary` / `secondary` / `ghost` / `text`; `tone` colours any of them (accent by default, neutral, success, danger, warning, info)
+- **TaoButton** — `variant`: `primary` / `secondary` / `ghost` / `text`; `tone` colours any of them (accent by default, neutral, success, danger, warning, info). `v-model:pressed` makes it a toggle (`aria-pressed`)
 - **TaoCard** — card with media / header / title / footer slots and a `#corner` (a tag, a menu button). `#media` can be a photo or `TaoCarousel`; `closable` adds a cross and the `close` event. `flush` is a tile (no padding/shadow, fills the cell); `#overlay` is a scrim on the media; `stripe="top | left | bottom"` with `stripeTone` (a tone or the palette `gradient`) draws a coloured stripe the corners clip
 - **TaoCopy** — clipboard icon. After a click, a “Copied” tooltip; if the trigger is gone, the tooltip is too
 - **TaoMarquee** — one line that never wraps: when it does not fit it runs round with fading edges and a pause at the start of every round, when it fits it stands still. Stops on hover, on focus and on a tap (WCAG 2.2.2); wraps with «reduce motion»; a screen reader reads it once. `text` or inline content in the slot, `speed`, `gap`, `fade` (the left fade takes that much room left of the text: give the parent the padding), `paused`
@@ -60,7 +60,7 @@
 - **TaoSpoiler** — disclosure. `v-model` and `aria-expanded`. Neighbours do not close each other
 - **TaoSpoilerGroup** — accordion: `v-model` is the open panel key (`null` = all closed); spoilers take `name`. Without `v-model` the group keeps that key itself
 - **TaoTabs** — tabbed sections
-- **TaoNav** — navigation between the sections of an app: one list of items (`icon`, `href`, `badge`), three looks. `layout="auto"` picks by the width of TaoNav itself (container queries, no JS): a bottom bar below 600px (more than five items: «More» with a menu), a rail with icons below 840px, a side panel with labels from 840px. With the page in its slot it lays the page out: the bar sticks to the bottom (safe area kept), the side list to the top. `select(id, event)` lets a router take over a link
+- **TaoNav** — navigation between the sections of an app: one list of items (`icon`, `href`, `badge`), three looks. `layout="auto"` picks by the width of TaoNav itself (container queries, no JS): a bottom bar below 600px (more than five items: «More» with a menu), a rail with icons below 840px, a side panel with labels from 840px. With the page in its slot it lays the page out: the bar sticks to the bottom (safe area kept), the side list to the top. `floating` lifts the bar into a detached pill with a shadow (the rail and the side panel stay). `select(id, event)` lets a router take over a link
 - **TaoTooltip** — hover hint. `placement`: `top` / `bottom` / `left` / `right`, each with `-start` / `-end`; flips at the viewport edge
 - **TaoPopover** — click panel with any slot content, Esc and outside click; `placement` as Tooltip. Not a tooltip, not an action menu
 
@@ -124,6 +124,7 @@
 - **TaoBreadcrumb** — crumbs: the last item is the current page
 - **TaoDropdownMenu** / **TaoMenu** — a menu from a plain data tree `items`: submenus, checkboxes, radios, separators, group labels, shortcuts to show, disabled items. Arrows, Home / End, type-ahead, `→` / `←` for submenus, Esc closes the top level first. `TaoMenu` is the panel itself, for your own shells (a menu bar, a context menu); flips at the viewport edge
 - **TaoMenubar** / **TaoContextMenu** — the menu bar of an editor and the menu on the right click, on `TaoMenu`. The bar is one tab stop (`role="menubar"`): `←` / `→` walk it, `↓` / Enter open, with a menu open `←` / `→` and the pointer move to the neighbour menu; an entry without `items` is a plain action. The context menu opens at the pointer (or at the element for the Menu key / Shift+F10) and wraps its content without a box of its own
+- **TaoToolbar** / **TaoToolbarGroup** / **TaoToolbarSeparator** — a bar of tools (`role="toolbar"`): one tab stop, `←` / `→` (or `↑` / `↓` when `orientation="vertical"`) walk the items, Home / End; inside a `TaoSegmented` the arrows pick the option and go on from its edge. Groups are split by a thin line across the bar; `inset` puts a sunken pill behind a group. Toggles are `TaoButton` with `v-model:pressed`
 - **TaoScrollTop** — floating “back to top”: `solid` / `ghost` / `text` looks, `side`, a mouse-hover `label`. Appears on reverse scroll after `boundary`
 
 ### Feedback

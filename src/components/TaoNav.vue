@@ -28,6 +28,13 @@ const props = withDefaults(
         ariaLabel?: string;
         /** The «More» entry of the bar. / Пункт «Ещё» нижней панели. */
         moreLabel?: string;
+        /**
+         * In the bar look, a detached pill above the page: inset from the edges and the safe area, round, with a shadow.
+         * The rail and the side panel stay as they are.
+         * В виде нижней панели — отдельная «пилюля» над страницей: отступ от краёв и безопасной зоны, скругление, тень.
+         * Рейка и боковая панель не меняются.
+         */
+        floating?: boolean;
     }>(),
     {
         modelValue: undefined,
@@ -35,6 +42,7 @@ const props = withDefaults(
         maxBarItems: 5,
         ariaLabel: undefined,
         moreLabel: undefined,
+        floating: false,
     },
 );
 const l10n = useLocaleText(props, 'nav');
@@ -106,7 +114,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
 </script>
 
 <template>
-    <div class="tao-nav" :class="[`tao-nav--${layout}`, { 'tao-nav--standalone': standalone }]">
+    <div class="tao-nav" :class="[`tao-nav--${layout}`, { 'tao-nav--standalone': standalone, 'tao-nav--floating': floating }]">
         <div class="tao-nav__shell">
             <nav class="tao-nav__panel" :aria-label="l10n.ariaLabel">
                 <ul class="tao-nav__list">
@@ -210,6 +218,8 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     --_more-display: block;
     --_badge-position: absolute;
     --_badge-push: 0;
+    --_bar: 1;
+    --_bar-shadow: var(--tao-shadow-lg);
 }
 
 /* rail */
@@ -232,6 +242,8 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     --_more-display: none;
     --_badge-position: absolute;
     --_badge-push: 0;
+    --_bar: 0;
+    --_bar-shadow: none;
 }
 
 /* drawer */
@@ -254,6 +266,8 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     --_more-display: none;
     --_badge-position: static;
     --_badge-push: auto;
+    --_bar: 0;
+    --_bar-shadow: none;
 }
 
 @container tao-nav (width < 600px) {
@@ -276,6 +290,8 @@ function onMoreClose(reason: TaoMenuCloseReason) {
         --_more-display: block;
         --_badge-position: absolute;
         --_badge-push: 0;
+        --_bar: 1;
+        --_bar-shadow: var(--tao-shadow-lg);
     }
 }
 
@@ -299,6 +315,8 @@ function onMoreClose(reason: TaoMenuCloseReason) {
         --_more-display: none;
         --_badge-position: absolute;
         --_badge-push: 0;
+        --_bar: 0;
+        --_bar-shadow: none;
     }
 }
 
@@ -322,6 +340,8 @@ function onMoreClose(reason: TaoMenuCloseReason) {
         --_more-display: none;
         --_badge-position: static;
         --_badge-push: auto;
+        --_bar: 0;
+        --_bar-shadow: none;
     }
 }
 
@@ -359,6 +379,32 @@ function onMoreClose(reason: TaoMenuCloseReason) {
 .tao-nav--standalone .tao-nav__panel {
     border-width: 1px;
     border-radius: var(--tao-radius-panel);
+}
+
+/*
+ * floating: the bar look becomes a pill above the page, off the edges and above the safe area (the sticky offset, not
+ * the padding, keeps it clear of the home indicator). --_bar is 1 in the bar look and 0 on the side, so the same rules
+ * leave the rail and the drawer untouched in `auto`. Wider than 520px + the insets it stays 520px, centred.
+ * floating: вид нижней панели становится «пилюлей» над страницей, с отступом от краёв и над безопасной зоной (от
+ * индикатора «домой» её отодвигает смещение sticky, а не padding). --_bar равен 1 в виде панели и 0 сбоку, поэтому
+ * те же правила в `auto` не трогают рейку и боковую панель. Шире 520px + отступы — остаётся 520px по центру.
+ */
+.tao-nav--floating .tao-nav__panel {
+    bottom: calc(var(--_bar) * (var(--tao-space-3) + var(--_safe-bottom)));
+    margin: 0 calc(var(--_bar) * max(var(--tao-space-3), (100% - 520px) / 2))
+        calc(var(--_bar) * (var(--tao-space-3) + var(--_safe-bottom)));
+    padding-bottom: calc(var(--tao-space-1) + (1 - var(--_bar)) * var(--_safe-bottom));
+    border-top-width: max(var(--_border-top), calc(var(--_bar) * 1px));
+    border-bottom-width: calc(var(--_bar) * 1px);
+    border-inline-start-width: calc(var(--_bar) * 1px);
+    border-inline-end-width: max(var(--_border-side), calc(var(--_bar) * 1px));
+    border-radius: calc(var(--_bar) * var(--tao-radius-full));
+    box-shadow: var(--_bar-shadow);
+}
+
+.tao-nav--floating.tao-nav--standalone .tao-nav__panel {
+    border-width: 1px;
+    border-radius: max(var(--tao-radius-panel), calc(var(--_bar) * var(--tao-radius-full)));
 }
 
 .tao-nav__list {
@@ -414,6 +460,11 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     transition: var(--tao-transition-base);
     /* selecting the text around must not catch the button label / выделение текста вокруг не захватывает подпись кнопки */
     user-select: none;
+}
+
+/* in the pill the active item is a pill too / в «пилюле» активный пункт тоже «пилюля» */
+.tao-nav--floating .tao-nav__item {
+    border-radius: max(max(0px, calc(var(--tao-radius-panel) - var(--tao-space-1))), calc(var(--_bar) * var(--tao-radius-full)));
 }
 
 .tao-nav__item:hover {

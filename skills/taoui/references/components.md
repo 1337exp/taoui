@@ -35,6 +35,7 @@ Showcase section: `#button`
 | `minWidth` | `number \| string` | — | Minimum width (number = px); the --tao-button-min-width variable |
 | `icon` | `string` | '' | An icon before the text: a name for TaoIcon (tao-plus, your own or a font one). Without text and slot the button is a square of the control height and needs aria-label |
 | `iconEnd` | `string` | '' | An icon after the text |
+| `v-model:pressed` | `boolean` | — | A toggle button (Bold, a filter): aria-pressed and the tone tint while pressed. Without it the button is an ordinary one |
 
 **Slots, events, notes.** default — the button caption.
 
@@ -893,6 +894,36 @@ Showcase section: `#dropdown`
 
 **Slots, events, notes.** Event select — the item id, close(reason) — the menu asks to be closed (escape / select / outside / tab). The panel for your own shells: a button, a context menu, a menu bar.
 
+## TaoToolbar
+
+Showcase section: `#toolbar`
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `label` | `string` | — | Accessible name of the bar: Formatting, Tools |
+| `size` | `'small' \| 'medium' \| 'large'` | inherited | The size of the controls inside |
+| `orientation` | `'horizontal' \| 'vertical'` | 'horizontal' | Which arrows walk it (← → or ↑ ↓); the separators lie across |
+| `variant` | `'panel' \| 'plain'` | 'panel' | panel — a raised bar of its own with concentric corners; plain — only the layout, for a toolbar inside a header |
+
+**Slots, events, notes.** default — any controls: TaoButton (toggles with v-model:pressed), TaoSegmented, a select, TaoToolbarGroup, TaoToolbarSeparator. Keys: the bar is one Tab stop and remembers the last item; ← → (↑ ↓ when vertical) walk it and wrap, Home / End go to the ends, disabled items are skipped. Inside a radio group (TaoSegmented) the arrows pick the option and go on from its edge; a text field keeps its arrows. The items wrap onto a new line on a narrow screen.
+
+## TaoToolbarGroup
+
+Showcase section: `#toolbar`
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `label` | `string` | — | Accessible name of the group: Text style, Alignment |
+| `inset` | `boolean` | false | A sunken pill behind the group: its buttons read as one set |
+
+**Slots, events, notes.** default — the tools of one kind. role="group".
+
+## TaoToolbarSeparator
+
+Showcase section: `#toolbar`
+
+**Slots, events, notes.** A thin line between the groups, across the bar: vertical in a horizontal toolbar. role="separator".
+
 ## TaoMenubar
 
 Showcase section: `#menubar`
@@ -955,6 +986,7 @@ Showcase section: `#tao-nav`
 | `maxBarItems` | `number` | 5 | How many fit the bar. With more items maxBarItems − 1 stay, the rest go into «More» with a menu |
 | `ariaLabel` | `string` | 'Navigation' | Accessible name of the navigation |
 | `moreLabel` | `string` | 'More' | The label of «More» |
+| `floating` | `boolean` | false | In the bar look, a detached pill above the page: inset from the edges and above the safe area, round, with a shadow; the active item is a pill too. The rail and the side panel do not change. The main action of the screen goes beside it as your own round button, not into the bar |
 
 **Slots, events, notes.** default — the page: TaoNav lays it out next to the navigation (the bar sticks to the bottom, on the side the list sticks to the top; env(safe-area-inset-bottom) is kept). Without the slot it is a standalone panel with a border. #label — your own item label ({ item, active }). Events: update:modelValue, select(id, event) — event.preventDefault() keeps a link from navigating, to route it yourself.
 

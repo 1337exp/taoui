@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.2.0
+
+New components and options, nothing to migrate.
+
+- **`TaoToolbar`**, **`TaoToolbarGroup`**, **`TaoToolbarSeparator`**: a bar of tools (`role="toolbar"`). It is one Tab stop with a roving tabindex: `←` / `→` (`↑` / `↓` with `orientation="vertical"`) walk the items and wrap, Home / End go to the ends, disabled items are skipped, and the bar remembers the last item. The items are found in the DOM, so any control fits: inside a `TaoSegmented` the arrows pick the option and move on from its edge, a text field keeps its arrows. A thin line across the bar splits the groups; `inset` puts a sunken pill behind a group. `variant="panel | plain"`, `size`.
+- **`TaoButton` `v-model:pressed`:** a toggle button (Bold, a filter). It says `aria-pressed` and, while pressed, wears a wash of its tone's text colour (every variant but `primary`). Without the prop the button is unchanged.
+- **`TaoNav` `floating`:** in the bar look the panel is a detached pill above the page, inset from the edges and above the safe area, with a shadow and a pill for the active item; 520px at most, centred. The rail and the side panel do not change, in `auto` too. The main action of a screen belongs beside it as your own round button (see the showcase), not in a notch of the bar.
+- **Icons** `tao-align-left`, `tao-align-center`, `tao-align-right`.
+
 ## 5.1.1
 
 Visual fixes, nothing to migrate.

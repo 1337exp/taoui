@@ -38,6 +38,9 @@ import TaoDropdownMenu from './components/TaoDropdownMenu.vue';
 import TaoContextMenu from './components/TaoContextMenu.vue';
 import TaoMenu from './components/TaoMenu.vue';
 import TaoMenubar from './components/TaoMenubar.vue';
+import TaoToolbar from './components/TaoToolbar.vue';
+import TaoToolbarGroup from './components/TaoToolbarGroup.vue';
+import TaoToolbarSeparator from './components/TaoToolbarSeparator.vue';
 import TaoNav from './components/TaoNav.vue';
 import TaoTree from './components/TaoTree.vue';
 import TaoChecklist from './components/TaoChecklist.vue';
@@ -122,6 +125,9 @@ const components = [
     TaoDropdownMenu,
     TaoMenu,
     TaoMenubar,
+    TaoToolbar,
+    TaoToolbarGroup,
+    TaoToolbarSeparator,
     TaoNav,
     TaoTree,
     TaoChecklist,
@@ -223,6 +229,9 @@ export {
     TaoDropdownMenu,
     TaoMenu,
     TaoMenubar,
+    TaoToolbar,
+    TaoToolbarGroup,
+    TaoToolbarSeparator,
     TaoNav,
     TaoTree,
     TaoChecklist,
@@ -326,6 +335,7 @@ export type {
 } from './menu';
 export { menuReturnsFocus } from './menu';
 export type { TaoNavItem, TaoNavLayout } from './nav';
+export type { TaoToolbarOrientation } from './toolbar';
 export type { TaoTreeCheckState, TaoTreeNode, TaoTreeSelection } from './tree';
 export type { TaoChecklistItem } from './checklist';
 export type { TaoStripe, TaoStripeTone } from './stripe';
