@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from 'vue'
-import { TaoGrid, TaoGridItem, TaoCard } from '@1337exp/taoui'
+import { computed, ref } from 'vue'
+import { TaoGrid, TaoGridItem, TaoCard, TaoSegmented, TaoSegmentedOption } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { tr } from '../i18n.js'
 import Tr from './Tr.vue'
@@ -32,6 +32,9 @@ const gridNotes = computed(() => [
   { id: 'c', title: tr('Medium', 'Средне'), text: tr('Two or three lines of text in the card body.', 'Две-три строки текста в теле карточки.') },
   { id: 'd', title: tr('One more', 'Ещё одна'), text: tr('The fourth one moves to the next row.', 'Четвёртая уезжает на следующий ряд.') },
 ])
+
+// an adaptive dashboard: the frame width picks the width class of the grid
+const bentoWidth = ref('100%')
 </script>
 
 <template>
@@ -96,12 +99,12 @@ const gridNotes = computed(() => [
     <Tr>
       <template #en>
         <p class="carousel-note">
-          <code>TaoGridItem</code> takes several cells. In a narrow column the span is dropped.
+          <code>TaoGridItem</code> takes several cells. A plain number: one column on a narrow grid.
         </p>
       </template>
       <template #ru>
         <p class="carousel-note">
-          <code>TaoGridItem</code> занимает несколько клеток. На узкой колонке span гасится.
+          <code>TaoGridItem</code> занимает несколько клеток. Простое число: одна колонка на узкой сетке.
         </p>
       </template>
     </Tr>
@@ -130,6 +133,45 @@ const gridNotes = computed(() => [
         </TaoCard>
       </TaoGridItem>
     </TaoGrid>
+
+    <h3>{{ tr('Adaptive bento', 'Адаптивная bento-сетка') }}</h3>
+    <Tr>
+      <template #en>
+        <p class="carousel-note">
+          Values per width class of the grid itself: compact below 600px, medium below 840px, expanded from 840px.
+          On a phone the big A and the wide B take the whole row, the small tiles stay three in a row, the side block F
+          goes to the end (<code>order</code>). Change the frame width.
+        </p>
+      </template>
+      <template #ru>
+        <p class="carousel-note">
+          Значения по классам ширины самой сетки: compact до 600px, medium до 840px, expanded от 840px. На телефоне
+          большой A и широкий B занимают весь ряд, мелкие плитки остаются по три в ряд, боковой F уходит в конец
+          (<code>order</code>). Меняйте ширину рамки.
+        </p>
+      </template>
+    </Tr>
+    <TaoSegmented v-model="bentoWidth" size="small" style="margin-bottom: 12px;">
+      <TaoSegmentedOption value="360px" label="360" />
+      <TaoSegmentedOption value="700px" label="700" />
+      <TaoSegmentedOption value="100%" label="100%" />
+    </TaoSegmented>
+    <div class="bento-frame" :style="{ width: bentoWidth }">
+      <TaoGrid :cols="{ compact: 3, medium: 4, expanded: 6 }" gap="10px" :row-height="80">
+        <TaoGridItem :col="{ compact: 'full', medium: 4, expanded: 4 }" :row="2">
+          <TaoCard stripe="top" stripe-tone="gradient"><template #title>A</template><template #sub>{{ tr('the main block', 'главный блок') }}</template></TaoCard>
+        </TaoGridItem>
+        <TaoGridItem :col="{ compact: 'full', medium: 3, expanded: 2 }" :row="2" :order="{ compact: 9, medium: 9, expanded: 0 }">
+          <TaoCard stripe="left" stripe-tone="info"><template #title>F</template><template #sub>{{ tr('the side block: last on a phone', 'боковой: последний на телефоне') }}</template></TaoCard>
+        </TaoGridItem>
+        <TaoGridItem :col="{ compact: 'full', medium: 2, expanded: 3 }">
+          <TaoCard><template #title>B</template><template #sub>{{ tr('wide', 'широкий') }}</template></TaoCard>
+        </TaoGridItem>
+        <TaoGridItem v-for="name in ['C', 'D', 'E']" :key="name">
+          <TaoCard><template #title>{{ name }}</template><template #sub>{{ tr('a tile', 'плитка') }}</template></TaoCard>
+        </TaoGridItem>
+      </TaoGrid>
+    </div>
 
     <h3>{{ tr('Mosaic: cover / fill / gradient at the bottom', 'Мозаика: обложка / заливка / градиент снизу') }}</h3>
     <Tr>
@@ -366,5 +408,15 @@ const gridNotes = computed(() => [
 .mosaic-fill--champagne {
   background: color-mix(in srgb, var(--tao-color-accent) 28%, var(--tao-color-surface-raised));
   color: var(--tao-color-text-strong);
+}
+.bento-frame {
+  max-width: 100%;
+  min-width: 280px;
+  margin-bottom: 24px;
+  padding: 10px;
+  overflow: hidden;
+  resize: horizontal;
+  border: 1px dashed var(--tao-color-border-strong);
+  border-radius: var(--tao-radius-panel);
 }
 </style>

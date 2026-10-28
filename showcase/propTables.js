@@ -652,17 +652,19 @@ export const propTables = {
     {
       title: 'TaoGrid',
       rows: [
-        r('min', 'string', "'220px'", 'Минимальная ширина плитки (auto-fill). Каталог. Игнорируется, если cols > 0'),
-        r('cols', 'number', '0', 'Фиксированные колонки (bento). 0 — режим min'),
+        r('min', 'string', "'220px'", 'Минимальная ширина плитки (auto-fill). Каталог. Игнорируется с cols'),
+        r('cols', 'number | { compact, medium, expanded }', '0', 'Фиксированные колонки (bento). Число: одна колонка в compact, это число начиная с medium. Объект: по классам ширины самой сетки (compact < 600px, medium < 840px, expanded), недостающий класс берёт значение меньшего. 0 — режим min'),
         r('gap', 'number | string', 'token space-4', 'Просвет между ячейками. Число — px, строка — CSS'),
+        r('rowHeight', 'number | string', '—', 'Минимальная высота ряда, чтобы плитка на 2 ряда была заметно выше; ряды всё равно растут под содержимое'),
       ],
-      slots: 'default — карточки или TaoGridItem. Не masonry: ряд по самой высокой. Уже ~560px cols → 1 колонка, span → 1.',
+      slots: 'default — карточки или TaoGridItem. Не masonry: ряд по самой высокой. Классы ширины — по ширине сетки, а не окна (в панели TaoSplit тоже).',
     },
     {
       title: 'TaoGridItem',
       rows: [
-        r('col', 'number', '1', 'Сколько колонок занять. Для cols, не для min'),
-        r('row', 'number', '1', 'Сколько рядов занять'),
+        r('col', "number | 'full' | { compact, medium, expanded }", '1', "Сколько колонок занять; 'full' — весь ряд. Никогда больше, чем есть. Для cols, не для min"),
+        r('row', 'number | { compact, medium, expanded }', '1', 'Сколько рядов занять. Число: 1 в compact, это число начиная с medium'),
+        r('order', 'number | { compact, medium, expanded }', '0', 'Место в потоке: { compact: 9 } уводит боковой блок в конец на телефоне'),
       ],
       slots: 'default — плитка. В каталоге можно без обёртки.',
     },

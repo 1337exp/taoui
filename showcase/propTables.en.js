@@ -659,17 +659,19 @@ export const propTablesEn = {
     {
       title: 'TaoGrid',
       rows: [
-        r('min', 'string', "'220px'", 'The minimum tile width (auto-fill). A catalogue. Ignored if cols > 0'),
-        r('cols', 'number', '0', 'Fixed columns (bento). 0 — the min mode'),
+        r('min', 'string', "'220px'", 'The minimum tile width (auto-fill). A catalogue. Ignored with cols'),
+        r('cols', 'number | { compact, medium, expanded }', '0', 'Fixed columns (bento). A number: one column on compact, the number from medium on. An object: per width class of the grid itself (compact < 600px, medium < 840px, expanded), a missing class takes the smaller one. 0 — the min mode'),
         r('gap', 'number | string', 'token space-4', 'The gap between cells. A number is px, a string is CSS'),
+        r('rowHeight', 'number | string', '—', 'The smallest row height, so a tile on 2 rows is visibly taller; rows still grow with the content'),
       ],
-      slots: 'default — cards or TaoGridItem. Not masonry: the row follows the tallest. Below ~560px cols → 1 column, span → 1.',
+      slots: 'default — cards or TaoGridItem. Not masonry: the row follows the tallest. The width classes follow the width of the grid, not of the window (inside a TaoSplit pane too).',
     },
     {
       title: 'TaoGridItem',
       rows: [
-        r('col', 'number', '1', 'How many columns to take. For cols, not for min'),
-        r('row', 'number', '1', 'How many rows to take'),
+        r('col', "number | 'full' | { compact, medium, expanded }", '1', "How many columns to take; 'full' is the whole row. Never more than there are. For cols, not for min"),
+        r('row', 'number | { compact, medium, expanded }', '1', 'How many rows to take. A number: 1 on compact, the number from medium on'),
+        r('order', 'number | { compact, medium, expanded }', '0', 'The place in the flow: { compact: 9 } sends a side block to the end on a phone'),
       ],
       slots: 'default — a tile. In a catalogue it can go without the wrapper.',
     },

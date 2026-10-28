@@ -68,7 +68,7 @@
 - **TaoContainer** — контейнер с ограничением ширины (wide/slim/ultra-slim) и авто-центровкой
 - **TaoFlex** — обёртка над flexbox с пропами justify/align/direction/wrap/gap
 - **TaoSpace** — авто-расстановка дочерних элементов с равномерным gap
-- **TaoGrid** / **TaoGridItem** — плитки: `min` — каталог (auto-fill), `cols` — bento. У item `col` / `row`; уже ~560px span сбрасывается. Не masonry
+- **TaoGrid** / **TaoGridItem** — плитки: `min` — каталог (auto-fill), `cols` — bento. Адаптивный bento берёт значения по классам ширины самой сетки (compact < 600px, medium < 840px, expanded): `:cols="{ compact: 3, expanded: 6 }"`, `:col="{ compact: 'full', expanded: 4 }"`, `:order="{ compact: 9 }"` — на телефоне крупные блоки занимают ряд, мелкие плитки остаются по три, боковой уходит вниз. Простое число — одна колонка на телефоне. `rowHeight` — чтобы высокие плитки были заметно выше. Не masonry
 - **TaoDivider** — `solid` (обычный border) / `dashed` / `colored` (акцент) / `gap`. Подпись — опциональный `text` на любом варианте; `fade` — плавные края линии; `size` только у `gap` (small / medium / large)
 - **TaoSplit** — две панели и полоса. `row` / `column` как у Flex. `v-model` — размер start в `%` или `px`; `resizable="false"` фиксирует полосу. Не Divider.
 - **TaoFieldset** — рамка-группа: `legend` сидит на верхней границе, `align` — start / center / end
