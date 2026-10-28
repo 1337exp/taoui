@@ -73,6 +73,8 @@ describe('the preset list', () => {
         expect(lib.taoPalettes).toBe(taoPalettes);
         expect(typeof lib.applyTaoPalette).toBe('function');
         expect(typeof lib.taoPaletteCss).toBe('function');
+        expect(lib.contrastRatio).toBe(contrastRatio);
+        expect(lib.apcaContrast).toBe(apcaContrast);
     });
 });
 

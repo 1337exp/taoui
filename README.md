@@ -712,6 +712,38 @@ stop()   // takes it off again; a third argument puts it on one element instead 
 
 or as a file: `taoPaletteCss(def)` returns the CSS the preset files are made of. To add a preset to the library, add it to `src/palettes.ts` and run `npm run palettes`.
 
+#### Contrast: WCAG 2 and APCA
+
+Two questions are asked of every colour pair, and they are answered by two different models.
+
+**Is it allowed?** WCAG 2 contrast ratio: `(L1 + 0.05) / (L2 + 0.05)` of the relative luminances, from 1 to 21. It is the
+legal standard (and the one accessibility audits check), so every number the palettes promise is a WCAG 2 ratio: 4.5:1
+for text, 3:1 for a fill seen on the page. `contrastRatio(a, b)` computes it.
+
+**Which reads better?** WCAG 2 has a known blind spot: it treats light and dark the same way, and on mid-tone colours it
+overrates black. On the green `#2ea85c` it says black 6.4:1 against white 3.1:1, while the eye clearly reads white better.
+APCA (Accessible Perceptual Contrast Algorithm, the model behind the WCAG 3 draft) follows how we see: it knows that
+light text on a dark background and dark text on a light one are not symmetric, and that thin text needs more. It gives
+a lightness contrast **Lc** from about −108 to 106 (the sign is the polarity: negative is light text on dark); about 75 is
+body text, 60 a label, 45 a large heading. `apcaContrast(text, background)` computes it.
+
+| On `#2ea85c` | WCAG 2 | APCA Lc |
+|---|---|---|
+| black text | **6.4 : 1** | 47 |
+| white text | 3.1 : 1 | **62** |
+
+So the palettes use both, each for what it is good at:
+
+1. **The polarity by APCA.** In light mode the label on a fill (the accent, a status) is the colour APCA reads better;
+   on mid-tones that is white.
+2. **The numbers by WCAG 2.** The fill is then moved along lightness until that label reaches 4.5:1, so a white label
+   on a mid-tone gets a slightly deeper fill, never a weaker label.
+3. **Dark mode keeps a dark label.** There the fills are light on purpose (to be seen on a dark page), and a light fill
+   carries dark text in both models.
+
+The checks are in `tests/palette.test.ts`: every palette, both modes, every fill. If you build your own colours, the two
+functions are exported, use them the same way: APCA to choose, WCAG 2 to promise.
+
 ### A theme from scratch, without primitives
 
 ```javascript

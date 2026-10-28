@@ -294,7 +294,7 @@ export type { TaoSize } from './size';
 export type { TaoTone, TaoToneName } from './tone';
 export { toneClass } from './tone';
 export type { TaoDensity, TaoResolvedDensity } from './density';
-export { applyTaoPalette, paletteCss as taoPaletteCss } from './palette';
+export { apcaContrast, applyTaoPalette, contrastRatio, paletteCss as taoPaletteCss } from './palette';
 export { taoPalettes } from './palettes';
 export type { TaoPaletteDef, TaoPaletteMode, TaoStatusName } from './palette';
 export { registerTaoIcons, taoIconNames } from './icons';
