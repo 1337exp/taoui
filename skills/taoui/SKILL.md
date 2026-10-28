@@ -107,6 +107,10 @@ choose a text colour, WCAG 2 to promise a number.
 `TaoCopy`, `TaoMarquee` (one line that runs round only when it does not fit), `TaoScrubber` (play / pause + time),
 `TaoScrollTop`, `TaoAnimatedBorder`, `TaoIcon`.
 
+Small charts only: `TaoSparkline` (a trend), `TaoMeter` (a value in a range, `low` / `high` / `optimum`), `TaoDonut`
+(`segments` or `value` of `max`). Series colours `--tao-color-chart-1…6`. For a real chart (axes, tooltips) use a chart
+library and feed it `taoChartTheme()` / `watchTaoChartTheme(apply)`; do not build axes by hand.
+
 ## Icons
 
 `<TaoIcon name="tao-check" />`: 29 built-in SVG icons under the `tao-` prefix (`taoIconNames`). Your own:

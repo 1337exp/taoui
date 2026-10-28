@@ -42,6 +42,9 @@ const props: Record<string, Record<string, unknown>> = {
     TaoColorInput: { modelValue: '#ff8800' },
     TaoColorPicker: { modelValue: '#ff8800' },
     TaoCopy: { text: 'copy me' },
+    TaoSparkline: { values: [1, 3, null, 2], area: true, dot: true, label: 'Trend' },
+    TaoMeter: { value: 70, low: 20, high: 80, label: 'Disk', valueText: true },
+    TaoDonut: { segments: [{ label: 'A', value: 2 }, { label: 'B', value: 1, tone: 'danger' }], legend: true },
 };
 
 const components = Object.entries(lib).filter(

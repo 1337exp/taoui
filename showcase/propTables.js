@@ -481,6 +481,46 @@ export const propTables = {
       slots: 'default — текст зоны. Событие change — добавили или убрали файлы. clear-request: родитель решает, обнулить сразу или после confirm().',
     },
   ],
+  charts: [
+    {
+      title: 'TaoSparkline',
+      rows: [
+        r('values', '(number | null)[]', '—', 'Ряд; null — разрыв линии'),
+        r('label', 'string', '—', 'Что показывает, для скринридера («Визиты за 12 недель, рост»). Без него линия — украшение (aria-hidden)'),
+        r('tone', "'accent' | 'neutral' | 'success' | 'danger' | 'warning' | 'info'", "'accent'", 'Цвет'),
+        r('area', 'boolean', 'false', 'Мягкая заливка под линией'),
+        r('dot', 'boolean', 'false', 'Точка на последнем значении'),
+        r('min / max', 'number', 'по данным', 'Постоянный диапазон (значения за ним обрезаются): чтобы сравнивать несколько спарклайнов'),
+        r('height', 'number | string', '32', 'Высота (число = px). Ширина — по контейнеру'),
+      ],
+      slots: 'Тренд без осей и подсказок: для карточки, ячейки таблицы, строки текста.',
+    },
+    {
+      title: 'TaoMeter',
+      rows: [
+        r('value', 'number', '—', 'Измеренное значение'),
+        r('min / max', 'number', '0 / 100', 'Диапазон'),
+        r('low / high', 'number', '—', 'Границы низкой и высокой области. Без них шкала цвета акцента'),
+        r('optimum', 'number', 'середина', 'Лучшее значение. Его область — success, соседняя — warning, дальняя — danger, как у HTML <meter>: optimum 0 для занятого места на диске, max для батареи'),
+        r('label', 'string', '—', 'Подпись над шкалой, доступное имя'),
+        r('valueText', 'string | boolean', 'false', 'Значение справа от подписи: true — число, строка — ваш текст (читается как aria-valuetext)'),
+        r('tone', 'TaoToneName', '—', 'Постоянный цвет вместо low / high'),
+      ],
+      slots: 'role="meter". Измеренное значение в диапазоне (диск, батарея, оценка), а не ход задачи: для него TaoProgress.',
+    },
+    {
+      title: 'TaoDonut',
+      rows: [
+        r('segments', 'TaoDonutSegment[]', '—', '{ label, value, tone?, color? }. Части берут --tao-color-chart-1…6 по порядку; tone или CSS-цвет важнее. Хорошо читаются 3–5 частей'),
+        r('value / max', 'number', '0 / 100', 'Без segments: одиночное кольцо, value из max'),
+        r('tone', 'TaoToneName', "'accent'", 'Цвет одиночного кольца'),
+        r('label', 'string', '—', 'Доступное имя; после него читаются части и их доли'),
+        r('size / thickness', 'number', '120 / 12', 'Внешний размер и толщина кольца, px'),
+        r('legend', 'boolean', 'false', 'Список частей с долями рядом с кольцом'),
+      ],
+      slots: 'default — середина кольца (число, слово). taoChartTheme(el?) отдаёт цвета темы в rgb() для библиотеки графиков: colors (6 серий), text, textMuted, grid, axis, background, tooltip, tooltipText, danger / success / warning, fontFamily; watchTaoChartTheme(apply, el?) вызывает её сейчас и при каждой смене темы, режима или палитры и возвращает stop().',
+    },
+  ],
   table: [
     {
       title: 'TaoTable',

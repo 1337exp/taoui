@@ -488,6 +488,46 @@ export const propTablesEn = {
       slots: 'default — the zone text. The change event — files were added or removed. clear-request: the parent decides whether to reset at once or after confirm().',
     },
   ],
+  charts: [
+    {
+      title: 'TaoSparkline',
+      rows: [
+        r('values', '(number | null)[]', '—', 'The series; null is a gap that splits the line'),
+        r('label', 'string', '—', 'What it shows, for a screen reader («Visits, 12 weeks, growing»). Without it the line is decoration (aria-hidden)'),
+        r('tone', "'accent' | 'neutral' | 'success' | 'danger' | 'warning' | 'info'", "'accent'", 'The colour'),
+        r('area', 'boolean', 'false', 'A soft fill under the line'),
+        r('dot', 'boolean', 'false', 'A dot on the last value'),
+        r('min / max', 'number', 'the data', 'A fixed range (values outside are clamped): to compare several sparklines'),
+        r('height', 'number | string', '32', 'Height (number = px). The width is the width of the container'),
+      ],
+      slots: 'A trend without axes or a tooltip: for a card, a table cell, a line of text.',
+    },
+    {
+      title: 'TaoMeter',
+      rows: [
+        r('value', 'number', '—', 'The measured value'),
+        r('min / max', 'number', '0 / 100', 'The range'),
+        r('low / high', 'number', '—', 'The bounds of the low and the high region. Without them the meter is the accent colour'),
+        r('optimum', 'number', 'the middle', 'The best value. Its region is success, the next one warning, the far one danger, as the HTML <meter>: optimum 0 for disk space used, max for a battery'),
+        r('label', 'string', '—', 'Shown above the bar, the accessible name'),
+        r('valueText', 'string | boolean', 'false', 'The value right of the label: true is the number, a string your own text (read as aria-valuetext)'),
+        r('tone', 'TaoToneName', '—', 'A fixed colour instead of low / high'),
+      ],
+      slots: 'role="meter". A measured value in a range (disk, battery, a score), not the progress of a task: that is TaoProgress.',
+    },
+    {
+      title: 'TaoDonut',
+      rows: [
+        r('segments', 'TaoDonutSegment[]', '—', '{ label, value, tone?, color? }. The parts take --tao-color-chart-1…6 in order; a tone or a CSS colour wins. 3–5 parts read well'),
+        r('value / max', 'number', '0 / 100', 'Without segments: a single ring, value of max'),
+        r('tone', 'TaoToneName', "'accent'", 'The colour of the single ring'),
+        r('label', 'string', '—', 'The accessible name; the parts and their shares are read after it'),
+        r('size / thickness', 'number', '120 / 12', 'The outer size and the ring width, px'),
+        r('legend', 'boolean', 'false', 'A list of the parts with their shares next to the ring'),
+      ],
+      slots: 'default — the middle of the ring (a number, a word). taoChartTheme(el?) returns the theme colours as rgb() for a chart library: colors (6 series), text, textMuted, grid, axis, background, tooltip, tooltipText, danger / success / warning, fontFamily; watchTaoChartTheme(apply, el?) calls it now and on every theme, mode or palette change, and returns stop().',
+    },
+  ],
   table: [
     {
       title: 'TaoTable',

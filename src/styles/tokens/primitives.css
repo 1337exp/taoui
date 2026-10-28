@@ -35,6 +35,12 @@
     --tao-pink-700: #c70a55;
     --tao-pink-800: #a8083f;
 
+    /* violet: only a chart series colour / фиолетовый: только цвет серии графика */
+    --tao-violet-400: #a78bfa;
+    --tao-violet-600: #7c4ddb;
+    /* teal: the last series of the light theme, whose accent is pink / бирюзовый: последняя серия светлой темы с розовым акцентом */
+    --tao-teal-600: #0e8a80;
+
     --tao-red-400: #e35766;
     --tao-red-500: #dc3545;
     --tao-red-600: #c82333;

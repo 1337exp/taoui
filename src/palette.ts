@@ -358,6 +358,14 @@ export function buildPaletteRoles(def: TaoPaletteDef, mode: TaoPaletteMode): Pal
             : 'color-mix(in srgb, var(--tao-color-surface) 60%, transparent)',
         '--tao-bg-atmosphere': atmosphere(dark),
         ...statusRoles,
+        // the series built on roles; violet and pink (chart-4, chart-6) are the theme's own, except that a palette
+        // gives its second stop to chart-4: a violet accent would meet the fixed violet otherwise
+        // серии на ролях; фиолетовый и розовый — свои у темы, только chart-4 палитра отдаёт второму стопу
+        '--tao-color-chart-1': 'var(--tao-color-accent)',
+        '--tao-color-chart-2': 'var(--tao-color-info)',
+        '--tao-color-chart-3': 'var(--tao-color-success)',
+        '--tao-color-chart-4': 'var(--tao-color-accent-2)',
+        '--tao-color-chart-5': 'var(--tao-color-warning)',
     };
     // the status roles below are written as hover = a derived colour; the -text-hover mixes with the strong text
     for (const name of TAO_STATUS_NAMES) {

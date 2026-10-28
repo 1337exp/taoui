@@ -39,6 +39,7 @@ export const navGroups = [
     title: { en: 'Data', ru: 'Данные' },
     items: [
       { id: 'table', label: 'TaoTable' },
+      { id: 'charts', label: 'Sparkline / Meter / Donut', aliases: ['TaoSparkline', 'TaoMeter', 'TaoDonut', 'chart', 'charts', 'graph', 'taoChartTheme', 'графики', 'диаграмма'] },
       { id: 'pagination', label: 'TaoPagination' },
       { id: 'empty', label: 'TaoEmpty' },
       { id: 'list', label: 'TaoList', aliases: ['TaoListItem', 'ListItem', 'список'] },
