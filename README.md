@@ -199,6 +199,10 @@ bolder) and the scale under it follows; h1 and h2 shrink on a narrow screen, nev
 `--tao-heading-1…6` for your own rules. `.tao-heading-1…6` gives the look of a level to any tag: the tag says what it is,
 the class how big.
 
+### For AI assistants
+
+The package ships a skill, `skills/taoui/SKILL.md` with `references/components.md`: the setup, the rules (roles not colours, contexts not props), every component and its props, and the mistakes people make. Point your assistant at it; for Claude Code, copy `node_modules/@1337exp/taoui/skills/taoui` into your project's `.claude/skills/`. The component reference is generated from the showcase prop tables (`npm run skill`), and a test keeps the skill naming every component.
+
 ## Icons
 
 The library ships **29 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,

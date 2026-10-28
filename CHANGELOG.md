@@ -23,6 +23,7 @@ In numbers: the tarball is 329 KB (560 KB before the ESM-only build), 451 tests 
 
 ### Packaging
 
+- **A skill for AI assistants** ships in the package: `skills/taoui/SKILL.md` (setup, rules, themes and contexts, layout, forms, overlays, mistakes to avoid) and `references/components.md`, generated from the showcase prop tables by `npm run skill`. `tests/skill.test.ts` keeps the reference generated and the skill naming every exported component, every palette and only tokens that exist. The repository has its own `.claude/skills/taoui-dev` for working on TaoUI.
 - **ESM only.** The CommonJS build and its source map are gone (`dist/index.js`, `index.d.ts`, `styles.css`, one map): the tarball is smaller and there is one way to load the library. `require()` users switch to `import()`.
 - `package.json`: `exports` with `types` + `default`, `sideEffects: ["**/*.css"]`, `files` include `MIGRATION-5.md`, `browserslist` (Chrome / Edge 111, Safari 16.4, Firefox 128; the build targets the same), the unused `nuxt` peer is removed.
 - **Style files are laid out by layer:** `tokens/` (primitives, theme-independent semantic roles), `themes/` (`dark.css` holds the colour roles, `light.css`), `contexts/` (size, tone, surface), `base.css`. `styles.css` is the same bundle (dark and light).

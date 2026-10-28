@@ -18,6 +18,8 @@ cd showcase && npm install   # the live showcase
 | `npm run build` | library build into `dist/` |
 | `npm run showcase` | showcase dev server (reads `src/` directly) |
 | `npm run media` | regenerate screenshots and clips, see [docs/media](docs/media/README.md) |
+| `npm run palettes` | write `src/styles/palettes/*.css` from `src/palettes.ts` (a test pins them) |
+| `npm run skill` | write `skills/taoui/references/components.md` from the showcase prop tables (a test pins it) |
 
 ## Layout
 
@@ -84,7 +86,7 @@ Rules:
 
 1. Branch from `master`.
 2. Run `npm run type-check && npm test`.
-3. Update both READMEs, the showcase section and `CHANGELOG.md`.
+3. Update both READMEs, the showcase section, its prop tables (then `npm run skill`) and `CHANGELOG.md`; a new component is also named in `skills/taoui/SKILL.md`.
 4. Describe the *why* in the PR.
 
 By contributing you agree that your work is licensed under the [MIT License](LICENSE).
