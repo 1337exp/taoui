@@ -14,12 +14,20 @@ const props = withDefaults(
         error?: boolean;
         /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
+        /**
+         * The change is being applied (a request is on its way): a spinner on the thumb, a click does nothing, and it is
+         * not greyed out like a disabled switch. A screen reader hears it busy.
+         * Изменение применяется (запрос в пути): на бегунке крутится кольцо, щелчок ничего не делает, и переключатель не
+         * гаснет, как недоступный. Скринридер слышит «занят».
+         */
+        loading?: boolean;
     }>(),
     {
         modelValue: false,
         label: '',
         disabled: false,
         error: false,
+        loading: false,
     },
 );
 
@@ -30,8 +38,12 @@ const emit = defineEmits<{
 
 const { field, controlId, invalid, describedBy } = useField(props);
 
-function toggle() {
-    if (props.disabled) {
+function toggle(event?: Event) {
+    if (props.disabled || props.loading) {
+        // the native checkbox already flipped: put it back / нативный чекбокс уже переключился: возвращаем
+        if (event?.target instanceof HTMLInputElement) {
+            event.target.checked = props.modelValue;
+        }
         return;
     }
 
@@ -42,7 +54,7 @@ function toggle() {
 </script>
 
 <template>
-    <label class="tao-switch" :class="[sizeClass(size), { 'tao-switch--disabled': disabled, 'tao-switch--on': modelValue, 'tao-switch--invalid': invalid }]" :for="controlId">
+    <label class="tao-switch" :class="[sizeClass(size), { 'tao-switch--disabled': disabled, 'tao-switch--on': modelValue, 'tao-switch--invalid': invalid, 'tao-switch--loading': loading }]" :for="controlId">
         <input
             :id="controlId"
             class="tao-switch__input"
@@ -53,6 +65,7 @@ function toggle() {
             :aria-checked="modelValue"
             :aria-invalid="invalid || undefined"
             :aria-describedby="describedBy"
+            :aria-busy="loading || undefined"
             @change="toggle"
         />
         <span class="tao-switch__track" aria-hidden="true">
@@ -136,6 +149,45 @@ function toggle() {
 .tao-switch--disabled {
     cursor: not-allowed;
     opacity: 0.6;
+}
+
+.tao-switch--loading {
+    cursor: progress;
+}
+
+/* the spinner: a ring on the thumb in the track's colour, one bright quarter running round
+   кольцо на бегунке цветом дорожки, одна яркая четверть бежит по кругу */
+.tao-switch__thumb {
+    position: relative;
+}
+
+.tao-switch--loading .tao-switch__thumb::after {
+    content: '';
+    position: absolute;
+    inset: 18%;
+    border: 2px solid color-mix(in srgb, var(--tao-color-accent) 30%, transparent);
+    border-top-color: var(--tao-color-accent);
+    border-radius: var(--tao-radius-full);
+    animation: tao-switch-spin 0.8s linear infinite;
+}
+
+/* off, the thumb is grey on a dark track: the ring takes the text colour so it is seen
+   выключен: бегунок серый на тёмной дорожке, кольцо цветом текста, чтобы его было видно */
+.tao-switch--loading:not(.tao-switch--on) .tao-switch__thumb::after {
+    border-color: color-mix(in srgb, var(--tao-color-surface-sunken) 55%, transparent);
+    border-top-color: var(--tao-color-surface-sunken);
+}
+
+@keyframes tao-switch-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tao-switch--loading .tao-switch__thumb::after {
+        animation-duration: 2.4s;
+    }
 }
 
 .tao-switch--invalid .tao-switch__track {

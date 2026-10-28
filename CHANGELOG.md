@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.1.0
+
+Two small additions, nothing to migrate.
+
+- **`TaoSwitch` `loading`**: the change is being applied (a request is on its way). A spinner runs on the thumb, a click does nothing and the box stays as the model says, the switch is not greyed out like a disabled one, and `aria-busy` tells a screen reader.
+- **A contact patch on the slider thumb** (`TaoSlider`, `TaoRangeSlider`, `TaoScrubber`): a soft ring of the thumb's own colour around the dot, wider under the pointer and widest while dragging, as if a finger pressed it. A shadow, so the layout and the hit area stay the same; none on `flat` and disabled sliders; the keyboard focus ring moves outside it.
+
 ## 5.0.0
 
 A foundation release: shared mechanisms instead of per-component copies, and a clean API. Everything deprecated since 2.0 is removed, so read [MIGRATION-5.md](MIGRATION-5.md) first. Why and how: `docs/v5-plan.md`.
