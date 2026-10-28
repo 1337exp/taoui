@@ -24,6 +24,7 @@ const layout = ref('auto')
 const width = ref('360px')
 const current = ref('home')
 const floating = ref(true)
+const action = ref(true)
 
 const items = computed(() => all.value.slice(0, Number(count.value)))
 const currentLabel = computed(() => all.value.find((item) => item.id === current.value)?.label ?? '')
@@ -40,7 +41,10 @@ const currentLabel = computed(() => all.value.find((item) => item.id === current
           side panel with labels from 840px. Put the page into the slot and TaoNav lays it out: the bar sticks to the bottom,
           on the side the list sticks to the top. More than five sections on the bar: the last place is «More» with a menu.
           Change the frame width below (or drag its right edge). <code>floating</code> lifts the bar off the edges into a
-          pill with a shadow; the main action of the screen is a separate round button beside it, not a hole in the bar.
+          pill with a shadow. The <code>#action</code> slot holds the main action of the screen and moves with the navigation:
+          a round button above the bar at the end side, at the top of the rail, an extended button with its text at the top
+          of the side panel. Put the text into <code>.tao-nav__action-label</code>: in the round looks it is hidden but
+          stays the button's name.
         </p>
       </template>
       <template #ru>
@@ -49,8 +53,10 @@ const currentLabel = computed(() => all.value.find((item) => item.id === current
           ширине самого TaoNav (container queries): нижняя панель до 600px, рейка с иконками до 840px, боковая панель с
           подписями от 840px. Страницу кладут в слот, и TaoNav раскладывает её сам: панель прилипает к низу, сбоку к верху
           прилипает список. Больше пяти разделов на панели: последнее место занимает «Ещё» с меню. Меняйте ширину рамки ниже
-          (или тяните её правый край). <code>floating</code> отрывает панель от краёв в «пилюлю» с тенью; главное действие
-          экрана — отдельная круглая кнопка рядом, а не вырез в панели.
+          (или тяните её правый край). <code>floating</code> отрывает панель от краёв в «пилюлю» с тенью.
+          <code>#action</code> — главное действие экрана, оно идёт за навигацией: круглая кнопка над панелью у
+          конечного края, наверху рейки, широкая кнопка с текстом наверху боковой панели. Текст кладут в
+          <code>.tao-nav__action-label</code>: в круглых видах он скрыт, но остаётся именем кнопки.
         </p>
       </template>
     </Tr>
@@ -73,6 +79,7 @@ const currentLabel = computed(() => all.value.find((item) => item.id === current
         <TaoSegmentedOption value="7" :label="tr('7 items', '7 пунктов')" />
       </TaoSegmented>
       <TaoSwitch v-model="floating" size="small" label="floating" />
+      <TaoSwitch v-model="action" size="small" label="#action" />
     </div>
 
     <div class="nav-demo__frame" :style="{ width }">
@@ -80,21 +87,23 @@ const currentLabel = computed(() => all.value.find((item) => item.id === current
         <div class="nav-demo__page">
           <h3>{{ currentLabel }}</h3>
           <p v-for="n in 12" :key="n">{{ tr('A line of the page, to scroll.', 'Строка страницы, чтобы было что прокручивать.') }} {{ n }}</p>
-          <TaoButton
-            v-if="floating"
-            class="nav-demo__fab"
-            :class="`nav-demo__fab--${layout}`"
-            icon="tao-plus"
-            size="large"
-            :aria-label="tr('New', 'Создать')"
-          />
         </div>
+        <template v-if="action" #action>
+          <TaoButton icon="tao-plus" size="large">
+            <span class="tao-nav__action-label">{{ tr('New', 'Создать') }}</span>
+          </TaoButton>
+        </template>
       </TaoNav>
     </div>
 
     <div class="code-block">
       <pre><code>&lt;TaoNav v-model="section" :items="sections" floating @select="go"&gt;
   &lt;RouterView /&gt;
+  &lt;template #action&gt;
+    &lt;TaoButton icon="tao-plus" size="large" @click="create"&gt;
+      &lt;span class="tao-nav__action-label"&gt;New&lt;/span&gt;
+    &lt;/TaoButton&gt;
+  &lt;/template&gt;
 &lt;/TaoNav&gt;
 
 const sections = [
@@ -133,29 +142,6 @@ function go(id, event) {
 
 .nav-demo__page {
   padding: 16px;
-}
-
-/* the screen's main action: the app's own round button, sticky above the pill at the side
-   главное действие экрана: своя круглая кнопка приложения, прилипает над «пилюлей» сбоку */
-.nav-demo__fab {
-  position: sticky;
-  /* the pill: 48px item + 2 × 4px padding + 2px border, its 12px inset, and a 12px gap */
-  bottom: 82px;
-  display: flex;
-  margin: 0 0 0 auto;
-  border-radius: var(--tao-radius-full);
-  box-shadow: var(--tao-shadow-lg);
-}
-
-.nav-demo__fab--rail,
-.nav-demo__fab--drawer {
-  bottom: 16px;
-}
-
-@container tao-nav (width >= 600px) {
-  .nav-demo__fab--auto {
-    bottom: 16px;
-  }
 }
 
 .nav-demo__page h3 {

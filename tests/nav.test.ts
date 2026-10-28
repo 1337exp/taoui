@@ -188,3 +188,41 @@ describe('TaoNav floating', () => {
         expect(navSource).toMatch(/\.tao-nav--floating \.tao-nav__panel \{[^}]*bottom: calc\(var\(--_bar\) \* \(var\(--tao-space-3\) \+ var\(--_safe-bottom\)\)\)/);
     });
 });
+
+// 5.4: the main action / 5.4: главное действие
+
+describe('TaoNav #action', () => {
+    const action = () => h('button', { class: 'fab' }, [h('span', { class: 'tao-nav__action-label' }, 'New')]);
+
+    it('renders the action at the top of the panel, before the list, and nothing without the slot', () => {
+        const w = nav({}, { action });
+        const column = w.find('.tao-nav__column').element;
+        expect(column.children[0]!.classList.contains('tao-nav__action')).toBe(true);
+        expect(column.children[0]!.querySelector('.fab')).not.toBeNull();
+        expect(column.children[1]!.classList.contains('tao-nav__list')).toBe(true);
+        expect(w.find('.fab').text()).toBe('New');
+        expect(nav().find('.tao-nav__action').exists()).toBe(false);
+    });
+
+    it('each look places it with variables: out of the bar and round, round on the rail, extended in the drawer', () => {
+        const blocks = navSource.match(/--_action-position: \w+;\s*--_compact: [01];\s*--_action-width: [^;]+;\s*--_action-ratio: [^;]+;\s*--_action-shadow: [^;]+;\s*--_action-label-position: \w+;/g) ?? [];
+        // bar, rail, drawer and the same three in auto / bar, rail, drawer и те же три в auto
+        expect(blocks).toHaveLength(6);
+        const look = (b: string) => b.replace(/\s+/g, ' ');
+        const bar = 'absolute; --_compact: 1; --_action-width: auto; --_action-ratio: 1; --_action-shadow: var(--tao-shadow-lg); --_action-label-position: absolute;';
+        const rail = 'static; --_compact: 1; --_action-width: auto; --_action-ratio: 1; --_action-shadow: none; --_action-label-position: absolute;';
+        const drawer = 'static; --_compact: 0; --_action-width: 100%; --_action-ratio: auto; --_action-shadow: none; --_action-label-position: static;';
+        expect(blocks.map(look)).toEqual([bar, rail, drawer, bar, rail, drawer].map((rest) => `--_action-position: ${rest}`));
+        expect(navSource).toMatch(/\.tao-nav__action \{[^}]*position: var\(--_action-position\);[^}]*bottom: calc\(100% \+ var\(--tao-space-3\)\)/);
+        expect(navSource).toMatch(/\.tao-nav--floating \.tao-nav__action \{[^}]*inset-inline-end: -1px/);
+        expect(navSource).toMatch(/\.tao-nav__action :deep\(\.tao-nav__action-label\) \{[^}]*clip-path: inset\(calc\(var\(--_compact\) \* 50%\)\)/);
+    });
+
+    it('renders on the server with the action', async () => {
+        const { createSSRApp } = await import('vue');
+        const { renderToString } = await import('vue/server-renderer');
+        const html = await renderToString(createSSRApp({ render: () => h(TaoNav, { items, floating: true }, { action, default: () => h('main', 'page') }) }));
+        expect(html).toContain('tao-nav__action');
+        expect(html).toContain('tao-nav__action-label');
+    });
+});

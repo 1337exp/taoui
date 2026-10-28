@@ -61,6 +61,15 @@ defineSlots<{
     default?(): unknown;
     /** Replaces the label of one item. / Заменяет подпись пункта. */
     label?(props: { item: TaoNavItem; active: boolean }): unknown;
+    /**
+     * The main action of the screen (Compose, New): a TaoButton with `icon` and its text in a
+     * `<span class="tao-nav__action-label">`. TaoNav places it by the look: above the bar at the end side, at the top of
+     * the rail, at the top of the side panel full width with the text shown.
+     * Главное действие экрана («Написать», «Создать»): TaoButton с `icon` и текстом в
+     * `<span class="tao-nav__action-label">`. TaoNav ставит его по виду: над панелью у конечного края, наверху рейки,
+     * наверху боковой панели во всю ширину с видимым текстом.
+     */
+    action?(): unknown;
 }>();
 
 const slots = useSlots();
@@ -117,57 +126,70 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     <div class="tao-nav" :class="[`tao-nav--${layout}`, { 'tao-nav--standalone': standalone, 'tao-nav--floating': floating }]">
         <div class="tao-nav__shell">
             <nav class="tao-nav__panel" :aria-label="l10n.ariaLabel">
-                <ul class="tao-nav__list">
-                    <li
-                        v-for="(item, index) in items"
-                        :key="item.id"
-                        class="tao-nav__entry"
-                        :class="{ 'tao-nav__entry--overflow': overflowing && index >= barCount }"
-                    >
-                        <component
-                            :is="item.href ? 'a' : 'button'"
-                            class="tao-nav__item"
-                            :class="{ 'tao-nav__item--active': item.id === modelValue }"
-                            :href="item.href && !item.disabled ? item.href : undefined"
-                            :type="item.href ? undefined : 'button'"
-                            :disabled="!item.href && item.disabled ? true : undefined"
-                            :aria-disabled="item.href && item.disabled ? 'true' : undefined"
-                            :aria-current="item.id === modelValue ? 'page' : undefined"
-                            @click="choose(item, $event)"
+                <div class="tao-nav__column">
+                    <!--
+                        No slot props: in `auto` only CSS knows the look, so one slot is rendered and the --_* variables size
+                        it (round with the text visually hidden, still its accessible name; or extended with the text).
+                        A `compact` prop would be right only for explicit layouts and wrong in `auto`.
+                        Без свойств слота: в `auto` вид знает только CSS, поэтому слот один, а размер ему задают --_*
+                        (круглая кнопка с визуально скрытым текстом, он же её имя; или широкая с текстом). Свойство `compact`
+                        было бы верным только для явных layout и неверным в `auto`.
+                    -->
+                    <div v-if="$slots.action" class="tao-nav__action">
+                        <slot name="action" />
+                    </div>
+                    <ul class="tao-nav__list">
+                        <li
+                            v-for="(item, index) in items"
+                            :key="item.id"
+                            class="tao-nav__entry"
+                            :class="{ 'tao-nav__entry--overflow': overflowing && index >= barCount }"
                         >
-                            <span v-if="item.icon" class="tao-nav__icon" aria-hidden="true">
-                                <TaoIcon :name="item.icon" :size="20" />
-                            </span>
-                            <span class="tao-nav__label">
-                                <slot name="label" :item="item" :active="item.id === modelValue">{{ item.label }}</slot>
-                            </span>
-                            <span
-                                v-if="hasBadge(item)"
-                                class="tao-nav__badge"
-                                :class="{ 'tao-nav__badge--dot': item.badge === true }"
-                                :aria-hidden="item.badge === true ? 'true' : undefined"
+                            <component
+                                :is="item.href ? 'a' : 'button'"
+                                class="tao-nav__item"
+                                :class="{ 'tao-nav__item--active': item.id === modelValue }"
+                                :href="item.href && !item.disabled ? item.href : undefined"
+                                :type="item.href ? undefined : 'button'"
+                                :disabled="!item.href && item.disabled ? true : undefined"
+                                :aria-disabled="item.href && item.disabled ? 'true' : undefined"
+                                :aria-current="item.id === modelValue ? 'page' : undefined"
+                                @click="choose(item, $event)"
                             >
-                                {{ badgeText(item) }}
-                            </span>
-                        </component>
-                    </li>
-                    <li v-if="overflowing" class="tao-nav__entry tao-nav__entry--more">
-                        <button
-                            ref="moreButton"
-                            type="button"
-                            class="tao-nav__item"
-                            :class="{ 'tao-nav__item--active': activeInOverflow }"
-                            aria-haspopup="menu"
-                            :aria-expanded="moreOpen"
-                            @click="moreOpen = !moreOpen"
-                        >
-                            <span class="tao-nav__icon" aria-hidden="true">
-                                <TaoIcon name="tao-more-horizontal" :size="20" />
-                            </span>
-                            <span class="tao-nav__label">{{ l10n.moreLabel }}</span>
-                        </button>
-                    </li>
-                </ul>
+                                <span v-if="item.icon" class="tao-nav__icon" aria-hidden="true">
+                                    <TaoIcon :name="item.icon" :size="20" />
+                                </span>
+                                <span class="tao-nav__label">
+                                    <slot name="label" :item="item" :active="item.id === modelValue">{{ item.label }}</slot>
+                                </span>
+                                <span
+                                    v-if="hasBadge(item)"
+                                    class="tao-nav__badge"
+                                    :class="{ 'tao-nav__badge--dot': item.badge === true }"
+                                    :aria-hidden="item.badge === true ? 'true' : undefined"
+                                >
+                                    {{ badgeText(item) }}
+                                </span>
+                            </component>
+                        </li>
+                        <li v-if="overflowing" class="tao-nav__entry tao-nav__entry--more">
+                            <button
+                                ref="moreButton"
+                                type="button"
+                                class="tao-nav__item"
+                                :class="{ 'tao-nav__item--active': activeInOverflow }"
+                                aria-haspopup="menu"
+                                :aria-expanded="moreOpen"
+                                @click="moreOpen = !moreOpen"
+                            >
+                                <span class="tao-nav__icon" aria-hidden="true">
+                                    <TaoIcon name="tao-more-horizontal" :size="20" />
+                                </span>
+                                <span class="tao-nav__label">{{ l10n.moreLabel }}</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
             </nav>
             <div v-if="!standalone" class="tao-nav__content">
                 <slot />
@@ -220,6 +242,12 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     --_badge-push: 0;
     --_bar: 1;
     --_bar-shadow: var(--tao-shadow-lg);
+    --_action-position: absolute;
+    --_compact: 1;
+    --_action-width: auto;
+    --_action-ratio: 1;
+    --_action-shadow: var(--tao-shadow-lg);
+    --_action-label-position: absolute;
 }
 
 /* rail */
@@ -244,6 +272,12 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     --_badge-push: 0;
     --_bar: 0;
     --_bar-shadow: none;
+    --_action-position: static;
+    --_compact: 1;
+    --_action-width: auto;
+    --_action-ratio: 1;
+    --_action-shadow: none;
+    --_action-label-position: absolute;
 }
 
 /* drawer */
@@ -268,6 +302,12 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     --_badge-push: auto;
     --_bar: 0;
     --_bar-shadow: none;
+    --_action-position: static;
+    --_compact: 0;
+    --_action-width: 100%;
+    --_action-ratio: auto;
+    --_action-shadow: none;
+    --_action-label-position: static;
 }
 
 @container tao-nav (width < 600px) {
@@ -292,6 +332,12 @@ function onMoreClose(reason: TaoMenuCloseReason) {
         --_badge-push: 0;
         --_bar: 1;
         --_bar-shadow: var(--tao-shadow-lg);
+        --_action-position: absolute;
+        --_compact: 1;
+        --_action-width: auto;
+        --_action-ratio: 1;
+        --_action-shadow: var(--tao-shadow-lg);
+        --_action-label-position: absolute;
     }
 }
 
@@ -317,6 +363,12 @@ function onMoreClose(reason: TaoMenuCloseReason) {
         --_badge-push: 0;
         --_bar: 0;
         --_bar-shadow: none;
+        --_action-position: static;
+        --_compact: 1;
+        --_action-width: auto;
+        --_action-ratio: 1;
+        --_action-shadow: none;
+        --_action-label-position: absolute;
     }
 }
 
@@ -342,6 +394,12 @@ function onMoreClose(reason: TaoMenuCloseReason) {
         --_badge-push: auto;
         --_bar: 0;
         --_bar-shadow: none;
+        --_action-position: static;
+        --_compact: 0;
+        --_action-width: 100%;
+        --_action-ratio: auto;
+        --_action-shadow: none;
+        --_action-label-position: static;
     }
 }
 
@@ -371,9 +429,14 @@ function onMoreClose(reason: TaoMenuCloseReason) {
 }
 
 /* on its own (no page in the slot) it is a panel: a full border, the corners, no sticking */
-.tao-nav--standalone .tao-nav__panel,
-.tao-nav--standalone .tao-nav__list {
+.tao-nav--standalone .tao-nav__column {
     position: static;
+}
+
+/* relative, not static: the action of the bar look is placed above the panel / относительная: действие ставится над панелью */
+.tao-nav.tao-nav--standalone .tao-nav__panel {
+    position: relative;
+    bottom: auto;
 }
 
 .tao-nav--standalone .tao-nav__panel {
@@ -407,11 +470,19 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     border-radius: max(var(--tao-radius-panel), calc(var(--_bar) * var(--tao-radius-full)));
 }
 
-.tao-nav__list {
-    /* the bar sticks as a whole; on the side the panel runs the full height and only the list sticks */
+.tao-nav__column {
+    /* the bar sticks as a whole; on the side the panel runs the full height and only the column (action + list) sticks
+       панель снизу прилипает целиком; сбоку панель во всю высоту, а прилипает только колонка (действие + список) */
     position: var(--_list-position);
     top: 0;
     max-height: var(--_panel-height);
+    display: flex;
+    flex-direction: column;
+}
+
+.tao-nav__list {
+    flex: 1 1 auto;
+    min-height: 0;
     overflow-y: auto;
     display: flex;
     flex-direction: var(--_list-direction);
@@ -419,6 +490,50 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     margin: 0;
     padding: 0;
     list-style: none;
+}
+
+/*
+ * The main action. Bar look: out of the bar, above it at the end side (above the pill with `floating`, so it follows
+ * the pill when the pill is centred), with a shadow. Rail: at the top, round. Side panel: at the top, full width, the
+ * text visible. --_compact is 1 for the round button: a square of the button's own height (aspect-ratio, so a size
+ * class on the button counts) with the text hidden but still the accessible name.
+ * Главное действие. Вид панели: вне панели, над ней у конечного края (с `floating` — над «пилюлей», поэтому идёт за
+ * ней, когда она по центру), с тенью. Рейка: наверху, круглое. Боковая панель: наверху, во всю ширину, с текстом.
+ * --_compact равен 1 для круглой кнопки: квадрат по высоте самой кнопки (aspect-ratio, так что её класс
+ * размера учитывается), текст скрыт, но остаётся её доступным именем.
+ */
+.tao-nav__action {
+    position: var(--_action-position);
+    bottom: calc(100% + var(--tao-space-3));
+    inset-inline-end: var(--tao-space-3);
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    margin-bottom: calc((1 - var(--_bar)) * var(--tao-space-2));
+}
+
+/* the pill is inset already: line up with its edge / «пилюля» уже с отступом: выравниваемся по её краю */
+.tao-nav--floating .tao-nav__action {
+    inset-inline-end: -1px;
+}
+
+.tao-nav .tao-nav__action > :deep(*) {
+    box-sizing: border-box;
+    width: var(--_action-width);
+    aspect-ratio: var(--_action-ratio);
+    padding-inline: calc((1 - var(--_compact)) * var(--tao-button-padding-x));
+    overflow: hidden;
+    border-radius: var(--tao-radius-full);
+    box-shadow: var(--_action-shadow);
+}
+
+.tao-nav__action :deep(.tao-nav__action-label) {
+    position: var(--_action-label-position);
+    clip-path: inset(calc(var(--_compact) * 50%));
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .tao-nav__entry {
