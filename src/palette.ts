@@ -129,7 +129,47 @@ function shiftUntil(hex: string, direction: 1 | -1, ok: (candidate: string) => b
     return withL(hex, direction === 1 ? 1 : 0);
 }
 
-const bestOn = (fill: string) => (contrastRatio(fill, WHITE) >= contrastRatio(fill, BLACK) ? WHITE : BLACK);
+/**
+ * APCA lightness contrast (Lc, 0.0.98G): how well a text reads on a background, as the eye sees it. Positive for dark
+ * text on a light background, negative the other way; |Lc| 75 is body text, 60 a label, 45 a large heading.
+ * WCAG 2 contrast overrates black on mid-tone colours (a teal button gets black text it reads worse with); APCA does not.
+ * Контраст APCA: как текст читается на фоне глазом. WCAG 2 переоценивает чёрный на средних по яркости цветах.
+ */
+export function apcaContrast(text: string, background: string): number {
+    const y = (hex: string) => {
+        const c = parseColor(hex);
+        if (!c) {
+            throw new Error(`[TaoUI] palette: "${hex}" is not a colour`);
+        }
+        const v = 0.2126729 * (c.r / 255) ** 2.4 + 0.7151522 * (c.g / 255) ** 2.4 + 0.072175 * (c.b / 255) ** 2.4;
+        return v < 0.022 ? v + (0.022 - v) ** 1.414 : v;
+    };
+    const t = y(text);
+    const b = y(background);
+    const sapc = b > t ? (b ** 0.56 - t ** 0.57) * 1.14 : (b ** 0.65 - t ** 0.62) * 1.14;
+    if (Math.abs(sapc) < 0.1) {
+        return 0;
+    }
+    return (sapc > 0 ? sapc - 0.027 : sapc + 0.027) * 100;
+}
+
+/**
+ * The text colour for a fill. In light mode the fills are mid-tones, where WCAG 2 overrates black: the polarity is the
+ * one the eye reads better (APCA), so a teal button gets a white label on a slightly deeper teal. In dark mode the fills
+ * are light on purpose (seen on a dark page) and keep the dark label of the default dark theme. Either way the 4.5:1 of
+ * WCAG 2 is enforced afterwards by moving the fill.
+ * Цвет текста на заливке. В светлом режиме заливки средней яркости, где WCAG 2 переоценивает чёрный: полярность — та,
+ * что глаз читает лучше (APCA). В тёмном заливки светлые нарочно и сохраняют тёмный текст тёмной темы. 4.5:1 потом
+ * обеспечивается сдвигом заливки.
+ */
+const bestOn = (fill: string, dark: boolean) =>
+    dark
+        ? contrastRatio(fill, WHITE) >= contrastRatio(fill, BLACK)
+            ? WHITE
+            : BLACK
+        : Math.abs(apcaContrast(WHITE, fill)) >= Math.abs(apcaContrast(BLACK, fill))
+          ? WHITE
+          : BLACK;
 
 // ------------------------------------------------------------------ what a palette decides
 
@@ -201,7 +241,7 @@ export function buildPaletteRoles(def: TaoPaletteDef, mode: TaoPaletteMode): Pal
     let accent = dark
         ? shiftUntil(stopHex, 1, (c) => ink(c) >= 3.2)
         : shiftUntil(stopHex, -1, (c) => ink(c) >= 3.2);
-    let onAccent = bestOn(accent);
+    let onAccent = bestOn(accent, dark);
     if (contrastRatio(accent, onAccent) < 4.5) {
         // too mid-tone for any text: move away from the mid until the better text reaches 4.5
         const toward = onAccent === WHITE ? -1 : 1;
@@ -252,26 +292,31 @@ export function buildPaletteRoles(def: TaoPaletteDef, mode: TaoPaletteMode): Pal
                 }
             }
         }
-        let best: { fill: string; distance: number } | null = null;
-        for (const c of candidates) {
-            const fill = oklchToHex({ ...c, L: Math.min(Math.max(c.L, 0.3), 0.9) });
-            const distance = colourDistance(fill, accent);
-            if (!best || distance > best.distance + 0.005 || (own && !best)) {
-                best = { fill, distance };
+        // a candidate is first made seen on the page and readable as a fill, and only then measured against the accent:
+        // the darkening for a white label can bring it close to the accent again
+        // кандидат сначала делается видимым и читаемым, и только потом сравнивается с акцентом
+        const fitted = (c: Oklch) => {
+            let fill = oklchToHex({ ...c, L: Math.min(Math.max(c.L, 0.3), 0.9) });
+            fill = shiftUntil(fill, dark ? 1 : -1, (x) => ink(x) >= 3.2);
+            let on = bestOn(fill, dark);
+            if (contrastRatio(fill, on) < 4.5) {
+                fill = shiftUntil(fill, on === WHITE ? -1 : 1, (x) => contrastRatio(x, on) >= 4.5);
+                on = bestOn(fill, dark);
             }
-            if (!own && distance >= MIN_STATUS_DISTANCE + 0.02) {
-                best = { fill, distance };
+            return { fill, on, distance: colourDistance(fill, accent) };
+        };
+        let best: ReturnType<typeof fitted> | null = null;
+        for (const c of candidates) {
+            const next = fitted(c);
+            if (!best || next.distance > best.distance + 0.005) {
+                best = next;
+            }
+            if (!own && next.distance >= MIN_STATUS_DISTANCE + 0.02) {
+                best = next;
                 break;
             }
         }
-        let fill = best!.fill;
-        // a fill that is seen on the page; a readable text on the fill
-        fill = shiftUntil(fill, dark ? 1 : -1, (c) => ink(c) >= 3.2);
-        let on = bestOn(fill);
-        if (contrastRatio(fill, on) < 4.5) {
-            fill = shiftUntil(fill, on === WHITE ? -1 : 1, (c) => contrastRatio(c, on) >= 4.5);
-            on = bestOn(fill);
-        }
+        const { fill, on } = best!;
         const text = shiftUntil(fill, dark ? 1 : -1, (c) => ink(c) >= 4.6);
         const hoverStep = on === WHITE ? -1 : 1;
         const fillHover = shiftUntil(fill, hoverStep, (c) => Math.abs(hexToOklch(c).L - hexToOklch(fill).L) >= 0.04);

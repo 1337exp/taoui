@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import * as lib from '../src/index';
 import {
+    apcaContrast,
     applyTaoPalette,
     buildPaletteRoles,
     colourDistance,
@@ -217,3 +218,35 @@ describe('applyTaoPalette', () => {
         expect(el.style.colorScheme).toBe('light');
     });
 });
+
+describe('the label on a fill', () => {
+    it('APCA: positive for dark on light, negative for light on dark, about 106 / -108 at the extremes', () => {
+        expect(apcaContrast('#000000', '#ffffff')).toBeGreaterThan(100);
+        expect(apcaContrast('#ffffff', '#000000')).toBeLessThan(-100);
+        expect(apcaContrast('#777777', '#777777')).toBe(0);
+    });
+
+    it('on a mid-tone green WCAG 2 picks black, the eye (APCA) reads white better', () => {
+        const green = '#2ea85c';
+        expect(contrastRatio(green, '#0d0d0d')).toBeGreaterThan(contrastRatio(green, '#ffffff'));
+        expect(Math.abs(apcaContrast('#ffffff', green))).toBeGreaterThan(Math.abs(apcaContrast('#0d0d0d', green)));
+    });
+
+    it('light mode: every palette puts a white label on its accent and its statuses, still at 4.5:1', () => {
+        for (const p of taoPalettes) {
+            const { accent, onAccent, status } = buildPaletteRoles(p, 'light').parts;
+            expect(onAccent, p.name).toBe('#ffffff');
+            expect(contrastRatio(accent, onAccent), p.name).toBeGreaterThanOrEqual(4.5);
+            for (const name of TAO_STATUS_NAMES) {
+                expect(status[name].on, `${p.name} ${name}`).toBe('#ffffff');
+            }
+        }
+    });
+
+    it('dark mode keeps light accents with a dark label where the palette has one (Pinheiro, Lagoon)', () => {
+        for (const name of ['pinheiro', 'lagoon', 'ocean-blue']) {
+            expect(buildPaletteRoles(taoPalettes.find((p) => p.name === name)!, 'dark').parts.onAccent, name).toBe('#0d0d0d');
+        }
+    });
+});
+
