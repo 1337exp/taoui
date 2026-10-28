@@ -1,10 +1,13 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
-import { TaoScrollTop, TaoSelect, taoPalettes } from '@1337exp/taoui'
+import { TaoButton, TaoIcon, TaoInput, TaoScrollTop, TaoSelect, TaoTag, taoPalettes } from '@1337exp/taoui'
 import { navGroups } from './nav.js'
 import { demoById } from './sections.js'
 import { lang, LANGS, tr } from './i18n.js'
 import { scrollTopDemo } from './scrollTopDemo.js'
+import pkg from '../package.json'
+
+const version = pkg.version
 
 // Search looks through both languages, whichever is on screen.
 const both = (text) => (text && typeof text === 'object' ? `${text.en ?? ''} ${text.ru ?? ''}` : (text ?? ''))
@@ -149,8 +152,12 @@ onBeforeUnmount(() => {
   <div class="showcase">
     <header class="showcase-top">
       <div>
-        <h1>Tao UI</h1>
-        <p class="showcase-lead">{{ tr('A Vue 3 kit on design tokens. Change the variables, the theme follows.', 'Vue 3 kit на дизайн-токенах. Поменял переменные — поменялась тема.') }}</p>
+        <h1 class="showcase-title">
+          Tao UI
+          <!-- the version of the build, so a deployed showcase says what it shows / версия сборки: развёрнутый шоукейс говорит, что показывает -->
+          <TaoTag size="small" flat :title="tr('The version this showcase is built from', 'Версия, из которой собран этот шоукейс')">v{{ version }}</TaoTag>
+        </h1>
+        <p class="showcase-lead">{{ tr('A Vue 3 kit on design tokens.', 'Vue 3 kit на дизайн-токенах.') }}</p>
       </div>
       <div class="showcase-top__controls">
       <div class="theme-switcher">
@@ -206,12 +213,14 @@ onBeforeUnmount(() => {
 
     <div class="showcase-body">
       <nav class="showcase-nav" :aria-label="tr('Showcase sections', 'Разделы showcase')">
-        <input
+        <TaoInput
           v-model="query"
           class="showcase-nav__search"
-          type="search"
+          size="small"
           :placeholder="tr('Find a component…', 'Найти компонент…')"
-        />
+        >
+          <template #prefix><TaoIcon name="tao-search" /></template>
+        </TaoInput>
 
         <button
           type="button"
@@ -256,7 +265,7 @@ onBeforeUnmount(() => {
             <p class="showcase-banner__kicker">{{ tr('Section', 'Раздел') }}</p>
             <h2 class="showcase-banner__title">{{ tr(currentGroup.title) }}</h2>
           </div>
-          <button type="button" class="showcase-banner__reset" @click="showAll">{{ tr('All components', 'Все компоненты') }}</button>
+          <TaoButton variant="secondary" tone="neutral" size="small" @click="showAll">{{ tr('All components', 'Все компоненты') }}</TaoButton>
         </div>
 
         <template v-for="group in navGroups" :key="group.id">

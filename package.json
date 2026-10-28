@@ -1,6 +1,6 @@
 {
   "name": "@1337exp/taoui",
-  "version": "5.4.3",
+  "version": "5.4.4",
   "description": "Design-token driven Vue 3 / Nuxt component library: palettes with tested contrast, accessible menus and toolbars, navigation that adapts without JS, small charts, built-in locales.",
   "keywords": [
     "vue",
