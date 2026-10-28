@@ -406,7 +406,9 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
     border-radius: var(--tao-radius-control);
     cursor: pointer;
     user-select: none;
-    transition: var(--tao-transition-base);
+    /* a row the pointer sweeps across changes at once, as in a system menu: a fade would trail behind it
+       строку, по которой пробегает указатель, подсвечиваем сразу, как в системном меню */
+    transition: none;
 }
 
 .tao-tree__row:hover {

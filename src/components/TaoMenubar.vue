@@ -214,7 +214,9 @@ function onEdge(direction: 'prev' | 'next') {
     color: inherit;
     font: inherit;
     cursor: pointer;
-    transition: var(--tao-transition-base);
+    /* a row the pointer sweeps across changes at once, as in a system menu: a fade would trail behind it
+       строку, по которой пробегает указатель, подсвечиваем сразу, как в системном меню */
+    transition: none;
     /* selecting the text around must not catch the button label / выделение текста вокруг не захватывает подпись кнопки */
     user-select: none;
 }

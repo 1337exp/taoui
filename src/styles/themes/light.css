@@ -57,6 +57,7 @@
     --tao-color-on-success: #ffffff;
     --tao-color-on-warning: #ffffff;
     --tao-color-on-info: #ffffff;
+    --tao-color-on-neutral: #ffffff;
     --tao-color-success: var(--tao-green-700);
     --tao-color-success-hover: color-mix(in srgb, var(--tao-green-700) 85%, #000000);
     --tao-color-success-subtle: color-mix(in srgb, var(--tao-color-success) 10%, transparent);

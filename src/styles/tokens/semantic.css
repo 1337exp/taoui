@@ -21,13 +21,13 @@
     /* Colours, shadow, opacity and transform only: `all` would also animate size, padding and the glass backdrop.
        Только цвета, тень, прозрачность и transform: `all` анимировал бы ещё размеры, отступы и размытие стекла. */
     --tao-transition-base:
-        color var(--tao-duration-base) var(--tao-ease-base),
-        background-color var(--tao-duration-base) var(--tao-ease-base),
-        border-color var(--tao-duration-base) var(--tao-ease-base),
-        outline-color var(--tao-duration-base) var(--tao-ease-base),
-        box-shadow var(--tao-duration-base) var(--tao-ease-base),
-        opacity var(--tao-duration-base) var(--tao-ease-base),
-        transform var(--tao-duration-base) var(--tao-ease-base),
-        fill var(--tao-duration-base) var(--tao-ease-base),
-        stroke var(--tao-duration-base) var(--tao-ease-base);
+        color var(--tao-duration-hover) var(--tao-ease-base),
+        background-color var(--tao-duration-hover) var(--tao-ease-base),
+        border-color var(--tao-duration-hover) var(--tao-ease-base),
+        outline-color var(--tao-duration-hover) var(--tao-ease-base),
+        box-shadow var(--tao-duration-hover) var(--tao-ease-base),
+        opacity var(--tao-duration-hover) var(--tao-ease-base),
+        transform var(--tao-duration-hover) var(--tao-ease-base),
+        fill var(--tao-duration-hover) var(--tao-ease-base),
+        stroke var(--tao-duration-hover) var(--tao-ease-base);
 }

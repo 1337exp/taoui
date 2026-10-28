@@ -136,7 +136,9 @@ function applyDragCursor() {
     savedBodyCursor = document.body.style.cursor;
     savedHtmlCursor = document.documentElement.style.cursor;
     savedUserSelect = document.body.style.userSelect;
-    const cursor = isRow.value ? 'col-resize' : 'row-resize';
+    // a matching pair of system arrows: col-resize / row-resize are drawn as two different shapes on Windows
+    // согласованная пара системных стрелок: col-resize / row-resize в Windows нарисованы по-разному
+    const cursor = isRow.value ? 'ew-resize' : 'ns-resize';
     document.body.style.cursor = cursor;
     document.documentElement.style.cursor = cursor;
     document.body.style.userSelect = 'none';
@@ -445,11 +447,11 @@ onBeforeUnmount(() => {
 }
 
 .tao-split--row > .tao-split__handle {
-    cursor: col-resize;
+    cursor: ew-resize;
 }
 
 .tao-split--column > .tao-split__handle {
-    cursor: row-resize;
+    cursor: ns-resize;
 }
 
 .tao-split--fixed > .tao-split__handle {
