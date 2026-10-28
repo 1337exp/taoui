@@ -41,6 +41,7 @@ export const localeRu: TaoLocale = {
         clearText: 'Очистить',
         prevMonthLabel: 'Предыдущий месяц',
         nextMonthLabel: 'Следующий месяц',
+        calendarLabel: 'Выбрать дату',
     },
     dateRange: {
         placeholder: 'Период',

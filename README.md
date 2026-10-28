@@ -87,7 +87,7 @@
 - **TaoSegmented** / **TaoSegmentedOption** — compact exclusive choice among 2–5 short options. Not tabs
 - **TaoSelect** — dropdown with keyboard, same chrome as Input. `size` (`small` / `medium` / `large`, same scale as Button). Clear via “Clear” in the list or Delete; `clearable="false"` turns clearing off, `#clear` replaces the row content
 - **TaoCombobox** — Select with a field: type to filter, `allow-create` writes a custom value into `v-model`, `create` lets the parent append the list. Takes the same `size`, `clearable` and `#clear` as `TaoSelect`
-- **TaoDate** — a single day: `YYYY-MM-DD`, no time, no timezone. Calendar popup like Select
+- **TaoDate** — a single day: `YYYY-MM-DD`, no time, no timezone. Calendar popup like Select. `editable` makes it a field you type into: `5`, `5.3`, `05.03.26` in the locale's order of day and month (`parseTaoDateInput` is exported, `parse` / `format` take your own)
 - **TaoDateRange** — a period: `v-model` is `{ start, end }` or `null`. First click is start, second is end (they swap if end is earlier). An incomplete pick is not written to the model
 - **TaoCalendar** — the month calendar itself, inline (no popup): `mode="single"` (`YYYY-MM-DD`) or `"range"` (`{ start, end }`), `min` / `max`, arrows / PageUp / PageDown / Home / End. `TaoDate` and `TaoDateRange` are a field with this calendar in a popup
 - **TaoFormField** — shared label / hint / error for form controls

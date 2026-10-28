@@ -76,7 +76,7 @@ choose a text colour, WCAG 2 to promise a number.
 
 - Every field takes `size`, `disabled`, `error` (a red frame). The message, the label and the hint go through
   **`TaoFormField`** (`label`, `hint`, `error`), which also wires `id`, `aria-describedby` and `aria-invalid`.
-- `TaoInput`, `TaoTextarea`, `TaoInputNumber`, `TaoQuantity`, `TaoSelect`, `TaoCombobox`, `TaoDate` / `TaoDateRange`
+- `TaoInput`, `TaoTextarea`, `TaoInputNumber`, `TaoQuantity`, `TaoSelect`, `TaoCombobox`, `TaoDate` (`editable` to type `5`, `5.3`, `05.03.26`) / `TaoDateRange`
   (`YYYY-MM-DD` strings), `TaoCalendar` (the inline month calendar, `mode="single" | "range"`), `TaoCheckbox`,
   `TaoChecklist` (one model for a group), `TaoRadioGroup` + `TaoRadio`, `TaoSwitch`, `TaoSegmented`, `TaoSlider` /
   `TaoRangeSlider`, `TaoPinCode` (`status="success | error"` after `complete`), `TaoColorInput` / `TaoColorPicker`,

@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.6.0
+
+Typing a date, as Next Up's old app did; nothing to migrate.
+
+- **`TaoDate editable`**: a text field you type the date into, with the calendar on a button next to it (or ↓). The text is read in the locale's order of day and month: `5` is the 5th of this month, `5.3` the 5th of March (`3/5` in en-US), `05.03.26` and `5.3.2026` full dates, digits alone split as `0503` / `050326`, ISO works too; a two-digit year goes to the nearest century. Enter or leaving the field applies it; a text that is not a date, or a date outside `min` / `max`, puts the value back; Esc drops the typing (and only then the next Esc reaches a dialog around it); an empty field is `null`. The field shows the date in numbers as the locale writes it (`05.03.2026`, `03/05/2026`). `parse` and `format` take your own rules («tomorrow»), `calendarLabel` names the button (an optional key of the locale, so a locale written before still type-checks). Without `editable` TaoDate is the button it was.
+- **Exported:** `parseTaoDateInput(text, { locale, reference })`, `formatTaoDateShort(iso, locale)`, `taoDateOrder(locale)`.
+- **Docs:** the default `locale` of TaoDate and TaoDateRange is the app locale (`setTaoLocale`), not `'en-US'` as the prop table said.
+
 ## 5.5.0
 
 What a phone interface needs, asked for by an app built on TaoUI (Next Up); nothing to migrate.

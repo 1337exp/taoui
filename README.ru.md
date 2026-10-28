@@ -87,7 +87,7 @@
 - **TaoSegmented** / **TaoSegmentedOption** — компактный выбор из 2–5 коротких вариантов. Не вкладки
 - **TaoSelect** — выпадающий список с клавиатурой, тот же визуал, что у Input. `size` (`small` / `medium` / `large`, та же шкала, что у Button). Сброс — «Очистить» в списке или Delete; `clearable="false"` отключает сброс, слот `#clear` заменяет содержимое строки
 - **TaoCombobox** — Select с полем: фильтр по вводу, `allow-create` пишет своё в `v-model`, `create` — чтобы родитель дополнил список. Те же `size`, `clearable` и `#clear`, что у `TaoSelect`
-- **TaoDate** — один день: `YYYY-MM-DD`, без часов и пояса. Календарь как у Select
+- **TaoDate** — один день: `YYYY-MM-DD`, без часов и пояса. Календарь как у Select. `editable` делает его полем для ввода: `5`, `5.3`, `05.03.26` в порядке дня и месяца языка (`parseTaoDateInput` экспортируется, `parse` / `format` принимают свои)
 - **TaoDateRange** — период: `v-model` — `{ start, end }` или `null`. Первый клик — начало, второй — конец (если конец раньше — меняются местами). Неполный выбор в модель не пишется
 - **TaoCalendar** — сам календарь на месяц, встроенный (без всплывающего окна): `mode="single"` (`YYYY-MM-DD`) или `"range"` (`{ start, end }`), `min` / `max`, стрелки / PageUp / PageDown / Home / End. `TaoDate` и `TaoDateRange` — поле с этим календарём во всплывающем окне
 - **TaoFormField** — общие label / hint / error для полей формы
