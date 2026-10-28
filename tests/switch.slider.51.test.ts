@@ -47,9 +47,10 @@ describe('TaoSlider thumb', () => {
 });
 
 describe('TaoSlider cursor', () => {
-    it('two cursors per gesture: grab over the thumb, grabbing on the whole rail while dragging', () => {
-        expect(sliderSource).toMatch(/\.tao-slider__thumb \{[^}]*cursor: grab;/);
-        expect(sliderSource).toMatch(/\.tao-slider__rail--dragging,\s*\.tao-slider__rail--dragging \* \{[^}]*cursor: grabbing;/);
+    it('one cursor, the finger, over the thumb and on the whole rail while dragging; no grab, which Opera draws as arrows', () => {
+        expect(sliderSource).toMatch(/\.tao-slider__thumb \{[^}]*cursor: pointer;/);
+        expect(sliderSource).toMatch(/\.tao-slider__rail--dragging,\s*\.tao-slider__rail--dragging \* \{[^}]*cursor: pointer;/);
+        expect(sliderSource).not.toMatch(/cursor: grab/);
         expect(sliderSource).toContain(":class=\"{ 'tao-slider__rail--dragging': isDragging }\"");
     });
 });

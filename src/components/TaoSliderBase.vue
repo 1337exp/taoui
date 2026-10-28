@@ -373,13 +373,15 @@ onBeforeUnmount(() => {
     cursor: not-allowed;
 }
 
-/* two cursors per gesture: an open hand over the thumb, a closed one for the whole drag. The rail holds the pointer
-   capture, so without this the browser shows the rail's own cursor (a finger) as soon as the pointer moves
-   два курсора на жест: открытая рука над бегунком, сжатая на всё перетаскивание. Захват указателя у рельса, и без
-   этого браузер показал бы его собственный курсор (палец), как только указатель сдвинется */
+/* one cursor, the pointing finger, over the rail, over the thumb and for the whole drag. Not grab / grabbing: Opera
+   on Windows draws them as the four-way move arrows and an up arrow, and a hand that changes shape mid-drag flickers.
+   The rail holds the pointer capture, so the class keeps the finger even where the pointer wanders
+   один курсор, палец: над рельсом, над бегунком и на всё перетаскивание. Не grab / grabbing: Opera под Windows рисует
+   их четырьмя стрелками и стрелкой вверх, а рука, меняющая форму посреди жеста, мелькает. Захват указателя у рельса,
+   класс держит палец, куда бы указатель ни ушёл */
 .tao-slider__rail--dragging,
 .tao-slider__rail--dragging * {
-    cursor: grabbing;
+    cursor: pointer;
 }
 
 .tao-slider__track,
@@ -425,7 +427,7 @@ onBeforeUnmount(() => {
     border-radius: var(--tao-radius-full);
     box-shadow: 0 0 0 var(--_tao-halo) color-mix(in srgb, var(--tao-slider-thumb-bg, var(--tao-color-accent)) 24%, transparent);
     transform: translate(-50%, -50%);
-    cursor: grab;
+    cursor: pointer;
     transition: box-shadow var(--tao-duration-base) var(--tao-ease-base);
 }
 
@@ -436,7 +438,6 @@ onBeforeUnmount(() => {
 .tao-slider__thumb:active,
 .tao-slider__thumb--active {
     --_tao-halo: 8px;
-    cursor: grabbing;
 }
 
 .tao-slider__thumb:focus {
