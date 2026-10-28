@@ -41,6 +41,19 @@ export const propTablesEn = {
       slots: 'default — the button caption.',
     },
   ],
+  typography: [
+    {
+      title: '.tao-prose / .tao-heading-*',
+      rows: [
+        r('--tao-text-base', 'length', '16px', 'The text size and h6; the scale is counted from it'),
+        r('--tao-text-ratio', 'number', '1.25', 'The step of the scale: each level up is multiplied by it (1.2 calmer, 1.333 bolder). Set it on any element and the scale under it follows'),
+        r('--tao-heading-1…6', 'length', '49 / 39 / 31 / 25 / 20 / 16', 'The steps, ready for your own rules; h1 and h2 in .tao-prose shrink on a narrow screen (not below h3 / h4)'),
+        r('--tao-line-height-body / -heading', 'number', '1.6 / 1.25', 'Line height of text and headings'),
+        r('--tao-font-family-mono', 'font', 'ui-monospace…', 'The code font in .tao-prose'),
+      ],
+      slots: '.tao-prose on a wrapper: headings, paragraphs, lists, quotes, code, hr, links (the theme link colour), images; spacing by proximity. Every rule inside is :where(), your CSS wins. .tao-heading-1…6 — the look of a level on any tag (h2 class="tao-heading-5").',
+    },
+  ],
   surface: [
     {
       title: 'Classes and tokens',

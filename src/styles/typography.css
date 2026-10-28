@@ -1,0 +1,220 @@
+/**
+ * Tao UI — Typography / Типографика
+ *
+ * An opt-in layer: nothing here touches a bare h1 or p. Two parts:
+ *   1. A heading scale from two numbers, `--tao-text-base` and `--tao-text-ratio`: h6 is the base, every level up is
+ *      one more step of the ratio (1.25 gives 16 / 20 / 25 / 31 / 39 / 49). Change the ratio on any element and the
+ *      scale under it follows; h1 and h2 shrink on a narrow screen (clamp).
+ *   2. `.tao-prose` on a wrapper styles the text inside: headings, paragraphs, lists, quotes, code, rules, links,
+ *      with the spacing by proximity (a heading sits close to its text and far from the block before).
+ * And `.tao-heading-1…6` gives the look of a heading to any tag: the tag says what it is (h2), the class how big.
+ * Every rule of .tao-prose is :where(), so it has no weight against your own CSS.
+ *
+ * Слой включается явно: голые h1 и p здесь не трогаются. Две части:
+ *   1. Шкала заголовков из двух чисел, `--tao-text-base` и `--tao-text-ratio`: h6 — база, каждый уровень выше — ещё
+ *      один шаг коэффициента (1.25 даёт 16 / 20 / 25 / 31 / 39 / 49). Меняете коэффициент на любом элементе — шкала под
+ *      ним следует; h1 и h2 уменьшаются на узком экране (clamp).
+ *   2. `.tao-prose` на обёртке оформляет текст внутри: заголовки, абзацы, списки, цитаты, код, линии, ссылки, с
+ *      отступами по близости (заголовок ближе к своему тексту и дальше от блока перед ним).
+ * А `.tao-heading-1…6` даёт вид заголовка любому тегу: тег говорит, что это (h2), класс — какого размера.
+ * Все правила .tao-prose в :where(), поэтому против вашего CSS они ничего не весят.
+ */
+
+:root {
+    --tao-text-base: 16px;
+    --tao-text-ratio: 1.25;
+    --tao-line-height-body: 1.6;
+    --tao-line-height-heading: 1.25;
+    --tao-font-family-mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, Consolas, monospace;
+}
+
+/*
+ * The steps, recomputed wherever the scale is used, so a ratio set on a wrapper reaches the headings inside.
+ * There is no pow() in the browsers we support: the powers are products. / Степени — произведения: pow() у нас нет.
+ */
+:root,
+.tao-prose,
+.tao-heading-1,
+.tao-heading-2,
+.tao-heading-3,
+.tao-heading-4,
+.tao-heading-5,
+.tao-heading-6 {
+    --tao-heading-6: var(--tao-text-base);
+    --tao-heading-5: calc(var(--tao-text-base) * var(--tao-text-ratio));
+    --tao-heading-4: calc(var(--tao-heading-5) * var(--tao-text-ratio));
+    --tao-heading-3: calc(var(--tao-heading-4) * var(--tao-text-ratio));
+    --tao-heading-2: calc(var(--tao-heading-3) * var(--tao-text-ratio));
+    --tao-heading-1: calc(var(--tao-heading-2) * var(--tao-text-ratio));
+    /* the big two shrink on a narrow screen, never below the level two steps down
+       два крупных уменьшаются на узком экране, но не ниже уровня на два шага меньше */
+    --tao-heading-1-fluid: clamp(var(--tao-heading-3), calc(var(--tao-heading-3) + 3vw), var(--tao-heading-1));
+    --tao-heading-2-fluid: clamp(var(--tao-heading-4), calc(var(--tao-heading-4) + 2.5vw), var(--tao-heading-2));
+}
+
+/* ---------- .tao-prose ---------- */
+
+.tao-prose {
+    font-size: var(--tao-text-base);
+    line-height: var(--tao-line-height-body);
+    color: var(--tao-color-text);
+    overflow-wrap: break-word;
+}
+
+.tao-prose :where(h1, h2, h3, h4, h5, h6) {
+    /* far from the block before, close to its own text; counted from the text size, not the heading's own, so a big
+       h1 does not push the page apart / далеко от блока перед, близко к своему тексту; от размера текста, а не заголовка */
+    margin: calc(var(--tao-text-base) * 2) 0 calc(var(--tao-text-base) * 0.5);
+    font-weight: 600;
+    line-height: var(--tao-line-height-heading);
+    color: var(--tao-color-text-strong);
+    text-wrap: balance;
+}
+
+.tao-prose :where(h1) {
+    font-size: var(--tao-heading-1-fluid);
+    font-weight: 700;
+}
+
+.tao-prose :where(h2) {
+    font-size: var(--tao-heading-2-fluid);
+}
+
+.tao-prose :where(h3) {
+    font-size: var(--tao-heading-3);
+}
+
+.tao-prose :where(h4) {
+    font-size: var(--tao-heading-4);
+}
+
+.tao-prose :where(h5) {
+    font-size: var(--tao-heading-5);
+}
+
+.tao-prose :where(h6) {
+    font-size: var(--tao-heading-6);
+}
+
+.tao-prose :where(p, ul, ol, blockquote, pre, figure, table) {
+    margin: 0 0 1em;
+}
+
+.tao-prose > :where(:first-child) {
+    margin-top: 0;
+}
+
+.tao-prose > :where(:last-child) {
+    margin-bottom: 0;
+}
+
+.tao-prose :where(ul, ol) {
+    padding-inline-start: 1.5em;
+}
+
+.tao-prose :where(li + li) {
+    margin-top: 0.25em;
+}
+
+.tao-prose :where(li > ul, li > ol) {
+    margin: 0.25em 0 0;
+}
+
+.tao-prose :where(li)::marker {
+    color: var(--tao-color-text-muted);
+}
+
+.tao-prose :where(a) {
+    color: var(--tao-color-link);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+}
+
+.tao-prose :where(a:hover) {
+    color: var(--tao-color-link-hover);
+}
+
+.tao-prose :where(strong, b) {
+    font-weight: 600;
+    color: var(--tao-color-text-strong);
+}
+
+.tao-prose :where(blockquote) {
+    padding-inline-start: 1em;
+    border-inline-start: 3px solid var(--tao-color-border-strong);
+    color: var(--tao-color-text-muted);
+}
+
+.tao-prose :where(code) {
+    padding: 0.1em 0.35em;
+    border-radius: var(--tao-radius-sm);
+    background: var(--tao-color-surface-sunken);
+    font-family: var(--tao-font-family-mono);
+    font-size: 0.875em;
+}
+
+.tao-prose :where(pre) {
+    padding: var(--tao-space-3) var(--tao-space-4);
+    overflow-x: auto;
+    border-radius: var(--tao-radius-panel);
+    background: var(--tao-color-surface-sunken);
+    line-height: 1.5;
+}
+
+.tao-prose :where(pre code) {
+    padding: 0;
+    background: none;
+    font-size: 0.875em;
+}
+
+.tao-prose :where(hr) {
+    margin: 2em 0;
+    border: 0;
+    border-top: 1px solid var(--tao-color-border);
+}
+
+.tao-prose :where(img, video) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--tao-radius-panel);
+}
+
+/* ---------- the look of a heading on any tag / вид заголовка на любом теге ---------- */
+
+.tao-heading-1,
+.tao-heading-2,
+.tao-heading-3,
+.tao-heading-4,
+.tao-heading-5,
+.tao-heading-6 {
+    font-weight: 600;
+    line-height: var(--tao-line-height-heading);
+    color: var(--tao-color-text-strong);
+    text-wrap: balance;
+}
+
+.tao-heading-1 {
+    font-size: var(--tao-heading-1-fluid);
+    font-weight: 700;
+}
+
+.tao-heading-2 {
+    font-size: var(--tao-heading-2-fluid);
+}
+
+.tao-heading-3 {
+    font-size: var(--tao-heading-3);
+}
+
+.tao-heading-4 {
+    font-size: var(--tao-heading-4);
+}
+
+.tao-heading-5 {
+    font-size: var(--tao-heading-5);
+}
+
+.tao-heading-6 {
+    font-size: var(--tao-heading-6);
+}

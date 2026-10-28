@@ -77,6 +77,7 @@ In numbers: the tarball is 329 KB (560 KB before the ESM-only build), 451 tests 
 
 ### Tokens
 
+- **Typography layer** (`styles/typography.css`, in `styles.css`, opt-in by class): a heading scale from `--tao-text-base` (16px) and `--tao-text-ratio` (1.25) → `--tao-heading-1…6` (49 / 39 / 31 / 25 / 20 / 16), recomputed wherever the ratio is set; h1 / h2 fluid on a narrow screen. `.tao-prose` styles the text inside a wrapper (`:where()` rules, roles for colours, spacing from the text size), `.tao-heading-1…6` gives any tag the look of a level. `--tao-line-height-body` / `-heading`, `--tao-font-family-mono`.
 - **Density, a second axis of the controls:** `.tao-density-compact` / `-comfortable` / `-auto` (and `-default` to reset) on any container change the height and the padding of every size, not the font: comfortable 34 / 44 / 52px, compact 22 / 32 / 40px, auto = comfortable on `pointer: coarse`. Size and density combine anywhere in the tree (the current tokens are recomputed wherever either changes); Select and Combobox carry the density into their teleported panels. Tokens `--tao-density-*`, type `TaoDensity`; the showcase header has a switch.
 - **Dark theme: `--tao-color-text-disabled` is `gray-500`** (it was `gray-300`, brighter than `text-muted`, so disabled items stood out instead of fading).
 - **z-index scale** `--tao-z-modal | popup | tooltip | toast | confirm`; no component writes a literal any more.

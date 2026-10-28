@@ -177,6 +177,27 @@ API rules — every component follows them:
 - **Booleans** are adjectives without `is` / `has` / `as`: `closable`, `clickable`, `masked`, `newTab`. Layout axis is `direction: 'row' | 'column'`, not `vertical`.
 - **Lengths** (`padding`, `radius`, `gap`, `maxHeight`): a number is pixels, a string goes to CSS as is (type `TaoLength`).
 
+## Typography
+
+An opt-in layer: the library never styles a bare `h1` or `p`. Put `.tao-prose` on a wrapper and the text inside gets
+headings, paragraphs, lists, quotes, code, rules and links in the theme roles, spaced by proximity (a heading close to
+its text, far from the block before). Every rule inside is `:where()`, so your CSS always wins.
+
+```html
+<article class="tao-prose">
+  <h1>Title</h1>
+  <p>Text with a <a href="/docs">link</a>.</p>
+</article>
+
+<h2 class="tao-heading-5">An h2 the size of level 5</h2>
+```
+
+The heading scale comes from two numbers: `--tao-text-base` (16px, the text and h6) and `--tao-text-ratio` (1.25), each
+level up one more step: 16 / 20 / 25 / 31 / 39 / 49. Set the ratio on `:root` or on one wrapper (1.2 calmer, 1.333
+bolder) and the scale under it follows; h1 and h2 shrink on a narrow screen, never below h3 / h4. The steps are tokens
+`--tao-heading-1…6` for your own rules. `.tao-heading-1…6` gives the look of a level to any tag: the tag says what it is,
+the class how big.
+
 ## Icons
 
 The library ships **29 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,
