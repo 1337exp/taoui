@@ -402,6 +402,10 @@ onBeforeUnmount(() => {
 }
 
 .tao-slider__thumb {
+    /* the contact patch: a soft ring of the thumb's own colour around the dot, wider under the pointer and widest while
+       dragging, as if a finger pressed it; a shadow, so the layout and the hit area stay the same
+       пятно контакта: мягкое кольцо цвета бегунка вокруг точки, шире под указателем и шире всего при перетаскивании */
+    --_tao-halo: 4px;
     position: absolute;
     top: 50%;
     width: var(--tao-slider-thumb);
@@ -409,12 +413,19 @@ onBeforeUnmount(() => {
     background: var(--tao-slider-thumb-bg, var(--tao-color-accent));
     border: 2px solid var(--tao-color-surface-sunken);
     border-radius: var(--tao-radius-full);
+    box-shadow: 0 0 0 var(--_tao-halo) color-mix(in srgb, var(--tao-slider-thumb-bg, var(--tao-color-accent)) 24%, transparent);
     transform: translate(-50%, -50%);
     cursor: grab;
+    transition: box-shadow var(--tao-duration-base) var(--tao-ease-base);
+}
+
+.tao-slider:not(.tao-slider--disabled) .tao-slider__thumb:hover {
+    --_tao-halo: 6px;
 }
 
 .tao-slider__thumb:active,
 .tao-slider__thumb--active {
+    --_tao-halo: 8px;
     cursor: grabbing;
 }
 
@@ -426,6 +437,7 @@ onBeforeUnmount(() => {
 .tao-slider--flat .tao-slider__thumb {
     background-color: transparent;
     border-color: transparent;
+    box-shadow: none;
 }
 
 /*
@@ -467,11 +479,19 @@ onBeforeUnmount(() => {
 
 .tao-slider:not(.tao-slider--pointer-focus) .tao-slider__thumb:focus-visible {
     outline: 2px solid var(--tao-color-accent);
-    outline-offset: 3px;
+    /* outside the contact patch, so the focus ring is never lost in it / снаружи пятна контакта */
+    outline-offset: calc(var(--_tao-halo) + 2px);
 }
 
 .tao-slider--disabled .tao-slider__thumb {
+    --_tao-halo: 0px;
     cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tao-slider__thumb {
+        transition: none;
+    }
 }
 
 .tao-slider__value {

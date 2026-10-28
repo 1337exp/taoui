@@ -17,6 +17,17 @@ const cities = computed(() => [
   { value: 'nsk', label: tr('Novosibirsk', 'Новосибирск') },
 ])
 const step = ref(4)
+
+// a switch that saves on the server: loading while the request is on its way
+const sync = ref(false)
+const syncing = ref(false)
+function toggleSync(value) {
+  syncing.value = true
+  setTimeout(() => {
+    sync.value = value
+    syncing.value = false
+  }, 1200)
+}
 const steps = [1, 2, 3, 4, 6, 8, 12, 16].map((n) => ({ value: n, label: `1/${n}` }))
 const sizeSmall = ref('msk')
 const sizeMedium = ref('msk')
@@ -69,6 +80,12 @@ const plan = ref('pro')
               <TaoSwitch v-model="notifyEmail" />
             </TaoFormField>
             <TaoSwitch :model-value="true" label="Disabled" disabled />
+            <TaoSwitch
+              :model-value="sync"
+              :loading="syncing"
+              :label="syncing ? tr('Saving…', 'Сохраняем…') : tr('Cloud sync (saves for 1.2 s)', 'Синхронизация (сохраняется 1,2 с)')"
+              @update:model-value="toggleSync"
+            />
     
             <TaoFormField :label="tr('Plan', 'Тариф')" :hint="tr('Team is not available yet', 'Team пока недоступен')">
               <TaoRadioGroup v-model="plan">

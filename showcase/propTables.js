@@ -238,6 +238,7 @@ export const propTables = {
         r('disabled', 'boolean', 'false', 'Неактивен'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Дорожка 28 / 36 / 44 px в ширину и кегль подписи. Без него — размер предков'),
         r('error', 'boolean', 'false', 'Красная рамка. Текст ошибки — error у TaoFormField'),
+        r('loading', 'boolean', 'false', 'Изменение применяется: кольцо на бегунке, щелчок ничего не делает, не гаснет; aria-busy'),
       ],
     },
     {

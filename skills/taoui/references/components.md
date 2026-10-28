@@ -257,6 +257,7 @@ Showcase section: `#select`
 | `disabled` | `boolean` | false | Disabled |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | The track is 28 / 36 / 44 px wide, and the caption font size. Without it — the size of the ancestors |
 | `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `loading` | `boolean` | false | The change is being applied: a spinner on the thumb, a click does nothing, not greyed out; aria-busy |
 
 ## TaoRadio / TaoRadioGroup
 
