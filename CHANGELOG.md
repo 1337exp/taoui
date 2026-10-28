@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.4.0
+
+One slot, nothing to migrate.
+
+- **`TaoNav` `#action`:** the main action of a screen (Compose, New) moves with the navigation instead of staying in a far corner of a wide screen. Pass a `TaoButton` with `icon` and its text in `<span class="tao-nav__action-label">`. The bar look puts it round above itself at the end side, 12px off like the pill (with `floating` it lines up with the pill's edge, so it follows a centred pill); the rail puts it round at the top, above the items; the side panel puts it at the top, full width, with the text (an extended button). In the round looks the text is visually hidden and stays the button's name. CSS places it from the same `--_*` variables as the rest, so `layout="auto"` switches it by container queries without JS; that is also why the slot has no props: only CSS knows the look in `auto`. The hand-placed round button of the 5.2 showcase is gone.
+
 ## 5.3.0
 
 Small charts and a bridge to chart libraries; nothing to migrate.
