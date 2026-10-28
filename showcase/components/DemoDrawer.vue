@@ -8,6 +8,12 @@ import { propTables } from '../propTables.js'
 defineOptions({ name: 'DemoDrawer' })
 
 const isDrawerOpen = ref(false)
+const side = ref('right')
+
+function open(value) {
+  side.value = value
+  isDrawerOpen.value = true
+}
 </script>
 
 <template>
@@ -15,8 +21,11 @@ const isDrawerOpen = ref(false)
     <h2>TaoDrawer</h2>
           <p>{{ tr('A side panel: filters, a cart, settings. Esc and a click on the backdrop close it, the focus does not escape to the page.', 'Боковая панель: фильтры, корзина, настройки. Esc и клик по фону закрывают, фокус не уезжает на страницу.') }}</p>
     
-          <TaoButton variant="secondary" @click="isDrawerOpen = true">{{ tr('Open on the right', 'Открыть справа') }}</TaoButton>
-          <TaoDrawer v-model="isDrawerOpen" :title="tr('Filters', 'Фильтры')">
+          <div class="button-row">
+            <TaoButton variant="secondary" @click="open('right')">{{ tr('Open on the right', 'Открыть справа') }}</TaoButton>
+            <TaoButton variant="secondary" @click="open('bottom')">{{ tr('Open a bottom sheet', 'Открыть нижний лист') }}</TaoButton>
+          </div>
+          <TaoDrawer v-model="isDrawerOpen" :side="side" :title="tr('Filters', 'Фильтры')">
             <p>{{ tr('Form fields can go here. On a narrow screen this is handier than a centred modal.', 'Здесь могут быть поля формы. На узком экране это удобнее модалки по центру.') }}</p>
             <template #footer>
               <TaoButton variant="secondary" @click="isDrawerOpen = false">{{ tr('Reset', 'Сбросить') }}</TaoButton>
@@ -29,7 +38,7 @@ const isDrawerOpen = ref(false)
   ...
 &lt;/TaoDrawer&gt;
 
-&lt;TaoDrawer v-model="open" title="Filters" close-label="Close"&gt;
+&lt;TaoDrawer v-model="open" side="bottom" title="Filters"&gt;   &lt;!-- a sheet from the bottom --&gt;
   &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
 &lt;/TaoDrawer&gt;</code></pre>
           </div>

@@ -788,6 +788,7 @@ export const propTables = {
         r('title', 'string', "''", 'Заголовок в шапке'),
         r('closable', 'boolean', 'true', 'Крестик, Esc, клик по фону'),
         r('closeLabel', 'string', "'Закрыть'", 'aria-label крестика'),
+        r('fullscreen', "boolean | 'narrow'", 'false', 'true — весь экран: прямые углы, шапка и подвал на месте, прокручивается содержимое, безопасные зоны учтены. narrow — так только на экране уже 600px: окно на компьютере, страница на телефоне'),
       ],
       slots: 'default — тело. #footer — кнопки. #close-icon — иконка крестика.',
     },
@@ -798,7 +799,7 @@ export const propTables = {
       rows: [
         r('v-model', 'boolean', '—', 'Открыто. Обязательный'),
         r('title', 'string', "''", 'Заголовок'),
-        r('side', "'left' | 'right'", "'right'", 'Откуда выезжает'),
+        r('side', "'left' | 'right' | 'bottom'", "'right'", 'Откуда выезжает. bottom — нижний лист: во всю ширину до 640px, по высоте содержимого до 90% экрана, скруглённый верх, ручка, над безопасной зоной'),
         r('closable', 'boolean', 'true', 'Esc, фон, крестик'),
         r('closeLabel', 'string', "'Закрыть'", 'aria-label крестика'),
       ],

@@ -8,6 +8,12 @@ import { propTables } from '../propTables.js'
 defineOptions({ name: 'DemoModal' })
 
 const isModalOpen = ref(false)
+const fullscreen = ref(false)
+
+function open(value) {
+  fullscreen.value = value
+  isModalOpen.value = true
+}
 </script>
 
 <template>
@@ -15,11 +21,13 @@ const isModalOpen = ref(false)
     <h2>TaoModal</h2>
           <p>{{ tr('A modal window: slots, click on the backdrop, Esc, a focus trap. It also closes with the cross.', 'Модальное окно: слоты, клик по фону, Esc, ловушка фокуса. Закрывается и по крестику.') }}</p>
           
-          <TaoButton @click="isModalOpen = true" variant="primary">
-            {{ tr('Open the modal', 'Открыть модальное окно') }}
-          </TaoButton>
+          <div class="button-row">
+            <TaoButton variant="primary" @click="open(false)">{{ tr('Open the modal', 'Открыть модальное окно') }}</TaoButton>
+            <TaoButton variant="secondary" @click="open('narrow')">{{ tr('Full screen on a phone', 'Во весь экран на телефоне') }}</TaoButton>
+            <TaoButton variant="secondary" @click="open(true)">{{ tr('Always full screen', 'Всегда во весь экран') }}</TaoButton>
+          </div>
     
-          <TaoModal v-model="isModalOpen" :title="tr('Modal title', 'Заголовок модального окна')">
+          <TaoModal v-model="isModalOpen" :fullscreen="fullscreen" :title="tr('Modal title', 'Заголовок модального окна')">
             <p>{{ tr('This is the content of the modal. You can put a form, text, images or any other components here.', 'Это содержимое модального окна. Здесь можно разместить форму, текст, изображения или любые другие компоненты.') }}</p>
             <p>{{ tr('It closes with Esc, the cross, the button below or a click outside the window.', 'Закрывается по Esc, по крестику, по кнопке внизу или по клику вне окна.') }}</p>
             
@@ -37,7 +45,7 @@ const isModalOpen = ref(false)
   &lt;/template&gt;
 &lt;/TaoModal&gt;
 
-&lt;TaoModal v-model="isOpen" title="Title" close-label="Close"&gt;
+&lt;TaoModal v-model="isOpen" fullscreen="narrow" title="Title"&gt;   &lt;!-- a page on a phone --&gt;
   &lt;template #close-icon&gt;&lt;TaoIcon name="close" /&gt;&lt;/template&gt;
 &lt;/TaoModal&gt;</code></pre>
           </div>

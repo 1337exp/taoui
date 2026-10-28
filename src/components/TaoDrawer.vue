@@ -11,7 +11,13 @@ const props = withDefaults(
     defineProps<{
         modelValue: boolean;
         title?: string;
-        side?: 'left' | 'right';
+        /**
+         * `bottom` is a sheet: it rises from the bottom edge, as wide as the screen up to 640px, as tall as its content up
+         * to 90% of the screen, above the safe area. The phone's own way to show options and a form.
+         * `bottom` — нижний лист: поднимается от нижнего края, во всю ширину до 640px, по высоте содержимого до 90%
+         * экрана, над безопасной зоной. Телефонный способ показать параметры и форму.
+         */
+        side?: 'left' | 'right' | 'bottom';
         closable?: boolean;
         closeLabel?: string;
     }>(),
@@ -79,6 +85,8 @@ watch(
                     :aria-labelledby="title ? titleId : undefined"
                     tabindex="-1"
                 >
+                    <!-- the sheet's grip: only a sign that it is a sheet / ручка листа: только знак, что это лист -->
+                    <span v-if="side === 'bottom'" class="tao-drawer__grip" aria-hidden="true" />
                     <div v-if="title || closable" class="tao-drawer__header">
                         <h2 v-if="title" :id="titleId" class="tao-drawer__title">{{ title }}</h2>
                         <span v-else></span>
@@ -122,6 +130,12 @@ watch(
     justify-content: flex-start;
 }
 
+.tao-drawer--bottom {
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
 .tao-drawer__overlay {
     position: absolute;
     inset: 0;
@@ -140,6 +154,29 @@ watch(
 
 .tao-drawer__panel:focus {
     outline: none;
+}
+
+/* the sheet: rounded top corners, its content's height up to 90% of the screen, the last line above the home indicator
+   лист: скруглённый верх, высота по содержимому до 90% экрана, последняя строка над индикатором «домой» */
+.tao-drawer--bottom .tao-drawer__panel {
+    width: min(640px, 100%);
+    height: auto;
+    max-height: 90dvh;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    border-radius: var(--tao-radius-panel) var(--tao-radius-panel) 0 0;
+}
+
+.tao-drawer__grip {
+    flex: none;
+    width: 36px;
+    height: 4px;
+    margin: var(--tao-space-2) auto 0;
+    border-radius: var(--tao-radius-full);
+    background: var(--tao-color-border-strong);
+}
+
+.tao-drawer--bottom .tao-drawer__header {
+    padding-top: var(--tao-space-2);
 }
 
 .tao-drawer__header {
@@ -196,21 +233,27 @@ watch(
 .tao-drawer-right-enter-active,
 .tao-drawer-right-leave-active,
 .tao-drawer-left-enter-active,
-.tao-drawer-left-leave-active {
+.tao-drawer-left-leave-active,
+.tao-drawer-bottom-enter-active,
+.tao-drawer-bottom-leave-active {
     transition: opacity var(--tao-duration-base) var(--tao-ease-base);
 }
 
 .tao-drawer-right-enter-active .tao-drawer__panel,
 .tao-drawer-right-leave-active .tao-drawer__panel,
 .tao-drawer-left-enter-active .tao-drawer__panel,
-.tao-drawer-left-leave-active .tao-drawer__panel {
+.tao-drawer-left-leave-active .tao-drawer__panel,
+.tao-drawer-bottom-enter-active .tao-drawer__panel,
+.tao-drawer-bottom-leave-active .tao-drawer__panel {
     transition: transform var(--tao-duration-slow) var(--tao-ease-base);
 }
 
 .tao-drawer-right-enter-from,
 .tao-drawer-right-leave-to,
 .tao-drawer-left-enter-from,
-.tao-drawer-left-leave-to {
+.tao-drawer-left-leave-to,
+.tao-drawer-bottom-enter-from,
+.tao-drawer-bottom-leave-to {
     opacity: 0;
 }
 
@@ -222,5 +265,10 @@ watch(
 .tao-drawer-left-enter-from .tao-drawer__panel,
 .tao-drawer-left-leave-to .tao-drawer__panel {
     transform: translateX(-100%);
+}
+
+.tao-drawer-bottom-enter-from .tao-drawer__panel,
+.tao-drawer-bottom-leave-to .tao-drawer__panel {
+    transform: translateY(100%);
 }
 </style>

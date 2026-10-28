@@ -861,6 +861,7 @@ Showcase section: `#modal`
 | `title` | `string` | '' | The title in the header |
 | `closable` | `boolean` | true | The cross, Esc, a click on the backdrop |
 | `closeLabel` | `string` | 'Close' | aria-label of the cross |
+| `fullscreen` | `boolean \| 'narrow'` | false | true — the whole screen: square corners, the header and the footer stay while the content scrolls, the safe areas kept. narrow — only on a screen narrower than 600px: a dialog on a computer, a page on a phone |
 
 **Slots, events, notes.** default — the body. #footer — buttons. #close-icon — the cross icon.
 
@@ -872,7 +873,7 @@ Showcase section: `#drawer`
 |---|---|---|---|
 | `v-model` | `boolean` | — | Open. Required |
 | `title` | `string` | '' | The title |
-| `side` | `'left' \| 'right'` | 'right' | Where it slides in from |
+| `side` | `'left' \| 'right' \| 'bottom'` | 'right' | Where it slides in from. bottom is a sheet: as wide as the screen up to 640px, as tall as its content up to 90% of the screen, rounded top, a grip, above the safe area |
 | `closable` | `boolean` | true | Esc, the backdrop, the cross |
 | `closeLabel` | `string` | 'Close' | aria-label of the cross |
 

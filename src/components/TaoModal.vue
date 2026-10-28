@@ -12,11 +12,19 @@ interface Props {
     title?: string;
     closable?: boolean;
     closeLabel?: string;
+    /**
+     * `true` — the whole screen, square corners, the header and the footer stay while the content scrolls, the safe
+     * areas kept. `'narrow'` — only on a screen narrower than 600px: a dialog on a computer, a page on a phone.
+     * `true` — весь экран, прямые углы, шапка и подвал на месте, прокручивается содержимое, безопасные зоны учтены.
+     * `'narrow'` — только на экране уже 600px: окно на компьютере, страница на телефоне.
+     */
+    fullscreen?: boolean | 'narrow';
 }
 
 const props = withDefaults(defineProps<Props>(), {
     title: '',
     closable: true,
+    fullscreen: false,
 });
 const l10n = useLocaleText(props, 'modal');
 
@@ -82,6 +90,10 @@ watch(
             <div
                 v-if="modelValue"
                 class="tao-modal-overlay"
+                :class="{
+                    'tao-modal-overlay--fullscreen': fullscreen === true,
+                    'tao-modal-overlay--fullscreen-narrow': fullscreen === 'narrow',
+                }"
                 @pointerdown="onOverlayPointerDown"
                 @pointerup="onOverlayPointerUp"
                 @keydown="onKeydown"
@@ -199,6 +211,68 @@ watch(
     display: flex;
     gap: var(--tao-space-3);
     justify-content: flex-end;
+}
+
+/* fullscreen: the dialog is the page; it scrolls its content, not itself, so the header and the footer stay
+   во весь экран: окно — это страница; прокручивается содержимое, а не окно, поэтому шапка и подвал на месте */
+.tao-modal-overlay--fullscreen {
+    padding: 0;
+}
+
+.tao-modal-overlay--fullscreen .tao-modal {
+    display: flex;
+    flex-direction: column;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    overflow: hidden;
+    border-radius: 0;
+}
+
+.tao-modal-overlay--fullscreen .tao-modal__header {
+    padding-top: calc(var(--tao-space-4) + env(safe-area-inset-top, 0px));
+}
+
+.tao-modal-overlay--fullscreen .tao-modal__content {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.tao-modal-overlay--fullscreen .tao-modal__footer {
+    padding-bottom: calc(var(--tao-space-4) + env(safe-area-inset-bottom, 0px));
+}
+
+/* the same below 600px of the screen: the modal lives in body, so it is the viewport that counts, not a container
+   то же уже 600px экрана: модалка живёт в body, поэтому важна ширина окна, а не контейнера */
+@media (width < 600px) {
+    .tao-modal-overlay--fullscreen-narrow {
+        padding: 0;
+    }
+
+    .tao-modal-overlay--fullscreen-narrow .tao-modal {
+        display: flex;
+        flex-direction: column;
+        max-width: none;
+        height: 100%;
+        max-height: none;
+        overflow: hidden;
+        border-radius: 0;
+    }
+
+    .tao-modal-overlay--fullscreen-narrow .tao-modal__header {
+        padding-top: calc(var(--tao-space-4) + env(safe-area-inset-top, 0px));
+    }
+
+    .tao-modal-overlay--fullscreen-narrow .tao-modal__content {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+    }
+
+    .tao-modal-overlay--fullscreen-narrow .tao-modal__footer {
+        padding-bottom: calc(var(--tao-space-4) + env(safe-area-inset-bottom, 0px));
+    }
 }
 
 .tao-modal-fade-enter-active,
