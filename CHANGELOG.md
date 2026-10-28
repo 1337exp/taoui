@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.3.0
+
+Small charts and a bridge to chart libraries; nothing to migrate.
+
+- **`TaoSparkline`**: a trend for a card, a table cell or a line of text. `values` (a `null` is a gap that splits the line), `area`, `dot` on the last value, `tone`, a fixed `min` / `max` to compare several. With `label` it is an image with that name, without it a decoration.
+- **`TaoMeter`**: a measured value in a range (`role="meter"`): disk space, a battery, a score. With `low` / `high` / `optimum` it colours itself as the HTML `<meter>` does: the region of the optimum is success, the next one warning, the far one danger. `label`, `valueText` (a number or your own text, read as `aria-valuetext`). The progress of a task stays `TaoProgress`.
+- **`TaoDonut`**: a share of a whole, from `segments` (`{ label, value, tone?, color? }`) or a single `value` of `max`. `legend`, a centre slot, `size` / `thickness`; a screen reader hears the label and every part with its share.
+- **Series colours** `--tao-color-chart-1…6`: the accent first, then the info, success and warning roles (so a palette moves them away from its accent), a violet and, last, pink in the dark theme or teal in the light one, whose accent is pink. Red is left out: it reads as «bad». Palettes re-declare the series built on roles and give their second stop to chart-4. New primitives `--tao-violet-400 / -600`, `--tao-teal-600`.
+- **`taoChartTheme(el?)`** returns the theme colours for Chart.js, ECharts, uPlot and the like, resolved where the element is (its palette, its mode) and converted to `rgb()` / `rgba()`: the roles are often `color-mix()`, which canvas libraries do not parse. **`watchTaoChartTheme(apply, el?)`** calls it now and on every theme, mode or palette change. TaoUI will not grow axes, tooltips or zoom: that is a chart library's work.
+
 ## 5.2.0
 
 New components and options, nothing to migrate.

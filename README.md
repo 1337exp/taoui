@@ -100,6 +100,7 @@
 ### Data display
 
 - **TaoTable** — simple table: columns, empty, loading, sort via `v-model:sort`. `head` tints the header, `lines` draws row rules (both on by default). `striped` starts on the first row; `striped="even"` starts on the second. Not a datagrid.
+- **TaoSparkline** / **TaoMeter** / **TaoDonut** — small charts for a card or a line of text: a trend (`values` with `null` gaps, `area`, `dot`), a measured value in a range (`role="meter"`, coloured by `low` / `high` / `optimum` as the HTML `<meter>`), a share of a whole (`segments`, or one `value` of `max`, `legend`, a centre slot). The series colours are the roles `--tao-color-chart-1…6` (the first is the accent, so palettes recolour them). For axes and tooltips use a chart library: `taoChartTheme()` gives it the theme colours as `rgb()`, `watchTaoChartTheme(apply)` re-applies them on a theme or palette change
 - **TaoPagination** — pages with ellipsis. Clicking “…” jumps `jump` pages (5 by default)
 - **TaoEmpty** — empty list, no results, no access
 - **TaoList** / **TaoListItem** — list row: icon, title, caption, hover action. Not Select, not a table

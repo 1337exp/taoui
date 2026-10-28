@@ -46,6 +46,11 @@
     --tao-color-on-info: #0d0d0d;
     --tao-color-info-text: #8aa1fd;
     --tao-color-info-subtle: color-mix(in srgb, var(--tao-color-info) 15%, transparent);
+    --tao-color-chart-1: var(--tao-color-accent);
+    --tao-color-chart-2: var(--tao-color-info);
+    --tao-color-chart-3: var(--tao-color-success);
+    --tao-color-chart-4: var(--tao-color-accent-2);
+    --tao-color-chart-5: var(--tao-color-warning);
     --tao-color-danger-text-hover: color-mix(in srgb, var(--tao-color-danger-text) 85%, var(--tao-color-text-strong));
     --tao-color-warning-text-hover: color-mix(in srgb, var(--tao-color-warning-text) 85%, var(--tao-color-text-strong));
     --tao-color-success-text-hover: color-mix(in srgb, var(--tao-color-success-text) 85%, var(--tao-color-text-strong));
@@ -97,6 +102,11 @@
     --tao-color-on-info: #ffffff;
     --tao-color-info-text: #3a46c7;
     --tao-color-info-subtle: color-mix(in srgb, var(--tao-color-info) 12%, transparent);
+    --tao-color-chart-1: var(--tao-color-accent);
+    --tao-color-chart-2: var(--tao-color-info);
+    --tao-color-chart-3: var(--tao-color-success);
+    --tao-color-chart-4: var(--tao-color-accent-2);
+    --tao-color-chart-5: var(--tao-color-warning);
     --tao-color-danger-text-hover: color-mix(in srgb, var(--tao-color-danger-text) 85%, var(--tao-color-text-strong));
     --tao-color-warning-text-hover: color-mix(in srgb, var(--tao-color-warning-text) 85%, var(--tao-color-text-strong));
     --tao-color-success-text-hover: color-mix(in srgb, var(--tao-color-success-text) 85%, var(--tao-color-text-strong));
