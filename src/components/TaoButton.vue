@@ -105,6 +105,8 @@ function handleClick(event: MouseEvent) {
     font-weight: 500;
     transition: var(--tao-transition-base);
     position: relative;
+    /* selecting the text around must not catch the button label / выделение текста вокруг не захватывает подпись кнопки */
+    user-select: none;
 }
 
 .tao-button:active:not(.tao-button--text) {

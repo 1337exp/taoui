@@ -37,7 +37,7 @@ const box = computed(() => (props.size ? `${props.size}px` : '1em'));
         <svg
             v-if="def"
             class="tao-icon__value tao-icon__svg"
-            :class="{ 'tao-icon__value--invert': props.invert }"
+            :class="{ 'tao-icon__value--invert': props.invert, 'tao-icon__svg--grid': def.grid }"
             :viewBox="def.viewBox ?? '0 0 24 24'"
             :width="box"
             :height="box"
@@ -78,6 +78,17 @@ const box = computed(() => (props.size ? `${props.size}px` : '1em'));
 
 .tao-icon__svg {
     flex: 0 0 auto;
+}
+
+/* lines through the middle land on a pixel boundary at even sizes: 2 whole pixels across it are crisp
+   линии через середину при чётном размере попадают на границу пикселей: 2 целых пикселя поперёк неё — чётко */
+.tao-icon__svg--grid {
+    shape-rendering: crispEdges;
+}
+
+.tao-icon__svg--grid :deep(*) {
+    vector-effect: non-scaling-stroke;
+    stroke-width: 2px;
 }
 
 .tao-icon__value--invert {

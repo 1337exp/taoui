@@ -125,6 +125,8 @@ function onLeave(el: Element) {
     border: none;
     cursor: pointer;
     text-align: left;
+    /* selecting the text around must not catch the button label / выделение текста вокруг не захватывает подпись кнопки */
+    user-select: none;
 }
 
 .tao-spoiler__header:hover {

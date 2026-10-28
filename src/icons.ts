@@ -14,6 +14,13 @@ export interface TaoIconDef {
     body: string;
     /** `0 0 24 24` unless the icon is drawn on another grid. / `0 0 24 24`, если не другая сетка. */
     viewBox?: string;
+    /**
+     * Only straight horizontal and vertical lines through the middle (a plus, a minus). Scaled down, such a line falls
+     * between two pixels and goes soft; with `grid` it is drawn 2 screen pixels wide and snapped to the pixel grid.
+     * Только прямые линии через середину (плюс, минус). При уменьшении такая линия ложится между пикселями и мылится;
+     * с `grid` она рисуется шириной 2 экранных пикселя и привязывается к пиксельной сетке.
+     */
+    grid?: boolean;
 }
 
 /** Prefix of the built-in icon names. / Приставка имён встроенных иконок. */
@@ -24,8 +31,8 @@ const dot = (cx: number, cy: number, r = 1.4) => `<circle cx="${cx}" cy="${cy}" 
 const builtin: Record<string, TaoIconDef> = {
     check: { body: '<path d="M5 12.5l4.5 4.5L19 7.5"/>' },
     close: { body: '<path d="M6 6l12 12M18 6L6 18"/>' },
-    plus: { body: '<path d="M12 5v14M5 12h14"/>' },
-    minus: { body: '<path d="M5 12h14"/>' },
+    plus: { body: '<path d="M12 5v14M5 12h14"/>', grid: true },
+    minus: { body: '<path d="M5 12h14"/>', grid: true },
     'chevron-up': { body: '<path d="M6 15l6-6 6 6"/>' },
     'chevron-down': { body: '<path d="M6 9l6 6 6-6"/>' },
     'chevron-left': { body: '<path d="M15 6l-6 6 6 6"/>' },

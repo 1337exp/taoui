@@ -145,6 +145,8 @@ function onKeydown(event: KeyboardEvent) {
     font-size: var(--tao-control-font-size);
     font-weight: 500;
     cursor: pointer;
+    /* selecting the text around must not catch the button label / выделение текста вокруг не захватывает подпись кнопки */
+    user-select: none;
 }
 
 .tao-tabs__tab:hover:not(:disabled) {

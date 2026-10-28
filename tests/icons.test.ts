@@ -88,3 +88,15 @@ describe('TaoButton icons', () => {
         expect(warn).toHaveBeenCalledTimes(1);
     });
 });
+
+describe('icons on the pixel grid', () => {
+    it('plus and minus are lines through the middle: they get the grid class, the curved icons do not', async () => {
+        const { mount } = await import('@vue/test-utils');
+        const TaoIcon = (await import('../src/components/TaoIcon.vue')).default;
+        const { resolveTaoIcon } = await import('../src/icons');
+        expect(resolveTaoIcon('tao-plus')?.grid).toBe(true);
+        expect(resolveTaoIcon('tao-minus')?.grid).toBe(true);
+        expect(mount(TaoIcon, { props: { name: 'tao-plus' } }).find('svg').classes()).toContain('tao-icon__svg--grid');
+        expect(mount(TaoIcon, { props: { name: 'tao-search' } }).find('svg').classes()).not.toContain('tao-icon__svg--grid');
+    });
+});

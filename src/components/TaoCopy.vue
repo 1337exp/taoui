@@ -153,6 +153,8 @@ const doneText = computed(() => props.successText ?? appLocale.value.copy.succes
     color: var(--tao-color-text-muted);
     cursor: pointer;
     transition: var(--tao-transition-base);
+    /* selecting the text around must not catch the button label / выделение текста вокруг не захватывает подпись кнопки */
+    user-select: none;
 }
 
 .tao-copy__button .tao-icon {

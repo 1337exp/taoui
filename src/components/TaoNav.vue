@@ -412,6 +412,8 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     text-decoration: none;
     cursor: pointer;
     transition: var(--tao-transition-base);
+    /* selecting the text around must not catch the button label / выделение текста вокруг не захватывает подпись кнопки */
+    user-select: none;
 }
 
 .tao-nav__item:hover {
