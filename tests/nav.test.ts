@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { h, nextTick } from 'vue';
 import TaoNav from '../src/components/TaoNav.vue';
 import type { TaoNavItem } from '../src/nav';
+// @ts-expect-error Vite `?raw` import: the component source as text
+import navSource from '../src/components/TaoNav.vue?raw';
 
 const wrappers: VueWrapper[] = [];
 afterEach(() => {
@@ -166,5 +168,23 @@ describe('TaoNav', () => {
         expect(w.find('nav').attributes('aria-label')).toBe('Sections');
         expect(w.find('.tao-nav__entry--more').text()).toBe('Other');
         expect(entries(w)[0]!.text()).toBe('A');
+    });
+});
+
+// 5.2: the floating pill / 5.2: плавающая «пилюля»
+
+describe('TaoNav floating', () => {
+    it('floating adds its class; without it there is none', () => {
+        const items: TaoNavItem[] = [{ id: 'a', label: 'A' }];
+        expect(mount(TaoNav, { props: { items, floating: true } }).classes()).toContain('tao-nav--floating');
+        expect(mount(TaoNav, { props: { items } }).classes()).not.toContain('tao-nav--floating');
+    });
+
+    it('only the bar look floats: --_bar is 1 there and 0 on the side, in the fixed looks and in auto', () => {
+        const blocks = navSource.match(/--_bar: [01];/g) ?? [];
+        expect(blocks.filter((b: string) => b.endsWith('1;'))).toHaveLength(2);
+        expect(blocks.filter((b: string) => b.endsWith('0;'))).toHaveLength(4);
+        expect(navSource).toMatch(/\.tao-nav--floating \.tao-nav__panel \{[^}]*border-radius: calc\(var\(--_bar\) \* var\(--tao-radius-full\)\)/);
+        expect(navSource).toMatch(/\.tao-nav--floating \.tao-nav__panel \{[^}]*bottom: calc\(var\(--_bar\) \* \(var\(--tao-space-3\) \+ var\(--_safe-bottom\)\)\)/);
     });
 });

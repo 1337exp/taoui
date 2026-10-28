@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { TaoNav, TaoSegmented, TaoSegmentedOption } from '@1337exp/taoui'
+import { TaoButton, TaoNav, TaoSegmented, TaoSegmentedOption, TaoSwitch } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import Tr from './Tr.vue'
 import { tr } from '../i18n.js'
@@ -23,6 +23,7 @@ const count = ref('5')
 const layout = ref('auto')
 const width = ref('360px')
 const current = ref('home')
+const floating = ref(true)
 
 const items = computed(() => all.value.slice(0, Number(count.value)))
 const currentLabel = computed(() => all.value.find((item) => item.id === current.value)?.label ?? '')
@@ -38,7 +39,8 @@ const currentLabel = computed(() => all.value.find((item) => item.id === current
           look by the width of TaoNav itself (container queries): a bottom bar below 600px, a rail with icons below 840px, a
           side panel with labels from 840px. Put the page into the slot and TaoNav lays it out: the bar sticks to the bottom,
           on the side the list sticks to the top. More than five sections on the bar: the last place is «More» with a menu.
-          Change the frame width below (or drag its right edge).
+          Change the frame width below (or drag its right edge). <code>floating</code> lifts the bar off the edges into a
+          pill with a shadow; the main action of the screen is a separate round button beside it, not a hole in the bar.
         </p>
       </template>
       <template #ru>
@@ -47,7 +49,8 @@ const currentLabel = computed(() => all.value.find((item) => item.id === current
           ширине самого TaoNav (container queries): нижняя панель до 600px, рейка с иконками до 840px, боковая панель с
           подписями от 840px. Страницу кладут в слот, и TaoNav раскладывает её сам: панель прилипает к низу, сбоку к верху
           прилипает список. Больше пяти разделов на панели: последнее место занимает «Ещё» с меню. Меняйте ширину рамки ниже
-          (или тяните её правый край).
+          (или тяните её правый край). <code>floating</code> отрывает панель от краёв в «пилюлю» с тенью; главное действие
+          экрана — отдельная круглая кнопка рядом, а не вырез в панели.
         </p>
       </template>
     </Tr>
@@ -69,19 +72,28 @@ const currentLabel = computed(() => all.value.find((item) => item.id === current
         <TaoSegmentedOption value="5" :label="tr('5 items', '5 пунктов')" />
         <TaoSegmentedOption value="7" :label="tr('7 items', '7 пунктов')" />
       </TaoSegmented>
+      <TaoSwitch v-model="floating" size="small" label="floating" />
     </div>
 
     <div class="nav-demo__frame" :style="{ width }">
-      <TaoNav v-model="current" :items="items" :layout="layout">
+      <TaoNav v-model="current" :items="items" :layout="layout" :floating="floating">
         <div class="nav-demo__page">
           <h3>{{ currentLabel }}</h3>
           <p v-for="n in 12" :key="n">{{ tr('A line of the page, to scroll.', 'Строка страницы, чтобы было что прокручивать.') }} {{ n }}</p>
+          <TaoButton
+            v-if="floating"
+            class="nav-demo__fab"
+            :class="`nav-demo__fab--${layout}`"
+            icon="tao-plus"
+            size="large"
+            :aria-label="tr('New', 'Создать')"
+          />
         </div>
       </TaoNav>
     </div>
 
     <div class="code-block">
-      <pre><code>&lt;TaoNav v-model="section" :items="sections" @select="go"&gt;
+      <pre><code>&lt;TaoNav v-model="section" :items="sections" floating @select="go"&gt;
   &lt;RouterView /&gt;
 &lt;/TaoNav&gt;
 
@@ -121,6 +133,29 @@ function go(id, event) {
 
 .nav-demo__page {
   padding: 16px;
+}
+
+/* the screen's main action: the app's own round button, sticky above the pill at the side
+   главное действие экрана: своя круглая кнопка приложения, прилипает над «пилюлей» сбоку */
+.nav-demo__fab {
+  position: sticky;
+  /* the pill: 48px item + 2 × 4px padding + 2px border, its 12px inset, and a 12px gap */
+  bottom: 82px;
+  display: flex;
+  margin: 0 0 0 auto;
+  border-radius: var(--tao-radius-full);
+  box-shadow: var(--tao-shadow-lg);
+}
+
+.nav-demo__fab--rail,
+.nav-demo__fab--drawer {
+  bottom: 16px;
+}
+
+@container tao-nav (width >= 600px) {
+  .nav-demo__fab--auto {
+    bottom: 16px;
+  }
 }
 
 .nav-demo__page h3 {

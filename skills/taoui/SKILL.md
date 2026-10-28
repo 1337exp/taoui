@@ -69,7 +69,8 @@ choose a text colour, WCAG 2 to promise a number.
   `:cols="{ compact: 3, expanded: 6 }"`, `:col="{ compact: 'full', expanded: 4 }"`, `:order="{ compact: 9 }"`. A plain
   number is one column on compact. `rowHeight` is the exact row height (a mosaic: pictures are cropped).
 - `TaoNav` — app navigation from one list: a bottom bar, a rail or a drawer, `layout="auto"` by its own width; put the page
-  in its default slot and it lays it out. `select(id, event)` + `event.preventDefault()` to route with a router.
+  in its default slot and it lays it out. `floating` makes the bar a detached pill (the FAB is your own button beside
+  it). `select(id, event)` + `event.preventDefault()` to route with a router.
 
 ## Forms
 
