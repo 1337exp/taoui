@@ -4,7 +4,8 @@ export const navGroups = [
     title: { en: 'Basics', ru: 'Основы' },
     items: [
       { id: 'block', label: 'TaoBlock' },
-      { id: 'button', label: 'TaoButton', aliases: ['text', 'tone'] },
+      { id: 'button', label: 'TaoButton', aliases: ['text', 'tone', 'toggle', 'pressed'] },
+      { id: 'toolbar', label: 'TaoToolbar', aliases: ['TaoToolbarGroup', 'TaoToolbarSeparator', 'toolbar', 'панель инструментов'] },
       { id: 'card', label: 'TaoCard' },
       { id: 'copy', label: 'TaoCopy' },
       { id: 'marquee', label: 'TaoMarquee', aliases: ['marquee', 'ticker', 'running line', 'бегущая строка'] },

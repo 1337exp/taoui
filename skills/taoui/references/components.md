@@ -35,6 +35,7 @@ Showcase section: `#button`
 | `minWidth` | `number \| string` | — | Minimum width (number = px); the --tao-button-min-width variable |
 | `icon` | `string` | '' | An icon before the text: a name for TaoIcon (tao-plus, your own or a font one). Without text and slot the button is a square of the control height and needs aria-label |
 | `iconEnd` | `string` | '' | An icon after the text |
+| `v-model:pressed` | `boolean` | — | A toggle button (Bold, a filter): aria-pressed and the tone tint while pressed. Without it the button is an ordinary one |
 
 **Slots, events, notes.** default — the button caption.
 
@@ -892,6 +893,36 @@ Showcase section: `#dropdown`
 | `label` | `string` | — | Accessible name of the menu |
 
 **Slots, events, notes.** Event select — the item id, close(reason) — the menu asks to be closed (escape / select / outside / tab). The panel for your own shells: a button, a context menu, a menu bar.
+
+## TaoToolbar
+
+Showcase section: `#toolbar`
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `label` | `string` | — | Accessible name of the bar: Formatting, Tools |
+| `size` | `'small' \| 'medium' \| 'large'` | inherited | The size of the controls inside |
+| `orientation` | `'horizontal' \| 'vertical'` | 'horizontal' | Which arrows walk it (← → or ↑ ↓); the separators lie across |
+| `variant` | `'panel' \| 'plain'` | 'panel' | panel — a raised bar of its own with concentric corners; plain — only the layout, for a toolbar inside a header |
+
+**Slots, events, notes.** default — any controls: TaoButton (toggles with v-model:pressed), TaoSegmented, a select, TaoToolbarGroup, TaoToolbarSeparator. Keys: the bar is one Tab stop and remembers the last item; ← → (↑ ↓ when vertical) walk it and wrap, Home / End go to the ends, disabled items are skipped. Inside a radio group (TaoSegmented) the arrows pick the option and go on from its edge; a text field keeps its arrows. The items wrap onto a new line on a narrow screen.
+
+## TaoToolbarGroup
+
+Showcase section: `#toolbar`
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `label` | `string` | — | Accessible name of the group: Text style, Alignment |
+| `inset` | `boolean` | false | A sunken pill behind the group: its buttons read as one set |
+
+**Slots, events, notes.** default — the tools of one kind. role="group".
+
+## TaoToolbarSeparator
+
+Showcase section: `#toolbar`
+
+**Slots, events, notes.** A thin line between the groups, across the bar: vertical in a horizontal toolbar. role="separator".
 
 ## TaoMenubar
 

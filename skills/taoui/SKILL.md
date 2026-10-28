@@ -88,6 +88,8 @@ choose a text colour, WCAG 2 to promise a number.
   Items are a data tree `TaoMenuItem[]`: `{ id, label, icon?, shortcut?, disabled?, items? }`,
   `{ type: 'checkbox' | 'radio', checked }`, `{ type: 'label' | 'separator' }`. `@select="id => …"`. `closeOnScroll`.
   With TaoUX, `createCommands().toMenu(layout)` builds this tree and binds the same shortcuts.
+- `TaoToolbar` (one tab stop, arrows walk it) with `TaoToolbarGroup` and `TaoToolbarSeparator`; toggles are
+  `TaoButton v-model:pressed`, a one-of-many choice inside it is `TaoSegmented`.
 - `toast().success().message('Saved')`, `toast().danger().title('Network').timeout(5000).message('…')`,
   `.action('Undo', fn)`. `await confirm().title('Delete?').message('…').danger()` resolves to a boolean.
   Their hosts `TaoToastViewport` / `TaoConfirmHost` mount themselves on the first call; place them yourself only to control
