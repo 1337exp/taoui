@@ -68,7 +68,7 @@
 - **TaoContainer** — max-width (wide / slim / ultra-slim) and centering
 - **TaoFlex** — flexbox wrapper: justify / align / direction / wrap / gap
 - **TaoSpace** — even gap between children
-- **TaoGrid** / **TaoGridItem** — tiles: `min` is a catalog (auto-fill), `cols` is a bento. An adaptive bento takes values per width class of the grid itself (compact < 600px, medium < 840px, expanded): `:cols="{ compact: 3, expanded: 6 }"`, `:col="{ compact: 'full', expanded: 4 }"`, `:order="{ compact: 9 }"` — on a phone the big blocks take the row, small tiles stay three in a row, a side block goes down. A plain number keeps one column on a phone. `rowHeight` for visibly tall tiles. Not masonry
+- **TaoGrid** / **TaoGridItem** — tiles: `min` is a catalog (auto-fill), `cols` is a bento. An adaptive bento takes values per width class of the grid itself (compact < 600px, medium < 840px, expanded): `:cols="{ compact: 3, expanded: 6 }"`, `:col="{ compact: 'full', expanded: 4 }"`, `:order="{ compact: 9 }"` — on a phone the big blocks take the row, small tiles stay three in a row, a side block goes down. A plain number keeps one column on a phone. `rowHeight` fixes the row height, as a mosaic wants. Not masonry
 - **TaoDivider** — `solid` (plain border) / `dashed` / `colored` (accent) / `gap`. Optional `text` sits in the middle of any of them; `fade` softens the line ends; `size` is for `gap` (small / medium / large)
 - **TaoSplit** — two panes and a gutter. `row` / `column` like Flex. `v-model` is the start size in `%` or `px`; `resizable="false"` locks the gutter. Not Divider.
 - **TaoFieldset** — grouped frame: `legend` sits on the top border, `align` is start / center / end

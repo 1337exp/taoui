@@ -67,9 +67,9 @@ describe('TaoGrid', () => {
         expect(itemSource).toContain('@container tao-grid (width >= 840px)');
     });
 
-    it('rowHeight gives the rows a minimum height, so a 2-row tile looks taller', () => {
+    it('rowHeight is the height of every row (a mosaic keeps its proportions); without it the rows follow the content', () => {
         expect(style(mount(TaoGrid, { props: { cols: 4, rowHeight: 80 } }).element)).toContain('--tao-grid-row-height: 80px');
-        expect(gridSource).toContain('grid-auto-rows: minmax(var(--tao-grid-row-height, auto), auto)');
+        expect(gridSource).toContain('grid-auto-rows: var(--tao-grid-row-height, auto)');
     });
 });
 

@@ -58,3 +58,17 @@ describe('the panel contract', () => {
         }
     });
 });
+
+describe('media-only card', () => {
+    it('the class the template sets is the one the stylesheet stretches (a picture fills a mosaic tile)', async () => {
+        const { mount } = await import('@vue/test-utils');
+        const { h } = await import('vue');
+        const TaoCard = (await import('../src/components/TaoCard.vue')).default;
+        // @ts-expect-error Vite `?raw` import: the component source as text
+        const source = (await import('../src/components/TaoCard.vue?raw')).default as string;
+        const w = mount(TaoCard, { props: { flush: true }, slots: { media: () => h('img', { src: 'x.png', alt: '' }) } });
+        expect(w.classes()).toContain('tao-card--media-only');
+        expect(source).toMatch(/\.tao-card--media-only \.tao-card__media \{[^}]*flex: 1 1 auto/);
+        expect(source).not.toContain('cover-only');
+    });
+});

@@ -25,8 +25,10 @@ const props = withDefaults(
         /** Number — px, string — any CSS length. / Число — px, строка — любая CSS-длина. */
         gap?: TaoLength;
         /**
-         * The smallest height of a row: a tile that takes 2 rows is then visibly taller. Rows still grow with the content.
-         * Минимальная высота ряда: плитка на 2 ряда тогда заметно выше. Ряды всё равно растут под содержимое.
+         * The height of every row, as a mosaic wants: the grid keeps its proportions and a picture in a tile is cropped,
+         * not stretching the row. Without it the rows follow the content.
+         * Высота каждого ряда, как нужно мозаике: сетка держит пропорции, картинка в плитке обрезается, а не растягивает
+         * ряд. Без него ряды идут по содержимому.
          */
         rowHeight?: TaoLength;
     }>(),
@@ -71,7 +73,7 @@ const gridStyle = computed(() => ({
 .tao-grid__cells {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--tao-grid-min, 220px)), 1fr));
-    grid-auto-rows: minmax(var(--tao-grid-row-height, auto), auto);
+    grid-auto-rows: var(--tao-grid-row-height, auto);
     gap: var(--tao-grid-gap, var(--tao-space-4));
 }
 

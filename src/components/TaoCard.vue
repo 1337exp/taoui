@@ -194,7 +194,7 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
     overflow: hidden;
 }
 
-.tao-card--cover-only .tao-card__media {
+.tao-card--media-only .tao-card__media {
     flex: 1 1 auto;
     min-height: 0;
 }

@@ -662,7 +662,7 @@ export const propTablesEn = {
         r('min', 'string', "'220px'", 'The minimum tile width (auto-fill). A catalogue. Ignored with cols'),
         r('cols', 'number | { compact, medium, expanded }', '0', 'Fixed columns (bento). A number: one column on compact, the number from medium on. An object: per width class of the grid itself (compact < 600px, medium < 840px, expanded), a missing class takes the smaller one. 0 — the min mode'),
         r('gap', 'number | string', 'token space-4', 'The gap between cells. A number is px, a string is CSS'),
-        r('rowHeight', 'number | string', '—', 'The smallest row height, so a tile on 2 rows is visibly taller; rows still grow with the content'),
+        r('rowHeight', 'number | string', '—', 'The height of every row, as a mosaic wants: the grid keeps its proportions, a picture in a tile is cropped. Without it the rows follow the content'),
       ],
       slots: 'default — cards or TaoGridItem. Not masonry: the row follows the tallest. The width classes follow the width of the grid, not of the window (inside a TaoSplit pane too).',
     },

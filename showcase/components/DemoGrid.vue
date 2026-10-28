@@ -192,7 +192,8 @@ const bentoWidth = ref('100%')
         </p>
       </template>
     </Tr>
-    <TaoGrid class="mosaic" :cols="4" gap="12px">
+    <!-- rows of 130px; the bottom blocks take two of them (130 + 12 + 130), the big A three -->
+    <TaoGrid class="mosaic" :cols="4" gap="12px" :row-height="130">
       <TaoGridItem :col="2" :row="3">
         <TaoCard flush :radius="6">
           <template #media>
@@ -254,7 +255,7 @@ const bentoWidth = ref('100%')
           </template>
         </TaoCard>
       </TaoGridItem>
-      <TaoGridItem :col="2">
+      <TaoGridItem :col="2" :row="2">
         <TaoCard flush :radius="6">
           <div class="mosaic-fill mosaic-stigma">
             <span>Osaka</span>
@@ -262,7 +263,7 @@ const bentoWidth = ref('100%')
           </div>
         </TaoCard>
       </TaoGridItem>
-      <TaoGridItem :col="2">
+      <TaoGridItem :col="2" :row="2">
         <TaoCard flush :radius="6">
           <div class="mosaic-fill mosaic-fill--champagne">
             <span>Spotify</span>
@@ -304,18 +305,6 @@ const bentoWidth = ref('100%')
 
 :deep(.tao-card__footer) {
   font-weight: 600;
-}
-
-.mosaic {
-  grid-auto-rows: unset;
-  grid-template-rows: 130px 130px 130px 270px;
-}
-
-@media (max-width: 700px) {
-  .mosaic {
-    grid-template-rows: none;
-    grid-auto-rows: minmax(140px, auto);
-  }
 }
 
 .mosaic-caption {
