@@ -92,7 +92,9 @@ const cards = computed(() => [
 .marquee-demo__line {
   max-width: 420px;
   margin-bottom: 16px;
-  padding: 10px 14px;
+  /* the left fade takes `fade` (22px) to the left of the text: the box gives it that much room
+     левое затухание занимает `fade` (22px) слева от текста: рамка даёт ему столько места */
+  padding: 10px 22px;
   border: 1px solid var(--tao-color-border);
   border-radius: var(--tao-radius-panel);
   background: var(--tao-color-surface);

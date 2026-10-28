@@ -22,8 +22,10 @@ const props = withDefaults(
         gap?: number;
         /**
          * The width of the fading edges, px. The left fade lives in a padding outside the text, so at rest the line
-         * starts where it would without the marquee.
-         * Ширина гаснущих краёв. Левое затухание лежит в отступе за пределами текста: в покое строка стоит на своём месте.
+         * starts where it would without the marquee; the parent needs that much room on the left (its padding), or the
+         * running text shows past its edge. 0 is no left fade.
+         * Ширина гаснущих краёв. Левое затухание лежит в отступе за пределами текста: в покое строка стоит на своём месте;
+         * родителю нужно столько места слева (его padding), иначе бегущий текст покажется за его краем. 0 — без затухания.
          */
         fade?: number;
         pauseOnHover?: boolean;
