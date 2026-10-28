@@ -42,6 +42,7 @@ import TaoNav from './components/TaoNav.vue';
 import TaoTree from './components/TaoTree.vue';
 import TaoChecklist from './components/TaoChecklist.vue';
 import TaoTimeline from './components/TaoTimeline.vue';
+import TaoMarquee from './components/TaoMarquee.vue';
 import TaoPinCode from './components/TaoPinCode.vue';
 import TaoLink from './components/TaoLink.vue';
 import TaoFormField from './components/TaoFormField.vue';
@@ -125,6 +126,7 @@ const components = [
     TaoTree,
     TaoChecklist,
     TaoTimeline,
+    TaoMarquee,
     TaoContextMenu,
     TaoPinCode,
     TaoLink,
@@ -225,6 +227,7 @@ export {
     TaoTree,
     TaoChecklist,
     TaoTimeline,
+    TaoMarquee,
     TaoContextMenu,
     TaoPinCode,
     TaoLink,

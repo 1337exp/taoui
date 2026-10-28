@@ -52,6 +52,7 @@
 - **TaoButton** — `variant`: `primary` / `secondary` / `ghost` / `text`; `tone` colours any of them (accent by default, neutral, success, danger, warning, info)
 - **TaoCard** — card with media / header / title / footer slots and a `#corner` (a tag, a menu button). `#media` can be a photo or `TaoCarousel`; `closable` adds a cross and the `close` event. `flush` is a tile (no padding/shadow, fills the cell); `#overlay` is a scrim on the media; `stripe="top | left | bottom"` with `stripeTone` (a tone or the palette `gradient`) draws a coloured stripe the corners clip
 - **TaoCopy** — clipboard icon. After a click, a “Copied” tooltip; if the trigger is gone, the tooltip is too
+- **TaoMarquee** — one line that never wraps: when it does not fit it runs round with fading edges and a pause at the start of every round, when it fits it stands still. Stops on hover, on focus and on a tap (WCAG 2.2.2); wraps with «reduce motion»; a screen reader reads it once. `text` or inline content in the slot, `speed`, `gap`, `fade`, `paused`
 - **TaoInput** — text field with v-model, validation, and `#prefix` / `#suffix` slots (icon or text inside the frame)
 - **TaoInputGroup** — outer glue: `#before` | field | `#after` (protocol, unit, button)
 - **TaoModal** — modal with animation and slots
