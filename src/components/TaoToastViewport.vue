@@ -73,6 +73,16 @@ function enterName(position: TaoToastPosition) {
     overflow: hidden;
 }
 
+/* The centred viewports span the whole width, so a 100%-wide stack leaves nothing to centre and the toast sticks to
+   the left edge: the stack shrinks to its widest toast and `justify-content: center` does the rest.
+   Центрированные контейнеры растянуты на всю ширину, и стопка в 100% оставляла бы тосту прижаться к левому краю:
+   стопка сжимается до самого широкого тоста, а центрирует `justify-content: center`. */
+.tao-toast-viewport--topCenter .tao-toast-viewport__stack,
+.tao-toast-viewport--bottomCenter .tao-toast-viewport__stack,
+.tao-toast-viewport--center .tao-toast-viewport__stack {
+    width: auto;
+}
+
 .tao-toast-viewport--topRight {
     top: 0;
     right: 0;

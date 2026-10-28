@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.4.2
+
+- **Fixed: a toast in a centred position stuck to the left edge.** `topCenter` (the default), `bottomCenter` and `center` span the whole width, and the stack inside was `width: 100%`, so there was nothing to centre. The stack now shrinks to its widest toast in those three positions and `justify-content: center` centres it. Corner positions are unchanged. Nothing to migrate.
+
 ## 5.4.1
 
 - **Fixed: a striped `TaoCard` / `TaoBlock` painted over a sticky `TaoNav` bar.** The stripe layer (`::after`) and the Card `#corner` use `z-index: 1`, but a panel did not form a stacking context, so they joined the page's layer and tied with the bar (`z-index: 1`, earlier in the DOM): the coloured stripe ran across the bottom bar while a card scrolled under it. `.tao-panel` is now `isolation: isolate`. Nothing to migrate.
