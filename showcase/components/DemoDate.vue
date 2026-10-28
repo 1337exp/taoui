@@ -10,6 +10,7 @@ defineOptions({ name: 'DemoDate' })
 
 const deliveryDate = ref('2026-09-02')
 const emptyDate = ref(null)
+const typedDate = ref('2026-09-02')
 const errorDate = ref(null)
 const stayRange = ref({ start: '2026-09-02', end: '2026-09-10' })
 const emptyRange = ref(null)
@@ -45,6 +46,13 @@ function rangeModelHint(value) {
     
             <TaoFormField :label="tr('Empty field', 'Пустое поле')" :hint="tr('Clear is at the bottom of the calendar', 'Очистить — внизу календаря')">
               <TaoDate v-model="emptyDate" :placeholder="tr('Pick a day', 'Выберите день')" />
+            </TaoFormField>
+
+            <TaoFormField
+              :label="tr('Typed: editable', 'С клавиатуры: editable')"
+              :hint="tr('Type 5, 3/5 or 3/5/26 (month first in English), then Enter. In the model: ', 'Наберите 5, 5.3 или 05.03.26 и Enter. В модели: ') + (typedDate || 'null')"
+            >
+              <TaoDate v-model="typedDate" editable :placeholder="tr('mm/dd/yyyy', 'дд.мм.гггг')" />
             </TaoFormField>
           </div>
     

@@ -1,6 +1,15 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref } from 'vue';
-import { formatTaoDateIso, formatTaoDateLabel, parseTaoDate } from '../date';
+import { computed, nextTick, ref, watch } from 'vue';
+import {
+    formatTaoDateIso,
+    formatTaoDateLabel,
+    formatTaoDateShort,
+    isTaoDateInRange,
+    parseTaoDate,
+    parseTaoDateInput,
+    todayTaoDate,
+} from '../date';
+import { localeEn } from '../locale/en';
 import { useDismiss } from '../dismiss';
 import { useFloating } from '../floating';
 import { useField } from '../formField';
@@ -30,6 +39,20 @@ const props = withDefaults(
         clearText?: string;
         prevMonthLabel?: string;
         nextMonthLabel?: string;
+        /**
+         * A text field you can type into: `5`, `5.3`, `05.03.26`, in the locale's order of day and month; the calendar
+         * opens from the button next to it or with ↓. Enter or leaving the field applies the text; one that is not a date
+         * or is outside min / max puts the value back; Esc drops the typing.
+         * Текстовое поле, в которое можно набрать дату: `5`, `5.3`, `05.03.26`, в порядке дня и месяца языка; календарь
+         * открывается кнопкой рядом или ↓. Enter или уход из поля применяют текст; не дата или дата вне min / max
+         * возвращает значение; Esc отменяет набор.
+         */
+        editable?: boolean;
+        /** Your own reading of the typed text → ISO or null. / Своё чтение набранного текста → ISO или null. */
+        parse?: (text: string, context: { locale: string; reference: string }) => string | null;
+        /** Your own text of a value in the field. / Свой текст значения в поле. */
+        format?: (iso: string, locale: string) => string;
+        calendarLabel?: string;
     }>(),
     {
         modelValue: null,
@@ -37,6 +60,9 @@ const props = withDefaults(
         error: false,
         min: undefined,
         max: undefined,
+        editable: false,
+        parse: undefined,
+        format: undefined,
     },
 );
 const l10n = useLocaleText(props, 'date');
@@ -52,6 +78,10 @@ const gridId = `${localId}-grid`;
 
 const open = ref(false);
 const triggerRef = ref<HTMLButtonElement | null>(null);
+// what the panel hangs from: the button, or the whole field when it is editable / от чего висит панель
+const fieldRef = ref<HTMLElement | null>(null);
+const inputRef = ref<HTMLInputElement | null>(null);
+const anchorRef = computed(() => (props.editable ? fieldRef.value : triggerRef.value));
 const panelRef = ref<HTMLElement | null>(null);
 const calendarRef = ref<InstanceType<typeof TaoCalendar> | null>(null);
 
@@ -61,14 +91,80 @@ const valueIso = computed(() => {
 });
 const displayLabel = computed(() => (valueIso.value ? formatTaoDateLabel(valueIso.value, dateLocale.value) : ''));
 
-const { style: panelStyle, update: updatePosition } = useFloating(triggerRef, panelRef, open, { placement: 'bottom-start' });
-useDismiss(open, () => [triggerRef.value, panelRef.value], close);
+const { style: panelStyle, update: updatePosition } = useFloating(anchorRef, panelRef, open, { placement: 'bottom-start' });
+useDismiss(open, () => [anchorRef.value, panelRef.value], close);
 useLayer(open, {
     onEscape: () => {
         close();
-        triggerRef.value?.focus();
+        focusBack();
     },
 });
+
+function focusBack() {
+    (props.editable ? inputRef.value : triggerRef.value)?.focus();
+}
+
+//---]>
+// the editable field / редактируемое поле
+
+function shortText(iso: string | null): string {
+    if (!iso) return '';
+    return props.format ? props.format(iso, dateLocale.value) : formatTaoDateShort(iso, dateLocale.value);
+}
+
+const text = ref(shortText(valueIso.value));
+// the value or the locale changed from outside: the field shows it, unless the user is typing
+// значение или язык поменялись снаружи: поле их показывает, если пользователь не набирает
+let typing = false;
+watch([valueIso, dateLocale], () => {
+    if (!typing) text.value = shortText(valueIso.value);
+});
+
+function emitValue(next: string | null) {
+    if (next === valueIso.value) return;
+    emit('update:modelValue', next);
+    emit('change', next);
+}
+
+function commitText() {
+    typing = false;
+    const raw = text.value.trim();
+    if (!raw) {
+        emitValue(null);
+        text.value = '';
+        return;
+    }
+    const context = { locale: dateLocale.value, reference: valueIso.value ?? todayTaoDate() };
+    const parsed = props.parse ? props.parse(raw, context) : parseTaoDateInput(raw, context);
+    if (parsed && isTaoDateInRange(parsed, props.min, props.max)) {
+        emitValue(parsed);
+        text.value = shortText(parsed);
+    } else {
+        // not a date, or out of range: the value stays / не дата или вне диапазона: значение остаётся
+        text.value = shortText(valueIso.value);
+    }
+}
+
+function onInput(event: Event) {
+    typing = true;
+    text.value = (event.target as HTMLInputElement).value;
+}
+
+function onInputKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+        // applied before a form around it submits / применяем раньше, чем форма вокруг отправится
+        commitText();
+    } else if (event.key === 'Escape' && typing) {
+        // Esc drops the typing first; the next one goes to the layer above / сначала Esc отменяет набор
+        event.stopPropagation();
+        typing = false;
+        text.value = shortText(valueIso.value);
+    } else if (event.key === 'ArrowDown' && !event.shiftKey) {
+        event.preventDefault();
+        commitText();
+        void setOpen(true);
+    }
+}
 
 async function setOpen(next: boolean) {
     if (props.disabled) {
@@ -95,10 +191,16 @@ function close() {
 
 function onChange(value: unknown) {
     const next = (value as string | null) ?? null;
-    emit('update:modelValue', next);
-    emit('change', next);
+    if (props.editable) {
+        typing = false;
+        emitValue(next);
+        text.value = shortText(next);
+    } else {
+        emit('update:modelValue', next);
+        emit('change', next);
+    }
     close();
-    triggerRef.value?.focus();
+    focusBack();
 }
 
 function onTriggerKeydown(event: KeyboardEvent) {
@@ -114,8 +216,41 @@ function onTriggerKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-    <div class="tao-date" :class="[sizeClass(size), { 'tao-date--open': open, 'tao-date--invalid': invalid }]">
+    <div class="tao-date" :class="[sizeClass(size), { 'tao-date--open': open, 'tao-date--invalid': invalid, 'tao-date--editable': editable }]">
+        <div v-if="editable" ref="fieldRef" class="tao-date__field" :class="{ 'tao-date__field--disabled': disabled }">
+            <input
+                :id="controlId"
+                ref="inputRef"
+                class="tao-date__input"
+                type="text"
+                inputmode="decimal"
+                autocomplete="off"
+                :value="text"
+                :placeholder="l10n.placeholder"
+                :disabled="disabled"
+                :aria-invalid="invalid || undefined"
+                :aria-describedby="describedBy"
+                @input="onInput"
+                @keydown="onInputKeydown"
+                @blur="commitText"
+            />
+            <button
+                type="button"
+                class="tao-date__toggle"
+                :aria-label="l10n.calendarLabel ?? localeEn.date.calendarLabel"
+                aria-haspopup="dialog"
+                :aria-expanded="open"
+                :aria-controls="gridId"
+                :disabled="disabled"
+                @click="toggle"
+            >
+                <slot name="icon">
+                    <TaoIcon name="tao-calendar" :size="16" />
+                </slot>
+            </button>
+        </div>
         <button
+            v-else
             :id="controlId"
             ref="triggerRef"
             type="button"
@@ -225,6 +360,82 @@ function onTriggerKeydown(event: KeyboardEvent) {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.tao-date__field {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: var(--tao-control-height);
+    border: 1px solid var(--tao-color-border-strong);
+    border-radius: var(--tao-radius-control);
+    background: var(--tao-color-input-bg);
+    transition: var(--tao-transition-base);
+}
+
+.tao-date__field:focus-within {
+    border-color: var(--tao-color-accent);
+    box-shadow: 0 0 0 2px var(--tao-color-accent-subtle-hover);
+}
+
+.tao-date--invalid .tao-date__field {
+    border-color: var(--tao-color-danger);
+}
+
+.tao-date__field--disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.tao-date__input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    padding: 0 0 0 var(--tao-control-padding-x);
+    border: 0;
+    background: transparent;
+    color: var(--tao-color-input-text);
+    font-size: var(--tao-control-font-size);
+    font-family: inherit;
+    font-variant-numeric: tabular-nums;
+    outline: none;
+}
+
+.tao-date__input::placeholder {
+    color: var(--tao-color-input-placeholder);
+}
+
+.tao-date__input:disabled {
+    cursor: not-allowed;
+}
+
+.tao-date__toggle {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0 var(--tao-control-padding-x);
+    border: 0;
+    border-radius: 0 var(--tao-radius-control) var(--tao-radius-control) 0;
+    background: transparent;
+    color: var(--tao-color-input-text);
+    opacity: 0.7;
+    cursor: pointer;
+}
+
+.tao-date__toggle:hover:not(:disabled) {
+    opacity: 1;
+}
+
+.tao-date__toggle:focus-visible {
+    outline: 2px solid var(--tao-color-accent);
+    outline-offset: -2px;
+    opacity: 1;
+}
+
+.tao-date__toggle:disabled {
+    cursor: not-allowed;
 }
 
 .tao-date__icon {

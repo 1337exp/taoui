@@ -308,6 +308,9 @@ export {
     todayTaoDate,
     formatTaoDateLabel,
     formatTaoDateRangeLabel,
+    formatTaoDateShort,
+    parseTaoDateInput,
+    taoDateOrder,
 } from './date';
 export { localeRu, localeEn, setTaoLocale, taoLocale, provideTaoLocale } from './locale';
 export type { TaoLocale, TaoLocaleOverrides } from './locale';
@@ -326,7 +329,7 @@ export type { TaoJustify } from './layout';
 export type { TaoSelectOption } from './select';
 export type { TaoPlacement } from './floating';
 export type { TaoTabItem } from './tabs';
-export type { TaoDateCell, TaoDateParts, TaoDateRangeValue } from './date';
+export type { TaoDateCell, TaoDateField, TaoDateInputOptions, TaoDateParts, TaoDateRangeValue } from './date';
 export type { TaoRadioValue } from './radio';
 export type { TaoSpoilerName } from './spoiler';
 export type { TaoFormFieldContext } from './formField';

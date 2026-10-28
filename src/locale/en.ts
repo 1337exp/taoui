@@ -40,6 +40,7 @@ export const localeEn: TaoLocale = {
         clearText: 'Clear',
         prevMonthLabel: 'Previous month',
         nextMonthLabel: 'Next month',
+        calendarLabel: 'Choose a date',
     },
     dateRange: {
         placeholder: 'Period',

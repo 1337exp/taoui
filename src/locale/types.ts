@@ -40,7 +40,19 @@ export interface TaoLocale {
     };
     confirm: { ok: string; cancel: string };
     copy: { copyLabel: string; successText: string };
-    date: { placeholder: string; todayText: string; clearText: string; prevMonthLabel: string; nextMonthLabel: string };
+    date: {
+        placeholder: string;
+        todayText: string;
+        clearText: string;
+        prevMonthLabel: string;
+        nextMonthLabel: string;
+        /**
+         * The calendar button of an `editable` TaoDate (5.6). Optional, so a locale written before it still type-checks;
+         * without it the English text is used.
+         * Кнопка календаря у `editable` TaoDate (5.6). Необязательна, чтобы локаль, написанная раньше, проходила типы.
+         */
+        calendarLabel?: string;
+    };
     dateRange: {
         placeholder: string;
         todayText: string;
