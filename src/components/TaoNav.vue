@@ -522,6 +522,9 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     width: var(--_action-width);
     aspect-ratio: var(--_action-ratio);
     padding-inline: calc((1 - var(--_compact)) * var(--tao-button-padding-x));
+    /* the hidden label still leaves its empty wrapper in the button's row: no gap before it, or the icon slides off
+       the centre / скрытая подпись оставляет в ряду кнопки пустую обёртку: без зазора, иначе иконка съезжает с центра */
+    gap: calc((1 - var(--_compact)) * var(--tao-space-2));
     overflow: hidden;
     border-radius: var(--tao-radius-full);
     box-shadow: var(--_action-shadow);

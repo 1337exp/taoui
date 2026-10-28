@@ -226,3 +226,9 @@ describe('TaoNav #action', () => {
         expect(html).toContain('tao-nav__action-label');
     });
 });
+
+describe('TaoNav action, round', () => {
+    it('no gap before the hidden label, so the icon stays centred', () => {
+        expect(navSource).toMatch(/\.tao-nav__action > :deep\(\*\) \{[^}]*gap: calc\(\(1 - var\(--_compact\)\) \* var\(--tao-space-2\)\)/);
+    });
+});
