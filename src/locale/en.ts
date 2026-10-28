@@ -3,6 +3,7 @@ import type { TaoLocale } from './types';
 export const localeEn: TaoLocale = {
     code: 'en-US',
     alert: { closeLabel: 'Close', detailsLabel: 'Details' },
+    pinCode: { successText: 'The code is correct', errorText: 'Wrong code' },
     avatar: {
         fallbackLabel: 'Avatar',
         notificationsLabel: '{count} notifications',

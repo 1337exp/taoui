@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { useField } from '../formField';
+import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import { parsePinFormat, pinFromPaste, separatorAfter } from '../pinFormat';
 
@@ -30,6 +31,15 @@ const props = withDefaults(
         /** `focus` — клик сбрасывает ячейку и все справа (неверный код, набор заново).
          *  `input` — цифра остаётся, пока не введут новую. */
         clearOn?: 'focus' | 'input';
+        /**
+         * The result of the check, set by the app: `error` shakes the cells and paints them red, `success` runs a soft
+         * glow over them and paints them green; a screen reader hears it too. Set `idle` again when the user edits.
+         * Результат проверки, его ставит приложение: `error` встряхивает ячейки и красит красным, `success` проводит по
+         * ним мягкое свечение и красит зелёным; скринридер тоже слышит. Верните `idle`, когда пользователь правит код.
+         */
+        status?: 'idle' | 'success' | 'error';
+        successText?: string;
+        errorText?: string;
     }>(),
     {
         masked: false,
@@ -39,8 +49,12 @@ const props = withDefaults(
         modelValue: '',
         numbersOnly: false,
         clearOn: 'focus',
+        status: 'idle',
+        successText: undefined,
+        errorText: undefined,
     },
 );
+const l10n = useLocaleText(props, 'pinCode');
 
 const emit = defineEmits<{
     'update:modelValue': [value: string];
@@ -50,7 +64,34 @@ const emit = defineEmits<{
     blur: [];
 }>();
 
-const { field, controlId, invalid, describedBy } = useField(props);
+const { field, controlId, invalid: fieldInvalid, describedBy } = useField(props);
+const invalid = computed(() => fieldInvalid.value || props.status === 'error');
+
+// The animation runs on every change of the status (and on play()): the class goes off for a frame and on again.
+// Анимация на каждую смену статуса (и на play()): класс снимается на кадр и ставится снова.
+const playing = ref<'success' | 'error' | null>(null);
+
+function play() {
+    if (props.status === 'idle') {
+        return;
+    }
+    playing.value = null;
+    void nextTick(() => {
+        requestAnimationFrame(() => {
+            playing.value = props.status === 'idle' ? null : props.status;
+        });
+    });
+}
+
+watch(
+    () => props.status,
+    (status) => (status === 'idle' ? (playing.value = null) : play()),
+);
+
+defineExpose({
+    /** Plays the status animation again (a second wrong code). / Проигрывает анимацию статуса ещё раз. */
+    play,
+});
 const isMasked = computed(() => props.masked);
 
 const layout = computed(() => (props.format === undefined ? null : parsePinFormat(props.format)));
@@ -255,7 +296,15 @@ watch(
 <template>
     <div
         class="tao-pin-code"
-        :class="[sizeClass(size), { 'tao-pin-code--disabled': disabled }]"
+        :class="[
+            sizeClass(size),
+            {
+                'tao-pin-code--disabled': disabled,
+                'tao-pin-code--success': status === 'success',
+                'tao-pin-code--shake': playing === 'error',
+                'tao-pin-code--glow': playing === 'success',
+            },
+        ]"
         role="group"
         :aria-invalid="invalid || undefined"
         :aria-describedby="describedBy"
@@ -270,6 +319,7 @@ watch(
                     'tao-pin-code__value--active': activeNumber === index,
                     'tao-pin-code__value--invalid': invalid,
                 }"
+                :style="{ '--_i': index }"
                 :value="num"
                 :placeholder="placeholder"
                 :type="isMasked ? 'password' : 'text'"
@@ -287,6 +337,8 @@ watch(
             />
         </template>
         <span v-if="layout?.after" class="tao-pin-code__separator" aria-hidden="true">{{ layout.after }}</span>
+        <!-- the result in words, not only in colour / результат словами, а не только цветом -->
+        <span class="tao-sr-only" role="status">{{ status === 'success' ? l10n.successText : status === 'error' ? l10n.errorText : '' }}</span>
     </div>
 </template>
 
@@ -332,6 +384,61 @@ watch(
 
 .tao-pin-code__value--invalid {
     border-color: var(--tao-color-danger);
+}
+
+.tao-pin-code--success .tao-pin-code__value {
+    border-color: var(--tao-color-success);
+    color: var(--tao-color-success-text);
+}
+
+/* error: the whole group shakes once / ошибка: вся группа вздрагивает один раз */
+.tao-pin-code--shake {
+    animation: tao-pin-shake 420ms var(--tao-ease-base);
+}
+
+@keyframes tao-pin-shake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    20% {
+        transform: translateX(-7px);
+    }
+    40% {
+        transform: translateX(6px);
+    }
+    60% {
+        transform: translateX(-4px);
+    }
+    80% {
+        transform: translateX(2px);
+    }
+}
+
+/* success: a soft glow runs over the cells from the left / успех: мягкое свечение бежит по ячейкам слева */
+.tao-pin-code--glow .tao-pin-code__value {
+    animation: tao-pin-glow 700ms var(--tao-ease-base) calc(var(--_i) * 60ms) both;
+}
+
+@keyframes tao-pin-glow {
+    0% {
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--tao-color-success) 55%, transparent);
+        transform: scale(1);
+    }
+    35% {
+        transform: scale(1.06);
+    }
+    100% {
+        box-shadow: 0 0 0 10px color-mix(in srgb, var(--tao-color-success) 0%, transparent);
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tao-pin-code--shake,
+    .tao-pin-code--glow .tao-pin-code__value {
+        animation: none;
+    }
 }
 
 .tao-pin-code--disabled {

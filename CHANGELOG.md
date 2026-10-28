@@ -29,6 +29,7 @@ In numbers: the tarball is 329 KB (560 KB before the ESM-only build), 451 tests 
 
 ### Components
 
+- **`TaoPinCode` `status`** (`idle | success | error`), set by the app after `complete`: `error` shakes the group once and paints the cells red (`aria-invalid`), `success` runs a soft glow over the cells from the left and paints them green; a hidden `role="status"` says it in words (`successText` / `errorText`). `play()` repeats the animation for a second wrong code; no motion with `prefers-reduced-motion`.
 - **`TaoAlert` `collapsible`** with `v-model:collapsed`: the title becomes the disclosure button (`aria-expanded`, `aria-controls`), the tone stays; the folded body keeps its text in the DOM with `hidden="until-found"`, so find-in-page and links to text open the alert (`beforematch`). Without a title the toggle says «Details» (`detailsLabel`). The message is a `<div>` now (it was a `<p>`), so it can hold lists and blocks.
 - **`stripe` on `TaoCard` and `TaoBlock`**: a coloured stripe on one side (`top | left | bottom`), `stripeTone` = a tone (accent by default) or `gradient` from the palette, so it follows the theme. It is a layer with the panel's own radius: the corners clip it, over a picture in `#media` too and with `overflow`. Token `--tao-stripe-width` (4px); the classes `.tao-stripe-*` work on any `.tao-panel`.
 - **A checked box shows a tick** (TaoCheckbox, TaoChecklist, TaoTree): the square inside an accent box read as an empty frame at a glance. The shape is in percentages of the box, the same in every size; a mixed box is still a dash.
