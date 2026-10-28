@@ -4,6 +4,7 @@ import type { TaoLocale } from './types';
 export const localeRu: TaoLocale = {
     code: 'ru-RU',
     alert: { closeLabel: 'Закрыть', detailsLabel: 'Подробнее' },
+    pinCode: { successText: 'Код верный', errorText: 'Неверный код' },
     avatar: {
         fallbackLabel: 'Аватар',
         notificationsLabel: '{count} уведомлений',

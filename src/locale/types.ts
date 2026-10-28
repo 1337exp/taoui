@@ -11,6 +11,8 @@ export interface TaoLocale {
     /** BCP 47 tag for dates (Intl), e.g. `ru-RU`, `en-US`. / Тег языка для дат. */
     code: string;
     alert: { closeLabel: string; detailsLabel: string };
+    /** What a screen reader hears when the status of TaoPinCode changes. / Что слышит скринридер при смене статуса. */
+    pinCode: { successText: string; errorText: string };
     avatar: {
         fallbackLabel: string;
         /** `{count}` — the number in the badge. / число в бейдже. */

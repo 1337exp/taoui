@@ -15,6 +15,17 @@ const pinFormatted = ref('')
 const pinPhone = ref('')
 const pinCompleteNote = ref('')
 
+// the check is the app's: here 1234 is right, anything else is wrong; editing the code clears the status
+const pinChecked = ref('')
+const pinStatus = ref('idle')
+function checkPin(value) {
+  pinStatus.value = value === '1234' ? 'success' : 'error'
+}
+function editPin(value) {
+  pinChecked.value = value
+  pinStatus.value = 'idle'
+}
+
 function onPinComplete(value) {
   pinCompleteNote.value = tr('Done: ', 'Готово: ') + value
 }
@@ -40,6 +51,12 @@ function onPinComplete(value) {
             </template>
           </Tr>
     
+          <h3>{{ tr('Status: the check result', 'Статус: результат проверки') }}</h3>
+          <p style="margin: 0 0 8px; font-size: 13px; color: var(--tao-color-text-muted);">
+            {{ tr('Type 1234 — success, anything else — error. The app checks on complete and sets status; editing returns idle.', 'Наберите 1234 — успех, другое — ошибка. Приложение проверяет по complete и ставит status; правка возвращает idle.') }}
+          </p>
+          <TaoPinCode :model-value="pinChecked" :length="4" numbers-only :status="pinStatus" @update:model-value="editPin" @complete="checkPin" />
+
           <h3>{{ tr('Clear on focus', 'Стереть при фокусе') }}</h3>
           <TaoPinCode v-model="pinValue" :length="4" @complete="onPinComplete" />
           <p style="margin-top: 8px; font-size: 13px;">{{ tr('Value', 'Значение') }}: {{ pinValue }}</p>
