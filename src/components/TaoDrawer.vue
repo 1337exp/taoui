@@ -196,6 +196,15 @@ watch(
 }
 
 .tao-drawer__close {
+    /* the icon is an inline SVG: as a plain block the button was as tall as a text line (24px icon + the gap under the
+       baseline = 28px), so the focus ring came out as a rectangle; a flex box of exactly the icon's size is square
+       иконка — инлайн-SVG: простым блоком кнопка была высотой в строку текста (24px + зазор под базовой линией = 28px),
+       и кольцо фокуса выходило прямоугольным; flex-бокс ровно по размеру иконки квадратный */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
     background: none;
     border: none;
     padding: 0;

@@ -182,6 +182,13 @@ watch(
 }
 
 .tao-modal__close {
+    /* an inline SVG icon: a flex box of exactly its size keeps the button, and so the focus ring, square
+       инлайн-SVG: flex-бокс ровно по его размеру оставляет кнопку, а значит и кольцо фокуса, квадратной */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
     background: none;
     border: none;
     font-size: 24px;

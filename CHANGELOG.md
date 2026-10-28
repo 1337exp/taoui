@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.6.1
+
+- **Fixed: the cross of TaoDrawer, TaoModal and TaoAlert was 24 x 28 px, so its focus ring was a rectangle.** The cross is an inline SVG icon (since 5.0), but the button was still sized as a text glyph: a block that is a text line tall, with the gap under the baseline below a 24px icon. The button is a flex box of exactly the icon's size (`1em x 1em`) now, and the ring is square. Nothing to migrate.
+
 ## 5.6.0
 
 Typing a date, as Next Up's old app did; nothing to migrate.

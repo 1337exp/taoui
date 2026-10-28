@@ -262,6 +262,13 @@ const isUrgent = computed(() => props.tone === 'danger' || props.tone === 'warni
 }
 
 .tao-alert__close {
+    /* an inline SVG icon: a flex box of exactly its size keeps the button square
+       инлайн-SVG: flex-бокс ровно по его размеру оставляет кнопку квадратной */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1em;
+    height: 1em;
     flex-shrink: 0;
     margin: calc(-1 * var(--tao-space-1)) calc(-1 * var(--tao-space-2)) 0 0;
     padding: 0;
