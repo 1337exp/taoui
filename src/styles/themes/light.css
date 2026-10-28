@@ -52,17 +52,19 @@
     --tao-color-danger-hover: var(--tao-red-600);
     --tao-color-on-danger: #ffffff;
     --tao-color-danger-subtle: color-mix(in srgb, var(--tao-red-500) 10%, transparent);
-    --tao-color-on-success: var(--tao-gray-950);
-    --tao-color-on-warning: var(--tao-gray-950);
-    --tao-color-on-info: var(--tao-gray-950);
-    --tao-color-success: var(--tao-green-500);
-    --tao-color-success-hover: var(--tao-green-600);
+    /* mid-tone fills read better with a white label (APCA), so the fills are the shade where white reaches 4.5:1;
+       hover goes deeper, the label only gains contrast / на средних заливках белая подпись читается лучше */
+    --tao-color-on-success: #ffffff;
+    --tao-color-on-warning: #ffffff;
+    --tao-color-on-info: #ffffff;
+    --tao-color-success: var(--tao-green-700);
+    --tao-color-success-hover: color-mix(in srgb, var(--tao-green-700) 85%, #000000);
     --tao-color-success-subtle: color-mix(in srgb, var(--tao-color-success) 10%, transparent);
-    --tao-color-warning: var(--tao-yellow-600);
-    --tao-color-warning-hover: var(--tao-yellow-500);
+    --tao-color-warning: var(--tao-yellow-700);
+    --tao-color-warning-hover: color-mix(in srgb, var(--tao-yellow-700) 85%, #000000);
     --tao-color-warning-subtle: color-mix(in srgb, var(--tao-color-warning) 12%, transparent);
-    --tao-color-info: var(--tao-blue-500);
-    --tao-color-info-hover: var(--tao-blue-600);
+    --tao-color-info: var(--tao-blue-600);
+    --tao-color-info-hover: var(--tao-blue-700);
     --tao-color-info-subtle: color-mix(in srgb, var(--tao-color-info) 12%, transparent);
 
     --tao-color-danger-text: var(--tao-red-600);
