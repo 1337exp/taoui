@@ -28,7 +28,7 @@ export const shots = [
     name: 'toasts',
     before: async (page, h) => {
       await h.scrollTo(page, '#toast')
-      for (const label of ['success', 'error', 'warning']) {
+      for (const label of ['success', 'danger', 'warning']) {
         await page.locator('#toast .button-row button', { hasText: new RegExp(`^${label}$`) }).first().click()
         await page.waitForTimeout(250)
       }
@@ -104,7 +104,7 @@ export const clips = [
     crop: 'viewport',
     prepare: (page, h) => h.scrollTo(page, '#toast'),
     steps: async (page) => {
-      for (const label of ['success', 'error', 'warning', 'info']) {
+      for (const label of ['success', 'danger', 'warning', 'info']) {
         await page.locator('#toast .button-row button', { hasText: new RegExp(`^${label}$`) }).first().click()
         await page.waitForTimeout(700)
       }
