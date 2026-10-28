@@ -61,6 +61,8 @@ npm run smoke                      # the packed tarball in a fresh Vite app
 - **Floating panels** go through `src/floating.ts` (`useFloating`: absolute in document coordinates, writes the position
   to the element at once), `src/dismiss.ts`, `src/layers.ts`; focus a panel with `{ preventScroll: true }`.
 - **Generated palettes stay LF** (`.gitattributes`); the pin test compares content, not line endings.
+- **A script a test imports has no shebang** (`scripts/generate-skill.mjs`): git checks files out with CRLF on Windows,
+  and Vitest fails on a `#!` line ending in `` with a SyntaxError that points at the wrong line.
 
 ## Checking in a browser
 

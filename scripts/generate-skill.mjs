@@ -1,8 +1,9 @@
-#!/usr/bin/env node
 /**
  * Writes skills/taoui/references/components.md from the English prop tables of the showcase (showcase/propTables.en.js),
  * so the skill an AI assistant reads never drifts from the components: the tables are tested against the code.
  * tests/skill.test.ts fails when the file is not what this script writes (run `npm run skill`).
+ * No shebang on purpose: the test imports this file, and Vitest cannot parse a `#!` line once git checks the file
+ * out with CRLF. Run it with `node` (`npm run skill`).
  *
  * Пишет справочник компонентов для skill из английских таблиц пропсов шоукейса: шпаргалка не расходится с кодом.
  * tests/skill.test.ts падает, если файл не совпадает с тем, что пишет скрипт (`npm run skill`).
