@@ -70,7 +70,9 @@
 .tao-tone-neutral {
     --tao-tone: var(--tao-color-text-muted);
     --tao-tone-hover: var(--tao-color-text);
-    --tao-tone-on: var(--tao-color-bg);
+    /* white on the mid grey in both themes (5.7:1); the page colour was dark on dark in the dark theme (3.4:1)
+       белое на среднем сером в обеих темах; цвет страницы в тёмной теме давал тёмное на тёмном */
+    --tao-tone-on: var(--tao-color-on-neutral);
     --tao-tone-text: var(--tao-color-text-strong);
     --tao-tone-text-hover: var(--tao-color-text-strong);
     --tao-tone-subtle: color-mix(in srgb, var(--tao-color-text-muted) 15%, transparent);

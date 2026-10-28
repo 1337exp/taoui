@@ -24,6 +24,9 @@
     --tao-orange-400: #ffb40b;
     --tao-orange-500: #ff9500;
     --tao-orange-600: #db8000;
+    /* the dark theme's warning: an orange clearly apart from the amber accent / warning тёмной темы: апельсиновый, отличный от янтарного акцента */
+    --tao-tangerine-400: #ff8f3d;
+    --tao-tangerine-500: #f07a2a;
 
     /* Rose: the light theme's brand colour (from the original 666.io palette) */
     --tao-pink-400: #dc4679;
@@ -46,6 +49,7 @@
     --tao-yellow-600: #b8860b;
     --tao-yellow-700: #8a6508;
 
+    --tao-blue-300: #82adff;
     --tao-blue-400: #6b9cff;
     --tao-blue-500: #4c82f7;
     --tao-blue-600: #3b6de0;
@@ -152,6 +156,9 @@
     --tao-z-confirm: 1200; /* above toasts: it asks for an answer */
 
     /* ---------- Motion ---------- */
+    /* A hover state: short, so the change follows the pointer instead of trailing behind it.
+       Наведение: коротко, чтобы смена шла за указателем, а не тянулась за ним. */
+    --tao-duration-hover: 0.1s;
     --tao-duration-fast: 0.15s;
     --tao-duration-base: 0.2s;
     --tao-duration-slow: 0.3s;

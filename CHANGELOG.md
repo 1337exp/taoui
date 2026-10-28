@@ -2,8 +2,11 @@
 
 ## 5.1.0
 
-Two small additions, nothing to migrate.
+Small additions and visual fixes, nothing to migrate.
 
+- **Dark theme tone fills:** the neutral button had a dark label on its grey fill (3.4:1), it is white now (5.7:1) through a new role `--tao-color-on-neutral` (white in both themes). Success and info are a step lighter (`green-400`, the new `blue-300`) so they read as buttons on a dark page with their dark label, and **warning leans to orange** (`--tao-tangerine-400`, `#ff8f3d`): the amber accent keeps yellow, so the two are not mistaken for each other (colour distance 0.037 → 0.114 for the text, as fill and as text). The light theme and the palettes are unchanged.
+- **Hover is twice as quick:** `--tao-transition-base` runs on the new `--tao-duration-hover` (0.1s instead of 0.2s), so a state follows the pointer instead of trailing behind it; other motion keeps its durations. Rows the pointer sweeps across (TaoMenu items, TaoMenubar entries, TaoTree rows) change at once, as in a system menu.
+- **TaoSplit cursors** are the matching pair `ew-resize` / `ns-resize` (`col-resize` / `row-resize` are drawn as two different shapes on Windows).
 - **`TaoSwitch` `loading`**: the change is being applied (a request is on its way). A spinner runs on the thumb, a click does nothing and the box stays as the model says, the switch is not greyed out like a disabled one, and `aria-busy` tells a screen reader.
 - **A contact patch on the slider thumb** (`TaoSlider`, `TaoRangeSlider`, `TaoScrubber`): a soft ring of the thumb's own colour around the dot, wider under the pointer and widest while dragging, as if a finger pressed it. A shadow, so the layout and the hit area stay the same; none on `flat` and disabled sliders; the keyboard focus ring moves outside it.
 
