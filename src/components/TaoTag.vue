@@ -95,7 +95,13 @@ function onClose(event: MouseEvent) {
     white-space: nowrap;
     text-align: start;
     font-size: var(--tao-tag-font-size);
-    line-height: 1.25;
+    /* the line is as tall as the inside of the tag (height minus the two borders): the text then sits a whole pixel from
+       the edge. At 1.25 it was 15px in 16px, 1.5px from the edge, and on a fractional position of the page the box
+       and the text rounded to different pixels, so the text jumped up and down from one tag to the next.
+       строка ровно по внутренней высоте тега (высота минус две рамки): текст отстоит от края на целый пиксель. При 1.25
+       она была 15px в 16px, то есть 1.5px от края, и на дробной позиции страницы рамка и текст округлялись к разным
+       пикселям: текст «прыгал» вверх-вниз от тега к тегу. */
+    line-height: calc(var(--tao-tag-height) - 2px);
     color: var(--tao-color-accent);
     background: var(--tao-color-accent-subtle);
     border: 1px solid var(--tao-color-border);

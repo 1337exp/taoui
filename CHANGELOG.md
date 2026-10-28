@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.6.2
+
+Two pixel-level fixes; nothing to migrate.
+
+- **`TaoTag`: the text no longer jumps from one tag to the next.** The line was `1.25` (15px in a 16px inside, so the text stood 1.5px from the edge). On a fractional position of the page the box and the text rounded to different pixels, and in a list of cards the text of one tag sat a pixel higher than in another. The line is as tall as the inside of the tag now (`calc(var(--tao-tag-height) - 2px)`), the text stands a whole pixel from the edge in every size.
+- **The cross of `TaoDrawer`, `TaoModal` and `TaoAlert` is in the middle of its button.** In a flex button Chrome keeps the icon's span `inline-flex`, and `align-items: center` put the icon 2px above the middle (next to the title it looked high). The button is `inline-grid` with `place-items: center` now; it is still `1em x 1em` (5.6.1).
+
 ## 5.6.1
 
 - **Fixed: the cross of TaoDrawer, TaoModal and TaoAlert was 24 x 28 px, so its focus ring was a rectangle.** The cross is an inline SVG icon (since 5.0), but the button was still sized as a text glyph: a block that is a text line tall, with the gap under the baseline below a 24px icon. The button is a flex box of exactly the icon's size (`1em x 1em`) now, and the ring is square. Nothing to migrate.

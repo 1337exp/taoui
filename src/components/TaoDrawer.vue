@@ -200,9 +200,12 @@ watch(
        baseline = 28px), so the focus ring came out as a rectangle; a flex box of exactly the icon's size is square
        иконка — инлайн-SVG: простым блоком кнопка была высотой в строку текста (24px + зазор под базовой линией = 28px),
        и кольцо фокуса выходило прямоугольным; flex-бокс ровно по размеру иконки квадратный */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    /* a grid, not a flex box: inside a button Chrome keeps the icon's span `inline-flex`, and `align-items: center` put
+       it 2px above the middle of the button; `place-items: center` keeps it in the middle
+       сетка, а не flex: внутри button Chrome оставляет span иконки `inline-flex`, и `align-items: center` ставил её на
+       2px выше середины кнопки; `place-items: center` держит её посередине */
+    display: inline-grid;
+    place-items: center;
     width: 1em;
     height: 1em;
     background: none;
