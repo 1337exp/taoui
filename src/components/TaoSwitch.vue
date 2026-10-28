@@ -171,11 +171,11 @@ function toggle(event?: Event) {
     animation: tao-switch-spin 0.8s linear infinite;
 }
 
-/* off, the thumb is grey on a dark track: the ring takes the text colour so it is seen
-   выключен: бегунок серый на тёмной дорожке, кольцо цветом текста, чтобы его было видно */
+/* off, the thumb is grey: a dark ring melts into it, a light one (the strong text colour) is seen in both themes
+   выключен: бегунок серый, тёмное кольцо в нём тонет, светлое (цвет яркого текста) видно в обеих темах */
 .tao-switch--loading:not(.tao-switch--on) .tao-switch__thumb::after {
-    border-color: color-mix(in srgb, var(--tao-color-surface-sunken) 55%, transparent);
-    border-top-color: var(--tao-color-surface-sunken);
+    border-color: color-mix(in srgb, var(--tao-color-text-strong) 30%, transparent);
+    border-top-color: var(--tao-color-text-strong);
 }
 
 @keyframes tao-switch-spin {
