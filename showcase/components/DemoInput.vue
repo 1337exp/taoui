@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { TaoInput, TaoFormField, TaoInputGroup, TaoButton, TaoSelect, TaoInputNumber, TaoDate, TaoSegmented, TaoSegmentedOption, TaoCheckbox, TaoSwitch, TaoRadio, TaoTag, TaoTabs, TaoPagination, TaoSlider, toast } from '@1337exp/taoui'
+import { TaoInput, TaoFormField, TaoInputGroup, TaoButton, TaoSelect, TaoInputNumber, TaoDate, TaoSegmented, TaoSegmentedOption, TaoCheckbox, TaoSwitch, TaoRadio, TaoTag, TaoTabs, TaoPagination, TaoSlider, TaoCombobox, toast } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { tr } from '../i18n.js'
 import Tr from './Tr.vue'
@@ -42,7 +42,14 @@ function onDemoSubmit() {
 
 // a list item that is its own field / пункт списка, который сам себе поле
 const plainDone = ref(false)
-const plainText = ref(tr('Buy oat milk — click to edit', 'Купить овсяное молоко — нажмите, чтобы править'))
+const plainCount = ref(2)
+const plainShop = ref('grocery')
+const shops = computed(() => [
+  { value: 'grocery', label: tr('Grocery', 'Продукты') },
+  { value: 'market', label: tr('Market', 'Рынок') },
+  { value: 'pharmacy', label: tr('Pharmacy', 'Аптека') },
+])
+const plainText = ref(tr('Oat milk', 'Овсяное молоко'))
 </script>
 
 <template>
@@ -107,8 +114,8 @@ const plainText = ref(tr('Buy oat milk — click to edit', 'Купить овс�
     
           <h3 class="carousel-heading">{{ tr('Variants (variant)', 'Варианты (variant)') }}</h3>
           <Tr>
-            <template #en><p class="carousel-note"><code>outline</code> — a frame (the default), <code>filled</code> — a fill only, <code>plain</code> — nothing: the field reads as text, for an item of a list being edited. The height is the same, so a row does not jump when you switch; a plain field shows an error as a red line under the text.</p></template>
-            <template #ru><p class="carousel-note"><code>outline</code> — рамка (по умолчанию), <code>filled</code> — только заливка, <code>plain</code> — ничего: поле читается как текст, для пункта списка в правке. Высота та же, ряд не прыгает при смене; у plain ошибка — красная черта под текстом.</p></template>
+            <template #en><p class="carousel-note"><code>outline</code> — a frame (the default), <code>filled</code> — a fill only, <code>plain</code> — nothing: the field reads as text, for an item of a list being edited. <code>TaoInputNumber</code> and <code>TaoCombobox</code> take the same <code>variant</code>: in the row below the task, the count and the shop are all fields. The height is the same, so a row does not jump when you switch; a plain field shows an error as a red line under the text.</p></template>
+            <template #ru><p class="carousel-note"><code>outline</code> — рамка (по умолчанию), <code>filled</code> — только заливка, <code>plain</code> — ничего: поле читается как текст, для пункта списка в правке. У <code>TaoInputNumber</code> и <code>TaoCombobox</code> тот же <code>variant</code>: в строке ниже задача, количество и магазин — всё поля. Высота та же, ряд не прыгает при смене; у plain ошибка — красная черта под текстом.</p></template>
           </Tr>
           <div class="demo-stack">
             <TaoInput :model-value="tr('A frame', 'Рамка')" :aria-label="tr('Outline', 'Рамка')" />
@@ -116,6 +123,8 @@ const plainText = ref(tr('Buy oat milk — click to edit', 'Купить овс�
             <div class="input-demo__item">
               <TaoCheckbox v-model="plainDone" :aria-label="tr('Done', 'Готово')" />
               <TaoInput v-model="plainText" variant="plain" :aria-label="tr('Task', 'Задача')" />
+              <TaoInputNumber v-model="plainCount" variant="plain" :min="1" :controls="false" class="input-demo__count" :aria-label="tr('How many', 'Сколько')" />
+              <TaoCombobox v-model="plainShop" variant="plain" :options="shops" :clearable="false" class="input-demo__shop" :aria-label="tr('Where', 'Где')" />
             </div>
           </div>
 
@@ -211,5 +220,15 @@ const plainText = ref(tr('Buy oat milk — click to edit', 'Купить овс�
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.input-demo__count {
+  flex: none;
+  width: 3em;
+}
+
+.input-demo__shop {
+  flex: none;
+  width: 9em;
 }
 </style>

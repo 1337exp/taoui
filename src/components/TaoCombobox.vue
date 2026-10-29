@@ -34,6 +34,13 @@ const props = withDefaults(
         clearable?: boolean;
         /** Control size, same scale as TaoButton and TaoSelect; without it — the size of ancestors. / Размер контрола, шкала как у TaoButton и TaoSelect; без него — размер предков. */
         size?: TaoSize;
+        /**
+         * `outline` — a frame, `filled` — a fill only, `plain` — no frame, no fill, as on TaoInput: a field that reads as
+         * text, its error a red line under the text.
+         * `outline` — рамка, `filled` — только заливка, `plain` — без рамки и заливки, как у TaoInput: поле читается как
+         * текст, его ошибка — красная черта под текстом.
+         */
+        variant?: 'outline' | 'filled' | 'plain';
         /** Можно оставить то, чего нет в списке. */
         allowCreate?: boolean;
     }>(),
@@ -44,6 +51,7 @@ const props = withDefaults(
         error: false,
         clearable: true,
         allowCreate: false,
+        variant: 'outline',
     },
 );
 const l10n = useLocaleText(props, 'combobox');
@@ -430,6 +438,7 @@ onBeforeUnmount(() => {
         :class="[
             sizeClass(size),
             {
+                [`tao-combobox--${variant}`]: variant !== 'outline',
                 'tao-combobox--open': open,
                 'tao-combobox--invalid': invalid,
                 'tao-combobox--disabled': disabled,
@@ -608,6 +617,18 @@ onBeforeUnmount(() => {
     transition: var(--tao-transition-base);
 }
 
+/* ---------- Variants, before the states, so a focus or an error still shows / Варианты — до состояний */
+.tao-combobox--filled .tao-combobox__field {
+    border-color: transparent;
+    background: color-mix(in srgb, var(--tao-color-text) 7%, transparent);
+}
+
+.tao-combobox--plain .tao-combobox__field {
+    padding-inline: 0;
+    border-color: transparent;
+    background: transparent;
+}
+
 .tao-combobox__field:focus-within {
     border-color: var(--tao-color-accent);
     box-shadow: 0 0 0 2px var(--tao-color-accent-subtle-hover);
@@ -619,6 +640,19 @@ onBeforeUnmount(() => {
 
 .tao-combobox--invalid .tao-combobox__field:focus-within {
     box-shadow: 0 0 0 2px var(--tao-color-danger-subtle);
+}
+
+/* a plain field stays text while it is edited: the caret shows the focus; an error is a red line under the text */
+/* поле plain остаётся текстом и в правке: фокус показывает каретка; ошибка — красная черта под текстом */
+.tao-combobox--plain .tao-combobox__field:focus-within,
+.tao-combobox--plain.tao-combobox--invalid .tao-combobox__field {
+    border-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.tao-combobox--plain.tao-combobox--invalid .tao-combobox__field {
+    box-shadow: inset 0 -1px 0 var(--tao-color-danger);
 }
 
 .tao-combobox__input {
