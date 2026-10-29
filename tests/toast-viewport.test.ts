@@ -45,3 +45,10 @@ describe('TaoToastViewport: the bounce is not clipped', () => {
         expect(bodyOf('.tao-toast-bottom-leave-active .tao-toast-slot__inner')).toContain('overflow: hidden');
     });
 });
+
+describe('TaoToastViewport: a centred toast on a whole pixel', () => {
+    it('the centred areas are an even number of pixels wide, where round() is supported', () => {
+        const all = (viewportSfc as string).replace(/\r\n/g, '\n');
+        expect(all).toMatch(/@supports \(width: round\(down, 100%, 2px\)\) \{\s*\.tao-toast-viewport--topCenter,\s*\.tao-toast-viewport--bottomCenter \{[^}]*width: round\(down, 100%, 2px\)/);
+    });
+});

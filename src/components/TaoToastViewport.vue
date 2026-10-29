@@ -142,6 +142,27 @@ function enterName(position: TaoToastPosition) {
     align-items: center;
 }
 
+/* A centred toast on a whole pixel: the area is an even number of pixels wide (and the toast too, see TaoToastItem),
+   so the middle never falls on half a pixel; on a half pixel the text snapped sideways when a hover repainted it.
+   Centred by the viewport's width, not 100vw, which counts the scrollbar.
+   Тост по центру на целом пикселе: область чётной ширины (и тост тоже), поэтому середина не попадает на полпикселя;
+   на полупикселе текст перескакивал вбок, когда наведение его перерисовывало. Ширина берётся у окна, а не 100vw,
+   который считает и полосу прокрутки. */
+@supports (width: round(down, 100%, 2px)) {
+    .tao-toast-viewport--topCenter,
+    .tao-toast-viewport--bottomCenter {
+        right: auto;
+        width: round(down, 100%, 2px);
+    }
+
+    .tao-toast-viewport--center {
+        right: auto;
+        bottom: auto;
+        width: round(down, 100%, 2px);
+        height: round(down, 100%, 2px);
+    }
+}
+
 /* The fade runs on the toast itself, not on a wrapper: an ancestor below opacity 1 cuts a glass toast off from what
    is behind it (Chrome: a backdrop root), so the blur waited for the fade to end and then popped in at once.
    Its own opacity fades the blur along with it.

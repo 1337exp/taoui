@@ -163,6 +163,8 @@ onBeforeUnmount(() => {
     align-items: flex-start;
     gap: var(--tao-space-3);
     width: min(470px, calc(100vw - 32px));
+    /* even, so a centred toast stands on a whole pixel (see TaoToastViewport) / чётная, чтобы тост по центру стоял на целом пикселе */
+    width: min(470px, round(down, 100vw - 32px, 2px));
     padding: var(--tao-space-3) var(--tao-space-4);
     overflow: hidden;
     background-color: var(--tao-surface-fill, color-mix(in srgb, var(--tao-toast-tone) 8%, var(--tao-color-surface-raised)));
