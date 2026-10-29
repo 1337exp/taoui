@@ -44,6 +44,7 @@ import TaoToolbarSeparator from './components/TaoToolbarSeparator.vue';
 import TaoSparkline from './components/TaoSparkline.vue';
 import TaoMeter from './components/TaoMeter.vue';
 import TaoDonut from './components/TaoDonut.vue';
+import TaoHeatmap from './components/TaoHeatmap.vue';
 import TaoNav from './components/TaoNav.vue';
 import TaoTree from './components/TaoTree.vue';
 import TaoChecklist from './components/TaoChecklist.vue';
@@ -134,6 +135,7 @@ const components = [
     TaoSparkline,
     TaoMeter,
     TaoDonut,
+    TaoHeatmap,
     TaoNav,
     TaoTree,
     TaoChecklist,
@@ -241,6 +243,7 @@ export {
     TaoSparkline,
     TaoMeter,
     TaoDonut,
+    TaoHeatmap,
     TaoNav,
     TaoTree,
     TaoChecklist,

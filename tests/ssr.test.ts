@@ -44,6 +44,7 @@ const props: Record<string, Record<string, unknown>> = {
     TaoCopy: { text: 'copy me' },
     TaoSparkline: { values: [1, 3, null, 2], area: true, dot: true, label: 'Trend' },
     TaoMeter: { value: 70, low: 20, high: 80, label: 'Disk', valueText: true },
+    TaoHeatmap: { values: [[1, 200], [null, 900]], rows: ['Mon', 'Tue'], cols: ['1 am', '2 am'], label: 'Orders' },
     TaoDonut: { segments: [{ label: 'A', value: 2 }, { label: 'B', value: 1, tone: 'danger' }], legend: true },
 };
 
