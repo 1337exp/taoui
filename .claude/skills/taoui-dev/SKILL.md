@@ -56,6 +56,13 @@ npm run smoke                      # the packed tarball in a fresh Vite app
 - **A new component:** register it in `src/index.ts` (import, the `components` list, the named export), add its props to
   `tests/ssr.test.ts`, a demo in `showcase/sections.js` + `showcase/nav.js` (with aliases, EN and RU), prop tables, a
   line in both READMEs, `skills/taoui/SKILL.md` names it (the skill test fails otherwise).
+- **A field is a wrapper around its control:** attributes given to it (`aria-label`, `name`, `autocomplete`, listeners)
+  must reach the control, `class` / `style` the wrapper. Use `useControlAttrs()` (`src/controlAttrs.ts`) with
+  `inheritAttrs: false`: `v-bind="rootAttrs()"` on the root, `v-bind="controlAttrs()"` on the input / trigger / checkbox.
+  `tests/control-attrs.test.ts` fails for a component with `:id="controlId"` that forgets it; add the new field to its
+  `cases` too. A component whose name lives elsewhere (a button label built from the value, a `role="group"` root)
+  routes the given `aria-label` there by hand, as `TaoColorInput` does. No HTML comment before the root of a
+  template: it makes the component a fragment and the attributes stop falling through.
 - **Tokens:** a role in `themes/dark.css` must exist in `light.css`; contexts (`contexts/*.css`) are classes that set
   private `--_tao-*` variables. A custom property is computed where it is declared: a context that combines two axes
   (size × density) must recompute on every class of both axes.

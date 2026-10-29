@@ -39,6 +39,10 @@ function onDemoSubmit() {
     toast().success().message(tr('Saved', 'Сохранено'))
   }, 700)
 }
+
+// a list item that is its own field / пункт списка, который сам себе поле
+const plainDone = ref(false)
+const plainText = ref(tr('Buy oat milk — click to edit', 'Купить овсяное молоко — нажмите, чтобы править'))
 </script>
 
 <template>
@@ -101,6 +105,20 @@ function onDemoSubmit() {
             </TaoFormField>
           </div>
     
+          <h3 class="carousel-heading">{{ tr('Variants (variant)', 'Варианты (variant)') }}</h3>
+          <Tr>
+            <template #en><p class="carousel-note"><code>outline</code> — a frame (the default), <code>filled</code> — a fill only, <code>plain</code> — nothing: the field reads as text, for an item of a list being edited. The height is the same, so a row does not jump when you switch; a plain field shows an error as a red line under the text.</p></template>
+            <template #ru><p class="carousel-note"><code>outline</code> — рамка (по умолчанию), <code>filled</code> — только заливка, <code>plain</code> — ничего: поле читается как текст, для пункта списка в правке. Высота та же, ряд не прыгает при смене; у plain ошибка — красная черта под текстом.</p></template>
+          </Tr>
+          <div class="demo-stack">
+            <TaoInput :model-value="tr('A frame', 'Рамка')" :aria-label="tr('Outline', 'Рамка')" />
+            <TaoInput variant="filled" :model-value="tr('A fill only', 'Только заливка')" :aria-label="tr('Filled', 'Заливка')" />
+            <div class="input-demo__item">
+              <TaoCheckbox v-model="plainDone" :aria-label="tr('Done', 'Готово')" />
+              <TaoInput v-model="plainText" variant="plain" :aria-label="tr('Task', 'Задача')" />
+            </div>
+          </div>
+
           <h3 class="carousel-heading">{{ tr('Sizes (size)', 'Размеры (size)') }}</h3>
           <Tr>
             <template #en><p class="carousel-note">One <code>small</code> / <code>medium</code> / <code>large</code> scale for buttons and fields — everything in a row has the same height. Without <code>size</code> a control takes the size of its ancestors: the <code>tao-size-*</code> class on any wrapper, or <code>size</code> on TaoFormField / TaoInputGroup. Below, the size is set once — with a class on the row.</p></template>
@@ -187,3 +205,11 @@ function onDemoSubmit() {
           </div>
   </ShowcaseSection>
 </template>
+
+<style scoped>
+.input-demo__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+</style>

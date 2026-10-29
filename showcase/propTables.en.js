@@ -123,6 +123,7 @@ export const propTablesEn = {
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium'),
         r('disabled', 'boolean', 'false', 'Disabled'),
         r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
+        r('variant', "'outline' | 'filled' | 'plain'", "'outline'", 'A frame / a fill only / nothing: plain reads as text (an item of a list being edited): no inset, the caret shows the focus, an error is a red line under the text. The height does not change'),
         r('id', 'string', 'auto', 'The input id; otherwise taken from FormField or useId'),
       ],
       slots: '#prefix and #suffix — inside the frame, left/right (an icon, text).',

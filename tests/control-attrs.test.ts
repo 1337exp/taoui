@@ -1,4 +1,6 @@
 import { mount } from '@vue/test-utils';
+import { readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import TaoCheckbox from '../src/components/TaoCheckbox.vue';
 import TaoColorInput from '../src/components/TaoColorInput.vue';
@@ -81,5 +83,36 @@ describe('the fields with a name of their own', () => {
         const w = mount(TaoPinCode, { props: { modelValue: '', length: 4 } as never });
         const labels = w.findAll('input').map((i) => i.attributes('aria-label'));
         expect(labels).toEqual(['Character 1 of 4', 'Character 2 of 4', 'Character 3 of 4', 'Character 4 of 4']);
+    });
+});
+
+// The guard for the fields to come: a component whose control takes the field id (`:id="controlId"`) is a wrapper
+// around it, so it must split its attributes (`useControlAttrs`), or an aria-label lands on the wrapper again.
+// Страж для будущих полей: компонент, чей элемент управления берёт id поля (`:id="controlId"`), — обёртка вокруг него
+// и должен разделять атрибуты (`useControlAttrs`), иначе aria-label снова окажется на обёртке.
+describe('every field splits its attributes', () => {
+    const dir = join(__dirname, '../src/components');
+    const fields = readdirSync(dir)
+        .filter((name) => name.endsWith('.vue'))
+        .map((name) => ({ name, source: readFileSync(join(dir, name), 'utf8').replace(/\r\n/g, '\n') }))
+        .filter(({ source }) => source.includes(':id="controlId"'));
+
+    it('there are fields to check', () => {
+        expect(fields.length).toBeGreaterThanOrEqual(10);
+    });
+
+    it.each(fields.map((f) => [f.name, f.source]))('%s: inheritAttrs: false, rootAttrs() on the wrapper, controlAttrs() on the control', (_, source) => {
+        expect(source).toMatch(/inheritAttrs:\s*false/);
+        expect(source).toContain('useControlAttrs()');
+        expect(source).toContain('v-bind="rootAttrs()"');
+        expect(source).toContain('v-bind="controlAttrs()"');
+    });
+});
+
+describe('TaoInput variant', () => {
+    it('outline by default; filled and plain mark the frame', () => {
+        expect(mount(TaoInput).find('.tao-input-shell').classes().some((c) => c.startsWith('tao-input-shell--') && /filled|plain|outline/.test(c))).toBe(false);
+        expect(mount(TaoInput, { props: { variant: 'plain' } }).find('.tao-input-shell').classes()).toContain('tao-input-shell--plain');
+        expect(mount(TaoInput, { props: { variant: 'filled' } }).find('.tao-input-shell').classes()).toContain('tao-input-shell--filled');
     });
 });

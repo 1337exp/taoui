@@ -19,6 +19,13 @@ interface Props {
     size?: TaoSize;
     /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
     error?: boolean;
+    /**
+     * `outline` — a frame, `filled` — a fill only, `plain` — no frame, no fill: a field that reads as text (an item of a
+     * list being edited), its error a red line under the text.
+     * `outline` — рамка, `filled` — только заливка, `plain` — без рамки и заливки: поле, которое читается как текст
+     * (пункт списка в правке), его ошибка — красная черта под текстом.
+     */
+    variant?: 'outline' | 'filled' | 'plain';
     id?: string;
 }
 
@@ -28,6 +35,7 @@ const props = withDefaults(defineProps<Props>(), {
     placeholder: '',
     disabled: false,
     error: false,
+    variant: 'outline',
 });
 
 const { field, controlId, invalid, describedBy } = useField(props);
@@ -56,6 +64,7 @@ function handleFocus(event: FocusEvent) {
         <div
             class="tao-input-shell"
             :class="{
+                [`tao-input-shell--${variant}`]: variant !== 'outline',
                 'tao-input-shell--focused': focused,
                 'tao-input-shell--invalid': invalid,
                 'tao-input-shell--disabled': disabled,
@@ -115,6 +124,25 @@ function handleFocus(event: FocusEvent) {
     transition: var(--tao-transition-base);
 }
 
+/* ---------- Variants, before the states, so a focus or an error still shows / Варианты — до состояний */
+/* the 1px border stays, only unseen: the height and the text do not move between variants */
+/* рамка в 1px остаётся невидимой: высота и текст не сдвигаются при смене варианта */
+/* a fill of the text colour shows on any surface: a page, a card, glass / заливка цветом текста видна на любой поверхности */
+.tao-input-shell--filled {
+    border-color: transparent;
+    background: color-mix(in srgb, var(--tao-color-text) 7%, transparent);
+}
+
+.tao-input-shell--plain {
+    border-color: transparent;
+    background: transparent;
+}
+
+/* the text of a plain field starts where the text next to it does / текст поля plain начинается там же, где соседний */
+.tao-input-shell--plain .tao-input {
+    padding-inline: 0;
+}
+
 .tao-input {
     flex: 1 1 auto;
     min-width: 0;
@@ -166,6 +194,25 @@ function handleFocus(event: FocusEvent) {
 
 .tao-input-shell--invalid {
     border-color: var(--tao-color-danger);
+}
+
+/* a plain field stays text while it is edited: the caret shows the focus, no frame appears; an error is a red line
+   under the text, so the text does not move */
+/* поле plain остаётся текстом и в правке: фокус показывает каретка, рамка не появляется; ошибка — красная черта под
+   текстом, чтобы текст не сдвигался */
+.tao-input-shell--plain.tao-input-shell--focused,
+.tao-input-shell--plain.tao-input-shell--invalid {
+    border-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.tao-input-shell--plain.tao-input-shell--invalid {
+    box-shadow: inset 0 -1px 0 var(--tao-color-danger);
+}
+
+.tao-input-shell--plain.tao-input-shell--disabled {
+    background: transparent;
 }
 
 .tao-input-shell--invalid.tao-input-shell--focused {
