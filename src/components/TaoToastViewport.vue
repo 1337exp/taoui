@@ -133,10 +133,32 @@ function enterName(position: TaoToastPosition) {
     align-items: center;
 }
 
+/* The fade runs on the toast itself, not on a wrapper: an ancestor below opacity 1 cuts a glass toast off from what
+   is behind it (Chrome: a backdrop root), so the blur waited for the fade to end and then popped in at once.
+   Its own opacity fades the blur along with it.
+   Прозрачность меняется у самого тоста, а не у обёртки: предок с прозрачностью меньше 1 отрезает стеклянный тост от
+   того, что за ним (Chrome: backdrop root), и размытие ждало конца появления, а потом включалось разом. Собственная
+   прозрачность гасит размытие вместе с ним. */
+.tao-toast-top-enter-active :deep(.tao-toast),
+.tao-toast-bottom-enter-active :deep(.tao-toast),
+.tao-toast-center-enter-active :deep(.tao-toast) {
+    animation: tao-toast-bounce-in var(--tao-duration-slow) var(--tao-ease-base);
+}
+
+/* Vue reads the length of the transition off the slot itself: an empty animation as long, or it would end the enter
+   at once and the toast's own animation would never start
+   Vue берёт длительность перехода с самой обёртки: пустая анимация той же длины, иначе он сразу закончил бы
+   появление, и анимация тоста не началась бы */
 .tao-toast-top-enter-active,
 .tao-toast-bottom-enter-active,
 .tao-toast-center-enter-active {
-    animation: tao-toast-bounce-in var(--tao-duration-slow) var(--tao-ease-base);
+    animation: tao-toast-hold var(--tao-duration-slow) linear;
+}
+
+@keyframes tao-toast-hold {
+    to {
+        visibility: visible;
+    }
 }
 
 .tao-toast-top-leave-active,
@@ -159,13 +181,13 @@ function enterName(position: TaoToastPosition) {
     grid-template-rows: 0fr;
 }
 
-.tao-toast-top-leave-active .tao-toast-slot__inner,
-.tao-toast-center-leave-active .tao-toast-slot__inner {
-    animation: tao-toast-fade-out-up var(--tao-duration-slow) var(--tao-ease-base);
+.tao-toast-top-leave-active :deep(.tao-toast),
+.tao-toast-center-leave-active :deep(.tao-toast) {
+    animation: tao-toast-fade-out-up var(--tao-duration-slow) var(--tao-ease-base) forwards;
 }
 
-.tao-toast-bottom-leave-active .tao-toast-slot__inner {
-    animation: tao-toast-fade-out-down var(--tao-duration-slow) var(--tao-ease-base);
+.tao-toast-bottom-leave-active :deep(.tao-toast) {
+    animation: tao-toast-fade-out-down var(--tao-duration-slow) var(--tao-ease-base) forwards;
 }
 
 @keyframes tao-toast-bounce-in {

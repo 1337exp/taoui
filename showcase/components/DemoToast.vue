@@ -31,6 +31,15 @@ function fireToast(kind) {
       .action(tr('Got it', 'Понятно'), () => {})
     return
   }
+  if (kind === 'undo') {
+    // a snackbar: what was just done, at the bottom, with one way back / snackbar: что сделано, внизу, с одним шагом назад
+    toast()
+      .byBottomCenter()
+      .show()
+      .message(tr('Note deleted', 'Заметка удалена'))
+      .action(tr('Undo', 'Отменить'), () => toast().byBottomCenter().show().short().message(tr('Note restored', 'Заметка восстановлена')))
+    return
+  }
   toast().byBottomRight().success().message(tr('Bottom right', 'Справа снизу'))
 }
 
@@ -58,6 +67,7 @@ function fireLoading(fail) {
             <TaoButton variant="ghost" @click="fireToast('info')">info</TaoButton>
             <TaoButton variant="secondary" @click="fireToast('action')">{{ tr('with a button', 'с кнопкой') }}</TaoButton>
             <TaoButton variant="secondary" @click="fireToast('corner')">bottomRight</TaoButton>
+            <TaoButton variant="secondary" tone="neutral" icon="tao-trash" @click="fireToast('undo')">{{ tr('Delete a note (undo)', 'Удалить заметку (с отменой)') }}</TaoButton>
           </div>
 
           <h3>{{ tr('Work in progress', 'Идёт работа') }}</h3>
@@ -71,6 +81,9 @@ function fireLoading(fail) {
             <pre><code>toast().success().message('{{ tr('Saved', 'Сохранено') }}')
 toast().danger().title('{{ tr('Network', 'Сеть') }}').message('{{ tr('No connection', 'Нет соединения') }}')
 toast.success('{{ tr('Saved', 'Сохранено') }}')
+
+// {{ tr('a snackbar: at the bottom, with a way back', 'snackbar: внизу, с шагом назад') }}
+toast().byBottomCenter().show().message('{{ tr('Note deleted', 'Заметка удалена') }}').action('{{ tr('Undo', 'Отменить') }}', undo)
 
 toast.promise(save(), {
   loading: '{{ tr('Saving…', 'Сохраняю…') }}',

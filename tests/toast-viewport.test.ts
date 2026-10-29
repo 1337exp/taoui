@@ -26,3 +26,15 @@ describe('TaoToastViewport: centred positions', () => {
         expect(bodyOf('.tao-toast-viewport__stack')).toContain('width: 100%');
     });
 });
+
+describe('TaoToastViewport: a glass toast keeps its blur while it fades', () => {
+    it('the fade runs on the toast itself: an ancestor below opacity 1 would switch the backdrop blur off', () => {
+        expect(css).toMatch(/\.tao-toast-top-enter-active :deep\(\.tao-toast\)[^{]*\{[^}]*animation: tao-toast-bounce-in/);
+        expect(css).toMatch(/\.tao-toast-bottom-leave-active :deep\(\.tao-toast\) \{[^}]*animation: tao-toast-fade-out-down/);
+        expect(css).not.toMatch(/\.tao-toast-slot__inner \{[^}]*animation/);
+    });
+
+    it('the slot holds an empty animation as long, so Vue waits for the toast', () => {
+        expect(css).toMatch(/\.tao-toast-center-enter-active \{\s*animation: tao-toast-hold var\(--tao-duration-slow\)/);
+    });
+});
