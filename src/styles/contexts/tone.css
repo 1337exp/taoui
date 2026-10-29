@@ -69,7 +69,7 @@
    Нейтральный: тихое действие рядом с главным. Сильный текст, цвет темы — только у подложки при наведении. */
 .tao-tone-neutral {
     --tao-tone: var(--tao-color-text-muted);
-    --tao-tone-hover: var(--tao-color-text);
+    --tao-tone-hover: var(--tao-color-neutral-hover);
     /* white on the mid grey in both themes (5.7:1); the page colour was dark on dark in the dark theme (3.4:1)
        белое на среднем сером в обеих темах; цвет страницы в тёмной теме давал тёмное на тёмном */
     --tao-tone-on: var(--tao-color-on-neutral);

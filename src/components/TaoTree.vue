@@ -412,7 +412,7 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
 }
 
 .tao-tree__row:hover {
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-tree__row--selected,

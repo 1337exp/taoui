@@ -163,7 +163,7 @@ const doneText = computed(() => props.successText ?? appLocale.value.copy.succes
 
 .tao-copy__button:hover {
     color: var(--tao-color-accent);
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-copy__button--copied {

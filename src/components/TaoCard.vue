@@ -270,7 +270,7 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
 
 .tao-card__close:hover {
     color: var(--tao-color-text-strong);
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-card__close:focus-visible {

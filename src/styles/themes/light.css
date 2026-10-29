@@ -33,6 +33,8 @@
     --tao-color-surface-raised: var(--tao-gray-50);
     --tao-color-surface-sunken: var(--tao-gray-50);
     --tao-color-surface-hover: var(--tao-gray-100);
+    /* see dark.css / см. dark.css */
+    --tao-color-hover: color-mix(in srgb, var(--tao-color-text-strong) 9%, transparent);
 
     --tao-color-border: var(--tao-gray-100);
     --tao-color-border-strong: var(--tao-gray-200);
@@ -58,6 +60,9 @@
     --tao-color-on-warning: #ffffff;
     --tao-color-on-info: #ffffff;
     --tao-color-on-neutral: #ffffff;
+    /* a light page: a step darker under the pointer, as the other light fills do (it was the near-black text, a jump)
+       светлая страница: под указателем на шаг темнее, как остальные светлые заливки (был почти чёрный текст, скачок) */
+    --tao-color-neutral-hover: color-mix(in srgb, var(--tao-color-text-muted) 78%, var(--tao-color-text-strong));
     --tao-color-success: var(--tao-green-700);
     --tao-color-success-hover: color-mix(in srgb, var(--tao-green-700) 85%, #000000);
     --tao-color-success-subtle: color-mix(in srgb, var(--tao-color-success) 10%, transparent);

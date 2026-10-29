@@ -115,7 +115,7 @@ function onHitClick(event: MouseEvent) {
 
 .tao-list-item:hover:not(.tao-list-item--disabled),
 .tao-list-item--active:not(.tao-list-item--disabled) {
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-list-item--selected {

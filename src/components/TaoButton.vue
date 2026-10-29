@@ -151,7 +151,7 @@ function handleClick(event: MouseEvent) {
 }
 
 .tao-button--secondary:hover:not(.tao-button--disabled) {
-    background-color: var(--tao-color-surface-hover);
+    background-color: var(--tao-color-hover);
     color: var(--tao-color-text-strong);
 }
 

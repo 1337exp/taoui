@@ -54,7 +54,7 @@
 }
 
 .tao-date__nav:hover {
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-date__nav:focus-visible {
@@ -134,11 +134,11 @@
 }
 
 .tao-date__day--cursor:not(.tao-date__day--selected):not(.tao-date__day--in-range) {
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-date__day:hover:not(:disabled):not(.tao-date__day--selected):not(.tao-date__day--in-range) {
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-date__day:disabled {

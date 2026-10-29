@@ -552,7 +552,7 @@ onBeforeUnmount(() => {
 
 .tao-combobox__clear:hover {
     color: var(--tao-color-accent);
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-combobox__option {
@@ -566,7 +566,7 @@ onBeforeUnmount(() => {
 
 .tao-combobox__option--active,
 .tao-combobox__option:hover:not(.tao-combobox__option--disabled) {
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-combobox__option--selected {
