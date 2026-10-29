@@ -71,7 +71,8 @@ choose a text colour, WCAG 2 to promise a number.
 - `TaoNav` — app navigation from one list: a bottom bar, a rail or a drawer, `layout="auto"` by its own width; put the page
   in its default slot and it lays it out. `floating` makes the bar a detached pill (the FAB is your own button beside
   it). `select(id, event)` + `event.preventDefault()` to route with a router. Widths `--tao-nav-rail-width` /
-  `--tao-nav-drawer-width`; the action button may take `shortcut="N"` (shown in the side panel, hidden when round).
+  `--tao-nav-drawer-width`; the action button may take `shortcut="N"` (shown in the side panel, hidden when round). `surface="glass"` for a
+  translucent bar over the page (as on TaoCard; it turns solid where blur is off).
 
 ## Forms
 

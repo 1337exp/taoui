@@ -3,6 +3,7 @@ import { computed, nextTick, ref, useSlots } from 'vue';
 import { useLocaleText } from '../locale';
 import { menuReturnsFocus, type TaoMenuCloseReason, type TaoMenuItem } from '../menu';
 import type { TaoNavItem, TaoNavLayout } from '../nav';
+import { surfaceClass, type TaoSurface } from '../surface';
 import TaoIcon from './TaoIcon.vue';
 import TaoMenu from './TaoMenu.vue';
 
@@ -42,6 +43,13 @@ const props = withDefaults(
          * в виде панели, вдоль его начального края в рейке и боковой панели).
          */
         indicator?: 'pill' | 'line';
+        /**
+         * What the panel is made of, as on TaoCard: `glass` lets the page show blurred through the bar while it scrolls
+         * under it (solid where blur is not supported or less transparency is asked), `grain` a film grain.
+         * Из чего сделана панель, как у TaoCard: `glass` — страница размыто просвечивает сквозь панель, когда уходит под
+         * неё (сплошная, где размытия нет или просят меньше прозрачности), `grain` — плёночное зерно.
+         */
+        surface?: TaoSurface;
     }>(),
     {
         modelValue: undefined,
@@ -51,6 +59,7 @@ const props = withDefaults(
         moreLabel: undefined,
         floating: false,
         indicator: 'pill',
+        surface: 'flat',
     },
 );
 const l10n = useLocaleText(props, 'nav');
@@ -133,7 +142,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
 <template>
     <div class="tao-nav" :class="[`tao-nav--${layout}`, `tao-nav--indicator-${indicator}`, { 'tao-nav--standalone': standalone, 'tao-nav--floating': floating }]">
         <div class="tao-nav__shell">
-            <nav class="tao-nav__panel" :aria-label="l10n.ariaLabel">
+            <nav class="tao-nav__panel" :class="surfaceClass(surface)" :aria-label="l10n.ariaLabel">
                 <div class="tao-nav__column">
                     <!--
                         No slot props: in `auto` only CSS knows the look, so one slot is rendered and the --_* variables size
@@ -436,8 +445,16 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     z-index: 1;
     box-sizing: border-box;
     width: var(--_panel-width);
-    padding: var(--tao-space-1) var(--tao-space-1) calc(var(--tao-space-1) + var(--_safe-bottom));
-    background: var(--tao-color-surface-raised);
+    /* 4px in the bar and the rail, 12px in the side panel, so its items stand off the edges like a list in a card
+       4px в нижней панели и рейке, 12px в боковой, чтобы её пункты отступали от краёв, как список в карточке */
+    --_pad: calc(var(--tao-space-1) + (1 - var(--_compact)) * (var(--tao-space-3) - var(--tao-space-1)));
+    padding: var(--_pad) var(--_pad) calc(var(--_pad) + var(--_safe-bottom));
+    /* the surface: flat by default, or grain / glass (the class sets these) / поверхность: плоская или grain / glass */
+    background-color: var(--tao-surface-fill, var(--tao-color-surface-raised));
+    background-image: var(--tao-surface-image, none);
+    background-size: var(--tao-surface-image-size, auto);
+    -webkit-backdrop-filter: var(--tao-surface-backdrop, none);
+    backdrop-filter: var(--tao-surface-backdrop, none);
     border: 0 solid var(--tao-color-border);
     border-top-width: var(--_border-top);
     border-inline-end-width: var(--_border-side);
@@ -498,8 +515,8 @@ function onMoreClose(reason: TaoMenuCloseReason) {
        --_panel-height is none, the calc is invalid there and max-height stays none
        прилипает там, где уже стоит, под отступом панели, поэтому прокрутка его не сдвигает; в виде нижней панели
        --_panel-height равен none, calc там недействителен и max-height остаётся none */
-    top: var(--tao-space-1);
-    max-height: calc(var(--_panel-height) - 2 * var(--tao-space-1));
+    top: var(--_pad);
+    max-height: calc(var(--_panel-height) - 2 * var(--_pad));
     display: flex;
     flex-direction: column;
 }
@@ -533,8 +550,9 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     z-index: 1;
     display: flex;
     justify-content: center;
-    /* on the side it stands off the top edge as from the items under it / сбоку отступает от верха, как от пунктов под ним */
-    margin-top: calc((1 - var(--_bar)) * var(--tao-space-2));
+    /* on the rail it stands off the top edge as from the items under it; the side panel has its own inset
+       на рейке отступает от верха, как от пунктов под ним; у боковой панели свой отступ */
+    margin-top: calc(var(--_compact) * (1 - var(--_bar)) * var(--tao-space-2));
     margin-bottom: calc((1 - var(--_bar)) * var(--tao-space-2));
 }
 
@@ -590,8 +608,11 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     justify-content: var(--_item-justify);
     gap: var(--tao-space-1) var(--tao-space-3);
     width: 100%;
-    /* a finger-sized target in every look / цель под палец в любом виде */
-    min-height: 48px;
+    /* a finger-sized target in the bar and the rail; in the side panel a row a little taller than a control, 40px at
+       the medium size (48px again with a touch screen, below)
+       цель под палец в нижней панели и рейке; в боковой — строка чуть выше контрола, 40px в medium (с сенсорным экраном
+       снова 48px, ниже) */
+    min-height: calc(var(--_compact) * 48px + (1 - var(--_compact)) * (var(--tao-control-height) + var(--tao-space-1)));
     /* the icon over the label (the bar, the rail): a narrow inset, so «Settings» fits 80px; the side panel keeps its own
        иконка над подписью (панель, рейка): узкий отступ, чтобы «Настройки» влезали в 80px; боковая панель — свой */
     padding: var(--tao-space-2) calc(var(--tao-space-3) - var(--_compact) * (var(--tao-space-3) - var(--tao-space-1)));
@@ -659,6 +680,17 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     color: var(--tao-color-text-disabled);
     background: transparent;
     cursor: default;
+}
+
+@media (pointer: coarse) {
+    .tao-nav__item {
+        min-height: 48px;
+    }
+}
+
+/* glass keeps its own edge: the border of glass, not of a solid panel / у стекла свой край — граница стекла */
+.tao-nav__panel.tao-surface-glass {
+    border-color: var(--tao-glass-border);
 }
 
 .tao-nav__icon {

@@ -8,7 +8,9 @@ Nothing to migrate.
 - **`TaoNav` labels fit the rail.** An item with the icon over its label (the rail, the bar) kept 12px on each side, so the rail left 47px for a label and «Settings» or «Calendar» in Russian were cut. Now it keeps 4px, and the label has about 63px. The side panel is unchanged.
 - **`TaoNav` widths are public:** `--tao-nav-rail-width` (80px), `--tao-nav-drawer-width` (240px) and `--tao-nav-action-radius`, set on `:root` or any wrapper, for an app whose labels are longer still.
 - **`TaoNav` action in the side panel:** the button keeps its own corners, like the items under it, instead of a pill (`--tao-nav-action-radius: var(--tao-radius-full)` brings the pill back), and stands off the top edge. A `shortcut` on it shows in the side panel and hides with the label when the button is round.
-- Showcase: buttons with a shortcut; the TaoNav action shows `N`.
+- **`TaoNav` side panel, lighter.** Its rows were 48px, the finger size of the bar, with 4px around the panel. With a mouse they are now a little taller than a control (40px at the medium size, and they follow the size and the density), and the panel keeps 12px from its edges, so the action and the items stand off them like a list in a card. On a touch screen (`pointer: coarse`) the rows stay 48px. The bar and the rail do not change.
+- **`TaoNav` `surface`:** `flat` (the default), `glass` or `grain`, as on TaoCard. `glass` lets the page show blurred through the bar while it scrolls under it, the floating pill included; where blur is not supported or less transparency is asked, the panel is solid.
+- Showcase: buttons with a shortcut; the TaoNav action shows `N` and switches the surface, with something bright under the bar.
 
 ## 5.10.0
 

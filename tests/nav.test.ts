@@ -241,7 +241,17 @@ describe('TaoNav fills the height the app gives it', () => {
 });
 describe('TaoNav stays still while the page scrolls', () => {
     it('the side column sticks below the panel padding, where it already stands', () => {
-        expect(navSource).toMatch(/\.tao-nav__column \{[^}]*top: var\(--tao-space-1\);/);
+        expect(navSource).toMatch(/\.tao-nav__column \{[^}]*top: var\(--_pad\);/);
+        expect(navSource).toMatch(/\.tao-nav__panel \{[^}]*--_pad: [^;]+;[^}]*padding: var\(--_pad\) var\(--_pad\)/);
+    });
+
+    it('the side panel: rows a little taller than a control with a mouse, 48px with a touch screen; a surface of its own', () => {
+        expect(navSource).toContain('min-height: calc(var(--_compact) * 48px + (1 - var(--_compact)) * (var(--tao-control-height) + var(--tao-space-1)));');
+        expect(navSource).toMatch(/@media \(pointer: coarse\) \{\s*\.tao-nav__item \{\s*min-height: 48px;/);
+        expect(navSource).toContain('backdrop-filter: var(--tao-surface-backdrop, none);');
+        const w = mount(TaoNav, { props: { items, surface: 'glass' } });
+        wrappers.push(w);
+        expect(w.find('.tao-nav__panel').classes()).toContain('tao-surface-glass');
     });
 
     it('the floating bar keeps its bottom margin 1px short of its sticky offset', () => {

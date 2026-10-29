@@ -26,6 +26,7 @@ const current = ref('home')
 const floating = ref(true)
 const indicator = ref('pill')
 const action = ref(true)
+const surface = ref('flat')
 
 const items = computed(() => all.value.slice(0, Number(count.value)))
 const currentLabel = computed(() => all.value.find((item) => item.id === current.value)?.label ?? '')
@@ -85,13 +86,22 @@ const currentLabel = computed(() => all.value.find((item) => item.id === current
         <TaoSegmentedOption value="line" label="line" />
       </TaoSegmented>
       <TaoSwitch v-model="action" size="small" label="#action" />
+      <TaoSegmented v-model="surface" size="small">
+        <TaoSegmentedOption value="flat" label="flat" />
+        <TaoSegmentedOption value="glass" label="glass" />
+        <TaoSegmentedOption value="grain" label="grain" />
+      </TaoSegmented>
     </div>
 
     <div class="nav-demo__frame" :style="{ width }">
-      <TaoNav v-model="current" :items="items" :layout="layout" :floating="floating" :indicator="indicator">
+      <TaoNav v-model="current" :items="items" :layout="layout" :floating="floating" :indicator="indicator" :surface="surface">
         <div class="nav-demo__page">
           <h3>{{ currentLabel }}</h3>
-          <p v-for="n in 12" :key="n">{{ tr('A line of the page, to scroll.', 'Строка страницы, чтобы было что прокручивать.') }} {{ n }}</p>
+          <template v-for="n in 12" :key="n">
+            <p>{{ tr('A line of the page, to scroll.', 'Строка страницы, чтобы было что прокручивать.') }} {{ n }}</p>
+            <!-- something bright to pass under a glass bar / что-то яркое, чтобы прошло под стеклянной панелью -->
+            <div v-if="n % 3 === 0" class="nav-demo__photo" :style="{ background: `linear-gradient(120deg, var(--tao-color-chart-${n / 3}), var(--tao-color-chart-${n / 3 + 1}))` }" />
+          </template>
         </div>
         <template v-if="action" #action>
           <TaoButton icon="tao-plus" size="large" shortcut="N">
@@ -147,6 +157,12 @@ function go(id, event) {
 
 .nav-demo__page {
   padding: 16px;
+}
+
+.nav-demo__photo {
+  height: 72px;
+  margin: 0 0 12px;
+  border-radius: 10px;
 }
 
 .nav-demo__page h3 {
