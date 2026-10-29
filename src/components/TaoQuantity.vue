@@ -1,12 +1,17 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
+import { useControlAttrs } from '../controlAttrs';
 import { computed, ref, watch } from 'vue';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import type { TaoQuantityChangeSource } from '../quantity';
 import { useLocaleText } from '../locale';
 
-defineOptions({ name: 'TaoQuantity' });
+defineOptions({ name: 'TaoQuantity', inheritAttrs: false });
+
+// the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
+// атрибуты — элементу управления, внешний вид — обёртке
+const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const props = withDefaults(
     defineProps<{
@@ -163,6 +168,7 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value
 
 <template>
     <div
+        v-bind="rootAttrs()"
         class="tao-quantity"
         :class="[
             sizeClass(size),
@@ -185,6 +191,7 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value
             </span>
         </button>
         <input
+            v-bind="controlAttrs()"
             :id="controlId"
             class="tao-quantity__input"
             type="text"

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
+import { useControlAttrs } from '../controlAttrs';
 import { normalizeHex, type ColorMode } from '../color';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
@@ -7,7 +8,11 @@ import type { TaoPlacement } from '../floating';
 import TaoColorPicker from './TaoColorPicker.vue';
 import TaoPopover from './TaoPopover.vue';
 
-defineOptions({ name: 'TaoColorInput' });
+defineOptions({ name: 'TaoColorInput', inheritAttrs: false });
+
+// the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
+// атрибуты — элементу управления, внешний вид — обёртке
+const { rootAttrs, controlAttrs } = useControlAttrs();
 
 // Поле цвета: образец и hex на кнопке, по нажатию открывается палитра (TaoColorPicker) во всплывающем окне.
 const props = withDefaults(
@@ -41,17 +46,21 @@ const emit = defineEmits<{
 
 const l10n = useLocaleText(props, 'colorPicker');
 const shown = computed(() => normalizeHex(props.modelValue, props.alpha) ?? props.modelValue);
+// «Background: #ff8800» when the app names the field, «Choose a colour: #ff8800» when it does not
+// «Фон: #ff8800», если приложение назвало поле, иначе «Выбрать цвет: #ff8800»
+const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? given : l10n.value.chooseLabel}: ${shown.value}`;
 </script>
 
 <template>
-    <TaoPopover :placement="placement" :disabled="disabled" class="tao-color-input-root">
+    <TaoPopover v-bind="rootAttrs()" :placement="placement" :disabled="disabled" class="tao-color-input-root">
         <template #trigger="{ open }">
             <button
+                v-bind="controlAttrs()"
                 type="button"
                 class="tao-color-input"
                 :class="[sizeClass(size), { 'tao-color-input--open': open, 'tao-color-input--invalid': error }]"
                 :disabled="disabled"
-                :aria-label="`${l10n.chooseLabel}: ${shown}`"
+                :aria-label="buttonLabel($attrs['aria-label'])"
                 aria-haspopup="dialog"
                 :aria-expanded="open"
             >

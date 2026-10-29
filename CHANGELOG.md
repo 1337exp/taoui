@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.8.4
+
+A fix; nothing to migrate.
+
+- **The rest of the fields get their name too.** `TaoQuantity` and `TaoFileDrop` pass their attributes to their control (the number input, the file input), like the fields in 5.8.3. `TaoColorInput` passes them to its trigger button, and an `aria-label` you give names it while the colour still follows: «Background: #ff8800» (without one, the locale's «Choose a colour»). `TaoColorPicker` is a `group`, so its `aria-label` names something. Each `TaoPinCode` cell says which character it is: «Character 2 of 6», from the new optional locale key `pinCode.cellLabel` (a locale written before still type-checks, English stands in).
+
 ## 5.8.3
 
 A fix; nothing to migrate.

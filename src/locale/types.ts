@@ -12,7 +12,12 @@ export interface TaoLocale {
     code: string;
     alert: { closeLabel: string; detailsLabel: string };
     /** What a screen reader hears when the status of TaoPinCode changes. / Что слышит скринридер при смене статуса. */
-    pinCode: { successText: string; errorText: string };
+    pinCode: {
+        successText: string;
+        errorText: string;
+        /** `{n}` of `{count}`: the name of one cell (5.8.4; optional for locales written before). / имя одной клетки */
+        cellLabel?: string;
+    };
     avatar: {
         fallbackLabel: string;
         /** `{count}` — the number in the badge. / число в бейдже. */
