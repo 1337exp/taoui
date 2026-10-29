@@ -126,6 +126,18 @@ describe('accent text colour', () => {
     }
 });
 
+// Secondary text is still text: labels, hints, legends. Only a disabled item may read below 4.5:1.
+// Второстепенный текст — всё равно текст: подписи, подсказки, легенды. Ниже 4,5:1 можно только неактивному.
+describe('muted text colour', () => {
+    for (const [theme, scope] of Object.entries(themes)) {
+        for (const surface of ['--tao-color-bg', '--tao-color-surface-raised']) {
+            it(`${theme}: --tao-color-text-muted on ${surface} has at least 4.5:1 contrast`, () => {
+                expect(contrast(resolveValue('--tao-color-text-muted', scope), resolveValue(surface, scope))).toBeGreaterThanOrEqual(4.5);
+            });
+        }
+    }
+});
+
 // styles/tone.css: `.tao-tone-<name>` sets the `--tao-tone*` tokens, and a component reads only those.
 const TONE_TOKENS = ['', '-hover', '-on', '-text', '-text-hover', '-subtle', '-wash'].map((suffix) => `--tao-tone${suffix}`);
 const toneBlocks = new Map<string, Map<string, string>>(

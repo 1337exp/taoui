@@ -135,6 +135,9 @@ onBeforeUnmount(() => stop?.())
 
     <h3>TaoHeatmap</h3>
     <TaoCard :padding="16" class="charts-demo__heatmap">
+      <!-- the card puts its content into a body of its own: the gap goes on a wrapper here
+           карточка кладёт содержимое в своё тело: зазор задаём обёртке здесь -->
+      <div class="charts-demo__heatmap-body">
       <span class="charts-demo__caption">{{ tr('Orders by time', 'Заказы по времени') }}</span>
       <TaoHeatmap
         :values="orders"
@@ -143,6 +146,7 @@ onBeforeUnmount(() => stop?.())
         :steps="[200, 500, 1000, 1500, 2000]"
         :label="tr('Orders by weekday and hour', 'Заказы по дням недели и часам')"
       />
+      </div>
     </TaoCard>
 
     <h3>{{ tr('For a chart library', 'Для библиотеки графиков') }}</h3>
@@ -231,10 +235,13 @@ echart.setOption({ color: t.colors, textStyle: { color: t.text, fontFamily: t.fo
 }
 
 .charts-demo__heatmap {
-  display: grid;
-  gap: 12px;
   max-width: 720px;
   margin-bottom: 16px;
+}
+
+.charts-demo__heatmap-body {
+  display: grid;
+  gap: 12px;
 }
 
 .charts-demo__swatches {

@@ -68,14 +68,14 @@
 /* Neutral: the quiet action next to a primary one. Strong text, only the wash takes the theme colour.
    Нейтральный: тихое действие рядом с главным. Сильный текст, цвет темы — только у подложки при наведении. */
 .tao-tone-neutral {
-    --tao-tone: var(--tao-color-text-muted);
+    --tao-tone: var(--tao-color-neutral);
     --tao-tone-hover: var(--tao-color-neutral-hover);
     /* white on the mid grey in both themes (5.7:1); the page colour was dark on dark in the dark theme (3.4:1)
        белое на среднем сером в обеих темах; цвет страницы в тёмной теме давал тёмное на тёмном */
     --tao-tone-on: var(--tao-color-on-neutral);
     --tao-tone-text: var(--tao-color-text-strong);
     --tao-tone-text-hover: var(--tao-color-text-strong);
-    --tao-tone-subtle: color-mix(in srgb, var(--tao-color-text-muted) 15%, transparent);
+    --tao-tone-subtle: color-mix(in srgb, var(--tao-color-neutral) 15%, transparent);
     --tao-tone-wash: var(--tao-color-accent-subtle-hover);
 }
 

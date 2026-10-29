@@ -51,7 +51,9 @@
     --tao-color-text: var(--tao-gray-200);
     --tao-color-text-strong: var(--tao-gray-0);
     --tao-color-text-subtle: var(--tao-gray-300); /* idle-контролы: segmented, tabs. Подписи остаются muted */
-    --tao-color-text-muted: var(--tao-gray-400);
+    /* secondary text (labels, hints, legends) still reads: 5.3:1 on the page, 4.8:1 on a card; it was #666, 3.2:1
+       второстепенный текст (подписи, подсказки, легенды) читается: 5,3:1 на странице, 4,8:1 на карточке; был #666, 3,2:1 */
+    --tao-color-text-muted: var(--tao-gray-350);
     --tao-color-text-disabled: var(--tao-gray-500); /* dimmer than muted: a disabled item must not stand out / тусклее muted */
 
     /* ---------- Links ---------- */
@@ -68,13 +70,15 @@
     --tao-color-on-success: var(--tao-gray-950);
     --tao-color-on-warning: var(--tao-gray-950);
     --tao-color-on-info: var(--tao-gray-950);
-    /* the neutral fill is the muted text grey: a white label on it / нейтральная заливка — серый muted, подпись белая */
+    /* the neutral fill: a mid grey of its own, so the white label keeps 5.7:1 (muted text is lighter now)
+       нейтральная заливка: свой средний серый, чтобы белая подпись держала 5,7:1 (приглушённый текст теперь светлее) */
+    --tao-color-neutral: var(--tao-gray-400);
     --tao-color-on-neutral: var(--tao-gray-0);
     /* under the pointer the neutral fill steps darker, as the other dark fills do: it went to the near-white text
        colour and the white label was lost on it
        под указателем нейтральная заливка темнеет, как остальные тёмные заливки: она становилась почти белым цветом
        текста, и белая подпись на ней терялась */
-    --tao-color-neutral-hover: color-mix(in srgb, var(--tao-color-text-muted) 78%, var(--tao-color-bg));
+    --tao-color-neutral-hover: color-mix(in srgb, var(--tao-color-neutral) 78%, var(--tao-color-bg));
     /* light fills with a dark label, as the amber accent: bright enough to read as a button on a dark page
        светлые заливки с тёмной подписью, как у янтарного акцента: достаточно яркие, чтобы читаться кнопкой на тёмной странице */
     --tao-color-success: var(--tao-green-400);
