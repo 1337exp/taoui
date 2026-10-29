@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { TaoCard, TaoDonut, TaoMeter, TaoSlider, TaoSparkline, TaoTag, watchTaoChartTheme } from '@1337exp/taoui'
+import { TaoCard, TaoDonut, TaoHeatmap, TaoMeter, TaoSlider, TaoSparkline, TaoTag, watchTaoChartTheme } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import Tr from './Tr.vue'
 import { tr } from '../i18n.js'
@@ -22,6 +22,16 @@ const traffic = computed(() => [
   { label: tr('Other', 'Другое'), value: 3 },
 ])
 
+// orders by weekday and hour: a lunch peak, an evening peak, a quiet night, a busier weekend
+// заказы по дню недели и часу: пик в обед, пик вечером, тихая ночь, выходные плотнее
+const hourly = [2, 1, 1, 0, 0, 1, 3, 6, 9, 11, 13, 17, 21, 19, 14, 12, 13, 16, 20, 23, 21, 15, 9, 5]
+const dayFactor = [0.85, 0.9, 0.95, 1, 1.15, 1.3, 1.1]
+const orders = dayFactor.map((f, d) => hourly.map((h, i) => Math.round(h * f * 100 + ((d * 7 + i * 13) % 11) * 9)))
+const weekdays = computed(() => tr('Mon Tue Wed Thu Fri Sat Sun', 'Пн Вт Ср Чт Пт Сб Вс').split(' '))
+const hours = computed(() =>
+  Array.from({ length: 24 }, (_, i) => tr(`${i % 12 || 12} ${i < 12 ? 'am' : 'pm'}`, `${i}:00`)),
+)
+
 // the colours a chart library would get, read live: switch the theme or the palette and they follow
 // цвета, которые получила бы библиотека графиков, вживую: смените тему или палитру — они последуют
 const theme = ref(null)
@@ -34,7 +44,7 @@ onBeforeUnmount(() => stop?.())
 
 <template>
   <ShowcaseSection id="charts" :tables="propTables['charts']">
-    <h2>TaoSparkline / TaoMeter / TaoDonut</h2>
+    <h2>TaoSparkline / TaoMeter / TaoDonut / TaoHeatmap</h2>
     <Tr>
       <template #en>
         <p>
@@ -123,6 +133,18 @@ onBeforeUnmount(() => stop?.())
       </TaoDonut>
     </div>
 
+    <h3>TaoHeatmap</h3>
+    <TaoCard :padding="16" class="charts-demo__heatmap">
+      <span class="charts-demo__caption">{{ tr('Orders by time', 'Заказы по времени') }}</span>
+      <TaoHeatmap
+        :values="orders"
+        :rows="weekdays"
+        :cols="hours"
+        :steps="[200, 500, 1000, 1500, 2000]"
+        :label="tr('Orders by weekday and hour', 'Заказы по дням недели и часам')"
+      />
+    </TaoCard>
+
     <h3>{{ tr('For a chart library', 'Для библиотеки графиков') }}</h3>
     <div v-if="theme" class="charts-demo__swatches" aria-hidden="true">
       <span v-for="(c, i) in theme.colors" :key="i" class="charts-demo__swatch" :style="{ background: c }" :title="c">{{ i + 1 }}</span>
@@ -206,6 +228,13 @@ echart.setOption({ color: t.colors, textStyle: { color: t.text, fontFamily: t.fo
   color: var(--tao-color-text-muted);
   font-size: 11px;
   font-weight: 400;
+}
+
+.charts-demo__heatmap {
+  display: grid;
+  gap: 12px;
+  max-width: 720px;
+  margin-bottom: 16px;
 }
 
 .charts-demo__swatches {

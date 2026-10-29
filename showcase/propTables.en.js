@@ -530,6 +530,24 @@ export const propTablesEn = {
       ],
       slots: 'default — the middle of the ring (a number, a word). taoChartTheme(el?) returns the theme colours as rgb() for a chart library: colors (6 series), text, textMuted, grid, axis, background, tooltip, tooltipText, danger / success / warning, fontFamily; watchTaoChartTheme(apply, el?) calls it now and on every theme, mode or palette change, and returns stop().',
     },
+    {
+      title: 'TaoHeatmap',
+      rows: [
+        r('values', '(number | null)[][]', '—', 'One array per row, one value per column; null is no data'),
+        r('rows / cols', 'string[]', '—', 'The names of the rows («Mon») and the columns («12 am»)'),
+        r('steps', 'number[]', 'by the data', 'The thresholds, ascending: a cell takes the colour of the highest one it reaches, below the first it is empty. By default round numbers at 10–80% of the largest value'),
+        r('tone', 'TaoToneName', "'accent'", 'The colour of the levels: from faint to the full tone'),
+        r('label', 'string', '—', 'The accessible name of the grid'),
+        r('legend', 'boolean', 'true', 'The thresholds with their colours («500+») under the map'),
+        r('hatch', 'number', '1', 'How many of the lowest levels are striped, so they read apart from empty cells without colour too'),
+        r('labelEvery', 'number', '1', 'Show every n-th column name; all of them are still read'),
+        r('colLabels', "'top' | 'bottom'", "'bottom'", 'Where the column names stand'),
+        r('cellHeight', 'number', '—', 'The cell height, px; square cells by default'),
+        r('gap', 'number', '3', 'The gap between cells, px'),
+        r('format', '(value) => string', 'by the locale', 'How a number is written in the tip, the cells and the legend'),
+      ],
+      slots: 'tip { row, col, value, text } — the tip over a cell. role="grid": one cell is in the tab order, the arrows, Home / End (Ctrl for the corners) and PageUp / PageDown move it; a screen reader reads the row, the column and the number. The map fits the width of its container.',
+    },
   ],
   table: [
     {

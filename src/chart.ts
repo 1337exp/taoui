@@ -2,11 +2,11 @@ import type { TaoToneName } from './tone';
 
 /**
  * Small charts and a bridge to real chart libraries.
- * TaoUI draws only what fits in a line of text or a card corner (TaoSparkline, TaoMeter, TaoDonut). Axes, tooltips,
+ * TaoUI draws only what fits in a line of text or a card corner (TaoSparkline, TaoMeter, TaoDonut, TaoHeatmap). Axes, tooltips,
  * zoom and thousands of points belong to a chart library; `taoChartTheme()` hands it the colours of the current theme.
  *
  * Маленькие графики и мост к настоящим библиотекам графиков.
- * TaoUI рисует только то, что помещается в строку текста или угол карточки (TaoSparkline, TaoMeter, TaoDonut). Оси,
+ * TaoUI рисует только то, что помещается в строку текста или угол карточки (TaoSparkline, TaoMeter, TaoDonut, TaoHeatmap). Оси,
  * подсказки, зум и тысячи точек — дело библиотеки графиков; `taoChartTheme()` отдаёт ей цвета текущей темы.
  */
 
@@ -78,6 +78,55 @@ export function sparklineArea(runs: [number, number][][]): string {
         .filter((run) => run.length > 1)
         .map((run) => `M${run[0][0]} 100` + run.map(([x, y]) => `L${x} ${y}`).join('') + `L${run[run.length - 1][0]} 100Z`)
         .join('');
+}
+
+/** The largest of 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8 × 10ⁿ not above x: 2 380 → 2 000, 470 → 400. / Круглое число не больше x. */
+export function niceFloor(x: number): number {
+    if (!(x > 0) || !Number.isFinite(x)) {
+        return 0;
+    }
+    const magnitude = 10 ** Math.floor(Math.log10(x));
+    const mantissa = [8, 6, 5, 4, 3, 2.5, 2, 1.5, 1].find((m) => m * magnitude <= x * (1 + 1e-9)) ?? 1;
+    return round(mantissa * magnitude);
+}
+
+/**
+ * The thresholds of a heatmap: round numbers at 10, 20, 40, 60 and 80% of the largest value, so the legend reads
+ * «200+, 500+, 1 000+, 1 500+, 2 000+». A value below the first one is an empty cell.
+ * Пороги тепловой карты: круглые числа на 10, 20, 40, 60 и 80% от наибольшего значения, чтобы легенда читалась
+ * «200+, 500+, 1 000+, 1 500+, 2 000+». Значение ниже первого — пустая клетка.
+ */
+export function heatmapSteps(values: readonly (readonly (number | null | undefined)[])[]): number[] {
+    const real = values.flat().filter(finite);
+    const max = real.length ? Math.max(...real) : 0;
+    if (!(max > 0)) {
+        return [];
+    }
+    const steps: number[] = [];
+    for (const share of [0.1, 0.2, 0.4, 0.6, 0.8]) {
+        const step = niceFloor(max * share);
+        if (step > 0 && step > (steps[steps.length - 1] ?? 0)) {
+            steps.push(step);
+        }
+    }
+    return steps;
+}
+
+/**
+ * The level of a value: 0 below the first threshold (or no value), n at or above the n-th.
+ * Уровень значения: 0 ниже первого порога (или без значения), n — от n-го порога.
+ */
+export function heatmapLevel(value: number | null | undefined, steps: readonly number[]): number {
+    if (!finite(value)) {
+        return 0;
+    }
+    let level = 0;
+    steps.forEach((step, i) => {
+        if (value >= step) {
+            level = i + 1;
+        }
+    });
+    return level;
 }
 
 export type TaoMeterTone = 'accent' | 'success' | 'warning' | 'danger';

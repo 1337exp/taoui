@@ -31,7 +31,7 @@
 - **Contrast you can trust.** The colour pairs of the themes and palettes are checked by tests against WCAG 2 (4.5:1 for text, 3:1 for a label on a fill); APCA picks whether a label is dark or white.
 - **Adapts without JS.** `TaoNav` turns from a bottom bar into a rail and a side panel, the bento grid reflows, the main action moves with the navigation — by the width of their own container (container queries), not of the window. Nothing jumps after hydration.
 - **Keyboard and screen readers.** Menus, the menu bar, the toolbar, the tree and the navigation follow the WAI-ARIA patterns: one Tab stop and arrows inside (roving tabindex), `aria-pressed` toggles, `role="meter"`, focus traps in overlays.
-- **Charts the honest way.** Small `TaoSparkline` / `TaoMeter` / `TaoDonut` for cards and lines of text; for real charts `taoChartTheme()` hands the theme colours to Chart.js, ECharts or uPlot.
+- **Charts the honest way.** Small `TaoSparkline` / `TaoMeter` / `TaoDonut` / `TaoHeatmap` for cards and lines of text; for real charts `taoChartTheme()` hands the theme colours to Chart.js, ECharts or uPlot.
 - **Built-in languages.** Placeholders, dates and aria labels in English and Russian, switchable at runtime without a reload.
 - **Nuxt and plain Vue.** `TaoLink` picks `NuxtLink`, `RouterLink` or `<a>` by itself. Fully typed ESM, every component tested for server rendering.
 - **Ready for AI assistants.** The package ships a skill with a reference of every component, generated from these docs, so an assistant writes Tao UI code instead of guessing.
@@ -104,6 +104,7 @@
 
 - **TaoTable** — simple table: columns, empty, loading, sort via `v-model:sort`. `head` tints the header, `lines` draws row rules (both on by default). `striped` starts on the first row; `striped="even"` starts on the second. Not a datagrid.
 - **TaoSparkline** / **TaoMeter** / **TaoDonut** — small charts for a card or a line of text: a trend (`values` with `null` gaps, `area`, `dot`), a measured value in a range (`role="meter"`, coloured by `low` / `high` / `optimum` as the HTML `<meter>`), a share of a whole (`segments`, or one `value` of `max`, `legend`, a centre slot). The series colours are the roles `--tao-color-chart-1…6` (the first is the accent, so palettes recolour them). For axes and tooltips use a chart library: `taoChartTheme()` gives it the theme colours as `rgb()`, `watchTaoChartTheme(apply)` re-applies them on a theme or palette change
+- **TaoHeatmap** — a value for each pair of two things (orders by weekday and hour): `values` by `rows` × `cols`, the colour by thresholds (`steps`, round numbers by default) that the legend names («500+»), the faint levels striped, a tip with the exact number. A `role="grid"` the arrows move through, a screen reader reads the row, the column and the number; it fits its container and shows the column names as often as they fit
 - **TaoPagination** — pages with ellipsis. Clicking “…” jumps `jump` pages (5 by default). `pageSizes` adds a «Per page» choice (`v-model:page-size`); the first row on screen stays on screen
 - **TaoEmpty** — empty list, no results, no access
 - **TaoList** / **TaoListItem** — list row: icon, title, caption, hover action. Not Select, not a table

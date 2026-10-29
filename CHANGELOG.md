@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.9.0
+
+A new component; nothing to migrate.
+
+- **TaoHeatmap.** A value for each pair of two things: orders by weekday and hour, visits by week and day. `values` by `rows` × `cols` (`null` is no data); a cell takes the colour of the highest threshold it reaches (`steps`, round numbers at 10–80% of the largest value by default), from faint to the full `tone`, and the legend names them («200+, 500+, 1 000+»). The `hatch` lowest levels are striped, so they read apart from the empty cells without colour too. A tip over the cell gives the row, the column and the number (`format`, by the locale by default; a `tip` slot for your own), kept on whole pixels inside the map. It is a `role="grid"`: one cell is in the tab order, the arrows, Home / End and PageUp / PageDown move it, and a screen reader reads the row, the column and the number. It fits the width of its container, and the column names show as often as they fit (`labelEvery` to choose).
+- Showcase: «Orders by time» in the charts section.
+
 ## 5.8.4
 
 A fix; nothing to migrate.

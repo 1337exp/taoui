@@ -1,10 +1,11 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import TaoDonut from '../src/components/TaoDonut.vue';
+import TaoHeatmap from '../src/components/TaoHeatmap.vue';
 import TaoMeter from '../src/components/TaoMeter.vue';
 import TaoSparkline from '../src/components/TaoSparkline.vue';
 import { colourDistance, contrastRatio } from '../src/palette';
-import { donutArcs, fraction, meterTone, sparklineArea, sparklinePath, sparklineRuns, taoChartTheme, toRgb } from '../src/chart';
+import { donutArcs, fraction, heatmapLevel, heatmapSteps, niceFloor, meterTone, sparklineArea, sparklinePath, sparklineRuns, taoChartTheme, toRgb } from '../src/chart';
 // @ts-expect-error Vite `?raw` import: the stylesheet as text
 import darkCss from '../src/styles/themes/dark.css?raw';
 // @ts-expect-error Vite `?raw` import: the stylesheet as text
@@ -230,5 +231,65 @@ describe('the series colours of the two themes stand apart', () => {
                 expect(colourDistance(series[i], series[j]), `chart-${i + 1} / chart-${j + 1}`).toBeGreaterThanOrEqual(0.11);
             }
         }
+    });
+});
+
+describe('heatmap thresholds', () => {
+    it('round numbers by the largest value', () => {
+        expect(niceFloor(2380)).toBe(2000);
+        expect(niceFloor(476)).toBe(400);
+        expect(niceFloor(0)).toBe(0);
+        expect(heatmapSteps([[100, 2400], [null, 50]])).toEqual([200, 400, 800, 1000, 1500]);
+        expect(heatmapSteps([[null]])).toEqual([]);
+    });
+
+    it('a level per threshold, 0 below the first or without a value', () => {
+        expect(heatmapLevel(150, [200, 500])).toBe(0);
+        expect(heatmapLevel(200, [200, 500])).toBe(1);
+        expect(heatmapLevel(9000, [200, 500])).toBe(2);
+        expect(heatmapLevel(null, [200, 500])).toBe(0);
+    });
+});
+
+describe('TaoHeatmap', () => {
+    const props = { values: [[250, 600], [null, 2400]], rows: ['Mon', 'Tue'], cols: ['1 am', '2 am'], steps: [200, 500, 2000], label: 'Orders' };
+
+    it('a grid with headers; each cell holds its number for a screen reader', () => {
+        const w = mount(TaoHeatmap, { props });
+        expect(w.find('[role=grid]').attributes('aria-label')).toBe('Orders');
+        expect(w.findAll('[role=columnheader]').map((h) => h.text())).toEqual(['', '1 am', '2 am']);
+        expect(w.findAll('[role=rowheader]').map((h) => h.text())).toEqual(['Mon', 'Tue']);
+        expect(w.findAll('[role=gridcell]').map((c) => c.text())).toEqual(['250', '600', '—', '2,400']);
+    });
+
+    it('the colour by level, the lowest hatched, the legend names the thresholds', () => {
+        const w = mount(TaoHeatmap, { props });
+        const fills = w.findAll('[role=gridcell] .tao-heatmap__fill');
+        expect(fills[0].classes()).toContain('tao-heatmap__fill--hatch');
+        expect(fills[1].classes()).toContain('tao-heatmap__fill--on');
+        expect(fills[1].classes()).not.toContain('tao-heatmap__fill--hatch');
+        expect(fills[2].classes()).not.toContain('tao-heatmap__fill--on');
+        expect(fills[3].attributes('style')).toContain('--_mix: 100%');
+        expect(w.findAll('.tao-heatmap__legend-item').map((i) => i.text())).toEqual(['200+', '500+', '2,000+']);
+    });
+
+    it('one cell in the tab order, the arrows move it', async () => {
+        const w = mount(TaoHeatmap, { props, attachTo: document.body });
+        const tabbable = () => w.findAll('[role=gridcell]').findIndex((c) => c.attributes('tabindex') === '0');
+        expect(tabbable()).toBe(0);
+        await w.find('[role=grid]').trigger('keydown', { key: 'ArrowRight' });
+        expect(tabbable()).toBe(1);
+        await w.find('[role=grid]').trigger('keydown', { key: 'ArrowDown' });
+        expect(tabbable()).toBe(3);
+        expect(document.activeElement).toBe(w.findAll('[role=gridcell]')[3].element);
+        await w.find('[role=grid]').trigger('keydown', { key: 'Home' });
+        expect(tabbable()).toBe(2);
+        w.unmount();
+    });
+
+    it('every n-th column name shows, all are read; a format of its own', () => {
+        const w = mount(TaoHeatmap, { props: { ...props, labelEvery: 2, format: (v: number) => `${v} pcs` } });
+        expect(w.findAll('[role=columnheader] .tao-sr-only').map((h) => h.text())).toEqual(['2 am']);
+        expect(w.findAll('[role=gridcell]')[1].text()).toBe('600 pcs');
     });
 });

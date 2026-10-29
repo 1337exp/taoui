@@ -112,7 +112,8 @@ choose a text colour, WCAG 2 to promise a number.
 `TaoScrollTop`, `TaoAnimatedBorder`, `TaoIcon`.
 
 Small charts only: `TaoSparkline` (a trend), `TaoMeter` (a value in a range, `low` / `high` / `optimum`), `TaoDonut`
-(`segments` or `value` of `max`). Series colours `--tao-color-chart-1…6`. For a real chart (axes, tooltips) use a chart
+(`segments` or `value` of `max`), `TaoHeatmap` (`values` by `rows` × `cols`, threshold `steps` with a legend, a grid the
+arrows move through). Series colours `--tao-color-chart-1…6`. For a real chart (axes, tooltips) use a chart
 library and feed it `taoChartTheme()` / `watchTaoChartTheme(apply)`; do not build axes by hand.
 
 ## Icons
