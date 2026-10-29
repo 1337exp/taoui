@@ -1,9 +1,14 @@
 <script lang="ts" setup>
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { useControlAttrs } from '../controlAttrs';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 
-defineOptions({ name: 'TaoTextarea' });
+defineOptions({ name: 'TaoTextarea', inheritAttrs: false });
+
+// the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
+// атрибуты — элементу управления, внешний вид — обёртке
+const { rootAttrs, controlAttrs } = useControlAttrs();
 
 type TaoTextareaVariant = 'bar' | 'outline' | 'filled' | 'plain';
 
@@ -157,8 +162,9 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="tao-textarea-wrap" :class="sizeClass(size)">
+    <div v-bind="rootAttrs()" class="tao-textarea-wrap" :class="sizeClass(size)">
         <textarea
+            v-bind="controlAttrs()"
             :id="controlId"
             ref="textareaRef"
             class="tao-textarea"

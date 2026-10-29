@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue';
+import { useControlAttrs } from '../controlAttrs';
 import { useDismiss } from '../dismiss';
 import { useFloating } from '../floating';
 import { useLayer } from '../layers';
@@ -10,7 +11,11 @@ import { densityClass, resolveDensity, type TaoResolvedDensity } from '../densit
 import { resolveSize, sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
 
-defineOptions({ name: 'TaoSelect' });
+defineOptions({ name: 'TaoSelect', inheritAttrs: false });
+
+// the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
+// атрибуты — элементу управления, внешний вид — обёртке
+const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const props = withDefaults(
     defineProps<{
@@ -185,8 +190,9 @@ watch(open, (isOpen) => {
 </script>
 
 <template>
-    <div class="tao-select" :class="[sizeClass(size), { 'tao-select--open': open, 'tao-select--invalid': invalid }]">
+    <div v-bind="rootAttrs()" class="tao-select" :class="[sizeClass(size), { 'tao-select--open': open, 'tao-select--invalid': invalid }]">
         <button
+            v-bind="controlAttrs()"
             :id="controlId"
             ref="triggerRef"
             type="button"

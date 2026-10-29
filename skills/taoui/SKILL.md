@@ -81,6 +81,8 @@ choose a text colour, WCAG 2 to promise a number.
   `TaoChecklist` (one model for a group), `TaoRadioGroup` + `TaoRadio`, `TaoSwitch`, `TaoSegmented`, `TaoSlider` /
   `TaoRangeSlider`, `TaoPinCode` (`status="success | error"` after `complete`), `TaoColorInput` / `TaoColorPicker`,
   `TaoFileDrop`. A form is a plain `<form>`; there is no TaoForm.
+- Attributes given to a field (`aria-label`, `name`, `autocomplete`, `inputmode`, `data-*`, listeners) reach its control
+  (the input, the trigger button, the checkbox); `class` and `style` stay on its wrapper.
 
 ## Overlays and feedback
 

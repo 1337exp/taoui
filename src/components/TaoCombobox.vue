@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { useControlAttrs } from '../controlAttrs';
 import { useDismiss } from '../dismiss';
 import { useFloating } from '../floating';
 import { useField } from '../formField';
@@ -11,7 +12,11 @@ import { densityClass, resolveDensity, type TaoResolvedDensity } from '../densit
 import { resolveSize, sizeClass, type TaoSize } from '../size';
 import { formatText, useLocaleText, useTaoLocale } from '../locale';
 
-defineOptions({ name: 'TaoCombobox' });
+defineOptions({ name: 'TaoCombobox', inheritAttrs: false });
+
+// the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
+// атрибуты — элементу управления, внешний вид — обёртке
+const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const appLocale = useTaoLocale();
 
@@ -420,7 +425,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div
+    <div v-bind="rootAttrs()"
         class="tao-combobox"
         :class="[
             sizeClass(size),
@@ -433,6 +438,7 @@ onBeforeUnmount(() => {
     >
         <div ref="fieldRef" class="tao-combobox__field" @mousedown="onFieldMouseDown">
             <input
+                v-bind="controlAttrs()"
                 :id="controlId"
                 ref="inputRef"
                 class="tao-combobox__input"
