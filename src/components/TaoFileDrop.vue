@@ -248,6 +248,10 @@ onBeforeUnmount(() => stopFocusLoss?.());
 
 <style scoped>
 .tao-file-drop {
+    /* holds its hidden input: an absolute one with no positioned parent lands against the page and stretches a
+       scrolling container's document / держит скрытое поле: без позиционированного родителя оно встаёт от страницы
+       и растягивает документ прокручиваемого контейнера */
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: var(--tao-space-2);

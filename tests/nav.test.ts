@@ -277,3 +277,28 @@ describe('TaoNav widths and labels', () => {
         expect(css).toMatch(/\.tao-nav__action :deep\(\.tao-nav__action-label\),\n\.tao-nav__action :deep\(\.tao-button__shortcut\) \{/);
     });
 });
+
+describe('TaoNav #footer', () => {
+    it('stands under the list, on the side only', () => {
+        const w = mount(TaoNav, { props: { items, layout: 'drawer' }, slots: { footer: 'v3' } });
+        wrappers.push(w);
+        const column = w.find('.tao-nav__column');
+        expect(column.element.lastElementChild?.classList.contains('tao-nav__footer')).toBe(true);
+        expect(w.find('.tao-nav__footer').text()).toBe('v3');
+        expect(navSource).toMatch(/\.tao-nav__footer \{[^}]*display: var\(--_overflow-display\);/);
+        const nofooter = mount(TaoNav, { props: { items } });
+        wrappers.push(nofooter);
+        expect(nofooter.find('.tao-nav__footer').exists()).toBe(false);
+    });
+});
+
+// A visually hidden input is absolute: its field must be positioned, or it lands against the page and stretches the
+// document of a scrolling container.
+describe('the fields hold their hidden inputs', () => {
+    const sources = (import.meta as unknown as { glob: (p: string, o: object) => unknown }).glob('../src/components/{TaoSwitch,TaoCheckbox,TaoRadio,TaoFileDrop,TaoPinCode}.vue', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+    it.each(Object.entries(sources).map(([file, src]) => [file.split('/').pop()!, src]))('%s: the root is position: relative', (name, src) => {
+        const root = { 'TaoSwitch.vue': 'tao-switch', 'TaoCheckbox.vue': 'tao-checkbox', 'TaoRadio.vue': 'tao-radio', 'TaoFileDrop.vue': 'tao-file-drop', 'TaoPinCode.vue': 'tao-pin-code' }[name]!;
+        const rule = new RegExp(`\\.${root} \\{[^}]*position: relative;`);
+        expect(src.replace(/\r\n/g, '\n')).toMatch(rule);
+    });
+});

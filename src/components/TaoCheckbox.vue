@@ -108,6 +108,10 @@ watch(
 
 <style scoped>
 .tao-checkbox {
+    /* holds its hidden input: an absolute one with no positioned parent lands against the page and stretches a
+       scrolling container's document / держит скрытое поле: без позиционированного родителя оно встаёт от страницы
+       и растягивает документ прокручиваемого контейнера */
+    position: relative;
     display: flex;
     align-items: center;
     gap: var(--tao-space-2);

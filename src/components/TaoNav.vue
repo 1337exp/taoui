@@ -87,6 +87,13 @@ defineSlots<{
      * наверху боковой панели во всю ширину с видимым текстом.
      */
     action?(): unknown;
+    /**
+     * A small line under the items in the rail and the side panel: the version, «About», a link. The bar has no room
+     * for it and does not show it.
+     * Мелкая строка под пунктами в рейке и боковой панели: версия, «О приложении», ссылка. В нижней панели для неё
+     * нет места, там её нет.
+     */
+    footer?(): unknown;
 }>();
 
 const slots = useSlots();
@@ -206,6 +213,9 @@ function onMoreClose(reason: TaoMenuCloseReason) {
                             </button>
                         </li>
                     </ul>
+                    <div v-if="$slots.footer" class="tao-nav__footer">
+                        <slot name="footer" />
+                    </div>
                 </div>
             </nav>
             <div v-if="!standalone" class="tao-nav__content">
@@ -258,6 +268,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     --_entry-flex: 1 1 0;
     --_item-direction: column;
     --_item-justify: center;
+    --_footer-align: center;
     --_label-size: var(--tao-font-size-xs);
     --_overflow-display: none;
     --_more-display: block;
@@ -288,6 +299,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     --_entry-flex: none;
     --_item-direction: column;
     --_item-justify: center;
+    --_footer-align: center;
     --_label-size: var(--tao-font-size-xs);
     --_overflow-display: block;
     --_more-display: none;
@@ -318,6 +330,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     --_entry-flex: none;
     --_item-direction: row;
     --_item-justify: flex-start;
+    --_footer-align: start;
     --_label-size: var(--tao-control-font-size);
     --_overflow-display: block;
     --_more-display: none;
@@ -348,6 +361,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
         --_entry-flex: 1 1 0;
         --_item-direction: column;
         --_item-justify: center;
+        --_footer-align: center;
         --_label-size: var(--tao-font-size-xs);
         --_overflow-display: none;
         --_more-display: block;
@@ -379,6 +393,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
         --_entry-flex: none;
         --_item-direction: column;
         --_item-justify: center;
+        --_footer-align: center;
         --_label-size: var(--tao-font-size-xs);
         --_overflow-display: block;
         --_more-display: none;
@@ -410,6 +425,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
         --_entry-flex: none;
         --_item-direction: row;
         --_item-justify: flex-start;
+        --_footer-align: start;
         --_label-size: var(--tao-control-font-size);
         --_overflow-display: block;
         --_more-display: none;
@@ -584,6 +600,18 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+/* under the items, on the side only (--_overflow-display is none in the bar); the list scrolls, the footer stays
+   под пунктами, только сбоку (--_overflow-display равен none в нижней панели); список прокручивается, подвал стоит */
+.tao-nav__footer {
+    display: var(--_overflow-display);
+    flex: none;
+    margin-top: var(--tao-space-3);
+    padding: var(--tao-space-2) calc(var(--tao-space-3) - var(--_compact) * (var(--tao-space-3) - var(--tao-space-1)));
+    color: var(--tao-color-text-muted);
+    font-size: var(--tao-font-size-xs);
+    text-align: var(--_footer-align);
 }
 
 .tao-nav__entry {

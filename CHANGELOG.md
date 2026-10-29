@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.13.0
+
+Nothing to migrate.
+
+- **Hidden inputs no longer stretch the page.** `TaoSwitch`, `TaoCheckbox`, `TaoRadio`, `TaoFileDrop` and `TaoPinCode` keep a visually hidden input (or a status) that is `position: absolute`, and their root was not positioned: the hidden element stood against the page, not the field, so a scrolling container did not clip it and the document grew (a long form in a `overflow: auto` block scrolled the whole page). Each root is `position: relative` now.
+- **`TaoNav` `#footer`:** a small line under the items in the rail and the side panel (the version, «About», a link); the bar has no room for it and does not show it.
+- Showcase: the TaoNav demo has a footer.
+
 ## 5.12.0
 
 Nothing to migrate.
