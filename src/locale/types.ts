@@ -95,6 +95,8 @@ export interface TaoLocale {
         goToText: string;
         /** `{count}` — the number of pages. / число страниц. */
         goToLabel: string;
+        /** The caption of the page size choice (5.7); optional for locales written before. / Подпись выбора размера страницы. */
+        perPageText?: string;
         /** `{from}`, `{to}`, `{total}`. */
         totalText: string;
         /** When there are no rows. / Когда строк нет. */

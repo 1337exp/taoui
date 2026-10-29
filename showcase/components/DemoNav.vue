@@ -24,6 +24,7 @@ const layout = ref('auto')
 const width = ref('360px')
 const current = ref('home')
 const floating = ref(true)
+const indicator = ref('pill')
 const action = ref(true)
 
 const items = computed(() => all.value.slice(0, Number(count.value)))
@@ -79,11 +80,15 @@ const currentLabel = computed(() => all.value.find((item) => item.id === current
         <TaoSegmentedOption value="7" :label="tr('7 items', '7 пунктов')" />
       </TaoSegmented>
       <TaoSwitch v-model="floating" size="small" label="floating" />
+      <TaoSegmented v-model="indicator" size="small">
+        <TaoSegmentedOption value="pill" label="pill" />
+        <TaoSegmentedOption value="line" label="line" />
+      </TaoSegmented>
       <TaoSwitch v-model="action" size="small" label="#action" />
     </div>
 
     <div class="nav-demo__frame" :style="{ width }">
-      <TaoNav v-model="current" :items="items" :layout="layout" :floating="floating">
+      <TaoNav v-model="current" :items="items" :layout="layout" :floating="floating" :indicator="indicator">
         <div class="nav-demo__page">
           <h3>{{ currentLabel }}</h3>
           <p v-for="n in 12" :key="n">{{ tr('A line of the page, to scroll.', 'Строка страницы, чтобы было что прокручивать.') }} {{ n }}</p>
