@@ -143,6 +143,20 @@ function onClose(event: MouseEvent) {
     text-overflow: ellipsis;
 }
 
+/* Optical centring: the line box is centred, but a font puts more room above its letters than below (Segoe UI, Roboto),
+   so the body of the lowercase letters sat about half a pixel low. Trimmed to the x-height and the baseline, the
+   letters themselves are centred, in any font; the padding gives the ascenders and descenders their room back, or the
+   ellipsis clip would cut them. A browser without text-box keeps the line box centring.
+   Оптическое центрирование: центрируется строка, но шрифт оставляет над буквами больше места, чем под ними, и тело
+   строчных сидело на полпикселя ниже. Обрезка по высоте строчных и базовой линии центрирует сами буквы, в любом
+   шрифте; отступ возвращает место выносным элементам, иначе обрезка многоточия срезала бы их. Без text-box — как было. */
+@supports (text-box: trim-both ex alphabetic) {
+    .tao-tag__text {
+        text-box: trim-both ex alphabetic;
+        padding-block: 0.3em;
+    }
+}
+
 .tao-tag__close {
     display: inline-flex;
     flex-shrink: 0;

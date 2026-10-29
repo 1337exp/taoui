@@ -58,4 +58,10 @@ describe('TaoTag', () => {
     it('keeps its text in the middle when it is wider than the text', () => {
         expect(tagSfc as string).toMatch(/\.tao-tag \{[^}]*justify-content: center;[^}]*text-align: center;/);
     });
+
+    it('centres the letters, not the line box, where text-box is supported; the padding keeps the ascenders', () => {
+        expect(tagSfc as string).toMatch(
+            /@supports \(text-box: trim-both ex alphabetic\) \{\s*\.tao-tag__text \{\s*text-box: trim-both ex alphabetic;\s*padding-block: 0\.3em;/,
+        );
+    });
 });
