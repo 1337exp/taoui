@@ -19,17 +19,20 @@ import tagSfc from '../src/components/TaoTag.vue?raw';
 // 5.6.1: no flash on a field that opens a list; a hover that shows on any fill; the neutral hover a step, not a jump.
 // 5.6.1: без вспышки у поля со списком; подсветка, видная на любой заливке; наведение нейтрального тона — шаг, а не скачок.
 
+// a Windows checkout has CRLF line ends / в checkout под Windows концы строк CRLF
+const lf = (text: unknown) => (text as string).replace(/\r\n/g, '\n');
+
 describe('a field that opens a list stays lit while it is open', () => {
     it.each([
         ['TaoSelect', selectSfc, 'tao-select'],
         ['TaoDate', dateSfc, 'tao-date'],
         ['TaoDateRange', rangeSfc, 'tao-date-range'],
     ])('%s', (_, sfc, block) => {
-        expect(sfc as string).toContain(`.${block}__trigger:focus,\n.${block}--open .${block}__trigger {`);
+        expect(lf(sfc)).toContain(`.${block}__trigger:focus,\n.${block}--open .${block}__trigger {`);
     });
 
     it('the editable date field too', () => {
-        expect(dateSfc as string).toContain('.tao-date__field:focus-within,\n.tao-date--open .tao-date__field {');
+        expect(lf(dateSfc)).toContain('.tao-date__field:focus-within,\n.tao-date--open .tao-date__field {');
     });
 });
 
