@@ -346,6 +346,10 @@ watch(
 
 <style scoped>
 .tao-pin-code {
+    /* holds its hidden status: an absolute one with no positioned parent lands against the page and stretches a
+       scrolling container's document / держит скрытый статус: без позиционированного родителя оно встаёт от страницы
+       и растягивает документ прокручиваемого контейнера */
+    position: relative;
     display: inline-flex;
     align-items: center;
     user-select: none;

@@ -84,6 +84,10 @@ function toggle(event?: Event) {
 
 <style scoped>
 .tao-switch {
+    /* holds its hidden input: an absolute one with no positioned parent lands against the page and stretches a
+       scrolling container's document / держит скрытое поле: без позиционированного родителя оно встаёт от страницы
+       и растягивает документ прокручиваемого контейнера */
+    position: relative;
     /* track: 36 × 20 at medium / дорожка 36 × 20 в medium */
     --tao-switch-height: calc(var(--tao-indicator-size) + 2px);
     display: inline-flex;

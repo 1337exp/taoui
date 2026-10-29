@@ -108,6 +108,7 @@ const currentLabel = computed(() => all.value.find((item) => item.id === current
             <span class="tao-nav__action-label">{{ tr('New', 'Создать') }}</span>
           </TaoButton>
         </template>
+        <template #footer>TaoUI · v5</template>
       </TaoNav>
     </div>
 
