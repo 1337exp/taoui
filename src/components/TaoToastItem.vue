@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import TaoButton from './TaoButton.vue';
 import TaoIcon from './TaoIcon.vue';
 import { listenFocusLoss } from '../focusLoss';
@@ -55,6 +55,14 @@ function resume() {
     startTimer();
 }
 
+// a snackbar: no title and an action — the text and the action share one line, the action at the end, as a text
+// button (Material, iOS); a long text wraps and the action goes under it, still at the end
+// snackbar: без заголовка и с действием — текст и действие в одной строке, действие в конце, текстовой кнопкой; длинный
+// текст переносится, и действие уходит под него, всё так же в конце
+const inline = computed(() => !props.toast.title && props.toast.actions.length > 0);
+// a neutral toast has no icon of its own: «Note deleted» needs none / у нейтрального тоста нет своей иконки
+const hasIcon = computed(() => props.toast.loading || Boolean(props.toast.icon) || props.toast.type !== 'neutral');
+
 function close() {
     clearTimer();
     removeToast(props.toast.id);
@@ -103,7 +111,7 @@ onBeforeUnmount(() => {
     >
         <span class="tao-toast__accent" aria-hidden="true"></span>
 
-        <span class="tao-toast__icon" aria-hidden="true">
+        <span v-if="hasIcon" class="tao-toast__icon" aria-hidden="true">
             <span v-if="toast.loading" class="tao-toast__spinner"></span>
             <TaoIcon v-else-if="toast.icon" :name="toast.icon" :size="18" />
             <TaoIcon v-else-if="toast.type === 'success'" name="tao-check-circle" :size="18" />
@@ -112,7 +120,7 @@ onBeforeUnmount(() => {
             <TaoIcon v-else name="tao-info" :size="18" />
         </span>
 
-        <div class="tao-toast__body">
+        <div class="tao-toast__body" :class="{ 'tao-toast__body--inline': inline, 'tao-toast__body--closable': toast.closable }">
             <strong v-if="toast.title" class="tao-toast__title">{{ toast.title }}</strong>
             <p v-if="toast.message" class="tao-toast__message">{{ toast.message }}</p>
             <div v-if="toast.actions.length" class="tao-toast__actions">
@@ -120,7 +128,7 @@ onBeforeUnmount(() => {
                     v-for="action in toast.actions"
                     :key="action.label"
                     size="small"
-                    variant="secondary"
+                    :variant="inline ? 'text' : 'secondary'"
                     @click="runAction(action.onClick)"
                 >
                     {{ action.label }}
@@ -219,7 +227,27 @@ onBeforeUnmount(() => {
     gap: var(--tao-space-1);
     min-width: 0;
     flex: 1;
+}
+
+/* room for the cross in the corner / место под крестик в углу */
+.tao-toast__body--closable {
     padding-right: var(--tao-space-4);
+}
+
+.tao-toast__body--inline {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    column-gap: var(--tao-space-4);
+}
+
+.tao-toast__body--inline .tao-toast__message {
+    flex: 1 1 12em;
+}
+
+.tao-toast__body--inline .tao-toast__actions {
+    margin-top: 0;
+    margin-inline-start: auto;
 }
 
 .tao-toast__title {

@@ -63,8 +63,11 @@ describe('TaoTag', () => {
     });
 
     it('centres the letters, not the line box, where text-box is supported; the padding keeps the ascenders', () => {
-        expect(tagSfc as string).toMatch(
-            /@supports \(text-box: trim-both ex alphabetic\) \{\s*\.tao-tag__text \{\s*text-box: trim-both ex alphabetic;\s*padding-block: 0\.3em;/,
-        );
+        const css = lf(tagSfc);
+        expect(css).toMatch(/@supports \(text-box: trim-both ex alphabetic\) \{\s*\.tao-tag__text \{\s*--_tao-pad: round\(0\.3em, 1px\);\s*text-box: trim-both ex alphabetic;/);
+    });
+
+    it('and keeps the text on a whole pixel, as the line of 5.6.2 does: the offset is rounded', () => {
+        expect(lf(tagSfc)).toMatch(/\.tao-tag:not\(\.tao-tag--prefix\) \.tao-tag__text \{[^}]*margin-top: round\(/);
     });
 });

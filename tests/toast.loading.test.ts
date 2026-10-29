@@ -108,3 +108,21 @@ describe('toast.promise', () => {
         expect(toasts.value.map((t) => [t.type, t.message])).toEqual([['danger', 'Not saved: offline']]);
     });
 });
+
+describe('a snackbar: no title and an action', () => {
+    it('the text and a text-button action share one line; with a title the actions stay below as buttons', () => {
+        const snack = mount(TaoToastItem, { props: { toast: record({ type: 'neutral', message: 'Note deleted', actions: [{ label: 'Undo', onClick: () => {} }] }) } });
+        expect(snack.find('.tao-toast__body').classes()).toContain('tao-toast__body--inline');
+        expect(snack.find('.tao-toast__actions .tao-button').classes()).toContain('tao-button--text');
+        const titled = mount(TaoToastItem, { props: { toast: record({ title: 'File uploaded', actions: [{ label: 'Open', onClick: () => {} }] }) } });
+        expect(titled.find('.tao-toast__body').classes()).not.toContain('tao-toast__body--inline');
+        expect(titled.find('.tao-toast__actions .tao-button').classes()).toContain('tao-button--secondary');
+    });
+
+    it('a neutral toast has no icon of its own; an icon you give, a status or a spinner still shows', () => {
+        expect(mount(TaoToastItem, { props: { toast: record({ type: 'neutral' }) } }).find('.tao-toast__icon').exists()).toBe(false);
+        expect(mount(TaoToastItem, { props: { toast: record({ type: 'neutral', icon: 'tao-trash' }) } }).find('.tao-toast__icon').exists()).toBe(true);
+        expect(mount(TaoToastItem, { props: { toast: record({ type: 'success' }) } }).find('.tao-toast__icon').exists()).toBe(true);
+        expect(mount(TaoToastItem, { props: { toast: record({ type: 'neutral', loading: true, timeout: 0 }) } }).find('.tao-toast__spinner').exists()).toBe(true);
+    });
+});

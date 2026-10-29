@@ -7,24 +7,20 @@ A toast for work in progress; nothing to migrate.
 - **`toast().loading()`**: a spinner instead of the icon, no timeout, `aria-busy`. Finish it with a toast of the same `id` and `replace()`.
 - **`toast.promise(promise, { loading, success, error })`**: loading while the promise runs, then success or error in the same place (`success` / `error` may be functions of the result / the error); it returns the same promise.
 - **A glass toast keeps its blur while it fades.** The fade ran on the toast's wrapper, and an ancestor below opacity 1 cuts a `backdrop-filter` off from what is behind it (Chrome): the blur waited for the fade in and then popped in, and went out at once on the fade out. The fade now runs on the toast itself.
+- **A snackbar is one line.** A toast with no title and an action puts the text and the action on one line, the action at the end as a text button, as phones do (Material, iOS); a long text wraps and the action goes under it, still at the end. With a title the actions stay below as buttons. A neutral toast (`show()`) has no icon of its own now; an icon you give, a status and the spinner still show.
 - Showcase: a snackbar example, «Note deleted · Undo» at the bottom.
 - **`replace()` changes a toast where it stands.** It used to drop the old one and add the new one at the end of the stack (a leave and an enter, a jump); now it takes the place and the id of the one it replaces, and the item restarts its timer for the new content.
 
 ## 5.7.0
 
-Two options; nothing to migrate.
+Two options and the visual fixes made after 5.6.0; nothing to migrate.
 
 - **`TaoPagination pageSizes`** (`[10, 20, 50, 100]`): a «Per page» choice next to the total, `v-model:page-size`. A new size moves the page so the first row on screen stays on screen (rows 41–60 at 20 a page are page 1 at 50). The caption is the locale key `perPageText` (optional, so a locale written before still type-checks) and labels the list for a screen reader.
 - **`TaoNav indicator="line"`**: the current section in the accent colour with a short line instead of a tint, under the item in the bar look and along its start edge in the rail and the side panel; `auto` moves it with the look. `pill` stays the default.
-
-## 5.6.1
-
-Visual fixes, nothing to migrate.
-
 - **No flash on a field that opens a list.** TaoSelect, TaoDate and TaoDateRange lit their frame on the press (focus) and dropped it at once when the list opened (the focus moves into the list): now the field stays lit while its list is open.
 - **The hover shows on any fill.** Rows and controls under the pointer (menus, the menu bar, Select / Combobox options, the tree, the nav, lists, the table, pagination, the calendar, secondary buttons) take the new role `--tao-color-hover`, a see-through wash of the strong text, instead of the solid `--tao-color-surface-hover`. It shows on a grain or glass panel too, and the default dark theme gets a hover you can see (1.27:1 against the raised surface, gray-700 on gray-800 was 1.09:1; palettes 1.16 → 1.25). `surface-hover` stays the solid colour (the colour inputs' checkerboard uses it).
 - **The neutral fill under the pointer is a step, not a jump.** It went to the text colour: near-white in the dark themes, so the white label was lost on it, and near-black in the light one. The new role `--tao-color-neutral-hover` steps it a little darker in the dark themes and a little towards the strong text in the light one; the label stays about 7.6:1.
-- **TaoTag** centres its text when it is wider than the text (a grid, a fixed width), and centres the letters themselves: a font keeps more room above its letters than below (Segoe UI, Roboto), so with the line box centred the lowercase sat about half a pixel low. Where `text-box` is supported (Chrome 133+, Safari 18.2+) the text is trimmed to the x-height and the baseline, with padding that gives the ascenders and descenders their room back; elsewhere it is as it was.
+- **TaoTag** centres its text when it is wider than the text (a grid, a fixed width), and centres the letters themselves: a font keeps more room above its letters than below (Segoe UI, Roboto), so with the line box centred the lowercase sat about half a pixel low. Where `text-box` is supported (Chrome 133+, Safari 18.2+) the text is trimmed to the x-height and the baseline, with padding that gives the ascenders and descenders their room back, and the offset is rounded to a whole pixel, so the fix of 5.6.2 (no jumping text) holds; a tag with an avatar keeps the plain centring; elsewhere it is as it was.
 - Showcase: the sparkline cards show a trend tag in the `#corner` of TaoCard.
 
 ## 5.6.2

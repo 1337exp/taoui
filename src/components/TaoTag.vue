@@ -152,8 +152,20 @@ function onClose(event: MouseEvent) {
    шрифте; отступ возвращает место выносным элементам, иначе обрезка многоточия срезала бы их. Без text-box — как было. */
 @supports (text-box: trim-both ex alphabetic) {
     .tao-tag__text {
+        --_tao-pad: round(0.3em, 1px);
         text-box: trim-both ex alphabetic;
-        padding-block: 0.3em;
+        padding-block: var(--_tao-pad);
+    }
+
+    /* and still on a whole pixel, as the line of 5.6.2: the offset of the letters is rounded, so the box and the text
+       round alike on a fractional position of the page and the text does not jump from one tag to the next (a tag with
+       an avatar is taller and keeps the plain centring)
+       и всё так же на целом пикселе, как строка из 5.6.2: смещение букв округляется, поэтому рамка и текст округляются
+       одинаково на дробной позиции страницы, и текст не прыгает от тега к тегу (тег с аватаром выше и центрируется как
+       обычно) */
+    .tao-tag:not(.tao-tag--prefix) .tao-tag__text {
+        align-self: flex-start;
+        margin-top: round(calc((var(--tao-tag-height) - 2px - 1ex) / 2 - var(--_tao-pad)), 1px);
     }
 }
 
