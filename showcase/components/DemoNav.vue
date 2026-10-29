@@ -94,7 +94,7 @@ const currentLabel = computed(() => all.value.find((item) => item.id === current
           <p v-for="n in 12" :key="n">{{ tr('A line of the page, to scroll.', 'Строка страницы, чтобы было что прокручивать.') }} {{ n }}</p>
         </div>
         <template v-if="action" #action>
-          <TaoButton icon="tao-plus" size="large">
+          <TaoButton icon="tao-plus" size="large" shortcut="N">
             <span class="tao-nav__action-label">{{ tr('New', 'Создать') }}</span>
           </TaoButton>
         </template>
@@ -105,7 +105,7 @@ const currentLabel = computed(() => all.value.find((item) => item.id === current
       <pre><code>&lt;TaoNav v-model="section" :items="sections" floating @select="go"&gt;
   &lt;RouterView /&gt;
   &lt;template #action&gt;
-    &lt;TaoButton icon="tao-plus" size="large" @click="create"&gt;
+    &lt;TaoButton icon="tao-plus" size="large" shortcut="N" @click="create"&gt;
       &lt;span class="tao-nav__action-label"&gt;New&lt;/span&gt;
     &lt;/TaoButton&gt;
   &lt;/template&gt;

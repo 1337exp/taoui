@@ -215,7 +215,7 @@ describe('TaoNav #action', () => {
         expect(blocks.map(look)).toEqual([bar, rail, drawer, bar, rail, drawer].map((rest) => `--_action-position: ${rest}`));
         expect(navSource).toMatch(/\.tao-nav__action \{[^}]*position: var\(--_action-position\);[^}]*bottom: calc\(100% \+ var\(--tao-space-3\)\)/);
         expect(navSource).toMatch(/\.tao-nav--floating \.tao-nav__action \{[^}]*inset-inline-end: -1px/);
-        expect(navSource).toMatch(/\.tao-nav__action :deep\(\.tao-nav__action-label\) \{[^}]*clip-path: inset\(calc\(var\(--_compact\) \* 50%\)\)/);
+        expect(navSource).toMatch(/\.tao-nav__action :deep\(\.tao-nav__action-label\),\s*\.tao-nav__action :deep\(\.tao-button__shortcut\) \{[^}]*clip-path: inset\(calc\(var\(--_compact\) \* 50%\)\)/);
     });
 
     it('renders on the server with the action', async () => {
@@ -247,5 +247,23 @@ describe('TaoNav stays still while the page scrolls', () => {
     it('the floating bar keeps its bottom margin 1px short of its sticky offset', () => {
         expect(navSource).toContain('calc(var(--_bar) * (var(--tao-space-3) + var(--_safe-bottom) - 1px))');
         expect(navSource).toContain('bottom: calc(var(--_bar) * (var(--tao-space-3) + var(--_safe-bottom)));');
+    });
+});
+
+describe('TaoNav widths and labels', () => {
+    const css = navSource.replace(/\r\n/g, '\n');
+    it('the rail and side panel widths are public variables', () => {
+        expect(css.match(/--_panel-width: var\(--tao-nav-rail-width, 80px\)/g)).toHaveLength(2);
+        expect(css.match(/--_panel-width: var\(--tao-nav-drawer-width, 240px\)/g)).toHaveLength(2);
+        expect(css).not.toMatch(/--_panel-width: (80|240)px/);
+    });
+
+    it('an item with the icon over the label keeps a narrow inset, so a long label fits the rail', () => {
+        expect(css).toMatch(/\.tao-nav__item \{[^}]*padding: var\(--tao-space-2\) calc\(var\(--tao-space-3\) - var\(--_compact\) \* \(var\(--tao-space-3\) - var\(--tao-space-1\)\)\)/);
+    });
+
+    it('the action: round when compact, its own corners when wide (or --tao-nav-action-radius); its shortcut hides with its label', () => {
+        expect(css).toMatch(/border-radius: calc\(var\(--_compact\) \* var\(--tao-radius-full\) \+ \(1 - var\(--_compact\)\) \* var\(--tao-nav-action-radius, var\(--tao-radius-control\)\)\)/);
+        expect(css).toMatch(/\.tao-nav__action :deep\(\.tao-nav__action-label\),\n\.tao-nav__action :deep\(\.tao-button__shortcut\) \{/);
     });
 });

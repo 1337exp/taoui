@@ -30,6 +30,13 @@ interface Props {
      * своё состояние; без него — обычная кнопка.
      */
     pressed?: boolean;
+    /**
+     * The key that does the same, shown at the end of the button (`N`, `Ctrl+K`) and given as `aria-keyshortcuts`.
+     * It only shows the key: listening to it is the app's job.
+     * Клавиша, которая делает то же, — в конце кнопки (`N`, `Ctrl+K`) и в `aria-keyshortcuts`. Только показывает
+     * клавишу: слушать её — дело приложения.
+     */
+    shortcut?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -43,6 +50,7 @@ const props = withDefaults(defineProps<Props>(), {
     iconEnd: '',
     minWidth: undefined,
     pressed: undefined,
+    shortcut: undefined,
 });
 
 const minWidthStyle = computed(() =>
@@ -93,6 +101,7 @@ function handleClick(event: MouseEvent) {
         :style="minWidthStyle"
         :type="type"
         :aria-pressed="pressed === undefined ? undefined : pressed"
+        :aria-keyshortcuts="shortcut || undefined"
         :disabled="disabled || loading"
         @click="handleClick"
     >
@@ -100,6 +109,8 @@ function handleClick(event: MouseEvent) {
         <TaoIcon v-if="icon" class="tao-button__icon" :name="icon" />
         <span v-if="$slots.default" class="tao-button__content"><slot /></span>
         <TaoIcon v-if="iconEnd" class="tao-button__icon" :name="iconEnd" />
+        <!-- read once, as aria-keyshortcuts / читается один раз, как aria-keyshortcuts -->
+        <kbd v-if="shortcut" class="tao-button__shortcut" aria-hidden="true">{{ shortcut }}</kbd>
     </button>
 </template>
 
@@ -224,6 +235,27 @@ function handleClick(event: MouseEvent) {
     border-top-color: currentColor;
     border-radius: var(--tao-radius-full);
     animation: tao-spin 0.8s linear infinite;
+}
+
+/* the key at the end: in a wide button it goes to the far edge, the text stays at the start; its fill is the button's own
+   text colour, so it fits any tone and variant; an even height on whole pixels keeps the letter centred
+   клавиша в конце: в широкой кнопке уходит к дальнему краю, текст остаётся в начале; заливка из цвета текста кнопки,
+   поэтому подходит к любому тону и варианту; чётная высота в целых пикселях держит букву по центру */
+.tao-button__shortcut {
+    display: inline-grid;
+    place-items: center;
+    box-sizing: border-box;
+    min-width: round(up, calc(var(--tao-control-height) * 0.56), 2px);
+    height: round(up, calc(var(--tao-control-height) * 0.56), 2px);
+    margin-inline-start: auto;
+    padding: 0 0.4em;
+    border-radius: max(4px, calc(var(--tao-radius-control) * 0.6));
+    background: color-mix(in srgb, currentColor 14%, transparent);
+    font: inherit;
+    font-size: var(--tao-font-size-xs);
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .tao-button__icon {

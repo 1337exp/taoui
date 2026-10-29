@@ -70,7 +70,8 @@ choose a text colour, WCAG 2 to promise a number.
   number is one column on compact. `rowHeight` is the exact row height (a mosaic: pictures are cropped).
 - `TaoNav` — app navigation from one list: a bottom bar, a rail or a drawer, `layout="auto"` by its own width; put the page
   in its default slot and it lays it out. `floating` makes the bar a detached pill (the FAB is your own button beside
-  it). `select(id, event)` + `event.preventDefault()` to route with a router.
+  it). `select(id, event)` + `event.preventDefault()` to route with a router. Widths `--tao-nav-rail-width` /
+  `--tao-nav-drawer-width`; the action button may take `shortcut="N"` (shown in the side panel, hidden when round).
 
 ## Forms
 

@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.11.0
+
+Nothing to migrate.
+
+- **`TaoButton` `shortcut`:** `shortcut="N"` shows the key at the end of the button, in a small chip of the button's own text colour, so it fits any variant and tone; in a wide button it goes to the far edge. It is given as `aria-keyshortcuts` and the chip itself is not read twice. It only shows the key: listening to it is the app's job.
+- **`TaoNav` labels fit the rail.** An item with the icon over its label (the rail, the bar) kept 12px on each side, so the rail left 47px for a label and «Settings» or «Calendar» in Russian were cut. Now it keeps 4px, and the label has about 63px. The side panel is unchanged.
+- **`TaoNav` widths are public:** `--tao-nav-rail-width` (80px), `--tao-nav-drawer-width` (240px) and `--tao-nav-action-radius`, set on `:root` or any wrapper, for an app whose labels are longer still.
+- **`TaoNav` action in the side panel:** the button keeps its own corners, like the items under it, instead of a pill (`--tao-nav-action-radius: var(--tao-radius-full)` brings the pill back), and stands off the top edge. A `shortcut` on it shows in the side panel and hides with the label when the button is round.
+- Showcase: buttons with a shortcut; the TaoNav action shows `N`.
+
 ## 5.10.0
 
 Nothing to migrate.
