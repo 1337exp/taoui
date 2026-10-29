@@ -126,3 +126,13 @@ describe('a snackbar: no title and an action', () => {
         expect(mount(TaoToastItem, { props: { toast: record({ type: 'neutral', loading: true, timeout: 0 }) } }).find('.tao-toast__spinner').exists()).toBe(true);
     });
 });
+
+describe('a snackbar has no cross unless asked', () => {
+    it('no title and an action: no cross; closable(true) brings it back; a titled toast keeps the default', () => {
+        toast().show().message('Note deleted').action('Undo', () => {});
+        toast().show().message('Note deleted').action('Undo', () => {}).closable(true);
+        toast().show().title('Upload').message('Done').action('Open', () => {});
+        vi.advanceTimersByTime(0);
+        expect(toasts.value.map((t) => t.closable)).toEqual([false, true, true]);
+    });
+});

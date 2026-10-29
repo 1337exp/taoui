@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.8.1
+
+Fixes after 5.8.0; nothing to migrate.
+
+- **TaoTag is centred as in 5.6.2 again.** The optical centring of 5.7.0 (`text-box`, the letters themselves in the middle) brought the tall letters too close to the top border; the line of 5.6.2 centres the text on a whole pixel, and that is what a tag does now. The horizontal centring of a wide tag stays.
+- **A snackbar has no cross unless you ask.** A toast with no title and an action has no close button by default: next to the action it is a mistap waiting to happen, and the toast goes by itself. `.closable(true)` brings it back; toasts with a title keep the default.
+- **The toast's bounce is no longer clipped.** Since the fade moved onto the toast (5.8.0) its slot clipped it, and the slight growth of the bounce and the shadow were cut at the edges. The slot clips only while its row folds away.
+- Showcase: a **Backgrounds** section: plain, grain, the glow of the palette, the gradient, glow and grain, each one line of CSS from the roles and classes the kit has.
+
 ## 5.8.0
 
 A toast for work in progress; nothing to migrate.

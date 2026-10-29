@@ -47,6 +47,8 @@ interface Draft {
     actions: TaoToastAction[];
     onClosed?: () => void;
     loading?: boolean;
+    /** closable() was called: the app decided, not the default. / closable() вызван: решило приложение. */
+    closableSet?: boolean;
 }
 
 function isClient() {
@@ -94,7 +96,9 @@ function flushDraft(draft: Draft) {
         icon: draft.icon,
         timeout: draft.timeout,
         position: draft.position,
-        closable: draft.closable,
+        // a snackbar (no title, an action) has no cross unless asked: next to the action it is a mistap waiting to happen
+        // у snackbar (без заголовка, с действием) крестика нет, если не попросили: рядом с действием по нему промахиваются
+        closable: draft.closableSet || draft.title || !draft.actions.length ? draft.closable : false,
         progress: draft.progress,
         surface: draft.surface,
         displayMode: draft.displayMode,
@@ -240,6 +244,7 @@ function createBuilder(): TaoToastBuilder {
         },
         closable(value = true) {
             draft.closable = value;
+            draft.closableSet = true;
             return ctx;
         },
         progress(value = true) {

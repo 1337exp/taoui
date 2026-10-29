@@ -38,3 +38,10 @@ describe('TaoToastViewport: a glass toast keeps its blur while it fades', () => 
         expect(css).toMatch(/\.tao-toast-center-enter-active \{\s*animation: tao-toast-hold var\(--tao-duration-slow\)/);
     });
 });
+
+describe('TaoToastViewport: the bounce is not clipped', () => {
+    it('the slot clips only while its row folds away', () => {
+        expect(bodyOf('.tao-toast-slot__inner')).not.toContain('overflow');
+        expect(bodyOf('.tao-toast-bottom-leave-active .tao-toast-slot__inner')).toContain('overflow: hidden');
+    });
+});
