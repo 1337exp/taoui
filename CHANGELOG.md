@@ -4,7 +4,7 @@
 
 Nothing to migrate.
 
-- **`TaoInput` `variant`:** `outline` (the frame, the default), `filled` (a fill only) and `plain` (no frame, no fill, no inset), the names `TaoTextarea` already uses. A `plain` field reads as text, for an item of a list being edited: the caret shows the focus, and an error is a red line under the text, so the text does not move. The height is the same in all three. `filled` takes a fill of the text colour, so it shows on a page, a card or glass alike.
+- **`variant` on the text fields:** `TaoInput`, `TaoInputNumber` and `TaoCombobox` take `outline` (the frame, the default), `filled` (a fill only) and `plain` (no frame, no fill, no inset), the names `TaoTextarea` already uses. On a plain `TaoInputNumber` the ± buttons lose their lines too. A `plain` field reads as text, for an item of a list being edited: the caret shows the focus, and an error is a red line under the text, so the text does not move. The height is the same in all three. `filled` takes a fill of the text colour, so it shows on a page, a card or glass alike.
 - A test now fails for any field whose control takes the field id (`:id="controlId"`) but does not split its attributes with `useControlAttrs`, so a new field cannot put its `aria-label` on the wrapper again.
 - Showcase: the variants in the TaoInput section.
 

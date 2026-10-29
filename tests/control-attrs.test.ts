@@ -116,3 +116,15 @@ describe('TaoInput variant', () => {
         expect(mount(TaoInput, { props: { variant: 'filled' } }).find('.tao-input-shell').classes()).toContain('tao-input-shell--filled');
     });
 });
+
+describe('the text fields share the variants', () => {
+    it.each([
+        ['TaoInputNumber', TaoInputNumber, { modelValue: 1 }, 'tao-input-number'],
+        ['TaoCombobox', TaoCombobox, { options: [] }, 'tao-combobox'],
+    ] as [string, unknown, Record<string, unknown>, string][])('%s: outline by default, filled and plain mark the root', (_, component, props, base) => {
+        const classes = (variant?: string) => mount(component as never, { props: { ...props, variant } as never }).classes();
+        expect(classes().filter((c) => /--(filled|plain|outline)$/.test(c))).toEqual([]);
+        expect(classes('filled')).toContain(`${base}--filled`);
+        expect(classes('plain')).toContain(`${base}--plain`);
+    });
+});

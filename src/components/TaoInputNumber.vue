@@ -25,6 +25,13 @@ const props = withDefaults(
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
         placeholder?: string;
+        /**
+         * `outline` — a frame, `filled` — a fill only, `plain` — no frame, no fill, as on TaoInput: a field that reads as
+         * text, its error a red line under the text.
+         * `outline` — рамка, `filled` — только заливка, `plain` — без рамки и заливки, как у TaoInput: поле читается как
+         * текст, его ошибка — красная черта под текстом.
+         */
+        variant?: 'outline' | 'filled' | 'plain';
         controls?: boolean;
         incrementLabel?: string;
         decrementLabel?: string;
@@ -36,6 +43,7 @@ const props = withDefaults(
         error: false,
         placeholder: '',
         controls: true,
+        variant: 'outline',
     },
 );
 const l10n = useLocaleText(props, 'inputNumber');
@@ -189,7 +197,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
 </script>
 
 <template>
-    <div v-bind="rootAttrs()" class="tao-input-number" :class="[sizeClass(size), { 'tao-input-number--invalid': invalid, 'tao-input-number--controls': controls }]">
+    <div v-bind="rootAttrs()" class="tao-input-number" :class="[sizeClass(size), { [`tao-input-number--${variant}`]: variant !== 'outline', 'tao-input-number--invalid': invalid, 'tao-input-number--controls': controls }]">
         <input
             v-bind="controlAttrs()"
             :id="controlId"
@@ -261,6 +269,19 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
     transition: var(--tao-transition-base);
 }
 
+/* ---------- Variants, before the states, so a focus or an error still shows / Варианты — до состояний */
+/* the 1px border stays, only unseen: the height and the text do not move / рамка в 1px остаётся невидимой */
+.tao-input-number--filled .tao-input-number__input {
+    border-color: transparent;
+    background: color-mix(in srgb, var(--tao-color-text) 7%, transparent);
+}
+
+.tao-input-number--plain .tao-input-number__input {
+    padding-left: 0;
+    border-color: transparent;
+    background: transparent;
+}
+
 .tao-input-number--controls .tao-input-number__input {
     padding-right: 34px;
 }
@@ -288,6 +309,23 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
 
 .tao-input-number--invalid .tao-input-number__input:focus {
     box-shadow: 0 0 0 2px var(--tao-color-danger-subtle);
+}
+
+/* a plain field stays text while it is edited: the caret shows the focus; an error is a red line under the text */
+/* поле plain остаётся текстом и в правке: фокус показывает каретка; ошибка — красная черта под текстом */
+.tao-input-number--plain .tao-input-number__input:focus,
+.tao-input-number--plain.tao-input-number--invalid .tao-input-number__input {
+    border-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.tao-input-number--plain.tao-input-number--invalid .tao-input-number__input {
+    box-shadow: inset 0 -1px 0 var(--tao-color-danger);
+}
+
+.tao-input-number--plain .tao-input-number__input:disabled {
+    background: transparent;
 }
 
 .tao-input-number__steppers {
@@ -339,6 +377,12 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
 
 .tao-input-number__step + .tao-input-number__step {
     border-top: 1px solid var(--tao-color-border);
+}
+
+/* without a frame the steppers lose their lines too / без рамки у кнопок шага нет и линий */
+.tao-input-number--plain .tao-input-number__steppers,
+.tao-input-number--plain .tao-input-number__step + .tao-input-number__step {
+    border-color: transparent;
 }
 
 .tao-input-number__step:hover:not(:disabled) {

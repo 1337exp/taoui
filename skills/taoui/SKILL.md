@@ -83,7 +83,7 @@ choose a text colour, WCAG 2 to promise a number.
   `TaoFileDrop`. A form is a plain `<form>`; there is no TaoForm.
 - Attributes given to a field (`aria-label`, `name`, `autocomplete`, `inputmode`, `data-*`, listeners) reach its control
   (the input, the trigger button, the checkbox); `class` and `style` stay on its wrapper. A field that reads as text
-  (an item of a list being edited): `<TaoInput variant="plain">` (`TaoTextarea` has the same `variant`). On `TaoColorInput` the
+  (an item of a list being edited): `<TaoInput variant="plain">` (`TaoInputNumber`, `TaoCombobox` and `TaoTextarea` take the same `variant`). On `TaoColorInput` the
   `aria-label` is followed by the colour («Background: #ff8800»); `TaoColorPicker` is a group it names.
 
 ## Overlays and feedback

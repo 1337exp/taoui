@@ -156,6 +156,7 @@ Showcase section: `#input-number`
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
 | `disabled` | `boolean` | false | Disabled |
 | `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `variant` | `'outline' \| 'filled' \| 'plain'` | 'outline' | As on TaoInput: a frame / a fill only / nothing (the field reads as text, an error is a red line under the text) |
 | `placeholder` | `string` | '' | The hint when null |
 
 ## TaoQuantity
@@ -333,6 +334,7 @@ Showcase section: `#combobox`
 | `clearable` | `boolean` | true | Clear row in the list. Turn off when null is not valid. |
 | `clearText` | `string` | 'Clear' | Label of the clear row; slot #clear replaces it. |
 | `disabled / error` | `boolean` | false | Disabled / a red border |
+| `variant` | `'outline' \| 'filled' \| 'plain'` | 'outline' | As on TaoInput: a frame / a fill only / nothing (the field reads as text, an error is a red line under the text) |
 
 **Slots, events, notes.** create — an event when a new value is typed: the parent extends options itself.
 
