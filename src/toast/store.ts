@@ -50,7 +50,16 @@ export function addToast(record: TaoToastRecord) {
     }
 
     if (record.displayMode === 'replace' && record.dedupeId) {
-        toasts.value = toasts.value.filter((item) => item.dedupeId !== record.dedupeId);
+        // in place, under the id of the one it replaces: «Saving…» turns into «Saved» where it stands, with no leave and
+        // enter, and the item restarts its timer for the new content
+        // на месте, под id заменяемого: «Сохраняю…» превращается в «Сохранено» там же, без ухода и появления, а элемент
+        // перезапускает таймер под новое содержимое
+        const index = toasts.value.findIndex((item) => item.dedupeId === record.dedupeId);
+        if (index !== -1) {
+            const kept = { ...record, id: toasts.value[index]!.id };
+            toasts.value = toasts.value.filter((item, i) => i === index || item.dedupeId !== record.dedupeId).map((item) => (item.id === kept.id ? kept : item));
+            return;
+        }
     }
 
     toasts.value = [...toasts.value, record];

@@ -288,6 +288,7 @@ export type {
     TaoToastDefaults,
     TaoToastDisplayMode,
     TaoToastPosition,
+    TaoToastPromiseTexts,
     TaoToastRecord,
     TaoToastShortcutOptions,
     TaoToastType,

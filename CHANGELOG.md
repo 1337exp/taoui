@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.8.0
+
+A toast for work in progress; nothing to migrate.
+
+- **`toast().loading()`**: a spinner instead of the icon, no timeout, `aria-busy`. Finish it with a toast of the same `id` and `replace()`.
+- **`toast.promise(promise, { loading, success, error })`**: loading while the promise runs, then success or error in the same place (`success` / `error` may be functions of the result / the error); it returns the same promise.
+- **`replace()` changes a toast where it stands.** It used to drop the old one and add the new one at the end of the stack (a leave and an enter, a jump); now it takes the place and the id of the one it replaces, and the item restarts its timer for the new content.
+
 ## 5.7.0
 
 Two options; nothing to migrate.

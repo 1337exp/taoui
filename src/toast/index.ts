@@ -7,12 +7,14 @@ import type {
     TaoToastDefaults,
     TaoToastDisplayMode,
     TaoToastPosition,
+    TaoToastPromiseTexts,
     TaoToastRecord,
     TaoToastShortcutOptions,
     TaoToastType,
 } from './types';
 
 export type {
+    TaoToastPromiseTexts,
     TaoToastAction,
     TaoToastDefaults,
     TaoToastDisplayMode,
@@ -44,6 +46,7 @@ interface Draft {
     dedupeId?: string;
     actions: TaoToastAction[];
     onClosed?: () => void;
+    loading?: boolean;
 }
 
 function isClient() {
@@ -98,6 +101,7 @@ function flushDraft(draft: Draft) {
         dedupeId,
         actions: draft.actions,
         onClosed: draft.onClosed,
+        loading: draft.loading,
     });
 }
 
@@ -144,6 +148,13 @@ export interface TaoToastBuilder {
     replace(): TaoToastBuilder;
     action(label: string, onClick: () => void): TaoToastBuilder;
     onClosed(fn: () => void): TaoToastBuilder;
+    /**
+     * Work in progress: a spinner, no timeout. Finish it with a toast of the same `id` and `replace()`, which takes its
+     * place, or use `toast.promise`.
+     * Идёт работа: кольцо, без таймаута. Завершите тостом с тем же `id` и `replace()`, он встанет на его место, или
+     * используйте `toast.promise`.
+     */
+    loading(): TaoToastBuilder;
 }
 
 function createBuilder(): TaoToastBuilder {
@@ -259,6 +270,12 @@ function createBuilder(): TaoToastBuilder {
             draft.onClosed = fn;
             return ctx;
         },
+        loading() {
+            draft.type = 'neutral';
+            draft.loading = true;
+            draft.timeout = 0;
+            return ctx;
+        },
     };
 
     // Тот самый flush: цепочка успевает собрать params в текущем тике.
@@ -331,6 +348,13 @@ export interface TaoToastApi {
     byBottomLeft(): TaoToastApi;
     byBottomRight(): TaoToastApi;
     dismiss(id?: string): void;
+    /**
+     * A toast that follows a promise: `loading` while it runs, then `success` or `error` in its place. Returns the same
+     * promise. `toast.promise(save(), { loading: 'Saving…', success: 'Saved', error: (e) => `Not saved: ${e}` })`.
+     * Тост, который следует за промисом: `loading`, пока он идёт, потом `success` или `error` на его месте. Возвращает
+     * тот же промис.
+     */
+    promise<T>(promise: Promise<T>, texts: TaoToastPromiseTexts<T>, options?: Pick<TaoToastShortcutOptions, 'title' | 'position' | 'id'>): Promise<T>;
 }
 
 export const toast: TaoToastApi = Object.assign(createBuilder, {
@@ -371,5 +395,20 @@ export const toast: TaoToastApi = Object.assign(createBuilder, {
     },
     dismiss(id?: string) {
         dismissToasts(id);
+    },
+    promise<T>(promise: Promise<T>, texts: TaoToastPromiseTexts<T>, options?: Pick<TaoToastShortcutOptions, 'title' | 'position' | 'id'>) {
+        const id = options?.id ?? nextToastId();
+        const start = (builder: TaoToastBuilder) => {
+            builder.id(id).replace();
+            if (options?.title) builder.title(options.title);
+            if (options?.position) builder.position(options.position);
+            return builder;
+        };
+        start(createBuilder().loading()).message(texts.loading);
+        promise.then(
+            (value) => start(createBuilder().success()).message(typeof texts.success === 'function' ? texts.success(value) : texts.success),
+            (error: unknown) => start(createBuilder().danger()).message(typeof texts.error === 'function' ? texts.error(error) : texts.error),
+        );
+        return promise;
     },
 });
