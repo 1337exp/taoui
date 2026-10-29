@@ -262,7 +262,7 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
 </script>
 
 <template>
-    <div class="tao-color-picker" :class="[sizeClass(size), { 'tao-color-picker--disabled': disabled }]">
+    <div class="tao-color-picker" :class="[sizeClass(size), { 'tao-color-picker--disabled': disabled }]" role="group">
         <div
             ref="areaRef"
             class="tao-color-picker__area"

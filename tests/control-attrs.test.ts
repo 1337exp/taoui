@@ -1,6 +1,11 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
 import TaoCheckbox from '../src/components/TaoCheckbox.vue';
+import TaoColorInput from '../src/components/TaoColorInput.vue';
+import TaoColorPicker from '../src/components/TaoColorPicker.vue';
+import TaoFileDrop from '../src/components/TaoFileDrop.vue';
+import TaoPinCode from '../src/components/TaoPinCode.vue';
+import TaoQuantity from '../src/components/TaoQuantity.vue';
 import TaoCombobox from '../src/components/TaoCombobox.vue';
 import TaoDate from '../src/components/TaoDate.vue';
 import TaoDateRange from '../src/components/TaoDateRange.vue';
@@ -26,6 +31,8 @@ const cases: [string, unknown, Record<string, unknown>, string][] = [
     ['TaoSwitch', TaoSwitch, {}, 'input'],
     ['TaoCheckbox', TaoCheckbox, {}, 'input'],
     ['TaoRadio', TaoRadio, { value: 'a' }, 'input'],
+    ['TaoQuantity', TaoQuantity, { modelValue: 1 }, 'input'],
+    ['TaoFileDrop', TaoFileDrop, {}, 'input[type=file]'],
 ];
 
 describe('a field passes its attributes to its control', () => {
@@ -45,5 +52,34 @@ describe('a field passes its attributes to its control', () => {
         expect(w.attributes('aria-label')).toBeUndefined();
         (el.element as HTMLElement).dispatchEvent(new FocusEvent('focus'));
         expect(onFocus).toHaveBeenCalled();
+    });
+});
+
+// 5.8.4: the fields that named themselves in their own way.
+// 5.8.4: поля, у которых имя устроено по-своему.
+describe('the fields with a name of their own', () => {
+    it('TaoColorInput: the given aria-label names the trigger, the colour follows it', () => {
+        const w = mount(TaoColorInput, { props: { modelValue: '#ff8800' }, attrs: { 'aria-label': 'Background', class: 'mine' } });
+        const button = w.find('button.tao-color-input');
+        expect(button.attributes('aria-label')).toBe('Background: #ff8800');
+        expect(w.find('.mine').exists()).toBe(true);
+        expect(w.find('.mine').attributes('aria-label')).toBeUndefined();
+    });
+
+    it('TaoColorInput: without one, the locale names it', () => {
+        const w = mount(TaoColorInput, { props: { modelValue: '#ff8800' } });
+        expect(w.find('button.tao-color-input').attributes('aria-label')).toMatch(/: #ff8800$/);
+    });
+
+    it('TaoColorPicker: a group, so its aria-label names something', () => {
+        const w = mount(TaoColorPicker, { props: { modelValue: '#ff8800' }, attrs: { 'aria-label': 'Accent' } });
+        expect(w.attributes('role')).toBe('group');
+        expect(w.attributes('aria-label')).toBe('Accent');
+    });
+
+    it('TaoPinCode: each cell says which character it is', () => {
+        const w = mount(TaoPinCode, { props: { modelValue: '', length: 4 } as never });
+        const labels = w.findAll('input').map((i) => i.attributes('aria-label'));
+        expect(labels).toEqual(['Character 1 of 4', 'Character 2 of 4', 'Character 3 of 4', 'Character 4 of 4']);
     });
 });

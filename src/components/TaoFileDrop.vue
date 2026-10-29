@@ -1,11 +1,16 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
+import { useControlAttrs } from '../controlAttrs';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText, useTaoLocale } from '../locale';
 
-defineOptions({ name: 'TaoFileDrop' });
+defineOptions({ name: 'TaoFileDrop', inheritAttrs: false });
+
+// the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
+// атрибуты — элементу управления, внешний вид — обёртке
+const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const appLocale = useTaoLocale();
 
@@ -186,7 +191,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
 </script>
 
 <template>
-    <div class="tao-file-drop" :class="sizeClass(size)">
+    <div v-bind="rootAttrs()" class="tao-file-drop" :class="sizeClass(size)">
         <div class="tao-file-drop__row">
             <button
                 v-if="showClear && modelValue.length"
@@ -210,6 +215,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
                 <slot>{{ appLocale.fileDrop.zoneText }}</slot>
 
                 <input
+                    v-bind="controlAttrs()"
                     ref="fileInput"
                     class="tao-sr-only"
                     type="file"
