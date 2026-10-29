@@ -45,6 +45,7 @@ import DemoPopover from './components/DemoPopover.vue'
 import DemoDropdown from './components/DemoDropdown.vue'
 import DemoMenubar from './components/DemoMenubar.vue'
 import DemoToolbar from './components/DemoToolbar.vue'
+import DemoBackgrounds from './components/DemoBackgrounds.vue'
 import DemoCharts from './components/DemoCharts.vue'
 import DemoNav from './components/DemoNav.vue'
 import DemoSpoiler from './components/DemoSpoiler.vue'
@@ -65,6 +66,7 @@ export const demoById = {
   'button': DemoButton,
   'card': DemoCard,
   'surface': DemoSurface,
+  'backgrounds': DemoBackgrounds,
   'typography': DemoTypography,
   'copy': DemoCopy,
   'marquee': DemoMarquee,

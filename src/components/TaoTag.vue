@@ -143,32 +143,6 @@ function onClose(event: MouseEvent) {
     text-overflow: ellipsis;
 }
 
-/* Optical centring: the line box is centred, but a font puts more room above its letters than below (Segoe UI, Roboto),
-   so the body of the lowercase letters sat about half a pixel low. Trimmed to the x-height and the baseline, the
-   letters themselves are centred, in any font; the padding gives the ascenders and descenders their room back, or the
-   ellipsis clip would cut them. A browser without text-box keeps the line box centring.
-   Оптическое центрирование: центрируется строка, но шрифт оставляет над буквами больше места, чем под ними, и тело
-   строчных сидело на полпикселя ниже. Обрезка по высоте строчных и базовой линии центрирует сами буквы, в любом
-   шрифте; отступ возвращает место выносным элементам, иначе обрезка многоточия срезала бы их. Без text-box — как было. */
-@supports (text-box: trim-both ex alphabetic) {
-    .tao-tag__text {
-        --_tao-pad: round(0.3em, 1px);
-        text-box: trim-both ex alphabetic;
-        padding-block: var(--_tao-pad);
-    }
-
-    /* and still on a whole pixel, as the line of 5.6.2: the offset of the letters is rounded, so the box and the text
-       round alike on a fractional position of the page and the text does not jump from one tag to the next (a tag with
-       an avatar is taller and keeps the plain centring)
-       и всё так же на целом пикселе, как строка из 5.6.2: смещение букв округляется, поэтому рамка и текст округляются
-       одинаково на дробной позиции страницы, и текст не прыгает от тега к тегу (тег с аватаром выше и центрируется как
-       обычно) */
-    .tao-tag:not(.tao-tag--prefix) .tao-tag__text {
-        align-self: flex-start;
-        margin-top: round(calc((var(--tao-tag-height) - 2px - 1ex) / 2 - var(--_tao-pad)), 1px);
-    }
-}
-
 .tao-tag__close {
     display: inline-flex;
     flex-shrink: 0;

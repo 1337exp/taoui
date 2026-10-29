@@ -70,6 +70,15 @@ function enterName(position: TaoToastPosition) {
 
 .tao-toast-slot__inner {
     min-height: 0;
+}
+
+/* clipped only while the row folds away: at rest and on the way in the toast grows a little past its box (the bounce)
+   and casts a shadow, a clip would cut both
+   обрезка только пока ряд сворачивается: в покое и при появлении тост чуть выходит за свою рамку (отскок) и отбрасывает
+   тень, обрезка срезала бы и то и другое */
+.tao-toast-top-leave-active .tao-toast-slot__inner,
+.tao-toast-bottom-leave-active .tao-toast-slot__inner,
+.tao-toast-center-leave-active .tao-toast-slot__inner {
     overflow: hidden;
 }
 

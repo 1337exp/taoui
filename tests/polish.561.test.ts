@@ -62,12 +62,10 @@ describe('TaoTag', () => {
         expect(tagSfc as string).toMatch(/\.tao-tag \{[^}]*justify-content: center;[^}]*text-align: center;/);
     });
 
-    it('centres the letters, not the line box, where text-box is supported; the padding keeps the ascenders', () => {
-        const css = lf(tagSfc);
-        expect(css).toMatch(/@supports \(text-box: trim-both ex alphabetic\) \{\s*\.tao-tag__text \{\s*--_tao-pad: round\(0\.3em, 1px\);\s*text-box: trim-both ex alphabetic;/);
-    });
-
-    it('and keeps the text on a whole pixel, as the line of 5.6.2 does: the offset is rounded', () => {
-        expect(lf(tagSfc)).toMatch(/\.tao-tag:not\(\.tao-tag--prefix\) \.tao-tag__text \{[^}]*margin-top: round\(/);
+    // 5.8.1: the optical centring (text-box) is gone: the ascenders came too close to the top border. The line of 5.6.2
+    // centres the text, on a whole pixel.
+    // 5.8.1: оптическое центрирование убрано: выносные буквы подходили слишком близко к верхней рамке.
+    it('centres the line, not the letters: no text-box trim', () => {
+        expect(lf(tagSfc)).not.toContain('text-box');
     });
 });
