@@ -398,6 +398,16 @@ toast.byBottomRight()
 toast().info().message('Удалить файл?').action('Удалить', onRemove)
 ```
 
+Идёт работа: кольцо, пока она идёт, потом результат на том же месте.
+
+```javascript
+toast.promise(save(), { loading: 'Сохраняю…', success: 'Сохранено', error: (e) => `Не сохранено: ${e.message}` })
+
+// вручную: тот же id и replace() встают на его место
+toast().loading().id('sync').message('Синхронизирую…')
+toast().success().id('sync').replace().message('Синхронизировано')
+```
+
 Viewport можно не вставлять: первый вызов сам создаст его. Если нужен явный контроль (тесты, свой layout):
 
 ```vue

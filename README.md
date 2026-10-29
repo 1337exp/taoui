@@ -398,6 +398,16 @@ There is no overlay `question` in this kit — that is confirm, not toast. Butto
 toast().info().message('Delete the file?').action('Delete', onRemove)
 ```
 
+Work in progress: a spinner while it runs, then the result in the same place.
+
+```javascript
+toast.promise(save(), { loading: 'Saving…', success: 'Saved', error: (e) => `Not saved: ${e.message}` })
+
+// by hand: the same id and replace() take its place
+toast().loading().id('sync').message('Syncing…')
+toast().success().id('sync').replace().message('Synced')
+```
+
 You can skip the viewport: the first call creates it. For explicit control (tests, a custom layout):
 
 ```vue

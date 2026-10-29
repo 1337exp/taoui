@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import TaoButton from './TaoButton.vue';
 import TaoIcon from './TaoIcon.vue';
 import { listenFocusLoss } from '../focusLoss';
@@ -67,6 +67,19 @@ function runAction(onClick: () => void) {
 
 startTimer();
 
+// replaced in place (a loading toast finished): the new content gets its own full time
+// заменён на месте (тост загрузки завершился): у нового содержимого своё полное время
+watch(
+    () => props.toast,
+    (next, prev) => {
+        if (next === prev) return;
+        clearTimer();
+        remaining = next.timeout;
+        paused.value = false;
+        startTimer();
+    },
+);
+
 let stopFocusLoss: (() => void) | undefined;
 onMounted(() => {
     stopFocusLoss = listenFocusLoss(resume);
@@ -84,13 +97,15 @@ onBeforeUnmount(() => {
         :class="[toneClass(toast.type === 'neutral' ? undefined : toast.type), surfaceClass(toast.surface), { 'tao-toast--paused': paused }]"
         :role="toast.type === 'danger' || toast.type === 'warning' ? 'alert' : 'status'"
         aria-live="polite"
+        :aria-busy="toast.loading || undefined"
         @mouseenter="pause"
         @mouseleave="resume"
     >
         <span class="tao-toast__accent" aria-hidden="true"></span>
 
         <span class="tao-toast__icon" aria-hidden="true">
-            <TaoIcon v-if="toast.icon" :name="toast.icon" :size="18" />
+            <span v-if="toast.loading" class="tao-toast__spinner"></span>
+            <TaoIcon v-else-if="toast.icon" :name="toast.icon" :size="18" />
             <TaoIcon v-else-if="toast.type === 'success'" name="tao-check-circle" :size="18" />
             <TaoIcon v-else-if="toast.type === 'danger'" name="tao-x-circle" :size="18" />
             <TaoIcon v-else-if="toast.type === 'warning'" name="tao-alert-triangle" :size="18" />
@@ -173,6 +188,29 @@ onBeforeUnmount(() => {
     flex-shrink: 0;
     margin-top: 1px;
     color: var(--tao-toast-tone);
+}
+
+/* the spinner of a loading toast: a ring the size of the icons / кольцо загрузки размером с иконку */
+.tao-toast__spinner {
+    box-sizing: border-box;
+    width: 18px;
+    height: 18px;
+    border: 2px solid color-mix(in srgb, var(--tao-color-accent) 25%, transparent);
+    border-top-color: var(--tao-color-accent);
+    border-radius: 50%;
+    animation: tao-toast-spin 0.8s linear infinite;
+}
+
+@keyframes tao-toast-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tao-toast__spinner {
+        animation-duration: 2.4s;
+    }
 }
 
 .tao-toast__body {

@@ -33,6 +33,15 @@ export interface TaoToastRecord {
     dedupeId?: string;
     actions: TaoToastAction[];
     onClosed?: () => void;
+    /** Work in progress: a spinner instead of the icon, no timeout. / Идёт работа: кольцо вместо иконки, без таймаута. */
+    loading?: boolean;
+}
+
+/** The texts of `toast.promise`: a function gets the result or the error. / Тексты `toast.promise`. */
+export interface TaoToastPromiseTexts<T> {
+    loading: string;
+    success: string | ((value: T) => string);
+    error: string | ((error: unknown) => string);
 }
 
 export interface TaoToastDefaults {

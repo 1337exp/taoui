@@ -1110,6 +1110,9 @@ Showcase section: `#toast`
 | `.short() / .timeout(ms)` | `() => builder` |  | 1 s or your own time |
 | `.byBottomRight() / …` | `() => builder` |  | The corner: top/bottom + left/right/center |
 | `.action(label, fn)` | `(string, fn) => builder` |  | A button in the toast |
+| `.loading()` | `() => builder` |  | Work in progress: a spinner, no timeout, aria-busy. Finish it with a toast of the same id and replace(): it takes its place |
+| `toast.promise(p, texts)` | `(Promise, { loading, success, error }) => Promise` |  | Loading while the promise runs, then success or error in the same place; success / error can be functions of the result / the error |
+| `.id(x).replace()` | `() => builder` |  | Replaces the toast with that id where it stands, and restarts its time |
 | `toast.defaults` | `(partial) => toast` |  | Position, timeout, closeLabel for the whole app |
 
 ## TaoAlert
