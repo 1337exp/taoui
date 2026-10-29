@@ -128,3 +128,13 @@ describe('the text fields share the variants', () => {
         expect(classes('plain')).toContain(`${base}--plain`);
     });
 });
+
+describe('TaoTextarea maxHeight', () => {
+    const max = (maxHeight?: number | string) => (mount(TaoTextarea, { props: maxHeight === undefined ? {} : { maxHeight } }).find('textarea').element as HTMLTextAreaElement).style.maxHeight;
+    it('500px by default; a number is px, a string any CSS length, none — no limit', () => {
+        expect(max()).toBe('500px');
+        expect(max(240)).toBe('240px');
+        expect(max('50vh')).toBe('50vh');
+        expect(max('none')).toBe('none');
+    });
+});
