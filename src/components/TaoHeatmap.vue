@@ -363,8 +363,20 @@ const columns = computed(() => `auto repeat(${Math.max(1, props.cols.length)}, m
 /* бледные уровни в полоску, чтобы отличаться от пустых клеток и без цвета */
 .tao-heatmap__fill--hatch {
     background:
-        repeating-linear-gradient(135deg, color-mix(in srgb, var(--_c) 55%, transparent) 0 1.5px, transparent 1.5px 4px),
+        linear-gradient(
+            135deg,
+            var(--_stripe) 0 12%,
+            transparent 12% 50%,
+            var(--_stripe) 50% 62%,
+            transparent 62%
+        ),
         color-mix(in srgb, var(--_c) var(--_mix, 100%), var(--_empty));
+    /* a 6px tile that repeats: every stripe the same, about 1px thick and 4px apart; a gradient across the whole cell
+       had fractional stops, and the browser drew its lines thicker and thinner by turns
+       плитка 6px, которая повторяется: все полосы одинаковые, около 1px толщиной и через 4px; градиент на всю клетку
+       давал дробные границы, и браузер рисовал линии то толще, то тоньше */
+    --_stripe: color-mix(in srgb, var(--_c) 45%, transparent);
+    background-size: 6px 6px, auto;
 }
 
 .tao-heatmap__cell:hover .tao-heatmap__fill {
