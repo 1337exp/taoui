@@ -136,3 +136,13 @@ describe('a snackbar has no cross unless asked', () => {
         expect(toasts.value.map((t) => t.closable)).toEqual([false, true, true]);
     });
 });
+
+describe('a toast stands on whole pixels', () => {
+    it('its lines are rounded to whole pixels, and a snackbar puts the text and the action on one baseline', async () => {
+        // @ts-expect-error Vite `?raw` import: the component source as text
+        const sfc = ((await import('../src/components/TaoToastItem.vue?raw')).default as string).replace(/\r\n/g, '\n');
+        expect(sfc).toMatch(/\.tao-toast__message \{[^}]*line-height: round\(1\.45em, 1px\)/);
+        expect(sfc).toMatch(/\.tao-toast__title \{[^}]*line-height: round\(1\.3em, 1px\)/);
+        expect(sfc).toMatch(/\.tao-toast__body--inline \{[^}]*align-items: baseline/);
+    });
+});

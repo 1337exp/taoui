@@ -237,7 +237,9 @@ onBeforeUnmount(() => {
 .tao-toast__body--inline {
     flex-direction: row;
     flex-wrap: wrap;
-    align-items: center;
+    /* the text and the action on one baseline: centred, a 19px line and an 18px button stood half a pixel apart
+       текст и действие на одной базовой линии: по центру строка 19px и кнопка 18px расходились на полпикселя */
+    align-items: baseline;
     column-gap: var(--tao-space-4);
 }
 
@@ -255,12 +257,21 @@ onBeforeUnmount(() => {
     font-weight: 600;
     color: var(--tao-color-text-strong);
     line-height: 1.3;
+    /* whole-pixel lines: see the message / строки в целых пикселях: см. текст ниже */
+    line-height: round(1.3em, 1px);
 }
 
 .tao-toast__message {
     margin: 0;
     font-size: var(--tao-font-size-sm);
     line-height: 1.45;
+    /* Whole-pixel lines (1.45 × 14px was 20.3px), so the toast's height is whole and a centred or bottom toast stands on
+       a whole pixel: on a fractional one the text snapped by a pixel when the first hover repainted it. The plain value
+       above is for a browser without round().
+       Строки в целых пикселях (1.45 × 14px было 20.3px), поэтому высота тоста целая и тост по центру или снизу стоит
+       на целом пикселе: на дробном текст перескакивал на пиксель, когда первое наведение его перерисовывало. Простое
+       значение выше — для браузера без round(). */
+    line-height: round(1.45em, 1px);
     color: var(--tao-color-text);
 }
 
