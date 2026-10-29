@@ -110,6 +110,9 @@ function itemVisibleInNav(group, item) {
 function goTo(groupId, sectionId) {
   query.value = ''
   activeGroup.value = groupId
+  // the address says which section is open, so it can be shared and reloaded; replace, not push: Back leaves the page
+  // адрес говорит, какой раздел открыт: им можно поделиться и перезагрузить; replace, а не push: «Назад» уходит со страницы
+  history.replaceState(null, '', `#${sectionId}`)
   nextTick(() => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     activeSection.value = sectionId
@@ -141,6 +144,11 @@ onMounted(() => {
     { rootMargin: '-20% 0px -65% 0px', threshold: [0, 0.25, 1] },
   )
   document.querySelectorAll('.showcase-section[id]').forEach((el) => sectionObserver.observe(el))
+
+  // opened with #section (a shared link, a reload): go there / открыта по ссылке с #раздел: идём туда
+  const id = decodeURIComponent(location.hash.slice(1))
+  const group = id && navGroups.find((g) => g.items.some((item) => item.id === id))
+  if (group) goTo(group.id, id)
 })
 
 onBeforeUnmount(() => {

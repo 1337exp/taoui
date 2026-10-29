@@ -5,7 +5,7 @@ description: Work inside the TaoUI repository (E:\job\git\taoui) — how a chang
 
 # Working in the TaoUI repository
 
-TaoUI is a Vue 3 kit on design tokens; 5.0.0 is a breaking major, not yet published. The user-facing guide is
+TaoUI is a Vue 3 kit on design tokens, 5.x on npm (minors add, patches fix). The user-facing guide is
 [skills/taoui/SKILL.md](../../../skills/taoui/SKILL.md): read it for how the library is meant to be used.
 `CONTRIBUTING.md` has the code rules (tokens, never literals; texts in `src/locale/` for `en` and `ru`; pure logic in
 `src/*.ts` with a unit test).
@@ -21,9 +21,11 @@ TaoUI is a Vue 3 kit on design tokens; 5.0.0 is a breaking major, not yet publis
 
 1. A short branch per change (`git checkout -b <topic>` from `master`).
 2. The code, the test, the showcase section (`showcase/components/Demo*.vue`), the prop tables.
-3. The docs, all of them: `README.md` and `README.ru.md` (same line in both), `CHANGELOG.md` (the 5.0.0 section, under the
-   right heading), `MIGRATION-5.md` when something visible changes (a table row, or the «New:» line), and the status log
-   at the end of `docs/v5-plan.md` (Russian).
+3. The docs, all of them: `README.md` and `README.ru.md` (same line in both), `CHANGELOG.md` (the open section on top),
+   `MIGRATION-5.md` only for a breaking change, and the status log at the end of `docs/v5-plan.md` (Russian).
+   **The version:** read what is published first (`npm view @1337exp/taoui version`, `git log -- package.json`, the top of
+   `CHANGELOG.md`); never reuse a published number, and set the version with a check, not a blind replace: commits can
+   land between your branches.
 4. The full check (below), then commit with the trailer
    `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`, then merge locally:
    `git checkout master && git merge --no-ff <topic>` (a one-commit fix may be `--ff-only`).
@@ -62,7 +64,8 @@ npm run smoke                      # the packed tarball in a fresh Vite app
   to the element at once), `src/dismiss.ts`, `src/layers.ts`; focus a panel with `{ preventScroll: true }`.
 - **Generated palettes stay LF** (`.gitattributes`); the pin test compares content, not line endings.
 - **A script a test imports has no shebang** (`scripts/generate-skill.mjs`): git checks files out with CRLF on Windows,
-  and Vitest fails on a `#!` line ending in `` with a SyntaxError that points at the wrong line.
+  and Vitest fails on a `#!` line ending in `
+` with a SyntaxError that points at the wrong line.
 
 ## Checking in a browser
 
