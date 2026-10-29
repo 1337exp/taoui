@@ -36,6 +36,7 @@ Showcase section: `#button`
 | `icon` | `string` | '' | An icon before the text: a name for TaoIcon (tao-plus, your own or a font one). Without text and slot the button is a square of the control height and needs aria-label |
 | `iconEnd` | `string` | '' | An icon after the text |
 | `v-model:pressed` | `boolean` | — | A toggle button (Bold, a filter): aria-pressed and the tone tint while pressed. Without it the button is an ordinary one |
+| `shortcut` | `string` | — | The key that does the same (N, Ctrl+K): shown at the end of the button, given as aria-keyshortcuts. It only shows the key; listening to it is the app's job |
 
 **Slots, events, notes.** default — the button caption.
 
@@ -1065,7 +1066,7 @@ Showcase section: `#tao-nav`
 | `indicator` | `'pill' \| 'line'` | 'pill' | How the current section is marked: a tint behind the item, or the accent colour and a short line (under the item in the bar, along its start edge on the side; auto moves it) |
 | `floating` | `boolean` | false | In the bar look, a detached pill above the page: inset from the edges and above the safe area, round, with a shadow; the active item is a pill too. The rail and the side panel do not change. The main action of the screen goes beside it as your own round button, not into the bar |
 
-**Slots, events, notes.** default — the page: TaoNav lays it out next to the navigation (the bar sticks to the bottom, on the side the list sticks to the top; env(safe-area-inset-bottom) is kept). Without the slot it is a standalone panel with a border. #label — your own item label ({ item, active }). #action — the main action of the screen: a TaoButton with icon and its text in <span class="tao-nav__action-label">; the bar puts it round above itself at the end side (above the pill with floating), the rail round at the top, the side panel extended with the text at the top; in the round looks the text is hidden but stays the name of the button. Events: update:modelValue, select(id, event) — event.preventDefault() keeps a link from navigating, to route it yourself.
+**Slots, events, notes.** default — the page: TaoNav lays it out next to the navigation (the bar sticks to the bottom, on the side the list sticks to the top; env(safe-area-inset-bottom) is kept). Without the slot it is a standalone panel with a border. #label — your own item label ({ item, active }). #action — the main action of the screen: a TaoButton with icon and its text in <span class="tao-nav__action-label">; the bar puts it round above itself at the end side (above the pill with floating), the rail round at the top, the side panel extended with the text at the top; in the round looks the text is hidden but stays the name of the button (a shortcut on it too). The side panel gives the button its own corners; --tao-nav-action-radius: var(--tao-radius-full) makes it a pill. --tao-nav-rail-width (80px) and --tao-nav-drawer-width (240px) set the widths. Events: update:modelValue, select(id, event) — event.preventDefault() keeps a link from navigating, to route it yourself.
 
 ## TaoTabs
 

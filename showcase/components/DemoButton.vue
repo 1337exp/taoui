@@ -78,6 +78,20 @@ const buttonSizes = ['small', 'medium', 'large']
             <TaoButton variant="secondary" icon="tao-search" aria-label="Search" />
             <TaoButton variant="ghost" tone="danger" icon="tao-close" aria-label="Remove" />
           </div>
+
+          <h3>{{ tr('With a shortcut (shortcut)', 'С клавишей (shortcut)') }}</h3>
+          <Tr>
+            <template #en><p><code>shortcut</code> shows the key at the end of the button and gives it as <code>aria-keyshortcuts</code>. It only shows the key: listening to it is the app's job. In a wide button the key goes to the far edge.</p></template>
+            <template #ru><p><code>shortcut</code> показывает клавишу в конце кнопки и отдаёт её в <code>aria-keyshortcuts</code>. Только показывает: слушать клавишу — дело приложения. В широкой кнопке клавиша уходит к дальнему краю.</p></template>
+          </Tr>
+          <div class="button-row">
+            <TaoButton icon="tao-plus" shortcut="N">{{ tr('New note', 'Новая заметка') }}</TaoButton>
+            <TaoButton variant="secondary" icon="tao-search" shortcut="Ctrl+K">{{ tr('Search', 'Поиск') }}</TaoButton>
+            <TaoButton variant="ghost" shortcut="Esc">{{ tr('Cancel', 'Отмена') }}</TaoButton>
+          </div>
+          <div style="max-width: 240px; margin-top: 12px">
+            <TaoButton icon="tao-plus" shortcut="N" block size="large">{{ tr('New note', 'Новая заметка') }}</TaoButton>
+          </div>
     
           <div class="code-block">
             <pre><code>&lt;TaoButton variant="primary" size="medium"&gt;

@@ -30,4 +30,11 @@
         transform var(--tao-duration-hover) var(--tao-ease-base),
         fill var(--tao-duration-hover) var(--tao-ease-base),
         stroke var(--tao-duration-hover) var(--tao-ease-base);
+
+    /* ---------- TaoNav ---------- */
+    /* The rail and the side panel widths, the corners of the action in the side panel (round in the compact looks).
+       Ширины рейки и боковой панели, углы действия в боковой панели (в компактных видах оно круглое). */
+    --tao-nav-rail-width: 80px;
+    --tao-nav-drawer-width: 240px;
+    --tao-nav-action-radius: var(--tao-radius-control);
 }

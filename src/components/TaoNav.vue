@@ -270,7 +270,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     --_panel-align: stretch;
     --_panel-position: relative;
     --_list-position: sticky;
-    --_panel-width: 80px;
+    --_panel-width: var(--tao-nav-rail-width, 80px);
     --_panel-height: 100dvh;
     --_border-top: 0px;
     --_border-side: 1px;
@@ -300,7 +300,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     --_panel-align: stretch;
     --_panel-position: relative;
     --_list-position: sticky;
-    --_panel-width: 240px;
+    --_panel-width: var(--tao-nav-drawer-width, 240px);
     --_panel-height: 100dvh;
     --_border-top: 0px;
     --_border-side: 1px;
@@ -361,7 +361,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
         --_panel-align: stretch;
         --_panel-position: relative;
         --_list-position: sticky;
-        --_panel-width: 80px;
+        --_panel-width: var(--tao-nav-rail-width, 80px);
         --_panel-height: 100dvh;
         --_border-top: 0px;
         --_border-side: 1px;
@@ -392,7 +392,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
         --_panel-align: stretch;
         --_panel-position: relative;
         --_list-position: sticky;
-        --_panel-width: 240px;
+        --_panel-width: var(--tao-nav-drawer-width, 240px);
         --_panel-height: 100dvh;
         --_border-top: 0px;
         --_border-side: 1px;
@@ -533,6 +533,8 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     z-index: 1;
     display: flex;
     justify-content: center;
+    /* on the side it stands off the top edge as from the items under it / сбоку отступает от верха, как от пунктов под ним */
+    margin-top: calc((1 - var(--_bar)) * var(--tao-space-2));
     margin-bottom: calc((1 - var(--_bar)) * var(--tao-space-2));
 }
 
@@ -550,11 +552,14 @@ function onMoreClose(reason: TaoMenuCloseReason) {
        the centre / скрытая подпись оставляет в ряду кнопки пустую обёртку: без зазора, иначе иконка съезжает с центра */
     gap: calc((1 - var(--_compact)) * var(--tao-space-2));
     overflow: hidden;
-    border-radius: var(--tao-radius-full);
+    /* round when compact; wide, the button's own corners, like the items under it (--tao-nav-action-radius: a pill)
+       круглая в компактном виде; широкая — со своими углами кнопки, как пункты под ней (--tao-nav-action-radius: «таблетка») */
+    border-radius: calc(var(--_compact) * var(--tao-radius-full) + (1 - var(--_compact)) * var(--tao-nav-action-radius, var(--tao-radius-control)));
     box-shadow: var(--_action-shadow);
 }
 
-.tao-nav__action :deep(.tao-nav__action-label) {
+.tao-nav__action :deep(.tao-nav__action-label),
+.tao-nav__action :deep(.tao-button__shortcut) {
     position: var(--_action-label-position);
     clip-path: inset(calc(var(--_compact) * 50%));
     min-width: 0;
@@ -587,7 +592,9 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     width: 100%;
     /* a finger-sized target in every look / цель под палец в любом виде */
     min-height: 48px;
-    padding: var(--tao-space-2) var(--tao-space-3);
+    /* the icon over the label (the bar, the rail): a narrow inset, so «Settings» fits 80px; the side panel keeps its own
+       иконка над подписью (панель, рейка): узкий отступ, чтобы «Настройки» влезали в 80px; боковая панель — свой */
+    padding: var(--tao-space-2) calc(var(--tao-space-3) - var(--_compact) * (var(--tao-space-3) - var(--tao-space-1)));
     border: 0;
     /* concentric corners: the panel radius minus its padding / концентричные углы */
     border-radius: max(0px, calc(var(--tao-radius-panel) - var(--tao-space-1)));
