@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.12.0
+
+Nothing to migrate.
+
+- **`TaoTextarea` `maxHeight`.** The field grew with its text up to 500px, written into the component. Now `maxHeight` sets it: a number is px, a string any CSS length (`50vh`, `20rem`), `none` — no limit; 500 stays the default. Dragging the corner stops there too. A framed field (`variant="outline"`) no longer scrolls by 2px: the height counts its border.
+
 ## 5.11.1
 
 A fix; nothing to migrate.

@@ -171,6 +171,7 @@ export const propTables = {
         r('v-model', 'string', "''", 'Текст'),
         r('placeholder', 'string', "''", 'Подсказка'),
         r('rows', 'number', '3', 'Стартовая высота'),
+        r('maxHeight', 'number | string', '500', 'До какой высоты поле растёт с текстом, прежде чем прокручиваться: число — px, строка — любая длина CSS (50vh), none — без предела. Растягивание за угол тоже останавливается на ней'),
         r('maxlength', 'number', '—', 'Режет ввод'),
         r('count', 'boolean', 'false', 'Показать «введено / максимум» (вместе с maxlength)'),
         r('resize', 'boolean', 'true', 'Можно тянуть за угол'),

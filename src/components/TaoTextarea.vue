@@ -32,6 +32,13 @@ const props = withDefaults(
         /** Spaces are not entered: neither typed nor pasted. / Пробелы не вводятся — ни с клавиатуры, ни вставкой. */
         noSpace?: boolean;
         rows?: number;
+        /**
+         * How tall the field grows with its text before it scrolls: a number is px, a string any CSS length (`50vh`,
+         * `20rem`), `none` — no limit. Dragging the corner stops there too.
+         * До какой высоты поле растёт с текстом, прежде чем прокручиваться: число — px, строка — любая длина CSS
+         * (`50vh`, `20rem`), `none` — без предела. Растягивание за угол тоже останавливается на ней.
+         */
+        maxHeight?: number | string;
         resize?: boolean;
         modelValue?: string;
         /** Focus on mount. / Фокус при монтировании. */
@@ -59,6 +66,7 @@ const props = withDefaults(
         readonly: false,
         noSpace: false,
         rows: 3,
+        maxHeight: 500,
         resize: true,
         modelValue: '',
         autofocus: false,
@@ -142,9 +150,16 @@ function autoResize() {
         return;
     }
 
+    // the height follows the text; max-height (from maxHeight) stops it, then the field scrolls. The borders are added:
+    // scrollHeight has none, and a framed field would scroll by 2px
+    // высота идёт за текстом; max-height (из maxHeight) её останавливает, дальше поле прокручивается. Рамки
+    // добавляются: в scrollHeight их нет, и поле с рамкой прокручивалось бы на 2px
     textarea.style.height = 'auto';
-    textarea.style.height = `${Math.min(textarea.scrollHeight, 500)}px`;
+    const borders = textarea.offsetHeight - textarea.clientHeight;
+    textarea.style.height = `${textarea.scrollHeight + borders}px`;
 }
+
+const maxHeightCss = computed(() => (typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight));
 
 watch(
     () => props.modelValue,
@@ -184,6 +199,7 @@ onMounted(() => {
             :disabled="disabled"
             :readonly="readonly"
             :rows="rows"
+            :style="{ maxHeight: maxHeightCss }"
             :value="modelValue"
             :aria-invalid="invalid || undefined"
             :aria-describedby="describedBy"
