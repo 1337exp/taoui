@@ -1,11 +1,16 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
+import { useControlAttrs } from '../controlAttrs';
 import { computed, ref, watch } from 'vue';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
 
-defineOptions({ name: 'TaoInputNumber' });
+defineOptions({ name: 'TaoInputNumber', inheritAttrs: false });
+
+// the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
+// атрибуты — элементу управления, внешний вид — обёртке
+const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const props = withDefaults(
     defineProps<{
@@ -184,8 +189,9 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
 </script>
 
 <template>
-    <div class="tao-input-number" :class="[sizeClass(size), { 'tao-input-number--invalid': invalid, 'tao-input-number--controls': controls }]">
+    <div v-bind="rootAttrs()" class="tao-input-number" :class="[sizeClass(size), { 'tao-input-number--invalid': invalid, 'tao-input-number--controls': controls }]">
         <input
+            v-bind="controlAttrs()"
             :id="controlId"
             class="tao-input-number__input"
             type="text"

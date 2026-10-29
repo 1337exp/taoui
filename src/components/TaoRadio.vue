@@ -1,10 +1,15 @@
 <script lang="ts" setup>
 import { computed, inject, useId } from 'vue';
+import { useControlAttrs } from '../controlAttrs';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { radioGroupKey, type TaoRadioValue } from '../radio';
 
-defineOptions({ name: 'TaoRadio' });
+defineOptions({ name: 'TaoRadio', inheritAttrs: false });
+
+// the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
+// атрибуты — элементу управления, внешний вид — обёртке
+const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const props = withDefaults(
     defineProps<{
@@ -59,8 +64,9 @@ function onChange() {
 </script>
 
 <template>
-    <label class="tao-radio" :class="[sizeClass(size), { 'tao-radio--disabled': isDisabled, 'tao-radio--invalid': invalid && !group }]" :for="controlId">
+    <label v-bind="rootAttrs()" class="tao-radio" :class="[sizeClass(size), { 'tao-radio--disabled': isDisabled, 'tao-radio--invalid': invalid && !group }]" :for="controlId">
         <input
+            v-bind="controlAttrs()"
             :id="controlId"
             class="tao-radio__input"
             type="radio"

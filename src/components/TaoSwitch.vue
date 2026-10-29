@@ -1,9 +1,14 @@
 <script lang="ts" setup>
 import {  } from 'vue';
+import { useControlAttrs } from '../controlAttrs';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 
-defineOptions({ name: 'TaoSwitch' });
+defineOptions({ name: 'TaoSwitch', inheritAttrs: false });
+
+// the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
+// атрибуты — элементу управления, внешний вид — обёртке
+const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const props = withDefaults(
     defineProps<{
@@ -54,8 +59,9 @@ function toggle(event?: Event) {
 </script>
 
 <template>
-    <label class="tao-switch" :class="[sizeClass(size), { 'tao-switch--disabled': disabled, 'tao-switch--on': modelValue, 'tao-switch--invalid': invalid, 'tao-switch--loading': loading }]" :for="controlId">
+    <label v-bind="rootAttrs()" class="tao-switch" :class="[sizeClass(size), { 'tao-switch--disabled': disabled, 'tao-switch--on': modelValue, 'tao-switch--invalid': invalid, 'tao-switch--loading': loading }]" :for="controlId">
         <input
+            v-bind="controlAttrs()"
             :id="controlId"
             class="tao-switch__input"
             type="checkbox"

@@ -1,9 +1,14 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
+import { useControlAttrs } from '../controlAttrs';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 
-defineOptions({ name: 'TaoCheckbox' });
+defineOptions({ name: 'TaoCheckbox', inheritAttrs: false });
+
+// the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
+// атрибуты — элементу управления, внешний вид — обёртке
+const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const props = withDefaults(
     defineProps<{
@@ -76,10 +81,11 @@ watch(
 </script>
 
 <template>
-    <label class="tao-checkbox" :class="[sizeClass(size), { 'tao-checkbox--disabled': disabled }]" :for="controlId">
+    <label v-bind="rootAttrs()" class="tao-checkbox" :class="[sizeClass(size), { 'tao-checkbox--disabled': disabled }]" :for="controlId">
         <slot name="pre" :text="label" />
 
         <input
+            v-bind="controlAttrs()"
             :id="controlId"
             ref="inputRef"
             class="tao-checkbox__input tao-sr-only"

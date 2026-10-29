@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.8.3
+
+A fix; nothing to migrate.
+
+- **A field's attributes reach its control.** `TaoInput`, `TaoTextarea`, `TaoInputNumber`, `TaoCombobox`, `TaoSelect`, `TaoDate`, `TaoDateRange`, `TaoSwitch`, `TaoCheckbox` and `TaoRadio` are a wrapper around their control, and Vue put every attribute you gave them on the wrapper: an `aria-label` named nothing there (a screen reader read the field without its name), and `name`, `autocomplete`, `inputmode`, `data-*` and listeners such as `@focus` missed the control too. Now `class` and `style` stay on the wrapper and everything else goes to the control (the input, the textarea, the trigger button, the checkbox). If you relied on an attribute or a listener landing on the wrapper, put it on an element around the field instead.
+- Showcase: the search field has its own `aria-label`.
+
+## 5.8.2
+
+No change to the library: the showcase writes the chosen section into the address (`#section`) and opens a `#section` link, and the `taoui-dev` skill is up to date.
+
 ## 5.8.1
 
 Fixes after 5.8.0; nothing to migrate.

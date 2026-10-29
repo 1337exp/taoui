@@ -1,9 +1,14 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
+import { useControlAttrs } from '../controlAttrs';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 
-defineOptions({ name: 'TaoInput' });
+defineOptions({ name: 'TaoInput', inheritAttrs: false });
+
+// the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
+// атрибуты — элементу управления, внешний вид — обёртке
+const { rootAttrs, controlAttrs } = useControlAttrs();
 
 interface Props {
     modelValue?: string | number;
@@ -47,7 +52,7 @@ function handleFocus(event: FocusEvent) {
 </script>
 
 <template>
-    <div class="tao-input-wrapper" :class="sizeClass(size)">
+    <div v-bind="rootAttrs()" class="tao-input-wrapper" :class="sizeClass(size)">
         <div
             class="tao-input-shell"
             :class="{
@@ -62,6 +67,7 @@ function handleFocus(event: FocusEvent) {
                 <slot name="prefix" />
             </span>
             <input
+                v-bind="controlAttrs()"
                 :id="controlId"
                 class="tao-input"
                 :class="{ 'tao-input--error': invalid }"

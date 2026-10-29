@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref } from 'vue';
+import { useControlAttrs } from '../controlAttrs';
 import { formatTaoDateRangeLabel, parseTaoDateRange, type TaoDateRangeValue } from '../date';
 import { useDismiss } from '../dismiss';
 import { useFloating } from '../floating';
@@ -11,7 +12,11 @@ import '../styles/date-popup.css';
 import TaoCalendar from './TaoCalendar.vue';
 import TaoIcon from './TaoIcon.vue';
 
-defineOptions({ name: 'TaoDateRange' });
+defineOptions({ name: 'TaoDateRange', inheritAttrs: false });
+
+// the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
+// атрибуты — элементу управления, внешний вид — обёртке
+const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const appLocale = useTaoLocale();
 
@@ -113,8 +118,9 @@ function onTriggerKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-    <div class="tao-date-range" :class="[sizeClass(size), { 'tao-date-range--open': open, 'tao-date-range--invalid': invalid }]">
+    <div v-bind="rootAttrs()" class="tao-date-range" :class="[sizeClass(size), { 'tao-date-range--open': open, 'tao-date-range--invalid': invalid }]">
         <button
+            v-bind="controlAttrs()"
             :id="controlId"
             ref="triggerRef"
             type="button"
