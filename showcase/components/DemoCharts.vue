@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { TaoCard, TaoDonut, TaoMeter, TaoSlider, TaoSparkline, watchTaoChartTheme } from '@1337exp/taoui'
+import { TaoCard, TaoDonut, TaoMeter, TaoSlider, TaoSparkline, TaoTag, watchTaoChartTheme } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import Tr from './Tr.vue'
 import { tr } from '../i18n.js'
@@ -57,6 +57,9 @@ onBeforeUnmount(() => stop?.())
     <h3>TaoSparkline</h3>
     <div class="charts-demo__stats">
       <TaoCard :padding="16">
+        <template #corner>
+          <TaoTag tone="success" flat size="small"><span aria-hidden="true">▲</span> +12%</TaoTag>
+        </template>
         <div class="charts-demo__stat">
           <span class="charts-demo__caption">{{ tr('Visits', 'Визиты') }}</span>
           <strong class="charts-demo__number">4 120</strong>
@@ -64,6 +67,9 @@ onBeforeUnmount(() => stop?.())
         </div>
       </TaoCard>
       <TaoCard :padding="16">
+        <template #corner>
+          <TaoTag tone="success" flat size="small"><span aria-hidden="true">▲</span> +6%</TaoTag>
+        </template>
         <div class="charts-demo__stat">
           <span class="charts-demo__caption">{{ tr('Revenue', 'Выручка') }}</span>
           <strong class="charts-demo__number">$61k</strong>
@@ -71,10 +77,13 @@ onBeforeUnmount(() => stop?.())
         </div>
       </TaoCard>
       <TaoCard :padding="16">
+        <template #corner>
+          <TaoTag tone="danger" flat size="small"><span aria-hidden="true">▲</span> +40%</TaoTag>
+        </template>
         <div class="charts-demo__stat">
-          <span class="charts-demo__caption">{{ tr('Errors (a gap: no data)', 'Ошибки (разрыв: нет данных)') }}</span>
+          <span class="charts-demo__caption">{{ tr('Errors', 'Ошибки') }}</span>
           <strong class="charts-demo__number">14</strong>
-          <TaoSparkline :values="errors" tone="danger" area dot :label="tr('Errors, 12 weeks', 'Ошибки за 12 недель')" />
+          <TaoSparkline :values="errors" tone="danger" area dot :label="tr('Errors, 12 weeks, two weeks without data', 'Ошибки за 12 недель, две недели без данных')" />
         </div>
       </TaoCard>
     </div>

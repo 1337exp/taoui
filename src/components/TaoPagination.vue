@@ -233,7 +233,7 @@ function goTo(next: number) {
 }
 
 .tao-pagination__btn:hover:not(:disabled) {
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
     color: var(--tao-color-text-strong);
 }
 

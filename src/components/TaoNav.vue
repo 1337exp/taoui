@@ -602,7 +602,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
 }
 
 .tao-nav__item:hover {
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
     color: var(--tao-color-text);
 }
 

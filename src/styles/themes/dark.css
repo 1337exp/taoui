@@ -37,6 +37,11 @@
     --tao-color-surface-raised: var(--tao-gray-800);
     --tao-color-surface-sunken: color-mix(in srgb, var(--tao-gray-600) 20%, transparent);
     --tao-color-surface-hover: var(--tao-gray-700);
+    /* the wash behind a row or a control under the pointer: see-through, so it shows on any fill, grain and glass
+       included (gray-700 on gray-800 was 1.09:1, nearly invisible); surface-hover stays the solid colour
+       подложка строки или контрола под указателем: полупрозрачная, поэтому видна на любой заливке, на зерне и стекле
+       тоже (gray-700 на gray-800 было 1.09:1, почти не видно); surface-hover остаётся сплошным цветом */
+    --tao-color-hover: color-mix(in srgb, var(--tao-color-text-strong) 8%, transparent);
 
     /* ---------- Borders ---------- */
     --tao-color-border: color-mix(in srgb, var(--tao-gray-600) 40%, transparent);
@@ -65,6 +70,11 @@
     --tao-color-on-info: var(--tao-gray-950);
     /* the neutral fill is the muted text grey: a white label on it / нейтральная заливка — серый muted, подпись белая */
     --tao-color-on-neutral: var(--tao-gray-0);
+    /* under the pointer the neutral fill steps darker, as the other dark fills do: it went to the near-white text
+       colour and the white label was lost on it
+       под указателем нейтральная заливка темнеет, как остальные тёмные заливки: она становилась почти белым цветом
+       текста, и белая подпись на ней терялась */
+    --tao-color-neutral-hover: color-mix(in srgb, var(--tao-color-text-muted) 78%, var(--tao-color-bg));
     /* light fills with a dark label, as the amber accent: bright enough to read as a button on a dark page
        светлые заливки с тёмной подписью, как у янтарного акцента: достаточно яркие, чтобы читаться кнопкой на тёмной странице */
     --tao-color-success: var(--tao-green-400);

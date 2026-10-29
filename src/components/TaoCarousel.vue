@@ -768,7 +768,7 @@ onBeforeUnmount(() => {
 }
 
 .tao-carousel__nav:hover:not(:disabled) {
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
     color: var(--tao-color-text-strong);
 }
 
@@ -936,7 +936,7 @@ onBeforeUnmount(() => {
 
 .tao-carousel__toggle:hover {
     color: var(--tao-color-text-strong);
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-carousel__toggle:focus-visible {

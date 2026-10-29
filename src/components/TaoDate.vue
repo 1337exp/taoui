@@ -336,7 +336,12 @@ function onTriggerKeydown(event: KeyboardEvent) {
     color: var(--tao-color-input-placeholder);
 }
 
-.tao-date__trigger:focus {
+/* open: the field stays lit while its list is open. The press focuses it (lit), opening moves the focus into the list:
+   without this the frame lit up and went out at once, a flash
+   открыт: поле горит, пока открыт его список. Нажатие даёт фокус (горит), открытие уводит фокус в список: без этого
+   рамка вспыхивала и сразу гасла */
+.tao-date__trigger:focus,
+.tao-date--open .tao-date__trigger {
     outline: none;
     border-color: var(--tao-color-accent);
     box-shadow: 0 0 0 2px var(--tao-color-accent-subtle-hover);
@@ -346,7 +351,8 @@ function onTriggerKeydown(event: KeyboardEvent) {
     border-color: var(--tao-color-danger);
 }
 
-.tao-date--invalid .tao-date__trigger:focus {
+.tao-date--invalid .tao-date__trigger:focus,
+.tao-date--invalid.tao-date--open .tao-date__trigger {
     box-shadow: 0 0 0 2px var(--tao-color-danger-subtle);
 }
 
@@ -373,7 +379,8 @@ function onTriggerKeydown(event: KeyboardEvent) {
     transition: var(--tao-transition-base);
 }
 
-.tao-date__field:focus-within {
+.tao-date__field:focus-within,
+.tao-date--open .tao-date__field {
     border-color: var(--tao-color-accent);
     box-shadow: 0 0 0 2px var(--tao-color-accent-subtle-hover);
 }

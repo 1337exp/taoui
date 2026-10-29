@@ -130,7 +130,7 @@ function onLeave(el: Element) {
 }
 
 .tao-spoiler__header:hover {
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-spoiler__icon {

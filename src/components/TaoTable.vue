@@ -296,7 +296,7 @@ function onRowClick(row: Record<string, unknown>, index: number) {
 }
 
 .tao-table--hover tbody tr:hover td {
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-table--clickable tbody tr {

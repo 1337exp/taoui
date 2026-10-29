@@ -85,6 +85,9 @@ function onClose(event: MouseEvent) {
     box-sizing: border-box;
     display: inline-flex;
     align-items: center;
+    /* a tag stretched wider than its text (a grid, a fixed width) keeps the text in the middle
+       тег шире своего текста (сетка, заданная ширина) держит текст посередине */
+    justify-content: center;
     gap: 6px;
     max-width: 100%;
     /* min: an avatar in #prefix makes it taller / min — аватар в #prefix делает тег выше */
@@ -93,7 +96,7 @@ function onClose(event: MouseEvent) {
     padding: 0 var(--tao-tag-padding-x);
     vertical-align: middle;
     white-space: nowrap;
-    text-align: start;
+    text-align: center;
     font-size: var(--tao-tag-font-size);
     /* the line is as tall as the inside of the tag (height minus the two borders): the text then sits a whole pixel from
        the edge. At 1.25 it was 15px in 16px, 1.5px from the edge, and on a fractional position of the page the box

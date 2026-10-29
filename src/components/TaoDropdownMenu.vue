@@ -118,7 +118,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
 }
 
 .tao-dropdown-menu__button:hover {
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-dropdown-menu__button:focus-visible {

@@ -337,7 +337,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
 
 .tao-input-number__step:hover:not(:disabled) {
     color: var(--tao-color-text-strong);
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
 }
 
 .tao-input-number__step:focus-visible {

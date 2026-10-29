@@ -223,7 +223,7 @@ function onEdge(direction: 'prev' | 'next') {
 
 .tao-menubar__item:hover,
 .tao-menubar__item--open {
-    background: var(--tao-color-surface-hover);
+    background: var(--tao-color-hover);
     color: var(--tao-color-text-strong);
 }
 
