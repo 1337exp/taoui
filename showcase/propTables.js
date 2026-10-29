@@ -116,6 +116,7 @@ export const propTables = {
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер, шкала как у TaoButton. Без него — размер предков (tao-size-* или size у FormField / InputGroup), иначе medium'),
         r('disabled', 'boolean', 'false', 'Неактивно'),
         r('error', 'boolean', 'false', 'Красная рамка. Текст ошибки — error у TaoFormField'),
+        r('variant', "'outline' | 'filled' | 'plain'", "'outline'", 'Рамка / только заливка / ничего: plain читается как текст (пункт списка в правке): без отступа, фокус показывает каретка, ошибка — красная черта под текстом. Высота не меняется'),
         r('id', 'string', 'auto', 'id инпута; иначе из FormField или useId'),
       ],
       slots: '#prefix и #suffix — внутри рамки слева/справа (иконка, текст).',

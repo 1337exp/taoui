@@ -56,7 +56,7 @@
 - **TaoCard** — card with media / header / title / footer slots and a `#corner` (a tag, a menu button). `#media` can be a photo or `TaoCarousel`; `closable` adds a cross and the `close` event. `flush` is a tile (no padding/shadow, fills the cell); `#overlay` is a scrim on the media; `stripe="top | left | bottom"` with `stripeTone` (a tone or the palette `gradient`) draws a coloured stripe the corners clip
 - **TaoCopy** — clipboard icon. After a click, a “Copied” tooltip; if the trigger is gone, the tooltip is too
 - **TaoMarquee** — one line that never wraps: when it does not fit it runs round with fading edges and a pause at the start of every round, when it fits it stands still. Stops on hover, on focus and on a tap (WCAG 2.2.2); wraps with «reduce motion»; a screen reader reads it once. `text` or inline content in the slot, `speed`, `gap`, `fade` (the left fade takes that much room left of the text: give the parent the padding), `paused`
-- **TaoInput** — text field with v-model, validation, and `#prefix` / `#suffix` slots (icon or text inside the frame)
+- **TaoInput** — text field with v-model, validation, and `#prefix` / `#suffix` slots (icon or text inside the frame); `variant` `outline` / `filled` / `plain` (no frame: an item of a list being edited)
 - **TaoInputGroup** — outer glue: `#before` | field | `#after` (protocol, unit, button)
 - **TaoModal** — modal with animation and slots; `fullscreen` (or `fullscreen="narrow"`: a page on a phone, a dialog on a computer)
 - **TaoDrawer** — side panel (filters, settings), or a bottom sheet with `side="bottom"`. Esc, backdrop click, focus trap — same as the modal
