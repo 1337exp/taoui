@@ -9,6 +9,8 @@ defineOptions({ name: 'DemoPagination' })
 
 const pagerPage = ref(12)
 const bigPage = ref(1)
+const sizedPage = ref(3)
+const pageSize = ref(20)
 </script>
 
 <template>
@@ -34,12 +36,14 @@ const bigPage = ref(1)
           <TaoPagination v-model:page="pagerPage" :total="500" :page-size="10" />
           <TaoPagination v-model:page="pagerPage" :total="500" :page-size="10" :jump="3" size="small" style="margin-top: 12px;" />
           <TaoPagination v-model:page="bigPage" :total="3400" :page-size="10" :page-input="20" style="margin-top: 12px;" />
+          <TaoPagination v-model:page="sizedPage" v-model:page-size="pageSize" :total="500" :page-sizes="[10, 20, 50, 100]" style="margin-top: 12px;" />
     
           <div class="code-block">
             <pre><code>&lt;TaoPagination v-model:page="page" :total="500" :page-size="10" /&gt;
 &lt;TaoPagination v-model:page="page" :total="500" :page-size="10" :jump="3" /&gt;
 &lt;!-- 340 pages: a field to type one in (from 20 pages on) --&gt;
 &lt;TaoPagination v-model:page="page" :total="3400" :page-size="10" :page-input="20" /&gt;
+&lt;TaoPagination v-model:page="page" v-model:page-size="size" :total="500" :page-sizes="[10, 20, 50, 100]" /&gt;
 
 &lt;TaoPagination
   v-model:page="page"

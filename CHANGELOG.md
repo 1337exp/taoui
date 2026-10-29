@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.7.0
+
+Two options; nothing to migrate.
+
+- **`TaoPagination pageSizes`** (`[10, 20, 50, 100]`): a «Per page» choice next to the total, `v-model:page-size`. A new size moves the page so the first row on screen stays on screen (rows 41–60 at 20 a page are page 1 at 50). The caption is the locale key `perPageText` (optional, so a locale written before still type-checks) and labels the list for a screen reader.
+- **`TaoNav indicator="line"`**: the current section in the accent colour with a short line instead of a tint, under the item in the bar look and along its start edge in the rail and the side panel; `auto` moves it with the look. `pill` stays the default.
+
 ## 5.6.1
 
 Visual fixes, nothing to migrate.

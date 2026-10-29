@@ -77,6 +77,7 @@ export const localeRu: TaoLocale = {
         jumpNextLabel: 'Вперёд на {n} страниц',
         goToText: 'Перейти',
         goToLabel: 'Перейти на страницу, от 1 до {count}',
+        perPageText: 'На странице',
         totalText: '{from}–{to} из {total}',
         emptyTotalText: '0 из 0',
     },

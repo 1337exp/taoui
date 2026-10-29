@@ -35,6 +35,13 @@ const props = withDefaults(
          * Рейка и боковая панель не меняются.
          */
         floating?: boolean;
+        /**
+         * How the current section is marked: `pill` — a tint behind the item; `line` — the accent colour and a short line
+         * (under the item in the bar look, along its start edge in the rail and the side panel).
+         * Как отмечен текущий раздел: `pill` — подложка под пунктом; `line` — цвет акцента и короткая черта (под пунктом
+         * в виде панели, вдоль его начального края в рейке и боковой панели).
+         */
+        indicator?: 'pill' | 'line';
     }>(),
     {
         modelValue: undefined,
@@ -43,6 +50,7 @@ const props = withDefaults(
         ariaLabel: undefined,
         moreLabel: undefined,
         floating: false,
+        indicator: 'pill',
     },
 );
 const l10n = useLocaleText(props, 'nav');
@@ -123,7 +131,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
 </script>
 
 <template>
-    <div class="tao-nav" :class="[`tao-nav--${layout}`, { 'tao-nav--standalone': standalone, 'tao-nav--floating': floating }]">
+    <div class="tao-nav" :class="[`tao-nav--${layout}`, `tao-nav--indicator-${indicator}`, { 'tao-nav--standalone': standalone, 'tao-nav--floating': floating }]">
         <div class="tao-nav__shell">
             <nav class="tao-nav__panel" :aria-label="l10n.ariaLabel">
                 <div class="tao-nav__column">
@@ -610,6 +618,28 @@ function onMoreClose(reason: TaoMenuCloseReason) {
 .tao-nav__item--active:hover {
     background: var(--tao-color-accent-subtle);
     color: var(--tao-color-accent-text);
+}
+
+/* indicator="line": no tint, the accent colour and a short line. --_bar puts it under the item in the bar look and
+   along the start edge on the side, so `auto` moves it by itself
+   indicator="line": без подложки, цвет акцента и короткая черта. --_bar кладёт её под пункт в виде панели и вдоль
+   начального края сбоку, поэтому в `auto` она переезжает сама */
+.tao-nav--indicator-line .tao-nav__item--active,
+.tao-nav--indicator-line .tao-nav__item--active:hover {
+    background: transparent;
+}
+
+.tao-nav--indicator-line .tao-nav__item--active::after {
+    content: '';
+    position: absolute;
+    top: calc(var(--_bar) * (100% - 3px) + (1 - var(--_bar)) * 50%);
+    inset-inline-start: calc(var(--_bar) * 50%);
+    width: calc(var(--_bar) * 20px + (1 - var(--_bar)) * 3px);
+    height: calc(var(--_bar) * 3px + (1 - var(--_bar)) * 20px);
+    border-radius: var(--tao-radius-full);
+    background: var(--tao-color-accent);
+    translate: calc(var(--_bar) * -50%) calc((1 - var(--_bar)) * -50%);
+    pointer-events: none;
 }
 
 .tao-nav__item:focus-visible {

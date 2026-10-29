@@ -607,6 +607,7 @@ Showcase section: `#pagination`
 | `pageSize` | `number` | 10 | Records per page |
 | `jump` | `number` | 5 | A click on “…” jumps this many pages. 0 — “…” is decorative |
 | `pageInput` | `boolean \| number` | false | A field to type a page in: true — always, a number — from this many pages on. Enter or leaving the field goes there (clamped to the range), Esc drops it |
+| `pageSizes` | `number[]` | — | The page sizes to choose from: «Per page» next to the total, v-model:page-size. On a change the page moves so the first row on screen stays on screen |
 | `siblingCount` | `number` | 1 | How many numbers around the current one |
 | `showTotal` | `boolean` | true | The “1–10 of N” caption |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Buttons 26 / 36 / 44, like TaoButton. Without it — the size of the ancestors |
@@ -1037,6 +1038,7 @@ Showcase section: `#tao-nav`
 | `maxBarItems` | `number` | 5 | How many fit the bar. With more items maxBarItems − 1 stay, the rest go into «More» with a menu |
 | `ariaLabel` | `string` | 'Navigation' | Accessible name of the navigation |
 | `moreLabel` | `string` | 'More' | The label of «More» |
+| `indicator` | `'pill' \| 'line'` | 'pill' | How the current section is marked: a tint behind the item, or the accent colour and a short line (under the item in the bar, along its start edge on the side; auto moves it) |
 | `floating` | `boolean` | false | In the bar look, a detached pill above the page: inset from the edges and above the safe area, round, with a shadow; the active item is a pill too. The rail and the side panel do not change. The main action of the screen goes beside it as your own round button, not into the bar |
 
 **Slots, events, notes.** default — the page: TaoNav lays it out next to the navigation (the bar sticks to the bottom, on the side the list sticks to the top; env(safe-area-inset-bottom) is kept). Without the slot it is a standalone panel with a border. #label — your own item label ({ item, active }). #action — the main action of the screen: a TaoButton with icon and its text in <span class="tao-nav__action-label">; the bar puts it round above itself at the end side (above the pill with floating), the rail round at the top, the side panel extended with the text at the top; in the round looks the text is hidden but stays the name of the button. Events: update:modelValue, select(id, event) — event.preventDefault() keeps a link from navigating, to route it yourself.

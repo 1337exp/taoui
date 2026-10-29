@@ -76,6 +76,7 @@ export const localeEn: TaoLocale = {
         jumpNextLabel: 'Forward {n} pages',
         goToText: 'Go to',
         goToLabel: 'Go to page, 1 to {count}',
+        perPageText: 'Per page',
         totalText: '{from}–{to} of {total}',
         emptyTotalText: '0 of 0',
     },

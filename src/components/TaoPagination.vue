@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
+import TaoSelect from './TaoSelect.vue';
+import { localeEn } from '../locale/en';
 import { computed, ref, watch } from 'vue';
 import { buildPaginationItems } from '../pagination';
 import { sizeClass, type TaoSize } from '../size';
@@ -38,6 +40,14 @@ const props = withDefaults(
         jumpNextLabel?: string;
         goToText?: string;
         goToLabel?: string;
+        /**
+         * The page sizes to choose from (`[10, 20, 50]`): a «Per page» choice next to the total, `v-model:page-size`.
+         * On a change the page moves so the first row on screen stays on screen.
+         * Размеры страницы на выбор: выбор «На странице» рядом с итогом, `v-model:page-size`. При смене страница
+         * сдвигается так, чтобы первая видимая строка осталась на экране.
+         */
+        pageSizes?: number[];
+        perPageText?: string;
     }>(),
     {
         page: 1,
@@ -55,7 +65,24 @@ const l10n = useLocaleText(props, 'pagination');
 const emit = defineEmits<{
     'update:page': [value: number];
     change: [value: number];
+    'update:pageSize': [value: number];
 }>();
+
+const sizeOptions = computed(() => (props.pageSizes ?? []).map((n) => ({ value: n, label: String(n) })));
+
+function onPageSize(value: unknown) {
+    const size = Number(value);
+    if (!Number.isFinite(size) || size <= 0 || size === props.pageSize || props.disabled) {
+        return;
+    }
+    // keep the first row on screen: the page that holds it at the new size / первая строка остаётся на экране
+    const page = Math.floor((Math.max(from.value, 1) - 1) / size) + 1;
+    emit('update:pageSize', size);
+    if (page !== props.page) {
+        emit('update:page', page);
+        emit('change', page);
+    }
+}
 
 const pageCount = computed(() => Math.max(1, Math.ceil(Math.max(props.total, 0) / Math.max(props.pageSize, 1))));
 const current = computed(() => Math.min(Math.max(props.page, 1), pageCount.value));
@@ -110,12 +137,25 @@ function goTo(next: number) {
 
 <template>
     <nav class="tao-pagination" :class="sizeClass(size)" :aria-label="l10n.ariaLabel">
-        <p v-if="showTotal" class="tao-pagination__total">
-            <slot name="total" :from="from" :to="to" :total="total">
-                <template v-if="total === 0">{{ appLocale.pagination.emptyTotalText }}</template>
-                <template v-else>{{ formatText(appLocale.pagination.totalText, { from, to, total }) }}</template>
-            </slot>
-        </p>
+        <div v-if="showTotal || sizeOptions.length" class="tao-pagination__info">
+            <p v-if="showTotal" class="tao-pagination__total">
+                <slot name="total" :from="from" :to="to" :total="total">
+                    <template v-if="total === 0">{{ appLocale.pagination.emptyTotalText }}</template>
+                    <template v-else>{{ formatText(appLocale.pagination.totalText, { from, to, total }) }}</template>
+                </slot>
+            </p>
+            <!-- the label names the list button: a screen reader hears «Per page, 20» / подпись — имя кнопки списка -->
+            <label v-if="sizeOptions.length" class="tao-pagination__sizes">
+                <span class="tao-pagination__sizes-text">{{ l10n.perPageText ?? localeEn.pagination.perPageText }}</span>
+                <TaoSelect
+                    class="tao-pagination__sizes-select"
+                    :model-value="pageSize"
+                    :options="sizeOptions"
+                    :disabled="disabled"
+                    @update:model-value="onPageSize"
+                />
+            </label>
+        </div>
 
         <div class="tao-pagination__pages">
             <button
@@ -198,6 +238,26 @@ function goTo(next: number) {
     justify-content: space-between;
     gap: var(--tao-space-3);
     width: 100%;
+}
+
+.tao-pagination__info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--tao-space-2) var(--tao-space-4);
+}
+
+.tao-pagination__sizes {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tao-space-2);
+    font-size: var(--tao-control-font-size-secondary);
+    color: var(--tao-color-text-muted);
+}
+
+/* as wide as «100» and the chevron / шириной в «100» и шеврон */
+.tao-pagination__sizes-select {
+    width: calc(4ch + var(--tao-control-padding-x) * 2 + 20px);
 }
 
 .tao-pagination__total {
