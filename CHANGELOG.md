@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.11.1
+
+A fix; nothing to migrate.
+
+- **Secondary text reads in the dark theme.** `--tao-color-text-muted` (labels, hints, legends, the names in TaoNav and the charts) was `#666`: 3.2:1 on the page and 2.9:1 on a card, below the 4.5:1 of normal text, in every dark palette. It was the grey of the neutral fill too, where a white label needs it dark. The two are apart now: the new `--tao-color-neutral` keeps `#666` for `tone="neutral"` (its white label stays 5.7:1), and muted text is `#8a8a8a` (`--tao-gray-350`): 5.3:1 on the page and 4.8:1 on a card. The light theme was fine (5.7:1) and does not change. The carousel dots and the knob of a switch that is off take the muted grey too and are a little lighter. A test now holds muted text at 4.5:1 on the page and on a card in both themes.
+
 ## 5.11.0
 
 Nothing to migrate.

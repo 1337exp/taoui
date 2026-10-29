@@ -52,8 +52,8 @@ describe('the hover wash', () => {
 describe('the neutral tone under the pointer', () => {
     it('is its own role, a step from the fill in both themes', () => {
         expect(toneCss as string).toMatch(/\.tao-tone-neutral \{[^}]*--tao-tone-hover: var\(--tao-color-neutral-hover\)/);
-        expect(darkCss as string).toContain('--tao-color-neutral-hover: color-mix(in srgb, var(--tao-color-text-muted) 78%, var(--tao-color-bg));');
-        expect(lightCss as string).toContain('--tao-color-neutral-hover: color-mix(in srgb, var(--tao-color-text-muted) 78%, var(--tao-color-text-strong));');
+        expect(darkCss as string).toContain('--tao-color-neutral-hover: color-mix(in srgb, var(--tao-color-neutral) 78%, var(--tao-color-bg));');
+        expect(lightCss as string).toContain('--tao-color-neutral-hover: color-mix(in srgb, var(--tao-color-neutral) 78%, var(--tao-color-text-strong));');
     });
 });
 
