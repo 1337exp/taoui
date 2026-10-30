@@ -98,13 +98,14 @@
        светлый акцент уже розовый: последняя серия оранжевая (бирюзовая сливалась с тёмно-зелёным success) */
     --tao-color-chart-6: var(--tao-tangerine-600);
 
-    /* translucent white, like the dark theme's translucent tint: the field follows the panel under it (a tinted surface, a darker window)
-       instead of staying pure white on any background
-       полупрозрачный белый, как полупрозрачный тон в тёмной теме: поле идёт за панелью под ним (окрашенная поверхность, более тёмное окно), а не остаётся чисто белым на любом фоне */
-    --tao-color-input-bg: color-mix(in srgb, var(--tao-gray-0) 65%, transparent);
+    /* the same role as in the dark theme: a field is the sunken surface, like the segmented track next to it (it was pure white, so a field stood out from its neighbours)
+       та же роль, что в тёмной теме: поле — «утопленная» поверхность, как дорожка сегментов рядом (раньше было чисто белым, и поле выбивалось из соседей) */
+    --tao-color-input-bg: var(--tao-color-surface-sunken);
     --tao-color-input-text: var(--tao-gray-950);
     --tao-color-input-placeholder: var(--tao-gray-300);
-    --tao-color-input-disabled-bg: var(--tao-gray-50);
+    /* a translucent tone, as in the dark theme: gray-50 is the field itself now, and a disabled field has to differ
+       полупрозрачный тон, как в тёмной теме: gray-50 теперь сам фон поля, а выключенное должно отличаться */
+    --tao-color-input-disabled-bg: color-mix(in srgb, var(--tao-gray-400) 12%, transparent);
     --tao-color-input-disabled-text: var(--tao-gray-300);
 
     --tao-color-overlay: rgba(0, 0, 0, 0.4);

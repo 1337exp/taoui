@@ -129,9 +129,13 @@ describe('accent text colour', () => {
 // Secondary text is still text: labels, hints, legends. Only a disabled item may read below 4.5:1.
 // Второстепенный текст — всё равно текст: подписи, подсказки, легенды. Ниже 4,5:1 можно только неактивному.
 describe('field background', () => {
-    it('follows the surface under it in both themes: translucent, not a solid white', () => {
-        expect(declarations(lightCss).get('--tao-color-input-bg')).toMatch(/^color-mix\(in srgb, var\(--tao-gray-0\) \d+%, transparent\)$/);
+    it('is the sunken surface in both themes, as the segmented track next to it', () => {
+        expect(declarations(lightCss).get('--tao-color-input-bg')).toBe('var(--tao-color-surface-sunken)');
         expect(declarations(darkCss).get('--tao-color-input-bg')).toBe('var(--tao-color-surface-sunken)');
+    });
+
+    it('a disabled field differs from an enabled one in the light theme too (translucent tone)', () => {
+        expect(declarations(lightCss).get('--tao-color-input-disabled-bg')).toMatch(/^color-mix\(in srgb, var\(--tao-gray-400\) \d+%, transparent\)$/);
     });
 });
 

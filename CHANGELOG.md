@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.16.2
+
+A fix; nothing to migrate.
+
+- **A light-theme field is the same surface as its neighbours.** `--tao-color-input-bg` is the sunken surface (`--tao-color-surface-sunken`) in the light theme now, as it already was in the dark one, so a field and the segmented track next to it, a switch or a tab bar come out of one role and not of two close greys. It was white in 5.16.0 and translucent white in 5.16.1, and it still stood off its neighbours. The disabled field takes a translucent grey tone, as in the dark theme, because `gray-50` is the field itself now. The text stays at 18:1. The framed fields keep their border.
+
 ## 5.16.1
 
 A fix; nothing to migrate.
