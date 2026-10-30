@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { h, nextTick } from 'vue';
 import TaoList from '../src/components/TaoList.vue';
 import TaoListItem from '../src/components/TaoListItem.vue';
+// @ts-expect-error Vite `?raw` import: the component source as text
+import itemSource from '../src/components/TaoListItem.vue?raw';
 
 // 5.14.0: one Tab stop for the list, the arrows move between the rows.
 // 5.14.0: одна остановка Tab на список, стрелки ходят по строкам.
@@ -85,5 +87,12 @@ describe('TaoList roving', () => {
         await w.setProps({ roving: false } as never);
         await nextTick();
         expect(stops(w)).toEqual([]);
+    });
+});
+
+describe('TaoListItem focus ring', () => {
+    it('goes round the whole row, not the button inside its padding', () => {
+        const source = (itemSource as string).replace(/\r\n/g, '\n');
+        expect(source).toMatch(/\.tao-list-item:has\(> button\.tao-list-item__hit:focus-visible\) \{[^}]*outline: 2px solid/);
     });
 });
