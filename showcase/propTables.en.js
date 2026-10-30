@@ -629,6 +629,7 @@ export const propTablesEn = {
         r('maxHeight', 'number | string', '—', 'Scroll. A number is pixels'),
         r('empty', 'boolean', 'false', 'Show #empty instead of rows'),
         r('ariaLabel', 'string', "''", 'The list name'),
+        r('roving', 'boolean', 'false', 'One Tab stop for the whole list: the arrows move between the rows, Home / End to the ends, disabled rows are skipped; Tab comes back to the row it left (the selected one the first time). The stop of a row is its button (clickable) or the row itself'),
       ],
       slots: 'default — TaoListItem. #empty — if empty.',
     },

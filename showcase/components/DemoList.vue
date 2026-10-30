@@ -49,16 +49,16 @@ function removeFile(id) {
     <Tr>
       <template #en>
         <p style="margin-top: 0; color: var(--tao-color-text-muted); font-size: 13px;">
-          A click selects the row. <code>clickable</code> makes it a button.
+          A click selects the row. <code>clickable</code> makes it a button. <code>roving</code>: the list is one Tab stop, the arrows and Home / End move between the rows and skip the disabled one.
         </p>
       </template>
       <template #ru>
         <p style="margin-top: 0; color: var(--tao-color-text-muted); font-size: 13px;">
-          Клик выбирает строку. <code>clickable</code> делает её кнопкой.
+          Клик выбирает строку. <code>clickable</code> делает её кнопкой. <code>roving</code>: список — одна остановка Tab, стрелки и Home / End ходят по строкам и пропускают недоступную.
         </p>
       </template>
     </Tr>
-    <TaoList class="demo-wide" :aria-label="tr('People', 'Люди')">
+    <TaoList class="demo-wide" roving :aria-label="tr('People', 'Люди')">
       <TaoListItem
         v-for="person in people"
         :key="person.id"
