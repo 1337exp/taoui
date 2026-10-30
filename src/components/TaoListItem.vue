@@ -159,6 +159,19 @@ button.tao-list-item__hit:focus-visible {
     outline-offset: -2px;
 }
 
+/* the ring goes round the whole row, as its highlight does: on the button it stood inside the row's padding, off the
+   edges / рамка обходит всю строку, как её подсветка: на кнопке она стояла внутри отступов строки, не по краям */
+@supports selector(:has(*)) {
+    button.tao-list-item__hit:focus-visible {
+        outline: none;
+    }
+
+    .tao-list-item:has(> button.tao-list-item__hit:focus-visible) {
+        outline: 2px solid var(--tao-color-accent);
+        outline-offset: -2px;
+    }
+}
+
 .tao-list-item__prefix {
     display: inline-flex;
     flex-shrink: 0;

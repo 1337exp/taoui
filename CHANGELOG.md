@@ -5,6 +5,7 @@
 Nothing to migrate.
 
 - **`TaoList` `roving`.** One Tab stop for the whole list: the arrows move between the rows, Home / End to the first and the last, disabled rows are skipped, and Tab comes back to the row it left (the selected one the first time). The stop of a row is its button (`clickable`) or the row itself, with the focus ring of a clickable row. Rows added or removed are followed; a key pressed in a row's own control (an input, a menu) stays with it. An app no longer writes its own roving tabindex for a list of records.
+- **`TaoListItem` focus ring round the whole row.** On a `clickable` row the ring was drawn on its button, inside the row's padding, so it stood off the edges while the highlight ran the full width. It goes round the row now (`:has()`; older browsers keep the ring on the button).
 - Showcase: the «People» list is roving.
 
 ## 5.13.0
