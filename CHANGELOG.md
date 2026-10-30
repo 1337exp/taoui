@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.16.1
+
+A fix; nothing to migrate.
+
+- **A field follows the panel under it in the light theme.** `--tao-color-input-bg` was pure white (`--tao-gray-0`) whatever it lay on, while in the dark theme it is a translucent tone that follows the surface. On a window or a drawer painted another colour (`--tao-surface-fill`, a darker panel, a tinted palette surface) the light `TaoInput`, `TaoSelect`, `TaoTextarea`, `TaoDate` and the other fields stood out white against components that take their colour from the surface scale. Now it is white at 65% opacity: on a plain page it is still white, on a tinted or darker panel it takes the panel's tone. The text stays at 19:1.
+
 ## 5.16.0
 
 Nothing to migrate; the one visible change is the current `TaoNav` item, which is bolder now.

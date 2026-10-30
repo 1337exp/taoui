@@ -98,7 +98,10 @@
        светлый акцент уже розовый: последняя серия оранжевая (бирюзовая сливалась с тёмно-зелёным success) */
     --tao-color-chart-6: var(--tao-tangerine-600);
 
-    --tao-color-input-bg: var(--tao-gray-0);
+    /* translucent white, like the dark theme's translucent tint: the field follows the panel under it (a tinted surface, a darker window)
+       instead of staying pure white on any background
+       полупрозрачный белый, как полупрозрачный тон в тёмной теме: поле идёт за панелью под ним (окрашенная поверхность, более тёмное окно), а не остаётся чисто белым на любом фоне */
+    --tao-color-input-bg: color-mix(in srgb, var(--tao-gray-0) 65%, transparent);
     --tao-color-input-text: var(--tao-gray-950);
     --tao-color-input-placeholder: var(--tao-gray-300);
     --tao-color-input-disabled-bg: var(--tao-gray-50);
