@@ -260,6 +260,14 @@ describe('TaoNav stays still while the page scrolls', () => {
     });
 });
 
+describe('TaoNav current item', () => {
+    const css = navSource.replace(/\r\n/g, '\n');
+
+    it('is bolder as well as accent-coloured; --tao-nav-active-weight sets or turns it off', () => {
+        expect(css).toMatch(/\.tao-nav__item--active,\n\.tao-nav__item--active:hover \{[^}]*font-weight: var\(--tao-nav-active-weight, 600\);/);
+    });
+});
+
 describe('TaoNav widths and labels', () => {
     const css = navSource.replace(/\r\n/g, '\n');
     it('the rail and side panel widths are public variables', () => {

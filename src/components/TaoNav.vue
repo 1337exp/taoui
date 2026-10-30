@@ -679,10 +679,13 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     color: var(--tao-color-text);
 }
 
+/* the current item is told apart by weight as well as colour (not everyone tells colours apart); --tao-nav-active-weight: 400 turns it off
+   текущий пункт отличается не только цветом, но и жирностью (цвета различают не все); --tao-nav-active-weight: 400 отключает */
 .tao-nav__item--active,
 .tao-nav__item--active:hover {
     background: var(--tao-color-accent-subtle);
     color: var(--tao-color-accent-text);
+    font-weight: var(--tao-nav-active-weight, 600);
 }
 
 /* indicator="line": no tint, the accent colour and a short line. --_bar puts it under the item in the bar look and

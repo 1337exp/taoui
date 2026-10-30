@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.16.0
+
+Nothing to migrate; the one visible change is the current `TaoNav` item, which is bolder now.
+
+- **`TaoNav`: the current item is told apart by weight as well as colour.** It was the accent colour on its own tint, and that is thin for a person who does not tell colours apart (WCAG 1.4.1: do not rely on colour alone); in the light theme the text on the tint is also close to the 4.5:1 edge. The label is `font-weight: 600` now. `--tao-nav-active-weight` sets another weight (`400` brings the old look back). `indicator="line"` has its line as the second mark already and takes the same weight.
+
 ## 5.15.0
 
 `TaoModal` and `TaoDrawer` put your `class`, `style` and other attributes on the dialog panel now, not on the overlay or the layer around it: if you styled the overlay through a class on the component, move that rule to `.tao-modal-overlay` / `.tao-drawer`.
