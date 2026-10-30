@@ -4,8 +4,11 @@ import { nextTick, ref, useId, watch } from 'vue';
 import { getFocusable, trapTab } from '../focusTrap';
 import { useLayer } from '../layers';
 import { useLocaleText } from '../locale';
+import { surfaceClass, type TaoSurface } from '../surface';
 
-defineOptions({ name: 'TaoModal' });
+// class, style and the other attributes go to the dialog panel, not to the overlay around it
+// class, style и остальные атрибуты — панели окна, а не подложке вокруг неё
+defineOptions({ name: 'TaoModal', inheritAttrs: false });
 
 interface Props {
     modelValue: boolean;
@@ -19,12 +22,20 @@ interface Props {
      * `'narrow'` — только на экране уже 600px: окно на компьютере, страница на телефоне.
      */
     fullscreen?: boolean | 'narrow';
+    /**
+     * What the panel is made of, as on TaoCard: `grain` (a film grain over a solid fill), `glass` (blurred,
+     * translucent; solid where blur is off).
+     * Из чего сделана панель, как у TaoCard: `grain` — плёночное зерно поверх сплошной заливки, `glass` — размытое
+     * стекло (сплошное, где размытия нет).
+     */
+    surface?: TaoSurface;
 }
 
 const props = withDefaults(defineProps<Props>(), {
     title: '',
     closable: true,
     fullscreen: false,
+    surface: 'flat',
 });
 const l10n = useLocaleText(props, 'modal');
 
@@ -99,8 +110,10 @@ watch(
                 @keydown="onKeydown"
             >
                 <div
+                    v-bind="$attrs"
                     ref="panelRef"
                     class="tao-modal"
+                    :class="surfaceClass(surface)"
                     role="dialog"
                     aria-modal="true"
                     :aria-labelledby="title ? titleId : undefined"
@@ -147,14 +160,30 @@ watch(
     padding: var(--tao-space-5);
 }
 
+/* the content scrolls, not the dialog: the header and the footer stay, as in fullscreen
+   прокручивается содержимое, а не окно: шапка и подвал на месте, как во весь экран */
 .tao-modal {
-    background: var(--tao-color-surface-raised);
+    /* the panel colour, for what sticks inside it (a bar of your own over the scrolling content); the surface fill
+       when the panel is glass or grain / цвет панели — для того, что липнет внутри неё; заливка поверхности у стекла и зерна */
+    --tao-modal-bg: var(--tao-surface-fill, var(--tao-color-surface-raised));
+    display: flex;
+    flex-direction: column;
+    background-color: var(--tao-modal-bg);
+    background-image: var(--tao-surface-image, none);
+    background-size: var(--tao-surface-image-size, auto);
+    -webkit-backdrop-filter: var(--tao-surface-backdrop, none);
+    backdrop-filter: var(--tao-surface-backdrop, none);
     border-radius: var(--tao-radius-panel);
     max-width: 500px;
     width: 100%;
     max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: var(--tao-shadow-overlay);
+    overflow: hidden;
+    box-shadow: var(--tao-surface-inset, 0 0 #0000), var(--tao-shadow-overlay);
+}
+
+.tao-modal__header,
+.tao-modal__footer {
+    flex: none;
 }
 
 .tao-modal:focus {
@@ -210,6 +239,9 @@ watch(
 }
 
 .tao-modal__content {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
     padding: var(--tao-space-5);
 }
 

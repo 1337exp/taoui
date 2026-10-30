@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import type { TaoPlacement } from '../floating';
 import { useLocaleText } from '../locale';
 import { menuReturnsFocus, type TaoMenuCloseReason, type TaoMenuItem } from '../menu';
+import { sizeClass, type TaoSize } from '../size';
 import TaoIcon from './TaoIcon.vue';
 import TaoMenu from './TaoMenu.vue';
 
@@ -17,11 +18,27 @@ const props = withDefaults(
         menuLabel?: string;
         /** Close when the page scrolls (the menu otherwise follows its button). / Закрывать при прокрутке страницы (иначе меню едет за кнопкой). */
         closeOnScroll?: boolean;
+        /**
+         * The button becomes a square of the control height of this size (a compact kebab in a list row); without it the
+         * button keeps its padding around the icon.
+         * Кнопка становится квадратом высотой с контрол этого размера (компактный «кебаб» в строке списка); без него
+         * кнопка остаётся с отступом вокруг иконки.
+         */
+        size?: TaoSize;
+        /**
+         * The button is a Tab stop. Turn it off when the row has its own key for the menu (a menu key, Shift+F10): the
+         * button leaves the Tab order and still opens by a click.
+         * Кнопка — остановка Tab. Выключите, когда у строки своя клавиша для меню (клавиша меню, Shift+F10): кнопка
+         * уходит из порядка Tab и по-прежнему открывается нажатием.
+         */
+        tabbable?: boolean;
     }>(),
     {
         items: () => [],
         placement: 'bottom-end',
         closeOnScroll: false,
+        size: undefined,
+        tabbable: true,
     },
 );
 const l10n = useLocaleText(props, 'dropdownMenu');
@@ -69,6 +86,8 @@ function onTriggerKeydown(event: KeyboardEvent) {
             ref="triggerRef"
             type="button"
             class="tao-dropdown-menu__button"
+            :class="size ? [sizeClass(size), 'tao-dropdown-menu__button--sized'] : undefined"
+            :tabindex="tabbable ? undefined : -1"
             aria-haspopup="menu"
             :aria-expanded="isOpen"
             :aria-label="$slots.button ? undefined : l10n.menuLabel"
@@ -115,6 +134,15 @@ function onTriggerKeydown(event: KeyboardEvent) {
     font: inherit;
     line-height: 1;
     transition: var(--tao-transition-base);
+}
+
+.tao-dropdown-menu__button--sized {
+    display: inline-grid;
+    place-items: center;
+    box-sizing: border-box;
+    width: var(--tao-control-height);
+    height: var(--tao-control-height);
+    padding: 0;
 }
 
 .tao-dropdown-menu__button:hover {

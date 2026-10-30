@@ -50,6 +50,14 @@ const props = withDefaults(
          * неё (сплошная, где размытия нет или просят меньше прозрачности), `grain` — плёночное зерно.
          */
         surface?: TaoSurface;
+        /**
+         * The colour of the counters: `accent` on every item, or `neutral` — grey, with the accent on the current item
+         * only, so the eye is not pulled round the menu. A dot (`badge: true`) is a sign of something new and stays
+         * the accent.
+         * Цвет счётчиков: `accent` у всех пунктов или `neutral` — серые, акцент только у текущего пункта, чтобы
+         * внимание не бегало по меню. Точка (`badge: true`) — знак нового и остаётся акцентной.
+         */
+        badgeTone?: 'accent' | 'neutral';
     }>(),
     {
         modelValue: undefined,
@@ -60,6 +68,7 @@ const props = withDefaults(
         floating: false,
         indicator: 'pill',
         surface: 'flat',
+        badgeTone: 'accent',
     },
 );
 const l10n = useLocaleText(props, 'nav');
@@ -147,7 +156,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
 </script>
 
 <template>
-    <div class="tao-nav" :class="[`tao-nav--${layout}`, `tao-nav--indicator-${indicator}`, { 'tao-nav--standalone': standalone, 'tao-nav--floating': floating }]">
+    <div class="tao-nav" :class="[`tao-nav--${layout}`, `tao-nav--indicator-${indicator}`, { 'tao-nav--standalone': standalone, 'tao-nav--floating': floating, 'tao-nav--badges-neutral': badgeTone === 'neutral' }]">
         <div class="tao-nav__shell">
             <nav class="tao-nav__panel" :class="surfaceClass(surface)" :aria-label="l10n.ariaLabel">
                 <div class="tao-nav__column">
@@ -750,6 +759,17 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     font-weight: 600;
     line-height: 16px;
     text-align: center;
+}
+
+/* neutral counters: grey on every item but the current one / нейтральные счётчики: серые у всех пунктов, кроме текущего */
+.tao-nav--badges-neutral .tao-nav__badge:not(.tao-nav__badge--dot) {
+    background: color-mix(in srgb, var(--tao-color-text) 14%, var(--tao-color-surface-raised));
+    color: var(--tao-color-text);
+}
+
+.tao-nav--badges-neutral .tao-nav__item--active .tao-nav__badge:not(.tao-nav__badge--dot) {
+    background: var(--tao-color-accent);
+    color: var(--tao-color-on-accent);
 }
 
 .tao-nav__badge--dot {

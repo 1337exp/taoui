@@ -1,5 +1,16 @@
 # Changelog
 
+## 5.15.0
+
+`TaoModal` and `TaoDrawer` put your `class`, `style` and other attributes on the dialog panel now, not on the overlay or the layer around it: if you styled the overlay through a class on the component, move that rule to `.tao-modal-overlay` / `.tao-drawer`.
+
+- **`TaoModal` scrolls its content, not itself.** The whole dialog scrolled, so the `#footer` went away with the text and an app drew its own sticky bar (in the page colour, with a dark edge round the buttons). Now the content scrolls and the header and the footer stay, as they already did in `fullscreen`. `--tao-modal-bg` is the panel colour, for a bar of your own that sticks inside.
+- **`TaoModal` and `TaoDrawer` take `surface`:** `grain` (a film grain over a solid fill) or `glass`, as on TaoCard, TaoBlock and TaoNav; with the attributes on the panel, `class="tao-surface-grain"` works too. `--tao-drawer-bg` is the drawer panel colour.
+- **The grain goes when more contrast is asked** (`prefers-contrast: more`): the fill stays solid and clean.
+- **`TaoNav` `badgeTone`:** `neutral` makes the counters grey with the accent on the current item only, so the eye is not pulled round the menu; a dot (`badge: true`) stays the accent. The docs say what is what: `.tao-nav` is the whole layout (navigation and page), `.tao-nav__panel` the navigation, `.tao-nav__content` the page.
+- **`TaoDropdownMenu` `size` and `tabbable`:** `size` makes the button a square of that control height (a compact kebab in a list row); `:tabbable="false"` takes it out of the Tab order when the row has its own menu key.
+- Showcase: a grain modal with a long text, a compact kebab, neutral counters in the TaoNav demo.
+
 ## 5.14.0
 
 Nothing to migrate.
