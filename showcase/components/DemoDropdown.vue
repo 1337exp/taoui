@@ -54,7 +54,11 @@ function onEditorSelect(id) {
     <h2>TaoDropdownMenu</h2>
           <p>{{ tr('A dropdown menu that positions itself automatically near the screen edge', 'Выпадающее меню с авто-позиционированием у края экрана') }}</p>
     
-          <TaoDropdownMenu :items="dropdownItems" @select="(id) => console.log('selected:', id)" />
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <TaoDropdownMenu :items="dropdownItems" @select="(id) => console.log('selected:', id)" />
+            <TaoDropdownMenu :items="dropdownItems" size="small" @select="(id) => console.log('selected:', id)" />
+            <span style="color: var(--tao-color-text-muted); font-size: 13px;">{{ tr('size="small": a compact square for a list row; :tabbable="false" when the row has its own menu key', 'size="small": компактный квадрат для строки списка; :tabbable="false", когда у строки своя клавиша меню') }}</span>
+          </div>
 
           <h3>{{ tr('Submenus, checkboxes, radios, shortcuts', 'Подменю, чекбоксы, радио, сочетания') }}</h3>
           <p>

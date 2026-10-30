@@ -27,6 +27,7 @@ const floating = ref(true)
 const indicator = ref('pill')
 const action = ref(true)
 const surface = ref('flat')
+const badgeTone = ref('accent')
 
 const items = computed(() => all.value.slice(0, Number(count.value)))
 const currentLabel = computed(() => all.value.find((item) => item.id === current.value)?.label ?? '')
@@ -91,10 +92,14 @@ const currentLabel = computed(() => all.value.find((item) => item.id === current
         <TaoSegmentedOption value="glass" label="glass" />
         <TaoSegmentedOption value="grain" label="grain" />
       </TaoSegmented>
+      <TaoSegmented v-model="badgeTone" size="small">
+        <TaoSegmentedOption value="accent" label="badges accent" />
+        <TaoSegmentedOption value="neutral" label="badges neutral" />
+      </TaoSegmented>
     </div>
 
     <div class="nav-demo__frame" :style="{ width }">
-      <TaoNav v-model="current" :items="items" :layout="layout" :floating="floating" :indicator="indicator" :surface="surface">
+      <TaoNav v-model="current" :items="items" :layout="layout" :floating="floating" :indicator="indicator" :surface="surface" :badge-tone="badgeTone">
         <div class="nav-demo__page">
           <h3>{{ currentLabel }}</h3>
           <template v-for="n in 12" :key="n">

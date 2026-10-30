@@ -4,8 +4,11 @@ import { nextTick, ref, useId, watch } from 'vue';
 import { getFocusable, trapTab } from '../focusTrap';
 import { useLayer } from '../layers';
 import { useLocaleText } from '../locale';
+import { surfaceClass, type TaoSurface } from '../surface';
 
-defineOptions({ name: 'TaoDrawer' });
+// class, style and the other attributes go to the panel, not to the layer around it
+// class, style и остальные атрибуты — панели, а не слою вокруг неё
+defineOptions({ name: 'TaoDrawer', inheritAttrs: false });
 
 const props = withDefaults(
     defineProps<{
@@ -18,12 +21,20 @@ const props = withDefaults(
          * экрана, над безопасной зоной. Телефонный способ показать параметры и форму.
          */
         side?: 'left' | 'right' | 'bottom';
+        /**
+         * What the panel is made of, as on TaoCard: `grain` (a film grain over a solid fill), `glass` (blurred,
+         * translucent; solid where blur is off).
+         * Из чего сделана панель, как у TaoCard: `grain` — плёночное зерно поверх сплошной заливки, `glass` — размытое
+         * стекло (сплошное, где размытия нет).
+         */
+        surface?: TaoSurface;
         closable?: boolean;
         closeLabel?: string;
     }>(),
     {
         title: '',
         side: 'right',
+        surface: 'flat',
         closable: true,
     },
 );
@@ -78,8 +89,10 @@ watch(
             <div v-if="modelValue" class="tao-drawer" :class="`tao-drawer--${side}`" @keydown="onKeydown">
                 <div class="tao-drawer__overlay" @click="close"></div>
                 <aside
+                    v-bind="$attrs"
                     ref="panelRef"
                     class="tao-drawer__panel"
+                    :class="surfaceClass(surface)"
                     role="dialog"
                     aria-modal="true"
                     :aria-labelledby="title ? titleId : undefined"
@@ -148,8 +161,15 @@ watch(
     flex-direction: column;
     width: min(360px, 100%);
     height: 100%;
-    background: var(--tao-color-surface-raised);
-    box-shadow: var(--tao-shadow-overlay);
+    /* the panel colour for what sticks inside it; the surface fill when it is glass or grain
+       цвет панели для того, что липнет внутри; заливка поверхности у стекла и зерна */
+    --tao-drawer-bg: var(--tao-surface-fill, var(--tao-color-surface-raised));
+    background-color: var(--tao-drawer-bg);
+    background-image: var(--tao-surface-image, none);
+    background-size: var(--tao-surface-image-size, auto);
+    -webkit-backdrop-filter: var(--tao-surface-backdrop, none);
+    backdrop-filter: var(--tao-surface-backdrop, none);
+    box-shadow: var(--tao-surface-inset, 0 0 #0000), var(--tao-shadow-overlay);
 }
 
 .tao-drawer__panel:focus {

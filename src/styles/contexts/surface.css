@@ -3,10 +3,11 @@
  *
  * How a panel is "made": flat fill (default), grain (film grain), glass (blurred translucent).
  * Put `.tao-surface-grain` / `-glass` on any element — a game HUD, a landing section, a sidebar —
- * or pass `surface` to TaoCard / TaoBlock. Theme tokens below tune the look once for the whole app.
+ * or pass `surface` to TaoCard / TaoBlock / TaoModal / TaoDrawer / TaoNav. Theme tokens below tune the look once for
+ * the whole app.
  *
  * Из чего «сделана» панель: плоская заливка (по умолчанию), grain (плёночное зерно), glass (размытое
- * полупрозрачное стекло). Класс `.tao-surface-*` — на любой элемент, или проп `surface` у TaoCard / TaoBlock.
+ * полупрозрачное стекло). Класс `.tao-surface-*` — на любой элемент, или проп `surface` у TaoCard / TaoBlock / TaoModal / TaoDrawer / TaoNav.
  * Токены ниже настраивают вид один раз на всё приложение.
  */
 
@@ -156,6 +157,14 @@
     [data-tao-theme],
     [data-tao-mode] {
         --tao-glass-fill: var(--tao-color-surface-raised);
+    }
+}
+
+/* More contrast asked: the grain goes, the fill stays solid and the text reads on a clean ground.
+   Просят больше контраста: зерно уходит, заливка остаётся сплошной, и текст читается на чистом фоне. */
+@media (prefers-contrast: more) {
+    .tao-surface-grain {
+        --tao-surface-image: none;
     }
 }
 
