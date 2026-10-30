@@ -622,6 +622,7 @@ export const propTables = {
         r('maxHeight', 'number | string', '—', 'Скролл. Число — пиксели'),
         r('empty', 'boolean', 'false', 'Показать #empty вместо строк'),
         r('ariaLabel', 'string', "''", 'Имя списка'),
+        r('roving', 'boolean', 'false', 'Одна остановка Tab на весь список: стрелки ходят по строкам, Home / End — в начало и конец, недоступные пропускаются; Tab возвращается в строку, из которой ушёл (в первый раз — в выбранную). Остановка строки — её кнопка (clickable) или сама строка'),
       ],
       slots: 'default — TaoListItem. #empty — если empty.',
     },
