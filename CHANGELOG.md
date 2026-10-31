@@ -4,6 +4,7 @@
 
 Nothing to migrate; the defaults do not change.
 
+- **Showcase: a section "Layers & theming".** The real files of the kit (`primitives` → `semantic` → `themes` → `contexts` → `base`) in the order `src/styles/index.css` imports them, each with a note whether it is yours to touch (only the themes are), taken from the source by `?raw`, so the page cannot drift from the library. Below it an own theme by hand: an accent, a page and the corners make a `[data-tao-theme]` file, a preview wears it, and the ratios are rated with the promises of the palettes. `tests/showcase.layers.test.ts` keeps the order equal to `index.css` and the theme's roles real.
 - **`TaoPinCode` `bordered`.** `:bordered="false"` is a light style: the cells have a soft fill and no frame at all (the border stays in the box, so the cells do not jump). A state is told by the fill and the digit instead: a tint of the accent on the focus, of danger on an error, of success on a result.
 - **`TaoPinCode`: an error paints the digits red**, as a success always painted them green (`--tao-color-danger-text`).
 - **`TaoDrawer`: the pull of a sheet no longer selects the title.** While the sheet is in the hand the panel has `user-select: none`, and it is given back at the end.
