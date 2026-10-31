@@ -84,6 +84,34 @@ describe('TaoMarquee', () => {
         expect(w.attributes('tabindex')).toBe('0');
     });
 
+    it('decorative: a ghost, hidden, inert, no tab stop, no tap, no pause between rounds', async () => {
+        const w = await marquee(100, 240, { decorative: true });
+        expect(w.attributes('aria-hidden')).toBe('true');
+        expect(w.attributes('inert')).toBeDefined();
+        expect(w.attributes('tabindex')).toBeUndefined();
+        expect(w.classes()).toContain('tao-marquee--ghost');
+        expect(w.classes()).toContain('tao-marquee--seamless');
+        expect(w.classes()).not.toContain('tao-marquee--hover-pause');
+        w.element.dispatchEvent(Object.assign(new Event('pointerup', { bubbles: true }), { pointerType: 'touch' }));
+        await nextTick();
+        expect(w.classes()).not.toContain('tao-marquee--stopped');
+        expect(source).toMatch(/\.tao-marquee--ghost \{\s*pointer-events: none;\s*user-select: none/);
+    });
+
+    it('a decorative line under reduced motion stands still and does not wrap', async () => {
+        const w = await marquee(100, 240, { decorative: true }, true);
+        expect(w.classes()).not.toContain('tao-marquee--wrap');
+        expect(w.classes()).not.toContain('tao-marquee--run');
+    });
+
+    it('roundPause: an ordinary line rests at the start of a round, off it does not; a decorative one does not unless asked', async () => {
+        expect((await marquee(100, 240)).classes()).not.toContain('tao-marquee--seamless');
+        expect((await marquee(100, 240, { roundPause: false })).classes()).toContain('tao-marquee--seamless');
+        expect((await marquee(100, 240, { decorative: true })).classes()).toContain('tao-marquee--seamless');
+        expect((await marquee(100, 240, { decorative: true, roundPause: true })).classes()).not.toContain('tao-marquee--seamless');
+        expect(source).toContain('@keyframes tao-marquee-seamless');
+    });
+
     it('paused stops it from the app', async () => {
         expect((await marquee(100, 240, { paused: true })).classes()).toContain('tao-marquee--stopped');
     });

@@ -100,6 +100,8 @@ Showcase section: `#marquee`
 | `gap` | `number` | 48 | The gap between the end of the line and its next round, px |
 | `fade` | `number` | 22 | The width of the fading edges, px. The left fade lives in a padding outside the text: at rest the line stands where it would, but the parent needs that much room on the left (its padding, or a smaller fade; 0 for none) or the running text shows past its edge |
 | `pauseOnHover` | `boolean` | true | Stop on hover, and a tap stops and starts it. false is for a background line: a cursor or a finger passing by does not stop it, and the running text cannot be selected. Focus still stops it, Tab reaches the line |
+| `roundPause` | `boolean` | true | A pause at the start of every round, to read the beginning. false — the line runs without a stop, like a looped picture. Not set: a decorative line has no pause, an ordinary one has |
+| `decorative` | `boolean` | false | The line is only decoration (a background, a design feature) with no meaning: a ghost. Hidden from a screen reader, not a tab stop, a cursor and a tap are nothing to it, the text cannot be selected, it runs without pauses. Only for text nobody needs to read. With «reduce motion» it stands still, clipped |
 | `paused` | `boolean` | false | Stopped by the app |
 
 **Slots, events, notes.** default — the content of the line; its copies for the second round are hidden from a screen reader and inert. It runs only when it does not fit; it stops on hover, on focus (a running line is a tab stop) and on a tap; with «reduce motion» it wraps. measure() — measure again by hand.
