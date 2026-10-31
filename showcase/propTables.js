@@ -486,7 +486,7 @@ export const propTables = {
         r('list', 'boolean', 'true', 'Имена под зоной. Снять файл — сразу в v-model'),
         r('showClear', 'boolean', 'false', 'Кнопка «очистить всё». Сама не чистит — шлёт clear-request'),
       ],
-      slots: 'default — текст зоны. Событие change — добавили или убрали файлы. clear-request: родитель решает, обнулить сразу или после confirm().',
+      slots: 'default — текст зоны. Событие change — добавили или убрали файлы. reject — файлы, не прошедшие accept (массив File[]): их нет в v-model, скажите пользователю, почему. clear-request: родитель решает, обнулить сразу или после confirm().',
     },
   ],
   charts: [

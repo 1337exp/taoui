@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.17.0
+
+Nothing to migrate.
+
+- **`TaoFileDrop` `reject` event.** A file that did not pass `accept` was dropped without a word: no `change`, no sign, and the user saw nothing happen. Now `reject` brings the refused files (`File[]`); they are still not in `v-model`, and in a mixed batch the good files go to `change` as before. Say why in your own words (the zone does not guess a message). The `accept` matching moved to `src/fileAccept.ts` with tests. Found by Next Up.
+
 ## 5.16.3
 
 A fix; nothing to migrate.

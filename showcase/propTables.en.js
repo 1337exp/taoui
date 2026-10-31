@@ -493,7 +493,7 @@ export const propTablesEn = {
         r('list', 'boolean', 'true', 'Names under the zone. Removing a file goes straight to v-model'),
         r('showClear', 'boolean', 'false', 'The “clear all” button. It does not clear by itself — it fires clear-request'),
       ],
-      slots: 'default — the zone text. The change event — files were added or removed. clear-request: the parent decides whether to reset at once or after confirm().',
+      slots: 'default — the zone text. The change event — files were added or removed. reject — the files that did not pass accept (File[]): they are not in v-model, tell the user why. clear-request: the parent decides whether to reset at once or after confirm().',
     },
   ],
   charts: [
