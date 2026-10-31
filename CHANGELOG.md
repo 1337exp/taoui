@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.19.1
+
+A fix; nothing to migrate.
+
+- **`toast()` has no accent bar on the left.** The 5.17.2 bar kept away from the rounded corners, and that left a gap between it and the progress line in the lower left corner. The bar told nothing the icon, the tinted background and the progress line do not: it is gone, and `.tao-toast__accent` with it. The progress line keeps its distance from the corners (`--tao-toast-edge`).
+- Showcase: the buttons in the header of the comments sheet use `icon` (a square of the control height), not an icon in the slot, so the icons sit in the middle.
+
 ## 5.19.0
 
 Nothing to migrate.
