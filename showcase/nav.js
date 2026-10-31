@@ -10,6 +10,7 @@ export const navGroups = [
       { id: 'copy', label: 'TaoCopy' },
       { id: 'marquee', label: 'TaoMarquee', aliases: ['marquee', 'ticker', 'running line', 'бегущая строка'] },
       { id: 'surface', label: { en: 'Surfaces', ru: 'Поверхности' }, aliases: ['glass', 'grain', 'lit', 'surface'] },
+      { id: 'layers', label: { en: 'Layers & theming', ru: 'Слои и темизация' }, aliases: ['layers', 'theme', 'theming', 'tokens', 'primitives', 'semantic', 'contexts', 'data-tao-theme', 'слои', 'тема', 'темизация', 'токены'] },
       { id: 'backgrounds', label: { en: 'Backgrounds', ru: 'Фоны' }, aliases: ['background', 'gradient', 'noise', 'atmosphere', 'glow', 'фон', 'градиент', 'шум'] },
       { id: 'typography', label: { en: 'Typography', ru: 'Типографика' }, aliases: ['prose', 'heading', 'tao-prose', 'заголовки', 'текст'] },
     ],
