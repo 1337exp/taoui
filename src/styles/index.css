@@ -2,7 +2,7 @@
  * Tao UI — styles entry point
  *
  * Layers, in order: primitives -> semantic tokens -> themes (dark is the default, light is opt-in with
- * data-tao-theme="light") -> contexts (size and density, tone, surface) -> typography (opt-in classes) -> base reset.
+ * data-tao-mode="light") -> contexts (size and density, tone, surface) -> typography (opt-in classes) -> base reset.
  * Порядок слоёв: примитивы -> семантические токены -> темы (dark по умолчанию, light включается атрибутом) ->
  * контексты (размер и плотность, тон, поверхность) -> типографика (классы по выбору) -> базовый сброс.
  */
