@@ -15,6 +15,13 @@ const sliderRange = ref([200, 4000])
 const sliderColor = ref(3)
 const sliderLoad = ref(82)
 const sliderBand = ref([20, 65])
+const sliderStrength = ref(25)
+// reveal: plain until the fill gets to the zone / reveal: обычная, пока заливка не дошла до зоны
+const strengthZones = [
+  { to: 33, tone: 'danger' },
+  { to: 66, tone: 'warning', reveal: true, dot: true },
+  { to: 100, tone: 'success', reveal: true, dot: true },
+]
 // zones: each runs to its `to`; a dot where it ends / зоны: каждая идёт до своего `to`; точка там, где она кончается
 const loadZones = [
   { to: 40, tone: 'info', dot: true },
@@ -100,6 +107,13 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
             <TaoSlider v-model="sliderLoad" :zones="loadZones" vertical :aria-label="tr('Load', 'Нагрузка')" />
             <TaoSlider v-model="sliderLoad" :zones="loadZones" flat :aria-label="tr('Load', 'Нагрузка')" class="demo-wide" />
           </div>
+          <h3>{{ tr('Zones that appear as it fills', 'Зоны, что проявляются по мере заполнения') }}</h3>
+          <p>
+            {{ tr('A zone with reveal has no colour until the value gets there: the field looks plain and is painted as you fill it.', 'У зоны с reveal нет цвета, пока значение до неё не дошло: поле выглядит обычным и красится по мере заполнения.') }}
+          </p>
+          <TaoSlider v-model="sliderStrength" :zones="strengthZones" :aria-label="tr('Strength', 'Надёжность')" class="demo-wide" />
+          <p style="margin-top: 4px; font-size: 13px;">{{ tr('Strength', 'Надёжность') }}: {{ sliderStrength }}</p>
+
           <pre><code>&lt;TaoSlider v-model="load" :zones="[
   { to: 40, tone: 'info', dot: true },
   { to: 70, tone: 'warning', dot: true },

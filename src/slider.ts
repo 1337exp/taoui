@@ -23,6 +23,12 @@ export interface TaoSliderZone {
     color?: string;
     /** A dot on the scale where the zone ends (not at `max`). / Точка на шкале там, где зона кончается (не на `max`). */
     dot?: boolean;
+    /**
+     * The zone has no colour until the value reaches it: the bar looks plain and is painted as it fills; its dot shows when
+     * the fill gets there. / У зоны нет цвета, пока значение до неё не дошло: полоса выглядит обычной и красится по мере
+     * заполнения; её точка видна, когда заливка дошла.
+     */
+    reveal?: boolean;
 }
 
 /** Значение слайдера: число (одна ручка) или пара [от, до] (диапазон). */
@@ -204,6 +210,7 @@ export interface TaoSliderResolvedZone {
     to: number;
     color: string;
     dot: boolean;
+    reveal: boolean;
 }
 
 /** The CSS colour of a zone: `color` as given, else the theme role of `tone`, else the accent. / CSS-цвет зоны. */
@@ -227,7 +234,7 @@ export function normalizeZones(zones: readonly TaoSliderZone[] | undefined, min:
     for (const zone of sorted) {
         const to = clamp(zone.to, min, max);
         if (to <= from) continue;
-        out.push({ from, to, color: zoneColor(zone), dot: !!zone.dot && to < max });
+        out.push({ from, to, color: zoneColor(zone), dot: !!zone.dot && to < max, reveal: !!zone.reveal });
         from = to;
     }
     const last = out[out.length - 1];
@@ -240,8 +247,12 @@ export function zoneAt(value: number, zones: readonly TaoSliderResolvedZone[]): 
     return zones.find((z) => value <= z.to) ?? zones[zones.length - 1];
 }
 
-/** A hard-stop gradient of the zones along the bar (from the start, from the bottom when vertical). / Градиент зон с жёсткими границами вдоль полосы. */
-export function zoneGradient(zones: readonly TaoSliderResolvedZone[], min: number, max: number, vertical = false): string {
-    const stops = zones.map((z) => `${z.color} ${ratioOf(z.from, min, max) * 100}% ${ratioOf(z.to, min, max) * 100}%`);
+/**
+ * A hard-stop gradient of the zones along the bar (from the start, from the bottom when vertical). `dimmed` is the layer of the
+ * whole bar: a zone with `reveal` is clear there, so it shows only where the fill has been.
+ * Градиент зон с жёсткими границами вдоль полосы. `dimmed` — слой всей полосы: зона с `reveal` в нём прозрачна и видна только там, где прошла заливка.
+ */
+export function zoneGradient(zones: readonly TaoSliderResolvedZone[], min: number, max: number, vertical = false, dimmed = false): string {
+    const stops = zones.map((z) => `${dimmed && z.reveal ? 'transparent' : z.color} ${ratioOf(z.from, min, max) * 100}% ${ratioOf(z.to, min, max) * 100}%`);
     return `linear-gradient(${vertical ? 'to top' : 'to right'}, ${stops.join(', ')})`;
 }
