@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { rollRanks } from '../counterRoll';
+import { computed, ref, watch } from 'vue';
+import { createRollGate, rollRanks } from '../counterRoll';
 
 defineOptions({ name: 'TaoCounter' });
 
@@ -14,6 +14,21 @@ const props = withDefaults(
         maxDigits: 9,
     },
 );
+
+// what the wheels show lags behind `value` while digits are rolling: the parent already holds the sum of the increments,
+// so the wheels take the latest value once the last digit has landed, and roll to it in one go
+// то, что показывают колёсики, отстаёт от `value`, пока цифры катятся: родитель уже держит сумму прибавок, поэтому
+// колёсики берут последнее значение, когда встала последняя цифра, и катятся к нему за один раз
+const shown = ref(props.value);
+
+function catchUp() {
+    if (!gate.busy && shown.value !== props.value) {
+        shown.value = props.value;
+    }
+}
+
+const gate = createRollGate(catchUp);
+watch(() => props.value, catchUp);
 
 type Slot = {
     value: string;
@@ -34,13 +49,13 @@ const isDigit = (slot: Slot) => /\d/.test(slot.value);
 // the previous slots come as the argument: the digits that changed roll in turn from the right, not all at once
 // прежние слоты приходят аргументом: изменившиеся цифры катятся по очереди справа, а не разом
 const slots = computed<Slot[]>((previous) => {
-    const formatted = formatDigits(props.value, props.maxDigits);
-    const significant = Math.abs(Math.trunc(props.value)).toString();
+    const formatted = formatDigits(shown.value, props.maxDigits);
+    const significant = Math.abs(Math.trunc(shown.value)).toString();
     const leadingZeros = Math.max(0, props.maxDigits - significant.length);
     const result: Slot[] = [];
     let digitCount = 0;
 
-    if (props.value < 0) {
+    if (shown.value < 0) {
         result.push({
             value: '−',
             isSpace: false,
@@ -93,7 +108,15 @@ const slots = computed<Slot[]>((previous) => {
                 :class="{ 'tao-counter__slot--space': slot.isSpace }"
                 :style="{ '--_rank': slot.rank }"
             >
-                <TransitionGroup name="tao-digit">
+                <TransitionGroup
+                    name="tao-digit"
+                    @before-enter="gate.start()"
+                    @after-enter="gate.end()"
+                    @enter-cancelled="gate.end()"
+                    @before-leave="gate.start()"
+                    @after-leave="gate.end()"
+                    @leave-cancelled="gate.end()"
+                >
                     <span
                         v-if="!slot.isSpace"
                         :key="slot.key"

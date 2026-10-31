@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.19.3
+
+A fix; nothing to migrate.
+
+- **`TaoCounter`: a fast run of increments no longer leaves empty and half-rolled slots.** A new value that came while the digits were still rolling cut the roll short and piled several digits in one slot. Now the wheels take the next value only when the last digit has landed: the parent already holds the sum of the increments, so the counter rolls once to the latest value, and again if more came during that roll. `aria-label` tells the real value at once. The gate is `createRollGate` in `src/counterRoll.ts`.
+
 ## 5.19.2
 
 A polish; nothing to migrate.

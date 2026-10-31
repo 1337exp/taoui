@@ -29,3 +29,31 @@ export function rollRanks(previous: readonly string[] | undefined, next: readonl
     }
     return ranks;
 }
+
+/**
+ * A gate that holds the next number back while digits are still rolling. `TaoCounter` starts a new roll only when the
+ * last one has landed, so a fast run of increments shows one clean roll to the latest value, not a pile of half-rolled
+ * digits in a slot. `start()` and `end()` are called for every digit that begins and finishes (or is cancelled);
+ * `onIdle` runs when the last one is done.
+ * Заслонка, которая держит следующее число, пока цифры ещё катятся. `TaoCounter` начинает новый прокат, только когда
+ * прошлый встал: быстрая серия прибавок даёт один чистый прокат к последнему значению, а не кучу недокрученных цифр в
+ * слоте. `start()` и `end()` зовутся на каждую цифру, что началась и что закончилась (или отменена); `onIdle` — когда
+ * закончилась последняя.
+ */
+export function createRollGate(onIdle: () => void) {
+    let rolling = 0;
+    return {
+        get busy() {
+            return rolling > 0;
+        },
+        start() {
+            rolling += 1;
+        },
+        end() {
+            rolling = Math.max(0, rolling - 1);
+            if (rolling === 0) {
+                onIdle();
+            }
+        },
+    };
+}

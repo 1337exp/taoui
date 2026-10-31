@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { rollRanks } from '../src/counterRoll';
+import { createRollGate, rollRanks } from '../src/counterRoll';
 
 const digits = (value: string) => [...value];
 
@@ -26,5 +26,29 @@ describe('rollRanks', () => {
     it('the first render, and an equal value, roll nothing', () => {
         expect(rollRanks(undefined, digits('1337'))).toEqual([0, 0, 0, 0]);
         expect(rollRanks(digits('1337'), digits('1337'))).toEqual([0, 0, 0, 0]);
+    });
+});
+
+describe('createRollGate', () => {
+    it('is idle until a digit starts to roll, and busy until the last one lands', () => {
+        let idle = 0;
+        const gate = createRollGate(() => (idle += 1));
+        expect(gate.busy).toBe(false);
+        gate.start();
+        gate.start();
+        expect(gate.busy).toBe(true);
+        gate.end();
+        expect(gate.busy).toBe(true);
+        expect(idle).toBe(0);
+        gate.end();
+        expect(gate.busy).toBe(false);
+        expect(idle).toBe(1);
+    });
+
+    it('an end without a start does not go below zero', () => {
+        const gate = createRollGate(() => {});
+        gate.end();
+        gate.start();
+        expect(gate.busy).toBe(true);
     });
 });
