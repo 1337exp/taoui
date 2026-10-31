@@ -45,6 +45,7 @@ export interface TaoLocale {
     };
     confirm: { ok: string; cancel: string };
     copy: { copyLabel: string; successText: string };
+    loader: { label: string };
     date: {
         placeholder: string;
         todayText: string;

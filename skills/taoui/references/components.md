@@ -1191,9 +1191,15 @@ Showcase section: `#loader`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `size` | `number \| string` | 80 | The size. A number is px |
-| `color` | `string` | accent token | The dot colour |
+| `variant` | `'dots' \| 'ring' \| 'pulse'` | 'dots' | The look: four dots / a ring with a turning arc / ripples from a core |
+| `size` | `number \| string` | 80 for dots, 40 for the others | The size. A number is px, "40px" works, or small / medium / large (24 / 40 / 64) |
+| `tone` | `'accent' \| 'success' \| 'danger' \| 'warning' \| 'info' \| 'neutral'` | 'accent' | A colour role of the theme |
+| `color` | `string` | — | A CSS colour of your own, wins over tone; currentColor takes the text colour around it |
 | `inline` | `boolean` | false | Inline, without block centring |
+| `label` | `string` | 'Loading' | What a screen reader says (the text of the locale by default) |
+| `decorative` | `boolean` | false | A picture only: hidden from a screen reader (the wait is said elsewhere; a button with loading says it itself) |
+
+**Slots, events, notes.** Under «reduce motion» nothing travels or turns: the loader only breathes.
 
 ## TaoImage
 

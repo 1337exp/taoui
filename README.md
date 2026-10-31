@@ -119,7 +119,7 @@
 - **TaoAlert** — inline page/form banner (success / error / warning / info); `collapsible` folds the body under the title (find-in-page still finds it)
 - **TaoProgress** — static bar (`progress` in %). Percent centered on top, or `showPercentage="right"`; `#left` / `#right` slots are captions, then the percent sits in parentheses on the right. `false` hides it. Width is `minWidth` / `maxWidth`, not the value domain
 - **TaoScrubber** — play / pause, a slider over time with event marks, a “time / length” label. Does not advance time by itself: drive `v-model` with your own clock
-- **TaoLoader** — four-dot spinner
+- **TaoLoader** — the wait whose end is unknown: `variant` `dots` (default) / `ring` / `pulse`, `tone`, `size` (a number or small / medium / large), says "Loading" to a screen reader (`label`), breathes under reduced motion; `TaoButton loading` wears the same ring
 - **TaoImage** — `<img>` wrapper: fade-in and placeholder. `lazy` turns on native `loading="lazy"`
 - **TaoIcon** — SVG icons (40 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)
 

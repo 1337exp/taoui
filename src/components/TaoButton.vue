@@ -4,6 +4,7 @@ import { devWarning } from '../deprecate';
 import { sizeClass, type TaoSize } from '../size';
 import { toneClass, type TaoToneName } from '../tone';
 import TaoIcon from './TaoIcon.vue';
+import TaoLoader from './TaoLoader.vue';
 
 defineOptions({ name: 'TaoButton' });
 
@@ -102,10 +103,12 @@ function handleClick(event: MouseEvent) {
         :type="type"
         :aria-pressed="pressed === undefined ? undefined : pressed"
         :aria-keyshortcuts="shortcut || undefined"
+        :aria-busy="loading || undefined"
         :disabled="disabled || loading"
         @click="handleClick"
     >
-        <span v-if="loading" class="tao-button__loader"></span>
+        <!-- the same ring as TaoLoader, in the text colour of the button; the button says it is busy by itself / то же кольцо, что у TaoLoader, цветом текста кнопки -->
+        <TaoLoader v-if="loading" class="tao-button__loader" variant="ring" :size="16" color="currentColor" decorative />
         <TaoIcon v-if="icon" class="tao-button__icon" :name="icon" />
         <span v-if="$slots.default" class="tao-button__content"><slot /></span>
         <TaoIcon v-if="iconEnd" class="tao-button__icon" :name="iconEnd" />
@@ -229,12 +232,6 @@ function handleClick(event: MouseEvent) {
 
 .tao-button__loader {
     position: absolute;
-    width: 16px;
-    height: 16px;
-    border: 2px solid color-mix(in srgb, currentColor 15%, transparent);
-    border-top-color: currentColor;
-    border-radius: var(--tao-radius-full);
-    animation: tao-spin 0.8s linear infinite;
 }
 
 /* the key at the end: in a wide button it goes to the far edge, the text stays at the start; its fill is the button's own
@@ -262,11 +259,5 @@ function handleClick(event: MouseEvent) {
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-@keyframes tao-spin {
-    to {
-        transform: rotate(360deg);
-    }
 }
 </style>
