@@ -94,7 +94,7 @@ function shuffle() {
         </div>
         <div class="palette-lab__gradient" :style="{ background: gradient }" aria-hidden="true" />
         <div class="palette-lab__actions">
-          <TaoButton v-if="!onPage" @click="applyToPage">{{ tr('Apply to the page', 'Применить к странице') }}</TaoButton>
+          <TaoButton v-if="!onPage" @click="applyToPage">{{ tr('Apply', 'Применить') }}</TaoButton>
           <TaoButton v-else variant="secondary" @click="removeFromPage">{{ tr('Remove', 'Снять') }}</TaoButton>
           <TaoButton variant="ghost" tone="neutral" icon="tao-repeat" @click="shuffle">{{ tr('Four random stops', 'Четыре случайных стопа') }}</TaoButton>
         </div>
