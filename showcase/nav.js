@@ -109,4 +109,11 @@ export const navGroups = [
       { id: 'icon', label: 'TaoIcon' },
     ],
   },
+  {
+    id: 'a11y',
+    title: { en: 'Accessibility', ru: 'Доступность' },
+    items: [
+      { id: 'a11y', label: { en: 'Contrast & keyboard', ru: 'Контраст и клавиатура' }, aliases: ['contrast', 'wcag', 'apca', 'keyboard', 'keys', 'focus', 'palette', 'applyTaoPalette', 'contrastRatio', 'apcaContrast', 'a11y', 'accessibility', 'контраст', 'клавиатура', 'клавиши', 'доступность', 'палитра'] },
+    ],
+  },
 ]

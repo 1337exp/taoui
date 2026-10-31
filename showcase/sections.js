@@ -60,6 +60,7 @@ import DemoLoader from './components/DemoLoader.vue'
 import DemoImage from './components/DemoImage.vue'
 import DemoAvatar from './components/DemoAvatar.vue'
 import DemoIcon from './components/DemoIcon.vue'
+import DemoA11y from './components/DemoA11y.vue'
 
 export const demoById = {
   'block': DemoBlock,
@@ -124,4 +125,5 @@ export const demoById = {
   'image': DemoImage,
   'avatar': DemoAvatar,
   'icon': DemoIcon,
+  'a11y': DemoA11y,
 }
