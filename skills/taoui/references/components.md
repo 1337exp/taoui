@@ -435,6 +435,7 @@ Showcase section: `#slider`
 | `discrete` | `boolean` | false | The value only on the marks (a stepped scale); the arrows follow the marks |
 | `format` | `(value: number) => string` | — | Number text: the captions of automatic marks and the value on the bar |
 | `flat` | `boolean` | false | No round handles: a flat bar with a fill. Keyboard and focus work |
+| `zones` | `{ to, tone?, color?, dot? }[]` | — | The scale in colour: each zone runs to its to (the first from min, the last to max, no gaps and no overlaps). tone is a colour role of the theme (accent, success, warning, danger, info, neutral), color is any CSS colour and wins over tone. The bar shows the zones dimmed, the filled part in full colour, the thumb takes the colour of its zone. dot: true puts a bead where a zone ends (none at max). Colour is not a message: say the state in words |
 | `vertical` | `boolean` | false | Vertical: the maximum on top, marks on the right. Length — --tao-slider-length (10rem) |
 | `variant` | `'bar' \| 'thin'` | 'bar' | bar — a thick track, a form control; thin — a thin one (seek / volume). It used to be size="small" |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | The scale of the track and the thumb (the thumb is 16 / 20 / 24). Without it — the size of the ancestors |
