@@ -638,11 +638,11 @@ tokens/primitives.css → tokens/semantic.css → themes/*.css → contexts/*.cs
 | `tokens/primitives.css` | Сырая палитра, шкалы отступов/радиусов/теней (`--tao-orange-400`, `--tao-space-3`...) | Обычно нет |
 | `tokens/semantic.css` | Роли, не зависящие от темы: скругления, тени, шрифт, движение | Редко |
 | `themes/dark.css` | Цветовые роли темы по умолчанию (dark): `--tao-color-accent`, `--tao-color-surface`, ... | **Да — это и есть API темизации** |
-| `themes/light.css` | Те же роли под `[data-tao-theme="light"]` | Да, как образец |
+| `themes/light.css` | Те же роли под `[data-tao-mode="light"]` (или старым `[data-tao-theme="light"]`) | Да, как образец |
 | `contexts/size.css`, `tone.css`, `surface.css` | `.tao-size-*` и `.tao-density-*`, `.tao-tone-*`, `.tao-surface-*`: что контрол читает, чтобы знать размер, цвет и материал | Редко |
 | `base.css` | Глобальный reset (скроллбар, ссылки, box-sizing) | Редко |
 
-Всё подключается одним файлом `@1337exp/taoui/styles.css` (и dark, и light: light включается атрибутом `data-tao-theme="light"`).
+Всё подключается одним файлом `@1337exp/taoui/styles.css` (и dark, и light: light включается атрибутом `data-tao-mode="light"`).
 Сырые файлы доступны как `@1337exp/taoui/styles/tokens/primitives.css` и так далее.
 
 ### Как сделать свою тему

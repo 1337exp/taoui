@@ -5,7 +5,7 @@
  * ТОЛЬКО цветовые роли из dark.css, ничего в компонентах
  * менять не нужно.
  *
- * Подключение: <html data-tao-theme="light"> (или data-tao-mode="light": тот же режим под палитрой)
+ * Подключение: <html data-tao-mode="light"> (или data-tao-theme="light": старая запись того же режима)
  */
 [data-tao-theme="light"],
 [data-tao-mode="light"] {

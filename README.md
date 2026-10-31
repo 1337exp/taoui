@@ -637,11 +637,11 @@ tokens/primitives.css → tokens/semantic.css → themes/*.css → contexts/*.cs
 | `tokens/primitives.css` | Raw palette, space / radius / shadow scales (`--tao-orange-400`, `--tao-space-3`…) | Usually no |
 | `tokens/semantic.css` | Theme-independent roles: radii, shadows, type, motion | Rarely |
 | `themes/dark.css` | The colour roles of the default (dark) theme: `--tao-color-accent`, `--tao-color-surface`, … | **Yes — this is the theming API** |
-| `themes/light.css` | The same roles under `[data-tao-theme="light"]` | Yes, as a sample |
+| `themes/light.css` | The same roles under `[data-tao-mode="light"]` (or the old `[data-tao-theme="light"]`) | Yes, as a sample |
 | `contexts/size.css`, `tone.css`, `surface.css` | `.tao-size-*` and `.tao-density-*`, `.tao-tone-*`, `.tao-surface-*`: what a control reads to know its size, colour and material | Rarely |
 | `base.css` | Global reset (scrollbar, links, box-sizing) | Rarely |
 
-Everything comes in through `@1337exp/taoui/styles.css` (dark and light both: light turns on with `data-tao-theme="light"`).
+Everything comes in through `@1337exp/taoui/styles.css` (dark and light both: light turns on with `data-tao-mode="light"`).
 The raw files are importable as `@1337exp/taoui/styles/tokens/primitives.css` and so on.
 
 ### Your own theme

@@ -104,11 +104,11 @@ const hasLabel = computed(() => Boolean(props.text) || Boolean(slots.default));
 }
 
 .tao-divider--solid .tao-divider__line {
-    border-top: 1px solid var(--tao-gray-300);
+    border-top: 1px solid var(--tao-color-text-muted);
 }
 
 .tao-divider--dashed .tao-divider__line {
-    border-top: 1px dashed var(--tao-gray-300);
+    border-top: 1px dashed var(--tao-color-text-muted);
 }
 
 .tao-divider--colored .tao-divider__line {

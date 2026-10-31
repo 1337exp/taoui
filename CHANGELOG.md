@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.16.3
+
+A fix; nothing to migrate.
+
+- **`TaoDivider` follows the theme.** The solid and dashed line read the primitive `--tao-gray-300`, the one thing a component must not read, so a theme or a palette could not recolour it. It reads `--tao-color-text-muted` now (the same grey in the dark theme, a little darker in the light one), at the same 20% opacity.
+- Inside the repository: `tests/component-styles.test.ts` holds that a component reads roles and not primitives, writes no colour of its own, and adds no spacing pixels beyond the recorded ones; the rules in `CONTRIBUTING.md` are regrouped (colour, then component rules).
+
 ## 5.16.2
 
 A fix; nothing to migrate.

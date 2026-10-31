@@ -13,8 +13,8 @@ TaoUI is a Vue 3 kit on design tokens, 5.x on npm (minors add, patches fix). The
 ## Never without the owner saying so
 
 - `npm publish`, `git push`, tags, and merging into a sibling repo's `main` when it would break its build.
-- Committing `docs/menubar-architecture.md` and `docs/theming-architecture.md`: the owner's own notes, untracked on
-  purpose. Stage with `git add -A -- . ':!docs/menubar-architecture.md' ':!docs/theming-architecture.md'`.
+- Committing the owner's own notes under `docs/` (e.g. `foundation-notes.md`): they stay local on purpose, excluded in
+  `.git/info/exclude`. Stage by name, not with `git add -A`: a new note was once swept into an unrelated commit that way.
 - Linking `node_modules` into a worktree with a junction (`git worktree remove --force` once wiped the real folder).
 
 ## How a change goes
@@ -92,6 +92,7 @@ The showcase dev server is the preview named `showcase` (port 5179, `.claude/lau
 ## The sibling repos
 
 `E:\job\git\taoux` (TaoUX, behaviour modules; its `theme/taoui.css` bridge maps `--tx-*` to 13 contract tokens),
-`E:\job\git\taofx` (an editor, the best acceptance test for a TaoUI major), `E:\job\git\home` (the owner's home page).
-All three follow 5.0 on a branch `taoui-5`. To test one against unpublished TaoUI: `npm pack --pack-destination <dir>`
+`E:\job\git\next-up` (the owner's pet notes app on TaoUI and TaoUX: the live field test; its `docs/library-issues*.md`
+list what the kits miss), `E:\job\git\taofx` (an editor, a raw test block to glance at: it sits on old TaoUI 5.1, do not
+spend time on it), `E:\job\git\home` (the owner's home page). To test one against unpublished TaoUI: `npm pack --pack-destination <dir>`
 here, then `npm install --no-save <tgz>` there (TaoUX's `npm run smoke` takes `TAOUI_TARBALL=<tgz>`).
