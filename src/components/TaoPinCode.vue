@@ -25,6 +25,13 @@ const props = withDefaults(
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
         error?: boolean;
+        /**
+         * The frame of a cell at rest. `false` is the light style: a soft fill only; focus, an error and a result still draw
+         * the frame, so the state is never only a colour of a fill.
+         * Рамка ячейки в покое. `false` — лёгкий стиль: только мягкая заливка; фокус, ошибка и результат рамку рисуют,
+         * так что состояние не держится на одном цвете заливки.
+         */
+        bordered?: boolean;
         /** Cell size; without it — the size of ancestors. / Размер ячеек; без него — размер предков. */
         size?: TaoSize;
         modelValue?: string;
@@ -47,6 +54,7 @@ const props = withDefaults(
         placeholder: '',
         disabled: false,
         error: false,
+        bordered: true,
         modelValue: '',
         numbersOnly: false,
         clearOn: 'focus',
@@ -301,6 +309,7 @@ watch(
             sizeClass(size),
             {
                 'tao-pin-code--disabled': disabled,
+                'tao-pin-code--plain': !bordered,
                 'tao-pin-code--success': status === 'success',
                 'tao-pin-code--shake': playing === 'error',
                 'tao-pin-code--glow': playing === 'success',
@@ -353,6 +362,13 @@ watch(
     display: inline-flex;
     align-items: center;
     user-select: none;
+    --_rest-border: var(--tao-color-border-strong);
+}
+
+/* light style: the frame is still there (the cells do not jump) but clear until a state asks for it
+   лёгкий стиль: рамка на месте (ячейки не прыгают), но прозрачна, пока её не попросит состояние */
+.tao-pin-code--plain {
+    --_rest-border: transparent;
 }
 
 .tao-pin-code__separator {
@@ -369,7 +385,7 @@ watch(
     width: calc(var(--tao-pin-code-height) - 6px);
     height: var(--tao-pin-code-height);
     margin: 2px;
-    border: 3px solid var(--tao-color-border-strong);
+    border: 3px solid var(--_rest-border);
     border-radius: var(--tao-radius-md);
     font-size: calc(var(--tao-pin-code-height) * 0.375);
     font-weight: 500;

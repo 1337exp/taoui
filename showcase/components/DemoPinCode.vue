@@ -57,6 +57,12 @@ function onPinComplete(value) {
           </p>
           <TaoPinCode :model-value="pinChecked" :length="4" numbers-only :status="pinStatus" @update:model-value="editPin" @complete="checkPin" />
 
+          <h3>{{ tr('Light style: no frame', 'Лёгкий стиль: без рамки') }}</h3>
+          <p style="margin: 0 0 8px; font-size: 13px; color: var(--tao-color-text-muted);">
+            {{ tr('bordered=false: a fill only at rest; focus, an error and a result still draw the frame, so the state is not left to a colour alone.', 'bordered=false: в покое только заливка; фокус, ошибка и результат рамку рисуют, так что состояние не держится на одном цвете.') }}
+          </p>
+          <TaoPinCode :model-value="pinChecked" :length="4" numbers-only :bordered="false" :status="pinStatus" @update:model-value="editPin" @complete="checkPin" />
+
           <h3>{{ tr('Clear on focus', 'Стереть при фокусе') }}</h3>
           <TaoPinCode v-model="pinValue" :length="4" @complete="onPinComplete" />
           <p style="margin-top: 8px; font-size: 13px;">{{ tr('Value', 'Значение') }}: {{ pinValue }}</p>
