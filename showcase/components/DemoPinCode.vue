@@ -59,7 +59,7 @@ function onPinComplete(value) {
 
           <h3>{{ tr('Light style: no frame', 'Лёгкий стиль: без рамки') }}</h3>
           <p style="margin: 0 0 8px; font-size: 13px; color: var(--tao-color-text-muted);">
-            {{ tr('bordered=false: a fill only at rest; focus, an error and a result still draw the frame, so the state is not left to a colour alone.', 'bordered=false: в покое только заливка; фокус, ошибка и результат рамку рисуют, так что состояние не держится на одном цвете.') }}
+            {{ tr('bordered=false: no frame, a soft fill; the focus, an error and a result are told by a tint of the fill (and the colour of the digit).', 'bordered=false: без рамки, мягкая заливка; фокус, ошибку и результат говорят оттенок заливки (и цвет цифры).') }}
           </p>
           <TaoPinCode :model-value="pinChecked" :length="4" numbers-only :bordered="false" :status="pinStatus" @update:model-value="editPin" @complete="checkPin" />
 
