@@ -56,8 +56,8 @@ const short = (role) => role.replace('--tao-color-', '')
           <tr>
             <th scope="col">{{ tr('Pair', 'Пара') }}</th>
             <th scope="col">{{ tr('As seen', 'Как видно') }}</th>
-            <th scope="col">WCAG 2</th>
             <th scope="col">APCA Lc</th>
+            <th scope="col" class="contrast-live__last">WCAG 2</th>
           </tr>
         </thead>
         <tbody>
@@ -67,8 +67,8 @@ const short = (role) => role.replace('--tao-color-', '')
               {{ tr(pair.en, pair.ru) }}
             </td>
             <td class="contrast-live__how">{{ short(pair.fg) }} → {{ short(pair.bg) }}</td>
-            <td><RatioBadge :ratio="pair.ratio" :need="pair.need" /></td>
             <td class="contrast-live__lc">{{ Math.round(pair.lc) }}</td>
+            <td class="contrast-live__last"><RatioBadge :ratio="pair.ratio" :need="pair.need" /></td>
           </tr>
         </tbody>
       </table>
@@ -156,6 +156,11 @@ const short = (role) => role.replace('--tao-color-', '')
 .contrast-live__pairs td {
   padding: 8px;
   border-top: 1px solid var(--tao-color-border);
+}
+
+/* the ratio is the last column, under the badges of the list above it */
+.contrast-live__last {
+  text-align: right;
 }
 
 .contrast-live__aa {
