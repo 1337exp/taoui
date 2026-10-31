@@ -4,6 +4,7 @@ import Tr from './Tr.vue'
 import ContrastLive from '../a11y/ContrastLive.vue'
 import ContrastWhy from '../a11y/ContrastWhy.vue'
 import PaletteLab from '../a11y/PaletteLab.vue'
+import PromisesStrip from '../a11y/PromisesStrip.vue'
 import KeyboardMap from '../a11y/KeyboardMap.vue'
 import { tr } from '../i18n.js'
 
@@ -36,6 +37,7 @@ defineOptions({ name: 'DemoA11y' })
     <ContrastLive />
     <ContrastWhy />
     <PaletteLab />
+    <PromisesStrip />
     <KeyboardMap />
   </ShowcaseSection>
 </template>

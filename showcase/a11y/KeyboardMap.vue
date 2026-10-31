@@ -2,7 +2,6 @@
 import { TaoButton, TaoToolbar, TaoToolbarGroup, TaoToolbarSeparator } from '@1337exp/taoui'
 import A11yPanel from './A11yPanel.vue'
 import { KEYS } from './keys.js'
-import { PROMISES } from './pairs.js'
 import { tr } from '../i18n.js'
 
 defineOptions({ name: 'KeyboardMap' })
@@ -44,17 +43,6 @@ defineOptions({ name: 'KeyboardMap' })
           <kbd v-for="key in row.keys" :key="key">{{ key }}</kbd>
         </span>
         <span class="keyboard-map__what">{{ tr(row.en, row.ru) }}</span>
-      </li>
-    </ul>
-  </A11yPanel>
-
-  <A11yPanel icon="tao-check-circle" :title="tr('What is promised in numbers, not in words', 'Что обещано числами, а не словами')">
-    <template #hint>{{ tr('tests/palette.test.ts holds this: every palette, both modes, every fill', 'это держит tests/palette.test.ts: каждая палитра, оба режима, каждая заливка') }}</template>
-
-    <ul class="keyboard-map__promises">
-      <li v-for="promise in PROMISES" :key="promise.en" class="keyboard-map__promise">
-        <strong>{{ promise.value }}</strong>
-        <span>{{ tr(promise.en, promise.ru) }}</span>
       </li>
     </ul>
   </A11yPanel>
@@ -113,40 +101,6 @@ defineOptions({ name: 'KeyboardMap' })
 
 .keyboard-map__what {
   min-width: 0;
-  color: var(--tao-color-text-muted);
-}
-
-.keyboard-map__promises {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  border: 1px solid var(--tao-color-border);
-  border-radius: var(--tao-radius-md);
-  background: var(--tao-color-bg);
-}
-
-.keyboard-map__promise {
-  display: grid;
-  align-content: start;
-  gap: 4px;
-  padding: 14px 16px;
-  border-right: 1px solid var(--tao-color-border);
-  font-size: 13px;
-}
-
-.keyboard-map__promise:last-child {
-  border-right: none;
-}
-
-.keyboard-map__promise strong {
-  color: var(--tao-color-text-strong);
-  font-size: 20px;
-  font-variant-numeric: tabular-nums;
-}
-
-.keyboard-map__promise span {
   color: var(--tao-color-text-muted);
 }
 </style>
