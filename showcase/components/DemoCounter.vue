@@ -20,6 +20,7 @@ const counterValue = ref(1284)
             <TaoButton size="small" variant="secondary" @click="counterValue = Math.max(0, counterValue - 1)">−1</TaoButton>
             <TaoButton size="small" @click="counterValue += 1">+1</TaoButton>
             <TaoButton size="small" variant="ghost" @click="counterValue += 100">+100</TaoButton>
+            <TaoButton size="small" variant="ghost" @click="counterValue += 1337">+1337</TaoButton>
           </div>
           <p style="margin-top: 8px; font-size: 13px;">{{ tr('Value', 'Значение') }}: {{ counterValue }}</p>
     

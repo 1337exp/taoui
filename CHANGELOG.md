@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.19.2
+
+A polish; nothing to migrate.
+
+- **`TaoCounter`: the digits roll in turn, not all at once.** All the digits that changed started at the same moment, and `+1337` looked like four wheels jerked together. Now the one on the right goes first and the others follow to the left, 55 ms apart, so they land one after another like an odometer. Only the digits that change take a turn: `1000 → 2000` does not wait for the three that stay. `--tao-counter-stagger` sets the step (`0` brings the old all-at-once back). With `prefers-reduced-motion` the digits change at once. The order is `src/counterRoll.ts`.
+
 ## 5.19.1
 
 A fix; nothing to migrate.
