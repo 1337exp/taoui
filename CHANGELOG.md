@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.20.1
+
+Nothing to migrate; the defaults do not change.
+
+- **`TaoMarquee`: `pauseOnHover="false"` is a background line now.** The prop was there, but a line used as a design feature still stopped for a tap and could be selected while it ran. With `pauseOnHover` off a cursor or a finger passing by does not stop it, and the running text has `user-select: none`. Focus still stops it and a running line stays a tab stop, so the keyboard keeps its way to stop moving content (WCAG 2.2.2). The showcase has a background line.
+- Showcase: the numbers promised by the palettes sit under the palette lab, with the other colour blocks of the section.
+
 ## 5.20.0
 
 Nothing to migrate; the library does not change.

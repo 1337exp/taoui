@@ -73,6 +73,17 @@ describe('TaoMarquee', () => {
         expect(w.classes()).not.toContain('tao-marquee--stopped');
     });
 
+    it('pauseOnHover off: a tap does not stop it, and the running line cannot be selected', async () => {
+        const w = await marquee(100, 240, { pauseOnHover: false });
+        expect(w.classes()).not.toContain('tao-marquee--hover-pause');
+        w.element.dispatchEvent(Object.assign(new Event('pointerup', { bubbles: true }), { pointerType: 'touch' }));
+        await nextTick();
+        expect(w.classes()).not.toContain('tao-marquee--stopped');
+        expect(source).toMatch(/\.tao-marquee--run:not\(\.tao-marquee--hover-pause\) \{\s*user-select: none/);
+        // focus still stops it and it stays a tab stop: the keyboard keeps its way to stop moving content
+        expect(w.attributes('tabindex')).toBe('0');
+    });
+
     it('paused stops it from the app', async () => {
         expect((await marquee(100, 240, { paused: true })).classes()).toContain('tao-marquee--stopped');
     });

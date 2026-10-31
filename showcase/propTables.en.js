@@ -97,7 +97,7 @@ export const propTablesEn = {
         r('speed', 'number', '40', 'Speed, pixels per second'),
         r('gap', 'number', '48', 'The gap between the end of the line and its next round, px'),
         r('fade', 'number', '22', 'The width of the fading edges, px. The left fade lives in a padding outside the text: at rest the line stands where it would, but the parent needs that much room on the left (its padding, or a smaller fade; 0 for none) or the running text shows past its edge'),
-        r('pauseOnHover', 'boolean', 'true', 'Stop on hover'),
+        r('pauseOnHover', 'boolean', 'true', 'Stop on hover, and a tap stops and starts it. false is for a background line: a cursor or a finger passing by does not stop it, and the running text cannot be selected. Focus still stops it, Tab reaches the line'),
         r('paused', 'boolean', 'false', 'Stopped by the app'),
       ],
       slots: 'default — the content of the line; its copies for the second round are hidden from a screen reader and inert. It runs only when it does not fit; it stops on hover, on focus (a running line is a tab stop) and on a tap; with «reduce motion» it wraps. measure() — measure again by hand.',
