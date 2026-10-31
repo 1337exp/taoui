@@ -2,7 +2,7 @@
 
 5.0 is a deliberate breaking release: shared mechanisms instead of per-component copies (one tone, one floating-panel
 engine, one icon set), and everything that 2.0 deprecated is deleted. Nothing is hidden behind a warning any more, so
-go through this page once. The reasons are in `docs/v5-plan.md`; the short list is in [CHANGELOG.md](CHANGELOG.md).
+go through this page once. The short list is in [CHANGELOG.md](CHANGELOG.md).
 
 ## The quick pass
 

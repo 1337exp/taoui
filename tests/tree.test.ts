@@ -51,6 +51,18 @@ describe('tree data', () => {
         expect(checkUnits(parent, own)).toEqual(['x']);
         expect(checkState(parent, new Set(['x']), own)).toBe('checked');
     });
+
+    it('a load that hands back the id of an ancestor does not loop: that node stays a leaf', () => {
+        // the demo bug of 5.17.0: `load` ignored the node and answered with the same ids at every level
+        // ошибка демо до 5.17.1: `load` не смотрел на узел и на каждом уровне отвечал одними и теми же id
+        const vue: TaoTreeNode = { id: 'vue', label: 'vue', hasChildren: true };
+        const loaded = new Map<string, TaoTreeNode[]>([['vue', [vue]]]);
+        const loadedChildren = (node: TaoTreeNode) => node.children ?? loaded.get(node.id);
+        const rows = visibleRows([vue], new Set(['vue']), loadedChildren);
+        expect(rows.map((r) => `${r.node.id}:${r.level}`)).toEqual(['vue:1', 'vue:2']);
+        expect(rows[1]).toMatchObject({ branch: false, expanded: false });
+        expect(checkUnits(vue, loadedChildren)).toEqual(['vue']);
+    });
 });
 
 const wrappers: VueWrapper[] = [];

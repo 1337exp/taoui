@@ -22,7 +22,7 @@ TaoUI is a Vue 3 kit on design tokens, 5.x on npm (minors add, patches fix). The
 1. A short branch per change (`git checkout -b <topic>` from `master`).
 2. The code, the test, the showcase section (`showcase/components/Demo*.vue`), the prop tables.
 3. The docs, all of them: `README.md` and `README.ru.md` (same line in both), `CHANGELOG.md` (the open section on top),
-   `MIGRATION-5.md` only for a breaking change, and the status log at the end of `docs/v5-plan.md` (Russian).
+   `MIGRATION-5.md` only for a breaking change.
    **The version:** read what is published first (`npm view @1337exp/taoui version`, `git log -- package.json`, the top of
    `CHANGELOG.md`); never reuse a published number, and set the version with a check, not a blind replace: commits can
    land between your branches.

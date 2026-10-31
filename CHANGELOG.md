@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.17.1
+
+A fix; nothing to migrate.
+
+- **`TaoTree` does not loop on a repeated id.** An id is unique in the whole tree. When `load(node)` answered with the same ids at every level (the showcase did: opening `vue` under `node_modules` handed back a `vue`), the node inside its own ancestor sent the walk round in a circle: `RangeError: Maximum call stack size exceeded`. A node whose id is already one of its ancestors is a leaf now. The showcase `load` gives path ids.
+- Inside the repository: `docs/v5-plan.md` (the ideas journal of the 5.0 design) is removed; MIGRATION-5.md no longer points to it.
+
 ## 5.17.0
 
 Nothing to migrate.
@@ -243,7 +250,7 @@ Two small additions, nothing to migrate.
 
 ## 5.0.0
 
-A foundation release: shared mechanisms instead of per-component copies, and a clean API. Everything deprecated since 2.0 is removed, so read [MIGRATION-5.md](MIGRATION-5.md) first. Why and how: `docs/v5-plan.md`.
+A foundation release: shared mechanisms instead of per-component copies, and a clean API. Everything deprecated since 2.0 is removed, so read [MIGRATION-5.md](MIGRATION-5.md) first.
 
 In numbers: the tarball is 329 KB (560 KB before the ESM-only build), 451 tests (183 before), one floating-panel engine instead of eight copies, 27 built-in icons instead of three icon mechanisms, one tone mechanism instead of six. TaoUX 0.2.0 and taofx follow it.
 
