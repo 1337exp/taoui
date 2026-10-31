@@ -109,8 +109,6 @@ onBeforeUnmount(() => {
         @mouseenter="pause"
         @mouseleave="resume"
     >
-        <span class="tao-toast__accent" aria-hidden="true"></span>
-
         <span v-if="hasIcon" class="tao-toast__icon" aria-hidden="true">
             <span v-if="toast.loading" class="tao-toast__spinner"></span>
             <TaoIcon v-else-if="toast.icon" :name="toast.icon" :size="18" />
@@ -157,9 +155,9 @@ onBeforeUnmount(() => {
 <style scoped>
 .tao-toast {
     --tao-toast-tone: var(--tao-tone);
-    /* how far the accent bar and the progress line stay from the rounded corners: they sit on the straight part and are
-       not cut by the curve; `--tao-toast-edge: 0` brings the flush look back
-       насколько полоса и шкала времени отступают от скруглённых углов: они лежат на прямой части и не режутся кривой;
+    /* how far the progress line stays from the rounded corners: it lies on the straight part and is not cut by the
+       curve; `--tao-toast-edge: 0` brings the flush look back
+       насколько шкала времени отступает от скруглённых углов: она лежит на прямой части и не режется кривой;
        `--tao-toast-edge: 0` возвращает прежний вид */
     --_edge: var(--tao-toast-edge, min(calc(var(--tao-radius-panel) * 0.6), var(--tao-space-6)));
 
@@ -194,15 +192,6 @@ onBeforeUnmount(() => {
     --tao-surface-fill: color-mix(in srgb, var(--tao-toast-tone) 10%, var(--tao-glass-fill));
     border-color: var(--tao-glass-border);
     box-shadow: var(--tao-toast-shadow, 0 2px 8px rgb(0 0 0 / 0.12));
-}
-
-.tao-toast__accent {
-    position: absolute;
-    inset: var(--_edge) auto var(--_edge) 0;
-    width: 3px;
-    border-radius: 0 var(--tao-radius-full) var(--tao-radius-full) 0;
-    background: var(--tao-toast-tone);
-    transition: background-color var(--tao-duration-slow) var(--tao-ease-base);
 }
 
 .tao-toast__icon {
@@ -248,7 +237,6 @@ onBeforeUnmount(() => {
     }
 
     .tao-toast,
-    .tao-toast__accent,
     .tao-toast__icon {
         transition: none;
     }

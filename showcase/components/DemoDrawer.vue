@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoButton, TaoDrawer, TaoIcon, TaoInput } from '@1337exp/taoui'
+import { TaoButton, TaoDrawer, TaoInput } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { tr } from '../i18n.js'
 import { propTables } from '../propTables.js'
@@ -50,8 +50,8 @@ const comments = Array.from({ length: 14 }, (_, index) => ({
             <template #header="{ close }">
               <strong class="comments__title">{{ tr('Comments', 'Комментарии') }} <span class="comments__count">275</span></strong>
               <span class="comments__tools">
-                <TaoButton variant="text" size="small" :aria-label="tr('Filter', 'Фильтр')"><TaoIcon name="tao-settings" /></TaoButton>
-                <TaoButton variant="text" size="small" :aria-label="tr('Close', 'Закрыть')" @click="close"><TaoIcon name="tao-close" /></TaoButton>
+                <TaoButton variant="ghost" tone="neutral" size="small" icon="tao-settings" :aria-label="tr('Filter', 'Фильтр')" />
+                <TaoButton variant="ghost" tone="neutral" size="small" icon="tao-close" :aria-label="tr('Close', 'Закрыть')" @click="close" />
               </span>
             </template>
             <ul class="comments">
