@@ -32,17 +32,21 @@ const nodes = [
   { id: 'lock', label: 'package-lock.json', disabled: true },
 ]
 
-// node_modules opens slowly, like a real folder over the network
-const load = () =>
+// node_modules opens slowly, like a real folder over the network; every id stays unique in the whole tree (the path)
+const packages = ['vue', 'vite', '@1337exp/taoui']
+const load = (node) =>
   new Promise((resolve) =>
     setTimeout(
       () =>
-        resolve([
-          { id: 'vue', label: 'vue', hasChildren: true },
-          { id: 'vite', label: 'vite', hasChildren: true },
-          { id: 'taoui', label: '@1337exp/taoui', hasChildren: true },
-        ]),
-      900,
+        resolve(
+          node.id === 'packages'
+            ? packages.map((name) => ({ id: `packages/${name}`, label: name, hasChildren: true }))
+            : [
+                { id: `${node.id}/package.json`, label: 'package.json' },
+                { id: `${node.id}/dist`, label: 'dist', hasChildren: true },
+              ],
+        ),
+      node.id === 'packages' ? 900 : 400,
     ),
   )
 

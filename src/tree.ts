@@ -40,18 +40,24 @@ export type TaoTreeChildren = (node: TaoTreeNode) => TaoTreeNode[] | undefined;
 
 /**
  * The rows a reader sees: the roots and the children of every expanded node, depth first.
+ * An id is unique in the whole tree: a node whose id is already one of its ancestors' is a leaf, so a wrong `load` cannot loop.
  * Строки, которые видны: корни и дети каждого раскрытого узла, в глубину.
+ * Id уникален во всём дереве: узел с id одного из своих предков остаётся листом, так что неверный `load` не зациклит дерево.
  */
 export function visibleRows(nodes: readonly TaoTreeNode[], expanded: ReadonlySet<string>, children: TaoTreeChildren): TaoTreeRow[] {
     const rows: TaoTreeRow[] = [];
+    const ancestors = new Set<string>();
     const walk = (list: readonly TaoTreeNode[], level: number, parentId: string | null) => {
         list.forEach((node, index) => {
-            const own = children(node);
-            const branch = Boolean(own?.length) || (Boolean(node.hasChildren) && own === undefined);
+            const repeated = ancestors.has(node.id);
+            const own = repeated ? undefined : children(node);
+            const branch = !repeated && (Boolean(own?.length) || (Boolean(node.hasChildren) && own === undefined));
             const open = branch && expanded.has(node.id);
             rows.push({ node, level, parentId, posinset: index + 1, setsize: list.length, branch, expanded: open });
             if (open && own) {
+                ancestors.add(node.id);
                 walk(own, level + 1, node.id);
+                ancestors.delete(node.id);
             }
         });
     };
@@ -63,12 +69,13 @@ export function visibleRows(nodes: readonly TaoTreeNode[], expanded: ReadonlySet
  * The checkable units under a node: the nodes without (loaded) children. A leaf is its own unit.
  * Отмечаемые единицы под узлом: узлы без (загруженных) детей. Лист — сам себе единица.
  */
-export function checkUnits(node: TaoTreeNode, children: TaoTreeChildren): string[] {
-    const own = children(node);
+export function checkUnits(node: TaoTreeNode, children: TaoTreeChildren, ancestors: ReadonlySet<string> = new Set()): string[] {
+    const own = ancestors.has(node.id) ? undefined : children(node);
     if (!own?.length) {
         return node.disabled ? [] : [node.id];
     }
-    return own.flatMap((child) => checkUnits(child, children));
+    const path = new Set(ancestors).add(node.id);
+    return own.flatMap((child) => checkUnits(child, children, path));
 }
 
 /**
