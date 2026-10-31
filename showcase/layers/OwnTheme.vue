@@ -28,18 +28,18 @@ const ratings = computed(() => themeRatings(values.value))
 
     <div class="own-theme">
       <div class="own-theme__controls">
-        <label class="own-theme__field">
+        <div class="own-theme__field">
           <span>{{ tr('Accent', 'Акцент') }}</span>
-          <TaoColorInput v-model="accent" />
-        </label>
-        <label class="own-theme__field">
+          <TaoColorInput v-model="accent" :aria-label="tr('Accent', 'Акцент')" />
+        </div>
+        <div class="own-theme__field">
           <span>{{ tr('Page', 'Страница') }}</span>
-          <TaoColorInput v-model="page" />
-        </label>
-        <label class="own-theme__field">
+          <TaoColorInput v-model="page" :aria-label="tr('Page', 'Страница')" />
+        </div>
+        <div class="own-theme__field">
           <span>{{ tr('Corners', 'Углы') }}: {{ radius }}px</span>
-          <TaoSlider v-model="radius" :min="0" :max="28" />
-        </label>
+          <TaoSlider v-model="radius" :min="0" :max="28" :aria-label="tr('Corners', 'Углы')" />
+        </div>
 
         <ul class="own-theme__ratings">
           <li v-for="row in ratings" :key="row.id">
@@ -102,6 +102,7 @@ const ratings = computed(() => themeRatings(values.value))
 }
 
 /* a colour field is as wide as its swatch and code: in a grid it would be stretched to the cell, and so would the click
+   (the field is a div, not a label: a label would pass a click on the empty space to the swatch)
    поле цвета по ширине равно образцу и коду: в сетке его растянуло бы на ячейку, а с ним и клик */
 .own-theme__field :deep(.tao-color-input-root) {
   justify-self: start;
