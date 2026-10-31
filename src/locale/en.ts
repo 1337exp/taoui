@@ -34,6 +34,7 @@ export const localeEn: TaoLocale = {
     },
     confirm: { ok: 'OK', cancel: 'Cancel' },
     copy: { copyLabel: 'Copy', successText: 'Copied!' },
+    loader: { label: 'Loading' },
     date: {
         placeholder: 'Date',
         todayText: 'Today',

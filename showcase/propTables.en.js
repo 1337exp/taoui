@@ -1100,10 +1100,15 @@ export const propTablesEn = {
     {
       title: 'TaoLoader',
       rows: [
-        r('size', 'number | string', '80', 'The size. A number is px'),
-        r('color', 'string', 'accent token', 'The dot colour'),
+        r('variant', "'dots' | 'ring' | 'pulse'", "'dots'", 'The look: four dots / a ring with a turning arc / ripples from a core'),
+        r('size', "number | string", '80 for dots, 40 for the others', 'The size. A number is px, "40px" works, or small / medium / large (24 / 40 / 64)'),
+        r('tone', "'accent' | 'success' | 'danger' | 'warning' | 'info' | 'neutral'", "'accent'", 'A colour role of the theme'),
+        r('color', 'string', '—', 'A CSS colour of your own, wins over tone; currentColor takes the text colour around it'),
         r('inline', 'boolean', 'false', 'Inline, without block centring'),
+        r('label', 'string', "'Loading'", 'What a screen reader says (the text of the locale by default)'),
+        r('decorative', 'boolean', 'false', 'A picture only: hidden from a screen reader (the wait is said elsewhere; a button with loading says it itself)'),
       ],
+      slots: 'Under «reduce motion» nothing travels or turns: the loader only breathes.',
     },
   ],
   image: [
