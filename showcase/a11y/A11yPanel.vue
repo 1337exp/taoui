@@ -32,12 +32,10 @@ defineProps({
   container-type: inline-size;
 }
 
+/* the hint always sits under the title, at any width: a line that jumps to the right and back is hard to follow */
 .a11y-panel__head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 4px 16px;
+  display: grid;
+  gap: 4px;
   margin-bottom: 16px;
 }
 
