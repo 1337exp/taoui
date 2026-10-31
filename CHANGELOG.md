@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.20.0
+
+Nothing to migrate; the library does not change.
+
+- **Showcase: a section "Contrast & keyboard".** What the README only promised can be tried now. A live look reads the colour roles of this very page from the computed styles and judges every pair with `contrastRatio()` and `apcaContrast()` (the numbers follow the palette and the mode in the header). A pair picker shows the two questions on one colour, with the well-known green `#2ea85c` where WCAG 2 and the eye disagree. A palette lab turns four stops into a whole theme with `applyTaoPalette()` on a preview (or on the page, and takes it off again) and rates the roles it made. A key map lists what the keys do in toolbars, menus, trees and lists, and the numbers the palettes are tested for. Every key line is one a test of the component or its code shows.
+- The section is a frame (`showcase/components/DemoA11y.vue`); each block and its data live apart in `showcase/a11y/`, and `tests/showcase.a11y.test.ts` keeps the roles it reads real and its promises equal to the palette constants.
+
 ## 5.19.3
 
 A fix; nothing to migrate.
