@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.22.0
+
+Nothing to migrate; the defaults do not change.
+
+- **`TaoPinCode` `bordered`.** `:bordered="false"` is a light style: the cells have a soft fill and no frame at rest. The frame is still in the box (the cells do not jump) and is only clear; focus, the active cell, an error and a result paint it, so a state is never left to a fill colour alone.
+- **`TaoDrawer`: the pull of a sheet no longer selects the title.** While the sheet is in the hand the panel has `user-select: none`, and it is given back at the end.
+- **`TaoDrawer`: a pointer that vanishes lets go.** The blur of the window, a tab that goes to the background, `pagehide` and a taken capture (`lostpointercapture`) end the pull as a cancel: the sheet settles back and does not close, and the next pull starts clean. The same guard `TaoCarousel` has had.
+
 ## 5.21.0
 
 Nothing to migrate; the defaults do not change.

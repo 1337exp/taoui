@@ -104,6 +104,45 @@ describe('TaoDrawer swipeToClose', () => {
         }
     });
 
+    it('a pull does not select the title: no selection while the sheet is in the hand, and it is given back after', async () => {
+        sheet();
+        const panel = $('.tao-drawer__panel')!;
+        pointer($('.tao-drawer__header')!, 'pointerdown', 100);
+        expect(panel.style.userSelect).toBe('none');
+        pointer($('.tao-drawer__header')!, 'pointerup', 100);
+        expect(panel.style.userSelect).toBe('');
+    });
+
+    it('a pointer that vanishes lets go: the blur of the window, the hidden tab and a taken capture settle the sheet back, no close', async () => {
+        const releases: Array<() => void> = [
+            () => window.dispatchEvent(new Event('blur')),
+            () => {
+                Object.defineProperty(document, 'hidden', { value: true, configurable: true });
+                document.dispatchEvent(new Event('visibilitychange'));
+                Object.defineProperty(document, 'hidden', { value: false, configurable: true });
+            },
+            () => pointer($('.tao-drawer__panel')!, 'lostpointercapture', 0),
+        ];
+        for (const release of releases) {
+            const wrapper = sheet();
+            const panel = $('.tao-drawer__panel')!;
+            Object.defineProperty(panel, 'offsetHeight', { value: 400, configurable: true });
+            pointer($('.tao-drawer__grip')!, 'pointerdown', 100);
+            pointer($('.tao-drawer__grip')!, 'pointermove', 400, { timeStamp: 900 });
+            expect(panel.style.transform).not.toBe('');
+            release();
+            await wrapper.vm.$nextTick();
+            expect(panel.style.transform).toBe('');
+            expect(panel.style.userSelect).toBe('');
+            expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+            // the next pull starts again: nothing is held / следующая тяга начинается заново: ничего не держится
+            pointer($('.tao-drawer__grip')!, 'pointerdown', 100);
+            expect(panel.style.userSelect).toBe('none');
+            pointer($('.tao-drawer__grip')!, 'pointerup', 100);
+            wrapper.unmount();
+        }
+    });
+
     it('if the parent keeps it open, the sheet comes back', async () => {
         const wrapper = sheet();
         const panel = pull($('.tao-drawer__grip')!, 300);

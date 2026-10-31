@@ -373,6 +373,7 @@ export const propTablesEn = {
         r('masked', 'boolean', 'false', 'Dots instead of characters'),
         r('disabled', 'boolean', 'false', 'Disabled'),
         r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
+        r('bordered', 'boolean', 'true', 'The frame of a cell at rest. false is the light style: a fill only; focus, an error and a result still draw the frame'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Cells 40×46 / 50×56 / 58×64. Without it — the size of the ancestors'),
         r('clearOn', "'focus' | 'input'", "'focus'", 'focus — a click clears the cell and everything to the right; input — changes only on typing'),
         r('status', "'idle' | 'success' | 'error'", "'idle'", 'The result of the check, set by the app (on complete): error shakes the cells and paints them red, success runs a glow and paints them green; a screen reader hears it. Set idle again when the user edits; play() repeats the animation'),

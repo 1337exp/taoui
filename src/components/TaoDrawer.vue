@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
-import { computed, nextTick, ref, useId, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
 import { getFocusable, trapTab } from '../focusTrap';
 import { useLayer } from '../layers';
 import { useLocaleText } from '../locale';
@@ -135,6 +135,10 @@ function onPointerDown(event: PointerEvent) {
     }
     drag = { pointerId: event.pointerId, startY: event.clientY, moved: false, offset: 0, samples: [{ t: event.timeStamp, y: event.clientY }] };
     capture(event.pointerId, true);
+    // a pull is a pull: it must not start selecting the title / тянем, а не выделяем: заголовок не должен выделяться
+    if (panelRef.value) {
+        panelRef.value.style.userSelect = 'none';
+    }
 }
 
 function onPointerMove(event: PointerEvent) {
@@ -155,17 +159,41 @@ function onPointerMove(event: PointerEvent) {
 }
 
 async function onPointerEnd(event: PointerEvent) {
+    if (drag && event.pointerId === drag.pointerId) {
+        await endDrag(event.type === 'pointerup', event.pointerId);
+    }
+}
+
+// the pointer is gone without a pointerup (focus left the window, the tab went to the background, the capture was taken away):
+// the sheet is not left hanging in the hand, it settles back
+// указатель пропал без pointerup (фокус ушёл из окна, вкладка в фоне, захват отобрали): лист не остаётся «в руке», он возвращается
+function abortDrag() {
+    if (drag) {
+        void endDrag(false, drag.pointerId);
+    }
+}
+
+function onHidden() {
+    if (document.hidden) {
+        abortDrag();
+    }
+}
+
+async function endDrag(released: boolean, pointerId: number) {
     const current = drag;
-    if (!current || event.pointerId !== current.pointerId) {
+    if (!current) {
         return;
     }
     drag = null;
-    capture(event.pointerId, false);
+    capture(pointerId, false);
+    if (panelRef.value) {
+        panelRef.value.style.userSelect = '';
+    }
     if (!current.moved) {
         return;
     }
     const height = panelRef.value?.offsetHeight ?? 0;
-    if (event.type === 'pointerup' && shouldDismissSheet(current.offset, height, releaseVelocity(current.samples))) {
+    if (released && shouldDismissSheet(current.offset, height, releaseVelocity(current.samples))) {
         setSheet(height, true);
         close();
         await nextTick();
@@ -193,6 +221,17 @@ function onKeydown(event: KeyboardEvent) {
         trapTab(event, panelRef.value);
     }
 }
+
+onMounted(() => {
+    window.addEventListener('blur', abortDrag);
+    window.addEventListener('pagehide', abortDrag);
+    document.addEventListener('visibilitychange', onHidden);
+});
+onBeforeUnmount(() => {
+    window.removeEventListener('blur', abortDrag);
+    window.removeEventListener('pagehide', abortDrag);
+    document.removeEventListener('visibilitychange', onHidden);
+});
 
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
 useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscape: close });
@@ -226,6 +265,7 @@ watch(
                     @pointermove="onPointerMove"
                     @pointerup="onPointerEnd"
                     @pointercancel="onPointerEnd"
+                    @lostpointercapture="abortDrag"
                 >
                     <!-- the sheet's grip: only a sign that it is a sheet / ручка листа: только знак, что это лист -->
                     <span v-if="side === 'bottom'" class="tao-drawer__grip" aria-hidden="true" />
