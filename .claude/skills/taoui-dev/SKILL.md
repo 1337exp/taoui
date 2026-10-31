@@ -80,6 +80,11 @@ The showcase dev server is the preview named `showcase` (port 5179, `.claude/lau
 - After a change in `<script setup>` imports, HMR can keep a stale module: navigate with `force: true`, or restart.
 - Screenshots of the pane are downscaled (about 945 → 800px): judge sharpness by measuring (computed styles, or render
   into a canvas and count soft pixels), not by eye.
+- **Colour, palette and theme work is checked in the showcase section `#a11y` (Contrast & keyboard)** before anything else:
+  it measures the page you are on with the kit's own `contrastRatio()` / `apcaContrast()` (switch the palette and the mode
+  in the header and every pair is rated again), and its palette lab runs `applyTaoPalette()` on four stops with the roles
+  rated. A red badge there is a failed promise (4.5:1 text, 3:1 fill). New role pairs go to `showcase/a11y/pairs.js`, new key
+  lines to `showcase/a11y/keys.js` (only for what a test or the code shows); `tests/showcase.a11y.test.ts` guards both.
 - A real check uses real input where it matters (wheel, right click); `window.find` does not fire `beforematch`, a
   `#:~:text=` link does.
 
