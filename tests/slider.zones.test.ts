@@ -35,6 +35,13 @@ describe('slider zones: the logic', () => {
         expect(zones.map((z) => z.dot)).toEqual([true, false]);
     });
 
+    it('reveal: clear in the layer of the whole bar, in colour in the layer of the fill', () => {
+        const zones = normalizeZones([{ to: 40, color: 'blue' }, { to: 100, color: 'red', reveal: true }], 0, 100);
+        expect(zones.map((z) => z.reveal)).toEqual([false, true]);
+        expect(zoneGradient(zones, 0, 100, false, true)).toBe('linear-gradient(to right, blue 0% 40%, transparent 40% 100%)');
+        expect(zoneGradient(zones, 0, 100)).toBe('linear-gradient(to right, blue 0% 40%, red 40% 100%)');
+    });
+
     it('a value on a border belongs to the zone that ends there', () => {
         const zones = normalizeZones([{ to: 30, tone: 'info' }, { to: 100, tone: 'danger' }], 0, 100);
         expect(zoneAt(30, zones)?.color).toBe('var(--tao-color-info)');
@@ -101,6 +108,20 @@ describe('slider zones: the component', () => {
         expect(b!.attributes('style')).toContain('var(--tao-color-danger)');
     });
 
+    it('reveal: the dim layer is clear there, and the dot shows only once the fill has got to it', async () => {
+        const revealed = [{ to: 40, tone: 'info' as const, dot: true, reveal: true }, { to: 70, tone: 'warning' as const, dot: true, reveal: true }, { to: 100, tone: 'danger' as const }];
+        const w = mount(TaoSlider, { props: { modelValue: 10, zones: revealed } });
+        expect(w.find('.tao-slider__zones--dim').attributes('style')).toContain('--_zones-dim: linear-gradient(to right, transparent 0% 40%, transparent 40% 70%, var(--tao-color-danger) 70% 100%)');
+        expect(w.findAll('.tao-slider__dot')).toHaveLength(0);
+        await w.setProps({ modelValue: 55 });
+        expect(w.findAll('.tao-slider__dot')).toHaveLength(1);
+        await w.setProps({ modelValue: 90 });
+        expect(w.findAll('.tao-slider__dot')).toHaveLength(2);
+        // the zones that are not revealed keep their dot at any value
+        const plain = mount(TaoSlider, { props: { modelValue: 10, zones: [{ to: 40, dot: true }, { to: 100 }] } });
+        expect(plain.findAll('.tao-slider__dot')).toHaveLength(1);
+    });
+
     it('the keyboard and the value are untouched', async () => {
         const w = mount(TaoSlider, { props: { modelValue: 50, zones } });
         await w.find('[role="slider"]').trigger('keydown', { key: 'ArrowRight' });
@@ -109,7 +130,7 @@ describe('slider zones: the component', () => {
     });
 
     it('the css: the layers take the track geometry; a bead is not hit; the invalid ring is not doubled on them', () => {
-        expect(source).toMatch(/\.tao-slider__zones--dim \{\s*opacity: 0\.4/);
+        expect(source).toMatch(/\.tao-slider__zones--dim \{\s*background: var\(--_zones-dim\);\s*opacity: 0\.4/);
         expect(source).toMatch(/\.tao-slider__dot \{[^}]*pointer-events: none/);
         expect(source).toContain('.tao-slider--invalid .tao-slider__track:not(.tao-slider__zones)');
     });

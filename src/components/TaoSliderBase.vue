@@ -79,8 +79,16 @@ const fillStyle = computed(() => {
 // the colour of the zone it stands in.
 // Зоны: полоса цветом. Приглушённый слой держит все, второй обрезан до закрашенной части, а каждая ручка носит цвет своей зоны.
 const zoneList = computed(() => normalizeZones(props.zones, props.min, props.max));
-const zoneDots = computed(() => zoneList.value.filter((z) => z.dot).map((z) => z.to));
-const zoneVars = computed(() => (zoneList.value.length ? { '--_zones': zoneGradient(zoneList.value, props.min, props.max, props.vertical) } : undefined));
+// the dot of a zone that is revealed shows once the fill has got there / точка раскрываемой зоны видна, когда заливка дошла
+const zoneDots = computed(() => zoneList.value.filter((z) => z.dot && (!z.reveal || isMarkActive(z.to, values.value))).map((z) => z.to));
+const zoneVars = computed(() =>
+    zoneList.value.length
+        ? {
+              '--_zones': zoneGradient(zoneList.value, props.min, props.max, props.vertical),
+              '--_zones-dim': zoneGradient(zoneList.value, props.min, props.max, props.vertical, true),
+          }
+        : undefined,
+);
 const zoneClip = computed(() => {
     const from = isRange.value ? percent(values.value[0]!) : 0;
     const to = percent(values.value[isRange.value ? 1 : 0]!);
@@ -444,6 +452,7 @@ onBeforeUnmount(() => {
 }
 
 .tao-slider__zones--dim {
+    background: var(--_zones-dim);
     opacity: 0.4;
 }
 
