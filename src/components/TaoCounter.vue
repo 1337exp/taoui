@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
+import { rollRanks } from '../counterRoll';
 
 defineOptions({ name: 'TaoCounter' });
 
@@ -19,6 +20,8 @@ type Slot = {
     isSpace: boolean;
     isLeadingZero: boolean;
     key: string;
+    /** the turn of the digit to roll: 0 goes first, 1 follows it / очередь цифры: 0 катится первой, 1 следом */
+    rank: number;
 };
 
 function formatDigits(num: number, minDigits: number) {
@@ -26,7 +29,11 @@ function formatDigits(num: number, minDigits: number) {
     return abs.toString().padStart(Math.max(1, minDigits), '0').replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }
 
-const slots = computed(() => {
+const isDigit = (slot: Slot) => /\d/.test(slot.value);
+
+// the previous slots come as the argument: the digits that changed roll in turn from the right, not all at once
+// прежние слоты приходят аргументом: изменившиеся цифры катятся по очереди справа, а не разом
+const slots = computed<Slot[]>((previous) => {
     const formatted = formatDigits(props.value, props.maxDigits);
     const significant = Math.abs(Math.trunc(props.value)).toString();
     const leadingZeros = Math.max(0, props.maxDigits - significant.length);
@@ -39,6 +46,7 @@ const slots = computed(() => {
             isSpace: false,
             isLeadingZero: false,
             key: 'sign',
+            rank: 0,
         });
     }
 
@@ -50,6 +58,7 @@ const slots = computed(() => {
                 isSpace: true,
                 isLeadingZero: false,
                 key: `space-${index}`,
+                rank: 0,
             });
             continue;
         }
@@ -59,9 +68,16 @@ const slots = computed(() => {
             isSpace: false,
             isLeadingZero: digitCount < leadingZeros,
             key: `${index}-${char}`,
+            rank: 0,
         });
         digitCount += 1;
     }
+
+    const digits = result.filter(isDigit);
+    const ranks = rollRanks(previous?.filter(isDigit).map((slot) => slot.value), digits.map((slot) => slot.value));
+    digits.forEach((slot, index) => {
+        slot.rank = ranks[index] ?? 0;
+    });
 
     return result;
 });
@@ -75,6 +91,7 @@ const slots = computed(() => {
                 :key="`${index}-${slot.isSpace ? 'gap' : 'd'}`"
                 class="tao-counter__slot"
                 :class="{ 'tao-counter__slot--space': slot.isSpace }"
+                :style="{ '--_rank': slot.rank }"
             >
                 <TransitionGroup name="tao-digit">
                     <span
@@ -145,12 +162,24 @@ const slots = computed(() => {
     opacity: 0;
 }
 
+/* the digits that change start one after another from the right, `--tao-counter-stagger` apart (0 — all at once); the
+   rank sits on the slot, which stays, so a digit that is leaving reads the turn of the new one
+   изменившиеся цифры стартуют одна за другой справа через `--tao-counter-stagger` (0 — все разом); очередь лежит на
+   слоте, который остаётся, поэтому уходящая цифра читает очередь новой */
 .tao-digit-enter-active,
 .tao-digit-leave-active {
     transition:
         transform var(--tao-duration-slow) cubic-bezier(0.68, -0.55, 0.265, 1.55),
         filter var(--tao-duration-slow) var(--tao-ease-base),
         opacity var(--tao-duration-slow) var(--tao-ease-base);
+    transition-delay: calc(var(--_rank, 0) * var(--tao-counter-stagger, 55ms));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tao-digit-enter-active,
+    .tao-digit-leave-active {
+        transition: none;
+    }
 }
 
 @media (max-width: 450px) {
