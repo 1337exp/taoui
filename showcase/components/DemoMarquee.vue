@@ -63,12 +63,35 @@ const cards = computed(() => [
       </TaoMarquee>
     </div>
 
+    <Tr>
+      <template #en>
+        <p class="marquee-demo__note">
+          As a design feature, in the background: <code>:pause-on-hover="false"</code>. The cursor passing by does not stop it and
+          its text cannot be selected; focus still stops it.
+        </p>
+      </template>
+      <template #ru>
+        <p class="marquee-demo__note">
+          Как приём дизайна, фоном: <code>:pause-on-hover="false"</code>. Мимо идущий курсор её не останавливает, а текст не
+          выделяется; фокус всё равно останавливает.
+        </p>
+      </template>
+    </Tr>
+    <div class="marquee-demo__line">
+      <TaoMarquee :speed="Number(speed)" :paused="paused" :pause-on-hover="false">
+        TAOUI · TOKENS · THEMES · PALETTES · CONTEXTS · TAOUI · TOKENS · THEMES · PALETTES · CONTEXTS · TAOUI · TOKENS · THEMES
+      </TaoMarquee>
+    </div>
+
     <div class="code-block">
       <pre><code>&lt;TaoMarquee :text="project.title" /&gt;
 
 &lt;TaoMarquee :speed="60" :gap="64"&gt;
   Now playing: &lt;b&gt;Nils Frahm — Says&lt;/b&gt; · &lt;a href="…"&gt;open&lt;/a&gt;
-&lt;/TaoMarquee&gt;</code></pre>
+&lt;/TaoMarquee&gt;
+
+&lt;!-- a background line: the cursor does not stop it, no selection --&gt;
+&lt;TaoMarquee :pause-on-hover="false" text="…" /&gt;</code></pre>
     </div>
   </ShowcaseSection>
 </template>

@@ -28,6 +28,14 @@ const props = withDefaults(
          * родителю нужно столько места слева (его padding), иначе бегущий текст покажется за его краем. 0 — без затухания.
          */
         fade?: number;
+        /**
+         * Stops under the pointer, and a tap stops and starts it. Turn it off when the line is a background (a design
+         * feature): a cursor or a finger passing by does not stop it, and its text cannot be selected (a line that runs
+         * away from a selection is no text to copy). Focus still stops it, and it is still a tab stop while it runs.
+         * Останавливается под курсором, а тап останавливает и запускает. Выключите, когда строка — фон (приём дизайна):
+         * мимо идущий курсор или палец её не останавливает, а текст не выделяется (убегающую строку не скопировать).
+         * Фокус всё равно останавливает, и пока строка бежит, она остаётся остановкой Tab.
+         */
         pauseOnHover?: boolean;
         /** Stopped by the app. / Остановлена приложением. */
         paused?: boolean;
@@ -90,7 +98,7 @@ function onMotionChange() {
 
 function onPointerUp(event: PointerEvent) {
     // a finger stops and starts it; a mouse has hover for that / палец останавливает и запускает; у мыши есть наведение
-    if (running.value && event.pointerType !== 'mouse') {
+    if (props.pauseOnHover && running.value && event.pointerType !== 'mouse') {
         tapped.value = !tapped.value;
     }
 }
@@ -174,6 +182,11 @@ const hasSlot = computed(() => Boolean(slots.default));
     padding-block: 3px;
     margin-block: -3px;
     outline: none;
+}
+
+/* a background line: nothing to select in text that runs away / строка-фон: в убегающем тексте нечего выделять */
+.tao-marquee--run:not(.tao-marquee--hover-pause) {
+    user-select: none;
 }
 
 .tao-marquee:focus-visible {
