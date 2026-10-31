@@ -10,9 +10,12 @@ import {
     nearestThumb,
     normalizeMarks,
     normalizeValue,
+    normalizeZones,
     ratioOf,
     stepMark,
     valueAt,
+    zoneAt,
+    zoneGradient,
     type TaoSliderBaseProps,
     type TaoSliderMark,
     type TaoSliderValue,
@@ -71,6 +74,26 @@ const fillStyle = computed(() => {
     const to = percent(values.value[isRange.value ? 1 : 0]!);
     return props.vertical ? { bottom: `${from}%`, height: `${to - from}%` } : { left: `${from}%`, width: `${to - from}%` };
 });
+
+// Zones: the bar in colour. A dimmed layer holds all of them, a second one is clipped to the filled part, and each thumb wears
+// the colour of the zone it stands in.
+// Зоны: полоса цветом. Приглушённый слой держит все, второй обрезан до закрашенной части, а каждая ручка носит цвет своей зоны.
+const zoneList = computed(() => normalizeZones(props.zones, props.min, props.max));
+const zoneDots = computed(() => zoneList.value.filter((z) => z.dot).map((z) => z.to));
+const zoneVars = computed(() => (zoneList.value.length ? { '--_zones': zoneGradient(zoneList.value, props.min, props.max, props.vertical) } : undefined));
+const zoneClip = computed(() => {
+    const from = isRange.value ? percent(values.value[0]!) : 0;
+    const to = percent(values.value[isRange.value ? 1 : 0]!);
+    const radius = 'round var(--_zone-radius)';
+    // inset(top right bottom left): along a vertical bar the share counts from the bottom
+    return {
+        clipPath: props.vertical ? `inset(${100 - to}% 0 ${from}% 0 ${radius})` : `inset(0 ${100 - to}% 0 ${from}% ${radius})`,
+    };
+});
+const thumbStyle = (v: number) => {
+    const zone = zoneAt(v, zoneList.value);
+    return zone ? { ...place(v), '--tao-slider-thumb-bg': zone.color } : place(v);
+};
 
 const barText = computed(() => values.value.map(text).join(' – '));
 
@@ -250,6 +273,7 @@ onBeforeUnmount(() => {
                 'tao-slider--flat': flat,
                 'tao-slider--pointer-focus': pointerFocus,
                 'tao-slider--collapsed': isRange && values[0] === values[1],
+                'tao-slider--zoned': zoneList.length > 0,
                 'tao-slider--range': isRange,
                 'tao-slider--has-marks': markList.length > 0,
                 'tao-slider--marks-start': marksSide === 'start',
@@ -274,14 +298,19 @@ onBeforeUnmount(() => {
             @lostpointercapture="endDrag"
         >
             <div class="tao-slider__track"></div>
-            <div class="tao-slider__fill" :style="fillStyle"></div>
+            <template v-if="zoneList.length">
+                <div class="tao-slider__track tao-slider__zones tao-slider__zones--dim" :style="zoneVars"></div>
+                <div class="tao-slider__track tao-slider__zones" :style="[zoneVars, zoneClip]"></div>
+                <span v-for="at in zoneDots" :key="at" class="tao-slider__dot" :style="place(at)" aria-hidden="true"></span>
+            </template>
+            <div v-else class="tao-slider__fill" :style="fillStyle"></div>
             <div
                 v-for="(v, i) in values"
                 :id="i === 0 ? controlId : undefined"
                 :key="i"
                 class="tao-slider__thumb"
                 :class="{ 'tao-slider__thumb--active': isDragging && activeThumb === i }"
-                :style="place(v)"
+                :style="thumbStyle(v)"
                 role="slider"
                 :tabindex="disabled ? -1 : 0"
                 :aria-valuemin="min"
@@ -404,7 +433,40 @@ onBeforeUnmount(() => {
     background: var(--tao-slider-fill-bg, var(--tao-color-accent));
 }
 
-.tao-slider--invalid .tao-slider__track {
+/* zones: the layers lie on the track and take its geometry (vertical included); the bright one is clipped to the filled part */
+.tao-slider__zones {
+    --_zone-radius: var(--tao-radius-sm);
+    background: var(--_zones);
+}
+
+.tao-slider--thin .tao-slider__zones {
+    --_zone-radius: var(--tao-radius-full);
+}
+
+.tao-slider__zones--dim {
+    opacity: 0.4;
+}
+
+/* the dot where a zone ends: a light bead on the bar, smaller than the track, the hit area is not touched */
+.tao-slider__dot {
+    position: absolute;
+    top: 50%;
+    width: calc(var(--tao-slider-track) * 0.45);
+    height: calc(var(--tao-slider-track) * 0.45);
+    border-radius: var(--tao-radius-full);
+    background: var(--tao-color-text-strong);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--tao-color-bg) 55%, transparent);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.tao-slider--vertical .tao-slider__dot {
+    top: auto;
+    left: 50%;
+    transform: translate(-50%, 50%);
+}
+
+.tao-slider--invalid .tao-slider__track:not(.tao-slider__zones) {
     box-shadow: inset 0 0 0 1px var(--tao-color-danger);
 }
 

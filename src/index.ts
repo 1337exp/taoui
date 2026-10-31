@@ -362,7 +362,7 @@ export type { TaoTimelineAlign, TaoTimelineItem, TaoTimelineState } from './time
 export type { TaoQuantityChangeSource } from './quantity';
 export type { TaoStageItem, TaoStageStatus } from './stage';
 export type { TaoSplitDirection, TaoSplitUnit } from './split';
-export type { TaoSliderMark, TaoSliderValue } from './slider';
+export type { TaoSliderMark, TaoSliderValue, TaoSliderZone, TaoSliderZoneTone } from './slider';
 export { colorModel, type ColorModelOptions } from './colorModel';
 export { hslToRgb, hsvaToRgba, rgbToHsl, type ColorMode, linearToSrgb, normalizeHex, parseColor, rgbaToHsva, srgbToLinear, toHex, type Hsva, type Rgba } from './color';
 

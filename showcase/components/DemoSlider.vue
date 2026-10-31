@@ -13,6 +13,14 @@ const sliderVolume = ref(70)
 const sliderWheel = ref(50)
 const sliderRange = ref([200, 4000])
 const sliderColor = ref(3)
+const sliderLoad = ref(82)
+const sliderBand = ref([20, 65])
+// zones: each runs to its `to`; a dot where it ends / зоны: каждая идёт до своего `to`; точка там, где она кончается
+const loadZones = [
+  { to: 40, tone: 'info', dot: true },
+  { to: 70, tone: 'warning', dot: true },
+  { to: 100, tone: 'danger' },
+]
 // The scrubber does not keep time itself: here a simple timer drives it (in projects: usePlayback from @1337exp/taoux/playback)
 const time = ref(1.25)
 const playing = ref(false)
@@ -67,6 +75,36 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
           <p style="margin-top: 4px; font-size: 13px;">{{ tr('Range', 'Диапазон') }}: {{ sliderRange[0] }} – {{ sliderRange[1] }}</p>
           <TaoSlider v-model="sliderColor" :min="0" :max="7" :marks="colorMarks" discrete class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">{{ tr('A stepped scale: the value sits only on the marks, a click on a label moves the handle', 'Ступенчатая шкала: значение только на метках, клик по подписи переносит ручку') }}</p>
+
+          <h3>{{ tr('Zones', 'Зоны') }}</h3>
+          <Tr>
+            <template #en>
+              <p>
+                <code>zones</code> colours the scale: each zone runs to its <code>to</code>, the last one to <code>max</code>. The bar shows them dimmed,
+                the filled part in full colour, the thumb wears the colour of the zone it stands in. <code>dot: true</code> puts a bead where a zone ends;
+                <code>tone</code> is a colour role of the theme, <code>color</code> any CSS colour. Colour alone is not a message: say the state in words too.
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                <code>zones</code> красит шкалу: каждая зона идёт до своего <code>to</code>, последняя до <code>max</code>. Полоса показывает их приглушённо,
+                закрашенная часть полным цветом, ручка носит цвет зоны, в которой стоит. <code>dot: true</code> ставит точку там, где зона кончается;
+                <code>tone</code> — роль цвета темы, <code>color</code> — любой CSS-цвет. Цвет — не сообщение: состояние скажите и словами.
+              </p>
+            </template>
+          </Tr>
+          <TaoSlider v-model="sliderLoad" :zones="loadZones" :aria-label="tr('Load', 'Нагрузка')" class="demo-wide" />
+          <p style="margin-top: 4px; font-size: 13px;">{{ tr('Load', 'Нагрузка') }}: {{ sliderLoad }}</p>
+          <TaoRangeSlider v-model="sliderBand" :zones="[{ to: 30, tone: 'neutral' }, { to: 70, tone: 'success' }, { to: 100, color: '#c026d3' }]" variant="thin" :aria-label="tr('Band', 'Полоса')" class="demo-wide" />
+          <div style="display: flex; align-items: center; gap: 24px; margin-top: 12px;">
+            <TaoSlider v-model="sliderLoad" :zones="loadZones" vertical :aria-label="tr('Load', 'Нагрузка')" />
+            <TaoSlider v-model="sliderLoad" :zones="loadZones" flat :aria-label="tr('Load', 'Нагрузка')" class="demo-wide" />
+          </div>
+          <pre><code>&lt;TaoSlider v-model="load" :zones="[
+  { to: 40, tone: 'info', dot: true },
+  { to: 70, tone: 'warning', dot: true },
+  { to: 100, tone: 'danger' },
+]" /&gt;</code></pre>
 
           <h3>TaoScrubber</h3>
           <TaoScrubber v-model="time" v-model:playing="playing" :length="8" :marks="[0, 2, 4, 6]" :format="(t) => tr(`${t.toFixed(2)} s`, `${t.toFixed(2)} с`)" class="demo-wide" />

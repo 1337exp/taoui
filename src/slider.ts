@@ -7,6 +7,24 @@ export interface TaoSliderMark {
     label?: string;
 }
 
+/** The colour roles a zone can wear. / Цветовые роли, в которые можно красить зону. */
+export type TaoSliderZoneTone = 'accent' | 'success' | 'warning' | 'danger' | 'info' | 'neutral';
+
+/**
+ * A zone of the scale: it runs from the end of the previous one to `to` (the first from `min`, the last to `max`), so zones
+ * never overlap and leave no gap. / Зона шкалы: идёт от конца предыдущей до `to` (первая от `min`, последняя до `max`), поэтому
+ * зоны не пересекаются и не оставляют дыр.
+ */
+export interface TaoSliderZone {
+    to: number;
+    /** A colour role of the theme (default `accent`). / Роль цвета темы (по умолчанию `accent`). */
+    tone?: TaoSliderZoneTone;
+    /** Any CSS colour; wins over `tone`. Its contrast is yours to keep. / Любой CSS-цвет; главнее `tone`. Контраст — на вас. */
+    color?: string;
+    /** A dot on the scale where the zone ends (not at `max`). / Точка на шкале там, где зона кончается (не на `max`). */
+    dot?: boolean;
+}
+
 /** Значение слайдера: число (одна ручка) или пара [от, до] (диапазон). */
 export type TaoSliderValue = number | [number, number];
 
@@ -39,6 +57,13 @@ export interface TaoSliderBaseProps {
      * Диапазон, сведённый в точку, показывает там короткий штрих.
      */
     flat?: boolean;
+    /**
+     * Zones of the scale in colour: `{ to, tone?, color?, dot? }`, each runs to its `to`. The bar shows them dimmed, the filled
+     * part in full colour, and the thumb takes the colour of the zone it stands in.
+     * Зоны шкалы цветом: `{ to, tone?, color?, dot? }`, каждая идёт до своего `to`. Полоса показывает их приглушённо,
+     * закрашенная часть полным цветом, а ручка берёт цвет зоны, в которой стоит.
+     */
+    zones?: readonly TaoSliderZone[];
     /** Vertical: the maximum is at the top. / Вертикальный: максимум сверху. */
     vertical?: boolean;
     disabled?: boolean;
@@ -171,4 +196,52 @@ export function normalizeMarks(
 /** Метка попадает в закрашенную часть: у одной ручки значение не больше неё, у диапазона между ручками. */
 export function isMarkActive(markValue: number, values: readonly number[]): boolean {
     return values.length === 2 ? markValue >= values[0]! && markValue <= values[1]! : markValue <= (values[0] ?? 0);
+}
+
+/** A zone ready to draw: its bounds, its CSS colour and whether it ends with a dot. / Зона к отрисовке: границы, CSS-цвет и точка на конце. */
+export interface TaoSliderResolvedZone {
+    from: number;
+    to: number;
+    color: string;
+    dot: boolean;
+}
+
+/** The CSS colour of a zone: `color` as given, else the theme role of `tone`, else the accent. / CSS-цвет зоны. */
+export function zoneColor(zone: Pick<TaoSliderZone, 'tone' | 'color'>): string {
+    if (zone.color) return zone.color;
+    if (zone.tone === 'neutral') return 'var(--tao-color-text-muted)';
+    return `var(--tao-color-${zone.tone ?? 'accent'})`;
+}
+
+/**
+ * Zones from the setting: sorted by `to`, kept inside min…max, a repeated or empty one dropped; the first starts at `min`, the
+ * last is stretched to `max`. A dot sits where its zone really ended, so none at `max`.
+ * Зоны из настройки: по возрастанию `to`, внутри min…max, повтор и пустая отбрасываются; первая от `min`, последняя
+ * растянута до `max`. Точка стоит там, где зона кончилась на самом деле, поэтому на `max` её нет.
+ */
+export function normalizeZones(zones: readonly TaoSliderZone[] | undefined, min: number, max: number): TaoSliderResolvedZone[] {
+    if (!zones?.length || !(max > min)) return [];
+    const sorted = zones.filter((z) => Number.isFinite(z.to)).sort((a, b) => a.to - b.to);
+    const out: TaoSliderResolvedZone[] = [];
+    let from = min;
+    for (const zone of sorted) {
+        const to = clamp(zone.to, min, max);
+        if (to <= from) continue;
+        out.push({ from, to, color: zoneColor(zone), dot: !!zone.dot && to < max });
+        from = to;
+    }
+    const last = out[out.length - 1];
+    if (last && last.to < max) out[out.length - 1] = { ...last, to: max };
+    return out;
+}
+
+/** The zone a value stands in; a value on a border belongs to the zone that ends there. / Зона, в которой стоит значение; на границе — та, что там кончается. */
+export function zoneAt(value: number, zones: readonly TaoSliderResolvedZone[]): TaoSliderResolvedZone | undefined {
+    return zones.find((z) => value <= z.to) ?? zones[zones.length - 1];
+}
+
+/** A hard-stop gradient of the zones along the bar (from the start, from the bottom when vertical). / Градиент зон с жёсткими границами вдоль полосы. */
+export function zoneGradient(zones: readonly TaoSliderResolvedZone[], min: number, max: number, vertical = false): string {
+    const stops = zones.map((z) => `${z.color} ${ratioOf(z.from, min, max) * 100}% ${ratioOf(z.to, min, max) * 100}%`);
+    return `linear-gradient(${vertical ? 'to top' : 'to right'}, ${stops.join(', ')})`;
 }
