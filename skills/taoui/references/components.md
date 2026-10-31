@@ -399,7 +399,7 @@ Showcase section: `#pincode`
 | `masked` | `boolean` | false | Dots instead of characters |
 | `disabled` | `boolean` | false | Disabled |
 | `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
-| `bordered` | `boolean` | true | The frame of a cell at rest. false is the light style: a fill only; focus, an error and a result still draw the frame |
+| `bordered` | `boolean` | true | The frame of the cells. false is the light style, no frame at all: a fill; the focus, an error and a result are told by a tint of the fill and the colour of the digit |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Cells 40×46 / 50×56 / 58×64. Without it — the size of the ancestors |
 | `clearOn` | `'focus' \| 'input'` | 'focus' | focus — a click clears the cell and everything to the right; input — changes only on typing |
 | `status` | `'idle' \| 'success' \| 'error'` | 'idle' | The result of the check, set by the app (on complete): error shakes the cells and paints them red, success runs a glow and paints them green; a screen reader hears it. Set idle again when the user edits; play() repeats the animation |

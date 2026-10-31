@@ -26,10 +26,10 @@ const props = withDefaults(
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
         error?: boolean;
         /**
-         * The frame of a cell at rest. `false` is the light style: a soft fill only; focus, an error and a result still draw
-         * the frame, so the state is never only a colour of a fill.
-         * Рамка ячейки в покое. `false` — лёгкий стиль: только мягкая заливка; фокус, ошибка и результат рамку рисуют,
-         * так что состояние не держится на одном цвете заливки.
+         * The frame of the cells. `false` is the light style: a soft fill and no frame at all; the focus, an error and a result
+         * are told by a tint of the fill and, for the last two, by the colour of the digit.
+         * Рамка ячеек. `false` — лёгкий стиль: мягкая заливка и никакой рамки; фокус, ошибку и результат говорят оттенок
+         * заливки и, у последних двух, цвет цифры.
          */
         bordered?: boolean;
         /** Cell size; without it — the size of ancestors. / Размер ячеек; без него — размер предков. */
@@ -362,13 +362,6 @@ watch(
     display: inline-flex;
     align-items: center;
     user-select: none;
-    --_rest-border: var(--tao-color-border-strong);
-}
-
-/* light style: the frame is still there (the cells do not jump) but clear until a state asks for it
-   лёгкий стиль: рамка на месте (ячейки не прыгают), но прозрачна, пока её не попросит состояние */
-.tao-pin-code--plain {
-    --_rest-border: transparent;
 }
 
 .tao-pin-code__separator {
@@ -385,7 +378,7 @@ watch(
     width: calc(var(--tao-pin-code-height) - 6px);
     height: var(--tao-pin-code-height);
     margin: 2px;
-    border: 3px solid var(--_rest-border);
+    border: 3px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-md);
     font-size: calc(var(--tao-pin-code-height) * 0.375);
     font-weight: 500;
@@ -406,11 +399,33 @@ watch(
 
 .tao-pin-code__value--invalid {
     border-color: var(--tao-color-danger);
+    color: var(--tao-color-danger-text);
 }
 
 .tao-pin-code--success .tao-pin-code__value {
     border-color: var(--tao-color-success);
     color: var(--tao-color-success-text);
+}
+
+/* light style: no frame at all (the border stays in the box, so the cells do not jump). A state is told by the fill and the
+   colour of the digit instead: the focus by a tint of the accent, an error and a success by a tint of their colour
+   лёгкий стиль: рамки нет вовсе (граница остаётся в коробке, ячейки не прыгают). Состояние говорят заливка и цвет цифры:
+   фокус — оттенок акцента, ошибка и успех — оттенок своего цвета */
+.tao-pin-code.tao-pin-code--plain .tao-pin-code__value {
+    border-color: transparent;
+}
+
+.tao-pin-code.tao-pin-code--plain .tao-pin-code__value--active,
+.tao-pin-code.tao-pin-code--plain .tao-pin-code__value:focus {
+    background: color-mix(in srgb, var(--tao-color-accent) 16%, var(--tao-color-input-bg));
+}
+
+.tao-pin-code.tao-pin-code--plain .tao-pin-code__value--invalid {
+    background: color-mix(in srgb, var(--tao-color-danger) 14%, var(--tao-color-input-bg));
+}
+
+.tao-pin-code.tao-pin-code--plain.tao-pin-code--success .tao-pin-code__value {
+    background: color-mix(in srgb, var(--tao-color-success) 14%, var(--tao-color-input-bg));
 }
 
 /* error: the whole group shakes once / ошибка: вся группа вздрагивает один раз */
