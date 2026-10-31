@@ -642,6 +642,7 @@ tokens/primitives.css → tokens/semantic.css → themes/*.css → contexts/*.cs
 | `base.css` | Global reset (scrollbar, links, box-sizing) | Rarely |
 
 Everything comes in through `@1337exp/taoui/styles.css` (dark and light both: light turns on with `data-tao-mode="light"`).
+A tap on a phone paints no system flash over a link or a button: `--tao-tap-highlight` is `transparent` on `<html>`; a colour there brings a flash of your own back.
 The raw files are importable as `@1337exp/taoui/styles/tokens/primitives.css` and so on.
 
 ### Your own theme

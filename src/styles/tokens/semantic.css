@@ -16,6 +16,13 @@
     --tao-shadow-panel: var(--tao-shadow-md);
     --tao-shadow-overlay: var(--tao-shadow-xl);
 
+    /* The flash a phone browser paints over a tapped link or button. Off by default: the system's own blue flash is not
+       ours to leave to chance (it differs by shell and fights the theme); the kit gives a tap its own feedback. A colour here
+       brings a flash of your own back.
+       Вспышка, которую браузер телефона рисует поверх нажатой ссылки или кнопки. По умолчанию выключена: системная синяя
+       вспышка зависит от оболочки и спорит с темой; отклик на нажатие даёт кит. Цвет здесь возвращает свою вспышку. */
+    --tao-tap-highlight: transparent;
+
     /* ---------- Typography / motion passthrough ---------- */
     --tao-font-family: var(--tao-font-family-base);
     /* Colours, shadow, opacity and transform only: `all` would also animate size, padding and the glass backdrop.

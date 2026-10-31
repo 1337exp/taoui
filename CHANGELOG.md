@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.18.0
+
+One visible change on a phone: a tap no longer flashes.
+
+- **No system flash on a tap.** Phone browsers paint a blue (or grey) square over a tapped link or button, and it differs by the shell and fights the theme. `styles.css` sets `-webkit-tap-highlight-color` from the new token `--tao-tap-highlight` (`transparent`) on `<html>`; the property is inherited, so every element gets it. A colour in the token brings a flash of your own back, anywhere in the tree. The kit gives a tap its own feedback instead of leaving it to the system; a row of `TaoList` has none yet, it is next.
+
 ## 5.17.2
 
 A fix; nothing to migrate.
