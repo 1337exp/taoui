@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.21.0
+
+Nothing to migrate; the defaults do not change.
+
+- **`TaoMarquee` `decorative`: a line that is only a picture.** For a marquee used as a design feature, in the background. A ghost: `aria-hidden` and `inert` (not a tab stop, nothing to select, no reaction to a cursor or a tap), `pointer-events: none`, and it runs round without a pause, like a looped GIF. Under «reduce motion» it stands still and is clipped, it does not wrap. Use it only for text nobody needs to read: the stop that WCAG 2.2.2 asks of moving content does not apply to pure decoration, and a screen reader will not see it.
+- **`TaoMarquee` `roundPause`.** The rest at the start of every round can be turned off for any line (`:round-pause="false"`): the round is one line plus the gap and the loop has no seam. Not set, it follows `decorative` (no rest) and an ordinary line keeps its rest.
+
 ## 5.20.1
 
 Nothing to migrate; the defaults do not change.

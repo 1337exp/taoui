@@ -37,6 +37,24 @@ const props = withDefaults(
          * Фокус всё равно останавливает, и пока строка бежит, она остаётся остановкой Tab.
          */
         pauseOnHover?: boolean;
+        /**
+         * A pause at the start of every round, to read the beginning. Off, the line runs round without a stop, like a
+         * looped picture. Without it set, a decorative line has no pause and an ordinary one has.
+         * Пауза в начале каждого круга, чтобы прочитать начало. Выключенная — строка бежит по кругу без остановок, как
+         * зацикленная картинка. Если не задана: у декоративной строки паузы нет, у обычной есть.
+         */
+        roundPause?: boolean;
+        /**
+         * A line that is only decoration (a background, a design feature) and carries no meaning: a ghost. Hidden from a
+         * screen reader, not a tab stop, nothing under a cursor or a finger reacts, the text cannot be selected, and it
+         * runs round without a pause. Only for text nobody needs to read: the stop that WCAG 2.2.2 asks of moving content
+         * does not apply to pure decoration. With «reduce motion» it stands still and is clipped, it does not wrap.
+         * Строка-декор (фон, приём дизайна) без смысла: призрак. Скрыта от скринридера, не остановка Tab, курсор и палец
+         * для неё пустое место, текст не выделяется, бежит по кругу без пауз. Только для текста, который никому не нужно
+         * читать: остановка, которую WCAG 2.2.2 требует от движения, чистому декору не нужна. При «уменьшить движение» стоит
+         * и обрезана, не переносится.
+         */
+        decorative?: boolean;
         /** Stopped by the app. / Остановлена приложением. */
         paused?: boolean;
     }>(),
@@ -46,6 +64,8 @@ const props = withDefaults(
         gap: 48,
         fade: 22,
         pauseOnHover: true,
+        roundPause: undefined,
+        decorative: false,
         paused: false,
     },
 );
@@ -68,7 +88,8 @@ let motionQuery: MediaQueryList | null = null;
 
 const overflowing = computed(() => itemWidth.value > boxWidth.value + 1);
 const running = computed(() => overflowing.value && !reduce.value);
-const wrapping = computed(() => overflowing.value && reduce.value);
+const wrapping = computed(() => overflowing.value && reduce.value && !props.decorative);
+const restAtStart = computed(() => props.roundPause ?? !props.decorative);
 const stopped = computed(() => props.paused || tapped.value);
 
 const trackStyle = computed(() => {
@@ -98,7 +119,7 @@ function onMotionChange() {
 
 function onPointerUp(event: PointerEvent) {
     // a finger stops and starts it; a mouse has hover for that / палец останавливает и запускает; у мыши есть наведение
-    if (props.pauseOnHover && running.value && event.pointerType !== 'mouse') {
+    if (!props.decorative && props.pauseOnHover && running.value && event.pointerType !== 'mouse') {
         tapped.value = !tapped.value;
     }
 }
@@ -144,10 +165,14 @@ const hasSlot = computed(() => Boolean(slots.default));
             'tao-marquee--run': running,
             'tao-marquee--wrap': wrapping,
             'tao-marquee--stopped': stopped,
-            'tao-marquee--hover-pause': pauseOnHover,
+            'tao-marquee--hover-pause': pauseOnHover && !decorative,
+            'tao-marquee--seamless': !restAtStart,
+            'tao-marquee--ghost': decorative,
         }"
         :style="{ '--_fade': `${fade}px` }"
-        :tabindex="running ? 0 : undefined"
+        :tabindex="running && !decorative ? 0 : undefined"
+        :aria-hidden="decorative ? 'true' : undefined"
+        :inert="decorative || undefined"
         @pointerup="onPointerUp"
     >
         <!-- the hidden copy that measures the natural width / скрытая копия для замера -->
@@ -186,6 +211,12 @@ const hasSlot = computed(() => Boolean(slots.default));
 
 /* a background line: nothing to select in text that runs away / строка-фон: в убегающем тексте нечего выделять */
 .tao-marquee--run:not(.tao-marquee--hover-pause) {
+    user-select: none;
+}
+
+/* a ghost: nothing to point at, select or reach / призрак: ни навести, ни выделить, ни дойти */
+.tao-marquee--ghost {
+    pointer-events: none;
     user-select: none;
 }
 
@@ -233,10 +264,24 @@ const hasSlot = computed(() => Boolean(slots.default));
         animation: tao-marquee var(--_duration) linear infinite;
     }
 
+    .tao-marquee--run.tao-marquee--seamless .tao-marquee__track {
+        animation-name: tao-marquee-seamless;
+    }
+
     .tao-marquee--stopped .tao-marquee__track,
     .tao-marquee--run:focus-within .tao-marquee__track,
     .tao-marquee--hover-pause.tao-marquee--run:hover .tao-marquee__track {
         animation-play-state: paused;
+    }
+}
+
+/* no pause: the round is one line plus the gap, so the loop has no seam / без паузы: круг — строка плюс зазор, шва нет */
+@keyframes tao-marquee-seamless {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(var(--_shift));
     }
 }
 

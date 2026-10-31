@@ -66,19 +66,22 @@ const cards = computed(() => [
     <Tr>
       <template #en>
         <p class="marquee-demo__note">
-          As a design feature, in the background: <code>:pause-on-hover="false"</code>. The cursor passing by does not stop it and
-          its text cannot be selected; focus still stops it.
+          As a design feature, in the background: <code>decorative</code>. A ghost: hidden from a screen reader, not a tab stop, the
+          cursor and a tap do nothing, the text cannot be selected, and it runs without a pause between rounds, like a looped
+          picture. Only for text nobody needs to read. <code>:pause-on-hover="false"</code> alone just stops the stopping under
+          the cursor.
         </p>
       </template>
       <template #ru>
         <p class="marquee-demo__note">
-          Как приём дизайна, фоном: <code>:pause-on-hover="false"</code>. Мимо идущий курсор её не останавливает, а текст не
-          выделяется; фокус всё равно останавливает.
+          Как приём дизайна, фоном: <code>decorative</code>. Призрак: скрыта от скринридера, не остановка Tab, курсор и тап ничего
+          не делают, текст не выделяется, а между кругами нет паузы, как у зацикленной картинки. Только для текста, который
+          никому не нужно читать. Один <code>:pause-on-hover="false"</code> лишь убирает остановку под курсором.
         </p>
       </template>
     </Tr>
     <div class="marquee-demo__line">
-      <TaoMarquee :speed="Number(speed)" :paused="paused" :pause-on-hover="false">
+      <TaoMarquee :speed="Number(speed)" :paused="paused" decorative>
         TAOUI · TOKENS · THEMES · PALETTES · CONTEXTS · TAOUI · TOKENS · THEMES · PALETTES · CONTEXTS · TAOUI · TOKENS · THEMES
       </TaoMarquee>
     </div>
@@ -90,8 +93,8 @@ const cards = computed(() => [
   Now playing: &lt;b&gt;Nils Frahm — Says&lt;/b&gt; · &lt;a href="…"&gt;open&lt;/a&gt;
 &lt;/TaoMarquee&gt;
 
-&lt;!-- a background line: the cursor does not stop it, no selection --&gt;
-&lt;TaoMarquee :pause-on-hover="false" text="…" /&gt;</code></pre>
+&lt;!-- a decorative line: a ghost, no pause between rounds --&gt;
+&lt;TaoMarquee decorative text="…" /&gt;</code></pre>
     </div>
   </ShowcaseSection>
 </template>
