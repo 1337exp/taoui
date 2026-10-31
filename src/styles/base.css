@@ -21,6 +21,12 @@ body {
     color: var(--tao-color-text);
 }
 
+/* inherited: one declaration covers every element; set `--tao-tap-highlight` for another colour
+   наследуется: одной строки хватает на все элементы; другой цвет — через `--tao-tap-highlight` */
+html {
+    -webkit-tap-highlight-color: var(--tao-tap-highlight);
+}
+
 ::selection {
     color: var(--tao-color-selection-text);
     background-color: var(--tao-color-selection);

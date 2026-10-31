@@ -643,6 +643,7 @@ tokens/primitives.css → tokens/semantic.css → themes/*.css → contexts/*.cs
 | `base.css` | Глобальный reset (скроллбар, ссылки, box-sizing) | Редко |
 
 Всё подключается одним файлом `@1337exp/taoui/styles.css` (и dark, и light: light включается атрибутом `data-tao-mode="light"`).
+Нажатие на телефоне не даёт системной вспышки поверх ссылки или кнопки: `--tao-tap-highlight` на `<html>` равен `transparent`; свой цвет возвращает вспышку.
 Сырые файлы доступны как `@1337exp/taoui/styles/tokens/primitives.css` и так далее.
 
 ### Как сделать свою тему
