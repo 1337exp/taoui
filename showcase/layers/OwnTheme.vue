@@ -101,6 +101,13 @@ const ratings = computed(() => themeRatings(values.value))
   font-size: 13px;
 }
 
+/* a colour field is as wide as its swatch and code: in a grid it would be stretched to the cell, and so would the click
+   поле цвета по ширине равно образцу и коду: в сетке его растянуло бы на ячейку, а с ним и клик */
+.own-theme__field :deep(.tao-color-input-root) {
+  justify-self: start;
+  max-width: 100%;
+}
+
 .own-theme__ratings {
   display: grid;
   gap: 6px;
