@@ -96,10 +96,8 @@ const short = (role) => role.replace('--tao-color-', '')
   display: grid;
   align-content: start;
   gap: 8px;
-  max-height: 380px;
   margin: 0;
-  padding: 0 8px 0 0;
-  overflow-y: auto;
+  padding: 0;
   list-style: none;
 }
 
@@ -181,11 +179,6 @@ const short = (role) => role.replace('--tao-color-', '')
 @container (max-width: 760px) {
   .contrast-live {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .contrast-live__roles {
-    max-height: none;
-    padding-right: 0;
   }
 }
 </style>

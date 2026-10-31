@@ -41,7 +41,8 @@ defineProps({
   margin-bottom: 16px;
 }
 
-.a11y-panel__title {
+/* the head in front: the page's own h3 rule (with margins) is as specific as a single class */
+.a11y-panel__head .a11y-panel__title {
   display: flex;
   align-items: center;
   gap: 8px;
