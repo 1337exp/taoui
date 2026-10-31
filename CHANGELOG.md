@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.17.2
+
+A fix; nothing to migrate.
+
+- **`toast()`: a loading toast turns into its result smoothly.** The tone changed at once when the work finished: the bar, the icon and the tinted background jumped from the accent to green or red. Now the colours follow in 0.3 s, the ring gives way to the result icon that comes in, and with `prefers-reduced-motion` nothing is animated.
+- **`toast()`: the accent bar and the progress line are not cut by a large radius.** With `--tao-radius-panel` of 20px and more the curve of the corners cut both marks down to a hair. They keep away from the corners now by 60% of the radius (up to 24px) and have rounded ends, so they lie on the straight part with any radius. `--tao-toast-edge` sets the distance (`0` brings the flush look back). `TaoCard` `stripe` stays clipped by the corners: it is a decoration, the toast marks tell the tone and the time.
+
 ## 5.17.1
 
 A fix; nothing to migrate.

@@ -157,6 +157,11 @@ onBeforeUnmount(() => {
 <style scoped>
 .tao-toast {
     --tao-toast-tone: var(--tao-tone);
+    /* how far the accent bar and the progress line stay from the rounded corners: they sit on the straight part and are
+       not cut by the curve; `--tao-toast-edge: 0` brings the flush look back
+       насколько полоса и шкала времени отступают от скруглённых углов: они лежат на прямой части и не режутся кривой;
+       `--tao-toast-edge: 0` возвращает прежний вид */
+    --_edge: var(--tao-toast-edge, min(calc(var(--tao-radius-panel) * 0.6), var(--tao-space-6)));
 
     position: relative;
     display: flex;
@@ -177,6 +182,11 @@ onBeforeUnmount(() => {
     border-radius: var(--tao-radius-panel);
     box-shadow: var(--tao-toast-shadow, 0 2px 8px rgb(0 0 0 / 0.12));
     pointer-events: auto;
+    /* a loading toast that finishes changes its tone in place: the colours follow, they do not jump
+       тост загрузки, закончившись, меняет тон на месте: цвета переходят плавно, а не прыгают */
+    transition:
+        background-color var(--tao-duration-slow) var(--tao-ease-base),
+        border-color var(--tao-duration-slow) var(--tao-ease-base);
 }
 
 /* Glass keeps the tone tint; its own edge replaces the border. / Стекло сохраняет оттенок тона; край стекла вместо рамки. */
@@ -188,9 +198,11 @@ onBeforeUnmount(() => {
 
 .tao-toast__accent {
     position: absolute;
-    inset: 0 auto 0 0;
+    inset: var(--_edge) auto var(--_edge) 0;
     width: 3px;
+    border-radius: 0 var(--tao-radius-full) var(--tao-radius-full) 0;
     background: var(--tao-toast-tone);
+    transition: background-color var(--tao-duration-slow) var(--tao-ease-base);
 }
 
 .tao-toast__icon {
@@ -198,6 +210,19 @@ onBeforeUnmount(() => {
     flex-shrink: 0;
     margin-top: 1px;
     color: var(--tao-toast-tone);
+    transition: color var(--tao-duration-slow) var(--tao-ease-base);
+}
+
+/* the ring gives way to the result icon: it comes in, it does not pop / кольцо уступает место значку результата: он появляется плавно */
+.tao-toast__icon > :not(.tao-toast__spinner) {
+    animation: tao-toast-icon-in var(--tao-duration-base) var(--tao-ease-base) both;
+}
+
+@keyframes tao-toast-icon-in {
+    from {
+        opacity: 0;
+        transform: scale(0.7);
+    }
 }
 
 /* the spinner of a loading toast: a ring the size of the icons / кольцо загрузки размером с иконку */
@@ -220,6 +245,16 @@ onBeforeUnmount(() => {
 @media (prefers-reduced-motion: reduce) {
     .tao-toast__spinner {
         animation-duration: 2.4s;
+    }
+
+    .tao-toast,
+    .tao-toast__accent,
+    .tao-toast__icon {
+        transition: none;
+    }
+
+    .tao-toast__icon > :not(.tao-toast__spinner) {
+        animation: none;
     }
 }
 
@@ -303,10 +338,11 @@ onBeforeUnmount(() => {
 
 .tao-toast__progress {
     position: absolute;
-    left: 0;
-    right: 0;
+    left: var(--_edge);
+    right: var(--_edge);
     bottom: 0;
     height: 2px;
+    border-radius: var(--tao-radius-full);
     transform-origin: left center;
     background: var(--tao-toast-tone);
     animation-name: tao-toast-progress;
