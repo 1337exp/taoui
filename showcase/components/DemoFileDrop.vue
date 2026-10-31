@@ -10,6 +10,8 @@ defineOptions({ name: 'DemoFileDrop' })
 
 const filesInstant = ref([])
 const filesConfirm = ref([])
+const filesJson = ref([])
+const refused = ref([])
 async function requestClearConfirm() {
   const ok = await confirm()
     .title(tr('Delete the files?', 'Удалить файлы?'))
@@ -67,8 +69,19 @@ async function requestClearConfirm() {
           </TaoFileDrop>
           <p style="margin-top: 4px; font-size: 13px;">{{ tr('Files', 'Файлов') }}: {{ filesConfirm.length }}</p>
     
+          <h3>{{ tr('A file that does not fit', 'Файл не подошёл') }}</h3>
+          <p>
+            {{ tr('The zone takes .json only. A refused file is not in v-model; reject hands it over so you can say why.', 'Зона берёт только .json. Отклонённого файла нет в v-model; reject передаёт его, чтобы вы объяснили причину.') }}
+          </p>
+          <TaoFileDrop v-model="filesJson" class="demo-wide" accept=".json" @reject="refused = $event.map((file) => file.name)" />
+          <p v-if="refused.length" style="margin-top: 4px; font-size: 13px; color: var(--tao-color-danger-text);">
+            {{ tr('Not .json', 'Не .json') }}: {{ refused.join(', ') }}
+          </p>
+
           <div class="code-block">
             <pre><code>&lt;TaoFileDrop v-model="files" multiple show-clear @clear-request="files = []" /&gt;
+
+&lt;TaoFileDrop v-model="files" accept=".json" @reject="(rejected) => say(rejected)" /&gt;
 
 &lt;TaoFileDrop
   v-model="files"

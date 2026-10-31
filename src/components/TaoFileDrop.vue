@@ -3,6 +3,7 @@ import TaoIcon from './TaoIcon.vue';
 import { useControlAttrs } from '../controlAttrs';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
+import { partitionByAccept } from '../fileAccept';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText, useTaoLocale } from '../locale';
 
@@ -46,6 +47,8 @@ const emit = defineEmits<{
     'update:modelValue': [files: File[]];
     /** The user added or removed files. / Пользователь добавил или убрал файлы. */
     change: [files: File[]];
+    /** Files that did not pass `accept` were left out: the list is what the user chose that fits. / Файлы, не прошедшие `accept`, отброшены. */
+    reject: [files: File[]];
     /** Запрос на очистку — компонент НЕ очищает себя сам. Родитель решает:
      * очистить сразу (emit → v-model = []) или сперва показать модалку
      * подтверждения и очистить только после ответа пользователя. */
@@ -57,35 +60,6 @@ const fileInput = ref<HTMLInputElement | null>(null);
 
 function sameFile(a: File, b: File) {
     return a.name === b.name && a.size === b.size && a.lastModified === b.lastModified;
-}
-
-function acceptTokens(accept: string) {
-    return accept
-        .split(',')
-        .map((token) => token.trim().toLowerCase())
-        .filter(Boolean);
-}
-
-function fileMatchesAccept(file: File, accept: string) {
-    const tokens = acceptTokens(accept);
-    if (!tokens.length || tokens.includes('*') || tokens.includes('*/*')) {
-        return true;
-    }
-
-    const name = file.name.toLowerCase();
-    const mime = (file.type || '').toLowerCase();
-    const dot = name.lastIndexOf('.');
-    const ext = dot >= 0 ? name.slice(dot) : '';
-
-    return tokens.some((token) => {
-        if (token.startsWith('.')) {
-            return ext === token;
-        }
-        if (token.endsWith('/*')) {
-            return mime.startsWith(token.slice(0, -1));
-        }
-        return mime === token;
-    });
 }
 
 function commit(files: File[]) {
@@ -136,7 +110,10 @@ function resetInput() {
 }
 
 function processFiles(fileList: FileList) {
-    const incoming = Array.from(fileList).filter((file) => fileMatchesAccept(file, props.accept));
+    const { accepted: incoming, rejected } = partitionByAccept(Array.from(fileList), props.accept);
+    if (rejected.length) {
+        emit('reject', rejected);
+    }
     if (!incoming.length) {
         resetInput();
         return;

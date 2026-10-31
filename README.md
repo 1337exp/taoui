@@ -98,7 +98,7 @@
 - **TaoSlider** / **TaoRangeSlider** — one thumb (`v-model` is a number) or two (`[from, to]`, `minGap`). Mouse, touch, arrows. `marks` (ticks, numbers, `{ value, label }`), `discrete` for stepped scales, `vertical`, `flat`, `format`; `variant="thin"` is a thin track for seek / volume
 - **TaoColorPicker** — saturation / brightness square, hue and opacity strips, swatches, eyedropper (where the browser has `EyeDropper`), HEX / RGB / HSL input modes. `v-model` is a hex string; `colorModel()` adapts your own colour storage
 - **TaoColorInput** — a field with a swatch and the hex text; the picker opens in a popover
-- **TaoFileDrop** — drop zone (drag & drop + click). File names listed under the zone, `v-model` is `File[]`. Clearing the whole batch is the parent’s job (`clear-request`)
+- **TaoFileDrop** — drop zone (drag & drop + click). File names listed under the zone, `v-model` is `File[]`. Clearing the whole batch is the parent’s job (`clear-request`); a file that does not fit `accept` comes back in `reject`
 
 ### Data display
 
