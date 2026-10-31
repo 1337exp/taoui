@@ -59,7 +59,7 @@
 - **TaoInput** — text field with v-model, validation, and `#prefix` / `#suffix` slots (icon or text inside the frame); `variant` `outline` / `filled` / `plain` (no frame: an item of a list being edited; `TaoInputNumber`, `TaoCombobox` and `TaoTextarea` take it too)
 - **TaoInputGroup** — outer glue: `#before` | field | `#after` (protocol, unit, button)
 - **TaoModal** — modal with animation and slots; `fullscreen` (or `fullscreen="narrow"`: a page on a phone, a dialog on a computer); `surface="grain"` / `"glass"`, class and attributes on the dialog panel; the content scrolls under a header and a footer that stay
-- **TaoDrawer** — side panel (filters, settings), or a bottom sheet with `side="bottom"`. Esc, backdrop click, focus trap — same as the modal; `surface`, class and attributes on the panel
+- **TaoDrawer** — side panel (filters, settings), or a bottom sheet with `side="bottom"`. Esc, backdrop click, focus trap — same as the modal; `surface`, class and attributes on the panel. The sheet is pulled down by its grip and header (`swipeToClose`); `show-close="false"` hides only the cross, `#header` is a header of your own
 - **TaoSpoiler** — disclosure. `v-model` and `aria-expanded`. Neighbours do not close each other
 - **TaoSpoilerGroup** — accordion: `v-model` is the open panel key (`null` = all closed); spoilers take `name`. Without `v-model` the group keeps that key itself
 - **TaoTabs** — tabbed sections

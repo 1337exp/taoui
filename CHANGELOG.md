@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.19.0
+
+Nothing to migrate.
+
+- **`TaoDrawer` as a bottom sheet of your own.** A sheet (`side="bottom"`) is pulled down by its grip and header now (`swipeToClose`, on by default): it closes when pulled a third of its height or flung, comes back otherwise, and the backdrop lets go as it goes. The pull starts only from the grip and the header, never from a button or a field in it, so the content still scrolls. It needs `closable`, and if the parent keeps `v-model` open the sheet returns.
+- **`show-close="false"` hides only the cross.** `closable="false"` still means that only the parent closes it (no cross, no backdrop, no Escape, no pull); `showClose` is just the cross, the rest keeps working: a sheet with no cross that is pulled down.
+- **`#header="{ close }"` replaces the whole header** (a title with a counter, a filter, a cross of your own). Name the panel for a screen reader with `aria-label`. The showcase has the comments of a video built from this, with `#footer` as the line to type in.
+- The pull-down is plain pointer events, no dependency on TaoUX; the maths is `src/sheetDrag.ts`.
+
 ## 5.18.0
 
 One visible change on a phone: a tap no longer flashes.

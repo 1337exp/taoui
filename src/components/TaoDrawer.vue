@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
-import { nextTick, ref, useId, watch } from 'vue';
+import { computed, nextTick, ref, useId, watch } from 'vue';
 import { getFocusable, trapTab } from '../focusTrap';
 import { useLayer } from '../layers';
 import { useLocaleText } from '../locale';
+import { releaseVelocity, sheetOffset, shouldDismissSheet, type SheetSample } from '../sheetDrag';
 import { surfaceClass, type TaoSurface } from '../surface';
 
 // class, style and the other attributes go to the panel, not to the layer around it
@@ -28,7 +29,23 @@ const props = withDefaults(
          * стекло (сплошное, где размытия нет).
          */
         surface?: TaoSurface;
+        /**
+         * The user can close it: the cross, a click on the backdrop, Escape and the pull-down of a sheet. `false`: only the
+         * parent closes it.
+         * Пользователь может его закрыть: крестик, клик по подложке, Escape и жест «потянуть вниз» у листа. `false`: закрывает только родитель.
+         */
         closable?: boolean;
+        /**
+         * The cross in the header. `false` hides only the cross: the backdrop, Escape and the pull-down still close it.
+         * Крестик в шапке. `false` прячет только крестик: подложка, Escape и жест «вниз» по-прежнему закрывают.
+         */
+        showClose?: boolean;
+        /**
+         * `side="bottom"`: the sheet is pulled down by its grip and header, and closes when pulled far enough or flung; it
+         * comes back otherwise. Needs `closable`.
+         * `side="bottom"`: лист тянут вниз за ручку и шапку; он закрывается, если утянут далеко или брошен, иначе возвращается. Нужен `closable`.
+         */
+        swipeToClose?: boolean;
         closeLabel?: string;
     }>(),
     {
@@ -36,6 +53,8 @@ const props = withDefaults(
         side: 'right',
         surface: 'flat',
         closable: true,
+        showClose: true,
+        swipeToClose: true,
     },
 );
 const l10n = useLocaleText(props, 'drawer');
@@ -43,7 +62,9 @@ const l10n = useLocaleText(props, 'drawer');
 const emit = defineEmits(['update:modelValue', 'close']);
 
 const panelRef = ref<HTMLElement | null>(null);
+const rootRef = ref<HTMLElement | null>(null);
 const titleId = useId();
+const showCloseButton = computed(() => props.closable && props.showClose);
 
 function close() {
     if (!props.closable) {
@@ -51,6 +72,110 @@ function close() {
     }
     emit('update:modelValue', false);
     emit('close');
+}
+
+// The pull-down of a sheet: from the grip and the header (not from a button or a field in it), so the content still scrolls.
+// Жест «вниз» у листа: от ручки и шапки (не от кнопки или поля в ней), поэтому содержимое по-прежнему прокручивается.
+const SWIPE_FROM = '.tao-drawer__grip, .tao-drawer__header';
+const SWIPE_NOT_FROM = 'button, a, input, select, textarea, label, [role="button"], [contenteditable]';
+const swipeable = computed(() => props.side === 'bottom' && props.swipeToClose && props.closable);
+
+interface SheetDrag {
+    pointerId: number;
+    startY: number;
+    moved: boolean;
+    offset: number;
+    samples: SheetSample[];
+}
+let drag: SheetDrag | null = null;
+
+const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+
+function setSheet(offset: number | null, animate: boolean) {
+    const panel = panelRef.value;
+    if (!panel) {
+        return;
+    }
+    panel.style.transition = animate && !reducedMotion() ? 'transform var(--tao-duration-base) var(--tao-ease-base)' : 'none';
+    panel.style.transform = offset === null ? '' : `translateY(${offset}px)`;
+    const height = panel.offsetHeight;
+    rootRef.value?.style.setProperty('--_sheet-progress', offset && height ? String(Math.min(1, offset / height)) : '0');
+}
+
+function settleSheet() {
+    setSheet(null, true);
+    window.setTimeout(() => {
+        if (panelRef.value && !drag) {
+            panelRef.value.style.transition = '';
+        }
+    }, 250);
+}
+
+// keeping the pointer while it leaves the header; it may be gone already (a cancelled touch), then there is nothing to keep
+// держим указатель, пока он выходит за шапку; он мог уже пропасть (отменённое касание), тогда держать нечего
+function capture(pointerId: number, on: boolean) {
+    try {
+        if (on) {
+            panelRef.value?.setPointerCapture?.(pointerId);
+        } else {
+            panelRef.value?.releasePointerCapture?.(pointerId);
+        }
+    } catch {
+        /* no such pointer */
+    }
+}
+
+function onPointerDown(event: PointerEvent) {
+    if (!swipeable.value || drag || !event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0)) {
+        return;
+    }
+    const target = event.target as Element | null;
+    if (!target?.closest(SWIPE_FROM) || target.closest(SWIPE_NOT_FROM)) {
+        return;
+    }
+    drag = { pointerId: event.pointerId, startY: event.clientY, moved: false, offset: 0, samples: [{ t: event.timeStamp, y: event.clientY }] };
+    capture(event.pointerId, true);
+}
+
+function onPointerMove(event: PointerEvent) {
+    if (!drag || event.pointerId !== drag.pointerId) {
+        return;
+    }
+    const delta = event.clientY - drag.startY;
+    if (!drag.moved && Math.abs(delta) < 4) {
+        return;
+    }
+    drag.moved = true;
+    drag.offset = sheetOffset(delta);
+    drag.samples.push({ t: event.timeStamp, y: event.clientY });
+    if (drag.samples.length > 8) {
+        drag.samples.shift();
+    }
+    setSheet(drag.offset, false);
+}
+
+async function onPointerEnd(event: PointerEvent) {
+    const current = drag;
+    if (!current || event.pointerId !== current.pointerId) {
+        return;
+    }
+    drag = null;
+    capture(event.pointerId, false);
+    if (!current.moved) {
+        return;
+    }
+    const height = panelRef.value?.offsetHeight ?? 0;
+    if (event.type === 'pointerup' && shouldDismissSheet(current.offset, height, releaseVelocity(current.samples))) {
+        setSheet(height, true);
+        close();
+        await nextTick();
+        // the parent kept it open (it refused to close): the sheet comes back / родитель оставил открытым: лист возвращается
+        if (props.modelValue) {
+            settleSheet();
+        }
+    } else {
+        settleSheet();
+    }
 }
 
 async function focusPanel() {
@@ -86,7 +211,7 @@ watch(
 <template>
     <Teleport to="body">
         <Transition :name="`tao-drawer-${side}`">
-            <div v-if="modelValue" class="tao-drawer" :class="`tao-drawer--${side}`" @keydown="onKeydown">
+            <div v-if="modelValue" ref="rootRef" class="tao-drawer" :class="`tao-drawer--${side}`" @keydown="onKeydown">
                 <div class="tao-drawer__overlay" @click="close"></div>
                 <aside
                     v-bind="$attrs"
@@ -97,23 +222,31 @@ watch(
                     aria-modal="true"
                     :aria-labelledby="title ? titleId : undefined"
                     tabindex="-1"
+                    @pointerdown="onPointerDown"
+                    @pointermove="onPointerMove"
+                    @pointerup="onPointerEnd"
+                    @pointercancel="onPointerEnd"
                 >
                     <!-- the sheet's grip: only a sign that it is a sheet / ручка листа: только знак, что это лист -->
                     <span v-if="side === 'bottom'" class="tao-drawer__grip" aria-hidden="true" />
-                    <div v-if="title || closable" class="tao-drawer__header">
-                        <h2 v-if="title" :id="titleId" class="tao-drawer__title">{{ title }}</h2>
-                        <span v-else></span>
-                        <button
-                            v-if="closable"
-                            type="button"
-                            class="tao-drawer__close"
-                            :aria-label="l10n.closeLabel"
-                            @click="close"
-                        >
-                            <span aria-hidden="true">
-                                <slot name="close-icon"><TaoIcon name="tao-close" /></slot>
-                            </span>
-                        </button>
+                    <div v-if="$slots.header || title || showCloseButton" class="tao-drawer__header">
+                        <!-- #header takes the whole header (a title with a counter, a filter, your own cross): `close` is the way out
+                             #header занимает всю шапку (заголовок со счётчиком, фильтр, свой крестик): `close` — выход -->
+                        <slot name="header" :close="close">
+                            <h2 v-if="title" :id="titleId" class="tao-drawer__title">{{ title }}</h2>
+                            <span v-else></span>
+                            <button
+                                v-if="showCloseButton"
+                                type="button"
+                                class="tao-drawer__close"
+                                :aria-label="l10n.closeLabel"
+                                @click="close"
+                            >
+                                <span aria-hidden="true">
+                                    <slot name="close-icon"><TaoIcon name="tao-close" /></slot>
+                                </span>
+                            </button>
+                        </slot>
                     </div>
                     <div class="tao-drawer__content">
                         <slot />
@@ -153,6 +286,8 @@ watch(
     position: absolute;
     inset: 0;
     background: var(--tao-color-overlay);
+    /* the backdrop lets go as the sheet is pulled down / подложка отпускает по мере того, как лист тянут вниз */
+    opacity: calc(1 - var(--_sheet-progress, 0));
 }
 
 .tao-drawer__panel {
@@ -187,12 +322,27 @@ watch(
 }
 
 .tao-drawer__grip {
+    position: relative;
     flex: none;
     width: 36px;
     height: 4px;
     margin: var(--tao-space-2) auto 0;
     border-radius: var(--tao-radius-full);
     background: var(--tao-color-border-strong);
+}
+
+/* a finger is wider than 4px: the grip is caught from a generous patch around it / палец шире 4px: ручку берут с щедрой площадки вокруг неё */
+.tao-drawer__grip::before {
+    content: '';
+    position: absolute;
+    inset: calc(var(--tao-space-3) * -1) calc(var(--tao-space-6) * -1);
+}
+
+/* the pull-down starts here, so the browser must not take the gesture for a scroll or a pull-to-refresh
+   жест начинается здесь, и браузер не должен принимать его за прокрутку или обновление свайпом */
+.tao-drawer--bottom .tao-drawer__grip,
+.tao-drawer--bottom .tao-drawer__header {
+    touch-action: none;
 }
 
 .tao-drawer--bottom .tao-drawer__header {
