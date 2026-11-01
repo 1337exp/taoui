@@ -23,13 +23,15 @@ describe('sheetDrag', () => {
         expect(shouldDismissSheet(100, 300, 0)).toBe(false);
     });
 
-    it('closes on a fast fling that went 15% of the height, not on a flick or a slow drift', () => {
-        expect(shouldDismissSheet(100, 600, 0.8)).toBe(true);
-        expect(shouldDismissSheet(90, 600, 0.7)).toBe(true);
-        expect(shouldDismissSheet(80, 600, 0.8)).toBe(false);
-        expect(shouldDismissSheet(40, 600, 0.8)).toBe(false);
-        expect(shouldDismissSheet(10, 600, 2)).toBe(false);
-        expect(shouldDismissSheet(100, 600, 0.6)).toBe(false);
+    it('closes on a hard fling that went 15% of the height, not on a flick, a light swipe or a slow drift', () => {
+        expect(shouldDismissSheet(100, 600, 1.4)).toBe(true);
+        expect(shouldDismissSheet(90, 600, 1.2)).toBe(true);
+        expect(shouldDismissSheet(80, 600, 1.4)).toBe(false);
+        expect(shouldDismissSheet(40, 600, 1.4)).toBe(false);
+        expect(shouldDismissSheet(10, 600, 3)).toBe(false);
+        // a light swipe (0.8 px/ms, closed it before 5.22.0) and a brisk one (1.1) are only a pull: the sheet comes back
+        expect(shouldDismissSheet(100, 600, 0.8)).toBe(false);
+        expect(shouldDismissSheet(100, 600, 1.1)).toBe(false);
     });
 
     it('the threshold is yours: a share of the height, kept between 5% and the whole height', () => {
@@ -37,7 +39,7 @@ describe('sheetDrag', () => {
         expect(shouldDismissSheet(100, 300, 0, 0.67)).toBe(false);
         expect(shouldDismissSheet(210, 300, 0, 0.67)).toBe(true);
         // a low threshold: the fling path is not longer than the threshold itself
-        expect(shouldDismissSheet(20, 300, 0.8, 0.05)).toBe(true);
+        expect(shouldDismissSheet(20, 300, 1.4, 0.05)).toBe(true);
         // nonsense falls back or is held in range
         expect(shouldDismissSheet(150, 300, 0, Number.NaN)).toBe(true);
         expect(shouldDismissSheet(150, 300, 0, 5)).toBe(false);

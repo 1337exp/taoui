@@ -100,8 +100,10 @@ const isRow = computed(() => props.direction === 'row');
     color: inherit;
 }
 
+/* the box of the icon is exactly its svg: a block span would add the line gap under the svg, lift the icon off the middle of the label and spin it around a point that is not its centre
+   бокс иконки ровно по её svg: блочная обёртка добавила бы щель строки под svg, подняла иконку над серединой подписи и вращала бы её вокруг не её центра */
 .tao-stages__mark {
-    display: block;
+    display: flex;
 }
 
 .tao-stages__label {
