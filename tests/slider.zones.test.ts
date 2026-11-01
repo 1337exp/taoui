@@ -4,7 +4,7 @@ import TaoSlider from '../src/components/TaoSlider.vue';
 import TaoRangeSlider from '../src/components/TaoRangeSlider.vue';
 // @ts-expect-error Vite `?raw` import: the component source as text
 import source from '../src/components/TaoSliderBase.vue?raw';
-import { normalizeZones, zoneAt, zoneColor, zoneGradient } from '../src/slider';
+import { normalizeZones, zoneAt, zoneColor, zoneGradient, zoneOn } from '../src/slider';
 
 // 5.22.0: zones of the scale in colour: each runs to its `to`, a dot where it ends, the thumb in the colour of its zone.
 // 5.22.0: зоны шкалы цветом: каждая идёт до своего `to`, точка там, где кончается, ручка цвета своей зоны.
@@ -15,6 +15,19 @@ describe('slider zones: the logic', () => {
         expect(zoneColor({ tone: 'danger' })).toBe('var(--tao-color-danger)');
         expect(zoneColor({})).toBe('var(--tao-color-accent)');
         expect(zoneColor({ tone: 'neutral' })).toBe('var(--tao-color-text-muted)');
+    });
+
+    it('the label on a zone: the on- role of the tone, black or white for a colour of your own, empty when it cannot be read', () => {
+        expect(zoneOn({ tone: 'danger' })).toBe('var(--tao-color-on-danger)');
+        expect(zoneOn({})).toBe('var(--tao-color-on-accent)');
+        expect(zoneOn({ tone: 'neutral' })).toBe('var(--tao-color-bg)');
+        expect(zoneOn({ color: '#ffffff' })).toBe('#0d0d0d');
+        expect(zoneOn({ color: '#102030' })).toBe('#ffffff');
+        expect(zoneOn({ color: 'rgb(255 214 0)' })).toBe('#0d0d0d');
+        expect(zoneOn({ color: 'hsl(250 60% 25%)' })).toBe('#ffffff');
+        expect(zoneOn({ color: 'rebeccapurple' })).toBe('');
+        expect(zoneOn({ color: 'var(--mine)' })).toBe('');
+        expect(normalizeZones([{ to: 100, tone: 'success' }], 0, 100)[0]!.on).toBe('var(--tao-color-on-success)');
     });
 
     it('each zone runs from the end of the previous one; the last is stretched to max', () => {
@@ -133,5 +146,74 @@ describe('slider zones: the component', () => {
         expect(source).toMatch(/\.tao-slider__zones--dim \{\s*background: var\(--_zones-dim\);\s*opacity: 0\.4/);
         expect(source).toMatch(/\.tao-slider__dot \{[^}]*pointer-events: none/);
         expect(source).toContain('.tao-slider--invalid .tao-slider__track:not(.tao-slider__zones)');
+    });
+});
+
+describe('slider bubble', () => {
+    const zones = [{ to: 30, tone: 'info' as const }, { to: 100, tone: 'danger' as const }];
+
+    it('off by default: no bubble, no class, so what exists does not change', () => {
+        const w = mount(TaoSlider, { props: { modelValue: 50, zones } });
+        expect(w.find('.tao-slider__bubble').exists()).toBe(false);
+        expect(w.classes()).not.toContain('tao-slider--bubble');
+    });
+
+    it('with bubble: the text of the value (format counts), hidden from a screen reader that has aria-valuetext', () => {
+        const w = mount(TaoSlider, { props: { modelValue: 434, max: 500, bubble: true, format: (v: number) => `${v}%` } });
+        const bubble = w.find('.tao-slider__bubble');
+        expect(bubble.text()).toBe('434%');
+        expect(bubble.attributes('aria-hidden')).toBe('true');
+        expect(w.find('[role="slider"]').attributes('aria-valuetext')).toBe('434%');
+        expect(bubble.attributes('style')).toContain('left: 86.8%');
+        expect(w.classes()).toContain('tao-slider--bubble');
+        expect(w.classes()).not.toContain('tao-slider--bubble-always');
+    });
+
+    it("'always' keeps it on; the accent is the colour without zones", () => {
+        const w = mount(TaoSlider, { props: { modelValue: 50, bubble: 'always' } });
+        expect(w.classes()).toContain('tao-slider--bubble-always');
+        const style = w.find('.tao-slider__bubble').attributes('style')!;
+        expect(style).toContain('--_bg: var(--tao-color-accent)');
+        expect(style).toContain('--_on: var(--tao-color-on-accent)');
+    });
+
+    it('it takes the colour of the zone the thumb stands in, and a label that reads on it', async () => {
+        const w = mount(TaoSlider, { props: { modelValue: 20, bubble: true, zones } });
+        expect(w.find('.tao-slider__bubble').attributes('style')).toContain('--_bg: var(--tao-color-info)');
+        expect(w.find('.tao-slider__bubble').attributes('style')).toContain('--_on: var(--tao-color-on-info)');
+        await w.setProps({ modelValue: 80 });
+        expect(w.find('.tao-slider__bubble').attributes('style')).toContain('--_bg: var(--tao-color-danger)');
+    });
+
+    it('a colour of your own: black or white by contrast, and the browser decides when the script cannot read it', () => {
+        const light = mount(TaoSlider, { props: { modelValue: 50, bubble: true, zones: [{ to: 100, color: '#ffe066' }] } });
+        expect(light.find('.tao-slider__bubble').attributes('style')).toContain('--_on: #0d0d0d');
+        expect(light.find('.tao-slider__bubble').classes()).not.toContain('tao-slider__bubble--auto');
+        const named = mount(TaoSlider, { props: { modelValue: 50, bubble: true, zones: [{ to: 100, color: 'rebeccapurple' }] } });
+        expect(named.find('.tao-slider__bubble').classes()).toContain('tao-slider__bubble--auto');
+        expect(named.find('.tao-slider__bubble').attributes('style')).not.toContain('--_on');
+    });
+
+    it('a range has a bubble at each thumb; the slot gets the value and the zone', () => {
+        const w = mount(TaoRangeSlider, {
+            props: { modelValue: [20, 80], bubble: true, zones },
+            slots: { bubble: `<template #bubble="{ value, zone }"><b class="mine">{{ value }}:{{ zone?.color }}</b></template>` },
+        });
+        expect(w.findAll('.tao-slider__bubble')).toHaveLength(2);
+        const mine = w.findAll('.mine').map((b) => b.text());
+        expect(mine).toEqual(['20:var(--tao-color-info)', '80:var(--tao-color-danger)']);
+    });
+
+    it('it follows a vertical bar from the bottom and sits right after its thumb (the css shows it by that)', () => {
+        const w = mount(TaoSlider, { props: { modelValue: 40, vertical: true, bubble: true } });
+        expect(w.find('.tao-slider__bubble').attributes('style')).toContain('bottom: 40%');
+        const thumb = w.find('[role="slider"]').element;
+        expect(thumb.nextElementSibling?.classList.contains('tao-slider__bubble')).toBe(true);
+    });
+
+    it('the css: it comes with hover, keyboard focus and the drag, stays under `always`, does not catch the pointer, does not fade under reduced motion', () => {
+        expect(source).toMatch(/\.tao-slider__thumb:hover \+ \.tao-slider__bubble,\s*\.tao-slider__thumb:focus-visible \+ \.tao-slider__bubble,\s*\.tao-slider__thumb--active \+ \.tao-slider__bubble,\s*\.tao-slider--bubble-always \.tao-slider__bubble \{\s*opacity: 1/);
+        expect(source).toMatch(/\.tao-slider__bubble \{[^}]*pointer-events: none/);
+        expect(source).toMatch(/prefers-reduced-motion: reduce\) \{\s*\.tao-slider__bubble \{\s*transition: none/);
     });
 });

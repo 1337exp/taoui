@@ -16,6 +16,8 @@ const emit = defineEmits<{
 defineSlots<{
     /** Caption of a mark. / Подпись метки. */
     mark?(props: { mark: TaoSliderMark; active: boolean }): unknown;
+    /** The bubble beside a thumb (with `bubble`): its text; `zone` is the zone the thumb stands in. / Плашка у ручки (с `bubble`): её текст; `zone` — зона, в которой стоит ручка. */
+    bubble?(props: { value: number; zone: { from: number; to: number; color: string } | undefined }): unknown;
     'pre-value'?(): unknown;
     'post-value'?(): unknown;
 }>();
@@ -24,6 +26,7 @@ defineSlots<{
 <template>
     <TaoSliderBase v-bind="props" @update:model-value="emit('update:modelValue', $event as [number, number])" @change="emit('change', $event as [number, number])">
         <template v-if="$slots.mark" #mark="slot"><slot name="mark" v-bind="slot" /></template>
+        <template v-if="$slots.bubble" #bubble="slot"><slot name="bubble" v-bind="slot" /></template>
         <template v-if="$slots['pre-value']" #pre-value><slot name="pre-value" /></template>
         <template v-if="$slots['post-value']" #post-value><slot name="post-value" /></template>
     </TaoSliderBase>

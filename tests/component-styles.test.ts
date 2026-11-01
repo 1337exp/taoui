@@ -26,7 +26,7 @@ describe('component styles', () => {
 
     it('write no colour of their own', () => {
         // What may stay: a mask is shape and not colour, black at an opacity is a shadow, `#0000` is the empty fallback of a shadow,
-        // the colour plane of the picker is the colour itself.
+        // the colour plane of the picker is the colour itself, a relative colour (`oklch(from var(--role) …)`) is made of a role and writes none.
         // Что остаётся: маска — форма, а не цвет; чёрный с прозрачностью — тень; `#0000` — пустой запас тени; плоскость пикера — сам цвет.
         const literal = /#[0-9a-fA-F]{3,8}\b|\b(?:rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(|:\s*(?:white|black|red|green|blue|yellow|orange|gray|grey)\b/;
         const offenders = styles
@@ -36,6 +36,8 @@ describe('component styles', () => {
                     .replace(/(?:-webkit-)?mask(?:-image)?\s*:[^;]*;/g, '')
                     .replace(/linear-gradient\(#000 0 0\)/g, '')
                     .replace(/#0000\b/g, '')
+                    .replace(/\boklch\(from var\(--[\w-]+\)[^;]*;/g, '')
+                    .replace(/@supports \(color: oklch\(from red l c h\)\)/g, '')
                     .replace(/\brgba?\(\s*0[\s,]+0[\s,]+0\b[^)]*\)/g, '');
                 return literal.test(rest);
             })

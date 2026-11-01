@@ -1,4 +1,6 @@
 // Чистая логика TaoSlider: значение ↔ позиция, шаг, метки, ручки диапазона. Без Vue и DOM, поэтому проверяется тестами.
+import { parseColor, toHex } from './color';
+import { contrastRatio } from './palette';
 import type { TaoSize } from './size';
 
 /** Метка на шкале: значение, подпись (нет подписи: только черта). */
@@ -70,6 +72,15 @@ export interface TaoSliderBaseProps {
      * закрашенная часть полным цветом, а ручка берёт цвет зоны, в которой стоит.
      */
     zones?: readonly TaoSliderZone[];
+    /**
+     * A bubble with the value beside the thumb, in the colour of its zone (the accent without zones). Off by default.
+     * `true`: it shows while the thumb is dragged, hovered or has the keyboard focus; `'always'`: it stays. The text is the
+     * `format` of the value, or the `#bubble` slot. Leave room for it above a horizontal bar (to the right of a vertical one).
+     * Плашка со значением у ручки, цвета её зоны (без зон — акцент). По умолчанию выключена. `true`: видна, пока ручку тянут,
+     * на неё наведён указатель или у неё фокус клавиатуры; `'always'`: видна всегда. Текст — `format` значения или слот `#bubble`.
+     * Оставьте ей место над горизонтальной полосой (справа от вертикальной).
+     */
+    bubble?: boolean | 'always';
     /** Vertical: the maximum is at the top. / Вертикальный: максимум сверху. */
     vertical?: boolean;
     disabled?: boolean;
@@ -209,6 +220,8 @@ export interface TaoSliderResolvedZone {
     from: number;
     to: number;
     color: string;
+    /** The colour of a label on it: a role of the theme, a hex, or '' (the browser picks, see the bubble). / Цвет подписи на ней. */
+    on: string;
     dot: boolean;
     reveal: boolean;
 }
@@ -218,6 +231,25 @@ export function zoneColor(zone: Pick<TaoSliderZone, 'tone' | 'color'>): string {
     if (zone.color) return zone.color;
     if (zone.tone === 'neutral') return 'var(--tao-color-text-muted)';
     return `var(--tao-color-${zone.tone ?? 'accent'})`;
+}
+
+const INK = '#0d0d0d';
+const PAPER = '#ffffff';
+
+/**
+ * The colour of a label on a zone: the `on-` role of its tone; for a colour of your own the better of black and white when it can
+ * be read here (hex, rgb, hsl), else '' and the browser decides in CSS.
+ * Цвет подписи на зоне: роль `on-` её тона; для своего цвета чёрный или белый, что читается лучше, если цвет разбирается здесь
+ * (hex, rgb, hsl), иначе '' и решает браузер в CSS.
+ */
+export function zoneOn(zone: Pick<TaoSliderZone, 'tone' | 'color'>): string {
+    if (zone.color) {
+        const rgba = parseColor(zone.color);
+        if (!rgba) return '';
+        const hex = toHex(rgba);
+        return contrastRatio(INK, hex) >= contrastRatio(PAPER, hex) ? INK : PAPER;
+    }
+    return zone.tone === 'neutral' ? 'var(--tao-color-bg)' : `var(--tao-color-on-${zone.tone ?? 'accent'})`;
 }
 
 /**
@@ -234,7 +266,7 @@ export function normalizeZones(zones: readonly TaoSliderZone[] | undefined, min:
     for (const zone of sorted) {
         const to = clamp(zone.to, min, max);
         if (to <= from) continue;
-        out.push({ from, to, color: zoneColor(zone), dot: !!zone.dot && to < max, reveal: !!zone.reveal });
+        out.push({ from, to, color: zoneColor(zone), on: zoneOn(zone), dot: !!zone.dot && to < max, reveal: !!zone.reveal });
         from = to;
     }
     const last = out[out.length - 1];

@@ -1,6 +1,6 @@
 <script setup>
 import { onBeforeUnmount, ref, watch } from 'vue'
-import { TaoProgress, TaoRangeSlider, TaoSlider, TaoScrubber } from '@1337exp/taoui'
+import { TaoIcon, TaoProgress, TaoRangeSlider, TaoSlider, TaoScrubber } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { tr } from '../i18n.js'
 import Tr from './Tr.vue'
@@ -107,6 +107,38 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
             <TaoSlider v-model="sliderLoad" :zones="loadZones" vertical :aria-label="tr('Load', 'Нагрузка')" />
             <TaoSlider v-model="sliderLoad" :zones="loadZones" flat :aria-label="tr('Load', 'Нагрузка')" class="demo-wide" />
           </div>
+          <h3>{{ tr('A bubble with the value', 'Плашка со значением') }}</h3>
+          <Tr>
+            <template #en>
+              <p>
+                <code>bubble</code> shows the value beside the thumb in the colour of its zone (the accent without zones), with a label that reads on it.
+                It is off by default. <code>true</code>: it shows while you drag, hover or tab to the thumb; <code>'always'</code>: it stays.
+                The text is <code>format</code>, or your own through the <code>#bubble="{ value, zone }"</code> slot. Leave room for it above the bar.
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                <code>bubble</code> показывает значение у ручки цветом её зоны (без зон — акцентом), с подписью, которая на нём читается.
+                По умолчанию выключена. <code>true</code>: видна, пока тянете, наводите или дошли до ручки Tab; <code>'always'</code>: остаётся.
+                Текст — <code>format</code> или ваш, через слот <code>#bubble="{ value, zone }"</code>. Оставьте ей место над полосой.
+              </p>
+            </template>
+          </Tr>
+          <div style="padding-top: 44px;">
+            <TaoSlider v-model="sliderLoad" :zones="loadZones" bubble :format="(v) => `${v}%`" :aria-label="tr('Load', 'Нагрузка')" class="demo-wide" />
+          </div>
+          <div style="padding-top: 44px;">
+            <TaoSlider v-model="sliderLoad" :zones="loadZones" bubble="always" variant="thin" :aria-label="tr('Load', 'Нагрузка')" class="demo-wide">
+              <template #bubble="{ value, zone }">
+                <TaoIcon v-if="zone && value > 70" name="tao-info" /> {{ value }}%
+              </template>
+            </TaoSlider>
+          </div>
+          <pre><code>&lt;TaoSlider v-model="load" :zones="zones" bubble :format="(v) =&gt; `${v}%`" /&gt;
+&lt;TaoSlider v-model="load" :zones="zones" bubble="always"&gt;
+  &lt;template #bubble="{ value, zone }"&gt;&lt;TaoIcon name="tao-info" /&gt; &#123;&#123; value &#125;&#125;%&lt;/template&gt;
+&lt;/TaoSlider&gt;</code></pre>
+
           <h3>{{ tr('Zones that appear as it fills', 'Зоны, что проявляются по мере заполнения') }}</h3>
           <p>
             {{ tr('A zone with reveal has no colour until the value gets there: the field looks plain and is painted as you fill it.', 'У зоны с reveal нет цвета, пока значение до неё не дошло: поле выглядит обычным и красится по мере заполнения.') }}
