@@ -214,6 +214,8 @@ describe('slider bubble', () => {
     it('the css: it comes with hover, keyboard focus and the drag, stays under `always`, does not catch the pointer, does not fade under reduced motion', () => {
         expect(source).toMatch(/\.tao-slider__thumb:hover \+ \.tao-slider__bubble,\s*\.tao-slider__thumb:focus-visible \+ \.tao-slider__bubble,\s*\.tao-slider__thumb--active \+ \.tao-slider__bubble,\s*\.tao-slider--bubble-always \.tao-slider__bubble \{\s*opacity: 1/);
         expect(source).toMatch(/\.tao-slider__bubble \{[^}]*pointer-events: none/);
+        // an icon beside the text sits on the middle line of it, not on the baseline
+        expect(source).toMatch(/\.tao-slider__bubble \{[^}]*display: flex;\s*align-items: center;/);
         expect(source).toMatch(/prefers-reduced-motion: reduce\) \{\s*\.tao-slider__bubble \{\s*transition: none/);
     });
 });

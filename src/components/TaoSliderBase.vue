@@ -475,6 +475,9 @@ onBeforeUnmount(() => {
 .tao-slider__bubble {
     position: absolute;
     bottom: calc(50% + var(--tao-slider-thumb) / 2 + 12px);
+    display: flex;
+    align-items: center;
+    gap: var(--tao-space-1);
     z-index: 1;
     padding: var(--tao-space-1) var(--tao-space-3);
     border-radius: var(--tao-radius-control);
