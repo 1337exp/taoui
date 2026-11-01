@@ -33,6 +33,7 @@ const props = withDefaults(defineProps<TaoSliderBaseProps & { modelValue: TaoSli
     showValue: false,
     marksSide: 'end',
     discrete: false,
+    bubble: false,
     flat: false,
     vertical: false,
     disabled: false,
@@ -49,6 +50,8 @@ const emit = defineEmits<{
 defineSlots<{
     /** Caption of a mark. / Подпись метки. */
     mark?(props: { mark: TaoSliderMark; active: boolean }): unknown;
+    /** The bubble beside a thumb (with `bubble`): its text; `zone` is the zone the thumb stands in. / Плашка у ручки (с `bubble`): её текст; `zone` — зона, в которой стоит ручка. */
+    bubble?(props: { value: number; zone: { from: number; to: number; color: string } | undefined }): unknown;
     'pre-value'?(): unknown;
     'post-value'?(): unknown;
 }>();
@@ -98,6 +101,17 @@ const zoneClip = computed(() => {
         clipPath: props.vertical ? `inset(${100 - to}% 0 ${from}% 0 ${radius})` : `inset(0 ${100 - to}% 0 ${from}% ${radius})`,
     };
 });
+// The bubble: the colour of the zone the thumb stands in (the accent without zones) and a label on it that reads.
+// Плашка: цвет зоны, в которой стоит ручка (без зон акцент), и подпись на нём, которая читается.
+const bubbleStyle = (v: number) => {
+    const zone = zoneAt(v, zoneList.value);
+    return { ...place(v), '--_bg': zone?.color ?? 'var(--tao-color-accent)', ...(zone ? (zone.on ? { '--_on': zone.on } : {}) : { '--_on': 'var(--tao-color-on-accent)' }) };
+};
+const bubbleAuto = (v: number) => {
+    const zone = zoneAt(v, zoneList.value);
+    return !!zone && !zone.on;
+};
+
 const thumbStyle = (v: number) => {
     const zone = zoneAt(v, zoneList.value);
     return zone ? { ...place(v), '--tao-slider-thumb-bg': zone.color } : place(v);
@@ -282,6 +296,8 @@ onBeforeUnmount(() => {
                 'tao-slider--pointer-focus': pointerFocus,
                 'tao-slider--collapsed': isRange && values[0] === values[1],
                 'tao-slider--zoned': zoneList.length > 0,
+                'tao-slider--bubble': bubble,
+                'tao-slider--bubble-always': bubble === 'always',
                 'tao-slider--range': isRange,
                 'tao-slider--has-marks': markList.length > 0,
                 'tao-slider--marks-start': marksSide === 'start',
@@ -312,10 +328,9 @@ onBeforeUnmount(() => {
                 <span v-for="at in zoneDots" :key="at" class="tao-slider__dot" :style="place(at)" aria-hidden="true"></span>
             </template>
             <div v-else class="tao-slider__fill" :style="fillStyle"></div>
+            <template v-for="(v, i) in values" :key="i">
             <div
-                v-for="(v, i) in values"
                 :id="i === 0 ? controlId : undefined"
-                :key="i"
                 class="tao-slider__thumb"
                 :class="{ 'tao-slider__thumb--active': isDragging && activeThumb === i }"
                 :style="thumbStyle(v)"
@@ -333,6 +348,11 @@ onBeforeUnmount(() => {
                 @keydown="onKeydown($event, i)"
                 @blur="pointerFocus = false"
             ></div>
+            <!-- the same text as aria-valuetext: a screen reader does not need it twice / тот же текст, что в aria-valuetext: скринридеру дважды не нужен -->
+            <div v-if="bubble" class="tao-slider__bubble" :class="{ 'tao-slider__bubble--auto': bubbleAuto(v) }" :style="bubbleStyle(v)" aria-hidden="true">
+                <slot name="bubble" :value="v" :zone="zoneAt(v, zoneList)">{{ text(v) }}</slot>
+            </div>
+            </template>
 
             <div v-if="showValue" class="tao-slider__value">
                 <slot name="pre-value" />{{ barText }}<slot name="post-value" />
@@ -449,6 +469,70 @@ onBeforeUnmount(() => {
 
 .tao-slider--thin .tao-slider__zones {
     --_zone-radius: var(--tao-radius-full);
+}
+
+/* the bubble: beside the thumb, the colour of its zone; it comes with the pointer or the keyboard focus, or stays (`always`) */
+.tao-slider__bubble {
+    position: absolute;
+    bottom: calc(50% + var(--tao-slider-thumb) / 2 + 12px);
+    z-index: 1;
+    padding: var(--tao-space-1) var(--tao-space-3);
+    border-radius: var(--tao-radius-control);
+    background: var(--_bg);
+    color: var(--_on, var(--tao-color-on-accent));
+    font-size: var(--tao-font-size-sm);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.4;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-50%);
+    pointer-events: none;
+    transition: opacity var(--tao-duration-hover) var(--tao-ease-base);
+}
+
+.tao-slider__bubble::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -4px;
+    width: 8px;
+    height: 8px;
+    background: inherit;
+    border-radius: 1px;
+    transform: translateX(-50%) rotate(45deg);
+}
+
+/* a colour of your own the script could not read: the browser picks black or white by its lightness */
+@supports (color: oklch(from red l c h)) {
+    .tao-slider__bubble--auto {
+        color: oklch(from var(--_bg) clamp(0, (0.65 - l) * 1000, 1) 0 0);
+    }
+}
+
+.tao-slider:not(.tao-slider--disabled) .tao-slider__thumb:hover + .tao-slider__bubble,
+.tao-slider__thumb:focus-visible + .tao-slider__bubble,
+.tao-slider__thumb--active + .tao-slider__bubble,
+.tao-slider--bubble-always .tao-slider__bubble {
+    opacity: 1;
+}
+
+.tao-slider--vertical .tao-slider__bubble {
+    bottom: auto;
+    left: calc(50% + var(--tao-slider-thumb) / 2 + 12px);
+    transform: translateY(50%);
+}
+
+.tao-slider--vertical .tao-slider__bubble::after {
+    left: -4px;
+    bottom: 50%;
+    transform: translateY(50%) rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tao-slider__bubble {
+        transition: none;
+    }
 }
 
 .tao-slider__zones--dim {
