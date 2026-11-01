@@ -2,6 +2,8 @@ import { mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { h, nextTick } from 'vue';
 import TaoCarousel from '../src/components/TaoCarousel.vue';
+// @ts-expect-error Vite `?raw` import: the component source as text
+import carouselSource from '../src/components/TaoCarousel.vue?raw';
 
 // The slide metrics need a layout; happy-dom has none, so every box is 100px wide.
 // Метрикам слайдов нужна раскладка, а в happy-dom её нет: каждая рамка 100px.
@@ -165,5 +167,11 @@ describe('TaoCarousel pauses', () => {
         } finally {
             window.matchMedia = original;
         }
+    });
+});
+
+describe('TaoCarousel cursor', () => {
+    it('does not change the system cursor of the track: no grab, no grabbing (the developer decides; Opera shows a big black arrow)', () => {
+        expect(carouselSource as string).not.toMatch(/cursor:\s*grab/);
     });
 });

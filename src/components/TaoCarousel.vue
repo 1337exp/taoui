@@ -700,7 +700,6 @@ onBeforeUnmount(() => {
     scrollbar-width: none;
     user-select: none;
     touch-action: pan-x;
-    cursor: grab;
 }
 
 /* Touch: native snap is smooth under the finger and lands flings on a slide. / Тач: родной snap плавный и сам доводит бросок. */
@@ -716,7 +715,6 @@ onBeforeUnmount(() => {
 
 .tao-carousel__track--dragging {
     scroll-snap-type: none;
-    cursor: grabbing;
 }
 
 /* Momentum drives scrollLeft itself and lands on a slide; snap would fight it. / Инерция сама ведёт scrollLeft до слайда — snap бы мешал. */

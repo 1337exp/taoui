@@ -18,7 +18,7 @@ export interface SheetSample {
  */
 export const SHEET_DISMISS_RATIO = 0.5;
 /** …or a fling faster than this (px per ms) that went at least `SHEET_FLING_MIN_RATIO` of the height. / …или рывок быстрее этого, прошедший не меньше этой доли высоты. */
-export const SHEET_FLING_SPEED = 0.7;
+export const SHEET_FLING_SPEED = 1.2;
 export const SHEET_FLING_MIN_RATIO = 0.15;
 
 /** How far the sheet is moved for a finger that went `delta` px down: it does not go above its place. / Насколько сдвинут лист: выше своего места он не идёт. */
