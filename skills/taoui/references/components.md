@@ -913,7 +913,8 @@ Showcase section: `#drawer`
 | `side` | `'left' \| 'right' \| 'bottom'` | 'right' | Where it slides in from. bottom is a sheet: as wide as the screen up to 640px, as tall as its content up to 90% of the screen, rounded top, a grip, above the safe area |
 | `closable` | `boolean` | true | The user can close it: Esc, the backdrop, the cross, the pull-down of a sheet. false — only the parent closes it |
 | `showClose` | `boolean` | true | The cross in the header. false hides only the cross: Esc, the backdrop and the pull-down still close it |
-| `swipeToClose` | `boolean` | true | side="bottom" only: the sheet is pulled down by its grip and header; it closes when pulled a third of its height or flung, and comes back otherwise. It does not start from a button or a field in the header, so the content still scrolls. Needs closable |
+| `swipeToClose` | `boolean` | true | side="bottom" only: the sheet is pulled down by its grip and header; it closes when pulled half of its height (swipeThreshold) or flung, and comes back otherwise. It does not start from a button or a field in the header, so the content still scrolls. Needs closable |
+| `swipeThreshold` | `number` | 0.5 | side="bottom" only: how far, as a share of its height (0.05–1), the sheet must be pulled to close. A touch that only grazes it does not close it; a fast fling needs 15% of the height at least |
 | `closeLabel` | `string` | 'Close' | aria-label of the cross |
 | `surface` | `'flat' \| 'grain' \| 'glass'` | 'flat' | What the panel is made of, as on TaoCard. class, style and the other attributes go to the panel; --tao-drawer-bg is its colour |
 

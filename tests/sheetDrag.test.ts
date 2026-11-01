@@ -17,15 +17,32 @@ describe('sheetDrag', () => {
         expect(releaseVelocity([{ t: 0, y: 100 }, { t: 50, y: 60 }])).toBeLessThan(0);
     });
 
-    it('closes when pulled a third of its height or more', () => {
-        expect(shouldDismissSheet(100, 300, 0)).toBe(true);
-        expect(shouldDismissSheet(89, 300, 0)).toBe(false);
+    it('closes when pulled half of its height or more, not on a graze', () => {
+        expect(shouldDismissSheet(150, 300, 0)).toBe(true);
+        expect(shouldDismissSheet(149, 300, 0)).toBe(false);
+        expect(shouldDismissSheet(100, 300, 0)).toBe(false);
     });
 
-    it('closes on a quick fling even when pulled little, but not on a twitch', () => {
-        expect(shouldDismissSheet(40, 600, 0.8)).toBe(true);
+    it('closes on a fast fling that went 15% of the height, not on a flick or a slow drift', () => {
+        expect(shouldDismissSheet(100, 600, 0.8)).toBe(true);
+        expect(shouldDismissSheet(90, 600, 0.7)).toBe(true);
+        expect(shouldDismissSheet(80, 600, 0.8)).toBe(false);
+        expect(shouldDismissSheet(40, 600, 0.8)).toBe(false);
         expect(shouldDismissSheet(10, 600, 2)).toBe(false);
-        expect(shouldDismissSheet(40, 600, 0.2)).toBe(false);
+        expect(shouldDismissSheet(100, 600, 0.6)).toBe(false);
+    });
+
+    it('the threshold is yours: a share of the height, kept between 5% and the whole height', () => {
+        expect(shouldDismissSheet(100, 300, 0, 0.3)).toBe(true);
+        expect(shouldDismissSheet(100, 300, 0, 0.67)).toBe(false);
+        expect(shouldDismissSheet(210, 300, 0, 0.67)).toBe(true);
+        // a low threshold: the fling path is not longer than the threshold itself
+        expect(shouldDismissSheet(20, 300, 0.8, 0.05)).toBe(true);
+        // nonsense falls back or is held in range
+        expect(shouldDismissSheet(150, 300, 0, Number.NaN)).toBe(true);
+        expect(shouldDismissSheet(150, 300, 0, 5)).toBe(false);
+        expect(shouldDismissSheet(300, 300, 0, 5)).toBe(true);
+        expect(shouldDismissSheet(1, 300, 0, 0)).toBe(false);
     });
 
     it('does not close when it was not pulled down at all', () => {
