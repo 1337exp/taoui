@@ -46,6 +46,13 @@ const props = withDefaults(
          * `side="bottom"`: лист тянут вниз за ручку и шапку; он закрывается, если утянут далеко или брошен, иначе возвращается. Нужен `closable`.
          */
         swipeToClose?: boolean;
+        /**
+         * How far a pulled sheet must go to close, as a share of its height (0.05–1). Default `0.5`: a touch that only grazes it
+         * does not close it. A fast fling needs 15% of the height at least.
+         * Как далеко надо утянуть лист, чтобы он закрылся, долей его высоты (0,05–1). По умолчанию `0.5`: случайное касание его
+         * не закрывает. Быстрому рывку нужно не меньше 15% высоты.
+         */
+        swipeThreshold?: number;
         closeLabel?: string;
     }>(),
     {
@@ -55,6 +62,7 @@ const props = withDefaults(
         closable: true,
         showClose: true,
         swipeToClose: true,
+        swipeThreshold: 0.5,
     },
 );
 const l10n = useLocaleText(props, 'drawer');
@@ -193,7 +201,7 @@ async function endDrag(released: boolean, pointerId: number) {
         return;
     }
     const height = panelRef.value?.offsetHeight ?? 0;
-    if (released && shouldDismissSheet(current.offset, height, releaseVelocity(current.samples))) {
+    if (released && shouldDismissSheet(current.offset, height, releaseVelocity(current.samples), props.swipeThreshold)) {
         setSheet(height, true);
         close();
         await nextTick();

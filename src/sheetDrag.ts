@@ -12,11 +12,14 @@ export interface SheetSample {
     y: number;
 }
 
-/** The sheet is let go when pulled this share of its height. / Лист закрывается, если его утянули на эту долю высоты. */
-export const SHEET_DISMISS_RATIO = 0.3;
-/** …or a fling faster than this (px per ms) that went at least `SHEET_FLING_MIN` px. / …или рывок быстрее этого, прошедший не меньше `SHEET_FLING_MIN` px. */
-export const SHEET_FLING_SPEED = 0.5;
-export const SHEET_FLING_MIN = 24;
+/**
+ * The sheet is let go when pulled this share of its height: half, so a touch that only grazes it does not close it.
+ * Лист закрывается, если его утянули на эту долю высоты: на половину, чтобы случайное касание его не закрывало.
+ */
+export const SHEET_DISMISS_RATIO = 0.5;
+/** …or a fling faster than this (px per ms) that went at least `SHEET_FLING_MIN_RATIO` of the height. / …или рывок быстрее этого, прошедший не меньше этой доли высоты. */
+export const SHEET_FLING_SPEED = 0.7;
+export const SHEET_FLING_MIN_RATIO = 0.15;
 
 /** How far the sheet is moved for a finger that went `delta` px down: it does not go above its place. / Насколько сдвинут лист: выше своего места он не идёт. */
 export function sheetOffset(delta: number): number {
@@ -34,10 +37,16 @@ export function releaseVelocity(samples: readonly SheetSample[], windowMs = 100)
     return dt > 0 ? (last.y - first.y) / dt : 0;
 }
 
-/** Does the sheet close on release: pulled far enough, or flung. / Закрывается ли лист при отпускании: утянут далеко или брошен. */
-export function shouldDismissSheet(offset: number, height: number, velocity: number): boolean {
+/**
+ * Does the sheet close on release: pulled `threshold` of its height (half by default), or flung. A fling needs a path of its own
+ * (15% of the height, or `threshold` if that is less), so a flick of a finger does not close a sheet.
+ * Закрывается ли лист при отпускании: утянут на `threshold` высоты (по умолчанию на половину) или брошен. Рывку нужен свой путь
+ * (15% высоты или `threshold`, если он меньше), поэтому щелчок пальцем лист не закрывает.
+ */
+export function shouldDismissSheet(offset: number, height: number, velocity: number, threshold = SHEET_DISMISS_RATIO): boolean {
     if (offset <= 0 || height <= 0) {
         return false;
     }
-    return offset >= height * SHEET_DISMISS_RATIO || (velocity >= SHEET_FLING_SPEED && offset >= SHEET_FLING_MIN);
+    const share = Number.isFinite(threshold) ? Math.min(Math.max(threshold, 0.05), 1) : SHEET_DISMISS_RATIO;
+    return offset >= height * share || (velocity >= SHEET_FLING_SPEED && offset >= height * Math.min(share, SHEET_FLING_MIN_RATIO));
 }

@@ -104,6 +104,18 @@ describe('TaoDrawer swipeToClose', () => {
         }
     });
 
+    it('a pull that grazes the sheet does not close it; swipeThreshold says how far is far enough', async () => {
+        const half = sheet();
+        pull($('.tao-drawer__grip')!, 120);
+        await half.vm.$nextTick();
+        expect(half.emitted('update:modelValue')).toBeUndefined();
+        half.unmount();
+        const quarter = sheet({ swipeThreshold: 0.25 });
+        pull($('.tao-drawer__grip')!, 120);
+        await quarter.vm.$nextTick();
+        expect(quarter.emitted('update:modelValue')?.[0]).toEqual([false]);
+    });
+
     it('a pull does not select the title: no selection while the sheet is in the hand, and it is given back after', async () => {
         sheet();
         const panel = $('.tao-drawer__panel')!;
