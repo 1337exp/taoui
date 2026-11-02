@@ -45,6 +45,8 @@ export interface TaoLocale {
     };
     confirm: { ok: string; cancel: string };
     copy: { copyLabel: string; successText: string };
+    /** The button says what a click does. / Кнопка говорит, что сделает клик. */
+    themeToggle: { toLightLabel: string; toDarkLabel: string };
     loader: { label: string };
     date: {
         placeholder: string;

@@ -116,7 +116,7 @@ choose a text colour, WCAG 2 to promise a number.
 `TaoTree` (expand, select, tri-state `checkable`, lazy `load`), `TaoStages`, `TaoTimeline` (`active` makes it a progress),
 `TaoTag`, `TaoAvatar`, `TaoImage`, `TaoCarousel`, `TaoCard` (`#media`, `#title`, `#sub`, `#footer`, `#corner`, `closable`,
 `stripe` + `stripeTone`), `TaoBlock`, `TaoTabs`, `TaoBreadcrumb`, `TaoLink`, `TaoSpoiler` / `TaoSpoilerGroup`, `TaoCounter`,
-`TaoCopy`, `TaoMarquee` (one line that runs round only when it does not fit), `TaoScrubber` (play / pause + time),
+`TaoCopy`, `TaoThemeToggle` (the light / dark switch as an icon button: flips `data-tao-mode` of `<html>`, or `v-model` with `:apply="false"`), `TaoMarquee` (one line that runs round only when it does not fit), `TaoScrubber` (play / pause + time),
 `TaoScrollTop`, `TaoAnimatedBorder`, `TaoIcon`.
 
 Small charts only: `TaoSparkline` (a trend), `TaoMeter` (a value in a range, `low` / `high` / `optimum`), `TaoDonut`
@@ -126,7 +126,7 @@ library and feed it `taoChartTheme()` / `watchTaoChartTheme(apply)`; do not buil
 
 ## Icons
 
-`<TaoIcon name="tao-check" />`: 40 built-in SVG icons under the `tao-` prefix (incl. `tao-settings`, `tao-edit`, `tao-trash`, `tao-bell`, `tao-tag`, `tao-repeat`, `tao-undo`, `tao-redo`) (`taoIconNames`). Your own:
+`<TaoIcon name="tao-check" />`: 42 built-in SVG icons under the `tao-` prefix (incl. `tao-settings`, `tao-edit`, `tao-trash`, `tao-bell`, `tao-tag`, `tao-repeat`, `tao-undo`, `tao-redo`, `tao-sun`, `tao-moon`) (`taoIconNames`). Your own:
 `registerTaoIcons({ rocket: { body: '<path d="…"/>' } })` on a 24 grid with `currentColor`; add `grid: true` for icons made
 only of straight lines through the middle (a plus), so they stay crisp when small. Any other name renders the class
 `icon-<name>` for an icon font you bring.

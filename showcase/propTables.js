@@ -109,6 +109,20 @@ export const propTables = {
       ],
     },
   ],
+  'theme-toggle': [
+    {
+      title: 'TaoThemeToggle',
+      rows: [
+        r('v-model', "'dark' | 'light'", 'режим страницы', 'Режим. Без него кнопка читает режим <html> (data-tao-mode) и следует за ним'),
+        r('apply', 'boolean', 'true', 'Писать режим в <html>. Выключите, чтобы делать это самим из v-model (сохранить выбор, поменять класс)'),
+        r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер кнопки'),
+        r('variant', "'primary' | 'secondary' | 'ghost' | 'text'", "'ghost'", 'Вид кнопки'),
+        r('toLightLabel', 'string', "'Включить светлую тему'", 'aria-label, пока тема тёмная (что сделает клик)'),
+        r('toDarkLabel', 'string', "'Включить тёмную тему'", 'aria-label, пока тема светлая'),
+      ],
+      slots: 'update:modelValue и change — новый режим ("dark" | "light"). Иконка — тема, к которой ведёт клик (солнце в тёмной, луна в светлой).',
+    },
+  ],
   input: [
     {
       title: 'TaoInput',
