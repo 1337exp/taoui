@@ -49,7 +49,7 @@ const builtin: Record<string, TaoIconDef> = {
     pause: { body: '<path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/>' },
     'skip-back': { body: '<path d="M19 5.5v13L9.5 12z" fill="currentColor"/><path d="M6 5.5v13"/>' },
     copy: { body: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7a2 2 0 002 2h3"/>' },
-    sun: { body: '<circle cx="12" cy="12" r="3.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.93 4.93L6.7 6.7M17.3 17.3l1.77 1.77M4.93 19.07L6.7 17.3M17.3 6.7l1.77-1.77"/>' },
+    sun: { body: '<circle cx="12" cy="12" r="4.25"/><path d="M12 3.75L12 1M18.45 6.86L20.6 5.14M20.04 13.84L22.72 14.45M15.58 19.43L16.77 21.91M8.42 19.43L7.23 21.91M3.96 13.84L1.28 14.45M5.55 6.86L3.4 5.14"/>' },
     moon: { body: '<path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/>' },
     calendar: { body: '<rect x="4" y="5.5" width="16" height="14.5" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>' },
     info: { body: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/>' + dot(12, 7.8, 1.1) },
