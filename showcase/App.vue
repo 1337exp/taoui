@@ -202,9 +202,9 @@ onBeforeUnmount(() => {
   <div ref="rootRef" class="showcase">
     <header class="showcase-top">
       <div>
-        <h1 class="showcase-title">
-          <img class="showcase-title__mark" :src="logoSrc" alt="" width="40" height="40" />
-          Tao UI
+        <!-- the mark is the T of the word; the name for a screen reader is the whole word / знак — это T слова; имя для скринридера — слово целиком -->
+        <h1 class="showcase-title" aria-label="Tao UI">
+          <span class="showcase-title__word" aria-hidden="true"><img class="showcase-title__mark" :src="logoSrc" alt="" width="89" height="87" />ao UI</span>
           <!-- the version of the build, so a deployed showcase says what it shows / версия сборки: развёрнутый шоукейс говорит, что показывает -->
           <TaoTag size="small" flat :title="tr('The version this showcase is built from', 'Версия, из которой собран этот шоукейс')">v{{ version }}</TaoTag>
         </h1>

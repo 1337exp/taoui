@@ -45,6 +45,13 @@ describe('showcase settings bar', () => {
         expect(brand).toContain('v{{ version }}');
     });
 
+    it('the mark is the T of the title: the visible word is hidden from a screen reader, the heading keeps its whole name', () => {
+        const source = app as string;
+        const title = source.slice(source.indexOf('<h1 class="showcase-title"'), source.indexOf('</h1>'));
+        expect(title).toContain('aria-label="Tao UI"');
+        expect(title).toMatch(/showcase-title__word" aria-hidden="true"><img class="showcase-title__mark"[^>]*alt=""[^>]*\/>ao UI/);
+    });
+
     it('sticks to the top, and does not stick on a phone', () => {
         const css = styles as string;
         expect(css).toMatch(/\.showcase-bar \{[^}]*position: sticky/);

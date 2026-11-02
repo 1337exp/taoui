@@ -316,10 +316,14 @@
 }
 
 /* the settings bar: sticks to the top, so the options are at hand whatever the scroll / панель настроек липнет к верху */
+/* the mark is the T of the word: it is sized in em, so it follows the heading; its stem goes down below the line like a tail / знак — T слова: размер в em, идёт за заголовком; стойка уходит под строку */
 .showcase-title__mark {
-  display: block;
-  width: 40px;
-  height: 40px;
+  display: inline-block;
+  width: 1em;
+  height: auto;
+  /* the arrow overhangs the stem: the word tucks in under it / стрелка выступает за стойку: слово подъезжает под неё */
+  margin-inline-end: -0.36em;
+  vertical-align: -0.133em;
 }
 
 .showcase-bar-sentinel {
