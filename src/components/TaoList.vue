@@ -203,7 +203,7 @@ watch(
 
 .tao-list--bordered {
     overflow: hidden;
-    border: 1px solid var(--tao-color-border);
+    border: 1px solid color-mix(in srgb, var(--tao-color-border) var(--tao-frame-alpha, 100%), transparent);
     border-radius: var(--tao-radius-control);
 }
 

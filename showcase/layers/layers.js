@@ -9,6 +9,7 @@ import light from '../../src/styles/themes/light.css?raw'
 import size from '../../src/styles/contexts/size.css?raw'
 import tone from '../../src/styles/contexts/tone.css?raw'
 import surface from '../../src/styles/contexts/surface.css?raw'
+import frames from '../../src/styles/contexts/frames.css?raw'
 import atmosphere from '../../src/styles/contexts/atmosphere.css?raw'
 import typography from '../../src/styles/typography.css?raw'
 import base from '../../src/styles/base.css?raw'
@@ -46,10 +47,11 @@ export const LAYERS = [
       { name: 'contexts/size.css', source: size },
       { name: 'contexts/tone.css', source: tone },
       { name: 'contexts/surface.css', source: surface },
+      { name: 'contexts/frames.css', source: frames },
       { name: 'contexts/atmosphere.css', source: atmosphere },
     ],
-    en: { role: 'what a control reads to learn its size, density, tone and material', hint: 'rarely', note: 'Classes that set private --_tao-* variables. A context that combines two axes recomputes on every class of both.' },
-    ru: { role: 'что читает контрол, чтобы узнать свой размер, плотность, тон и материал', hint: 'редко', note: 'Классы, которые задают приватные переменные --_tao-*. Контекст на двух осях пересчитывается на каждом классе обеих.' },
+    en: { role: 'what a control reads to learn its size, density, tone, material and how loud its frames are', hint: 'rarely', note: 'Classes that set private --_tao-* variables. A context that combines two axes recomputes on every class of both.' },
+    ru: { role: 'что читает контрол, чтобы узнать свой размер, плотность, тон, материал и насколько громки его рамки', hint: 'редко', note: 'Классы, которые задают приватные переменные --_tao-*. Контекст на двух осях пересчитывается на каждом классе обеих.' },
   },
   {
     id: 'base',

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { onBeforeUnmount, onMounted, provide, ref, toRef } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
+import { frameStyle } from '../frames';
 import {
     applyRoving,
     isRadio,
@@ -23,12 +24,15 @@ const props = withDefaults(
         orientation?: TaoToolbarOrientation;
         /** `panel` — a raised bar of its own; `plain` — only the layout, for a toolbar inside a header. */
         variant?: 'panel' | 'plain';
+        /** The frame of a `panel`; not set, it follows the frames context (`.tao-frames-soft`). / Рамка `panel`; не задан — идёт за контекстом рамок. */
+        bordered?: boolean;
     }>(),
     {
         label: undefined,
         size: undefined,
         orientation: 'horizontal',
         variant: 'panel',
+        bordered: undefined,
     },
 );
 
@@ -122,6 +126,7 @@ onBeforeUnmount(() => observer?.disconnect());
         role="toolbar"
         :aria-label="label"
         :aria-orientation="orientation"
+        :style="frameStyle(bordered)"
         @focusin="onFocusin"
         @keydown="onKeydown"
     >
@@ -146,7 +151,7 @@ onBeforeUnmount(() => observer?.disconnect());
 .tao-toolbar--panel {
     padding: var(--tao-space-1);
     background: var(--tao-color-surface-raised);
-    border: 1px solid var(--tao-color-border);
+    border: 1px solid color-mix(in srgb, var(--tao-color-border) var(--tao-frame-alpha, 100%), transparent);
     /* concentric corners: the controls' radius plus the padding / концентричные углы: радиус контролов плюс отступ */
     border-radius: calc(var(--tao-radius-control) + var(--tao-space-1));
 }

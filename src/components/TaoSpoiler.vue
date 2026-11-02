@@ -2,6 +2,7 @@
 import TaoIcon from './TaoIcon.vue';
 import { computed, inject, ref, useId } from 'vue';
 import { spoilerGroupKey } from '../spoiler';
+import { frameStyle } from '../frames';
 
 defineOptions({ name: 'TaoSpoiler' });
 
@@ -12,12 +13,15 @@ const props = withDefaults(
         modelValue?: boolean;
         /** Ключ панели в `TaoSpoilerGroup`. Без группы не используется. */
         name?: string | number;
+        /** The outer frame; not set, it follows the frames context (`.tao-frames-soft`); `false`: the header fill alone sets the panel off. / Внешняя рамка; не задан — идёт за контекстом рамок; `false`: панель выделяет одна заливка шапки. */
+        bordered?: boolean;
     }>(),
     {
         title: '',
         defaultOpen: false,
         modelValue: undefined,
         name: undefined,
+        bordered: undefined,
     },
 );
 
@@ -78,7 +82,7 @@ function onLeave(el: Element) {
 </script>
 
 <template>
-    <div class="tao-spoiler">
+    <div class="tao-spoiler" :style="frameStyle(bordered)">
         <button
             type="button"
             class="tao-spoiler__header"
@@ -109,7 +113,7 @@ function onLeave(el: Element) {
 
 <style scoped>
 .tao-spoiler {
-    border: 1px solid var(--tao-color-border);
+    border: 1px solid color-mix(in srgb, var(--tao-color-border) var(--tao-frame-alpha, 100%), transparent);
     border-radius: var(--tao-radius-panel);
     overflow: hidden;
 }

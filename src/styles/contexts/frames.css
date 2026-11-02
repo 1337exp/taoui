@@ -1,0 +1,35 @@
+/**
+ * Tao UI — Frames context / Контекст рамок
+ *
+ * How loud the decorative frames are. `.tao-frames-soft` on the page (or any container) lets the frames of panels
+ * (Alert, Spoiler, Table, List, Toolbar, Menubar) go clear and gives the tone-filled ones (Alert) a little more tint
+ * instead, so the panel is held by its fill and not by a line. Nothing moves: the 1px border stays in the box, only
+ * unseen. `.tao-frames-framed` puts the frames back inside a soft area. A component with a `bordered` prop (`true` /
+ * `false`) overrides the context for itself.
+ *
+ *   --tao-frame-alpha   how much of its colour a decorative frame keeps (100% framed, 0% clear)
+ *   --tao-frame-tint    what a tone-filled panel adds to its tint when the frame is gone
+ *   --tao-frame-fill    how far a panel with no fill of its own (Table) leans on the raised fill when the frame is gone
+ *
+ * Only decorative frames follow it. The frame of a field (Input, Select, ...), a focus ring and the lines between the
+ * rows of a table or a list stay as they are: they tell where a control is or what belongs together, and WCAG 1.4.11
+ * asks 3:1 of them. The tokens are plain numbers, so a theme does not need to know them.
+ *
+ * Насколько громки декоративные рамки. `.tao-frames-soft` на странице (или любом контейнере) делает рамки панелей
+ * (Alert, Spoiler, Table, List, Toolbar, Menubar) прозрачными, а залитым тоном (Alert) добавляет немного заливки: панель
+ * держится заливкой, а не линией. Ничего не двигается: рамка в 1px остаётся в боксе, только невидимая.
+ * `.tao-frames-framed` возвращает рамки внутри мягкой области. Компонент с `bordered` (`true` / `false`) переопределяет
+ * контекст для себя. Рамки полей, кольцо фокуса и линии между строками не затрагиваются.
+ */
+:root,
+.tao-frames-framed {
+    --tao-frame-alpha: 100%;
+    --tao-frame-tint: 0%;
+    --tao-frame-fill: 0%;
+}
+
+.tao-frames-soft {
+    --tao-frame-alpha: 0%;
+    --tao-frame-tint: 6%;
+    --tao-frame-fill: 100%;
+}
