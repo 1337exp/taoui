@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
-import { TaoButton, TaoIcon, TaoInput, TaoScrollTop, TaoSelect, TaoTag, taoPalettes } from '@1337exp/taoui'
+import { TaoButton, TaoIcon, TaoInput, TaoPopover, TaoScrollTop, TaoSegmented, TaoSegmentedOption, TaoSelect, TaoTag, taoPalettes } from '@1337exp/taoui'
 import { navGroups } from './nav.js'
 import { demoById } from './sections.js'
 import { lang, LANGS, tr } from './i18n.js'
@@ -41,6 +41,10 @@ const logoSrc = computed(() => `${import.meta.env.BASE_URL}logo/logo-mark-${them
 // (--showcase-bar) for the section list and the scroll margins; the brand shows in it only once it has stuck.
 // Панель настроек липнет к верху: опции под рукой, где бы ни прокрутили. Её высота уходит в страницу (--showcase-bar)
 // для списка разделов и отступов прокрутки; бренд в ней появляется, только когда она прилипла.
+// the rare options sit in the "View" popover; a dot on its button says one of them is off the default
+// редкие опции лежат в поповере «Вид»; точка на его кнопке говорит, что одна из них не по умолчанию
+const viewChanged = computed(() => density.value !== 'default' || frames.value !== 'framed')
+
 const rootRef = ref(null)
 const barRef = ref(null)
 const sentinelRef = ref(null)
@@ -210,72 +214,48 @@ onBeforeUnmount(() => {
 
     <div ref="sentinelRef" class="showcase-bar-sentinel" aria-hidden="true"></div>
     <div ref="barRef" class="showcase-bar" role="group" :aria-label="tr('Showcase settings', 'Настройки шоукейса')">
+      <span v-if="!stuck" class="showcase-bar__hint">{{ tr('Showcase settings', 'Настройки шоукейса') }}</span>
       <span class="showcase-bar__brand" :class="{ 'showcase-bar__brand--on': stuck }" aria-hidden="true">
         <img :src="logoSrc" alt="" width="22" height="22" />
         Tao UI
       </span>
-      <div class="showcase-top__controls">
-      <div class="theme-switcher">
-        <span class="theme-switcher__label">{{ tr('Language:', 'Язык:') }}</span>
-        <button
-          v-for="code in LANGS"
-          :key="code"
-          type="button"
-          class="theme-switcher__btn"
-          :class="{ active: lang === code }"
-          @click="lang = code"
-        >
-          {{ code.toUpperCase() }}
-        </button>
-      </div>
-      <div class="theme-switcher">
-        <span class="theme-switcher__label">{{ tr('Palette:', 'Палитра:') }}</span>
-        <span class="palette-select">
-          <TaoSelect :model-value="palette" :options="paletteOptions" :clearable="false" @update:model-value="setPalette" />
+      <div class="showcase-bar__controls">
+        <TaoSegmented size="small" :model-value="lang" :aria-label="tr('Language', 'Язык')" @update:model-value="lang = $event">
+          <TaoSegmentedOption v-for="code in LANGS" :key="code" :value="code">{{ code.toUpperCase() }}</TaoSegmentedOption>
+        </TaoSegmented>
+        <span class="showcase-bar__palette">
+          <span class="palette-select">
+            <TaoSelect :model-value="palette" :options="paletteOptions" :clearable="false" :aria-label="tr('Palette', 'Палитра')" @update:model-value="setPalette" />
+          </span>
+          <span class="palette-swatches" aria-hidden="true">
+            <i v-for="color in swatches" :key="color" :style="{ background: color }" />
+          </span>
         </span>
-        <span class="palette-swatches" aria-hidden="true">
-          <i v-for="color in swatches" :key="color" :style="{ background: color }" />
-        </span>
-      </div>
-      <div class="theme-switcher">
-        <span class="theme-switcher__label">{{ tr('Mode:', 'Режим:') }}</span>
-        <button
-          v-for="t in ['dark', 'light']"
-          :key="t"
-          type="button"
-          class="theme-switcher__btn"
-          :class="{ active: theme === t }"
-          @click="setTheme(t)"
-        >
-          {{ t }}
-        </button>
-      </div>
-      <div class="theme-switcher">
-        <span class="theme-switcher__label">{{ tr('Density:', 'Плотность:') }}</span>
-        <button
-          v-for="d in DENSITIES"
-          :key="d"
-          type="button"
-          class="theme-switcher__btn"
-          :class="{ active: density === d }"
-          @click="setDensity(d)"
-        >
-          {{ d }}
-        </button>
-      </div>
-      <div class="theme-switcher">
-        <span class="theme-switcher__label">{{ tr('Frames:', 'Рамки:') }}</span>
-        <button
-          v-for="f in FRAMES"
-          :key="f"
-          type="button"
-          class="theme-switcher__btn"
-          :class="{ active: frames === f }"
-          @click="setFrames(f)"
-        >
-          {{ f }}
-        </button>
-      </div>
+        <TaoSegmented size="small" :model-value="theme" :aria-label="tr('Mode', 'Режим')" @update:model-value="setTheme">
+          <TaoSegmentedOption v-for="mode in ['dark', 'light']" :key="mode" :value="mode">{{ mode }}</TaoSegmentedOption>
+        </TaoSegmented>
+        <TaoPopover placement="bottom-end">
+          <template #trigger>
+            <TaoButton size="small" variant="secondary" icon="tao-settings">
+              {{ tr('View', 'Вид') }}
+              <i v-if="viewChanged" class="showcase-bar__dot" :title="tr('Not the defaults', 'Не по умолчанию')" />
+            </TaoButton>
+          </template>
+          <div class="showcase-view">
+            <div class="showcase-view__row">
+              <span class="showcase-view__label">{{ tr('Density', 'Плотность') }}</span>
+              <TaoSegmented size="small" :model-value="density" :aria-label="tr('Density', 'Плотность')" @update:model-value="setDensity">
+                <TaoSegmentedOption v-for="d in DENSITIES" :key="d" :value="d">{{ d }}</TaoSegmentedOption>
+              </TaoSegmented>
+            </div>
+            <div class="showcase-view__row">
+              <span class="showcase-view__label">{{ tr('Frames', 'Рамки') }}</span>
+              <TaoSegmented size="small" :model-value="frames" :aria-label="tr('Frames', 'Рамки')" @update:model-value="setFrames">
+                <TaoSegmentedOption v-for="f in FRAMES" :key="f" :value="f">{{ f }}</TaoSegmentedOption>
+              </TaoSegmented>
+            </div>
+          </div>
+        </TaoPopover>
       </div>
     </div>
 

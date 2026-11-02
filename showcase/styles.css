@@ -171,44 +171,6 @@
   }
 }
 
-.theme-switcher {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px;
-  max-width: 100%;
-  margin-bottom: 0;
-  flex-shrink: 0;
-}
-
-.theme-switcher__label {
-  color: var(--tao-color-text-muted);
-  font-size: 13px;
-}
-
-.theme-switcher__btn {
-  height: 32px;
-  padding: 0 14px;
-  border-radius: var(--tao-radius-control);
-  border: 1px solid var(--tao-color-border-strong);
-  background: var(--tao-color-surface-sunken);
-  color: var(--tao-color-text);
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 13px;
-  transition: var(--tao-transition-base, all 0.2s ease);
-}
-
-.theme-switcher__btn:hover {
-  background: var(--tao-color-surface-hover);
-}
-
-.theme-switcher__btn.active {
-  background: var(--tao-color-accent);
-  color: var(--tao-color-on-accent);
-  border-color: var(--tao-color-accent);
-}
-
 /* the showcase's own headings stay out of .tao-prose: there the typography layer speaks */
 .showcase h1:not(.tao-prose *) {
   font-size: var(--tao-font-size-4xl);
@@ -324,14 +286,6 @@
   color: var(--tao-color-text-muted);
 }
 
-.showcase-top__controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px 20px;
-}
-
 .showcase-footer a {
   color: inherit;
   text-decoration: underline;
@@ -381,7 +335,7 @@
   align-items: center;
   gap: 8px 16px;
   margin-bottom: 24px;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border: 1px solid var(--tao-color-border);
   border-radius: var(--tao-radius-panel);
   background: color-mix(in srgb, var(--tao-color-surface) 86%, transparent);
@@ -404,40 +358,72 @@
   display: inline-flex;
 }
 
-.showcase-bar .showcase-top__controls {
-  /* flex-basis 0: the brand keeps its place on the first row, the groups wrap among themselves / бренд остаётся в первой строке, группы переносятся между собой */
+/* at the top the bar says what it is, and the brand takes its place once it has stuck / вверху панель говорит, что она такое, а бренд занимает место, когда она прилипла */
+.showcase-bar__hint {
+  color: var(--tao-color-text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.showcase-bar__controls {
+  display: flex;
   flex: 1 1 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px 12px;
   min-width: 0;
-  gap: 6px 14px;
 }
 
-.showcase-bar .theme-switcher {
-  gap: 6px;
-}
-
-.showcase-bar .theme-switcher__label {
-  font-size: 12px;
-}
-
-.showcase-bar .theme-switcher__btn {
-  height: 28px;
-  padding: 0 8px;
-  font-size: 12px;
+.showcase-bar__palette {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .showcase-bar .palette-select {
   --tao-control-height: 28px;
   --tao-control-font-size: 12px;
-  width: 140px;
+  width: 150px;
 }
 
 .showcase-bar .palette-swatches {
   min-width: 0;
 }
 
+/* the dot on the View button: one of the rare options is off the default / точка на кнопке «Вид»: одна из редких опций не по умолчанию */
+.showcase-bar__dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-inline-start: 6px;
+  border-radius: 50%;
+  background: var(--tao-color-accent);
+}
+
+.showcase-view {
+  display: grid;
+  gap: 14px;
+  min-width: 240px;
+}
+
+.showcase-view__row {
+  display: grid;
+  gap: 6px;
+}
+
+.showcase-view__label {
+  color: var(--tao-color-text-muted);
+  font-size: 12px;
+}
+
 /* a phone has no room for a sticky bar of five groups: it scrolls away with the page / на телефоне липкой панели из пяти групп не место */
 @media (max-width: 860px) {
   .showcase-bar {
     position: static;
+  }
+
+  .showcase-bar__hint {
+    display: none;
   }
 }
