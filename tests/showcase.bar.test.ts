@@ -4,8 +4,8 @@ import { describe, expect, it } from 'vitest';
 // @ts-expect-error Vite `?raw` import
 import app from '../showcase/App.vue?raw';
 
-// 5.22.0: the settings bar of the showcase: the frequent options inline, the rare ones in the "View" popover, built from the kit itself.
-// 5.22.0: панель настроек шоукейса: частые опции в строке, редкие в поповере «Вид», собрана из самого набора.
+// 5.23.0: the settings bar of the showcase: the frequent options inline, the rare ones in the "View" popover, built from the kit itself.
+// 5.23.0: панель настроек шоукейса: частые опции в строке, редкие в поповере «Вид», собрана из самого набора.
 
 const styles = readFileSync(resolve(__dirname, '../showcase/styles.css'), 'utf8');
 

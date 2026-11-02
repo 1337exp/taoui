@@ -6,8 +6,8 @@ import TaoRangeSlider from '../src/components/TaoRangeSlider.vue';
 import source from '../src/components/TaoSliderBase.vue?raw';
 import { normalizeZones, zoneAt, zoneColor, zoneGradient, zoneOn } from '../src/slider';
 
-// 5.22.0: zones of the scale in colour: each runs to its `to`, a dot where it ends, the thumb in the colour of its zone.
-// 5.22.0: зоны шкалы цветом: каждая идёт до своего `to`, точка там, где кончается, ручка цвета своей зоны.
+// 5.23.0: zones of the scale in colour: each runs to its `to`, a dot where it ends, the thumb in the colour of its zone.
+// 5.23.0: зоны шкалы цветом: каждая идёт до своего `to`, точка там, где кончается, ручка цвета своей зоны.
 
 describe('slider zones: the logic', () => {
     it('colours: a colour of your own wins, then the role of the tone, the accent by default', () => {

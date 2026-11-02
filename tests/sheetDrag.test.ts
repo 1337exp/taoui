@@ -29,7 +29,7 @@ describe('sheetDrag', () => {
         expect(shouldDismissSheet(80, 600, 1.4)).toBe(false);
         expect(shouldDismissSheet(40, 600, 1.4)).toBe(false);
         expect(shouldDismissSheet(10, 600, 3)).toBe(false);
-        // a light swipe (0.8 px/ms, closed it before 5.22.0) and a brisk one (1.1) are only a pull: the sheet comes back
+        // a light swipe (0.8 px/ms, closed it before 5.23.0) and a brisk one (1.1) are only a pull: the sheet comes back
         expect(shouldDismissSheet(100, 600, 0.8)).toBe(false);
         expect(shouldDismissSheet(100, 600, 1.1)).toBe(false);
     });

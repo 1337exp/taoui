@@ -2,8 +2,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-// 5.22.0: the mark of the project: three SVG files in showcase/public/logo, drawn as paths (no font, no raster).
-// 5.22.0: знак проекта: три SVG-файла в showcase/public/logo, нарисованы контурами (без шрифта и растра).
+// 5.23.0: the mark of the project: three SVG files in showcase/public/logo, drawn as paths (no font, no raster).
+// 5.23.0: знак проекта: три SVG-файла в showcase/public/logo, нарисованы контурами (без шрифта и растра).
 
 const dir = resolve(__dirname, '../showcase/public/logo');
 const read = (name: string) => readFileSync(resolve(dir, name), 'utf8');

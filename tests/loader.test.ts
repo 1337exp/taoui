@@ -7,8 +7,8 @@ import source from '../src/components/TaoLoader.vue?raw';
 // @ts-expect-error Vite `?raw` import: the button source as text
 import buttonSource from '../src/components/TaoButton.vue?raw';
 
-// 5.22.0: TaoLoader has three looks, a voice for a screen reader, a colour role and a calm way for reduced motion.
-// 5.22.0: у TaoLoader три вида, голос для скринридера, роль цвета и спокойный вид при «уменьшить движение».
+// 5.23.0: TaoLoader has three looks, a voice for a screen reader, a colour role and a calm way for reduced motion.
+// 5.23.0: у TaoLoader три вида, голос для скринридера, роль цвета и спокойный вид при «уменьшить движение».
 
 describe('TaoLoader', () => {
     it('as it was: four dots, 80px, the accent; nothing asked changes', () => {

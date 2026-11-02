@@ -23,8 +23,8 @@ import rawMenubar from '../src/components/TaoMenubar.vue?raw';
 // @ts-expect-error Vite `?raw` import
 import rawList from '../src/components/TaoList.vue?raw';
 
-// 5.22.0: the frames context: `.tao-frames-soft` lets the decorative frames of panels go clear, `bordered` overrides it per panel.
-// 5.22.0: контекст рамок: `.tao-frames-soft` делает декоративные рамки панелей прозрачными, `bordered` переопределяет для панели.
+// 5.23.0: the frames context: `.tao-frames-soft` lets the decorative frames of panels go clear, `bordered` overrides it per panel.
+// 5.23.0: контекст рамок: `.tao-frames-soft` делает декоративные рамки панелей прозрачными, `bordered` переопределяет для панели.
 
 const sources: Record<string, string> = { TaoAlert: rawAlert, TaoSpoiler: rawSpoiler, TaoTable: rawTable, TaoToolbar: rawToolbar, TaoMenubar: rawMenubar, TaoList: rawList };
 
