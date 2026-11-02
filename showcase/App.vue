@@ -218,6 +218,7 @@ onBeforeUnmount(() => {
       <span class="showcase-bar__brand" :class="{ 'showcase-bar__brand--on': stuck }" aria-hidden="true">
         <img :src="logoSrc" alt="" width="22" height="22" />
         Tao UI
+        <TaoTag size="small" flat>v{{ version }}</TaoTag>
       </span>
       <div class="showcase-bar__controls">
         <TaoSegmented size="small" :model-value="lang" :aria-label="tr('Language', 'Язык')" @update:model-value="lang = $event">
