@@ -116,7 +116,7 @@ choose a text colour, WCAG 2 to promise a number.
 `TaoTree` (expand, select, tri-state `checkable`, lazy `load`), `TaoStages`, `TaoTimeline` (`active` makes it a progress),
 `TaoTag`, `TaoAvatar`, `TaoImage`, `TaoCarousel`, `TaoCard` (`#media`, `#title`, `#sub`, `#footer`, `#corner`, `closable`,
 `stripe` + `stripeTone`), `TaoBlock`, `TaoTabs`, `TaoBreadcrumb`, `TaoLink`, `TaoSpoiler` / `TaoSpoilerGroup`, `TaoCounter`,
-`TaoCopy`, `TaoThemeToggle` (the light / dark switch as an icon button: flips `data-tao-mode` of `<html>`, or `v-model` with `:apply="false"`), `TaoMarquee` (one line that runs round only when it does not fit), `TaoScrubber` (play / pause + time),
+`TaoCopy`, `TaoThemeToggle` (the light / dark switch as an icon button: flips `data-tao-mode` of `<html>`, or `v-model` with `:apply="false"`; `#icon="{ mode, next }"` for your own glyph), `TaoMarquee` (one line that runs round only when it does not fit), `TaoScrubber` (play / pause + time),
 `TaoScrollTop`, `TaoAnimatedBorder`, `TaoIcon`.
 
 Small charts only: `TaoSparkline` (a trend), `TaoMeter` (a value in a range, `low` / `high` / `optimum`), `TaoDonut`

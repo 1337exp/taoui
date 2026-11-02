@@ -127,7 +127,7 @@ export const propTablesEn = {
         r('toLightLabel', 'string', "'Switch to the light theme'", 'aria-label while the theme is dark (what a click does)'),
         r('toDarkLabel', 'string', "'Switch to the dark theme'", 'aria-label while the theme is light'),
       ],
-      slots: 'update:modelValue and change: the new mode ("dark" | "light"). The icon is the theme a click leads to (a sun while dark, a moon while light).',
+      slots: 'icon: your own glyph, { mode, next } (the current mode and the one a click leads to); the button stays a square and keeps its label. update:modelValue and change: the new mode ("dark" | "light"). The icon is the theme a click leads to (a sun while dark, a moon while light).',
     },
   ],
   input: [
