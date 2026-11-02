@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="t">
+  <title id="t">TaoUI</title>
+  <!-- a tile, so it reads on any tab colour; no road markings: at 16px they are only noise / плитка, чтобы читалось на любой вкладке; без разметки: на 16px она шум -->
+  <rect width="64" height="64" rx="14" fill="#1a1a1a"/>
+  <g transform="translate(7.6 8.2) scale(0.055) translate(-48 -50)">
+    <path fill="#ffffff" d="M68 165H545C465 200 407 262 395 328H68Z M390 500H480V470C482 415 505 372 552 362V900H390Z"/>
+    <path fill="#ffc04a" d="M390 500V440C390 300 500 168 650 168H735V72L915 245L735 420V328H575C500 330 460 400 460 500Z"/>
+  </g>
+</svg>
