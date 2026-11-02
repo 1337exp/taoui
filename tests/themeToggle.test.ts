@@ -73,6 +73,18 @@ describe('TaoThemeToggle', () => {
         wrapper.unmount();
     });
 
+    it('the icon slot gets the mode and the mode a click leads to, and the button stays named and square', async () => {
+        const wrapper = mount(TaoThemeToggle, {
+            props: { modelValue: 'dark', apply: false },
+            slots: { icon: '<template #icon="{ mode, next }"><b class="mine">{{ mode }}>{{ next }}</b></template>' },
+        });
+        expect(wrapper.find('.mine').text()).toBe('dark>light');
+        expect(wrapper.attributes('aria-label')).toBe('Switch to the light theme');
+        expect(wrapper.classes()).toContain('tao-theme-toggle--custom');
+        await wrapper.setProps({ modelValue: 'light' });
+        expect(wrapper.find('.mine').text()).toBe('light>dark');
+    });
+
     it('the labels can be given', () => {
         const wrapper = mount(TaoThemeToggle, { props: { toLightLabel: 'Light please' } });
         expect(wrapper.attributes('aria-label')).toBe('Light please');

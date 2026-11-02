@@ -130,7 +130,7 @@ Showcase section: `#theme-toggle`
 | `toLightLabel` | `string` | 'Switch to the light theme' | aria-label while the theme is dark (what a click does) |
 | `toDarkLabel` | `string` | 'Switch to the dark theme' | aria-label while the theme is light |
 
-**Slots, events, notes.** update:modelValue and change: the new mode ("dark" \| "light"). The icon is the theme a click leads to (a sun while dark, a moon while light).
+**Slots, events, notes.** icon: your own glyph, { mode, next } (the current mode and the one a click leads to); the button stays a square and keeps its label. update:modelValue and change: the new mode ("dark" \| "light"). The icon is the theme a click leads to (a sun while dark, a moon while light).
 
 ## TaoInput
 

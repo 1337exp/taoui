@@ -4,7 +4,7 @@
 
 Nothing to migrate; the defaults do not change.
 
-- **TaoThemeToggle: the light / dark switch as one icon button.** Until now the kit had no switch of its own, only text in the showcase. The icon is the theme a click leads to (a sun while the page is dark, a moon while it is light), the `aria-label` says the same in words (`toLightLabel` / `toDarkLabel`, in both locales). By default it reads `data-tao-mode` of `<html>`, flips it on a click and follows it when somebody else changes it; a palette keeps its name, the old `data-tao-theme="dark"` spelling follows the mode. For your own storage: `v-model` with `:apply="false"`. New icons `tao-sun` and `tao-moon`; `readTaoMode(el)` and `applyTaoMode(el, mode)` are exported. The mode control of the showcase bar is this button now.
+- **TaoThemeToggle: the light / dark switch as one icon button.** Until now the kit had no switch of its own, only text in the showcase. The icon is the theme a click leads to (a sun while the page is dark, a moon while it is light), the `aria-label` says the same in words (`toLightLabel` / `toDarkLabel`, in both locales). By default it reads `data-tao-mode` of `<html>`, flips it on a click and follows it when somebody else changes it; a palette keeps its name, the old `data-tao-theme="dark"` spelling follows the mode. For your own storage: `v-model` with `:apply="false"`. New icons `tao-sun` and `tao-moon`; `readTaoMode(el)` and `applyTaoMode(el, mode)` are exported. The `#icon` slot (`{ mode, next }`) puts your own glyph in the button, which stays a square with its label. The mode control of the showcase bar is this button now.
 
 ## 5.23.2
 

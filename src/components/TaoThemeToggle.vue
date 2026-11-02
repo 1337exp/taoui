@@ -90,8 +90,20 @@ function toggle() {
 // иконка — тема, к которой ведёт клик; подпись говорит это словами
 const icon = computed(() => (mode.value === 'dark' ? 'tao-sun' : 'tao-moon'));
 const label = computed(() => (mode.value === 'dark' ? l10n.value.toLightLabel : l10n.value.toDarkLabel));
+// with the icon slot the button stays a square of the control height
+// со слотом icon кнопка остаётся квадратом высотой с контрол
 </script>
 
 <template>
-    <TaoButton class="tao-theme-toggle" :icon="icon" :size="size" :variant="variant" :aria-label="label" @click="toggle" />
+    <TaoButton v-if="$slots.icon" class="tao-theme-toggle tao-theme-toggle--custom" :size="size" :variant="variant" :aria-label="label" @click="toggle">
+        <slot name="icon" :mode="mode" :next="mode === 'dark' ? 'light' : 'dark'" />
+    </TaoButton>
+    <TaoButton v-else class="tao-theme-toggle" :icon="icon" :size="size" :variant="variant" :aria-label="label" @click="toggle" />
 </template>
+
+<style>
+.tao-theme-toggle--custom {
+    width: var(--tao-control-height);
+    padding: 0;
+}
+</style>
