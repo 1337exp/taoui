@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="30 32 924 906" role="img" aria-labelledby="t">
+  <title id="t">TaoUI</title>
+  <!-- for a background we do not choose (npm, a README, a social card): a white T with a dark outline, so it reads on light and on dark / для фона, который выбираем не мы (npm, README, соцсети): белая T с тёмным контуром, читается и на светлом, и на тёмном -->
+  <g stroke="#1a1a1a" stroke-width="30" stroke-linejoin="round" paint-order="stroke">
+    <path fill="#ffffff" fill-rule="evenodd" d="M68 165H545C465 200 407 262 395 328H68Z M390 500H480V470C482 415 505 372 552 362V900H480V840H458V900H390Z M458 565H480V635H458Z M458 700H480V772H458Z"/>
+    <path fill="#ffc04a" d="M390 500V440C390 300 500 168 650 168H735V72L915 245L735 420V328H575C500 330 460 400 460 500Z"/>
+  </g>
+</svg>

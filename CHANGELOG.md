@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.23.1
+
+Nothing to migrate; the defaults do not change.
+
+- **The mark in the README now reads on any background.** npm has its own dark / light switch that does not follow `prefers-color-scheme`, so the `<picture>` of 5.23.0 handed a dark-on-dark mark to a dark npm page and the logo vanished. `showcase/public/logo/logo-mark.svg` is a neutral one: a white T and a yellow arrow with a thin dark outline, which reads on light, on dark and on any colour; the READMEs use it with a plain `<img>`. `logo-mark-dark.svg` and `logo-mark-light.svg` stay for the showcase, where the theme is ours.
+
 ## 5.23.0
 
 Nothing to migrate; the defaults do not change.
