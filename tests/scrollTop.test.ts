@@ -2,6 +2,8 @@ import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import { nextTick } from 'vue';
 import TaoScrollTop from '../src/components/TaoScrollTop.vue';
+// @ts-expect-error Vite `?raw` import: the component source as text
+import source from '../src/components/TaoScrollTop.vue?raw';
 import { localeEn, setTaoLocale } from '../src/locale';
 
 function scrollTo(y: number) {
@@ -90,5 +92,17 @@ describe('TaoScrollTop: empty label', () => {
 
     it('shows no hover caption for solid either', async () => {
         expect((await shown({ label: '' })).find('.tao-scroll-top__label').exists()).toBe(false);
+    });
+});
+
+describe('TaoScrollTop caption over content', () => {
+    it('keeps the halo everywhere and adds an outline only where paint-order exists (a stroke would eat the letters otherwise)', () => {
+        const css = source as string;
+        expect(css).toMatch(/text-shadow: 0 0 6px var\(--tao-color-bg\)/);
+        const supports = css.match(/@supports \(paint-order: stroke\) \{([\s\S]*?)\n\}/)?.[1] ?? '';
+        expect(supports).toMatch(/-webkit-text-stroke: var\(--tao-space-1\) var\(--tao-color-bg\)/);
+        expect(supports).toMatch(/paint-order: stroke fill/);
+        // the stroke is not set outside the guard / штрих не задан вне условия
+        expect(css.replace(supports, '')).not.toMatch(/-webkit-text-stroke/);
     });
 });
