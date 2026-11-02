@@ -316,14 +316,16 @@
 }
 
 /* the settings bar: sticks to the top, so the options are at hand whatever the scroll / панель настроек липнет к верху */
-/* the mark is the T of the word: it is sized in em, so it follows the heading; its stem goes down below the line like a tail / знак — T слова: размер в em, идёт за заголовком; стойка уходит под строку */
+/* the mark is the T of the word: it is sized in em, so it follows the heading, and it stands on the same line as the letters / знак — T слова: размер в em, идёт за заголовком и стоит на одной линии с буквами */
 .showcase-title__mark {
   display: inline-block;
-  width: 1em;
+  /* the T of the mark (bar top to stem foot) is as tall as a capital letter, 0.71em: 0.71 / 0.8277 of the mark box / T знака (от верха перекладины до подошвы стойки) ростом с заглавную, 0.71em */
+  width: 0.858em;
   height: auto;
   /* the arrow overhangs the stem: the word tucks in under it / стрелка выступает за стойку: слово подъезжает под неё */
-  margin-inline-end: -0.36em;
-  vertical-align: -0.133em;
+  margin-inline-end: -0.31em;
+  /* the foot of the stem stands on the baseline, like the letters; the box has 20 of 888 units of air under it / подошва стойки стоит на базовой линии, как буквы */
+  vertical-align: -0.019em;
 }
 
 .showcase-bar-sentinel {
