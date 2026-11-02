@@ -32,6 +32,12 @@ const spoilerFaq = ref('ship')
             </template>
           </Tr>
     
+          <h3>{{ tr('Light style (trial)', 'Лёгкий стиль (проба)') }}</h3>
+          <div style="display: flex; flex-direction: column; gap: 12px; max-width: 520px;">
+            <TaoSpoiler :bordered="false" default-open :title="tr('No frame', 'Без рамки')"><p>{{ tr('bordered=false: the header fill alone sets the panel off.', 'bordered=false: панель выделяет одна заливка шапки.') }}</p></TaoSpoiler>
+            <TaoSpoiler :bordered="false" :title="tr('Closed, no frame', 'Закрыт, без рамки')"><p>{{ tr('Hidden text.', 'Скрытый текст.') }}</p></TaoSpoiler>
+          </div>
+
           <TaoSpoiler v-model="spoilerOpen" :title="tr('Click to expand', 'Нажмите, чтобы раскрыть')">
             <p>{{ tr('This is the hidden content of the spoiler. Put detailed information, extra settings or any other content that should be shown on demand here.', 'Это скрытое содержимое спойлера. Здесь можно разместить подробную информацию, дополнительные настройки или любой другой контент, который нужно показывать по требованию.') }}</p>
             <ul>

@@ -25,6 +25,16 @@ const logFolded = ref(true)
             <TaoAlert tone="info">{{ tr('It works without a title too.', 'Можно вызвать и без заголовка.') }}</TaoAlert>
           </div>
 
+          <h3>{{ tr('Light style (trial)', 'Лёгкий стиль (проба)') }}</h3>
+          <p>{{ tr('bordered=false: no frame, a stronger tint of the tone instead.', 'bordered=false: рамки нет, вместо неё гуще тон заливки.') }}</p>
+          <div style="display: flex; flex-direction: column; gap: 12px; max-width: 520px;">
+            <TaoAlert :bordered="false" tone="success" :title="tr('Saved', 'Сохранено')">{{ tr('Profile updated.', 'Профиль обновлён.') }}</TaoAlert>
+            <TaoAlert :bordered="false" tone="danger" :title="tr('Error', 'Ошибка')">{{ tr('Could not reach the server.', 'Не удалось связаться с сервером.') }}</TaoAlert>
+            <TaoAlert :bordered="false" tone="warning" :title="tr('Draft', 'Черновик')">{{ tr('Save before you leave.', 'Сохраните, прежде чем уйти.') }}</TaoAlert>
+            <TaoAlert :bordered="false" tone="info">{{ tr('It works without a title too.', 'Можно вызвать и без заголовка.') }}</TaoAlert>
+            <TaoAlert :bordered="false" tone="neutral">{{ tr('And the neutral one.', 'И нейтральный.') }}</TaoAlert>
+          </div>
+
           <h3>{{ tr('Collapsible', 'Сворачиваемый') }}</h3>
           <p>{{ tr('The title becomes the toggle, the tone stays. Folded text stays on the page: Ctrl+F finds it and opens the alert. For an error it is kinder to start open.', 'Заголовок становится переключателем, тон остаётся. Свёрнутый текст остаётся на странице: Ctrl+F его находит и раскрывает алерт. Ошибку лучше показывать развёрнутой.') }}</p>
           <div style="display: flex; flex-direction: column; gap: 12px; max-width: 520px;">

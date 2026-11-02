@@ -12,12 +12,15 @@ const props = withDefaults(
         modelValue?: boolean;
         /** Ключ панели в `TaoSpoilerGroup`. Без группы не используется. */
         name?: string | number;
+        /** `false` is a light style: no frame, the header fill alone sets the panel off. / `false` — лёгкий стиль: рамки нет, панель выделяет заливка шапки. */
+        bordered?: boolean;
     }>(),
     {
         title: '',
         defaultOpen: false,
         modelValue: undefined,
         name: undefined,
+        bordered: true,
     },
 );
 
@@ -78,7 +81,7 @@ function onLeave(el: Element) {
 </script>
 
 <template>
-    <div class="tao-spoiler">
+    <div class="tao-spoiler" :class="{ 'tao-spoiler--plain': !bordered }">
         <button
             type="button"
             class="tao-spoiler__header"
@@ -112,6 +115,10 @@ function onLeave(el: Element) {
     border: 1px solid var(--tao-color-border);
     border-radius: var(--tao-radius-panel);
     overflow: hidden;
+}
+
+.tao-spoiler.tao-spoiler--plain {
+    border-color: transparent;
 }
 
 .tao-spoiler__header {
