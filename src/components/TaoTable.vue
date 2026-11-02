@@ -5,6 +5,7 @@ import { sizeClass, type TaoSize } from '../size';
 import { toCssLength, type TaoLength } from '../length';
 import type { TaoTableColumn, TaoTableSort } from '../table';
 import { useLocaleText } from '../locale';
+import { frameStyle } from '../frames';
 
 defineOptions({ name: 'TaoTable' });
 
@@ -30,6 +31,8 @@ const props = withDefaults(
         clickable?: boolean;
         sort?: TaoTableSort | null;
         caption?: string;
+        /** The outer frame; not set, it follows the frames context (`.tao-frames-soft`). / Внешняя рамка; не задан — идёт за контекстом рамок. */
+        bordered?: boolean;
     }>(),
     {
         rows: () => [],
@@ -44,6 +47,7 @@ const props = withDefaults(
         clickable: false,
         sort: null,
         caption: '',
+        bordered: undefined,
     },
 );
 const l10n = useLocaleText(props, 'table');
@@ -127,7 +131,7 @@ function onRowClick(row: Record<string, unknown>, index: number) {
                 'tao-table-wrap--loading': loading,
             },
         ]"
-        :style="maxHeight ? { maxHeight: toCssLength(maxHeight) } : undefined"
+        :style="[frameStyle(bordered), maxHeight ? { maxHeight: toCssLength(maxHeight) } : undefined]"
     >
         <table
             class="tao-table"
@@ -224,9 +228,9 @@ function onRowClick(row: Record<string, unknown>, index: number) {
     position: relative;
     width: 100%;
     overflow: auto;
-    border: 1px solid var(--tao-color-border);
+    border: 1px solid color-mix(in srgb, var(--tao-color-border) var(--tao-frame-alpha, 100%), transparent);
     border-radius: var(--tao-radius-panel);
-    background: var(--tao-color-surface);
+    background: color-mix(in srgb, var(--tao-color-surface-raised) var(--tao-frame-fill, 0%), var(--tao-color-surface));
 }
 
 .tao-table-wrap--loading {

@@ -162,6 +162,8 @@ Container lives on another axis — width: `width="wide" | "slim" | "ultra-slim"
 <html class="tao-density-auto">
 ```
 
+**Frames** are the third context, for the decorative frames of panels: `tao-frames-soft` on a container (or on `<html>`) lets the frames of `TaoAlert`, `TaoSpoiler`, `TaoTable`, `TaoList`, `TaoToolbar` and `TaoMenubar` go clear and holds the panel by its fill instead (an alert gets a little more tint); nothing moves, the 1px border stays in the box. `tao-frames-framed` puts them back inside a soft area, and `bordered` on a panel (`true` / `false`) overrides the context for that panel. The frame of a field, the focus ring and the lines between rows are not touched: they tell where a control is, and WCAG 1.4.11 asks 3:1 of them. Tokens `--tao-frame-alpha` / `--tao-frame-tint` / `--tao-frame-fill`.
+
 
 Surfaces — what a panel is made of: `flat` fill (default), `grain` (static film grain), `glass` (translucent, blurs what is
 behind). Use `surface` on TaoCard / TaoBlock or the class `tao-surface-grain` / `-glass` on any element — a game HUD, a
@@ -638,7 +640,7 @@ tokens/primitives.css → tokens/semantic.css → themes/*.css → contexts/*.cs
 | `tokens/semantic.css` | Theme-independent roles: radii, shadows, type, motion | Rarely |
 | `themes/dark.css` | The colour roles of the default (dark) theme: `--tao-color-accent`, `--tao-color-surface`, … | **Yes — this is the theming API** |
 | `themes/light.css` | The same roles under `[data-tao-mode="light"]` (or the old `[data-tao-theme="light"]`) | Yes, as a sample |
-| `contexts/size.css`, `tone.css`, `surface.css` | `.tao-size-*` and `.tao-density-*`, `.tao-tone-*`, `.tao-surface-*`: what a control reads to know its size, colour and material | Rarely |
+| `contexts/size.css`, `tone.css`, `surface.css`, `frames.css` | `.tao-size-*` and `.tao-density-*`, `.tao-tone-*`, `.tao-surface-*`, `.tao-frames-*`: what a control reads to know its size, colour, material and how loud its frames are | Rarely |
 | `base.css` | Global reset (scrollbar, links, box-sizing) | Rarely |
 
 Everything comes in through `@1337exp/taoui/styles.css` (dark and light both: light turns on with `data-tao-mode="light"`).

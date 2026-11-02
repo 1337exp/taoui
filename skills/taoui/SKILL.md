@@ -37,6 +37,9 @@ createApp(App).use(TaoUI, { locale: localeRu }).mount('#app')   // locale option
    prop wins. `comfortable` gives touch-sized controls (34 / 44 / 52px); `auto` is comfortable on `pointer: coarse`.
 4. **A surface is a material**: `surface="flat | grain | glass"` on TaoCard / TaoBlock or `class="tao-surface-glass"` on any
    element. Glass needs something behind it (popovers, a header over a scroll).
+   **Frames are a context too**: `class="tao-frames-soft"` on `<html>` or a container lets the decorative frames of Alert, Spoiler,
+   Table, List, Toolbar and Menubar go clear (the fill holds the panel); `bordered` on one of them overrides it. Field frames and
+   focus rings never follow it.
 5. **Floating panels** (Select, Combobox, Date, Popover, Tooltip, menus) are teleported to `body`; they carry the size and
    the density of where they hang from by themselves. Do not wrap them in `overflow: hidden` expecting a clip.
 6. **Do not restyle internals by class names** (`.tao-select__panel` …) unless the reference says a class is public;

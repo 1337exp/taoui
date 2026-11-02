@@ -162,6 +162,8 @@ Container живёт на другой оси — ширина: `width="wide" | 
 <html class="tao-density-auto">
 ```
 
+**Рамки** — третий контекст, для декоративных рамок панелей: `tao-frames-soft` на контейнере (или на `<html>`) делает прозрачными рамки `TaoAlert`, `TaoSpoiler`, `TaoTable`, `TaoList`, `TaoToolbar` и `TaoMenubar`, и панель держит заливка (у алерта чуть гуще тон); ничего не двигается, рамка в 1px остаётся в боксе. `tao-frames-framed` возвращает их внутри мягкой области, а `bordered` на панели (`true` / `false`) переопределяет контекст для неё. Рамки полей, кольцо фокуса и линии между рядами не затрагиваются: они показывают, где контрол, и WCAG 1.4.11 требует от них 3:1. Токены `--tao-frame-alpha` / `--tao-frame-tint` / `--tao-frame-fill`.
+
 
 Поверхности — из чего «сделана» панель: `flat` — заливка (по умолчанию), `grain` — статичное плёночное зерно, `glass` —
 полупрозрачное стекло с размытием того, что позади. Проп `surface` у TaoCard / TaoBlock или класс `tao-surface-grain` /
@@ -639,7 +641,7 @@ tokens/primitives.css → tokens/semantic.css → themes/*.css → contexts/*.cs
 | `tokens/semantic.css` | Роли, не зависящие от темы: скругления, тени, шрифт, движение | Редко |
 | `themes/dark.css` | Цветовые роли темы по умолчанию (dark): `--tao-color-accent`, `--tao-color-surface`, ... | **Да — это и есть API темизации** |
 | `themes/light.css` | Те же роли под `[data-tao-mode="light"]` (или старым `[data-tao-theme="light"]`) | Да, как образец |
-| `contexts/size.css`, `tone.css`, `surface.css` | `.tao-size-*` и `.tao-density-*`, `.tao-tone-*`, `.tao-surface-*`: что контрол читает, чтобы знать размер, цвет и материал | Редко |
+| `contexts/size.css`, `tone.css`, `surface.css`, `frames.css` | `.tao-size-*` и `.tao-density-*`, `.tao-tone-*`, `.tao-surface-*`, `.tao-frames-*`: что контрол читает, чтобы знать размер, цвет, материал и насколько громки его рамки | Редко |
 | `base.css` | Глобальный reset (скроллбар, ссылки, box-sizing) | Редко |
 
 Всё подключается одним файлом `@1337exp/taoui/styles.css` (и dark, и light: light включается атрибутом `data-tao-mode="light"`).

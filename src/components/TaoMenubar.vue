@@ -4,6 +4,7 @@ import { useLocaleText } from '../locale';
 import { isMenuSelectable, menuReturnsFocus, type TaoMenuActionItem, type TaoMenuCloseReason, type TaoMenuItem } from '../menu';
 import { sizeClass, type TaoSize } from '../size';
 import TaoMenu from './TaoMenu.vue';
+import { frameStyle } from '../frames';
 
 defineOptions({ name: 'TaoMenubar' });
 
@@ -23,11 +24,14 @@ const props = withDefaults(
         ariaLabel?: string;
         /** Close an open menu when the page scrolls (otherwise it follows its entry). / Закрывать меню при прокрутке (иначе оно едет за пунктом). */
         closeOnScroll?: boolean;
+        /** The outer frame; not set, it follows the frames context (`.tao-frames-soft`). / Внешняя рамка; не задан — идёт за контекстом рамок. */
+        bordered?: boolean;
     }>(),
     {
         size: undefined,
         ariaLabel: undefined,
         closeOnScroll: false,
+        bordered: undefined,
     },
 );
 const l10n = useLocaleText(props, 'menubar');
@@ -151,7 +155,7 @@ function onEdge(direction: 'prev' | 'next') {
 </script>
 
 <template>
-    <div class="tao-menubar" :class="sizeClass(size)" role="menubar" :aria-label="l10n.ariaLabel">
+    <div class="tao-menubar" :class="sizeClass(size)" :style="frameStyle(bordered)" role="menubar" :aria-label="l10n.ariaLabel">
         <template v-for="(entry, index) in entries" :key="entry.id">
             <button
                 :ref="(el) => (buttons[index] = el as HTMLElement | null)"
@@ -198,7 +202,7 @@ function onEdge(direction: 'prev' | 'next') {
     min-height: var(--tao-control-height);
     padding: var(--tao-space-1);
     background: var(--tao-color-surface-raised);
-    border: 1px solid var(--tao-color-border);
+    border: 1px solid color-mix(in srgb, var(--tao-color-border) var(--tao-frame-alpha, 100%), transparent);
     border-radius: var(--tao-radius-panel);
     color: var(--tao-color-text);
     font-size: var(--tao-control-font-size);

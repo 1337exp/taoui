@@ -621,6 +621,7 @@ Showcase section: `#table`
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Paddings and text of cells (small = the former compact), and the size of controls in cells too |
 | `head` | `boolean` | true | Highlight the header |
 | `lines` | `boolean` | true | Lines between rows |
+| `bordered` | `boolean` | by context | The outer frame. Not set, it follows the frames context; false: no frame, the table sits on a raised fill. The lines between rows stay (lines) |
 | `sticky` | `boolean` | false | A sticky header (needs maxHeight) |
 | `rowKey` | `string \| fn` | 'id' | The row key |
 | `maxHeight` | `number \| string` | — | Scroll. A number is px |
@@ -995,6 +996,7 @@ Showcase section: `#toolbar`
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | The size of the controls inside |
 | `orientation` | `'horizontal' \| 'vertical'` | 'horizontal' | Which arrows walk it (← → or ↑ ↓); the separators lie across |
 | `variant` | `'panel' \| 'plain'` | 'panel' | panel — a raised bar of its own with concentric corners; plain — only the layout, for a toolbar inside a header |
+| `bordered` | `boolean` | by context | The frame of a panel. Not set, it follows the frames context; false: no frame, the raised fill stays |
 
 **Slots, events, notes.** default — any controls: TaoButton (toggles with v-model:pressed), TaoSegmented, a select, TaoToolbarGroup, TaoToolbarSeparator. Keys: the bar is one Tab stop and remembers the last item; ← → (↑ ↓ when vertical) walk it and wrap, Home / End go to the ends, disabled items are skipped. Inside a radio group (TaoSegmented) the arrows pick the option and go on from its edge; a text field keeps its arrows. The items wrap onto a new line on a narrow screen.
 
@@ -1025,6 +1027,7 @@ Showcase section: `#menubar`
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | The height of the bar, as for the controls |
 | `ariaLabel` | `string` | 'Menu bar' | Accessible name of the bar |
 | `closeOnScroll` | `boolean` | false | Close an open menu when the page scrolls. Off: it follows its entry |
+| `bordered` | `boolean` | by context | The outer frame. Not set, it follows the frames context; false: no frame, the raised fill stays |
 
 **Slots, events, notes.** The select event — the id of the picked item (in a menu or a plain top entry). #item — your own item face in the menus. Keys: Tab enters the bar, ← → walk it, Home / End, ↓ / Enter / Space open, with a menu open ← → move to the neighbour menu, Esc closes and gives the focus back. No folding of entries into “…” on a narrow bar yet.
 
@@ -1051,6 +1054,7 @@ Showcase section: `#spoiler`
 | `title` | `string` | '' | The button title |
 | `name` | `string \| number` | — | The panel key inside TaoSpoilerGroup |
 | `defaultOpen` | `boolean` | false | The initial state, if there is no v-model |
+| `bordered` | `boolean` | by context | The outer frame. Not set, it follows the frames context; false: the header fill holds the panel |
 | `@change` | `value` | — | The user opened or closed it |
 
 **Slots, events, notes.** default — the body. Neighbours do not close each other.
@@ -1169,6 +1173,7 @@ Showcase section: `#alert`
 | `collapsible` | `boolean` | false | The body folds under the title (the title is the toggle, aria-expanded); the tone stays. Folded text stays in the DOM, find-in-page opens it |
 | `v-model:collapsed` | `boolean` | own | Folded or not; v-model:collapsed="true" starts folded. Better open for an error |
 | `detailsLabel` | `string` | 'Details' | The toggle text when there is no title |
+| `bordered` | `boolean` | by context | The frame. Not set, it follows the frames context (.tao-frames-soft); false: no frame, a stronger tint of the tone; true: the frame stays |
 
 **Slots, events, notes.** default — the text. #close-icon. v-if + @close — to hide it.
 

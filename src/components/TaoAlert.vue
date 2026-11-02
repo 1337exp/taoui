@@ -2,6 +2,7 @@
 import TaoIcon from './TaoIcon.vue';
 import { computed, onBeforeUnmount, ref, useId, watch } from 'vue';
 import { toneClass, type TaoTone } from '../tone';
+import { frameStyle } from '../frames';
 import { useLocaleText } from '../locale';
 defineOptions({ name: 'TaoAlert' });
 
@@ -22,8 +23,8 @@ const props = withDefaults(
         /** The toggle text when there is no title. / Текст переключателя, когда нет заголовка. */
         detailsLabel?: string;
         /**
-         * `false` is a light style: no frame, a stronger tint of the tone instead (the border stays in the box, so nothing moves).
-         * `false` — лёгкий стиль: рамки нет, вместо неё гуще тон заливки (рамка остаётся в боксе, ничего не двигается).
+         * Not set, it follows the frames context (`.tao-frames-soft`). `false` is a light style: no frame, a stronger tint of the tone instead (the border stays in the box, so nothing moves); `true` keeps the frame.
+         * Не задан — идёт за контекстом рамок (`.tao-frames-soft`). `false` — лёгкий стиль: рамки нет, вместо неё гуще тон заливки (рамка остаётся в боксе); `true` — рамка остаётся.
          */
         bordered?: boolean;
     }>(),
@@ -34,7 +35,7 @@ const props = withDefaults(
         collapsible: false,
         collapsed: undefined,
         detailsLabel: undefined,
-        bordered: true,
+        bordered: undefined,
     },
 );
 const l10n = useLocaleText(props, 'alert');
@@ -105,7 +106,8 @@ const isUrgent = computed(() => props.tone === 'danger' || props.tone === 'warni
 <template>
     <div
         class="tao-alert"
-        :class="[toneClass(tone), { 'tao-alert--plain': !bordered }]"
+        :class="toneClass(tone)"
+        :style="frameStyle(bordered)"
         :role="tone === 'danger' ? 'alert' : 'status'"
         :aria-live="isUrgent ? 'assertive' : 'polite'"
     >
@@ -169,15 +171,10 @@ const isUrgent = computed(() => props.tone === 'danger' || props.tone === 'warni
     gap: var(--tao-space-3);
     width: 100%;
     padding: var(--tao-space-3) var(--tao-space-4);
-    background: color-mix(in srgb, var(--tao-alert-tone) 10%, var(--tao-color-surface-raised));
+    background: color-mix(in srgb, var(--tao-alert-tone) calc(10% + var(--tao-frame-tint, 0%)), var(--tao-color-surface-raised));
     color: var(--tao-color-text);
-    border: 1px solid color-mix(in srgb, var(--tao-alert-tone) 35%, var(--tao-color-border));
+    border: 1px solid color-mix(in srgb, color-mix(in srgb, var(--tao-alert-tone) 35%, var(--tao-color-border)) var(--tao-frame-alpha, 100%), transparent);
     border-radius: var(--tao-radius-panel);
-}
-
-.tao-alert.tao-alert--plain {
-    border-color: transparent;
-    background: color-mix(in srgb, var(--tao-alert-tone) 16%, var(--tao-color-surface-raised));
 }
 
 .tao-alert__body {
