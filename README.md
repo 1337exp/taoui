@@ -1,8 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/1337exp/taoui/master/showcase/public/logo/logo-mark-dark.svg">
-    <img src="https://raw.githubusercontent.com/1337exp/taoui/master/showcase/public/logo/logo-mark-light.svg" alt="Tao UI" width="96" height="94">
-  </picture>
+  <img src="https://raw.githubusercontent.com/1337exp/taoui/master/showcase/public/logo/logo-mark.svg" alt="Tao UI" width="96" height="94">
 </p>
 
 <h1 align="center">Tao UI</h1>

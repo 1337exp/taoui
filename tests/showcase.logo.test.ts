@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 
 const dir = resolve(__dirname, '../showcase/public/logo');
 const read = (name: string) => readFileSync(resolve(dir, name), 'utf8');
-const FILES = ['logo-mark-dark.svg', 'logo-mark-light.svg', 'favicon.svg'];
+const FILES = ['logo-mark.svg', 'logo-mark-dark.svg', 'logo-mark-light.svg', 'favicon.svg'];
 
 describe('logo files', () => {
     it.each(FILES)('%s is a titled SVG made of paths only', (name) => {
@@ -31,6 +31,15 @@ describe('logo files', () => {
         expect(read('logo-mark-light.svg')).not.toContain('#ffffff');
     });
 
+    it('the neutral mark is the same drawing with an outline, for a background we do not choose', () => {
+        const paths = (svg: string) => [...svg.matchAll(/ d="([^"]+)"/g)].map((m) => m[1]);
+        const neutral = read('logo-mark.svg');
+        expect(paths(neutral)).toEqual(paths(read('logo-mark-dark.svg')));
+        expect(neutral).toMatch(/stroke="#1a1a1a"/);
+        expect(neutral).toMatch(/paint-order="stroke"/);
+        expect(neutral).toContain('#ffffff');
+    });
+
     it('the favicon is a square tile with no road markings (they are noise at 16px)', () => {
         const svg = read('favicon.svg');
         expect(svg).toContain('viewBox="0 0 64 64"');
@@ -40,14 +49,14 @@ describe('logo files', () => {
 });
 
 describe('where the mark is used', () => {
-    it('both READMEs show it with <picture>, and the files they name exist', () => {
+    it('both READMEs show the neutral mark with a plain <img> (npm ignores prefers-color-scheme, so a <picture> can hand it a mark that vanishes)', () => {
         for (const readme of ['README.md', 'README.ru.md']) {
             const text = readFileSync(resolve(__dirname, '..', readme), 'utf8');
-            expect(text, readme).toContain('<picture>');
-            for (const file of ['logo-mark-dark.svg', 'logo-mark-light.svg']) {
-                expect(text, `${readme} ${file}`).toContain(`showcase/public/logo/${file}`);
-                expect(existsSync(resolve(dir, file))).toBe(true);
-            }
+            expect(text, readme).toContain('showcase/public/logo/logo-mark.svg');
+            expect(text, readme).not.toContain('logo-mark-dark.svg');
+            expect(text, readme).not.toContain('logo-mark-light.svg');
+            expect(text, readme).not.toContain('<picture>');
+            expect(existsSync(resolve(dir, 'logo-mark.svg'))).toBe(true);
         }
     });
 
