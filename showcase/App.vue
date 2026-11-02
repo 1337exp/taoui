@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
-import { TaoButton, TaoIcon, TaoInput, TaoPopover, TaoScrollTop, TaoSegmented, TaoSegmentedOption, TaoSelect, TaoTag, taoPalettes } from '@1337exp/taoui'
+import { TaoButton, TaoIcon, TaoInput, TaoPopover, TaoScrollTop, TaoSegmented, TaoSegmentedOption, TaoSelect, TaoTag, TaoThemeToggle, readTaoMode, taoPalettes } from '@1337exp/taoui'
 import { navGroups } from './nav.js'
 import { demoById } from './sections.js'
 import { lang, LANGS, tr } from './i18n.js'
@@ -158,8 +158,15 @@ function toggleGroup(groupId) {
 let sectionObserver = null
 let barObserver = null
 let stuckObserver = null
+let modeObserver = null
 
 onMounted(() => {
+  // a TaoThemeToggle in a demo changes <html> by itself: the bar follows and remembers it / переключатель в демо сам меняет <html>: панель идёт следом и запоминает
+  modeObserver = new MutationObserver(() => {
+    const mode = readTaoMode(document.documentElement)
+    if (mode !== theme.value) setTheme(mode)
+  })
+  modeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-tao-mode'] })
   barObserver = new ResizeObserver(() => {
     const bar = barRef.value
     // a bar that does not stick (a narrow screen) takes no room from the section list / не липнущая панель не отнимает места
@@ -192,6 +199,7 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  modeObserver?.disconnect()
   barObserver?.disconnect()
   stuckObserver?.disconnect()
   sectionObserver?.disconnect()
@@ -232,9 +240,7 @@ onBeforeUnmount(() => {
             <i v-for="color in swatches" :key="color" :style="{ background: color }" />
           </span>
         </span>
-        <TaoSegmented size="small" :model-value="theme" :aria-label="tr('Mode', 'Режим')" @update:model-value="setTheme">
-          <TaoSegmentedOption v-for="mode in ['dark', 'light']" :key="mode" :value="mode">{{ mode }}</TaoSegmentedOption>
-        </TaoSegmented>
+        <TaoThemeToggle size="small" :model-value="theme" :apply="false" @update:model-value="setTheme" />
         <TaoPopover placement="bottom-end">
           <template #trigger>
             <TaoButton size="small" variant="secondary" icon="tao-settings">

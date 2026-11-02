@@ -117,6 +117,21 @@ Showcase section: `#copy`
 | `copyLabel` | `string` | 'Copy' | aria-label of the button |
 | `tip` | `boolean` | true | Show a tooltip above the button after copying |
 
+## TaoThemeToggle
+
+Showcase section: `#theme-toggle`
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `v-model` | `'dark' \| 'light'` | page mode | The mode. Without it the button reads the mode of <html> (data-tao-mode) and follows it |
+| `apply` | `boolean` | true | Write the mode to <html>. Turn it off to do it yourself from v-model (save the choice, change a class) |
+| `size` | `'small' \| 'medium' \| 'large'` | from ancestors | Button size |
+| `variant` | `'primary' \| 'secondary' \| 'ghost' \| 'text'` | 'ghost' | Button look |
+| `toLightLabel` | `string` | 'Switch to the light theme' | aria-label while the theme is dark (what a click does) |
+| `toDarkLabel` | `string` | 'Switch to the dark theme' | aria-label while the theme is light |
+
+**Slots, events, notes.** update:modelValue and change: the new mode ("dark" \| "light"). The icon is the theme a click leads to (a sun while dark, a moon while light).
+
 ## TaoInput
 
 Showcase section: `#input`

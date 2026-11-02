@@ -12,7 +12,7 @@ const styles = readFileSync(resolve(__dirname, '../showcase/styles.css'), 'utf8'
 describe('showcase settings bar', () => {
     it('is made of the kit: segmented controls, a select, a popover', () => {
         const source = app as string;
-        for (const name of ['TaoSegmented', 'TaoSegmentedOption', 'TaoSelect', 'TaoPopover']) {
+        for (const name of ['TaoSegmented', 'TaoSegmentedOption', 'TaoSelect', 'TaoPopover', 'TaoThemeToggle']) {
             expect(source, name).toContain(name);
         }
         expect(source).not.toContain('theme-switcher');
@@ -31,7 +31,7 @@ describe('showcase settings bar', () => {
         const source = app as string;
         const bar = source.slice(source.indexOf('<div ref="barRef"'), source.indexOf('<div class="showcase-body">'));
         const segmented = bar.match(/<TaoSegmented [^>]*>/g) ?? [];
-        expect(segmented.length).toBe(4);
+        expect(segmented.length).toBe(3);
         for (const tag of segmented) {
             expect(tag).toContain(':aria-label=');
             expect(tag).not.toContain(':legend=');
