@@ -264,6 +264,18 @@ onBeforeUnmount(() => {
     text-shadow: 0 0 6px var(--tao-color-bg), 0 0 2px var(--tao-color-bg);
 }
 
+/* a crisp outline in the page colour: paint-order puts the stroke under the letters, so only its outer half shows; where
+   paint-order is not supported (a stroke would eat the letters) the halo above is all there is
+   чёткая обводка цвета страницы: paint-order кладёт штрих под буквы, и видна только его внешняя половина; где paint-order
+   не поддерживается (штрих съел бы буквы), остаётся одно гало выше */
+@supports (paint-order: stroke) {
+    .tao-scroll-top__text,
+    .tao-scroll-top__label {
+        -webkit-text-stroke: var(--tao-space-1) var(--tao-color-bg);
+        paint-order: stroke fill;
+    }
+}
+
 .tao-scroll-top__label {
     position: absolute;
     top: 50%;
