@@ -33,6 +33,19 @@ const density = ref(DENSITIES.includes(saved.density) ? saved.density : 'default
 const FRAMES = ['framed', 'soft']
 const frames = ref(FRAMES.includes(saved.frames) ? saved.frames : 'framed')
 
+// the mark of the project follows the mode: a white T on dark, a dark T on light (showcase/public/logo)
+// знак проекта идёт за режимом: белая T на тёмном, тёмная на светлом
+const logoSrc = computed(() => `${import.meta.env.BASE_URL}logo/logo-mark-${theme.value}.svg`)
+
+// The settings bar sticks to the top, so the options are at hand wherever you scroll. Its height goes to the page
+// (--showcase-bar) for the section list and the scroll margins; the brand shows in it only once it has stuck.
+// Панель настроек липнет к верху: опции под рукой, где бы ни прокрутили. Её высота уходит в страницу (--showcase-bar)
+// для списка разделов и отступов прокрутки; бренд в ней появляется, только когда она прилипла.
+const rootRef = ref(null)
+const barRef = ref(null)
+const sentinelRef = ref(null)
+const stuck = ref(false)
+
 const paletteOptions = computed(() => [
   { value: 'default', label: tr('Default', 'По умолчанию') },
   ...taoPalettes.map((p) => ({ value: p.name, label: p.label })),
@@ -139,8 +152,22 @@ function toggleGroup(groupId) {
 }
 
 let sectionObserver = null
+let barObserver = null
+let stuckObserver = null
 
 onMounted(() => {
+  barObserver = new ResizeObserver(() => {
+    const bar = barRef.value
+    // a bar that does not stick (a narrow screen) takes no room from the section list / не липнущая панель не отнимает места
+    const room = bar && getComputedStyle(bar).position === 'sticky' ? bar.offsetHeight + 8 : 0
+    rootRef.value?.style.setProperty('--showcase-bar', `${room}px`)
+  })
+  if (barRef.value) barObserver.observe(barRef.value)
+  stuckObserver = new IntersectionObserver(([entry]) => {
+    stuck.value = !entry.isIntersecting && entry.boundingClientRect.top < 0
+  })
+  if (sentinelRef.value) stuckObserver.observe(sentinelRef.value)
+
   sectionObserver = new IntersectionObserver(
     (entries) => {
       const visible = entries
@@ -161,21 +188,32 @@ onMounted(() => {
 })
 
 onBeforeUnmount(() => {
+  barObserver?.disconnect()
+  stuckObserver?.disconnect()
   sectionObserver?.disconnect()
 })
 </script>
 
 <template>
-  <div class="showcase">
+  <div ref="rootRef" class="showcase">
     <header class="showcase-top">
       <div>
         <h1 class="showcase-title">
+          <img class="showcase-title__mark" :src="logoSrc" alt="" width="40" height="40" />
           Tao UI
           <!-- the version of the build, so a deployed showcase says what it shows / версия сборки: развёрнутый шоукейс говорит, что показывает -->
           <TaoTag size="small" flat :title="tr('The version this showcase is built from', 'Версия, из которой собран этот шоукейс')">v{{ version }}</TaoTag>
         </h1>
         <p class="showcase-lead">{{ tr('A Vue 3 kit on design tokens.', 'Vue 3 kit на дизайн-токенах.') }}</p>
       </div>
+    </header>
+
+    <div ref="sentinelRef" class="showcase-bar-sentinel" aria-hidden="true"></div>
+    <div ref="barRef" class="showcase-bar" role="group" :aria-label="tr('Showcase settings', 'Настройки шоукейса')">
+      <span class="showcase-bar__brand" :class="{ 'showcase-bar__brand--on': stuck }" aria-hidden="true">
+        <img :src="logoSrc" alt="" width="22" height="22" />
+        Tao UI
+      </span>
       <div class="showcase-top__controls">
       <div class="theme-switcher">
         <span class="theme-switcher__label">{{ tr('Language:', 'Язык:') }}</span>
@@ -239,7 +277,7 @@ onBeforeUnmount(() => {
         </button>
       </div>
       </div>
-    </header>
+    </div>
 
     <div class="showcase-body">
       <nav class="showcase-nav" :aria-label="tr('Showcase sections', 'Разделы showcase')">
