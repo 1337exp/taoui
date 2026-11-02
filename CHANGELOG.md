@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.23.2
+
+Nothing to migrate; the defaults do not change.
+
+- **TaoCopy: the arrow of the tip points at the button at the edge of the window.** When the tip was pushed in from the viewport edge, its arrow stayed in the middle of the tip and no longer pointed at the trigger. It now takes its place from where the trigger falls on the tip (kept off the rounded corners), and it moves to the top edge when the tip flips below the button.
+
 ## 5.23.1
 
 Nothing to migrate; the defaults do not change.
