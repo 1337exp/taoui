@@ -27,7 +27,11 @@ const l10n = useLocaleText(props, 'copy');
 const copied = ref(false);
 const triggerRef = ref<HTMLElement | null>(null);
 const tipRef = ref<HTMLElement | null>(null);
-const { style: tipStyle } = useFloating(triggerRef, tipRef, () => copied.value && props.tip, { placement: 'top', gap: 8 });
+const { style: tipStyle, side, anchorOffset } = useFloating(triggerRef, tipRef, () => copied.value && props.tip, { placement: 'top', gap: 8 });
+
+// the arrow points at the middle of the trigger even when the tip is pushed in from the viewport edge
+// стрелка смотрит в середину кнопки, даже когда подсказку сдвинуло от края окна
+const tipStyleWithArrow = computed(() => ({ ...tipStyle.value, '--tao-copy-arrow': `${anchorOffset.value.x}px` }));
 
 let hideTimer = 0;
 let visibleObserver: IntersectionObserver | null = null;
@@ -89,8 +93,9 @@ const doneText = computed(() => props.successText ?? appLocale.value.copy.succes
                 v-if="copied && tip && doneText"
                 ref="tipRef"
                 class="tao-copy__tip"
+                :class="{ 'tao-copy__tip--below': side === 'bottom' }"
                 role="status"
-                :style="tipStyle"
+                :style="tipStyleWithArrow"
             >
                 {{ doneText }}
             </div>
@@ -119,13 +124,18 @@ const doneText = computed(() => props.successText ?? appLocale.value.copy.succes
     content: '';
     position: absolute;
     top: 100%;
-    left: 50%;
+    /* at the trigger's middle, kept off the rounded corners; 50% when nothing was measured / по середине кнопки, не заходя на скругления */
+    left: clamp(var(--tao-space-3), var(--tao-copy-arrow, 50%), calc(100% - var(--tao-space-3)));
     width: 8px;
     height: 8px;
     margin-top: -4px;
     margin-left: -4px;
     background: var(--tao-color-surface-raised);
     transform: rotate(45deg);
+}
+
+.tao-copy__tip--below::after {
+    top: 0;
 }
 </style>
 
