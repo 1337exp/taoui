@@ -38,6 +38,13 @@ describe('showcase settings bar', () => {
         }
     });
 
+    it('the brand in the bar carries the version of the build, so it is clear what you work with', () => {
+        const source = app as string;
+        const brand = source.slice(source.indexOf('class="showcase-bar__brand"'), source.indexOf('class="showcase-bar__controls"'));
+        expect(brand).toContain('<TaoTag');
+        expect(brand).toContain('v{{ version }}');
+    });
+
     it('sticks to the top, and does not stick on a phone', () => {
         const css = styles as string;
         expect(css).toMatch(/\.showcase-bar \{[^}]*position: sticky/);
