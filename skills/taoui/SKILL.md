@@ -134,6 +134,7 @@ only of straight lines through the middle (a plus), so they stay crisp when smal
 ## Language
 
 `app.use(TaoUI, { locale: localeRu })`; `setTaoLocale(localeEn)` switches at run time without a reload; a prop passed by
+- Which language to start with: `detectTaoLanguage(['en', 'ru'], { fallback?, requested? })` returns one of your languages by `navigator.languages` (`parseAcceptLanguage(header)` for a server); it only answers, `setTaoLocale` sets. A locale text may be plural forms `{ one, few, many, other }` (`formatTaoText(text, { count }, code)` does it for your own texts); a plain string stays the same for every number.
 hand (`placeholder`, `closeLabel`…) always wins. For SSR per request, `provideTaoLocale`.
 
 ## Mistakes to avoid

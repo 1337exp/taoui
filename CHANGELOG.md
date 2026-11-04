@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.27.0
+
+Nothing to migrate; the defaults do not change (a plain string in a locale works as before).
+
+- **Plural forms in locale texts.** A text that depends on a number may now be written as forms, `{ one, few, many, other }` (as `Intl.PluralRules` names the categories; only `other` is required, a missing form falls back to it), chosen by the number (`count`, or `n`) and the `code` of the locale. A plain string is still accepted and is the same for every number, so nobody has to write forms. The built-in texts that count have them now, in English and Russian: the badge of `TaoAvatar` ("1 notification", "2 уведомления", "5 уведомлений") and the jump buttons of `TaoPagination`. `formatTaoText(text, values, code?)` is exported for your own texts; the types are `TaoText` and `TaoPluralForms`.
+- **`detectTaoLanguage(supported, { fallback?, requested? })`.** The one of your languages that the user would like most, by `navigator.languages` (a server passes `requested`, e.g. `parseAcceptLanguage(header)`); `ru-RU` fits `ru`, `en` is answered by `en-GB`. It only answers: it does not set the language and does not remember it (`saved ?? detectTaoLanguage(['en', 'ru'])`). `matchTaoLanguage(requested, supported, fallback?)` is the pure core.
+- **Showcase: the keys of the locale are browsable.** The sections of the locale are buttons: one shows its keys in English and Russian, built from the real `localeEn` / `localeRu`, so the page cannot differ from the library; a template to translate can be copied. New there: plural forms and the language of the user, both live. `showcase/lab/rtl.html` is a probe of the same components left to right and right to left (the status of RTL is in the README of the lab).
+
 ## 5.26.0
 
 Nothing to migrate; the defaults do not change.

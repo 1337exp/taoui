@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { localeEn, localeRu, TaoCopy } from '@1337exp/taoui'
+import { detectTaoLanguage, formatTaoText, localeEn, localeRu, matchTaoLanguage, TaoCopy, TaoInput, TaoInputNumber } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import LocaleBox from './LocaleBox.vue'
 import LocaleSpecimen from './LocaleSpecimen.vue'
@@ -70,6 +70,39 @@ const codeOwn = `import { localeEn, type TaoLocale } from '@1337exp/taoui'
 
 const german: TaoLocale = { ...localeEn, code: 'de-DE', select: { placeholder: 'Auswählen', clearText: 'Leeren' } /* … */ }
 // or a few keys only: setTaoLocale({ code: 'de-DE', select: { placeholder: 'Auswählen' } })`
+
+// plural forms: the same number, three languages / формы числа: одно число, три языка
+const qty = ref(1)
+const forms = {
+  en: { code: 'en-US', text: { one: '{count} file', other: '{count} files' } },
+  ru: { code: 'ru-RU', text: { one: '{count} файл', few: '{count} файла', many: '{count} файлов', other: '{count} файла' } },
+  ar: { code: 'ar', text: { zero: 'لا ملفات', one: 'ملف واحد', two: 'ملفان', few: '{count} ملفات', many: '{count} ملفًا', other: '{count} ملف' } },
+}
+const pluralLines = computed(() => Object.entries(forms).map(([lang, f]) => ({ lang, text: formatTaoText(f.text, { count: qty.value }, f.code) })))
+
+// the language of the user: what the browser says, and a field to try other wishes / язык пользователя: что говорит браузер и поле для других пожеланий
+const supported = ['en', 'ru', 'de']
+const browserLanguages = typeof navigator === 'undefined' ? '' : navigator.languages.join(', ')
+const detected = detectTaoLanguage(supported)
+const wishes = ref('ru-RU, en')
+const matched = computed(() => matchTaoLanguage(wishes.value.split(',').map((s) => s.trim()).filter(Boolean), supported, 'en'))
+
+const codePlural = `// a locale: a plain string, or one form per category of the language (only \`other\` is required)
+setTaoLocale({
+  avatar: { notificationsLabel: { one: '{count} уведомление', few: '{count} уведомления', many: '{count} уведомлений', other: '{count} уведомления' } },
+  checklist: { counterText: '{checked} из {total}' },     // a plain string works for every number, as it always did
+})
+
+// and in your own code, the same rules:
+formatTaoText(forms, { count: 5 }, 'ru-RU')            // '5 файлов'`
+
+const codeDetect = `import { detectTaoLanguage, parseAcceptLanguage, setTaoLocale, localeRu, localeEn } from '@1337exp/taoui'
+
+const lang = localStorage.getItem('lang') ?? detectTaoLanguage(['en', 'ru'])   // saved, else the language of the browser
+setTaoLocale(lang === 'ru' ? localeRu : localeEn)
+
+// on the server (Nuxt): there is no navigator, give the wishes of the request
+detectTaoLanguage(['en', 'ru'], { requested: parseAcceptLanguage(headers['accept-language']) })`
 
 const codeProp = computed(() => `<TaoSelect :options="options" placeholder="${tr('Pick a city', 'Выберите город')}" />   // ${tr('a prop in hand always wins', 'проп, переданный руками, главнее локали')}`)
 </script>
@@ -147,6 +180,62 @@ const codeProp = computed(() => `<TaoSelect :options="options" placeholder="${tr
     <div class="code-block"><pre><code>{{ codeOwn }}</code></pre></div>
     <div class="code-block"><pre><code>{{ codeProp }}</code></pre></div>
 
+    <h3>{{ tr('Numbers: plural forms', 'Числа: формы множественного числа') }}</h3>
+    <Tr>
+      <template #en>
+        <p>
+          A text that depends on a number may be written as forms, one per plural category of the language (<code>one</code>, <code>few</code>, <code>many</code>,
+          <code>other</code>…): the library picks one by the number and the <code>code</code> of the locale (<code>Intl.PluralRules</code>, so every language the
+          browser knows). Only <code>other</code> is required, and a plain string still works: it is the same for every number. So nobody has to write forms; the
+          built-in texts that count (the badge of an avatar, the jump of a pager) already have them in English and Russian.
+        </p>
+      </template>
+      <template #ru>
+        <p>
+          Текст, зависящий от числа, можно написать формами, по одной на категорию множественного числа языка (<code>one</code>, <code>few</code>,
+          <code>many</code>, <code>other</code>…): библиотека выберет нужную по числу и <code>code</code> локали (<code>Intl.PluralRules</code>, то есть любой язык, который знает
+          браузер). Обязательна только <code>other</code>, а обычная строка по-прежнему работает: она одна на любое число. Так что писать формы никого не заставляют;
+          встроенные тексты, где есть счёт (бейдж аватара, прыжок пагинации), уже с формами на английском и русском.
+        </p>
+      </template>
+    </Tr>
+    <div class="locale-try">
+      <TaoInputNumber v-model="qty" :min="0" :max="1000" />
+      <ul>
+        <li v-for="line in pluralLines" :key="line.lang"><code>{{ line.lang }}</code> {{ line.text }}</li>
+      </ul>
+    </div>
+    <div class="code-block"><pre><code>{{ codePlural }}</code></pre></div>
+
+    <h3>{{ tr('The language of the user', 'Язык пользователя') }}</h3>
+    <Tr>
+      <template #en>
+        <p>
+          <code>detectTaoLanguage(['en', 'ru'])</code> answers with the one of your languages that the user would like most (<code>navigator.languages</code>;
+          <code>ru-RU</code> fits <code>ru</code>). It only answers: it neither sets the language nor remembers it, so the usual order is “saved choice, else this”.
+          On a server pass the wishes of the request. Try other wishes below.
+        </p>
+      </template>
+      <template #ru>
+        <p>
+          <code>detectTaoLanguage(['en', 'ru'])</code> отвечает тем из ваших языков, который пользователь хотел бы больше всего (<code>navigator.languages</code>;
+          <code>ru-RU</code> подойдёт к <code>ru</code>). Только отвечает: язык не ставит и не запоминает, поэтому обычный порядок — «сохранённый выбор, иначе это».
+          На сервере передайте пожелания запроса. Ниже можно попробовать другие пожелания.
+        </p>
+      </template>
+    </Tr>
+    <div class="locale-try">
+      <div class="locale-note">
+        {{ tr('Your browser says', 'Ваш браузер говорит') }}: <code>{{ browserLanguages }}</code><br />
+        <code>detectTaoLanguage(['en', 'ru', 'de'])</code> → <code>{{ detected }}</code>
+      </div>
+      <div class="locale-try__field">
+        <TaoInput v-model="wishes" :aria-label="tr('Wishes, the most wanted first', 'Пожелания, самое желаемое первым')" />
+        <span>→ <code>{{ matched }}</code></span>
+      </div>
+    </div>
+    <div class="code-block"><pre><code>{{ codeDetect }}</code></pre></div>
+
     <h3>{{ tr('What is translated', 'Что переводится') }}</h3>
     <Tr>
       <template #en>
@@ -214,6 +303,31 @@ const codeProp = computed(() => `<TaoSelect :options="options" placeholder="${tr
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 16px;
   margin: 12px 0 8px;
+}
+
+.locale-try {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 8px 0 12px;
+}
+
+.locale-try ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.locale-try li {
+  padding: 2px 0;
+}
+
+.locale-try__field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 260px;
 }
 
 .locale-note {

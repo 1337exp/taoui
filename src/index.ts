@@ -322,8 +322,8 @@ export {
     parseTaoDateInput,
     taoDateOrder,
 } from './date';
-export { localeRu, localeEn, setTaoLocale, taoLocale, provideTaoLocale } from './locale';
-export type { TaoLocale, TaoLocaleOverrides } from './locale';
+export { localeRu, localeEn, setTaoLocale, taoLocale, provideTaoLocale, formatText as formatTaoText, detectTaoLanguage, matchTaoLanguage, parseAcceptLanguage } from './locale';
+export type { TaoLocale, TaoLocaleOverrides, TaoPluralForms, TaoText } from './locale';
 export type { TaoSize } from './size';
 export type { TaoTone, TaoToneName } from './tone';
 export { toneClass } from './tone';

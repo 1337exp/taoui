@@ -6,7 +6,7 @@ export const localeEn: TaoLocale = {
     pinCode: { successText: 'The code is correct', errorText: 'Wrong code', cellLabel: 'Character {n} of {count}' },
     avatar: {
         fallbackLabel: 'Avatar',
-        notificationsLabel: '{count} notifications',
+        notificationsLabel: { one: '{count} notification', other: '{count} notifications' },
         dotLabels: {
             success: 'online',
             danger: 'busy',
@@ -75,8 +75,8 @@ export const localeEn: TaoLocale = {
         prevLabel: 'Previous',
         nextLabel: 'Next',
         pageLabel: 'Page {page}',
-        jumpPrevLabel: 'Back {n} pages',
-        jumpNextLabel: 'Forward {n} pages',
+        jumpPrevLabel: { one: 'Back {n} page', other: 'Back {n} pages' },
+        jumpNextLabel: { one: 'Forward {n} page', other: 'Forward {n} pages' },
         goToText: 'Go to',
         goToLabel: 'Go to page, 1 to {count}',
         perPageText: 'Per page',

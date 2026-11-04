@@ -2,7 +2,8 @@
 import { computed, ref, watch } from 'vue';
 import type { TaoSize } from '../size';
 import { toneClass, type TaoTone } from '../tone';
-import { useLocaleText, useTaoLocale } from '../locale';
+import { formatText, useLocaleText, useTaoLocale } from '../locale';
+import type { TaoText } from '../locale/types';
 
 defineOptions({ name: 'TaoAvatar' });
 
@@ -26,7 +27,7 @@ const props = withDefaults(
         count?: number | string;
         fallbackLabel?: string;
         /** `{count}` — число в бейдже. */
-        notificationsLabel?: string;
+        notificationsLabel?: TaoText;
         dotLabels?: Partial<Record<TaoAvatarDot, string>>;
     }>(),
     {
@@ -93,7 +94,7 @@ const label = computed(() => {
         extra.push(props.dotLabels[dotTone.value] ?? appLocale.value.avatar.dotLabels[dotTone.value]);
     }
     if (badge.value) {
-        extra.push(l10n.value.notificationsLabel.replace('{count}', badge.value));
+        extra.push(formatText(l10n.value.notificationsLabel, { count: badge.value }, appLocale.value.code));
     }
     return extra.length ? `${base}, ${extra.join(', ')}` : base;
 });

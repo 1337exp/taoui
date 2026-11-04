@@ -7,6 +7,24 @@ import type { TaoStageStatus } from '../stage';
  * Все встроенные тексты библиотеки. Ключи повторяют имена пропсов: `locale.select.placeholder` —
  * значение по умолчанию для `placeholder` у TaoSelect; переданный руками проп всегда главнее.
  */
+/**
+ * A text that depends on a number: one form per plural category of the language (`one`, `few`, `many`, `other`…,
+ * as `Intl.PluralRules` names them). Only `other` is required; a form that is missing falls back to it.
+ * Текст, зависящий от числа: по форме на каждую категорию множественного числа языка (`one`, `few`, `many`, `other`…,
+ * как их называет `Intl.PluralRules`). Обязательна только `other`; недостающая форма заменяется ею.
+ */
+export interface TaoPluralForms {
+    other: string;
+    zero?: string;
+    one?: string;
+    two?: string;
+    few?: string;
+    many?: string;
+}
+
+/** A text: a plain string (the same for every number) or plural forms. / Текст: просто строка (одна на любое число) или формы множественного числа. */
+export type TaoText = string | TaoPluralForms;
+
 export interface TaoLocale {
     /** BCP 47 tag for dates (Intl), e.g. `ru-RU`, `en-US`. / Тег языка для дат. */
     code: string;
@@ -20,8 +38,8 @@ export interface TaoLocale {
     };
     avatar: {
         fallbackLabel: string;
-        /** `{count}` — the number in the badge. / число в бейдже. */
-        notificationsLabel: string;
+        /** `{count}` — the number in the badge. A string or plural forms. / число в бейдже. Строка или формы числа. */
+        notificationsLabel: TaoText;
         dotLabels: Record<'success' | 'danger' | 'warning' | 'info' | 'neutral', string>;
     };
     breadcrumb: { ariaLabel: string };
@@ -98,9 +116,9 @@ export interface TaoLocale {
         nextLabel: string;
         /** `{page}`. */
         pageLabel: string;
-        /** `{n}` — pages skipped by «…». / сколько страниц перескакивает «…». */
-        jumpPrevLabel: string;
-        jumpNextLabel: string;
+        /** `{n}` — pages skipped by «…». A string or plural forms. / сколько страниц перескакивает «…». Строка или формы числа. */
+        jumpPrevLabel: TaoText;
+        jumpNextLabel: TaoText;
         /** The text before the page field. / Текст перед полем страницы. */
         goToText: string;
         /** `{count}` — the number of pages. / число страниц. */
