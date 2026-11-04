@@ -4,7 +4,7 @@
 
 Nothing to migrate; the defaults do not change.
 
-- **TaoLoader `variant="diamonds"`.** A hollow diamond crosses to a filled one and takes its place (the filled one shrinks away as it arrives), and a new filled diamond grows where the hollow one stood; then it goes back the other way. Sized, toned and named like the other looks (`size`, `tone`, `color`, `label`), hidden from a screen reader as a picture; under reduced motion it stands (filled on the left, hollow on the right) and breathes.
+- **TaoLoader `variant="diamonds"`.** Four diamonds on two axes, which flow into each other. On each axis a hollow diamond crosses to a filled one; the filled one shrinks as it comes (from half way) and is gone when the hollow one lands; the new filled one grows at the place the hollow one left, before the old one is quite gone; then it goes back the other way. The second axis is the same pair turned a quarter and a fifth of the cycle behind, so the two pass the middle one after the other. Sized, toned and named like the other looks (`size`, `tone`, `color`, `label`), hidden from a screen reader as a picture; under reduced motion it stands and breathes. `showcase/lab/` is a bench for working on such an animation frame by frame (not part of the package).
 
 ## 5.25.0
 

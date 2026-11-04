@@ -61,10 +61,16 @@ describe('TaoLoader', () => {
         expect(w.find('.tao-sr-only').exists()).toBe(false);
     });
 
-    it('diamonds: a hollow one and two filled ones, the hollow on top; hidden from the reader like the others', () => {
+    it('diamonds: on two axes, a hollow one and two filled ones each, the hollow on top; hidden from the reader like the others', () => {
         const wrapper = mount(TaoLoader, { props: { variant: 'diamonds' } });
         expect(wrapper.find('.tao-loader__swap').attributes('aria-hidden')).toBe('true');
-        expect([...wrapper.findAll('.tao-loader__swap i')].map((i) => i.classes()[0])).toEqual(['tao-loader__swap-left', 'tao-loader__swap-right', 'tao-loader__swap-hollow']);
+        // two axes: the same three diamonds twice, the second turned a quarter
+        const axes = wrapper.findAll('.tao-loader__axis');
+        expect(axes).toHaveLength(2);
+        expect(axes[1]!.classes()).toContain('tao-loader__axis--cross');
+        for (const axis of axes) {
+            expect([...axis.findAll('i')].map((i) => i.classes()[0])).toEqual(['tao-loader__swap-left', 'tao-loader__swap-right', 'tao-loader__swap-hollow']);
+        }
         expect(wrapper.attributes('style')).toContain('--_s: 40px');
         expect(wrapper.text()).toContain('Loading');
     });
