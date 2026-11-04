@@ -1232,7 +1232,7 @@ Showcase section: `#loader`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `variant` | `'dots' \| 'ring' \| 'pulse' \| 'diamonds'` | 'dots' | The look: four dots / a ring with a turning arc / ripples from a core / a hollow diamond crosses to a filled one and takes its place, and a new filled one grows where it stood |
+| `variant` | `'dots' \| 'ring' \| 'pulse' \| 'diamonds'` | 'dots' | The look: four dots / a ring with a turning arc / ripples from a core / four diamonds on two axes that flow into each other: a hollow one crosses to a filled one and takes it in, and a new filled one grows where it stood |
 | `size` | `number \| string` | 80 for dots, 40 for the others | The size. A number is px, "40px" works, or small / medium / large (24 / 40 / 64) |
 | `tone` | `'accent' \| 'success' \| 'danger' \| 'warning' \| 'info' \| 'neutral'` | 'accent' | A colour role of the theme |
 | `color` | `string` | — | A CSS colour of your own, wins over tone; currentColor takes the text colour around it |

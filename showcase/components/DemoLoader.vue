@@ -21,13 +21,13 @@ function save() {
     <Tr>
       <template #en>
         <p>
-          The wait whose end nobody knows. Four looks: <code>dots</code> (the first one, still the default), <code>ring</code>, <code>pulse</code> and <code>diamonds</code> (a hollow diamond crosses to the filled one and takes its place, a new filled one grows where it stood).
+          The wait whose end nobody knows. Four looks: <code>dots</code> (the first one, still the default), <code>ring</code>, <code>pulse</code> and <code>diamonds</code> (four diamonds on two axes: a hollow one crosses to a filled one and takes it in, a new filled one grows where it stood).
           A screen reader hears “Loading” (<code>label</code> says it your way), under «reduce motion» nothing travels or turns: the picture only breathes.
         </p>
       </template>
       <template #ru>
         <p>
-          Ожидание, конца которого никто не знает. Четыре вида: <code>dots</code> (первый, по-прежнему по умолчанию), <code>ring</code>, <code>pulse</code> и <code>diamonds</code> (пустой ромб переходит к заполненному и занимает его место, на старом вырастает новый заполненный).
+          Ожидание, конца которого никто не знает. Четыре вида: <code>dots</code> (первый, по-прежнему по умолчанию), <code>ring</code>, <code>pulse</code> и <code>diamonds</code> (четыре ромба на двух осях: пустой переходит к заполненному и поглощает его, на старом месте вырастает новый).
           Скринридер слышит «Загрузка» (<code>label</code> скажет по-своему), при «уменьшить движение» ничто не бежит и не крутится: картинка только дышит.
         </p>
       </template>

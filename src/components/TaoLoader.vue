@@ -6,7 +6,7 @@ import { toneClass, type TaoToneName } from '../tone';
 defineOptions({ name: 'TaoLoader' });
 
 interface Props {
-    /** The look of the wait: `dots` (the four jumping dots), `ring` (a turning arc), `pulse` (a ripple), `diamonds` (a hollow diamond crosses to a filled one and takes its place, and a new filled one grows where it stood). / Вид ожидания. */
+    /** The look of the wait: `dots` (the four jumping dots), `ring` (a turning arc), `pulse` (a ripple), `diamonds` (four diamonds on two axes: a hollow one crosses to a filled one and takes it in, and a new filled one grows where it stood). / Вид ожидания. */
     variant?: 'dots' | 'ring' | 'pulse' | 'diamonds';
     /**
      * The size: a number is px, `'40px'` works, or `small` / `medium` / `large` (24 / 40 / 64 px).
@@ -71,7 +71,12 @@ const rootStyle = computed(() => ({
         </div>
         <span v-else-if="variant === 'ring'" class="tao-loader__ring" aria-hidden="true" />
         <span v-else-if="variant === 'diamonds'" class="tao-loader__swap" aria-hidden="true">
-            <i class="tao-loader__swap-left" /><i class="tao-loader__swap-right" /><i class="tao-loader__swap-hollow" />
+            <span class="tao-loader__axis">
+                <i class="tao-loader__swap-left" /><i class="tao-loader__swap-right" /><i class="tao-loader__swap-hollow" />
+            </span>
+            <span class="tao-loader__axis tao-loader__axis--cross">
+                <i class="tao-loader__swap-left" /><i class="tao-loader__swap-right" /><i class="tao-loader__swap-hollow" />
+            </span>
         </span>
         <span v-else class="tao-loader__pulse" aria-hidden="true" />
         <span v-if="!decorative" class="tao-sr-only">{{ l10n.label }}</span>
@@ -196,10 +201,29 @@ const rootStyle = computed(() => ({
 .tao-loader__swap {
     --_d: calc(var(--_s) * 0.2);
     --_go: calc(var(--_s) * 0.64);
+    --_h: calc(var(--_s) * 0.34);
     position: relative;
     display: block;
     width: var(--_s);
-    height: calc(var(--_s) * 0.34);
+    height: var(--_s);
+}
+
+/* two axes: the same pair, turned a quarter turn and a fifth of the cycle behind, so the two pass the middle one after the other / две оси: та же пара, повёрнутая на четверть оборота и отстающая на пятую часть цикла, поэтому в середине они проходят одна за другой */
+.tao-loader__axis {
+    position: absolute;
+    top: calc((var(--_s) - var(--_h)) / 2);
+    left: 0;
+    width: var(--_s);
+    height: var(--_h);
+}
+
+.tao-loader__axis--cross {
+    transform: rotate(90deg);
+}
+
+.tao-loader__axis--cross i {
+    /* a fifth of the cycle behind the first pair (the delay is negative: it starts that much ahead, a whole cycle minus a fifth) / на пятую часть цикла позади первой пары */
+    animation-delay: -1.92s;
 }
 
 .tao-loader__swap i {
@@ -236,29 +260,43 @@ const rootStyle = computed(() => ({
     animation-name: tao-loader-swap-go;
 }
 
+/* one turn: the hollow one waits on the right while the left one grows; it crosses; it lands on the left one, which is taken in
+   (shrinks inside the hollow one); only then the new filled one grows on the right, where the hollow one stood; and back
+   один круг: пустой ждёт справа, пока слева растёт заполненный; переходит; садится на левый, и тот поглощается (сжимается внутри
+   пустого); только потом справа, где стоял пустой, вырастает новый заполненный; и обратно */
 @keyframes tao-loader-swap-go {
     0%,
-    6% { transform: translateX(var(--_go)) rotate(45deg); }
+    24% { transform: translateX(var(--_go)) rotate(45deg); }
     44%,
-    56% { transform: translateX(0) rotate(45deg); }
+    74% { transform: translateX(0) rotate(45deg); }
     94%,
     100% { transform: translateX(var(--_go)) rotate(45deg); }
 }
 
+/* the filled one begins to shrink when the hollow one is half way to it, and is gone as it arrives; the new one starts to grow before the old one is quite gone; across the turn of the loop it is one growth (the first 0.93 of it before, the rest after) */
 @keyframes tao-loader-swap-left {
-    0%,
-    30% { transform: rotate(45deg) scale(1); }
+    0% {
+        transform: rotate(45deg) scale(0.93);
+        animation-timing-function: linear;
+    }
+    4%,
+    34% { transform: rotate(45deg) scale(1); }
     46%,
-    56% { transform: rotate(45deg) scale(0); }
-    74%,
-    100% { transform: rotate(45deg) scale(1); }
+    90% {
+        transform: rotate(45deg) scale(0);
+        animation-timing-function: ease-out;
+    }
+    100% { transform: rotate(45deg) scale(0.93); }
 }
 
 @keyframes tao-loader-swap-right {
     0%,
-    6% { transform: rotate(45deg) scale(0); }
-    24%,
-    80% { transform: rotate(45deg) scale(1); }
+    40% {
+        transform: rotate(45deg) scale(0);
+        animation-timing-function: ease-out;
+    }
+    54%,
+    84% { transform: rotate(45deg) scale(1); }
     96%,
     100% { transform: rotate(45deg) scale(0); }
 }
