@@ -3,6 +3,7 @@ import ShowcaseSection from './ShowcaseSection.vue'
 import Tr from './Tr.vue'
 import LayerStack from '../layers/LayerStack.vue'
 import OwnTheme from '../layers/OwnTheme.vue'
+import Scrollbars from '../layers/Scrollbars.vue'
 import { tr } from '../i18n.js'
 
 defineOptions({ name: 'DemoLayers' })
@@ -35,5 +36,6 @@ defineOptions({ name: 'DemoLayers' })
 
     <LayerStack />
     <OwnTheme />
+    <Scrollbars />
   </ShowcaseSection>
 </template>

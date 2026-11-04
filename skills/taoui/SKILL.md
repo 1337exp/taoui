@@ -136,6 +136,8 @@ only of straight lines through the middle (a plus), so they stay crisp when smal
 `app.use(TaoUI, { locale: localeRu })`; `setTaoLocale(localeEn)` switches at run time without a reload; a prop passed by
 hand (`placeholder`, `closeLabel`…) always wins. For SSR per request, `provideTaoLocale`.
 
+Scrollbars: thin (5px) by default; `--tao-scrollbar-size` / `-thumb` / `-track` / `-width` (Firefox) change them on the page or on a block, the class `tao-native-scrollbars` (on `<html>` or a block) gives the browser's own back.
+
 Which language to start with: `detectTaoLanguage(['en', 'ru'], { fallback?, requested? })` returns one of your languages by `navigator.languages` (`parseAcceptLanguage(header)` for a server); it only answers, `setTaoLocale` sets. A locale text may be plural forms `{ one, few, many, other }` (`formatTaoText(text, { count }, code)` does it for your own texts); a plain string stays the same for every number.
 
 ## Mistakes to avoid

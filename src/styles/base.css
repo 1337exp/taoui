@@ -37,19 +37,37 @@ html {
     background-color: var(--tao-color-selection);
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-    max-width: 5px;
-    max-height: 5px;
+/* Scrollbar: thin, the accent for the thumb. Four hooks set on the page, a block or a component, nothing else to override:
+   --tao-scrollbar-size (px, 5px), --tao-scrollbar-thumb (the accent), --tao-scrollbar-track (transparent),
+   --tao-scrollbar-width (Firefox, which has no pixels: thin | auto | none). The class tao-native-scrollbars on <html>, or on any
+   block, gives the browser's own scrollbars back for everything inside it. The colours are read where the scroll is, so a block
+   with another theme gets its own accent.
+   Полоса прокрутки: тонкая, бегунок акцентный. Четыре крючка на странице, блоке или компоненте, больше ничего переопределять
+   не нужно: --tao-scrollbar-size (px, 5px), --tao-scrollbar-thumb (акцент), --tao-scrollbar-track (прозрачная),
+   --tao-scrollbar-width (Firefox, у него нет пикселей: thin | auto | none). Класс tao-native-scrollbars на <html> или на любом блоке
+   возвращает родные полосы всему внутри. Цвета читаются там, где прокрутка, поэтому блок с другой темой получает свой акцент. */
+:not(.tao-native-scrollbars, .tao-native-scrollbars *)::-webkit-scrollbar {
+    width: var(--tao-scrollbar-size, 5px);
+    height: var(--tao-scrollbar-size, 5px);
 }
 
-::-webkit-scrollbar-track {
-    background: transparent;
+:not(.tao-native-scrollbars, .tao-native-scrollbars *)::-webkit-scrollbar-track {
+    background: var(--tao-scrollbar-track, transparent);
 }
 
-::-webkit-scrollbar-thumb {
-    background: var(--tao-color-accent);
+:not(.tao-native-scrollbars, .tao-native-scrollbars *)::-webkit-scrollbar-thumb {
+    background: var(--tao-scrollbar-thumb, var(--tao-color-accent));
     border-radius: var(--tao-radius-full);
+}
+
+/* Firefox has no ::-webkit-scrollbar: the standard properties, and only there (Chrome 121+ understands them too and would then
+   ignore the rules above). / У Firefox нет ::-webkit-scrollbar: стандартные свойства и только там (Chrome 121+ их тоже понимает
+   и тогда игнорировал бы правила выше). */
+@supports not selector(::-webkit-scrollbar) {
+    :not(.tao-native-scrollbars, .tao-native-scrollbars *) {
+        scrollbar-width: var(--tao-scrollbar-width, thin);
+        scrollbar-color: var(--tao-scrollbar-thumb, var(--tao-color-accent)) var(--tao-scrollbar-track, transparent);
+    }
 }
 
 /* Links */
