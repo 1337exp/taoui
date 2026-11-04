@@ -1132,7 +1132,7 @@ export const propTables = {
     {
       title: 'TaoLoader',
       rows: [
-        r('variant', "'dots' | 'ring' | 'pulse'", "'dots'", 'Вид: четыре точки / кольцо с бегущей дугой / круги от ядра'),
+        r('variant', "'dots' | 'ring' | 'pulse' | 'diamonds'", "'dots'", 'Вид: четыре точки / кольцо с бегущей дугой / круги от ядра / пустой ромб переходит к заполненному и занимает его место, а на старом месте вырастает новый заполненный'),
         r('size', "number | string", '80 у dots, 40 у остальных', 'Размер. Число — px, можно "40px" или small / medium / large (24 / 40 / 64)'),
         r('tone', "'accent' | 'success' | 'danger' | 'warning' | 'info' | 'neutral'", "'accent'", 'Роль цвета темы'),
         r('color', 'string', '—', 'Свой CSS-цвет, главнее tone; currentColor берёт цвет текста вокруг'),
