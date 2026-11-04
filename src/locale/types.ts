@@ -46,6 +46,8 @@ export interface TaoLocale {
     confirm: { ok: string; cancel: string };
     copy: { copyLabel: string; successText: string };
     /** The button says what a click does. / Кнопка говорит, что сделает клик. */
+    /** `{n}` of `{count}` in `progressLabel`. / `{n}` из `{count}` в `progressLabel`. */
+    tour: { nextLabel: string; prevLabel: string; skipLabel: string; doneLabel: string; progressLabel: string };
     themeToggle: { toLightLabel: string; toDarkLabel: string };
     loader: { label: string };
     date: {

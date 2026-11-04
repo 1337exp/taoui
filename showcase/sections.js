@@ -5,6 +5,7 @@ import DemoSurface from './components/DemoSurface.vue'
 import DemoTypography from './components/DemoTypography.vue'
 import DemoCopy from './components/DemoCopy.vue'
 import DemoThemeToggle from './components/DemoThemeToggle.vue'
+import DemoTour from './components/DemoTour.vue'
 import DemoMarquee from './components/DemoMarquee.vue'
 import DemoInput from './components/DemoInput.vue'
 import DemoInputNumber from './components/DemoInputNumber.vue'
@@ -73,6 +74,7 @@ export const demoById = {
   'typography': DemoTypography,
   'copy': DemoCopy,
   'theme-toggle': DemoThemeToggle,
+  'tour': DemoTour,
   'marquee': DemoMarquee,
   'input': DemoInput,
   'input-number': DemoInputNumber,
