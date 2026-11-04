@@ -121,8 +121,8 @@ export const propTablesEn = {
       title: 'TaoTour',
       rows: [
         r('step', 'TaoTourStep | null', 'null', 'The step on screen; null closes the tour. A step: { id, target?, title?, text?, placement? }. target is a CSS selector, an element or a function that finds it; without it (or when nothing is found) the step is a card in the middle'),
-        r('index', 'number', '0', 'The place of the step in the tour, from 0 (for the dots and "Step 2 of 5")'),
-        r('count', 'number', '0', 'How many steps there are; at 1 or less there are no dots and no counter'),
+        r('index', 'number', '0', 'The place of the step in the tour, from 0 (for the dots and "Step 2 of 5"). With TaoUX it is position, which does not count the steps that are jumped over'),
+        r('count', 'number', '0', 'How many steps there are; at 1 or less there are no dots and no counter. With TaoUX it is total'),
         r('first', 'boolean', 'index === 0', 'No Back button'),
         r('last', 'boolean', 'index === count - 1', 'The button says Done instead of Next, and there is no Skip'),
         r('placement', 'TaoPlacement', "'bottom'", 'Where the card stands against the target when the step does not say. It flips when it does not fit'),
