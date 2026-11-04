@@ -331,6 +331,8 @@ function onLanguageChange(lang) {
 
 Without the plugin (individual components) `setTaoLocale()` is the only call you need.
 
+Scrollbars are thin (5px) with the accent thumb. To change them, set `--tao-scrollbar-size`, `--tao-scrollbar-thumb`, `--tao-scrollbar-track` (and `--tao-scrollbar-width` for Firefox) on the page or on a block; the class `tao-native-scrollbars` on `<html>` or on a block gives the browser's own back. A panel with sliders is in the showcase, under «Layers and theming».
+
 Which language to start with: `detectTaoLanguage(['en', 'ru'])` answers with the one of your languages that the browser prefers (`ru-RU` fits `ru`), for example `saved ?? detectTaoLanguage(['en', 'ru'])`; on a server pass the wishes of the request: `{ requested: parseAcceptLanguage(header) }`.
 
 A text that depends on a number may be plural forms (`{ one, few, many, other }`, chosen by the plural rules of the locale `code`); a plain string still works and is the same for every number.
