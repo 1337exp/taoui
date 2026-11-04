@@ -84,7 +84,8 @@ const steps = [
   { id: 'menu', target: () =&gt; menuEl.value, text: '…' },
 ]
 
-// with TaoUX: const { step, index, count, next, prev, skip, start } = useTour({ steps })</code></pre>
+// with TaoUX: const { step, position, total, first, last, next, prev, skip, start } = useTour({ steps })
+// and pass :index="position" :count="total": they do not count the steps that are jumped over</code></pre>
     </div>
   </ShowcaseSection>
 </template>
