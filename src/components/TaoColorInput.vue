@@ -34,6 +34,8 @@ const props = withDefaults(
         /** Without it the size of ancestors. / Без него — размер предков. */
         size?: TaoSize;
         chooseLabel?: string;
+        /** What the field says while the value is empty (an optional colour that is not set). / Что говорит поле, пока значение пустое (необязательный цвет не задан). */
+        placeholder?: string;
     }>(),
     { alpha: false, modes: () => ['hex', 'rgb', 'hsl'], eyedropper: true, disabled: false, error: false, placement: 'bottom-start' },
 );
@@ -48,7 +50,11 @@ const l10n = useLocaleText(props, 'colorPicker');
 const shown = computed(() => normalizeHex(props.modelValue, props.alpha) ?? props.modelValue);
 // «Background: #ff8800» when the app names the field, «Choose a colour: #ff8800» when it does not
 // «Фон: #ff8800», если приложение назвало поле, иначе «Выбрать цвет: #ff8800»
-const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? given : l10n.value.chooseLabel}: ${shown.value}`;
+// an empty value is a state, not a mistake: the field says it is not set, with a crossed-out swatch
+// пустое значение — состояние, а не ошибка: поле говорит, что цвет не задан, а образец зачёркнут
+const empty = computed(() => props.modelValue === '');
+const text = computed(() => (empty.value ? l10n.value.placeholder : shown.value));
+const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? given : l10n.value.chooseLabel}: ${text.value}`;
 </script>
 
 <template>
@@ -64,8 +70,8 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
                 aria-haspopup="dialog"
                 :aria-expanded="open"
             >
-                <span class="tao-color-input__swatch"><span :style="{ backgroundColor: shown }"></span></span>
-                <span class="tao-color-input__text">{{ shown }}</span>
+                <span class="tao-color-input__swatch" :class="{ 'tao-color-input__swatch--empty': empty }"><span :style="{ backgroundColor: shown }"></span></span>
+                <span class="tao-color-input__text" :class="{ 'tao-color-input__text--empty': empty }">{{ text }}</span>
             </button>
         </template>
 
@@ -139,5 +145,17 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
 .tao-color-input__text {
     font-variant-numeric: tabular-nums;
     text-transform: uppercase;
+}
+
+/* not set: a muted sentence, and a slash over the swatch / не задан: приглушённая фраза и косая черта поверх образца */
+.tao-color-input__text--empty {
+    color: var(--tao-color-text-muted);
+    text-transform: none;
+}
+
+.tao-color-input__swatch--empty {
+    background:
+        linear-gradient(to top right, transparent calc(50% - 1px), var(--tao-color-text-muted) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)),
+        var(--tao-color-input-bg);
 }
 </style>

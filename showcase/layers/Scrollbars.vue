@@ -60,8 +60,8 @@ function reset() {
           <TaoSlider v-model="size" :min="2" :max="32" :disabled="native" :aria-label="tr('Thickness', 'Толщина')" />
         </div>
         <div class="scrollbars__field">
-          <span>{{ tr('Thumb (empty: the accent)', 'Бегунок (пусто: акцент)') }} <small>--tao-scrollbar-thumb</small></span>
-          <TaoColorInput v-model="thumb" :disabled="native" :aria-label="tr('Thumb colour', 'Цвет бегунка')" />
+          <span>{{ tr('Thumb', 'Бегунок') }} <small>--tao-scrollbar-thumb</small></span>
+          <TaoColorInput v-model="thumb" :disabled="native" :placeholder="tr('Not set: the accent', 'Не задан: акцент')" :aria-label="tr('Thumb colour', 'Цвет бегунка')" />
         </div>
         <TaoSwitch v-model="track" :disabled="native" :label="tr('Show the track', 'Показать дорожку')" />
         <div class="scrollbars__field">
@@ -89,7 +89,7 @@ function reset() {
         </div>
         <pre tabindex="0" :aria-label="tr('The code', 'Код')"><code>{{ css }}</code></pre>
         <p class="scrollbars__note">
-          {{ tr('The kit’s 5px is thin for a mouse (a thumb is hard to catch), so a thicker one is a fair wish; the default stays 5px. The hooks work on the page, on a block and on a component; the colours are read where the scroll is, so a block with another theme gets its own accent. In Firefox only the width (thin or auto) and the colours apply: it has no pixels.', 'Пятипиксельная полоса набора тонкая для мыши (бегунок трудно поймать), поэтому толще — справедливое желание; по умолчанию остаётся 5px. Крючки работают на странице, на блоке и на компоненте; цвета читаются там, где прокрутка, поэтому блок с другой темой получает свой акцент. В Firefox применяются только ширина (thin или auto) и цвета: пикселей там нет.') }}
+          {{ tr('The hooks work on the page, on a block and on a component; the colours are read where the scroll is, so a block with another theme gets its own accent. In Firefox only the width (thin or auto) and the colours apply: it has no pixels.', 'Крючки работают на странице, на блоке и на компоненте; цвета читаются там, где прокрутка, поэтому блок с другой темой получает свой акцент. В Firefox применяются только ширина (thin или auto) и цвета: пикселей там нет.') }}
         </p>
       </div>
     </div>

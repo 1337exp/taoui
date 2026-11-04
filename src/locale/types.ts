@@ -148,6 +148,8 @@ export interface TaoLocale {
         eyedropperLabel: string;
         /** Trigger of TaoColorInput. / Кнопка TaoColorInput. */
         chooseLabel: string;
+        /** What the field of TaoColorInput says while it has no colour (an empty value). / Что говорит поле TaoColorInput, пока цвета нет (пустое значение). */
+        placeholder: string;
     };
     scrubber: { playLabel: string; pauseLabel: string; restartLabel: string };
     toast: { closeLabel: string };

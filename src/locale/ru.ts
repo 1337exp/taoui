@@ -102,6 +102,7 @@ export const localeRu: TaoLocale = {
         swatchesLabel: 'Образцы',
         eyedropperLabel: 'Пипетка',
         chooseLabel: 'Выбрать цвет',
+        placeholder: 'Не задан',
     },
     scrubber: { playLabel: 'Играть', pauseLabel: 'Пауза', restartLabel: 'В начало' },
     toast: { closeLabel: 'Закрыть уведомление' },
