@@ -8,6 +8,7 @@ export const navGroups = [
       { id: 'toolbar', label: 'TaoToolbar', aliases: ['TaoToolbarGroup', 'TaoToolbarSeparator', 'toolbar', 'панель инструментов'] },
       { id: 'card', label: 'TaoCard' },
       { id: 'copy', label: 'TaoCopy' },
+      { id: 'tour', label: 'TaoTour', aliases: ['tour', 'onboarding', 'coach', 'coachmark', 'spotlight', 'guide', 'walkthrough', 'тур', 'обучение', 'подсказки', 'гайд'] },
       { id: 'theme-toggle', label: 'TaoThemeToggle', aliases: ['theme', 'dark', 'light', 'mode', 'switch', 'тема', 'тёмная', 'светлая', 'режим', 'переключатель'] },
       { id: 'marquee', label: 'TaoMarquee', aliases: ['marquee', 'ticker', 'running line', 'бегущая строка'] },
       { id: 'surface', label: { en: 'Surfaces', ru: 'Поверхности' }, aliases: ['glass', 'grain', 'lit', 'surface'] },

@@ -109,6 +109,24 @@ export const propTables = {
       ],
     },
   ],
+  tour: [
+    {
+      title: 'TaoTour',
+      rows: [
+        r('step', 'TaoTourStep | null', 'null', 'Шаг на экране; null закрывает тур. Шаг: { id, target?, title?, text?, placement? }. target — CSS-селектор, элемент или функция, которая его находит; без него (или если не нашлось) шаг — карточка посередине'),
+        r('index', 'number', '0', 'Место шага в туре, с 0 (для точек и «Шаг 2 из 5»)'),
+        r('count', 'number', '0', 'Сколько всего шагов; при 1 и меньше точек и счётчика нет'),
+        r('first', 'boolean', 'index === 0', 'Нет кнопки «Назад»'),
+        r('last', 'boolean', 'index === count - 1', 'Кнопка говорит «Готово» вместо «Далее», кнопки «Пропустить» нет'),
+        r('placement', 'TaoPlacement', "'bottom'", 'Где карточка относительно цели, если шаг не говорит сам. Не влезает — переворачивается'),
+        r('padding', 'number', '6', 'Отступ от цели до края освещённого окна, px'),
+        r('interactive', 'boolean', 'false', 'Цель можно нажимать (шаг «нажмите здесь»); остальная страница закрыта'),
+        r('nextLabel / prevLabel / skipLabel / doneLabel', 'string', 'из локали', 'Тексты кнопок'),
+        r('progressLabel', 'string', "'Шаг {n} из {count}'", 'Подпись прогресса'),
+      ],
+      slots: 'default { step, index, count } — своё содержимое карточки (вместо заголовка и текста). События: next, prev, skip (кнопки, стрелки ← →, Esc). TaoTour только рисует: состояние ведёте вы или useTour из TaoUX (@1337exp/taoux/tour), который перепрыгивает шаги без цели и помнит, что тур видели. Шаг сам прокручивает цель в окно.',
+    },
+  ],
   'theme-toggle': [
     {
       title: 'TaoThemeToggle',

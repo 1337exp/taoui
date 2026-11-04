@@ -100,6 +100,11 @@ export interface UseFloatingOptions {
     flip?: boolean;
     /** The panel is as wide as the anchor (Select, Combobox). / Панель по ширине якоря. */
     matchWidth?: boolean;
+    /**
+     * The panel is `fixed` whatever the anchor is: for a panel inside a layer that is itself `fixed` (a tour over the page).
+     * Панель всегда `fixed`, какой бы ни был якорь: для панели внутри слоя, который сам `fixed` (тур поверх страницы).
+     */
+    fixed?: boolean;
 }
 
 /**
@@ -213,7 +218,7 @@ export function useFloating(
             window.addEventListener('resize', onViewportChange);
             window.addEventListener('scroll', onViewportChange, true);
             await nextTick();
-            strategy = anchor.value && pinnedToScreen(anchor.value) ? 'fixed' : 'absolute';
+            strategy = options.fixed || (anchor.value && pinnedToScreen(anchor.value)) ? 'fixed' : 'absolute';
             update();
         },
         { immediate: true },

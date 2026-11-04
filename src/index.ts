@@ -15,6 +15,7 @@ import TaoSpoiler from './components/TaoSpoiler.vue';
 import TaoSpoilerGroup from './components/TaoSpoilerGroup.vue';
 import TaoCopy from './components/TaoCopy.vue';
 import TaoThemeToggle from './components/TaoThemeToggle.vue';
+import TaoTour from './components/TaoTour.vue';
 import TaoContainer from './components/TaoContainer.vue';
 import TaoFlex from './components/TaoFlex.vue';
 import TaoSpace from './components/TaoSpace.vue';
@@ -108,6 +109,7 @@ const components = [
     TaoSpoilerGroup,
     TaoCopy,
     TaoThemeToggle,
+    TaoTour,
     TaoContainer,
     TaoFlex,
     TaoSpace,
@@ -217,6 +219,7 @@ export {
     TaoSpoilerGroup,
     TaoCopy,
     TaoThemeToggle,
+    TaoTour,
     TaoContainer,
     TaoFlex,
     TaoSpace,
@@ -325,6 +328,8 @@ export type { TaoSize } from './size';
 export type { TaoTone, TaoToneName } from './tone';
 export { toneClass } from './tone';
 export type { TaoDensity, TaoResolvedDensity } from './density';
+export { resolveTourTarget } from './tour';
+export type { TaoTourStep } from './tour';
 export { readTaoMode, applyTaoMode } from './themeMode';
 export type { TaoMode } from './themeMode';
 export { apcaContrast, applyTaoPalette, contrastRatio, paletteCss as taoPaletteCss } from './palette';

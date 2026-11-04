@@ -116,6 +116,24 @@ export const propTablesEn = {
       ],
     },
   ],
+  tour: [
+    {
+      title: 'TaoTour',
+      rows: [
+        r('step', 'TaoTourStep | null', 'null', 'The step on screen; null closes the tour. A step: { id, target?, title?, text?, placement? }. target is a CSS selector, an element or a function that finds it; without it (or when nothing is found) the step is a card in the middle'),
+        r('index', 'number', '0', 'The place of the step in the tour, from 0 (for the dots and "Step 2 of 5")'),
+        r('count', 'number', '0', 'How many steps there are; at 1 or less there are no dots and no counter'),
+        r('first', 'boolean', 'index === 0', 'No Back button'),
+        r('last', 'boolean', 'index === count - 1', 'The button says Done instead of Next, and there is no Skip'),
+        r('placement', 'TaoPlacement', "'bottom'", 'Where the card stands against the target when the step does not say. It flips when it does not fit'),
+        r('padding', 'number', '6', 'Space between the target and the edge of the lit window, px'),
+        r('interactive', 'boolean', 'false', 'The target can be pressed (a "press here" step); the rest of the page stays shut'),
+        r('nextLabel / prevLabel / skipLabel / doneLabel', 'string', 'from the locale', 'Button texts'),
+        r('progressLabel', 'string', "'Step {n} of {count}'", 'The progress text'),
+      ],
+      slots: 'default { step, index, count }: your own card content (instead of the title and the text). Events: next, prev, skip (the buttons, the arrows, Esc). TaoTour only draws: you keep the state, or use useTour from TaoUX (@1337exp/taoux/tour), which jumps over steps with no target and remembers that the tour was seen. The step scrolls its target into view by itself.',
+    },
+  ],
   'theme-toggle': [
     {
       title: 'TaoThemeToggle',

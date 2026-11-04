@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.25.0
+
+Nothing to migrate; the defaults do not change.
+
+- **TaoTour: a guided tour of the page.** The page goes dim, the target stays lit (the lit window glides from one target to the next), a card with an arrow says what it is, with Back / Next / Skip, the dots and "Step 2 of 5". A step is `{ id, target?, title?, text?, placement? }`: `target` is a selector, an element or a function; without it (or when it is not on the page) the step is a card in the middle. `interactive` lets the user press the target itself while the rest of the page stays shut. Escape skips, the arrows move on, Tab stays in the card, focus goes back where it was. The step scrolls its target into view (calmly under reduced motion). TaoTour only draws: the state is yours, or `useTour` from TaoUX `tour`, which jumps over steps whose target is gone and remembers that the tour was seen. `useFloating` takes `fixed: true` for a panel inside a layer that is itself fixed.
 ## 5.24.0
 
 Nothing to migrate; the defaults do not change.
