@@ -150,6 +150,8 @@ export interface TaoLocale {
         chooseLabel: string;
         /** What the field of TaoColorInput says while it has no colour (an empty value). / Что говорит поле TaoColorInput, пока цвета нет (пустое значение). */
         placeholder: string;
+        /** The button that empties an optional colour (`clearable`). / Кнопка, очищающая необязательный цвет (`clearable`). */
+        clearText: string;
     };
     scrubber: { playLabel: string; pauseLabel: string; restartLabel: string };
     toast: { closeLabel: string };

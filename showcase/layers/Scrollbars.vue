@@ -61,7 +61,7 @@ function reset() {
         </div>
         <div class="scrollbars__field">
           <span>{{ tr('Thumb', 'Бегунок') }} <small>--tao-scrollbar-thumb</small></span>
-          <TaoColorInput v-model="thumb" :disabled="native" :placeholder="tr('Not set: the accent', 'Не задан: акцент')" :aria-label="tr('Thumb colour', 'Цвет бегунка')" />
+          <TaoColorInput v-model="thumb" :disabled="native" clearable :placeholder="tr('Not set: the accent', 'Не задан: акцент')" :aria-label="tr('Thumb colour', 'Цвет бегунка')" />
         </div>
         <TaoSwitch v-model="track" :disabled="native" :label="tr('Show the track', 'Показать дорожку')" />
         <div class="scrollbars__field">
