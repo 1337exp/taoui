@@ -138,6 +138,9 @@ function onViewportChange() {
 let resizeObserver: ResizeObserver | null = null;
 
 function stopWatching() {
+    if (typeof window === 'undefined') {
+        return;
+    }
     window.removeEventListener('scroll', onViewportChange, true);
     window.removeEventListener('resize', onViewportChange);
     resizeObserver?.disconnect();
@@ -160,6 +163,10 @@ async function focusCard() {
 }
 
 async function showStep() {
+    // on the server there is no page to light: the card is drawn on the client / на сервере страницы для подсветки нет: карточка рисуется на клиенте
+    if (typeof window === 'undefined') {
+        return;
+    }
     stopWatching();
     const step = props.step;
     if (!step) {
