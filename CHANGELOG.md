@@ -5,6 +5,7 @@
 Nothing to migrate; the defaults do not change.
 
 - **TaoLoader `variant="diamonds"`.** Four diamonds on two axes, which flow into each other. On each axis a hollow diamond crosses to a filled one; the filled one shrinks as it comes (from half way) and is gone when the hollow one lands; the new filled one grows at the place the hollow one left, before the old one is quite gone; then it goes back the other way. The second axis is the same pair turned a quarter and a fifth of the cycle behind, so the two pass the middle one after the other. Sized, toned and named like the other looks (`size`, `tone`, `color`, `label`), hidden from a screen reader as a picture; under reduced motion it stands and breathes. `showcase/lab/` is a bench for working on such an animation frame by frame (not part of the package).
+- **Showcase: a «Localization» section.** The same components with no text given by hand in three columns, each with a language of its own (`provideTaoLocale`): English, Russian and a third made of a few German keys on top of English (its `code` `de-DE` makes the date read the German way). How to set it (`app.use`, `setTaoLocale`, a subtree), your own language, a prop that wins, what is translated (every section of the locale with its count of texts), and what to know (`<html lang>`, no plural forms).
 
 ## 5.25.0
 
