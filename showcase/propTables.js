@@ -495,6 +495,7 @@ export const propTables = {
       rows: [
         r('v-model', 'string', '—', 'Цвет строкой hex. Обязательный'),
         r('alpha / swatches / modes / v-model:mode / eyedropper / size', '', '', 'Как у TaoColorPicker'),
+        r('placeholder', 'string', "'Не задан'", 'Что говорит поле, пока значение пустое (""): необязательный цвет не задан; образец зачёркнут'),
         r('placement', 'TaoPlacement', "'bottom-start'", 'Сторона и выравнивание: top / bottom / left / right и -start / -end. У края экрана переворачивается'),
         r('error', 'boolean', 'false', 'Красная рамка. Текст ошибки — error у TaoFormField'),
         r('disabled', 'boolean', 'false', 'Неактивно'),

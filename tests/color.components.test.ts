@@ -97,6 +97,17 @@ describe('ColorPicker', () => {
 });
 
 describe('ColorInput', () => {
+    it('an empty value says it is not set: a muted text, a crossed-out swatch, the same for a screen reader; a given text wins', () => {
+        const w = mount(TaoColorInput, { props: { modelValue: '' } });
+        const trigger = w.find('.tao-color-input');
+        expect(trigger.text()).toBe('Not set');
+        expect(w.find('.tao-color-input__text--empty').exists()).toBe(true);
+        expect(w.find('.tao-color-input__swatch--empty').exists()).toBe(true);
+        expect(trigger.attributes('aria-label')).toBe('Choose color: Not set');
+        expect(mount(TaoColorInput, { props: { modelValue: '', placeholder: 'Accent' } }).find('.tao-color-input').text()).toBe('Accent');
+        expect(mount(TaoColorInput, { props: { modelValue: '#ff8800' } }).find('.tao-color-input__text--empty').exists()).toBe(false);
+    });
+
     it('the button shows the colour, the popover opens with the picker, a change goes out', async () => {
         const w = mount(TaoColorInput, { props: { modelValue: '#ff8800' }, attachTo: document.body });
         const trigger = w.find('.tao-color-input');
