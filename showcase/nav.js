@@ -15,6 +15,7 @@ export const navGroups = [
       { id: 'layers', label: { en: 'Layers & theming', ru: 'Слои и темизация' }, aliases: ['layers', 'theme', 'theming', 'tokens', 'primitives', 'semantic', 'contexts', 'data-tao-theme', 'слои', 'тема', 'темизация', 'токены'] },
       { id: 'backgrounds', label: { en: 'Backgrounds', ru: 'Фоны' }, aliases: ['background', 'gradient', 'noise', 'atmosphere', 'glow', 'фон', 'градиент', 'шум'] },
       { id: 'typography', label: { en: 'Typography', ru: 'Типографика' }, aliases: ['prose', 'heading', 'tao-prose', 'заголовки', 'текст'] },
+      { id: 'locale', label: { en: 'Localization', ru: 'Локализация' }, aliases: ['locale', 'language', 'i18n', 'translation', 'setTaoLocale', 'provideTaoLocale', 'localeRu', 'localeEn', 'язык', 'перевод', 'локаль', 'интернационализация'] },
     ],
   },
   {
