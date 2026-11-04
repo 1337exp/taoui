@@ -1,6 +1,6 @@
 <script setup>
-import { computed } from 'vue'
-import { localeEn, localeRu } from '@1337exp/taoui'
+import { computed, ref } from 'vue'
+import { localeEn, localeRu, TaoCopy } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import LocaleBox from './LocaleBox.vue'
 import LocaleSpecimen from './LocaleSpecimen.vue'
@@ -30,6 +30,26 @@ const sections = Object.entries(localeEn)
   .filter(([key]) => key !== 'code')
   .map(([key, value]) => ({ key, texts: count(value) }))
 const total = sections.reduce((sum, s) => sum + s.texts, 0)
+
+// the keys of one section with both languages, from the real objects, so the page cannot differ from the library
+// ключи одного раздела с обоими языками, из настоящих объектов: страница не может разойтись с библиотекой
+const picked = ref('')
+const flat = (value, path = []) =>
+  value && typeof value === 'object' && !Array.isArray(value)
+    ? Object.entries(value).flatMap(([k, v]) => flat(v, [...path, k]))
+    : [{ key: path.join('.'), text: JSON.stringify(value) }]
+const rows = computed(() => {
+  if (!picked.value) return []
+  const ru = Object.fromEntries(flat(localeRu[picked.value], [picked.value]).map((r) => [r.key, r.text]))
+  return flat(localeEn[picked.value], [picked.value]).map((r) => ({ key: r.key, en: r.text, ru: ru[r.key] ?? '' }))
+})
+const template = JSON.stringify(localeEn, null, 2)
+
+const codeConsole = `import { localeEn } from '@1337exp/taoui'
+
+console.log(localeEn)                 // the whole object
+console.table(localeEn.select)        // one section: placeholder, clearText
+// in an editor: type a locale as TaoLocale and the keys complete themselves`
 
 const codeApp = `import TaoUI, { localeRu } from '@1337exp/taoui'
 
@@ -128,12 +148,43 @@ const codeProp = computed(() => `<TaoSelect :options="options" placeholder="${tr
     <div class="code-block"><pre><code>{{ codeProp }}</code></pre></div>
 
     <h3>{{ tr('What is translated', 'Что переводится') }}</h3>
+    <Tr>
+      <template #en>
+        <p>
+          The names of the keys are in the library itself: <code>localeEn</code> and <code>localeRu</code> are exported objects (the source is
+          <code>src/locale/en.ts</code>, the type with every key is <code>TaoLocale</code> in <code>src/locale/types.ts</code>). This list is built from those
+          very objects, so it cannot differ from the library. Press a section to see its keys in both languages.
+        </p>
+      </template>
+      <template #ru>
+        <p>
+          Имена ключей лежат в самой библиотеке: <code>localeEn</code> и <code>localeRu</code> — экспортируемые объекты (исходник —
+          <code>src/locale/en.ts</code>, тип со всеми ключами — <code>TaoLocale</code> в <code>src/locale/types.ts</code>). Этот список построен из тех же самых
+          объектов, поэтому разойтись с библиотекой не может. Нажмите на раздел, чтобы увидеть его ключи на обоих языках.
+        </p>
+      </template>
+    </Tr>
     <p class="locale-note">
       {{ tr(`${total} texts in ${sections.length} sections (the sections repeat the components):`, `${total} текстов в ${sections.length} разделах (разделы повторяют компоненты):`) }}
     </p>
     <ul class="locale-sections">
-      <li v-for="s in sections" :key="s.key"><code>{{ s.key }}</code><span>{{ s.texts }}</span></li>
+      <li v-for="s in sections" :key="s.key">
+        <button type="button" :class="{ on: picked === s.key }" :aria-pressed="picked === s.key" @click="picked = picked === s.key ? '' : s.key">
+          <code>{{ s.key }}</code><span>{{ s.texts }}</span>
+        </button>
+      </li>
     </ul>
+    <table v-if="rows.length" class="locale-keys">
+      <thead><tr><th>{{ tr('Key', 'Ключ') }}</th><th>English</th><th>Русский</th></tr></thead>
+      <tbody>
+        <tr v-for="r in rows" :key="r.key"><td><code>{{ r.key }}</code></td><td>{{ r.en }}</td><td>{{ r.ru }}</td></tr>
+      </tbody>
+    </table>
+    <div class="locale-tools">
+      <span>{{ tr('A template to translate: the whole English locale as JSON', 'Заготовка для перевода: вся английская локаль как JSON') }}</span>
+      <TaoCopy :text="template" />
+    </div>
+    <div class="code-block"><pre><code>{{ codeConsole }}</code></pre></div>
 
     <h3>{{ tr('Good to know', 'Что ещё важно') }}</h3>
     <Tr>
@@ -180,14 +231,61 @@ const codeProp = computed(() => `<TaoSelect :options="options" placeholder="${tr
   list-style: none;
 }
 
-.locale-sections li {
+.locale-sections button {
   display: inline-flex;
   align-items: baseline;
   gap: 6px;
   padding: 2px 10px;
   border: 1px solid var(--tao-color-border);
   border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
   font-size: 12px;
+  cursor: pointer;
+}
+
+.locale-sections button:hover {
+  border-color: var(--tao-color-border-strong);
+}
+
+.locale-sections button.on {
+  border-color: var(--tao-color-accent);
+  color: var(--tao-color-accent);
+}
+
+.locale-sections button:focus-visible {
+  outline: 2px solid var(--tao-color-accent);
+  outline-offset: 2px;
+}
+
+.locale-keys {
+  width: 100%;
+  margin: 0 0 12px;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.locale-keys th,
+.locale-keys td {
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--tao-color-border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.locale-keys th {
+  color: var(--tao-color-text-muted);
+  font-weight: 600;
+}
+
+.locale-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  color: var(--tao-color-text-muted);
+  font-size: 13px;
 }
 
 .locale-sections span {

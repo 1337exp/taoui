@@ -5,6 +5,7 @@ not part of the built showcase and not in the package.
 
 | Page | What it is for |
 |---|---|
+| `/lab/rtl.html` | The same components twice, left to right and right to left (a container with `dir="rtl"`), to see what mirrors and what does not; the checkbox sets `dir` on `<html>` too, for the panels that are teleported to `<body>`. |
 | `/lab/loader.html` | The animation of `TaoLoader` frame by frame: frames at chosen moments of the cycle (`?marks=0,25,50`), a scrubber, slow motion, live samples at small sizes, a light / dark background. `?variant=ring` picks a look. |
 
 Run the showcase (`npm --prefix showcase run dev`, port 5179) and open `http://localhost:5179/lab/loader.html`.
