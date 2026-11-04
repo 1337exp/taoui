@@ -7,7 +7,7 @@ export const localeRu: TaoLocale = {
     pinCode: { successText: 'Код верный', errorText: 'Неверный код', cellLabel: 'Символ {n} из {count}' },
     avatar: {
         fallbackLabel: 'Аватар',
-        notificationsLabel: '{count} уведомлений',
+        notificationsLabel: { one: '{count} уведомление', few: '{count} уведомления', many: '{count} уведомлений', other: '{count} уведомления' },
         dotLabels: {
             success: 'в сети',
             danger: 'занят',
@@ -76,8 +76,8 @@ export const localeRu: TaoLocale = {
         prevLabel: 'Назад',
         nextLabel: 'Вперёд',
         pageLabel: 'Страница {page}',
-        jumpPrevLabel: 'Назад на {n} страниц',
-        jumpNextLabel: 'Вперёд на {n} страниц',
+        jumpPrevLabel: { one: 'Назад на {n} страницу', few: 'Назад на {n} страницы', many: 'Назад на {n} страниц', other: 'Назад на {n} страницы' },
+        jumpNextLabel: { one: 'Вперёд на {n} страницу', few: 'Вперёд на {n} страницы', many: 'Вперёд на {n} страниц', other: 'Вперёд на {n} страницы' },
         goToText: 'Перейти',
         goToLabel: 'Перейти на страницу, от 1 до {count}',
         perPageText: 'На странице',

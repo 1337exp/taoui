@@ -331,6 +331,10 @@ function onLanguageChange(lang) {
 
 Without the plugin (individual components) `setTaoLocale()` is the only call you need.
 
+Which language to start with: `detectTaoLanguage(['en', 'ru'])` answers with the one of your languages that the browser prefers (`ru-RU` fits `ru`), for example `saved ?? detectTaoLanguage(['en', 'ru'])`; on a server pass the wishes of the request: `{ requested: parseAcceptLanguage(header) }`.
+
+A text that depends on a number may be plural forms (`{ one, few, many, other }`, chosen by the plural rules of the locale `code`); a plain string still works and is the same for every number.
+
 ### Upgrading to 5.0
 
 5.0 deletes every name that 2.0 deprecated (plus the `error` tone alias), see [MIGRATION-5.md](MIGRATION-5.md) for the table old → new.

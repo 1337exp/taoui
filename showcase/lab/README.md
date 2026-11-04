@@ -13,3 +13,7 @@ Run the showcase (`npm --prefix showcase run dev`, port 5179) and open `http://l
 A new page: copy `loader.html` + `loader.js`, change the component. The trick is small: a wrapper with `data-at="30"` has all
 its animations paused at 30 % of the longest duration inside it (read from the CSS, so a new duration is followed), and
 `data-slow` plays at the speed of the slider.
+
+## RTL status (checked with `/lab/rtl.html`)
+
+Not claimed yet. Mirrors by itself (flex / grid): the order of buttons, tags, tabs, segments, fields with `prefix` / `suffix`, the icons of Select, Combobox and Date, Alert, Stages, Breadcrumb, the columns of Table, the fill of Progress, the order of the pager. Not yet: the arrow keys (`ArrowRight` always means next: Tabs, Slider, Menu, Menubar, Toolbar, Tree, Calendar, Carousel, Heatmap, Split, ColorPicker, listNav), the direction of Slider (zero is always on the left), chevrons that stay as they are, floating panels (`bottom-start` is the left edge; panels teleported to `<body>` follow `dir` of `<html>` only), the steppers of InputNumber, a few literal `text-align: left`, the corners of Toast and ScrollTop.

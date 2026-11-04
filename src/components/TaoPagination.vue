@@ -6,6 +6,7 @@ import { computed, ref, watch } from 'vue';
 import { buildPaginationItems } from '../pagination';
 import { sizeClass, type TaoSize } from '../size';
 import { formatText, useLocaleText, useTaoLocale } from '../locale';
+import type { TaoText } from '../locale/types';
 
 defineOptions({ name: 'TaoPagination' });
 
@@ -36,8 +37,8 @@ const props = withDefaults(
         /** `{page}` — номер страницы. */
         pageLabel?: string;
         /** `{n}` — сколько страниц перескакивает «…». */
-        jumpPrevLabel?: string;
-        jumpNextLabel?: string;
+        jumpPrevLabel?: TaoText;
+        jumpNextLabel?: TaoText;
         goToText?: string;
         goToLabel?: string;
         /**
@@ -175,7 +176,7 @@ function goTo(next: number) {
                     v-if="item.type === 'ellipsis' && jump > 0"
                     type="button"
                     class="tao-pagination__btn tao-pagination__btn--jump"
-                    :aria-label="item.id === 'left' ? l10n.jumpPrevLabel.replace('{n}', String(jump)) : l10n.jumpNextLabel.replace('{n}', String(jump))"
+                    :aria-label="formatText(item.id === 'left' ? l10n.jumpPrevLabel : l10n.jumpNextLabel, { n: jump }, appLocale.code)"
                     :disabled="disabled"
                     @click="goTo(item.id === 'left' ? current - jump : current + jump)"
                 >
