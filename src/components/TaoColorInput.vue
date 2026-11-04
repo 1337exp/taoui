@@ -5,6 +5,7 @@ import { normalizeHex, type ColorMode } from '../color';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import type { TaoPlacement } from '../floating';
+import TaoButton from './TaoButton.vue';
 import TaoColorPicker from './TaoColorPicker.vue';
 import TaoPopover from './TaoPopover.vue';
 
@@ -36,8 +37,12 @@ const props = withDefaults(
         chooseLabel?: string;
         /** What the field says while the value is empty (an optional colour that is not set). / Что говорит поле, пока значение пустое (необязательный цвет не задан). */
         placeholder?: string;
+        /** The colour can be taken away again: a Clear button under the palette, and Delete / Backspace on the field. Gives `''`. / Цвет можно убрать: кнопка «Очистить» под палитрой и Delete / Backspace на поле. Отдаёт `''`. */
+        clearable?: boolean;
+        /** Text of the clear button. / Текст кнопки очистки. */
+        clearText?: string;
     }>(),
-    { alpha: false, modes: () => ['hex', 'rgb', 'hsl'], eyedropper: true, disabled: false, error: false, placement: 'bottom-start' },
+    { alpha: false, modes: () => ['hex', 'rgb', 'hsl'], eyedropper: true, disabled: false, error: false, placement: 'bottom-start', clearable: false },
 );
 
 const emit = defineEmits<{
@@ -54,6 +59,18 @@ const shown = computed(() => normalizeHex(props.modelValue, props.alpha) ?? prop
 // пустое значение — состояние, а не ошибка: поле говорит, что цвет не задан, а образец зачёркнут
 const empty = computed(() => props.modelValue === '');
 const text = computed(() => (empty.value ? l10n.value.placeholder : shown.value));
+function clear() {
+    emit('update:modelValue', '');
+    emit('change', '');
+}
+
+function onKeydown(event: KeyboardEvent) {
+    if ((event.key === 'Backspace' || event.key === 'Delete') && props.clearable && !empty.value && !props.disabled) {
+        event.preventDefault();
+        clear();
+    }
+}
+
 const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? given : l10n.value.chooseLabel}: ${text.value}`;
 </script>
 
@@ -69,6 +86,7 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
                 :aria-label="buttonLabel($attrs['aria-label'])"
                 aria-haspopup="dialog"
                 :aria-expanded="open"
+                @keydown="onKeydown"
             >
                 <span class="tao-color-input__swatch" :class="{ 'tao-color-input__swatch--empty': empty }"><span :style="{ backgroundColor: shown }"></span></span>
                 <span class="tao-color-input__text" :class="{ 'tao-color-input__text--empty': empty }">{{ text }}</span>
@@ -87,6 +105,7 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
             @update:mode="emit('update:mode', $event)"
             @change="emit('change', $event)"
         />
+        <TaoButton v-if="clearable && !empty" class="tao-color-input__clear" size="small" variant="text" @click="clear">{{ l10n.clearText }}</TaoButton>
     </TaoPopover>
 </template>
 
@@ -145,6 +164,12 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
 .tao-color-input__text {
     font-variant-numeric: tabular-nums;
     text-transform: uppercase;
+}
+
+/* the clear button sits under the palette, at its end / кнопка очистки под палитрой, в её конце */
+.tao-color-input__clear {
+    margin-top: var(--tao-space-2);
+    margin-inline-start: auto;
 }
 
 /* not set: a muted sentence, and a slash over the swatch / не задан: приглушённая фраза и косая черта поверх образца */

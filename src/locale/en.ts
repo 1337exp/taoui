@@ -102,6 +102,7 @@ export const localeEn: TaoLocale = {
         eyedropperLabel: 'Eyedropper',
         chooseLabel: 'Choose color',
         placeholder: 'Not set',
+        clearText: 'Clear',
     },
     scrubber: { playLabel: 'Play', pauseLabel: 'Pause', restartLabel: 'Restart' },
     toast: { closeLabel: 'Close notification' },

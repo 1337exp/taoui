@@ -502,6 +502,7 @@ export const propTablesEn = {
       rows: [
         r('v-model', 'string', '—', 'The colour as a hex string. Required'),
         r('alpha / swatches / modes / v-model:mode / eyedropper / size', '', '', 'As in TaoColorPicker'),
+        r('clearable', 'boolean', 'false', 'The colour can be taken away again: a Clear button under the palette and Delete / Backspace on the field; gives "" (the field then says Not set)'),
         r('placeholder', 'string', "'Not set'", 'What the field says while the value is empty (""): an optional colour that is not set; the swatch is crossed out'),
         r('placement', 'TaoPlacement', "'bottom-start'", 'Side and alignment: top / bottom / left / right and -start / -end. Flips at the screen edge'),
         r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),

@@ -97,6 +97,24 @@ describe('ColorPicker', () => {
 });
 
 describe('ColorInput', () => {
+    it('clearable: a Clear button under the palette and Delete on the field give an empty value; not clearable, or already empty: neither', async () => {
+        const w = mount(TaoColorInput, { props: { modelValue: '#ff8800', clearable: true }, attachTo: document.body });
+        await w.find('.tao-color-input').trigger('keydown', { key: 'Delete' });
+        expect(w.emitted('update:modelValue')?.[0]).toEqual(['']);
+        await w.find('.tao-color-input').trigger('click');
+        const clear = [...document.querySelectorAll<HTMLButtonElement>('.tao-popover__panel button')].find((b) => b.textContent?.trim() === 'Clear');
+        clear!.click();
+        expect(w.emitted('update:modelValue')?.[1]).toEqual(['']);
+        expect(w.emitted('change')?.[0]).toEqual(['']);
+        w.unmount();
+        const plain = mount(TaoColorInput, { props: { modelValue: '#ff8800' } });
+        await plain.find('.tao-color-input').trigger('keydown', { key: 'Delete' });
+        expect(plain.emitted('update:modelValue')).toBeUndefined();
+        const empty = mount(TaoColorInput, { props: { modelValue: '', clearable: true } });
+        await empty.find('.tao-color-input').trigger('keydown', { key: 'Delete' });
+        expect(empty.emitted('update:modelValue')).toBeUndefined();
+    });
+
     it('an empty value says it is not set: a muted text, a crossed-out swatch, the same for a screen reader; a given text wins', () => {
         const w = mount(TaoColorInput, { props: { modelValue: '' } });
         const trigger = w.find('.tao-color-input');
