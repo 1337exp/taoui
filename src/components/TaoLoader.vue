@@ -6,8 +6,8 @@ import { toneClass, type TaoToneName } from '../tone';
 defineOptions({ name: 'TaoLoader' });
 
 interface Props {
-    /** The look of the wait: `dots` (the four jumping dots), `ring` (a turning arc), `pulse` (a ripple). / Вид ожидания. */
-    variant?: 'dots' | 'ring' | 'pulse';
+    /** The look of the wait: `dots` (the four jumping dots), `ring` (a turning arc), `pulse` (a ripple), `diamonds` (a hollow diamond crosses to a filled one and takes its place, and a new filled one grows where it stood). / Вид ожидания. */
+    variant?: 'dots' | 'ring' | 'pulse' | 'diamonds';
     /**
      * The size: a number is px, `'40px'` works, or `small` / `medium` / `large` (24 / 40 / 64 px).
      * Without it: 80 for `dots` (as it always was), 40 for the others.
@@ -70,6 +70,9 @@ const rootStyle = computed(() => ({
             <div /><div /><div /><div />
         </div>
         <span v-else-if="variant === 'ring'" class="tao-loader__ring" aria-hidden="true" />
+        <span v-else-if="variant === 'diamonds'" class="tao-loader__swap" aria-hidden="true">
+            <i class="tao-loader__swap-left" /><i class="tao-loader__swap-right" /><i class="tao-loader__swap-hollow" />
+        </span>
         <span v-else class="tao-loader__pulse" aria-hidden="true" />
         <span v-if="!decorative" class="tao-sr-only">{{ l10n.label }}</span>
     </div>
@@ -189,6 +192,77 @@ const rootStyle = computed(() => ({
     100% { transform: scale(1); opacity: 0; }
 }
 
+/* ---------- diamonds: the hollow one crosses to the filled one and takes its place; a new filled one grows where it stood ---------- */
+.tao-loader__swap {
+    --_d: calc(var(--_s) * 0.2);
+    --_go: calc(var(--_s) * 0.64);
+    position: relative;
+    display: block;
+    width: var(--_s);
+    height: calc(var(--_s) * 0.34);
+}
+
+.tao-loader__swap i {
+    position: absolute;
+    top: calc((100% - var(--_d)) / 2);
+    box-sizing: border-box;
+    width: var(--_d);
+    height: var(--_d);
+    transform: rotate(45deg);
+    animation-duration: 2.4s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+}
+
+.tao-loader__swap-left,
+.tao-loader__swap-right {
+    background: var(--_c);
+}
+
+.tao-loader__swap-left {
+    left: calc(var(--_s) * 0.18 - var(--_d) / 2);
+    animation-name: tao-loader-swap-left;
+}
+
+.tao-loader__swap-right {
+    left: calc(var(--_s) * 0.82 - var(--_d) / 2);
+    animation-name: tao-loader-swap-right;
+}
+
+/* the hollow one starts on the right and goes there and back; it is the one that is drawn last, so it is on top / пустой стартует справа и ходит туда-обратно */
+.tao-loader__swap-hollow {
+    left: calc(var(--_s) * 0.18 - var(--_d) / 2);
+    border: max(1.5px, calc(var(--_s) * 0.03)) solid var(--_c);
+    animation-name: tao-loader-swap-go;
+}
+
+@keyframes tao-loader-swap-go {
+    0%,
+    6% { transform: translateX(var(--_go)) rotate(45deg); }
+    44%,
+    56% { transform: translateX(0) rotate(45deg); }
+    94%,
+    100% { transform: translateX(var(--_go)) rotate(45deg); }
+}
+
+@keyframes tao-loader-swap-left {
+    0%,
+    30% { transform: rotate(45deg) scale(1); }
+    46%,
+    56% { transform: rotate(45deg) scale(0); }
+    74%,
+    100% { transform: rotate(45deg) scale(1); }
+}
+
+@keyframes tao-loader-swap-right {
+    0%,
+    6% { transform: rotate(45deg) scale(0); }
+    24%,
+    80% { transform: rotate(45deg) scale(1); }
+    96%,
+    100% { transform: rotate(45deg) scale(0); }
+}
+
 /* ---------- reduced motion: nothing travels or turns, the picture breathes ---------- */
 @media (prefers-reduced-motion: reduce) {
     .tao-loader__ellipsis div {
@@ -224,6 +298,19 @@ const rootStyle = computed(() => ({
     }
 
     .tao-loader__pulse::after {
+        display: none;
+    }
+
+    /* the picture stands (filled on the left, hollow on the right) and breathes / картинка стоит и дышит */
+    .tao-loader__swap i {
+        animation: tao-loader-breathe 1.6s ease-in-out infinite;
+    }
+
+    .tao-loader__swap-hollow {
+        transform: translateX(var(--_go)) rotate(45deg);
+    }
+
+    .tao-loader__swap-right {
         display: none;
     }
 }

@@ -21,13 +21,13 @@ function save() {
     <Tr>
       <template #en>
         <p>
-          The wait whose end nobody knows. Three looks: <code>dots</code> (the first one, still the default), <code>ring</code> and <code>pulse</code>.
+          The wait whose end nobody knows. Four looks: <code>dots</code> (the first one, still the default), <code>ring</code>, <code>pulse</code> and <code>diamonds</code> (a hollow diamond crosses to the filled one and takes its place, a new filled one grows where it stood).
           A screen reader hears “Loading” (<code>label</code> says it your way), under «reduce motion» nothing travels or turns: the picture only breathes.
         </p>
       </template>
       <template #ru>
         <p>
-          Ожидание, конца которого никто не знает. Три вида: <code>dots</code> (первый, по-прежнему по умолчанию), <code>ring</code> и <code>pulse</code>.
+          Ожидание, конца которого никто не знает. Четыре вида: <code>dots</code> (первый, по-прежнему по умолчанию), <code>ring</code>, <code>pulse</code> и <code>diamonds</code> (пустой ромб переходит к заполненному и занимает его место, на старом вырастает новый заполненный).
           Скринридер слышит «Загрузка» (<code>label</code> скажет по-своему), при «уменьшить движение» ничто не бежит и не крутится: картинка только дышит.
         </p>
       </template>
@@ -38,6 +38,7 @@ function save() {
       <TaoLoader variant="dots" :size="48" />
       <TaoLoader variant="ring" />
       <TaoLoader variant="pulse" />
+      <TaoLoader variant="diamonds" :size="64" />
       <TaoLoader variant="ring" tone="success" />
       <TaoLoader variant="ring" tone="danger" />
       <TaoLoader variant="pulse" tone="warning" />

@@ -61,11 +61,20 @@ describe('TaoLoader', () => {
         expect(w.find('.tao-sr-only').exists()).toBe(false);
     });
 
+    it('diamonds: a hollow one and two filled ones, the hollow on top; hidden from the reader like the others', () => {
+        const wrapper = mount(TaoLoader, { props: { variant: 'diamonds' } });
+        expect(wrapper.find('.tao-loader__swap').attributes('aria-hidden')).toBe('true');
+        expect([...wrapper.findAll('.tao-loader__swap i')].map((i) => i.classes()[0])).toEqual(['tao-loader__swap-left', 'tao-loader__swap-right', 'tao-loader__swap-hollow']);
+        expect(wrapper.attributes('style')).toContain('--_s: 40px');
+        expect(wrapper.text()).toContain('Loading');
+    });
+
     it('reduced motion: nothing travels or turns, every look breathes instead', () => {
         const reduce = (source as string).slice((source as string).indexOf('@media (prefers-reduced-motion: reduce)'));
         expect(reduce).toMatch(/\.tao-loader__ring \{\s*animation: tao-loader-breathe/);
         expect(reduce).toMatch(/\.tao-loader__ellipsis div \{\s*animation: tao-loader-breathe[^}]*transform: none/);
         expect(reduce).toMatch(/\.tao-loader__pulse::after \{\s*display: none/);
+        expect(reduce).toMatch(/\.tao-loader__swap i \{\s*animation: tao-loader-breathe/);
         expect(source).toContain('@keyframes tao-loader-breathe');
     });
 

@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.26.0
+
+Nothing to migrate; the defaults do not change.
+
+- **TaoLoader `variant="diamonds"`.** A hollow diamond crosses to a filled one and takes its place (the filled one shrinks away as it arrives), and a new filled diamond grows where the hollow one stood; then it goes back the other way. Sized, toned and named like the other looks (`size`, `tone`, `color`, `label`), hidden from a screen reader as a picture; under reduced motion it stands (filled on the left, hollow on the right) and breathes.
+
 ## 5.25.0
 
 Nothing to migrate; the defaults do not change.
