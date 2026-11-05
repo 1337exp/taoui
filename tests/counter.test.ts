@@ -63,3 +63,12 @@ describe('TaoCounter', () => {
         });
     });
 });
+
+// 5.27.1: a digit is a layer before it moves, so its text is drawn the same at the start of the roll (no jump of a pixel)
+// 5.27.1: цифра — слой до движения, поэтому её текст рисуется одинаково на старте качения (без прыжка на пиксель)
+describe('TaoCounter digit layer', () => {
+    it('the digit has will-change for what the roll animates', () => {
+        const rule = (counterSource as string).match(/\.tao-counter__digit \{([^}]*)\}/)?.[1] ?? '';
+        expect(rule).toMatch(/will-change:\s*transform,\s*opacity,\s*filter/);
+    });
+});

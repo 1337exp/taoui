@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.27.1
+
+Nothing to migrate.
+
+- **TaoCounter: a digit no longer jumps a pixel when it starts to roll.** A digit became a layer of its own only when its `transform` and `blur` began, and the text was then redrawn on whole pixels: in Chromium it moved a little to the left at the start (and back at the end). The digit is a layer from the start now (`will-change`), so it is drawn the same before, during and after. The geometry was never off: the cells and the centre of the text stay put to a hundredth of a pixel.
+
 ## 5.27.0
 
 Nothing to migrate; the defaults do not change (a plain string in a locale works as before).
