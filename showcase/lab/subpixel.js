@@ -6,7 +6,7 @@
 // когда что-то под указателем перерисовывается, поэтому кнопка «прыгает». Страница открывает каждую подозрительную часть, меряет текст и
 // кнопки в ней и говорит, что стоит на доле, а что встало бы на неё в окне другой чётности (у отцентрованной панели нечётное оставшееся место).
 import { createApp, defineComponent, h, nextTick, reactive, ref } from 'vue'
-import { TaoButton, TaoDrawer, TaoModal, TaoPopover, TaoTooltip, confirm, toast } from '@1337exp/taoui'
+import { TaoButton, TaoDrawer, TaoModal, TaoPopover, TaoSelect, TaoTooltip, confirm, toast } from '@1337exp/taoui'
 import '../../src/styles/index.css'
 import '../../src/styles/palettes/index.css'
 
@@ -79,6 +79,20 @@ const cases = [
     close: () => {},
   },
   {
+    name: 'TaoPopover',
+    box: null,
+    root: '.tao-popover__panel',
+    open: () => document.querySelector('#lab-popover button')?.click(),
+    close: () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })),
+  },
+  {
+    name: 'TaoSelect',
+    box: null,
+    root: '.tao-select__panel',
+    open: () => document.querySelector('#lab-select .tao-select__trigger')?.click(),
+    close: () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })),
+  },
+  {
     name: 'TaoTooltip',
     box: null,
     root: '.tao-tooltip',
@@ -129,6 +143,8 @@ const App = defineComponent({
       h('div', { style: 'display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px' }, [
         h(TaoButton, { disabled: state.busy, onClick: checkAll }, () => 'Check all'),
         ...cases.map((c) => h(TaoButton, { variant: 'secondary', size: 'small', disabled: state.busy, onClick: () => checkOne(c) }, () => c.name)),
+        h('span', { id: 'lab-popover', style: 'display:inline-block;margin-inline-start:13px' }, h(TaoPopover, { placement: 'bottom-start' }, { trigger: () => h(TaoButton, { variant: 'secondary', size: 'small' }, () => 'popover target'), default: () => h('div', [h('p', { style: 'margin:0 0 8px' }, 'The text of a popover.'), h(TaoButton, { size: 'small' }, () => 'A button')]) })),
+        h('span', { id: 'lab-select', style: 'display:inline-block;margin-inline-start:7px;width:140px' }, h(TaoSelect, { modelValue: 'a', options: [{ value: 'a', label: 'Alpha' }, { value: 'b', label: 'Beta' }] })),
         h(TaoTooltip, { content: 'A tooltip', placement: 'top' }, () => h('span', { ref: tip, style: 'display:inline-block;padding:4px 8px;border:1px dashed var(--tao-color-border-strong)' }, 'tooltip target')),
       ]),
       h('table', { style: 'border-collapse:collapse;width:100%' }, [
