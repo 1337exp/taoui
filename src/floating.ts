@@ -41,7 +41,7 @@ const opposite: Record<TaoSide, TaoSide> = { top: 'bottom', bottom: 'top', left:
 
 /**
  * Pure placement maths. The wanted side flips only when it does not fit and the opposite one has more room;
- * the result is then clamped into the viewport on both axes.
+ * the result is then clamped into the viewport on both axes and put on whole pixels.
  * Чистая математика. Сторона переворачивается, только если не влезает и напротив больше места;
  * затем результат зажимается в окно по обеим осям.
  */
@@ -84,6 +84,13 @@ export function computePosition(input: FloatingInput): FloatingResult {
 
     left = Math.max(pad, Math.min(left, viewport.width - pad - size.width));
     top = Math.max(pad, Math.min(top, viewport.height - pad - size.height));
+
+    // on whole pixels: text and buttons of a panel that starts on a fraction are drawn one way at first and snapped to whole pixels when
+    // they are repainted (under the pointer), and seem to jump. The arrow still points at the middle of the anchor.
+    // на целых пикселях: текст и кнопки панели, которая начинается с доли, сначала рисуются по-одному, а при перерисовке (под указателем)
+    // прижимаются к целым и «прыгают». Стрелка по-прежнему смотрит в середину якоря.
+    left = Math.round(left);
+    top = Math.round(top);
 
     return {
         top,
