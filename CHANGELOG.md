@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.28.0
+
+Nothing to migrate; the defaults do not change.
+
+- **New `TaoStretchedLink`: a whole card, row or tile as one link.** A `TaoLink` (so `NuxtLink` / `RouterLink` / `<a>` by itself, with `to`, `newTab`, `private`, `exactPath`) whose layer is stretched over the container: a click anywhere on it goes to the link, and the buttons inside it still work on their own. The link stays where it is in the markup (the title, a "View" button); the container gets `tao-stretched` (it is `position: relative`), and a control that must stay clickable by itself gets `tao-stretched-raise`. The keyboard sees one link and its focus ring goes round the whole container, inside its edge, with the corners from `--tao-stretched-radius` (the radius of a panel by default). The class `tao-stretched-link` works on any `<a>`. It is a context like `tao-frames-soft`: `styles/contexts/stretch.css`, no JavaScript. **One rule, written in the showcase, the README and the stylesheet:** never put `filter`, `transform`, `perspective`, `will-change: transform` or `contain` on the link (on `:hover` too). Such a property makes the link the containing block of its own layer, the layer shrinks to the link, the pointer is no longer over it, the property goes, the layer stretches back, and so on every frame: the cursor flickers between a hand and a text bar. Light the link with a colour, or put the effect on an inner element (on the container it is fine); a test keeps the context itself clear of these properties. Why a component and not a recipe: every site that makes a card clickable meets this, and it is found only by the flicker.
+
 ## 5.27.1
 
 Nothing to migrate.

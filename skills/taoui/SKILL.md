@@ -115,7 +115,7 @@ choose a text colour, WCAG 2 to promise a number.
 `TaoTable` (columns, sort, row click), `TaoPagination` (`pageInput` for hundreds of pages), `TaoList` / `TaoListItem` (`roving`: one Tab stop, arrows between the rows),
 `TaoTree` (expand, select, tri-state `checkable`, lazy `load`), `TaoStages`, `TaoTimeline` (`active` makes it a progress),
 `TaoTag`, `TaoAvatar`, `TaoImage`, `TaoCarousel`, `TaoCard` (`#media`, `#title`, `#sub`, `#footer`, `#corner`, `closable`,
-`stripe` + `stripeTone`), `TaoBlock`, `TaoTabs`, `TaoBreadcrumb`, `TaoLink`, `TaoSpoiler` / `TaoSpoilerGroup`, `TaoCounter`,
+`stripe` + `stripeTone`), `TaoBlock`, `TaoTabs`, `TaoBreadcrumb`, `TaoLink`, `TaoStretchedLink` (a whole card or row as one link, the buttons inside still work: `tao-stretched` on the container, `tao-stretched-raise` on a control that must click by itself; never `filter` / `transform` on the link), `TaoSpoiler` / `TaoSpoilerGroup`, `TaoCounter`,
 `TaoCopy`, `TaoTour` (a guided tour: `:step` / `:index` / `:count`, events `next` / `prev` / `skip`; it only draws, the state is yours or TaoUX `useTour`; a step is `{ id, target?, title?, text?, placement? }`), `TaoThemeToggle` (the light / dark switch as an icon button: flips `data-tao-mode` of `<html>`, or `v-model` with `:apply="false"`; `#icon="{ mode, next }"` for your own glyph), `TaoMarquee` (one line that runs round only when it does not fit), `TaoScrubber` (play / pause + time),
 `TaoScrollTop`, `TaoAnimatedBorder`, `TaoIcon`.
 

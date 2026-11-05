@@ -1070,6 +1070,18 @@ export const propTablesEn = {
       slots: 'default — the link text.',
     },
   ],
+  'stretched-link': [
+    {
+      title: 'TaoStretchedLink',
+      rows: [
+        r('to', 'string | object', '—', 'The address, as in TaoLink'),
+        r('newTab', 'boolean', 'false', 'target=_blank + rel=noopener'),
+        r('private', 'boolean', 'false', 'rel=noopener noreferrer'),
+        r('exactPath', 'boolean', 'false', 'An exact path match for active (vue-router)'),
+      ],
+      slots: 'default — the link text. Classes: tao-stretched on the container (position: relative), tao-stretched-raise on the controls that must stay clickable by themselves; --tao-stretched-radius is the corner of the focus ring. Never give the link filter, transform, perspective, will-change: transform or contain (on :hover too): the cursor flickers.',
+    },
+  ],
   scrolltop: [
     {
       title: 'TaoScrollTop',

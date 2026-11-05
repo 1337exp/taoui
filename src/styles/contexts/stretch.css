@@ -1,0 +1,62 @@
+/**
+ * Tao UI — Stretched link context / Контекст растянутой ссылки
+ *
+ * A whole card, row or tile that is one link, while the buttons inside it still work on their own. The link keeps its
+ * place in the markup (a title, a "View" button); its `::after` is stretched over the nearest positioned ancestor, so a click anywhere
+ * on that ancestor goes to the link.
+ *
+ *   .tao-stretched         the container the link stretches over (it is `position: relative`)
+ *   .tao-stretched-link    the link itself; `<TaoStretchedLink>` is a `<TaoLink>` with this class, any `<a>` can take it
+ *   .tao-stretched-raise   a control that must stay clickable on its own (a button, a second link): it sits above the stretched layer
+ *
+ *   --tao-stretched-radius   the corners of the focus ring, so it follows the container (default: the radius of a panel)
+ *
+ * The keyboard sees one link; its focus ring goes round the whole container (inside its edge, so a container with
+ * `overflow: hidden` does not cut it).
+ *
+ * Do not put `filter`, `transform`, `perspective`, `will-change: transform` or `contain` on the link (on `:hover`
+ * too): such a property makes the link the containing block of its own `::after`, the stretched layer shrinks to the
+ * link, the pointer is no longer over it, the property goes, the layer stretches back, and so on every frame (the cursor
+ * flickers). Light the link with a colour (`background`, `color-mix`), or put the effect on an inner element. On the container it is fine.
+ *
+ * Целая карточка, строка или плитка как одна ссылка, при этом кнопки внутри нажимаются сами по себе. Ссылка остаётся на своём
+ * месте в разметке (заголовок, кнопка «Посмотреть»), её `::after` растягивается на ближайшего позиционированного предка, и клик в
+ * любом месте предка уходит в ссылку.
+ *
+ *   .tao-stretched         контейнер, на который растягивается ссылка (`position: relative`)
+ *   .tao-stretched-link    сама ссылка; `<TaoStretchedLink>` это `<TaoLink>` с этим классом, класс можно дать любому `<a>`
+ *   .tao-stretched-raise   элемент, который должен нажиматься сам (кнопка, вторая ссылка): он выше растянутого слоя
+ *
+ *   --tao-stretched-radius   скругление кольца фокуса, чтобы оно повторяло контейнер (по умолчанию радиус панели)
+ *
+ * Клавиатура видит одну ссылку; кольцо фокуса идёт по всему контейнеру (внутри его края, чтобы `overflow: hidden` не обрезал).
+ *
+ * Не давайте ссылке `filter`, `transform`, `perspective`, `will-change: transform` и `contain` (и на `:hover` тоже): такое свойство
+ * делает ссылку опорным блоком для её же `::after`, слой сжимается до ссылки, курсор оказывается уже не над ним, свойство
+ * пропадает, слой снова растягивается, и так каждый кадр (курсор мигает). Подсвечивайте ссылку цветом (`background`, `color-mix`)
+ * или вешайте эффект на внутренний элемент. Контейнеру это можно.
+ */
+.tao-stretched {
+    position: relative;
+}
+
+.tao-stretched-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--tao-stretched-radius, var(--tao-radius-panel));
+}
+
+.tao-stretched-link:focus-visible {
+    outline: none;
+}
+
+.tao-stretched-link:focus-visible::after {
+    outline: 2px solid var(--tao-color-accent);
+    outline-offset: -2px;
+}
+
+.tao-stretched-raise {
+    position: relative;
+    z-index: 1;
+}

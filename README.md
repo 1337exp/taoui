@@ -132,6 +132,7 @@
 ### Navigation
 
 - **TaoLink** — `<NuxtLink>` in Nuxt, `<RouterLink>` with vue-router, otherwise a plain `<a>` — no extra setup
+- **TaoStretchedLink** — a `TaoLink` that makes a whole card or row one link while the buttons inside it still work: `tao-stretched` on the container, `tao-stretched-raise` on a control that must stay clickable by itself. The keyboard sees one link and its focus ring goes round the container (`--tao-stretched-radius`). Never put `filter` / `transform` on the link: the layer would shrink under the pointer and the cursor would flicker
 - **TaoBreadcrumb** — crumbs: the last item is the current page
 - **TaoDropdownMenu** / **TaoMenu** — a menu from a plain data tree `items`: submenus, checkboxes, radios, separators, group labels, shortcuts to show, disabled items. Arrows, Home / End, type-ahead, `→` / `←` for submenus, Esc closes the top level first. `TaoMenu` is the panel itself, for your own shells (a menu bar, a context menu); flips at the viewport edge; `size` makes the button a compact square, `:tabbable="false"` takes it out of the Tab order
 - **TaoMenubar** / **TaoContextMenu** — the menu bar of an editor and the menu on the right click, on `TaoMenu`. The bar is one tab stop (`role="menubar"`): `←` / `→` walk it, `↓` / Enter open, with a menu open `←` / `→` and the pointer move to the neighbour menu; an entry without `items` is a plain action. The context menu opens at the pointer (or at the element for the Menu key / Shift+F10) and wraps its content without a box of its own

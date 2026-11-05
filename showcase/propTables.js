@@ -1063,6 +1063,18 @@ export const propTables = {
       slots: 'default — текст ссылки.',
     },
   ],
+  'stretched-link': [
+    {
+      title: 'TaoStretchedLink',
+      rows: [
+        r('to', 'string | object', '—', 'Адрес, как у TaoLink'),
+        r('newTab', 'boolean', 'false', 'target=_blank + rel=noopener'),
+        r('private', 'boolean', 'false', 'rel=noopener noreferrer'),
+        r('exactPath', 'boolean', 'false', 'Точное совпадение пути для active (vue-router)'),
+      ],
+      slots: 'default — текст ссылки. Классы: tao-stretched на контейнере (position: relative), tao-stretched-raise на кнопках, которые должны нажиматься сами; --tao-stretched-radius — скругление кольца фокуса. Ссылке нельзя давать filter, transform, perspective, will-change: transform и contain (и на :hover): курсор начнёт мигать.',
+    },
+  ],
   scrolltop: [
     {
       title: 'TaoScrollTop',
