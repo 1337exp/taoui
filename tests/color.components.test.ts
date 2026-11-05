@@ -107,6 +107,13 @@ describe('ColorInput', () => {
         expect(w.emitted('update:modelValue')?.[1]).toEqual(['']);
         expect(w.emitted('change')?.[0]).toEqual(['']);
         w.unmount();
+        // the row is always there when clearable, and disabled while there is nothing to clear / строка есть всегда, а очищать нечего — неактивна
+        const none = mount(TaoColorInput, { props: { modelValue: '', clearable: true }, attachTo: document.body });
+        await none.find('.tao-color-input').trigger('click');
+        const row = document.querySelector<HTMLButtonElement>('.tao-color-input__clear');
+        expect(row?.textContent?.trim()).toBe('Clear');
+        expect(row?.disabled).toBe(true);
+        none.unmount();
         const plain = mount(TaoColorInput, { props: { modelValue: '#ff8800' } });
         await plain.find('.tao-color-input').trigger('keydown', { key: 'Delete' });
         expect(plain.emitted('update:modelValue')).toBeUndefined();
