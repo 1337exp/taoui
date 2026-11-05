@@ -55,6 +55,7 @@ import DemoSpoiler from './components/DemoSpoiler.vue'
 import DemoTabs from './components/DemoTabs.vue'
 import DemoBreadcrumb from './components/DemoBreadcrumb.vue'
 import DemoLink from './components/DemoLink.vue'
+import DemoStretchedLink from './components/DemoStretchedLink.vue'
 import DemoScrollTop from './components/DemoScrollTop.vue'
 import DemoToast from './components/DemoToast.vue'
 import DemoAlert from './components/DemoAlert.vue'
@@ -124,6 +125,7 @@ export const demoById = {
   'tabs': DemoTabs,
   'breadcrumb': DemoBreadcrumb,
   'link': DemoLink,
+  'stretched-link': DemoStretchedLink,
   'scrolltop': DemoScrollTop,
   'toast': DemoToast,
   'alert': DemoAlert,

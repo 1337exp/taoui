@@ -1160,6 +1160,19 @@ Showcase section: `#link`
 
 **Slots, events, notes.** default — the link text.
 
+## TaoStretchedLink
+
+Showcase section: `#stretched-link`
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `to` | `string \| object` | — | The address, as in TaoLink |
+| `newTab` | `boolean` | false | target=_blank + rel=noopener |
+| `private` | `boolean` | false | rel=noopener noreferrer |
+| `exactPath` | `boolean` | false | An exact path match for active (vue-router) |
+
+**Slots, events, notes.** default — the link text. Classes: tao-stretched on the container (position: relative), tao-stretched-raise on the controls that must stay clickable by themselves; --tao-stretched-radius is the corner of the focus ring. Never give the link filter, transform, perspective, will-change: transform or contain (on :hover too): the cursor flickers.
+
 ## TaoScrollTop
 
 Showcase section: `#scrolltop`

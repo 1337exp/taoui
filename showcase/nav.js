@@ -91,6 +91,7 @@ export const navGroups = [
       { id: 'tabs', label: 'TaoTabs' },
       { id: 'breadcrumb', label: 'TaoBreadcrumb' },
       { id: 'link', label: 'TaoLink' },
+      { id: 'stretched-link', label: 'TaoStretchedLink', aliases: ['clickable card', 'card link', 'row link', 'кликабельная карточка'] },
       { id: 'scrolltop', label: 'TaoScrollTop' },
     ],
   },
