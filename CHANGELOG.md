@@ -4,6 +4,7 @@
 
 Nothing to migrate.
 
+- **confirm(): a button no longer jumps a pixel under the pointer.** A confirm with a message (the danger one, for example) stood on a fraction of a pixel: its text had fractional line heights (16 x 1.3, 14 x 1.45), so the panel was 143.09px high, and centred in a box where the room left over was odd it started at 351.45. A button on such a fraction is drawn one way at first and snapped to whole pixels when it is repainted under the pointer, so it moved down a little. The line heights are whole pixels at the default sizes now (16 x 1.25 = 20, 14 x 1.5 = 21), and a centred panel with an odd room left over gets a margin of 1px, which moves it by half a pixel onto a whole one (`centringNudge`, when the confirm opens and when the window is resized). No layer is forced (a `will-change` made the text blurry).
 - **TaoCounter: a digit no longer jumps a pixel when it starts to roll.** A digit became a layer of its own only when its `transform` and `blur` began, and the text was then redrawn on whole pixels: in Chromium it moved a little to the left at the start (and back at the end). The digit is a layer from the start now (`will-change`), so it is drawn the same before, during and after. The geometry was never off: the cells and the centre of the text stay put to a hundredth of a pixel.
 
 ## 5.27.0

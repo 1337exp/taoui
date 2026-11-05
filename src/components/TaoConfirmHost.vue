@@ -7,6 +7,7 @@ import { trapTab } from '../focusTrap';
 import { toneClass } from '../tone';
 import { useLayer } from '../layers';
 import { surfaceClass } from '../surface';
+import { centringNudge } from '../pixelSnap';
 
 defineOptions({ name: 'TaoConfirmHost' });
 
@@ -14,14 +15,28 @@ const panelRef = ref<HTMLElement | null>(null);
 
 onMounted(() => {
     registerConfirmHost();
+    window.addEventListener('resize', snapPanel);
 });
 
 onBeforeUnmount(() => {
     unregisterConfirmHost();
+    window.removeEventListener('resize', snapPanel);
 });
 
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
 useLayer(() => Boolean(currentConfirm.value), { lockScroll: true, restoreFocus: true, onEscape: () => answer(false) });
+
+// the panel is centred: when the room left over is odd it starts on a half pixel, and its buttons jump when they are repainted
+// панель отцентрована: когда оставшееся место нечётное, она начинается с половины пикселя, и её кнопки прыгают при перерисовке
+function snapPanel() {
+    const panel = panelRef.value;
+    const box = panel?.parentElement;
+    if (!panel || !box) {
+        return;
+    }
+    panel.style.marginTop = '';
+    panel.style.marginTop = centringNudge(box.clientHeight, panel.offsetHeight) ? '1px' : '';
+}
 
 watch(
     () => currentConfirm.value?.id,
@@ -31,6 +46,7 @@ watch(
         }
 
         await nextTick();
+        snapPanel();
         queryButton(currentConfirm.value?.danger ? 'cancel' : 'ok')?.focus();
     },
 );
@@ -185,14 +201,18 @@ function onKeydown(event: KeyboardEvent) {
     margin: 0;
     font-size: var(--tao-font-size-lg);
     font-weight: 600;
-    line-height: 1.3;
+    /* whole pixels at the default sizes (16 x 1.25 = 20): a fractional line height makes the panel, and the buttons under the text, stand on a
+       fraction of a pixel, and a button then jumps when it is repainted under the pointer
+       целые пиксели при размерах по умолчанию (16 x 1,25 = 20): дробная высота строки ставит панель и кнопки под текстом на долю пикселя,
+       и кнопка прыгает, когда её перерисовывают под указателем */
+    line-height: 1.25;
     color: var(--tao-color-text-strong);
 }
 
 .tao-confirm__message {
     margin: var(--tao-space-2) 0 0;
     font-size: var(--tao-font-size-md);
-    line-height: 1.45;
+    line-height: 1.5; /* 14 x 1.5 = 21, whole / целые 21 */
     color: var(--tao-color-text);
 }
 
