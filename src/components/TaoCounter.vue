@@ -166,6 +166,11 @@ const slots = computed<Slot[]>((previous) => {
     display: flex;
     align-items: center;
     justify-content: center;
+    /* a digit is its own layer before it moves, not from the moment it starts: a text that is promoted to a layer when the transform and the
+       blur begin is drawn on whole pixels, and it jumps a pixel; drawn on a layer from the start, it does not
+       цифра — свой слой ещё до движения, а не с его начала: текст, ставший слоем в момент начала transform и blur, рисуется по целым
+       пикселям и прыгает на пиксель; нарисованный слоем с самого начала — не прыгает */
+    will-change: transform, opacity, filter;
 }
 
 .tao-counter__digit--muted {
