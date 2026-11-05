@@ -7,7 +7,7 @@ import { trapTab } from '../focusTrap';
 import { toneClass } from '../tone';
 import { useLayer } from '../layers';
 import { surfaceClass } from '../surface';
-import { centringNudge } from '../pixelSnap';
+import { useWholePixelPanel } from '../wholePixel';
 
 defineOptions({ name: 'TaoConfirmHost' });
 
@@ -15,12 +15,10 @@ const panelRef = ref<HTMLElement | null>(null);
 
 onMounted(() => {
     registerConfirmHost();
-    window.addEventListener('resize', snapPanel);
 });
 
 onBeforeUnmount(() => {
     unregisterConfirmHost();
-    window.removeEventListener('resize', snapPanel);
 });
 
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
@@ -28,15 +26,7 @@ useLayer(() => Boolean(currentConfirm.value), { lockScroll: true, restoreFocus: 
 
 // the panel is centred: when the room left over is odd it starts on a half pixel, and its buttons jump when they are repainted
 // панель отцентрована: когда оставшееся место нечётное, она начинается с половины пикселя, и её кнопки прыгают при перерисовке
-function snapPanel() {
-    const panel = panelRef.value;
-    const box = panel?.parentElement;
-    if (!panel || !box) {
-        return;
-    }
-    panel.style.marginTop = '';
-    panel.style.marginTop = centringNudge(box.clientHeight, panel.offsetHeight) ? '1px' : '';
-}
+useWholePixelPanel(panelRef, () => Boolean(currentConfirm.value));
 
 watch(
     () => currentConfirm.value?.id,
@@ -46,7 +36,6 @@ watch(
         }
 
         await nextTick();
-        snapPanel();
         queryButton(currentConfirm.value?.danger ? 'cancel' : 'ok')?.focus();
     },
 );

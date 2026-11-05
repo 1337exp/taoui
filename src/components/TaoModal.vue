@@ -5,6 +5,7 @@ import { getFocusable, trapTab } from '../focusTrap';
 import { useLayer } from '../layers';
 import { useLocaleText } from '../locale';
 import { surfaceClass, type TaoSurface } from '../surface';
+import { useWholePixelPanel } from '../wholePixel';
 
 // class, style and the other attributes go to the dialog panel, not to the overlay around it
 // class, style и остальные атрибуты — панели окна, а не подложке вокруг неё
@@ -80,6 +81,9 @@ function onOverlayPointerUp(event: PointerEvent) {
     }
     pointerDownOnOverlay = false;
 }
+
+// a centred panel stands on whole pixels, or its text and buttons jump when they are repainted / отцентрованная панель стоит на целых пикселях, иначе её текст и кнопки прыгают при перерисовке
+useWholePixelPanel(panelRef, () => props.modelValue);
 
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
 useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscape: close });
@@ -206,6 +210,11 @@ watch(
 .tao-modal__title {
     margin: 0;
     font-size: var(--tao-font-size-xl);
+    /* 24px at the default size (18 x 4/3), the height of the close button: whole pixels, so the header and all under it stand on whole pixels
+       and the button is centred without a half. A fractional line height put them on a fraction
+       24px при размере по умолчанию (18 x 4/3), высота кнопки закрытия: целые пиксели, поэтому шапка и всё под ней стоят на целых, а кнопка
+       по центру без половинки. Дробная высота строки ставила их на долю */
+    line-height: calc(var(--tao-font-size-xl) * 4 / 3);
     font-weight: 600;
     color: var(--tao-color-text-strong);
 }
