@@ -5,7 +5,6 @@ import { normalizeHex, type ColorMode } from '../color';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import type { TaoPlacement } from '../floating';
-import TaoButton from './TaoButton.vue';
 import TaoColorPicker from './TaoColorPicker.vue';
 import TaoPopover from './TaoPopover.vue';
 
@@ -105,7 +104,7 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
             @update:mode="emit('update:mode', $event)"
             @change="emit('change', $event)"
         />
-        <TaoButton v-if="clearable && !empty" class="tao-color-input__clear" size="small" variant="text" @click="clear">{{ l10n.clearText }}</TaoButton>
+        <button v-if="clearable" type="button" class="tao-color-input__clear" :disabled="empty" @click="clear">{{ l10n.clearText }}</button>
     </TaoPopover>
 </template>
 
@@ -166,10 +165,39 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
     text-transform: uppercase;
 }
 
-/* the clear button sits under the palette, at its end / кнопка очистки под палитрой, в её конце */
+/* the clear row, as in Select: a divider and a full-width row at the foot of the panel; it is always there, and disabled while there is
+   nothing to clear, so nobody has to guess that it exists. The negative margins take the padding of the panel back.
+   строка очистки, как у Select: разделитель и строка на всю ширину внизу окна; она есть всегда, а пока очищать нечего — неактивна,
+   чтобы не гадать, что она существует. Отрицательные отступы забирают padding окна обратно. */
 .tao-color-input__clear {
-    margin-top: var(--tao-space-2);
-    margin-inline-start: auto;
+    display: block;
+    box-sizing: border-box;
+    width: calc(100% + var(--tao-space-3) * 2);
+    margin: var(--tao-space-3) calc(var(--tao-space-3) * -1) calc(var(--tao-space-3) * -1);
+    padding: var(--tao-control-padding-y) var(--tao-control-padding-x);
+    border: none;
+    border-top: 1px solid var(--tao-color-border);
+    background: none;
+    color: var(--tao-color-text-muted);
+    font: inherit;
+    font-size: var(--tao-control-font-size-secondary);
+    text-align: start;
+    cursor: pointer;
+}
+
+.tao-color-input__clear:hover:not(:disabled) {
+    color: var(--tao-color-accent);
+    background: var(--tao-color-hover);
+}
+
+.tao-color-input__clear:focus-visible {
+    outline: 2px solid var(--tao-color-accent);
+    outline-offset: -2px;
+}
+
+.tao-color-input__clear:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* not set: a muted sentence, and a slash over the swatch / не задан: приглушённая фраза и косая черта поверх образца */
