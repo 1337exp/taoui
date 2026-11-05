@@ -54,6 +54,11 @@ const pressed = ref(0)
           the property goes, the layer stretches back, and the cursor flickers every frame. Light the link with a colour
           (<code>background</code>, <code>color-mix</code>) or put the effect on an inner element; on the container it is fine.
         </p>
+        <p>
+          <strong>Two limits:</strong> the text under the stretched layer cannot be selected with the mouse (lift what must be
+          selectable with <code>tao-stretched-raise</code>); and the link is named only by what is written in it, so for a card
+          point <code>aria-describedby</code> of the link at the description.
+        </p>
       </template>
       <template #ru>
         <p>
@@ -62,6 +67,11 @@ const pressed = ref(0)
           опорным блоком для её же слоя, слой сжимается до ссылки, курсор оказывается уже не над ним, свойство пропадает, слой
           снова растягивается, и курсор мигает каждый кадр. Подсвечивайте ссылку цветом (<code>background</code>,
           <code>color-mix</code>) или вешайте эффект на внутренний элемент; контейнеру это можно.
+        </p>
+        <p>
+          <strong>Два ограничения:</strong> текст под растянутым слоем нельзя выделить мышью (то, что должно выделяться, поднимите
+          через <code>tao-stretched-raise</code>); и имя ссылке даёт только то, что в ней написано, поэтому для карточки направьте
+          <code>aria-describedby</code> ссылки на описание.
         </p>
       </template>
     </Tr>
