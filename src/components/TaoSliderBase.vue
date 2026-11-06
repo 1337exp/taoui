@@ -788,7 +788,8 @@ onBeforeUnmount(() => {
     padding: 0 var(--tao-space-2);
     border: 1px solid var(--tao-color-accent);
     border-radius: var(--tao-radius-sm);
-    background: var(--tao-color-input-bg);
+    /* opaque: a translucent field lets the filled part of the bar through, and the text vanishes on it */
+    background: linear-gradient(var(--tao-color-input-bg), var(--tao-color-input-bg)), var(--tao-color-bg);
     color: var(--tao-color-input-text);
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--tao-color-accent) 24%, transparent);
     font: inherit;

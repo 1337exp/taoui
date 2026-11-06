@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.29.1
+
+- **`TaoSlider` `editable`: the field is opaque.** Its background was the translucent input colour, so over the filled part of the bar the accent showed through it and the typed number was unreadable. The field now lies on the page background first.
+
 ## 5.29.0
 
 Nothing to migrate; the defaults do not change (`editable` is off, a slider that does not pass it works as before).

@@ -3,6 +3,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import TaoRangeSlider from '../src/components/TaoRangeSlider.vue';
 import TaoSlider from '../src/components/TaoSlider.vue';
+// @ts-expect-error Vite `?raw` import: the component source as text
+import sliderSource from '../src/components/TaoSliderBase.vue?raw';
 
 // `editable`: the value is typed into a field over the bar (a right click, a double click, Enter / F2 on a thumb).
 // `editable`: значение набирают в поле поверх полосы (правый клик, двойной клик, Enter / F2 на ручке).
@@ -279,5 +281,11 @@ describe('TaoRangeSlider editable', () => {
         const w = range();
         await w.findAll('[role=slider]')[1]!.trigger('keydown', { key: 'Enter' });
         expect(editor(w).element.value).toBe('60');
+    });
+});
+
+describe('TaoSlider editable: the field reads over the fill', () => {
+    it('has an opaque base under its tint: the coloured fill must not show through the text', () => {
+        expect(sliderSource).toMatch(/\.tao-slider__editor \{[^}]*background: linear-gradient\(var\(--tao-color-input-bg\), var\(--tao-color-input-bg\)\), var\(--tao-color-bg\);/);
     });
 });
