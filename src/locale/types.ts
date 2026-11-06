@@ -154,6 +154,8 @@ export interface TaoLocale {
         clearText: string;
     };
     scrubber: { playLabel: string; pauseLabel: string; restartLabel: string };
+    /** The field of an `editable` slider. / Поле слайдера с `editable`. */
+    slider: { editLabel: string };
     toast: { closeLabel: string };
 }
 

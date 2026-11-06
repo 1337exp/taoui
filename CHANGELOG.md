@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.29.0
+
+Nothing to migrate; the defaults do not change (`editable` is off, a slider that does not pass it works as before).
+
+- **`TaoSlider` / `TaoRangeSlider`: `editable`, the value can be typed.** The number over the bar (`show-value`) was only a label, and there was no way to say "exactly 37": the thumb had to be dragged to it. With `editable` a **right click** or a **double click** on the bar (a long press on a touch screen), or **Enter / F2** on a thumb (so the keyboard reaches it too), opens a field over the middle of the bar, where the value text stands. Enter or leaving the field sets the value, snapped to the step (or to the nearest mark with `discrete`) and kept in `min`…`max`, exactly like a value picked with the pointer; a comma works as the decimal point; Esc drops the edit; text that is not a decimal number changes nothing. On a range it edits the thumb nearest to the click (the focused one for the keyboard), and `minGap` still holds. `change` fires once, when the value is set. The field is named by `editLabel`, else by `ariaLabel`, else by the locale (`slider.editLabel`, "Value" / "Значение"); the thumbs advertise `aria-keyshortcuts="Enter F2"`. Off by default, so a slider that is not `editable` keeps its browser context menu.
 ## 5.28.0
 
 Nothing to migrate; the defaults do not change.

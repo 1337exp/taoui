@@ -105,5 +105,6 @@ export const localeEn: TaoLocale = {
         clearText: 'Clear',
     },
     scrubber: { playLabel: 'Play', pauseLabel: 'Pause', restartLabel: 'Restart' },
+    slider: { editLabel: 'Value' },
     toast: { closeLabel: 'Close notification' },
 };

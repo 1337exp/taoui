@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
 import { useField } from '../formField';
+import { useLocaleText } from '../locale';
 import { sizeClass } from '../size';
 import {
     isMarkActive,
@@ -40,6 +41,7 @@ const props = withDefaults(defineProps<TaoSliderBaseProps & { modelValue: TaoSli
     error: false,
     variant: 'bar',
     wheel: 0,
+    editable: false,
 });
 
 const emit = defineEmits<{
@@ -57,6 +59,7 @@ defineSlots<{
 }>();
 
 const { field, controlId, invalid, describedBy } = useField(props);
+const l10n = useLocaleText(props, 'slider');
 
 const isRange = computed(() => Array.isArray(props.modelValue));
 const values = computed(() => normalizeValue(props.modelValue, props.min, props.max));
@@ -231,6 +234,74 @@ function onPointerEnd(event: PointerEvent) {
 }
 
 //--------------------------------------------------
+// Ввод значения (editable): поле поверх полосы, на месте цифры
+
+const editorRef = ref<HTMLInputElement | null>(null);
+/** Номер ручки, значение которой набирают; null: поле закрыто. */
+const editing = ref<number | null>(null);
+const draft = ref('');
+
+// Десятичная запись: «0x10» или «1e500» значением не считаем, хотя Number() их разберёт.
+const DECIMAL = /^[+-]?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i;
+
+function openEditor(index: number) {
+    if (!props.editable || props.disabled) return;
+    endDrag();
+    activeThumb.value = index;
+    draft.value = String(values.value[index]);
+    editing.value = index;
+    void nextTick(() => {
+        editorRef.value?.focus();
+        editorRef.value?.select();
+    });
+}
+
+/** Закрывает поле и возвращает номер ручки, которую правили (null, если поле уже закрыто). */
+function closeEditor(refocus: boolean): number | null {
+    const index = editing.value;
+    editing.value = null;
+    if (refocus && index !== null) {
+        void nextTick(() => railRef.value?.querySelectorAll<HTMLElement>('.tao-slider__thumb')[index]?.focus({ preventScroll: true }));
+    }
+    return index;
+}
+
+/**
+ * Ставит набранное: прижато к шагу (или к метке при discrete) и к границам, как значение под указателем. Не число значение не
+ * меняет. Уход из поля (blur) ставит тоже, как у TaoInputNumber; Esc отменяет.
+ */
+function commitEditor(refocus = false) {
+    const index = closeEditor(refocus);
+    if (index === null) return;
+    const typed = draft.value.trim().replace(/\s/g, '').replace(',', '.');
+    if (!DECIMAL.test(typed)) return;
+    const parsed = Number(typed);
+    if (!Number.isFinite(parsed)) return;
+    const target = stepped.value
+        ? nearestMark(parsed, markValues.value)
+        : valueAt(ratioOf(parsed, props.min, props.max), props.min, props.max, props.step);
+    setThumb(index, target, true);
+}
+
+function cancelEditor() {
+    closeEditor(true);
+}
+
+/** Правый клик (на сенсоре долгое нажатие) и двойной клик по полосе: правим ближайшую к указателю ручку. */
+function onEditGesture(event: MouseEvent) {
+    if (!props.editable || props.disabled) return;
+    event.preventDefault();
+    openEditor(nearestThumb(values.value, valueUnder(event), activeThumb.value));
+}
+
+watch(
+    () => props.disabled || !props.editable,
+    (off) => {
+        if (off) editing.value = null;
+    },
+);
+
+//--------------------------------------------------
 // Клавиатура и колёсико
 
 function onKeydown(event: KeyboardEvent, index: number) {
@@ -252,6 +323,10 @@ function onKeydown(event: KeyboardEvent, index: number) {
         next = props.min;
     } else if (event.key === 'End') {
         next = props.max;
+    } else if (props.editable && (event.key === 'Enter' || event.key === 'F2')) {
+        event.preventDefault();
+        openEditor(index);
+        return;
     }
     if (next === null) return;
 
@@ -320,6 +395,8 @@ onBeforeUnmount(() => {
             @pointerup="onPointerEnd"
             @pointercancel="onPointerEnd"
             @lostpointercapture="endDrag"
+            @contextmenu="onEditGesture"
+            @dblclick="onEditGesture"
         >
             <div class="tao-slider__track"></div>
             <template v-if="zoneList.length">
@@ -345,6 +422,7 @@ onBeforeUnmount(() => {
                 :aria-disabled="disabled || undefined"
                 :aria-invalid="invalid || undefined"
                 :aria-describedby="describedBy"
+                :aria-keyshortcuts="editable ? 'Enter F2' : undefined"
                 @keydown="onKeydown($event, i)"
                 @blur="pointerFocus = false"
             ></div>
@@ -354,9 +432,29 @@ onBeforeUnmount(() => {
             </div>
             </template>
 
-            <div v-if="showValue" class="tao-slider__value">
+            <div v-if="showValue && editing === null" class="tao-slider__value">
                 <slot name="pre-value" />{{ barText }}<slot name="post-value" />
             </div>
+
+            <!-- editable: the value is typed here; the rail must not take these events for its own (a drag, a menu, a wheel) / editable: значение набирают здесь; рельс не должен принимать эти события за свои (перетаскивание, меню, колёсико) -->
+            <input
+                v-if="editing !== null"
+                ref="editorRef"
+                v-model="draft"
+                class="tao-slider__editor"
+                type="text"
+                inputmode="decimal"
+                autocomplete="off"
+                spellcheck="false"
+                :aria-label="ariaLabel ?? l10n.editLabel"
+                @keydown.enter.prevent="commitEditor(true)"
+                @keydown.esc.prevent.stop="cancelEditor"
+                @blur="commitEditor()"
+                @pointerdown.stop
+                @contextmenu.stop
+                @dblclick.stop
+                @wheel.stop
+            />
         </div>
 
         <div v-if="markList.length > 0" class="tao-slider__marks">
@@ -676,6 +774,30 @@ onBeforeUnmount(() => {
     color: var(--tao-color-text-strong);
     text-shadow: -1px -1px 0 var(--tao-color-bg), 1px -1px 0 var(--tao-color-bg),
         -1px 1px 0 var(--tao-color-bg), 1px 1px 0 var(--tao-color-bg);
+}
+
+/* editable: the field the value is typed into stands where the value text stands, over the middle of the bar */
+.tao-slider__editor {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    box-sizing: border-box;
+    width: 6em;
+    height: max(22px, calc(var(--tao-slider-hit) + 6px));
+    padding: 0 var(--tao-space-2);
+    border: 1px solid var(--tao-color-accent);
+    border-radius: var(--tao-radius-sm);
+    background: var(--tao-color-input-bg);
+    color: var(--tao-color-input-text);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--tao-color-accent) 24%, transparent);
+    font: inherit;
+    font-size: var(--tao-control-font-size-secondary);
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    outline: none;
+    transform: translate(-50%, -50%);
+    cursor: text;
 }
 
 /* Метки: черта и подпись, подпись вне закрашенной части тускнеет */

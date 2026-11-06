@@ -478,6 +478,8 @@ Showcase section: `#slider`
 | `disabled` | `boolean` | false | Disabled |
 | `error` | `boolean` | false | A red outline of the track. The error text is error on TaoFormField |
 | `wheel` | `number` | 0 | The change step for the mouse wheel (a single handle). 0 — disabled |
+| `editable` | `boolean` | false | The value can be typed: a right click or a double click on the bar, or Enter / F2 on a handle, opens a field over the bar (for a range, for the nearest or the focused handle). Enter or leaving the field sets the value, snapped to the step (or to a mark with discrete) and kept in range; Esc drops the edit |
+| `editLabel` | `string` | from the locale | The accessible name of the field of editable (slider.editLabel, "Value") |
 | `@change` | `value` | — | Finished changing: released, a key, the wheel, a click on a mark. v-model fires on every move |
 | `#mark` | `{ mark, active }` | — | A custom mark caption |
 

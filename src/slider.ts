@@ -94,6 +94,17 @@ export interface TaoSliderBaseProps {
     ariaLabel?: string;
     /** Step for the mouse wheel (a single thumb only). 0 — off. / Шаг для колёсика мыши (только одна ручка). 0 — отключено. */
     wheel?: number;
+    /**
+     * The value can be typed: a right click or a double click on the bar, or Enter / F2 on a thumb, opens a field over the bar
+     * (for a range, for the nearest or the focused thumb). Enter or leaving the field sets the value, snapped to the step (or
+     * to a mark with `discrete`) and kept in range; Esc drops the edit. Off by default.
+     * Значение можно набрать: правый клик или двойной клик по полосе либо Enter / F2 на ручке открывают поле поверх полосы
+     * (у диапазона для ближайшей или сфокусированной ручки). Enter или уход из поля ставит значение, прижатое к шагу (или к
+     * метке при `discrete`) и в границах; Esc отменяет правку. По умолчанию выключено.
+     */
+    editable?: boolean;
+    /** Accessible name of the field of `editable` (the locale text by default). / Имя поля у `editable` для скринридеров (по умолчанию текст локали). */
+    editLabel?: string;
 }
 
 const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);

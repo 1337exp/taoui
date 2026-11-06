@@ -11,6 +11,8 @@ defineOptions({ name: 'DemoSlider' })
 const sliderValue = ref(35)
 const sliderVolume = ref(70)
 const sliderWheel = ref(50)
+const sliderEdit = ref(30)
+const sliderEditRange = ref([20, 60])
 const sliderRange = ref([200, 4000])
 const sliderColor = ref(3)
 const sliderLoad = ref(82)
@@ -76,7 +78,17 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
           <h3>wheel</h3>
           <TaoSlider v-model="sliderWheel" variant="thin" :wheel="5" class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">{{ tr('Volume with a wheel', 'Громкость с колёсиком') }}: {{ sliderWheel }} — <em>{{ tr('scrolling over the slider changes the value by 5', 'прокрутка над слайдером меняет значение на 5') }}</em></p>
-    
+
+          <h3>editable</h3>
+          <Tr>
+            <template #en><p>The number can be typed. <strong>Right-click</strong> or <strong>double-click</strong> the bar (a long press on a touch screen), or press <kbd>Enter</kbd> / <kbd>F2</kbd> on a thumb: a field opens over the bar. <kbd>Enter</kbd> or leaving the field sets the value, snapped to the step and kept in range; <kbd>Esc</kbd> drops it. On a range it edits the thumb nearest to the click.</p></template>
+            <template #ru><p>Число можно набрать. <strong>Правый клик</strong> или <strong>двойной клик</strong> по полосе (на сенсоре долгое нажатие) либо <kbd>Enter</kbd> / <kbd>F2</kbd> на ручке: поверх полосы откроется поле. <kbd>Enter</kbd> или уход из поля ставит значение, прижатое к шагу и в границах; <kbd>Esc</kbd> отменяет. У диапазона правится ближайшая к клику ручка.</p></template>
+          </Tr>
+          <TaoSlider v-model="sliderEdit" show-value editable :step="5" :format="(v) => v + ' %'" class="demo-wide" />
+          <p style="margin-top: 4px; font-size: 13px;">{{ tr('Tolerance, step 5', 'Допуск, шаг 5') }}: {{ sliderEdit }}</p>
+          <TaoRangeSlider v-model="sliderEditRange" show-value editable class="demo-wide" />
+          <p style="margin-top: 4px; font-size: 13px;">{{ tr('Range', 'Диапазон') }}: {{ sliderEditRange[0] }} – {{ sliderEditRange[1] }}</p>
+
           <h3>TaoRangeSlider, marks, discrete</h3>
           <TaoRangeSlider v-model="sliderRange" :min="0" :max="5000" :step="100" marks class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">{{ tr('Range', 'Диапазон') }}: {{ sliderRange[0] }} – {{ sliderRange[1] }}</p>
@@ -177,6 +189,8 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
 &lt;TaoSlider v-model="value" show-value /&gt;
 &lt;TaoSlider v-model="volume" variant="thin" /&gt;
 &lt;TaoSlider v-model="volume" variant="thin" :wheel="5" /&gt;
+&lt;TaoSlider v-model="tolerance" show-value editable :step="5" /&gt;
+&lt;TaoRangeSlider v-model="band" editable /&gt;
 &lt;TaoRangeSlider v-model="range" :min="0" :max="5000" :step="100" marks /&gt;
 &lt;TaoSlider v-model="color" :min="0" :max="7" :marks="colorMarks" discrete /&gt;
 &lt;TaoScrubber v-model="time" v-model:playing="playing" :length="8" :marks="[0, 2, 4, 6]" /&gt;</code></pre>

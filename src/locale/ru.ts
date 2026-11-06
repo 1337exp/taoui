@@ -106,5 +106,6 @@ export const localeRu: TaoLocale = {
         clearText: 'Очистить',
     },
     scrubber: { playLabel: 'Играть', pauseLabel: 'Пауза', restartLabel: 'В начало' },
+    slider: { editLabel: 'Значение' },
     toast: { closeLabel: 'Закрыть уведомление' },
 };
