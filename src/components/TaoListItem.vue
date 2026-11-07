@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, useSlots } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
+import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoListItem' });
 
@@ -35,11 +36,13 @@ const emit = defineEmits<{
 }>();
 
 const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 
-const hasAction = computed(() => Boolean(slots.action));
-const hasPrefix = computed(() => Boolean(slots.prefix));
-const hasSuffix = computed(() => Boolean(slots.suffix));
-const hasDescription = computed(() => Boolean(props.description || slots.description));
+const hasAction = computed(() => has('action'));
+const hasPrefix = computed(() => has('prefix'));
+const hasSuffix = computed(() => has('suffix'));
+const hasDescription = computed(() => Boolean(props.description || has('description')));
 
 function onHitClick(event: MouseEvent) {
     if (props.disabled || !props.clickable) {

@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
-import { computed, onBeforeUnmount, ref, useId, watch } from 'vue';
+import { computed, onBeforeUnmount, ref, useId, useSlots, watch } from 'vue';
 import { toneClass, type TaoTone } from '../tone';
 import { frameStyle } from '../frames';
 import { useLocaleText } from '../locale';
+import { slotHas } from '../slots';
 defineOptions({ name: 'TaoAlert' });
 
 const props = withDefaults(
@@ -101,6 +102,10 @@ watch(isCollapsed, (collapsed) => {
 onBeforeUnmount(() => pending?.());
 
 const isUrgent = computed(() => props.tone === 'danger' || props.tone === 'warning');
+
+const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 </script>
 
 <template>
@@ -130,7 +135,7 @@ const isUrgent = computed(() => props.tone === 'danger' || props.tone === 'warni
             <!-- folded text stays in the DOM and find-in-page opens it (hidden="until-found" + beforematch)
                  свёрнутый текст остаётся в DOM, поиск по странице его раскрывает -->
             <div
-                v-if="$slots.default && collapsible"
+                v-if="has('default') && collapsible"
                 ref="fold"
                 class="tao-alert__fold"
                 :class="{ 'tao-alert__fold--closed': isCollapsed }"
@@ -144,7 +149,7 @@ const isUrgent = computed(() => props.tone === 'danger' || props.tone === 'warni
                     <slot />
                 </div>
             </div>
-            <div v-else-if="$slots.default" :id="bodyId" class="tao-alert__message">
+            <div v-else-if="has('default')" :id="bodyId" class="tao-alert__message">
                 <slot />
             </div>
         </div>

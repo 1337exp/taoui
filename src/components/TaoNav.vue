@@ -6,6 +6,7 @@ import type { TaoNavItem, TaoNavLayout } from '../nav';
 import { surfaceClass, type TaoSurface } from '../surface';
 import TaoIcon from './TaoIcon.vue';
 import TaoMenu from './TaoMenu.vue';
+import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoNav' });
 
@@ -106,6 +107,8 @@ defineSlots<{
 }>();
 
 const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 const standalone = computed(() => !slots.default);
 
 const overflowing = computed(() => props.items.length > props.maxBarItems);
@@ -168,7 +171,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
                         (круглая кнопка с визуально скрытым текстом, он же её имя; или широкая с текстом). Свойство `compact`
                         было бы верным только для явных layout и неверным в `auto`.
                     -->
-                    <div v-if="$slots.action" class="tao-nav__action">
+                    <div v-if="has('action')" class="tao-nav__action">
                         <slot name="action" />
                     </div>
                     <ul class="tao-nav__list">
@@ -222,7 +225,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
                             </button>
                         </li>
                     </ul>
-                    <div v-if="$slots.footer" class="tao-nav__footer">
+                    <div v-if="has('footer')" class="tao-nav__footer">
                         <slot name="footer" />
                     </div>
                 </div>

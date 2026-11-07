@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, useSlots } from 'vue';
+import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoProgress' });
 
@@ -24,9 +25,11 @@ const props = withDefaults(
 );
 
 const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 const minW = computed(() => props.minWidth ?? 200);
 const maxW = computed(() => props.maxWidth ?? 400);
-const hasRight = computed(() => Boolean(slots.right));
+const hasRight = computed(() => has('right'));
 const percentPlace = computed((): 'top' | 'right' | null => {
     if (!props.showPercentage) {
         return null;
@@ -47,7 +50,7 @@ const endPercentLabel = computed(() =>
             :class="{ 'tao-progress__container--over': showOverPercent }"
             :style="{ minWidth: `${minW}px`, maxWidth: `${maxW}px` }"
         >
-            <div v-if="$slots.left" class="tao-progress__side">
+            <div v-if="has('left')" class="tao-progress__side">
                 <slot name="left" />
             </div>
 
@@ -62,7 +65,7 @@ const endPercentLabel = computed(() =>
                 </div>
             </div>
 
-            <div v-if="$slots.right || showEndPercent" class="tao-progress__side">
+            <div v-if="has('right') || showEndPercent" class="tao-progress__side">
                 <slot name="right" />
                 <span v-if="showEndPercent" class="tao-progress__percentage">{{ endPercentLabel }}</span>
             </div>

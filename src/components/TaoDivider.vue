@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, useSlots } from 'vue';
 import type { TaoSize } from '../size';
+import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoDivider' });
 
@@ -24,8 +25,10 @@ const props = withDefaults(
 );
 
 const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 const gapSize = computed(() => props.size);
-const hasLabel = computed(() => Boolean(props.text) || Boolean(slots.default));
+const hasLabel = computed(() => Boolean(props.text) || has('default'));
 </script>
 
 <template>

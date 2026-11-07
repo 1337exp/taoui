@@ -1,5 +1,7 @@
 <script lang="ts" setup>
+import { useSlots } from 'vue';
 import { useLocaleText } from '../locale';
+import { slotHas } from '../slots';
 defineOptions({ name: 'TaoEmpty' });
 
 const props = withDefaults(
@@ -10,16 +12,20 @@ const props = withDefaults(
     },
 );
 const l10n = useLocaleText(props, 'empty');
+
+const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 </script>
 
 <template>
     <div class="tao-empty">
-        <div v-if="$slots.icon" class="tao-empty__icon">
+        <div v-if="has('icon')" class="tao-empty__icon">
             <slot name="icon" />
         </div>
         <p v-if="l10n.title" class="tao-empty__title">{{ l10n.title }}</p>
-        <p v-if="$slots.default" class="tao-empty__text"><slot /></p>
-        <div v-if="$slots.action" class="tao-empty__action">
+        <p v-if="has('default')" class="tao-empty__text"><slot /></p>
+        <div v-if="has('action')" class="tao-empty__action">
             <slot name="action" />
         </div>
     </div>

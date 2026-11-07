@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useSlots, watch } from 'vue';
+import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoMarquee' });
 
@@ -76,6 +77,8 @@ defineSlots<{
 }>();
 
 const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 const box = ref<HTMLElement | null>(null);
 const meter = ref<HTMLElement | null>(null);
 const itemWidth = ref(0);
@@ -154,7 +157,7 @@ defineExpose({
     measure,
 });
 
-const hasSlot = computed(() => Boolean(slots.default));
+const hasSlot = computed(() => has('default'));
 </script>
 
 <template>

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import {  } from 'vue';
+import { useSlots } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
+import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoSwitch', inheritAttrs: false });
 
@@ -56,6 +57,10 @@ function toggle(event?: Event) {
     emit('update:modelValue', next);
     emit('change', next);
 }
+
+const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 </script>
 
 <template>
@@ -78,7 +83,7 @@ function toggle(event?: Event) {
             <span class="tao-switch__thumb"></span>
         </span>
         <span v-if="label" class="tao-switch__label">{{ label }}</span>
-        <span v-else-if="$slots.default" class="tao-switch__label"><slot /></span>
+        <span v-else-if="has('default')" class="tao-switch__label"><slot /></span>
     </label>
 </template>
 

@@ -1,7 +1,8 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, useSlots } from 'vue';
 import { chartColorVar, donutArcs, fraction, type TaoDonutSegment } from '../chart';
 import { toneClass, type TaoToneName } from '../tone';
+import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoDonut' });
 
@@ -82,6 +83,10 @@ const summary = computed(() => {
         : `${props.value} / ${props.max}`;
     return props.label ? `${props.label}: ${parts}` : parts;
 });
+
+const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 </script>
 
 <template>
@@ -106,7 +111,7 @@ const summary = computed(() => {
                     :style="{ stroke: arc.stroke }"
                 />
             </svg>
-            <div v-if="$slots.default" class="tao-donut__centre" aria-hidden="true">
+            <div v-if="has('default')" class="tao-donut__centre" aria-hidden="true">
                 <slot />
             </div>
         </div>

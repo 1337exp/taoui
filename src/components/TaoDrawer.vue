@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, useSlots, watch } from 'vue';
 import { getFocusable, trapTab } from '../focusTrap';
 import { useLayer } from '../layers';
 import { useLocaleText } from '../locale';
 import { releaseVelocity, sheetOffset, shouldDismissSheet, type SheetSample } from '../sheetDrag';
 import { surfaceClass, type TaoSurface } from '../surface';
+import { slotHas } from '../slots';
 
 // class, style and the other attributes go to the panel, not to the layer around it
 // class, style и остальные атрибуты — панели, а не слою вокруг неё
@@ -253,6 +254,10 @@ watch(
     },
     { immediate: true },
 );
+
+const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 </script>
 
 <template>
@@ -299,7 +304,7 @@ watch(
                     <div class="tao-drawer__content">
                         <slot />
                     </div>
-                    <div v-if="$slots.footer" class="tao-drawer__footer">
+                    <div v-if="has('footer')" class="tao-drawer__footer">
                         <slot name="footer" />
                     </div>
                 </aside>

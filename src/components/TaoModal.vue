@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
-import { nextTick, ref, useId, watch } from 'vue';
+import { nextTick, ref, useId, useSlots, watch } from 'vue';
 import { getFocusable, trapTab } from '../focusTrap';
 import { useLayer } from '../layers';
 import { useLocaleText } from '../locale';
 import { surfaceClass, type TaoSurface } from '../surface';
 import { useWholePixelPanel } from '../wholePixel';
+import { slotHas } from '../slots';
 
 // class, style and the other attributes go to the dialog panel, not to the overlay around it
 // class, style и остальные атрибуты — панели окна, а не подложке вокруг неё
@@ -97,6 +98,10 @@ watch(
     },
     { immediate: true },
 );
+
+const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 </script>
 
 <template>
@@ -143,7 +148,7 @@ watch(
                     <div class="tao-modal__content">
                         <slot />
                     </div>
-                    <div v-if="$slots.footer" class="tao-modal__footer">
+                    <div v-if="has('footer')" class="tao-modal__footer">
                         <slot name="footer" />
                     </div>
                 </div>

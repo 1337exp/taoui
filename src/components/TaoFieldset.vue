@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { useSlots } from 'vue';
+import { slotHas } from '../slots';
 defineOptions({ name: 'TaoFieldset' });
 
 withDefaults(
@@ -12,11 +14,15 @@ withDefaults(
         align: 'start',
     },
 );
+
+const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 </script>
 
 <template>
     <fieldset class="tao-fieldset" :class="`tao-fieldset--${align}`">
-        <legend v-if="legend || $slots.legend" class="tao-fieldset__legend">
+        <legend v-if="legend || has('legend')" class="tao-fieldset__legend">
             <slot name="legend">{{ legend }}</slot>
         </legend>
         <div class="tao-fieldset__body">

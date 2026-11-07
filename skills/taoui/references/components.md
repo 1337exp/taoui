@@ -36,7 +36,7 @@ Showcase section: `#button`
 | `icon` | `string` | '' | An icon before the text: a name for TaoIcon (tao-plus, your own or a font one). Without text and slot the button is a square of the control height and needs aria-label |
 | `iconEnd` | `string` | '' | An icon after the text |
 | `v-model:pressed` | `boolean` | — | A toggle button (Bold, a filter): aria-pressed and the tone tint while pressed. Without it the button is an ordinary one |
-| `shortcut` | `string` | — | The key that does the same (N, Ctrl+K): shown at the end of the button, given as aria-keyshortcuts. It only shows the key; listening to it is the app's job |
+| `shortcut` | `string` | — | The key that does the same (N, Ctrl+K): shown at the end of the button, given as aria-keyshortcuts. On an icon-only button it is not printed (no room in the square): it goes to the tooltip, "Label (key)", and to aria-keyshortcuts; your own title wins. It only shows the key; listening to it is the app's job |
 
 **Slots, events, notes.** default — the button caption.
 
