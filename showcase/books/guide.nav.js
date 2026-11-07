@@ -4,6 +4,13 @@
 // доступность); рекомендации и готовые шаблоны добавятся сюда отдельной группой.
 export const navGroups = [
   {
+    id: 'recommendations',
+    title: { en: 'Recommendations', ru: 'Рекомендации' },
+    items: [
+      { id: 'patterns', label: { en: 'Patterns', ru: 'Шаблоны' }, aliases: ['patterns', 'recommendations', 'design', 'accent', 'toolbar', 'form', 'footer', 'destructive', 'delete', 'ghost', 'neutral', 'шаблоны', 'рекомендации', 'дизайн', 'акцент', 'панель', 'подвал', 'удаление'] },
+    ],
+  },
+  {
     id: 'foundations',
     title: { en: 'Foundations', ru: 'Основа' },
     items: [

@@ -82,7 +82,7 @@
     "prepublishOnly": "npm run type-check && npm run test && npm run build && npm run lint:package",
     "lint:package": "publint && attw --pack . --profile esm-only --exclude-entrypoints styles.css palettes.css",
     "palettes": "node scripts/generate-palettes.mjs",
-    "skill": "node scripts/generate-skill.mjs"
+    "skill": "node scripts/generate-skill.mjs && node scripts/generate-patterns.mjs"
   },
   "peerDependencies": {
     "vue": "^3.4.0"

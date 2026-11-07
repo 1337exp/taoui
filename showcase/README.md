@@ -41,6 +41,10 @@ unique and every menu entry wired to a page.
 - `components/` — one section per library component (`DemoButton.vue`, ...), plus the shared `Tr.vue`, `ShowcaseSection.vue`, `PropsTable.vue`
 - `demo/` — playgrounds that are *not* part of the npm package (`TypeaheadPlayground.vue` can be copied into a project)
 - `guide/` — the pages of the Guide (`DemoLayers.vue`, `DemoA11y.vue`, ...)
+- `guide/patterns/` — the recommendations of the Guide as data: `meta.js` (the accent budget, and per pattern the situation, the
+  rule, why; EN and RU) and `<id>.good.vue` / `<id>.bad.vue` (the do and the don't: rendered live on the page, their
+  `<template>` is the code shown). `npm run skill` writes `skills/taoui/references/patterns.md` from the same files for AI
+  assistants (`tests/showcase.patterns.test.ts` holds it). A new rule is added after something broke, not in advance
 
 A new page: put the file in its book's folder, add the menu entry to `books/<book>.nav.js` and the line to
 `books/<book>.sections.js` (the section `id` is the same in both, and in the address).
