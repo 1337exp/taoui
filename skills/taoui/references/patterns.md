@@ -19,7 +19,7 @@ Medium is the default, and the right answer unless there is a reason. A size is 
 
 | Size | Height | Text | Side padding | Use it for | What it costs |
 |---|---|---|---|---|---|
-| `small` | 26px | 12px | 12px | Tools that serve the content, not the task itself: a toolbar or an editor panel, a filter or settings bar, the actions in a table or list row, a utility panel (the bar of this showcase). Many controls close together, a mouse first. A popover or a menu with a few controls is not that: it stays medium, small ones stick together there. | A small hit area (26px: above the 24px WCAG 2.2 minimum, below the 44px a finger needs) and 12px text. Not for the main action of a screen, not where the only pointer is a finger. |
+| `small` | 26px | 12px | 12px | Tools that serve the content, not the task itself: a toolbar or an editor panel, a filter or settings bar, the actions in a table or list row. Many controls close together, a mouse first. A popover or a menu with a few controls is not that: it stays medium, small ones stick together there. | A small hit area (26px: above the 24px WCAG 2.2 minimum, below the 44px a finger needs) and 12px text. Not for the main action of a screen, not where the only pointer is a finger. |
 | `medium` | 36px | 14px | 16px | Forms and the content of the page. The default: do not set `size` at all. | None; it is the scale everything else is drawn for. |
 | `large` | 44px | 16px | 24px | The one thing the screen is for: a sign-in or checkout button, a call to action on a landing page, a kiosk, a form people fill in on a phone, a reader who needs bigger targets. | Takes room and is loud: in a dense panel it pushes the rest out. |
 
