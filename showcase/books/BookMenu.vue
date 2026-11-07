@@ -24,7 +24,6 @@ defineEmits(['go', 'all', 'group'])
     <TaoInput
       v-model="query"
       class="showcase-nav__search"
-      size="small"
       :placeholder="tr('Find a page…', 'Найти страницу…')"
       :aria-label="tr('Find a page', 'Найти страницу')"
     >

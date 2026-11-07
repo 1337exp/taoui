@@ -54,8 +54,8 @@ export const sizeGuide = {
       font: 12,
       padding: 12,
       use: {
-        en: 'Tools that serve the content, not the task itself: a toolbar or an editor panel, a filter or settings bar, the actions in a table or list row, a utility panel (the bar of this showcase). Many controls close together, a mouse first. A popover or a menu with a few controls is not that: it stays medium, small ones stick together there.',
-        ru: 'Инструменты, которые служат содержимому, а не самой задаче: панель инструментов или редактора, панель фильтров и настроек, действия в строке таблицы или списка, служебная панель (панель этого шоукейса). Много контролов рядом, прежде всего мышь. Поповер или меню с парой контролов — не тот случай: там medium, мелкие слипаются.',
+        en: 'Tools that serve the content, not the task itself: a toolbar or an editor panel, a filter or settings bar, the actions in a table or list row. Many controls close together, a mouse first. A popover or a menu with a few controls is not that: it stays medium, small ones stick together there.',
+        ru: 'Инструменты, которые служат содержимому, а не самой задаче: панель инструментов или редактора, панель фильтров и настроек, действия в строке таблицы или списка. Много контролов рядом, прежде всего мышь. Поповер или меню с парой контролов — не тот случай: там medium, мелкие слипаются.',
       },
       cost: {
         en: 'A small hit area (26px: above the 24px WCAG 2.2 minimum, below the 44px a finger needs) and 12px text. Not for the main action of a screen, not where the only pointer is a finger.',
