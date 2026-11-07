@@ -13,6 +13,32 @@ The accent colour (amber by default) is a signal, and a signal that is on everyw
 3. Status is `tone` (`success`, `danger`, `warning`, `info`), always with words, never colour alone. A destructive action is `tone="danger"` on the button that destroys; the safe button stays quiet.
 4. Colours come from roles (`var(--tao-color-…)`), never a hex or an `rgba()` in app CSS.
 
+## Choosing a size
+
+Medium is the default, and the right answer unless there is a reason. A size is a decision about a region of the screen, not about a button: how many controls sit close together, how much they matter, and what presses them (a mouse or a finger).
+
+| Size | Height | Text | Side padding | Use it for | What it costs |
+|---|---|---|---|---|---|
+| `small` | 26px | 12px | 12px | Tools that serve the content, not the task itself: a toolbar or an editor panel, a filter or settings bar, the actions in a table or list row, the controls inside a popover or a menu, a utility panel (the bar of this showcase). Many controls close together, a mouse first. | A small hit area (26px: above the 24px WCAG 2.2 minimum, below the 44px a finger needs) and 12px text. Not for the main action of a screen, not where the only pointer is a finger. |
+| `medium` | 36px | 14px | 16px | Forms and the content of the page. The default: do not set `size` at all. | None; it is the scale everything else is drawn for. |
+| `large` | 44px | 16px | 24px | The one thing the screen is for: a sign-in or checkout button, a call to action on a landing page, a kiosk, a form people fill in on a phone, a reader who needs bigger targets. | Takes room and is loud: in a dense panel it pushes the rest out. |
+
+Density is added on top of the size (the height and the padding, not the font), as a class on a container or on `<html>`:
+
+| Density | small | medium | large | |
+|---|---|---|---|---|
+| `tao-density-compact` | 22px | 32px | 40px | dense tools and tables |
+| `tao-density-default` | 26px | 36px | 44px | the default |
+| `tao-density-comfortable` | 34px | 44px | 52px | a touch-sized row |
+| `tao-density-auto` | comfortable under a finger (`pointer: coarse`), default with a mouse | | | |
+
+1. Decide for a region, with one class on the container (`class="tao-size-small"`), never for a control (see "Controls side by side").
+2. Importance is `variant` and `tone`, not size. Inside one region the main action is as tall as its neighbours; a bigger control belongs to a different region (a hero block), not to emphasis in a row.
+3. Small is for the supporting cast. If the control is why the person came to the screen, it is medium or large.
+4. A phone is a question of density, not of size: put `tao-density-auto` on `<html>`. The same medium becomes 44px under a finger and stays 36px with a mouse; the font does not change. `large` on a phone is for the hero action only.
+5. Do not shrink to fit. If it does not fit, wrap, scroll or move the rest into a menu: small controls that are cramped are still cramped.
+6. Where did the small come from? The size is inherited. In DevTools read the computed `--tao-size` and `--tao-density` on the element, then walk up to the ancestor that sets `tao-size-*` / `tao-density-*` (or a `size` on a `TaoFormField` / `TaoInputGroup`, or a pinned `--tao-control-height`). Nothing else changes the size of a control.
+
 ## A toolbar of tools
 
 **When.** A bar of formatting or editing tools: text style toggles, undo and redo, a few actions.

@@ -8,8 +8,8 @@ description: Build Vue 3 interfaces with @1337exp/taoui 5 (TaoUI) — setup, the
 A Vue 3 component kit on design tokens. Components read **roles** (CSS custom properties `--tao-*`), never colours, so a
 theme, a palette or a context class changes every component under it. The props of every component, with types and
 defaults, are in [references/components.md](references/components.md); read the section you need before writing a
-component you have not used yet. **How to put them together** (the accent budget, a toolbar, the footer of a form, a
-destructive action: what to use when, with a do and a don't) is in [references/patterns.md](references/patterns.md); read
+component you have not used yet. **How to put them together** (the accent budget, choosing a size: small / medium / large and
+density, a toolbar, the footer of a form, a destructive action: what to use when, with a do and a don't) is in [references/patterns.md](references/patterns.md); read
 it before you compose a screen.
 
 ## Setup

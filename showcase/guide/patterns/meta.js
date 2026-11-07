@@ -35,6 +35,96 @@ export const accentBudget = {
   ],
 }
 
+/**
+ * Choosing a size: what each size is for, what it costs, and how to decide. The numbers are the tokens of the kit
+ * (src/styles/tokens/primitives.css: --tao-control-height-*, --tao-control-font-size-*, --tao-button-padding-x-*,
+ * --tao-density-height-*); tests/showcase.patterns.test.ts holds them equal to the CSS.
+ * Выбор размера: для чего каждый размер, чего он стоит и как решать. Числа — токены набора; тест держит их равными CSS.
+ */
+export const sizeGuide = {
+  title: { en: 'Choosing a size', ru: 'Выбор размера' },
+  lead: {
+    en: 'Medium is the default, and the right answer unless there is a reason. A size is a decision about a region of the screen, not about a button: how many controls sit close together, how much they matter, and what presses them (a mouse or a finger).',
+    ru: 'Medium — значение по умолчанию и верный ответ, пока нет причины. Размер — решение про область экрана, а не про кнопку: сколько контролов стоит рядом, насколько они важны и чем их нажимают (мышью или пальцем).',
+  },
+  sizes: [
+    {
+      size: 'small',
+      height: 26,
+      font: 12,
+      padding: 12,
+      use: {
+        en: 'Tools that serve the content, not the task itself: a toolbar or an editor panel, a filter or settings bar, the actions in a table or list row, the controls inside a popover or a menu, a utility panel (the bar of this showcase). Many controls close together, a mouse first.',
+        ru: 'Инструменты, которые служат содержимому, а не самой задаче: панель инструментов или редактора, панель фильтров и настроек, действия в строке таблицы или списка, контролы внутри поповера и меню, служебная панель (панель этого шоукейса). Много контролов рядом, прежде всего мышь.',
+      },
+      cost: {
+        en: 'A small hit area (26px: above the 24px WCAG 2.2 minimum, below the 44px a finger needs) and 12px text. Not for the main action of a screen, not where the only pointer is a finger.',
+        ru: 'Малая зона нажатия (26px: выше минимума WCAG 2.2 в 24px, ниже 44px, которые нужны пальцу) и текст в 12px. Не для главного действия экрана и не там, где единственный указатель — палец.',
+      },
+    },
+    {
+      size: 'medium',
+      height: 36,
+      font: 14,
+      padding: 16,
+      use: {
+        en: 'Forms and the content of the page. The default: do not set `size` at all.',
+        ru: 'Формы и содержимое страницы. Значение по умолчанию: `size` не задавать вовсе.',
+      },
+      cost: {
+        en: 'None; it is the scale everything else is drawn for.',
+        ru: 'Никакой; под эту шкалу нарисовано всё остальное.',
+      },
+    },
+    {
+      size: 'large',
+      height: 44,
+      font: 16,
+      padding: 24,
+      use: {
+        en: 'The one thing the screen is for: a sign-in or checkout button, a call to action on a landing page, a kiosk, a form people fill in on a phone, a reader who needs bigger targets.',
+        ru: 'Единственное, ради чего экран: кнопка входа или оплаты, призыв на лендинге, киоск, форма, которую заполняют на телефоне, читатель, которому нужны цели покрупнее.',
+      },
+      cost: {
+        en: 'Takes room and is loud: in a dense panel it pushes the rest out.',
+        ru: 'Занимает место и громкий: в плотной панели вытесняет остальное.',
+      },
+    },
+  ],
+  // density: added on top of the size, not the font / плотность: прибавляется к размеру, шрифт не меняет
+  density: [
+    { name: 'compact', heights: [22, 32, 40], note: { en: 'dense tools and tables', ru: 'плотные инструменты и таблицы' } },
+    { name: 'default', heights: [26, 36, 44], note: { en: 'the default', ru: 'по умолчанию' } },
+    { name: 'comfortable', heights: [34, 44, 52], note: { en: 'a touch-sized row', ru: 'строка под палец' } },
+  ],
+  rules: [
+    {
+      en: 'Decide for a region, with one class on the container (`class="tao-size-small"`), never for a control (see "Controls side by side").',
+      ru: 'Решать для области, одним классом на контейнере (`class="tao-size-small"`), а не для контрола (см. «Контролы рядом: один размер»).',
+    },
+    {
+      en: 'Importance is `variant` and `tone`, not size. Inside one region the main action is as tall as its neighbours; a bigger control belongs to a different region (a hero block), not to emphasis in a row.',
+      ru: 'Важность — это `variant` и `tone`, а не размер. Внутри одной области главное действие той же высоты, что соседи; крупнее — это уже другая область (hero-блок), а не выделение в ряду.',
+    },
+    {
+      en: 'Small is for the supporting cast. If the control is why the person came to the screen, it is medium or large.',
+      ru: 'Small — для массовки. Если контрол — причина, по которой человек пришёл на экран, он medium или large.',
+    },
+    {
+      en: 'A phone is a question of density, not of size: put `tao-density-auto` on `<html>`. The same medium becomes 44px under a finger and stays 36px with a mouse; the font does not change. `large` on a phone is for the hero action only.',
+      ru: 'Телефон — вопрос плотности, а не размера: `tao-density-auto` на `<html>`. Тот же medium под пальцем станет 44px, а с мышью останется 36px; шрифт не меняется. `large` на телефоне — только для главного действия блока.',
+    },
+    {
+      en: 'Do not shrink to fit. If it does not fit, wrap, scroll or move the rest into a menu: small controls that are cramped are still cramped.',
+      ru: 'Не уменьшать, чтобы влезло. Не влезает — переносить, прокручивать или убирать остальное в меню: тесные мелкие контролы всё равно тесные.',
+    },
+    {
+      en: 'Where did the small come from? The size is inherited. In DevTools read the computed `--tao-size` and `--tao-density` on the element, then walk up to the ancestor that sets `tao-size-*` / `tao-density-*` (or a `size` on a `TaoFormField` / `TaoInputGroup`, or a pinned `--tao-control-height`). Nothing else changes the size of a control.',
+      ru: 'Откуда взялся маленький? Размер наследуется. В DevTools смотрите вычисленные `--tao-size` и `--tao-density` у элемента, потом поднимайтесь к предку, который задаёт `tao-size-*` / `tao-density-*` (или `size` у `TaoFormField` / `TaoInputGroup`, или прибитый `--tao-control-height`). Больше размер контрола ничто не меняет.',
+    },
+  ],
+}
+
 /** The patterns: a situation, the rule, why, and a good and a bad example. / Шаблоны: ситуация, правило, почему, пример «так» и «не так». */
 export const patterns = [
   {
