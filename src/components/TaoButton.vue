@@ -34,9 +34,11 @@ interface Props {
     pressed?: boolean;
     /**
      * The key that does the same, shown at the end of the button (`N`, `Ctrl+K`) and given as `aria-keyshortcuts`.
+     * On an icon-only button it is not printed (there is no room in the square): it goes to the tooltip, `Bold (Ctrl+B)`.
      * It only shows the key: listening to it is the app's job.
-     * Клавиша, которая делает то же, — в конце кнопки (`N`, `Ctrl+K`) и в `aria-keyshortcuts`. Только показывает
-     * клавишу: слушать её — дело приложения.
+     * Клавиша, которая делает то же, — в конце кнопки (`N`, `Ctrl+K`) и в `aria-keyshortcuts`. На кнопке только с иконкой
+     * не печатается (в квадрате нет места): уходит в подсказку, `Жирный (Ctrl+B)`. Только показывает клавишу: слушать
+     * её — дело приложения.
      */
     shortcut?: string;
 }
@@ -77,6 +79,18 @@ if (Boolean(props.icon || props.iconEnd) && !slots.default && !attrs['aria-label
     devWarning('button:icon-only', 'TaoButton: a button with only an icon needs aria-label (or aria-labelledby / title).');
 }
 
+// An icon-only button is a square: there is no room for the key printed in it, so the key goes to the native tooltip
+// (`Bold (Ctrl+B)`) and stays in aria-keyshortcuts. A `title` of your own wins: attributes fall through over this one.
+// Кнопка только с иконкой — квадрат: клавише внутри места нет, она уходит в нативную подсказку (`Жирный (Ctrl+B)`) и
+// остаётся в aria-keyshortcuts. Свой `title` главнее: переданные атрибуты ложатся поверх этого.
+function shortcutTitle(): string | undefined {
+    if (!props.shortcut || !isIconOnly()) {
+        return undefined;
+    }
+    const label = attrs['aria-label'];
+    return typeof label === 'string' && label ? `${label} (${props.shortcut})` : props.shortcut;
+}
+
 function handleClick(event: MouseEvent) {
     if (!props.disabled && !props.loading) {
         emit('click', event);
@@ -107,6 +121,7 @@ function handleClick(event: MouseEvent) {
         :type="type"
         :aria-pressed="pressed === undefined ? undefined : pressed"
         :aria-keyshortcuts="shortcut || undefined"
+        :title="shortcutTitle()"
         :aria-busy="loading || undefined"
         :disabled="disabled || loading"
         @click="handleClick"
@@ -116,8 +131,8 @@ function handleClick(event: MouseEvent) {
         <TaoIcon v-if="icon" class="tao-button__icon" :name="icon" />
         <span v-if="hasContent()" class="tao-button__content"><slot /></span>
         <TaoIcon v-if="iconEnd" class="tao-button__icon" :name="iconEnd" />
-        <!-- read once, as aria-keyshortcuts / читается один раз, как aria-keyshortcuts -->
-        <kbd v-if="shortcut" class="tao-button__shortcut" aria-hidden="true">{{ shortcut }}</kbd>
+        <!-- read once, as aria-keyshortcuts; not printed in an icon-only square (it is in the title) / читается один раз, как aria-keyshortcuts; в квадрате с одной иконкой не печатается (она в title) -->
+        <kbd v-if="shortcut && !isIconOnly()" class="tao-button__shortcut" aria-hidden="true">{{ shortcut }}</kbd>
     </button>
 </template>
 
