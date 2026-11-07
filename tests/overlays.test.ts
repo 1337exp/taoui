@@ -184,6 +184,18 @@ describe('TaoPopover', () => {
         expect($('[role="dialog"]')?.textContent).toContain('body');
     });
 
+    it('the panel carries the size and the density of the place it hangs from (it is in body, where they are not inherited)', async () => {
+        const w = mountOverlay(TaoPopover, { slots: { trigger, default: () => 'body' } });
+        // happy-dom does not inherit custom properties: set them on the element the code reads, the trigger wrapper
+        const reads = (w.find('.tao-popover__trigger').element as HTMLElement).style;
+        reads.setProperty('--tao-size', 'small');
+        reads.setProperty('--tao-density', 'compact');
+        await w.find('button').trigger('click');
+        const panel = $('[role="dialog"]');
+        expect(panel?.classList.contains('tao-size-small')).toBe(true);
+        expect(panel?.classList.contains('tao-density-compact')).toBe(true);
+    });
+
     it('Escape and an outside press close it', async () => {
         const w = mountOverlay(TaoPopover, { slots: { trigger, default: () => 'body' } });
         await w.find('button').trigger('click');

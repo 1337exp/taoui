@@ -145,7 +145,9 @@ Which language to start with: `detectTaoLanguage(['en', 'ru'], { fallback?, requ
 ## Mistakes to avoid
 
 - Writing hex colours or `rgba()` in app CSS instead of roles; inventing token names (check `styles.css`).
-- Passing `size` to every control instead of one `tao-size-*` / `tao-density-*` class on the container.
+- Passing `size` to every control instead of one `tao-size-*` / `tao-density-*` class on the container; worse, to some of them
+  only (the rest stay medium and the row comes out uneven), or pinning `--tao-control-height` on one (patterns.md, "Controls
+  side by side").
 - Styling `.tao-grid` as a grid (it is `.tao-grid__cells`); expecting `rowHeight` to be a minimum (it is exact).
 - Putting `TaoMarquee` in a parent without left room: the left fade takes `fade` px (22) left of the text.
 - Using colour alone for a status; forgetting `aria-label` on an icon-only button (`TaoButton icon="tao-plus"` needs one).

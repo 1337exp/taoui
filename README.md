@@ -216,7 +216,7 @@ the class how big.
 
 ### For AI assistants
 
-The package ships a skill, `skills/taoui/SKILL.md` with `references/components.md`: the setup, the rules (roles not colours, contexts not props), every component and its props, and the mistakes people make. Point your assistant at it; for Claude Code, copy `node_modules/@1337exp/taoui/skills/taoui` into your project's `.claude/skills/`. The component reference is generated from the showcase prop tables (`npm run skill`), and a test keeps the skill naming every component.
+The package ships a skill, `skills/taoui/SKILL.md` with `references/components.md` and `references/patterns.md`: the setup, the rules (roles not colours, contexts not props), every component and its props, what to use when (the accent budget, a toolbar, a form footer, controls side by side, a destructive action: a do and a don't each), and the mistakes people make. Point your assistant at it; for Claude Code, copy `node_modules/@1337exp/taoui/skills/taoui` into your project's `.claude/skills/`. The component reference is generated from the showcase prop tables (`npm run skill`), and a test keeps the skill naming every component.
 
 ## Icons
 

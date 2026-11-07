@@ -2,6 +2,7 @@
 import { computed, useAttrs, useSlots } from 'vue';
 import { devWarning } from '../deprecate';
 import { sizeClass, type TaoSize } from '../size';
+import { slotHasContent } from '../slots';
 import { toneClass, type TaoToneName } from '../tone';
 import TaoIcon from './TaoIcon.vue';
 import TaoLoader from './TaoLoader.vue';
@@ -68,8 +69,11 @@ const emit = defineEmits<{
 const slots = useSlots();
 const attrs = useAttrs();
 // no text, only an icon: a square of the control height, and it needs a name for screen readers
-const iconOnly = computed(() => Boolean(props.icon || props.iconEnd) && !slots.default);
-if (iconOnly.value && !attrs['aria-label'] && !attrs['aria-labelledby'] && !attrs.title) {
+// The slot may be there and draw nothing (`<template v-if>`, an `<i v-if>`): that is no text either, so it is asked at render
+// time what the slot draws, not whether it exists. / Слот может быть и ничего не рисовать: это тоже не текст.
+const hasContent = () => slotHasContent(slots.default?.());
+const isIconOnly = () => Boolean(props.icon || props.iconEnd) && !hasContent();
+if (Boolean(props.icon || props.iconEnd) && !slots.default && !attrs['aria-label'] && !attrs['aria-labelledby'] && !attrs.title) {
     devWarning('button:icon-only', 'TaoButton: a button with only an icon needs aria-label (or aria-labelledby / title).');
 }
 
@@ -94,7 +98,7 @@ function handleClick(event: MouseEvent) {
                 'tao-button--disabled': disabled,
                 'tao-button--loading': loading,
                 'tao-button--block': block,
-                'tao-button--icon-only': iconOnly,
+                'tao-button--icon-only': isIconOnly(),
                 'tao-button--toned': !!tone && tone !== 'accent',
                 'tao-button--pressed': pressed === true,
             },
@@ -110,7 +114,7 @@ function handleClick(event: MouseEvent) {
         <!-- the same ring as TaoLoader, in the text colour of the button; the button says it is busy by itself / то же кольцо, что у TaoLoader, цветом текста кнопки -->
         <TaoLoader v-if="loading" class="tao-button__loader" variant="ring" :size="16" color="currentColor" decorative />
         <TaoIcon v-if="icon" class="tao-button__icon" :name="icon" />
-        <span v-if="$slots.default" class="tao-button__content"><slot /></span>
+        <span v-if="hasContent()" class="tao-button__content"><slot /></span>
         <TaoIcon v-if="iconEnd" class="tao-button__icon" :name="iconEnd" />
         <!-- read once, as aria-keyshortcuts / читается один раз, как aria-keyshortcuts -->
         <kbd v-if="shortcut" class="tao-button__shortcut" aria-hidden="true">{{ shortcut }}</kbd>

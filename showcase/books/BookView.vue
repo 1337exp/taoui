@@ -104,7 +104,7 @@ onBeforeUnmount(() => sectionObserver?.disconnect())
   <!-- a phone: the button sits in the sticky bar, the menu is a sheet / телефон: кнопка в липкой панели, меню — лист -->
   <template v-if="narrow">
     <Teleport to="#showcase-pages-slot">
-      <TaoButton block size="small" variant="secondary" tone="neutral" icon="tao-align-left" @click="pagesOpen = true">
+      <TaoButton block variant="secondary" tone="neutral" icon="tao-align-left" @click="pagesOpen = true">
         {{ tr('Pages', 'Страницы') }}<template v-if="currentLabel"> · {{ currentLabel }}</template>
       </TaoButton>
     </Teleport>
