@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
-import { computed, inject, ref, useId } from 'vue';
+import { computed, inject, ref, useId, useSlots } from 'vue';
 import { spoilerGroupKey } from '../spoiler';
 import { frameStyle } from '../frames';
+import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoSpoiler' });
 
@@ -79,6 +80,10 @@ function onLeave(el: Element) {
         element.style.height = '0';
     });
 }
+
+const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 </script>
 
 <template>
@@ -91,7 +96,7 @@ function onLeave(el: Element) {
             @click="toggle"
         >
             <TaoIcon class="tao-spoiler__icon" :class="{ 'tao-spoiler__icon--open': isOpen }" name="tao-chevron-right" />
-            <span v-if="title || $slots.title" class="tao-spoiler__title">
+            <span v-if="title || has('title')" class="tao-spoiler__title">
                 <slot name="title">{{ title }}</slot>
             </span>
         </button>

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, useSlots } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
+import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoInput', inheritAttrs: false });
 
@@ -57,6 +58,10 @@ function handleFocus(event: FocusEvent) {
     focused.value = true;
     emit('focus', event);
 }
+
+const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 </script>
 
 <template>
@@ -68,11 +73,11 @@ function handleFocus(event: FocusEvent) {
                 'tao-input-shell--focused': focused,
                 'tao-input-shell--invalid': invalid,
                 'tao-input-shell--disabled': disabled,
-                'tao-input-shell--prefix': $slots.prefix,
-                'tao-input-shell--suffix': $slots.suffix,
+                'tao-input-shell--prefix': has('prefix'),
+                'tao-input-shell--suffix': has('suffix'),
             }"
         >
-            <span v-if="$slots.prefix" class="tao-input__affix tao-input__affix--prefix">
+            <span v-if="has('prefix')" class="tao-input__affix tao-input__affix--prefix">
                 <slot name="prefix" />
             </span>
             <input
@@ -90,7 +95,7 @@ function handleFocus(event: FocusEvent) {
                 @blur="handleBlur"
                 @focus="handleFocus"
             />
-            <span v-if="$slots.suffix" class="tao-input__affix tao-input__affix--suffix">
+            <span v-if="has('suffix')" class="tao-input__affix tao-input__affix--suffix">
                 <slot name="suffix" />
             </span>
         </div>

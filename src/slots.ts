@@ -1,4 +1,14 @@
-import { Comment, Fragment, Text, type VNode } from 'vue';
+import { Comment, Fragment, Text, type Slots, type VNode } from 'vue';
+
+/**
+ * Whether a named slot of a component draws anything: the check for `v-if` on a wrapper. Plain slots only (no slot props):
+ * it calls the slot with none. Call it at render time, from the template or from a `computed` the template reads.
+ * Рисует ли что-нибудь именованный слот компонента: проверка для `v-if` на обёртке. Только простые слоты (без пропсов
+ * слота): он вызывается без них. Вызывать при рендере, из шаблона или из `computed`, который читает шаблон.
+ */
+export function slotHas(slots: Slots, name = 'default'): boolean {
+    return slotHasContent(slots[name]?.());
+}
 
 /**
  * Whether the vnodes of a slot draw anything. `$slots.default` is there even when the content is `<template v-if="false">`

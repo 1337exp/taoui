@@ -4,6 +4,7 @@ import { computed, useSlots } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
 import { toneClass, type TaoTone } from '../tone';
 import { useLocaleText } from '../locale';
+import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoTag' });
 
@@ -36,6 +37,8 @@ const emit = defineEmits<{
 }>();
 
 const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 const style = computed(() => ({
     color: props.color || '',
     background: props.background || '',
@@ -62,7 +65,7 @@ function onClose(event: MouseEvent) {
         ]"
         :style="style"
     >
-        <span v-if="$slots.prefix" class="tao-tag__prefix">
+        <span v-if="has('prefix')" class="tao-tag__prefix">
             <slot name="prefix" />
         </span>
         <span class="tao-tag__text"><slot /></span>

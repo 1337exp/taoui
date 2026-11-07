@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, useSlots } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
+import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoInputGroup' });
 
@@ -22,6 +23,10 @@ function onFocusOut(event: FocusEvent) {
         focused.value = false;
     }
 }
+
+const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 </script>
 
 <template>
@@ -32,13 +37,13 @@ function onFocusOut(event: FocusEvent) {
         @focusin="onFocusIn"
         @focusout="onFocusOut"
     >
-        <div v-if="$slots.before" class="tao-input-group__addon tao-input-group__addon--before">
+        <div v-if="has('before')" class="tao-input-group__addon tao-input-group__addon--before">
             <slot name="before" />
         </div>
         <div class="tao-input-group__field">
             <slot />
         </div>
-        <div v-if="$slots.after" class="tao-input-group__addon tao-input-group__addon--after">
+        <div v-if="has('after')" class="tao-input-group__addon tao-input-group__addon--after">
             <slot name="after" />
         </div>
     </div>

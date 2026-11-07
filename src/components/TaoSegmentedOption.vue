@@ -3,6 +3,7 @@ import TaoIcon from './TaoIcon.vue';
 import { computed, inject, useId, useSlots } from 'vue';
 import { type TaoRadioValue } from '../radio';
 import { segmentedKey } from '../segmented';
+import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoSegmentedOption' });
 
@@ -31,6 +32,8 @@ const emit = defineEmits<{
 
 const group = inject(segmentedKey, null);
 const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 const localId = useId();
 
 const isDisabled = computed(() => props.disabled || Boolean(group?.disabled.value));
@@ -40,8 +43,8 @@ const isChecked = computed(() => {
     return current === props.value;
 });
 
-const hasLabel = computed(() => Boolean(props.label || slots.default));
-const isIconOnly = computed(() => Boolean((props.icon || slots.icon) && !hasLabel.value));
+const hasLabel = computed(() => Boolean(props.label || has('default')));
+const isIconOnly = computed(() => Boolean((props.icon || has('icon')) && !hasLabel.value));
 
 const countLabel = computed(() => {
     if (props.count === undefined || props.count === null || props.count === '') {
@@ -96,7 +99,7 @@ function onChange() {
             @change="onChange"
         />
         <span class="tao-segmented-option__face">
-            <span v-if="icon || $slots.icon" class="tao-segmented-option__icon" aria-hidden="true">
+            <span v-if="icon || has('icon')" class="tao-segmented-option__icon" aria-hidden="true">
                 <slot name="icon"><TaoIcon :name="icon" /></slot>
             </span>
             <span v-if="hasLabel" class="tao-segmented-option__label">

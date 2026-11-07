@@ -5,6 +5,7 @@ import { toCssBox, toCssLength, type TaoLength } from '../length';
 import { stripeClasses, type TaoStripe, type TaoStripeTone } from '../stripe';
 import { surfaceClass, type TaoSurface } from '../surface';
 import TaoIcon from './TaoIcon.vue';
+import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoCard' });
 
@@ -69,18 +70,20 @@ defineSlots<{
 }>();
 
 const slots = useSlots();
+// a slot counts when it draws something, not when it merely exists (see src/slots.ts)
+const has = (name: string) => slotHas(slots, name);
 
 const hasContent = computed(
     () =>
-        Boolean(slots.header) ||
-        Boolean(slots.title) ||
-        Boolean(slots.sub) ||
-        Boolean(slots.default) ||
-        Boolean(slots.footer),
+        has('header') ||
+        has('title') ||
+        has('sub') ||
+        has('default') ||
+        has('footer'),
 );
 
-const mediaOnly = computed(() => Boolean(slots.media) && !hasContent.value);
-const hasCorner = computed(() => Boolean(slots.corner) || props.closable);
+const mediaOnly = computed(() => has('media') && !hasContent.value);
+const hasCorner = computed(() => has('corner') || props.closable);
 
 // Only what the user passed goes inline; the defaults come from tokens (see .tao-panel in styles/contexts/surface.css).
 // В inline уходит только то, что передал пользователь; значения по умолчанию — из токенов.
@@ -123,16 +126,16 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
         </div>
 
         <div v-if="hasContent" class="tao-card__content" :style="paddingStyle">
-            <div v-if="$slots.header" class="tao-card__header"><slot name="header" /></div>
+            <div v-if="has('header')" class="tao-card__header"><slot name="header" /></div>
 
-            <div v-if="$slots.title || $slots.sub" class="tao-card__title-block">
-                <h2 v-if="$slots.title" class="tao-card__title"><slot name="title" /></h2>
-                <div v-if="$slots.sub" class="tao-card__sub"><slot name="sub" /></div>
+            <div v-if="has('title') || has('sub')" class="tao-card__title-block">
+                <h2 v-if="has('title')" class="tao-card__title"><slot name="title" /></h2>
+                <div v-if="has('sub')" class="tao-card__sub"><slot name="sub" /></div>
             </div>
 
-            <div v-if="$slots.default" class="tao-card__body"><slot /></div>
+            <div v-if="has('default')" class="tao-card__body"><slot /></div>
 
-            <div v-if="$slots.footer" class="tao-card__footer"><slot name="footer" /></div>
+            <div v-if="has('footer')" class="tao-card__footer"><slot name="footer" /></div>
         </div>
 
         <div v-if="hasCorner" class="tao-card__corner">
