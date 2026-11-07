@@ -54,8 +54,8 @@ export const sizeGuide = {
       font: 12,
       padding: 12,
       use: {
-        en: 'Tools that serve the content, not the task itself: a toolbar or an editor panel, a filter or settings bar, the actions in a table or list row. Many controls close together, a mouse first. A popover or a menu with a few controls is not that: it stays medium, small ones stick together there.',
-        ru: 'Инструменты, которые служат содержимому, а не самой задаче: панель инструментов или редактора, панель фильтров и настроек, действия в строке таблицы или списка. Много контролов рядом, прежде всего мышь. Поповер или меню с парой контролов — не тот случай: там medium, мелкие слипаются.',
+        en: 'Only where a lot sits close together and a mouse is the pointer: the actions in a row of a dense table or list, a power-user tool with dozens of controls. Not a toolbar or an editor panel, not a filter or settings bar, not a popover or a menu: an editor that people use all day, above all one for clients, stays medium, or it grows small buttons that are hard to hit.',
+        ru: 'Только там, где много всего рядом и указатель — мышь: действия в строке плотной таблицы или списка, профессиональный инструмент с десятками контролов. Не панель инструментов или редактора, не панель фильтров и настроек, не поповер и не меню: редактор, которым пользуются каждый день, тем более клиентский, остаётся medium, иначе он обрастает мелкими кнопками, в которые трудно попасть.',
       },
       cost: {
         en: 'A small hit area (26px: above the 24px WCAG 2.2 minimum, below the 44px a finger needs) and 12px text. Not for the main action of a screen, not where the only pointer is a finger.',
@@ -139,8 +139,8 @@ export const patterns = [
       ru: 'Полоса инструментов форматирования или правки: переключатели начертания, отмена и возврат, пара действий.',
     },
     rule: {
-      en: 'Every button is `variant="ghost" tone="neutral"`, an icon with an `aria-label`. A toggle is `v-model:pressed`. Group related tools with `TaoToolbarGroup` and split the groups with `TaoToolbarSeparator`.',
-      ru: 'Каждая кнопка — `variant="ghost" tone="neutral"`, иконка с `aria-label`. Переключатель — `v-model:pressed`. Связанные инструменты — в `TaoToolbarGroup`, группы разделяет `TaoToolbarSeparator`.',
+      en: 'Every button is `variant="ghost" tone="neutral"`, an icon with an `aria-label`. A toggle is `v-model:pressed`. Group related tools with `TaoToolbarGroup` and split the groups with `TaoToolbarSeparator`. Leave the size medium: a small toolbar is hard to hit (see "Choosing a size").',
+      ru: 'Каждая кнопка — `variant="ghost" tone="neutral"`, иконка с `aria-label`. Переключатель — `v-model:pressed`. Связанные инструменты — в `TaoToolbarGroup`, группы разделяет `TaoToolbarSeparator`. Размер оставить medium: в мелкую панель трудно попасть (см. «Выбор размера»).',
     },
     wrong: {
       en: 'No `tone`: every tool is amber.',
