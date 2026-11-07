@@ -47,6 +47,7 @@ npm run smoke                      # the packed tarball in a fresh Vite app
 |---|---|---|---|
 | `src/styles/palettes/*.css` | `src/palettes.ts` + `src/palette.ts` | `npm run palettes` | `tests/palette.test.ts` |
 | `skills/taoui/references/components.md` | `showcase/propTables.en.js` | `npm run skill` | `tests/skill.test.ts` |
+| `skills/taoui/references/patterns.md` | `showcase/guide/patterns/` (`meta.js` + the `*.good.vue` / `*.bad.vue` examples) | `npm run skill` | `tests/showcase.patterns.test.ts` |
 
 ## Conventions that are easy to miss
 

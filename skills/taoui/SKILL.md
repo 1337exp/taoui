@@ -8,7 +8,9 @@ description: Build Vue 3 interfaces with @1337exp/taoui 5 (TaoUI) — setup, the
 A Vue 3 component kit on design tokens. Components read **roles** (CSS custom properties `--tao-*`), never colours, so a
 theme, a palette or a context class changes every component under it. The props of every component, with types and
 defaults, are in [references/components.md](references/components.md); read the section you need before writing a
-component you have not used yet.
+component you have not used yet. **How to put them together** (the accent budget, a toolbar, the footer of a form, a
+destructive action: what to use when, with a do and a don't) is in [references/patterns.md](references/patterns.md); read
+it before you compose a screen.
 
 ## Setup
 
@@ -149,6 +151,8 @@ Which language to start with: `detectTaoLanguage(['en', 'ru'], { fallback?, requ
 - Using colour alone for a status; forgetting `aria-label` on an icon-only button (`TaoButton icon="tao-plus"` needs one).
 - Global `h1 { … }` styles fighting `.tao-prose` (its rules are `:where()`, so yours win by design).
 - Expecting `variant="danger"` on a button: the colour is `tone="danger"`, the shape is `variant`.
+- A `ghost` or `text` button without `tone` is accent-coloured (amber): in a toolbar, a row or a header it must be
+  `tone="neutral"`. The accent is for the one main action, the selected item and the focus (patterns.md, the accent budget).
 - Importing from deep paths (`@1337exp/taoui/dist/...`); only the package root, `styles.css`, `palettes.css` and
   `styles/*` are public.
 
