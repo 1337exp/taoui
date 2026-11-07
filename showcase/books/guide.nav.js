@@ -7,6 +7,7 @@ export const navGroups = [
     id: 'recommendations',
     title: { en: 'Recommendations', ru: 'Рекомендации' },
     items: [
+      { id: 'size-choice', label: { en: 'Choosing a size', ru: 'Выбор размера' }, aliases: ['size', 'sizes', 'small', 'medium', 'large', 'density', 'compact', 'comfortable', 'touch', 'height', 'размер', 'размеры', 'маленький', 'плотность', 'высота', 'кнопка'] },
       { id: 'patterns', label: { en: 'Patterns', ru: 'Шаблоны' }, aliases: ['patterns', 'recommendations', 'design', 'accent', 'toolbar', 'form', 'footer', 'destructive', 'delete', 'ghost', 'neutral', 'шаблоны', 'рекомендации', 'дизайн', 'акцент', 'панель', 'подвал', 'удаление'] },
     ],
   },

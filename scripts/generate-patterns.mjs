@@ -14,7 +14,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dir = join(root, 'showcase/guide/patterns');
-const { accentBudget, patterns, templateOf } = await import(pathToFileURL(join(dir, 'meta.js')).href);
+const { accentBudget, sizeGuide, patterns, templateOf } = await import(pathToFileURL(join(dir, 'meta.js')).href);
 
 /** The markdown of the patterns, the same text the test expects. / Markdown шаблонов. */
 export function patternsMarkdown(read = (name) => readFileSync(join(dir, name), 'utf8')) {
@@ -30,6 +30,25 @@ export function patternsMarkdown(read = (name) => readFileSync(join(dir, name), 
         accentBudget.lead.en,
         '',
         ...accentBudget.rules.map((rule, i) => `${i + 1}. ${rule.en}`),
+        '',
+        `## ${sizeGuide.title.en}`,
+        '',
+        sizeGuide.lead.en,
+        '',
+        '| Size | Height | Text | Side padding | Use it for | What it costs |',
+        '|---|---|---|---|---|---|',
+        ...sizeGuide.sizes.map(
+            (row) => `| \`${row.size}\` | ${row.height}px | ${row.font}px | ${row.padding}px | ${row.use.en} | ${row.cost.en} |`,
+        ),
+        '',
+        'Density is added on top of the size (the height and the padding, not the font), as a class on a container or on `<html>`:',
+        '',
+        '| Density | small | medium | large | |',
+        '|---|---|---|---|---|',
+        ...sizeGuide.density.map((row) => `| \`tao-density-${row.name}\` | ${row.heights.map((h) => `${h}px`).join(' | ')} | ${row.note.en} |`),
+        '| `tao-density-auto` | comfortable under a finger (`pointer: coarse`), default with a mouse | | | |',
+        '',
+        ...sizeGuide.rules.map((rule, i) => `${i + 1}. ${rule.en}`),
         '',
     ];
     for (const pattern of patterns) {

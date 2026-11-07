@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 // @ts-expect-error a plain JS module of the showcase
-import { accentBudget, patterns, templateOf } from '../showcase/guide/patterns/meta.js';
+import { accentBudget, patterns, sizeGuide, templateOf } from '../showcase/guide/patterns/meta.js';
 // @ts-expect-error a plain JS module of the build scripts
 import { patternsMarkdown } from '../scripts/generate-patterns.mjs';
 // @ts-expect-error Vite `?raw` import
@@ -75,6 +75,35 @@ describe('Guide patterns', () => {
         const bad = buttons(templateOf(read('destructive.bad.vue')));
         expect(good.find((tag) => tag.includes('tone="danger"'))).toContain('tao-trash');
         expect(bad.find((tag) => tag.includes('tone="danger"'))).not.toContain('tao-trash');
+    });
+
+    it('the size guide is in both languages and its numbers are the tokens of the kit', () => {
+        const css = readFileSync(join(root, 'src/styles/tokens/primitives.css'), 'utf8');
+        const px = (name: string) => Number(new RegExp(`--${name}:\\s*(-?\\d+)px`).exec(css)?.[1]);
+        const sizes = sizeGuide.sizes as { size: string; height: number; font: number; padding: number; use: Record<string, string>; cost: Record<string, string> }[];
+        expect(sizes.map((r) => r.size)).toEqual(['small', 'medium', 'large']);
+        const fontToken = { small: 'xs', medium: 'md', large: 'lg' } as Record<string, string>;
+        const padToken = { small: '3', medium: '4', large: '6' } as Record<string, string>;
+        for (const row of sizes) {
+            expect(row.use.en && row.use.ru && row.cost.en && row.cost.ru, row.size).toBeTruthy();
+            expect(row.height, `${row.size} height`).toBe(px(`tao-control-height-${row.size}`));
+            expect(row.font, `${row.size} font`).toBe(px(`tao-font-size-${fontToken[row.size]}`));
+            expect(row.padding, `${row.size} padding`).toBe(px(`tao-space-${padToken[row.size]}`));
+        }
+        const delta = { compact: -4, default: 0, comfortable: 8 } as Record<string, number>;
+        expect(px('tao-density-height-compact')).toBe(delta.compact);
+        expect(px('tao-density-height-comfortable')).toBe(delta.comfortable);
+        for (const row of sizeGuide.density as { name: string; heights: number[]; note: Record<string, string> }[]) {
+            expect(row.heights, row.name).toEqual(sizes.map((r) => r.height + delta[row.name]!));
+            expect(row.note.en && row.note.ru).toBeTruthy();
+        }
+        expect(sizeGuide.rules.length).toBeGreaterThan(3);
+        expect(sizeGuide.rules.every((r: Record<string, string>) => r.en && r.ru)).toBe(true);
+    });
+
+    it('the size guide is a page of the Guide', () => {
+        expect(guideNav).toContain("id: 'size-choice'");
+        expect(guideSections).toContain("'size-choice': DemoSizes");
     });
 
     it('templateOf takes the template out and removes its indent', () => {
