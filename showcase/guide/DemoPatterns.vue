@@ -64,6 +64,12 @@ const rich = (text) => String(text).split('`')
         <figure v-for="kind in ['good', 'bad']" :key="kind" class="pattern__side">
           <figcaption>
             <TaoTag size="small" :tone="kind === 'good' ? 'success' : 'danger'">{{ kind === 'good' ? tr('Do', 'Так') : tr('Don\'t', 'Не так') }}</TaoTag>
+            <span v-if="kind === 'bad'" class="pattern__wrong">
+              <template v-for="(piece, i) in rich(tr(pattern.wrong))" :key="i">
+                <code v-if="i % 2">{{ piece }}</code>
+                <template v-else>{{ piece }}</template>
+              </template>
+            </span>
           </figcaption>
           <div class="pattern__live"><component :is="example(pattern.id, kind).comp" /></div>
           <div class="code-block"><pre><code>{{ example(pattern.id, kind).code }}</code></pre></div>
@@ -108,6 +114,12 @@ const rich = (text) => String(text).split('`')
   align-content: start;
   min-width: 0;
   margin: 0;
+}
+
+.pattern__wrong {
+  margin-inline-start: 8px;
+  color: var(--tao-color-text-muted);
+  font-size: 13px;
 }
 
 .pattern__live {

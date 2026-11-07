@@ -21,14 +21,14 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const dir = join(root, 'showcase/guide/patterns');
 const read = (name: string) => readFileSync(join(dir, name), 'utf8');
 
-type Pattern = { id: string; title: Record<string, string>; when: Record<string, string>; rule: Record<string, string>; why: Record<string, string> };
+type Pattern = { id: string; title: Record<string, string>; when: Record<string, string>; rule: Record<string, string>; wrong: Record<string, string>; why: Record<string, string> };
 const all = patterns as Pattern[];
 const buttons = (code: string) => code.match(/<TaoButton\b[^>]*>/g) ?? [];
 
 describe('Guide patterns', () => {
     it('every text is written in both languages', () => {
         for (const p of all) {
-            for (const key of ['title', 'when', 'rule', 'why'] as const) {
+            for (const key of ['title', 'when', 'rule', 'wrong', 'why'] as const) {
                 expect(p[key].en, `${p.id}.${key}.en`).toBeTruthy();
                 expect(p[key].ru, `${p.id}.${key}.ru`).toBeTruthy();
             }

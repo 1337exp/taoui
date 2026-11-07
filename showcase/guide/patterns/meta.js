@@ -142,6 +142,10 @@ export const patterns = [
       en: 'Every button is `variant="ghost" tone="neutral"`, an icon with an `aria-label`. A toggle is `v-model:pressed`. Group related tools with `TaoToolbarGroup` and split the groups with `TaoToolbarSeparator`.',
       ru: 'Каждая кнопка — `variant="ghost" tone="neutral"`, иконка с `aria-label`. Переключатель — `v-model:pressed`. Связанные инструменты — в `TaoToolbarGroup`, группы разделяет `TaoToolbarSeparator`.',
     },
+    wrong: {
+      en: 'No `tone`: every tool is amber.',
+      ru: 'Без `tone`: каждый инструмент янтарный.',
+    },
     why: {
       en: 'In a toolbar every button is a tool and none is the main one, so none may take the accent. Left amber, the bar shouts, and the one thing that must stand out, which toggles are on, is lost: it is the same colour as the rest. In neutral the pressed toggle is the only lit thing.',
       ru: 'В панели инструментов каждая кнопка — инструмент, и ни одна не главная, поэтому акцент не принадлежит ни одной. Оставишь янтарь — панель кричит, а то единственное, что должно выделяться, — какие переключатели включены, — теряется: оно того же цвета, что и остальное. В нейтральной панели включённый переключатель — единственное, что подсвечено.',
@@ -157,6 +161,10 @@ export const patterns = [
     rule: {
       en: 'The confirming action is the one primary button, at the end. Cancel is `secondary` (or `ghost` with `tone="neutral"`), before it.',
       ru: 'Подтверждающее действие — единственная primary-кнопка, в конце. Отмена — `secondary` (или `ghost` с `tone="neutral"`), перед ней.',
+    },
+    wrong: {
+      en: 'Two filled accent buttons: Cancel looks as important as Save.',
+      ru: 'Две залитые акцентные кнопки: «Отмена» выглядит такой же важной, как «Сохранить».',
     },
     why: {
       en: 'Two filled accent buttons side by side make the eye choose between them. The footer has one answer the user is expected to give; the other button is the way out, and it looks like one.',
@@ -174,6 +182,10 @@ export const patterns = [
       en: 'Put one context class on the container: `class="tao-size-small"` (and `tao-density-*`). Do not pass `size` to some of the controls, and do not pin a height (`--tao-control-height: 32px`, `height: 32px`) on one of them. An explicit `size` is for the one control that must stand out. A `TaoPopover` panel, a select list and a combobox list carry the size and the density of where they hang from.',
       ru: 'Один контекстный класс на контейнер: `class="tao-size-small"` (и `tao-density-*`). Не передавать `size` части контролов и не прибивать высоту (`--tao-control-height: 32px`, `height: 32px`) одному из них. Явный `size` — для единственного контрола, который должен выделяться. Панель `TaoPopover`, список select и список combobox несут размер и плотность того места, откуда висят.',
     },
+    wrong: {
+      en: 'On purpose: `size="small"` on the switch only, so it is shorter than the select and the button beside it.',
+      ru: 'Нарочно: `size="small"` только у переключателя, поэтому он ниже select и кнопки рядом.',
+    },
     why: {
       en: '`size` is a prop with a default of medium. Set it on the controls you remember and the rest stay medium: the row comes out uneven, a small switch beside a tall select. A pinned height is the same thing by hand. The class makes them one by construction, also for the controls added later and for a panel in the body.',
       ru: '`size` — это проп со значением по умолчанию medium. Задашь его тем контролам, которые вспомнил, — остальные останутся medium: ряд выходит неровным, мелкий переключатель рядом с высоким select. Прибитая высота — то же самое руками. Класс делает их одним целым по построению, в том числе для контролов, добавленных потом, и для панели в body.',
@@ -189,6 +201,10 @@ export const patterns = [
     rule: {
       en: '`tone="danger"` on the button that destroys, the safe choice quiet (`secondary`). For a question in its own window use `await confirm().title(…).message(…).danger()`: it resolves to a boolean.',
       ru: '`tone="danger"` на кнопке, которая разрушает, безопасный выбор тихий (`secondary`). Для вопроса в отдельном окне — `await confirm().title(…).message(…).danger()`: он возвращает boolean.',
+    },
+    wrong: {
+      en: 'Red on the safe button, the accent on the one that deletes.',
+      ru: 'Красный на безопасной кнопке, акцент на той, что удаляет.',
     },
     why: {
       en: 'The accent says "the normal main thing", and a delete wearing it looks like any other action. Red on the safe button inverts the warning: the colour then points at the wrong choice.',
