@@ -54,8 +54,8 @@ export const sizeGuide = {
       font: 12,
       padding: 12,
       use: {
-        en: 'Tools that serve the content, not the task itself: a toolbar or an editor panel, a filter or settings bar, the actions in a table or list row, the controls inside a popover or a menu, a utility panel (the bar of this showcase). Many controls close together, a mouse first.',
-        ru: 'Инструменты, которые служат содержимому, а не самой задаче: панель инструментов или редактора, панель фильтров и настроек, действия в строке таблицы или списка, контролы внутри поповера и меню, служебная панель (панель этого шоукейса). Много контролов рядом, прежде всего мышь.',
+        en: 'Tools that serve the content, not the task itself: a toolbar or an editor panel, a filter or settings bar, the actions in a table or list row, a utility panel (the bar of this showcase). Many controls close together, a mouse first. A popover or a menu with a few controls is not that: it stays medium, small ones stick together there.',
+        ru: 'Инструменты, которые служат содержимому, а не самой задаче: панель инструментов или редактора, панель фильтров и настроек, действия в строке таблицы или списка, служебная панель (панель этого шоукейса). Много контролов рядом, прежде всего мышь. Поповер или меню с парой контролов — не тот случай: там medium, мелкие слипаются.',
       },
       cost: {
         en: 'A small hit area (26px: above the 24px WCAG 2.2 minimum, below the 44px a finger needs) and 12px text. Not for the main action of a screen, not where the only pointer is a finger.',
@@ -98,6 +98,10 @@ export const sizeGuide = {
     { name: 'comfortable', heights: [34, 44, 52], note: { en: 'a touch-sized row', ru: 'строка под палец' } },
   ],
   rules: [
+    {
+      en: 'Do not change the size unless you know exactly why. Leave medium: it is the scale everything is drawn for. A small control is a deliberate choice for a dense region, and you should be able to name the region and what is crowded in it; "it looks big" is not a reason, and neither is "it is a utility thing".',
+      ru: 'Не менять размер, если точно не знаете, зачем. Оставьте medium: под него нарисовано всё. Small — осознанный выбор для плотной области, и вы должны суметь назвать область и что в ней тесно; «выглядит крупно» — не причина, как и «это служебное».',
+    },
     {
       en: 'Decide for a region, with one class on the container (`class="tao-size-small"`), never for a control (see "Controls side by side").',
       ru: 'Решать для области, одним классом на контейнере (`class="tao-size-small"`), а не для контрола (см. «Контролы рядом: один размер»).',

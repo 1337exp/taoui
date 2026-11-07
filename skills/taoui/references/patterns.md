@@ -19,7 +19,7 @@ Medium is the default, and the right answer unless there is a reason. A size is 
 
 | Size | Height | Text | Side padding | Use it for | What it costs |
 |---|---|---|---|---|---|
-| `small` | 26px | 12px | 12px | Tools that serve the content, not the task itself: a toolbar or an editor panel, a filter or settings bar, the actions in a table or list row, the controls inside a popover or a menu, a utility panel (the bar of this showcase). Many controls close together, a mouse first. | A small hit area (26px: above the 24px WCAG 2.2 minimum, below the 44px a finger needs) and 12px text. Not for the main action of a screen, not where the only pointer is a finger. |
+| `small` | 26px | 12px | 12px | Tools that serve the content, not the task itself: a toolbar or an editor panel, a filter or settings bar, the actions in a table or list row, a utility panel (the bar of this showcase). Many controls close together, a mouse first. A popover or a menu with a few controls is not that: it stays medium, small ones stick together there. | A small hit area (26px: above the 24px WCAG 2.2 minimum, below the 44px a finger needs) and 12px text. Not for the main action of a screen, not where the only pointer is a finger. |
 | `medium` | 36px | 14px | 16px | Forms and the content of the page. The default: do not set `size` at all. | None; it is the scale everything else is drawn for. |
 | `large` | 44px | 16px | 24px | The one thing the screen is for: a sign-in or checkout button, a call to action on a landing page, a kiosk, a form people fill in on a phone, a reader who needs bigger targets. | Takes room and is loud: in a dense panel it pushes the rest out. |
 
@@ -32,12 +32,13 @@ Density is added on top of the size (the height and the padding, not the font), 
 | `tao-density-comfortable` | 34px | 44px | 52px | a touch-sized row |
 | `tao-density-auto` | comfortable under a finger (`pointer: coarse`), default with a mouse | | | |
 
-1. Decide for a region, with one class on the container (`class="tao-size-small"`), never for a control (see "Controls side by side").
-2. Importance is `variant` and `tone`, not size. Inside one region the main action is as tall as its neighbours; a bigger control belongs to a different region (a hero block), not to emphasis in a row.
-3. Small is for the supporting cast. If the control is why the person came to the screen, it is medium or large.
-4. A phone is a question of density, not of size: put `tao-density-auto` on `<html>`. The same medium becomes 44px under a finger and stays 36px with a mouse; the font does not change. `large` on a phone is for the hero action only.
-5. Do not shrink to fit. If it does not fit, wrap, scroll or move the rest into a menu: small controls that are cramped are still cramped.
-6. Where did the small come from? The size is inherited. In DevTools read the computed `--tao-size` and `--tao-density` on the element, then walk up to the ancestor that sets `tao-size-*` / `tao-density-*` (or a `size` on a `TaoFormField` / `TaoInputGroup`, or a pinned `--tao-control-height`). Nothing else changes the size of a control.
+1. Do not change the size unless you know exactly why. Leave medium: it is the scale everything is drawn for. A small control is a deliberate choice for a dense region, and you should be able to name the region and what is crowded in it; "it looks big" is not a reason, and neither is "it is a utility thing".
+2. Decide for a region, with one class on the container (`class="tao-size-small"`), never for a control (see "Controls side by side").
+3. Importance is `variant` and `tone`, not size. Inside one region the main action is as tall as its neighbours; a bigger control belongs to a different region (a hero block), not to emphasis in a row.
+4. Small is for the supporting cast. If the control is why the person came to the screen, it is medium or large.
+5. A phone is a question of density, not of size: put `tao-density-auto` on `<html>`. The same medium becomes 44px under a finger and stays 36px with a mouse; the font does not change. `large` on a phone is for the hero action only.
+6. Do not shrink to fit. If it does not fit, wrap, scroll or move the rest into a menu: small controls that are cramped are still cramped.
+7. Where did the small come from? The size is inherited. In DevTools read the computed `--tao-size` and `--tao-density` on the element, then walk up to the ancestor that sets `tao-size-*` / `tao-density-*` (or a `size` on a `TaoFormField` / `TaoInputGroup`, or a pinned `--tao-control-height`). Nothing else changes the size of a control.
 
 ## A toolbar of tools
 

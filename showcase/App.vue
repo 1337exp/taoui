@@ -219,7 +219,7 @@ onBeforeUnmount(() => {
               <i v-if="viewChanged" class="showcase-bar__dot" :title="tr('Not the defaults', 'Не по умолчанию')" />
             </TaoButton>
           </template>
-          <div class="showcase-view">
+          <div class="showcase-view tao-size-medium">
             <template v-if="narrow">
               <div class="showcase-view__row">
                 <span class="showcase-view__label">{{ tr('Language', 'Язык') }}</span>

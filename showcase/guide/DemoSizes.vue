@@ -27,42 +27,29 @@ const rich = (text) => String(text).split('`')
       </template>
     </p>
 
-    <div class="sizes-table-wrap">
-      <table class="sizes-table">
-        <thead>
-          <tr>
-            <th>{{ tr('Size', 'Размер') }}</th>
-            <th>{{ tr('Live', 'Вживую') }}</th>
-            <th>{{ tr('Use it for', 'Для чего') }}</th>
-            <th>{{ tr('What it costs', 'Чего стоит') }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="row in sizeGuide.sizes" :key="row.size">
-            <td>
-              <strong>{{ row.size }}</strong>
-              <div class="sizes-table__nums">{{ row.height }}px · {{ row.font }}px {{ tr('text', 'текст') }} · {{ row.padding }}px {{ tr('side', 'по бокам') }}</div>
-            </td>
-            <td>
-              <div :class="'tao-size-' + row.size" class="sizes-table__live">
-                <TaoInput model-value="Find…" aria-label="Find" />
-                <TaoSegmented v-model="mode" :aria-label="tr('Mode', 'Режим')">
-                  <TaoSegmentedOption value="a">A</TaoSegmentedOption>
-                  <TaoSegmentedOption value="b">B</TaoSegmentedOption>
-                </TaoSegmented>
-                <TaoButton variant="secondary">{{ tr('Apply', 'Применить') }}</TaoButton>
-              </div>
-            </td>
-            <td>
-              <template v-for="(part, i) in rich(tr(row.use))" :key="i">
-                <code v-if="i % 2">{{ part }}</code>
-                <template v-else>{{ part }}</template>
-              </template>
-            </td>
-            <td>{{ tr(row.cost) }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- a card per size, not a table: four columns of prose do not fit a phone / карточка на размер, а не таблица: четыре колонки текста не влезают на телефон -->
+    <div class="sizes-cards">
+      <article v-for="row in sizeGuide.sizes" :key="row.size" class="sizes-card">
+        <h4 class="sizes-card__name">{{ row.size }}</h4>
+        <div class="sizes-card__nums">{{ row.height }}px · {{ row.font }}px {{ tr('text', 'текст') }} · {{ row.padding }}px {{ tr('side', 'по бокам') }}</div>
+        <div :class="'tao-size-' + row.size" class="sizes-card__live">
+          <TaoInput model-value="Find…" aria-label="Find" />
+          <TaoSegmented v-model="mode" :aria-label="tr('Mode', 'Режим')">
+            <TaoSegmentedOption value="a">A</TaoSegmentedOption>
+            <TaoSegmentedOption value="b">B</TaoSegmentedOption>
+          </TaoSegmented>
+          <TaoButton variant="secondary">{{ tr('Apply', 'Применить') }}</TaoButton>
+        </div>
+        <p class="sizes-card__label">{{ tr('Use it for', 'Для чего') }}</p>
+        <p>
+          <template v-for="(part, i) in rich(tr(row.use))" :key="i">
+            <code v-if="i % 2">{{ part }}</code>
+            <template v-else>{{ part }}</template>
+          </template>
+        </p>
+        <p class="sizes-card__label">{{ tr('What it costs', 'Чего стоит') }}</p>
+        <p>{{ tr(row.cost) }}</p>
+      </article>
     </div>
 
     <h3>{{ tr('Density: on top of the size', 'Плотность: поверх размера') }}</h3>
@@ -140,24 +127,58 @@ const rich = (text) => String(text).split('`')
   text-transform: uppercase;
 }
 
-.sizes-table__nums {
-  margin-top: 4px;
+.sizes-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.sizes-card {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--tao-color-border);
+  border-radius: var(--tao-radius-panel);
+  background: var(--tao-color-surface);
+}
+
+.sizes-card p {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+.sizes-card__name {
+  margin: 0;
+  font-size: 16px;
+}
+
+.sizes-card__nums {
+  margin: 4px 0 12px;
   color: var(--tao-color-text-muted);
   font-size: 12px;
-  white-space: nowrap;
 }
 
-/* the live row is as wide as its widest size, so the three rows read as a ruler / живая строка по ширине самого крупного */
-.sizes-table__live {
+/* the live row wraps when there is no room, so it never pushes the page / живая строка переносится, когда тесно */
+.sizes-card__live {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  min-width: 340px;
+  margin-bottom: 12px;
 }
 
-.sizes-table__live > :first-child {
-  flex: 1 1 90px;
+.sizes-card__live > :first-child {
+  flex: 1 1 100px;
   min-width: 0;
+}
+
+.sizes-card__label {
+  margin: 12px 0 4px !important;
+  color: var(--tao-color-text-muted);
+  font-size: 11px !important;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .sizes-table--density td:not(:first-child) {
