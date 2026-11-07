@@ -19,7 +19,7 @@ Medium is the default, and the right answer unless there is a reason. A size is 
 
 | Size | Height | Text | Side padding | Use it for | What it costs |
 |---|---|---|---|---|---|
-| `small` | 26px | 12px | 12px | Tools that serve the content, not the task itself: a toolbar or an editor panel, a filter or settings bar, the actions in a table or list row. Many controls close together, a mouse first. A popover or a menu with a few controls is not that: it stays medium, small ones stick together there. | A small hit area (26px: above the 24px WCAG 2.2 minimum, below the 44px a finger needs) and 12px text. Not for the main action of a screen, not where the only pointer is a finger. |
+| `small` | 26px | 12px | 12px | Only where a lot sits close together and a mouse is the pointer: the actions in a row of a dense table or list, a power-user tool with dozens of controls. Not a toolbar or an editor panel, not a filter or settings bar, not a popover or a menu: an editor that people use all day, above all one for clients, stays medium, or it grows small buttons that are hard to hit. | A small hit area (26px: above the 24px WCAG 2.2 minimum, below the 44px a finger needs) and 12px text. Not for the main action of a screen, not where the only pointer is a finger. |
 | `medium` | 36px | 14px | 16px | Forms and the content of the page. The default: do not set `size` at all. | None; it is the scale everything else is drawn for. |
 | `large` | 44px | 16px | 24px | The one thing the screen is for: a sign-in or checkout button, a call to action on a landing page, a kiosk, a form people fill in on a phone, a reader who needs bigger targets. | Takes room and is loud: in a dense panel it pushes the rest out. |
 
@@ -44,7 +44,7 @@ Density is added on top of the size (the height and the padding, not the font), 
 
 **When.** A bar of formatting or editing tools: text style toggles, undo and redo, a few actions.
 
-**Rule.** Every button is `variant="ghost" tone="neutral"`, an icon with an `aria-label`. A toggle is `v-model:pressed`. Group related tools with `TaoToolbarGroup` and split the groups with `TaoToolbarSeparator`.
+**Rule.** Every button is `variant="ghost" tone="neutral"`, an icon with an `aria-label`. A toggle is `v-model:pressed`. Group related tools with `TaoToolbarGroup` and split the groups with `TaoToolbarSeparator`. Leave the size medium: a small toolbar is hard to hit (see "Choosing a size").
 
 **Do:**
 
