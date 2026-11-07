@@ -1,11 +1,16 @@
 <script setup>
 // One book of the showcase: its menu, its search and its pages. The pages are loaded when the book is opened, so the
 // other two books cost nothing until then. The shell (App.vue) owns the theme bar and the choice of the book.
+// On a phone the menu is a bottom sheet; its button goes into the sticky bar through a Teleport (#showcase-pages-slot).
 // Одна книга шоукейса: её меню, поиск и страницы. Страницы грузятся, когда книгу открывают, так что две другие книги
 // ничего не стоят, пока их не открыли. Оболочка (App.vue) держит панель темы и выбор книги.
+// На телефоне меню — нижний лист; его кнопка попадает в липкую панель через Teleport (#showcase-pages-slot).
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { TaoButton, TaoIcon, TaoInput } from '@1337exp/taoui'
+import { TaoButton, TaoDrawer } from '@1337exp/taoui'
 import { tr } from '../i18n.js'
+import { narrow } from '../narrow.js'
+import BookMenu from './BookMenu.vue'
+import { sectionVisible } from './match.js'
 
 const props = defineProps({
   book: { type: Object, required: true },
@@ -16,45 +21,24 @@ const props = defineProps({
 const navGroups = props.book.nav
 const { demoById } = await props.book.load()
 
-// Search looks through both languages, whichever is on screen.
-const both = (text) => (text && typeof text === 'object' ? `${text.en ?? ''} ${text.ru ?? ''}` : (text ?? ''))
-
 const activeGroup = ref('all')
 const query = ref('')
 const activeSection = ref('')
+const pagesOpen = ref(false)
 
 const currentGroup = computed(() => {
   if (query.value.trim()) return null
   return navGroups.find((group) => group.id === activeGroup.value) ?? null
 })
 
-function itemMatchesQuery(item, needle) {
-  const hay = [item.id, both(item.label), ...(item.aliases ?? [])].join(' ').toLowerCase()
-  return hay.includes(needle)
-}
-
-function sectionVisible(group, item) {
-  const needle = query.value.trim().toLowerCase()
-  if (needle) {
-    const hay = [group.id, both(group.title), item.id, both(item.label), ...(item.aliases ?? [])].join(' ').toLowerCase()
-    return hay.includes(needle)
+// the button of the sheet says where you are / кнопка листа говорит, где вы
+const currentLabel = computed(() => {
+  for (const group of navGroups) {
+    const item = group.items.find((entry) => entry.id === activeSection.value)
+    if (item) return tr(item.label)
   }
-  return activeGroup.value === 'all' || activeGroup.value === group.id
-}
-
-function groupVisibleInNav(group) {
-  const needle = query.value.trim().toLowerCase()
-  if (!needle) return true
-  if (both(group.title).toLowerCase().includes(needle)) return true
-  return group.items.some((item) => itemMatchesQuery(item, needle))
-}
-
-function itemVisibleInNav(group, item) {
-  const needle = query.value.trim().toLowerCase()
-  if (!needle) return true
-  if (both(group.title).toLowerCase().includes(needle)) return true
-  return itemMatchesQuery(item, needle)
-}
+  return ''
+})
 
 function goTo(groupId, sectionId) {
   query.value = ''
@@ -66,6 +50,12 @@ function goTo(groupId, sectionId) {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     activeSection.value = sectionId
   })
+}
+
+// from the sheet: close it first, the page is locked for scrolling while it is open / из листа: сначала закрыть, пока он открыт, страница не прокручивается
+function goFromSheet(groupId, sectionId) {
+  pagesOpen.value = false
+  setTimeout(() => goTo(groupId, sectionId), 200)
 }
 
 function goToId(sectionId) {
@@ -110,54 +100,41 @@ onBeforeUnmount(() => sectionObserver?.disconnect())
 
 <template>
   <p class="showcase-book-lead">{{ tr(book.lead) }}</p>
+
+  <!-- a phone: the button sits in the sticky bar, the menu is a sheet / телефон: кнопка в липкой панели, меню — лист -->
+  <template v-if="narrow">
+    <Teleport to="#showcase-pages-slot">
+      <TaoButton block size="small" variant="secondary" tone="neutral" icon="tao-align-left" @click="pagesOpen = true">
+        {{ tr('Pages', 'Страницы') }}<template v-if="currentLabel"> · {{ currentLabel }}</template>
+      </TaoButton>
+    </Teleport>
+    <TaoDrawer v-model="pagesOpen" side="bottom" :title="tr(book.title)">
+      <BookMenu
+        v-model:query="query"
+        sheet
+        :groups="navGroups"
+        :label="tr(book.title)"
+        :active-group="activeGroup"
+        :active-section="activeSection"
+        @go="goFromSheet"
+        @all="showAll"
+        @group="toggleGroup"
+      />
+    </TaoDrawer>
+  </template>
+
   <div class="showcase-body">
-    <nav class="showcase-nav" :aria-label="tr(book.title)">
-      <TaoInput
-        v-model="query"
-        class="showcase-nav__search"
-        size="small"
-        :placeholder="tr('Find a page…', 'Найти страницу…')"
-        :aria-label="tr('Find a page', 'Найти страницу')"
-      >
-        <template #prefix><TaoIcon name="tao-search" /></template>
-      </TaoInput>
-
-      <button
-        type="button"
-        class="showcase-nav__all"
-        :class="{ active: activeGroup === 'all' && !query }"
-        @click="showAll"
-      >
-        {{ tr('All', 'Все') }}
-      </button>
-
-      <div
-        v-for="group in navGroups"
-        v-show="groupVisibleInNav(group)"
-        :key="group.id"
-        class="showcase-nav__group"
-      >
-        <button
-          type="button"
-          class="showcase-nav__group-title"
-          :class="{ active: activeGroup === group.id }"
-          @click="toggleGroup(group.id)"
-        >
-          {{ tr(group.title) }}
-        </button>
-        <a
-          v-for="item in group.items"
-          v-show="itemVisibleInNav(group, item)"
-          :key="item.id"
-          class="showcase-nav__link"
-          :class="{ active: activeSection === item.id }"
-          :href="'#' + item.id"
-          @click.prevent="goTo(group.id, item.id)"
-        >
-          {{ tr(item.label) }}
-        </a>
-      </div>
-    </nav>
+    <BookMenu
+      v-if="!narrow"
+      v-model:query="query"
+      :groups="navGroups"
+      :label="tr(book.title)"
+      :active-group="activeGroup"
+      :active-section="activeSection"
+      @go="goTo"
+      @all="showAll"
+      @group="toggleGroup"
+    />
 
     <main class="showcase-main">
       <div v-if="currentGroup" class="showcase-banner">
@@ -173,7 +150,7 @@ onBeforeUnmount(() => sectionObserver?.disconnect())
           v-for="item in group.items"
           :key="item.id"
           :is="demoById[item.id]"
-          v-show="sectionVisible(group, item)"
+          v-show="sectionVisible(group, item, query, activeGroup)"
         />
       </template>
     </main>

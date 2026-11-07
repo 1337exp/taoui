@@ -4,6 +4,7 @@ import { TaoButton, TaoPopover, TaoScrollTop, TaoSegmented, TaoSegmentedOption, 
 import { bookById, bookOfSection, books } from './books/index.js'
 import BookView from './books/BookView.vue'
 import { lang, LANGS, tr } from './i18n.js'
+import { narrow } from './narrow.js'
 import { scrollTopDemo } from './scrollTopDemo.js'
 import pkg from '../package.json'
 
@@ -196,26 +197,48 @@ onBeforeUnmount(() => {
         </a>
       </nav>
       <div class="showcase-bar__controls">
-        <TaoSegmented size="small" :model-value="lang" :aria-label="tr('Language', 'Язык')" @update:model-value="lang = $event">
-          <TaoSegmentedOption v-for="code in LANGS" :key="code" :value="code">{{ code.toUpperCase() }}</TaoSegmentedOption>
-        </TaoSegmented>
-        <span class="showcase-bar__palette">
-          <span class="palette-select">
-            <TaoSelect :model-value="palette" :options="paletteOptions" :clearable="false" :aria-label="tr('Palette', 'Палитра')" @update:model-value="setPalette" />
+        <!-- a phone keeps only the theme in the bar (it is what you test while you scroll); the rest folds into the popover / телефон оставляет в панели только тему (её проверяют на ходу), остальное складывается в поповер -->
+        <template v-if="!narrow">
+          <TaoSegmented size="small" :model-value="lang" :aria-label="tr('Language', 'Язык')" @update:model-value="lang = $event">
+            <TaoSegmentedOption v-for="code in LANGS" :key="code" :value="code">{{ code.toUpperCase() }}</TaoSegmentedOption>
+          </TaoSegmented>
+          <span class="showcase-bar__palette">
+            <span class="palette-select">
+              <TaoSelect :model-value="palette" :options="paletteOptions" :clearable="false" :aria-label="tr('Palette', 'Палитра')" @update:model-value="setPalette" />
+            </span>
+            <span class="palette-swatches" aria-hidden="true">
+              <i v-for="color in swatches" :key="color" :style="{ background: color }" />
+            </span>
           </span>
-          <span class="palette-swatches" aria-hidden="true">
-            <i v-for="color in swatches" :key="color" :style="{ background: color }" />
-          </span>
-        </span>
+        </template>
         <TaoThemeToggle size="small" :model-value="theme" :apply="false" @update:model-value="setTheme" />
         <TaoPopover placement="bottom-end">
           <template #trigger>
-            <TaoButton size="small" variant="secondary" icon="tao-settings">
-              {{ tr('View', 'Вид') }}
+            <TaoButton size="small" variant="secondary" icon="tao-settings" :aria-label="narrow ? tr('View', 'Вид') : undefined">
+              <template v-if="!narrow">{{ tr('View', 'Вид') }}</template>
               <i v-if="viewChanged" class="showcase-bar__dot" :title="tr('Not the defaults', 'Не по умолчанию')" />
             </TaoButton>
           </template>
           <div class="showcase-view">
+            <template v-if="narrow">
+              <div class="showcase-view__row">
+                <span class="showcase-view__label">{{ tr('Language', 'Язык') }}</span>
+                <TaoSegmented size="small" :model-value="lang" :aria-label="tr('Language', 'Язык')" @update:model-value="lang = $event">
+                  <TaoSegmentedOption v-for="code in LANGS" :key="code" :value="code">{{ code.toUpperCase() }}</TaoSegmentedOption>
+                </TaoSegmented>
+              </div>
+              <div class="showcase-view__row">
+                <span class="showcase-view__label">{{ tr('Palette', 'Палитра') }}</span>
+                <span class="showcase-bar__palette">
+                  <span class="palette-select">
+                    <TaoSelect :model-value="palette" :options="paletteOptions" :clearable="false" :aria-label="tr('Palette', 'Палитра')" @update:model-value="setPalette" />
+                  </span>
+                  <span class="palette-swatches" aria-hidden="true">
+                    <i v-for="color in swatches" :key="color" :style="{ background: color }" />
+                  </span>
+                </span>
+              </div>
+            </template>
             <div class="showcase-view__row">
               <span class="showcase-view__label">{{ tr('Density', 'Плотность') }}</span>
               <TaoSegmented size="small" :model-value="density" :aria-label="tr('Density', 'Плотность')" @update:model-value="setDensity">
@@ -231,6 +254,8 @@ onBeforeUnmount(() => {
           </div>
         </TaoPopover>
       </div>
+      <!-- the book puts its page menu button here on a phone (books/BookView.vue) / книга кладёт сюда кнопку меню страниц на телефоне -->
+      <div v-if="narrow" id="showcase-pages-slot" class="showcase-bar__pages"></div>
     </div>
 
     <!-- one book at a time: its pages are fetched when it is opened / одна книга за раз: её страницы грузятся, когда её открывают -->

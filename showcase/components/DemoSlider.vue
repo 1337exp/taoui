@@ -146,10 +146,10 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
               </template>
             </TaoSlider>
           </div>
-          <pre><code>&lt;TaoSlider v-model="load" :zones="zones" bubble :format="(v) =&gt; `${v}%`" /&gt;
+          <div class="code-block"><pre><code>&lt;TaoSlider v-model="load" :zones="zones" bubble :format="(v) =&gt; `${v}%`" /&gt;
 &lt;TaoSlider v-model="load" :zones="zones" bubble="always"&gt;
   &lt;template #bubble="{ value, zone }"&gt;&lt;TaoIcon name="tao-info" /&gt; &#123;&#123; value &#125;&#125;%&lt;/template&gt;
-&lt;/TaoSlider&gt;</code></pre>
+&lt;/TaoSlider&gt;</code></pre></div>
 
           <h3>{{ tr('Zones that appear as it fills', 'Зоны, что проявляются по мере заполнения') }}</h3>
           <p>
@@ -158,11 +158,11 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
           <TaoSlider v-model="sliderStrength" :zones="strengthZones" :aria-label="tr('Strength', 'Надёжность')" class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">{{ tr('Strength', 'Надёжность') }}: {{ sliderStrength }}</p>
 
-          <pre><code>&lt;TaoSlider v-model="load" :zones="[
+          <div class="code-block"><pre><code>&lt;TaoSlider v-model="load" :zones="[
   { to: 40, tone: 'info', dot: true },
   { to: 70, tone: 'warning', dot: true },
   { to: 100, tone: 'danger' },
-]" /&gt;</code></pre>
+]" /&gt;</code></pre></div>
 
           <h3>TaoScrubber</h3>
           <TaoScrubber v-model="time" v-model:playing="playing" :length="8" :marks="[0, 2, 4, 6]" :format="(t) => tr(`${t.toFixed(2)} s`, `${t.toFixed(2)} с`)" class="demo-wide" />
