@@ -287,14 +287,15 @@
   text-decoration: underline;
 }
 
-/* the palette picker in the header / выбор палитры в шапке */
-/* A fixed width, so the header does not jump when the chosen name is longer or shorter; the same height as the buttons
-   next to it (the select reads the control height from here). */
+/* the palette picker in the bar / выбор палитры в панели */
+/* A fixed width, so the bar does not jump when the chosen name is longer or shorter. No height and no font size here: the
+   select takes them, like its neighbours, from the size context of the bar (tao-size-small); a number pinned on one control
+   is how it ends up taller than the rest.
+   Ширина фиксирована, чтобы панель не прыгала. Ни высоты, ни шрифта здесь нет: их, как у соседей, задаёт контекст размера
+   панели (tao-size-small); число, прибитое к одному контролу, и делает его выше остальных. */
 .palette-select {
-  --tao-control-height: 32px;
-  --tao-control-font-size: 13px;
   display: block;
-  width: 168px;
+  width: 150px;
 }
 
 .palette-swatches {
@@ -414,12 +415,6 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-}
-
-.showcase-bar .palette-select {
-  --tao-control-height: 28px;
-  --tao-control-font-size: 12px;
-  width: 150px;
 }
 
 .showcase-bar .palette-swatches {

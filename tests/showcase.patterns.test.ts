@@ -59,6 +59,17 @@ describe('Guide patterns', () => {
         expect(primary(templateOf(read('form-footer.bad.vue')))).toBe(2);
     });
 
+    it('a row of controls gets one size from the container in the do, and a size on some of them in the don\'t', () => {
+        const good = templateOf(read('sizes.good.vue'));
+        const bad = templateOf(read('sizes.bad.vue'));
+        expect(good).toMatch(/class="tao-size-(small|medium|large)"/);
+        expect(good).not.toMatch(/\ssize="/);
+        expect(bad).not.toMatch(/tao-size-/);
+        // some of the controls carry a size and some do not: the uneven row the rule is about
+        expect(bad.match(/\ssize="/g)?.length).toBe(1);
+        expect(bad.match(/<Tao(Segmented|Select|Button)\b/g)?.length).toBeGreaterThan(1);
+    });
+
     it('a destructive do puts the danger on the button that destroys; the don\'t puts it on the safe one', () => {
         const good = buttons(templateOf(read('destructive.good.vue')));
         const bad = buttons(templateOf(read('destructive.bad.vue')));

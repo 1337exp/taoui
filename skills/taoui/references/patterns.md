@@ -75,6 +75,40 @@ The accent colour (amber by default) is a signal, and a signal that is on everyw
 
 **Why.** Two filled accent buttons side by side make the eye choose between them. The footer has one answer the user is expected to give; the other button is the way out, and it looks like one.
 
+## Controls side by side: one size
+
+**When.** A row or a panel with several controls: a segmented switch, a select, buttons, inputs. Also the content of a popover.
+
+**Rule.** Put one context class on the container: `class="tao-size-small"` (and `tao-density-*`). Do not pass `size` to some of the controls, and do not pin a height (`--tao-control-height: 32px`, `height: 32px`) on one of them. An explicit `size` is for the one control that must stand out. A `TaoPopover` panel, a select list and a combobox list carry the size and the density of where they hang from.
+
+**Do:**
+
+```vue
+<TaoFlex class="tao-size-small" align="center" :gap="8">
+  <TaoSegmented v-model="mode" aria-label="Mode">
+    <TaoSegmentedOption value="grid">Grid</TaoSegmentedOption>
+    <TaoSegmentedOption value="list">List</TaoSegmentedOption>
+  </TaoSegmented>
+  <TaoSelect v-model="palette" :options="palettes" :clearable="false" aria-label="Palette" />
+  <TaoButton variant="secondary">Apply</TaoButton>
+</TaoFlex>
+```
+
+**Don't:**
+
+```vue
+<TaoFlex align="center" :gap="8">
+  <TaoSegmented v-model="mode" size="small" aria-label="Mode">
+    <TaoSegmentedOption value="grid">Grid</TaoSegmentedOption>
+    <TaoSegmentedOption value="list">List</TaoSegmentedOption>
+  </TaoSegmented>
+  <TaoSelect v-model="palette" :options="palettes" :clearable="false" aria-label="Palette" />
+  <TaoButton variant="secondary">Apply</TaoButton>
+</TaoFlex>
+```
+
+**Why.** `size` is a prop with a default of medium. Set it on the controls you remember and the rest stay medium: the row comes out uneven, a small switch beside a tall select. A pinned height is the same thing by hand. The class makes them one by construction, also for the controls added later and for a panel in the body.
+
 ## A destructive action
 
 **When.** Delete, discard, reset: something that cannot be taken back.

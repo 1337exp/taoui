@@ -176,7 +176,7 @@ onBeforeUnmount(() => {
     </header>
 
     <div ref="sentinelRef" class="showcase-bar-sentinel" aria-hidden="true"></div>
-    <div ref="barRef" class="showcase-bar" role="group" :aria-label="tr('Showcase settings', 'Настройки шоукейса')">
+    <div ref="barRef" class="showcase-bar tao-size-small" role="group" :aria-label="tr('Showcase settings', 'Настройки шоукейса')">
       <span class="showcase-bar__brand" :class="{ 'showcase-bar__brand--on': stuck }" aria-hidden="true">
         <img :src="logoSrc" alt="" width="22" height="22" />
         Tao UI
@@ -199,7 +199,7 @@ onBeforeUnmount(() => {
       <div class="showcase-bar__controls">
         <!-- a phone keeps only the theme in the bar (it is what you test while you scroll); the rest folds into the popover / телефон оставляет в панели только тему (её проверяют на ходу), остальное складывается в поповер -->
         <template v-if="!narrow">
-          <TaoSegmented size="small" :model-value="lang" :aria-label="tr('Language', 'Язык')" @update:model-value="lang = $event">
+          <TaoSegmented :model-value="lang" :aria-label="tr('Language', 'Язык')" @update:model-value="lang = $event">
             <TaoSegmentedOption v-for="code in LANGS" :key="code" :value="code">{{ code.toUpperCase() }}</TaoSegmentedOption>
           </TaoSegmented>
           <span class="showcase-bar__palette">
@@ -211,10 +211,10 @@ onBeforeUnmount(() => {
             </span>
           </span>
         </template>
-        <TaoThemeToggle size="small" :model-value="theme" :apply="false" @update:model-value="setTheme" />
+        <TaoThemeToggle :model-value="theme" :apply="false" @update:model-value="setTheme" />
         <TaoPopover placement="bottom-end">
           <template #trigger>
-            <TaoButton size="small" variant="secondary" icon="tao-settings" :aria-label="narrow ? tr('View', 'Вид') : undefined">
+            <TaoButton variant="secondary" icon="tao-settings" :aria-label="narrow ? tr('View', 'Вид') : undefined">
               <template v-if="!narrow">{{ tr('View', 'Вид') }}</template>
               <i v-if="viewChanged" class="showcase-bar__dot" :title="tr('Not the defaults', 'Не по умолчанию')" />
             </TaoButton>
@@ -223,7 +223,7 @@ onBeforeUnmount(() => {
             <template v-if="narrow">
               <div class="showcase-view__row">
                 <span class="showcase-view__label">{{ tr('Language', 'Язык') }}</span>
-                <TaoSegmented size="small" :model-value="lang" :aria-label="tr('Language', 'Язык')" @update:model-value="lang = $event">
+                <TaoSegmented :model-value="lang" :aria-label="tr('Language', 'Язык')" @update:model-value="lang = $event">
                   <TaoSegmentedOption v-for="code in LANGS" :key="code" :value="code">{{ code.toUpperCase() }}</TaoSegmentedOption>
                 </TaoSegmented>
               </div>
@@ -241,13 +241,13 @@ onBeforeUnmount(() => {
             </template>
             <div class="showcase-view__row">
               <span class="showcase-view__label">{{ tr('Density', 'Плотность') }}</span>
-              <TaoSegmented size="small" :model-value="density" :aria-label="tr('Density', 'Плотность')" @update:model-value="setDensity">
+              <TaoSegmented :model-value="density" :aria-label="tr('Density', 'Плотность')" @update:model-value="setDensity">
                 <TaoSegmentedOption v-for="d in DENSITIES" :key="d" :value="d">{{ d }}</TaoSegmentedOption>
               </TaoSegmented>
             </div>
             <div class="showcase-view__row">
               <span class="showcase-view__label">{{ tr('Frames', 'Рамки') }}</span>
-              <TaoSegmented size="small" :model-value="frames" :aria-label="tr('Frames', 'Рамки')" @update:model-value="setFrames">
+              <TaoSegmented :model-value="frames" :aria-label="tr('Frames', 'Рамки')" @update:model-value="setFrames">
                 <TaoSegmentedOption v-for="f in FRAMES" :key="f" :value="f">{{ f }}</TaoSegmentedOption>
               </TaoSegmented>
             </div>

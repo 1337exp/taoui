@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue';
+import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
 import { useDismiss } from '../dismiss';
 import { useFloating, type TaoPlacement } from '../floating';
 import { useLayer } from '../layers';
+import { resolveSize, sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoPopover' });
 
@@ -30,6 +32,12 @@ const panelRef = ref<HTMLElement | null>(null);
 const internal = ref(false);
 const isControlled = computed(() => props.modelValue !== undefined);
 const open = computed(() => (isControlled.value ? Boolean(props.modelValue) : internal.value));
+// The panel is teleported to body, where the size and the density of the trigger's surroundings are not inherited: they are read
+// when it opens and put on the panel, so the controls inside keep the scale of the place the popover hangs from.
+// Панель телепортирована в body, где размер и плотность окружения триггера не наследуются: читаются при открытии и
+// ставятся на панель, чтобы контролы внутри держали масштаб места, откуда она висит.
+const panelSize = ref<TaoSize>('medium');
+const panelDensity = ref<TaoResolvedDensity>('default');
 
 function setOpen(next: boolean) {
     if (props.disabled && next) {
@@ -70,6 +78,8 @@ useLayer(open, {
 
 watch(open, (isOpen) => {
     if (isOpen) {
+        panelSize.value = resolveSize(triggerRef.value);
+        panelDensity.value = resolveDensity(triggerRef.value);
         void nextTick(() => panelRef.value?.focus({ preventScroll: true }));
     }
 });
@@ -86,6 +96,7 @@ watch(open, (isOpen) => {
                 v-if="open"
                 ref="panelRef"
                 class="tao-popover__panel"
+                :class="[sizeClass(panelSize), densityClass(panelDensity)]"
                 role="dialog"
                 tabindex="-1"
                 :style="panelStyle"

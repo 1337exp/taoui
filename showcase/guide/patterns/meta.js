@@ -70,6 +70,22 @@ export const patterns = [
     },
   },
   {
+    id: 'sizes',
+    title: { en: 'Controls side by side: one size', ru: 'Контролы рядом: один размер' },
+    when: {
+      en: 'A row or a panel with several controls: a segmented switch, a select, buttons, inputs. Also the content of a popover.',
+      ru: 'Ряд или панель из нескольких контролов: переключатель, select, кнопки, поля. И содержимое поповера.',
+    },
+    rule: {
+      en: 'Put one context class on the container: `class="tao-size-small"` (and `tao-density-*`). Do not pass `size` to some of the controls, and do not pin a height (`--tao-control-height: 32px`, `height: 32px`) on one of them. An explicit `size` is for the one control that must stand out. A `TaoPopover` panel, a select list and a combobox list carry the size and the density of where they hang from.',
+      ru: 'Один контекстный класс на контейнер: `class="tao-size-small"` (и `tao-density-*`). Не передавать `size` части контролов и не прибивать высоту (`--tao-control-height: 32px`, `height: 32px`) одному из них. Явный `size` — для единственного контрола, который должен выделяться. Панель `TaoPopover`, список select и список combobox несут размер и плотность того места, откуда висят.',
+    },
+    why: {
+      en: '`size` is a prop with a default of medium. Set it on the controls you remember and the rest stay medium: the row comes out uneven, a small switch beside a tall select. A pinned height is the same thing by hand. The class makes them one by construction, also for the controls added later and for a panel in the body.',
+      ru: '`size` — это проп со значением по умолчанию medium. Задашь его тем контролам, которые вспомнил, — остальные останутся medium: ряд выходит неровным, мелкий переключатель рядом с высоким select. Прибитая высота — то же самое руками. Класс делает их одним целым по построению, в том числе для контролов, добавленных потом, и для панели в body.',
+    },
+  },
+  {
     id: 'destructive',
     title: { en: 'A destructive action', ru: 'Разрушающее действие' },
     when: {
