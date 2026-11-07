@@ -23,15 +23,20 @@ describe('showcase settings bar', () => {
         const popover = source.slice(source.indexOf('<TaoPopover'), source.indexOf('</TaoPopover>'));
         expect(popover).toContain('setDensity');
         expect(popover).toContain('setFrames');
+        // on a phone (v-if="narrow") language and palette fold into the popover too; the mode never does: it is tested while you scroll
+        // на телефоне (v-if="narrow") язык и палитра тоже уходят в поповер; режим — никогда: его проверяют на ходу
+        const wide = popover.replace(/<template v-if="narrow">[\s\S]*?<\/template>/, '');
+        expect(wide).not.toContain('setPalette');
         expect(popover).not.toContain('setTheme');
-        expect(popover).not.toContain('setPalette');
+        expect(popover).toMatch(/<template v-if="narrow">[\s\S]*setPalette/);
     });
 
     it('every control has a name for a screen reader (no visible legend: the bar is one line)', () => {
         const source = app as string;
-        const bar = source.slice(source.indexOf('<div ref="barRef"'), source.indexOf('<div class="showcase-body">'));
+        const bar = source.slice(source.indexOf('<div ref="barRef"'), source.indexOf('<Suspense>'));
         const segmented = bar.match(/<TaoSegmented [^>]*>/g) ?? [];
-        expect(segmented.length).toBe(3);
+        // language (in the bar, and in the popover on a phone), density, frames / язык (в панели и в поповере на телефоне), плотность, рамки
+        expect(segmented.length).toBe(4);
         for (const tag of segmented) {
             expect(tag).toContain(':aria-label=');
             expect(tag).not.toContain(':legend=');
@@ -52,10 +57,18 @@ describe('showcase settings bar', () => {
         expect(title).toMatch(/showcase-title__word" aria-hidden="true"><img class="showcase-title__mark"[^>]*alt=""[^>]*\/>ao UI/);
     });
 
-    it('sticks to the top, and does not stick on a phone', () => {
+    it('sticks to the top, on a phone too: the theme is tested while you scroll', () => {
         const css = styles as string;
         expect(css).toMatch(/\.showcase-bar \{[^}]*position: sticky/);
         const media = css.slice(css.lastIndexOf('@media (max-width: 860px)'));
-        expect(media).toMatch(/\.showcase-bar \{\s*position: static/);
+        expect(media).not.toMatch(/position: static/);
+        // compact on a phone: the page menu button gets a row of its own under the tabs / компактная на телефоне: кнопка меню страниц — своей строкой под вкладками
+        expect(media).toMatch(/\.showcase-bar__pages \{[^}]*flex: 1 1 100%/);
+    });
+
+    it('a phone gets the page menu as a bottom sheet, its button teleported into the bar', () => {
+        const source = app as string;
+        expect(source).toContain('id="showcase-pages-slot"');
+        expect(source).toMatch(/<div v-if="narrow" id="showcase-pages-slot"/);
     });
 });

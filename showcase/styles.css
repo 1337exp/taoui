@@ -147,28 +147,24 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .showcase-nav {
-    position: static;
-    max-height: none;
-    margin-bottom: 8px;
-  }
+}
 
-  .showcase-nav__group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    align-items: center;
-  }
+/* the menu as the content of a bottom sheet (a phone): no frame of its own, rows as tall as a finger / меню как содержимое нижнего листа */
+.showcase-nav--sheet {
+  position: static;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
 
-  .showcase-nav__group-title {
-    width: auto;
-    margin-right: 4px;
-  }
+.showcase-nav--sheet .showcase-nav__link {
+  padding: 8px 12px;
+  font-size: 14px;
+}
 
-  .showcase-nav__link {
-    width: auto;
-    padding: 4px 8px;
-  }
+.showcase-nav--sheet .showcase-nav__group-title {
+  padding: 8px;
 }
 
 /* the showcase's own headings stay out of .tao-prose: there the typography layer speaks */
@@ -456,9 +452,36 @@
   font-size: 12px;
 }
 
-/* a phone has no room for a sticky bar of five groups: it scrolls away with the page / на телефоне липкой панели из пяти групп не место */
+/* a phone: the bar still sticks (the theme is tested while you scroll), but it is compact: the tabs and two icons in a row,
+   the page menu button under them; the brand is left out, the tabs say where you are
+   телефон: панель по-прежнему липнет (тему проверяют на ходу), но компактная: вкладки и две иконки в ряд, под ними кнопка меню страниц */
 @media (max-width: 860px) {
   .showcase-bar {
-    position: static;
+    gap: 6px 8px;
+    padding: 6px 8px;
+    margin-bottom: 16px;
+  }
+
+  .showcase-bar__brand--on {
+    display: none;
+  }
+
+  .showcase-books {
+    gap: 2px;
+  }
+
+  .showcase-books__tab {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  .showcase-bar__controls {
+    flex: 0 0 auto;
+    margin-inline-start: auto;
+    gap: 6px;
+  }
+
+  .showcase-bar__pages {
+    flex: 1 1 100%;
   }
 }
