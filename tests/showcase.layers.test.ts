@@ -6,9 +6,9 @@ import { labelOn, themeCss, themeRatings, themeVars } from '../showcase/layers/t
 // @ts-expect-error Vite `?raw` import
 import indexCss from '../src/styles/index.css?raw';
 // @ts-expect-error Vite `?raw` import
-import navSource from '../showcase/nav.js?raw';
+import navSource from '../showcase/books/guide.nav.js?raw';
 // @ts-expect-error Vite `?raw` import
-import sectionsSource from '../showcase/sections.js?raw';
+import sectionsSource from '../showcase/books/guide.sections.js?raw';
 // @ts-expect-error Vite `?raw` import
 import darkCss from '../src/styles/themes/dark.css?raw';
 import { contrastRatio } from '../src/palette';

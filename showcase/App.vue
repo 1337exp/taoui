@@ -1,16 +1,49 @@
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
-import { TaoButton, TaoIcon, TaoInput, TaoPopover, TaoScrollTop, TaoSegmented, TaoSegmentedOption, TaoSelect, TaoTag, TaoThemeToggle, readTaoMode, taoPalettes } from '@1337exp/taoui'
-import { navGroups } from './nav.js'
-import { demoById } from './sections.js'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { TaoButton, TaoPopover, TaoScrollTop, TaoSegmented, TaoSegmentedOption, TaoSelect, TaoTag, TaoThemeToggle, readTaoMode, taoPalettes } from '@1337exp/taoui'
+import { bookById, bookOfSection, books } from './books/index.js'
+import BookView from './books/BookView.vue'
 import { lang, LANGS, tr } from './i18n.js'
 import { scrollTopDemo } from './scrollTopDemo.js'
 import pkg from '../package.json'
 
 const version = pkg.version
 
-// Search looks through both languages, whichever is on screen.
-const both = (text) => (text && typeof text === 'object' ? `${text.en ?? ''} ${text.ru ?? ''}` : (text ?? ''))
+// The book is the first thing the address says: #/guide opens a book, #button opens the book that holds that section
+// and goes there (so the old links keep working). The pages of a book are in books/BookView.vue.
+// Книга — первое, что говорит адрес: #/guide открывает книгу, #button — книгу, где лежит этот раздел, и идёт к нему
+// (старые ссылки работают). Страницы книги — в books/BookView.vue.
+const bookId = ref(books[0].id)
+const book = computed(() => bookById(bookId.value))
+const focus = ref(null)
+let focusCount = 0
+
+function readAddress() {
+  const hash = decodeURIComponent(location.hash.slice(1))
+  if (hash.startsWith('/')) {
+    const target = bookById(hash.slice(1))
+    if (target) bookId.value = target.id
+    focus.value = null
+    return
+  }
+  const holder = hash && bookOfSection(hash)
+  if (holder) {
+    bookId.value = holder.id
+    focus.value = { id: hash, n: ++focusCount }
+  }
+}
+
+function openBook(id) {
+  if (id !== bookId.value) {
+    bookId.value = id
+    focus.value = null
+  }
+  // replace, not push: Back leaves the page / replace, а не push: «Назад» уходит со страницы
+  history.replaceState(null, '', `#/${id}`)
+  window.scrollTo({ top: 0 })
+}
+
+readAddress()
 
 // Theme = a palette (a list of ready-made ones, or the default) x a mode (dark / light). The choice is remembered.
 // The default palette keeps the old attribute (data-tao-theme="dark" / "light"); a palette is data-tao-theme="<name>"
@@ -92,70 +125,6 @@ function setPalette(value) {
 
 applyTheme()
 
-const activeGroup = ref('all')
-const query = ref('')
-const activeSection = ref('')
-
-const currentGroup = computed(() => {
-  if (query.value.trim()) return null
-  return navGroups.find((group) => group.id === activeGroup.value) ?? null
-})
-
-function sectionVisible(groupId, sectionId) {
-  const needle = query.value.trim().toLowerCase()
-  if (needle) {
-    const group = navGroups.find((item) => item.id === groupId)
-    const item = group?.items.find((entry) => entry.id === sectionId)
-    const hay = [groupId, both(group?.title), item?.id, both(item?.label), ...(item?.aliases ?? [])]
-      .join(' ')
-      .toLowerCase()
-    return hay.includes(needle)
-  }
-  return activeGroup.value === 'all' || activeGroup.value === groupId
-}
-
-function groupVisibleInNav(group) {
-  const needle = query.value.trim().toLowerCase()
-  if (!needle) return true
-  if (both(group.title).toLowerCase().includes(needle)) return true
-  return group.items.some((item) => itemMatchesQuery(item, needle))
-}
-
-function itemMatchesQuery(item, needle) {
-  const hay = [item.id, both(item.label), ...(item.aliases ?? [])].join(' ').toLowerCase()
-  return hay.includes(needle)
-}
-
-function itemVisibleInNav(group, item) {
-  const needle = query.value.trim().toLowerCase()
-  if (!needle) return true
-  if (both(group.title).toLowerCase().includes(needle)) return true
-  return itemMatchesQuery(item, needle)
-}
-
-function goTo(groupId, sectionId) {
-  query.value = ''
-  activeGroup.value = groupId
-  // the address says which section is open, so it can be shared and reloaded; replace, not push: Back leaves the page
-  // адрес говорит, какой раздел открыт: им можно поделиться и перезагрузить; replace, а не push: «Назад» уходит со страницы
-  history.replaceState(null, '', `#${sectionId}`)
-  nextTick(() => {
-    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    activeSection.value = sectionId
-  })
-}
-
-function showAll() {
-  query.value = ''
-  activeGroup.value = 'all'
-}
-
-function toggleGroup(groupId) {
-  query.value = ''
-  activeGroup.value = activeGroup.value === groupId ? 'all' : groupId
-}
-
-let sectionObserver = null
 let barObserver = null
 let stuckObserver = null
 let modeObserver = null
@@ -179,30 +148,15 @@ onMounted(() => {
   })
   if (sentinelRef.value) stuckObserver.observe(sentinelRef.value)
 
-  sectionObserver = new IntersectionObserver(
-    (entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-      if (visible?.target?.id) {
-        activeSection.value = visible.target.id
-      }
-    },
-    { rootMargin: '-20% 0px -65% 0px', threshold: [0, 0.25, 1] },
-  )
-  document.querySelectorAll('.showcase-section[id]').forEach((el) => sectionObserver.observe(el))
-
-  // opened with #section (a shared link, a reload): go there / открыта по ссылке с #раздел: идём туда
-  const id = decodeURIComponent(location.hash.slice(1))
-  const group = id && navGroups.find((g) => g.items.some((item) => item.id === id))
-  if (group) goTo(group.id, id)
+  // a link typed or followed inside the page (a guide page pointing at #button) / ссылка, набранная или нажатая внутри страницы
+  window.addEventListener('hashchange', readAddress)
 })
 
 onBeforeUnmount(() => {
   modeObserver?.disconnect()
   barObserver?.disconnect()
   stuckObserver?.disconnect()
-  sectionObserver?.disconnect()
+  window.removeEventListener('hashchange', readAddress)
 })
 </script>
 
@@ -222,12 +176,25 @@ onBeforeUnmount(() => {
 
     <div ref="sentinelRef" class="showcase-bar-sentinel" aria-hidden="true"></div>
     <div ref="barRef" class="showcase-bar" role="group" :aria-label="tr('Showcase settings', 'Настройки шоукейса')">
-      <span v-if="!stuck" class="showcase-bar__hint">{{ tr('Showcase settings', 'Настройки шоукейса') }}</span>
       <span class="showcase-bar__brand" :class="{ 'showcase-bar__brand--on': stuck }" aria-hidden="true">
         <img :src="logoSrc" alt="" width="22" height="22" />
         Tao UI
         <TaoTag size="small" flat>v{{ version }}</TaoTag>
       </span>
+      <!-- the three books: the choice sits in the bar, so it is at hand wherever you have scrolled / три книги: выбор в панели, под рукой, как бы далеко ни прокрутили -->
+      <nav class="showcase-books" :aria-label="tr('Showcase books', 'Книги шоукейса')">
+        <a
+          v-for="item in books"
+          :key="item.id"
+          class="showcase-books__tab"
+          :class="{ active: item.id === bookId }"
+          :href="'#/' + item.id"
+          :aria-current="item.id === bookId ? 'page' : undefined"
+          @click.prevent="openBook(item.id)"
+        >
+          {{ tr(item.title) }}
+        </a>
+      </nav>
       <div class="showcase-bar__controls">
         <TaoSegmented size="small" :model-value="lang" :aria-label="tr('Language', 'Язык')" @update:model-value="lang = $event">
           <TaoSegmentedOption v-for="code in LANGS" :key="code" :value="code">{{ code.toUpperCase() }}</TaoSegmentedOption>
@@ -266,74 +233,13 @@ onBeforeUnmount(() => {
       </div>
     </div>
 
-    <div class="showcase-body">
-      <nav class="showcase-nav" :aria-label="tr('Showcase sections', 'Разделы showcase')">
-        <TaoInput
-          v-model="query"
-          class="showcase-nav__search"
-          size="small"
-          :placeholder="tr('Find a component…', 'Найти компонент…')"
-          :aria-label="tr('Find a component', 'Найти компонент')"
-        >
-          <template #prefix><TaoIcon name="tao-search" /></template>
-        </TaoInput>
-
-        <button
-          type="button"
-          class="showcase-nav__all"
-          :class="{ active: activeGroup === 'all' && !query }"
-          @click="showAll"
-        >
-          {{ tr('All', 'Все') }}
-        </button>
-
-        <div
-          v-for="group in navGroups"
-          v-show="groupVisibleInNav(group)"
-          :key="group.id"
-          class="showcase-nav__group"
-        >
-          <button
-            type="button"
-            class="showcase-nav__group-title"
-            :class="{ active: activeGroup === group.id }"
-            @click="toggleGroup(group.id)"
-          >
-            {{ tr(group.title) }}
-          </button>
-          <a
-            v-for="item in group.items"
-            v-show="itemVisibleInNav(group, item)"
-            :key="item.id"
-            class="showcase-nav__link"
-            :class="{ active: activeSection === item.id }"
-            :href="'#' + item.id"
-            @click.prevent="goTo(group.id, item.id)"
-          >
-            {{ tr(item.label) }}
-          </a>
-        </div>
-      </nav>
-
-      <main class="showcase-main">
-        <div v-if="currentGroup" class="showcase-banner">
-          <div>
-            <p class="showcase-banner__kicker">{{ tr('Section', 'Раздел') }}</p>
-            <h2 class="showcase-banner__title">{{ tr(currentGroup.title) }}</h2>
-          </div>
-          <TaoButton variant="secondary" tone="neutral" size="small" @click="showAll">{{ tr('All components', 'Все компоненты') }}</TaoButton>
-        </div>
-
-        <template v-for="group in navGroups" :key="group.id">
-          <component
-            v-for="item in group.items"
-            :key="item.id"
-            :is="demoById[item.id]"
-            v-show="sectionVisible(group.id, item.id)"
-          />
-        </template>
-      </main>
-    </div>
+    <!-- one book at a time: its pages are fetched when it is opened / одна книга за раз: её страницы грузятся, когда её открывают -->
+    <Suspense>
+      <BookView :key="book.id" :book="book" :focus="focus" />
+      <template #fallback>
+        <p class="showcase-book-lead">{{ tr('Loading…', 'Загрузка…') }}</p>
+      </template>
+    </Suspense>
 
     <footer class="showcase-footer">
       <p>Tao UI · MIT · 2026 · <a href="https://github.com/1337exp/taoui">GitHub</a> · <a href="https://www.npmjs.com/package/@1337exp/taoui">npm</a></p>

@@ -10,9 +10,9 @@ import darkCss from '../src/styles/themes/dark.css?raw';
 // @ts-expect-error Vite `?raw` import
 import lightCss from '../src/styles/themes/light.css?raw';
 // @ts-expect-error Vite `?raw` import
-import navSource from '../showcase/nav.js?raw';
+import navSource from '../showcase/books/guide.nav.js?raw';
 // @ts-expect-error Vite `?raw` import
-import sectionsSource from '../showcase/sections.js?raw';
+import sectionsSource from '../showcase/books/guide.sections.js?raw';
 import { MIN_STATUS_DISTANCE } from '../src/palette';
 
 // the section "Contrast and keyboard" reads these data modules: they may name only roles that exist, and promise only

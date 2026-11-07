@@ -1,6 +1,6 @@
 <script setup>
-import ShowcaseSection from './ShowcaseSection.vue'
-import Tr from './Tr.vue'
+import ShowcaseSection from '../components/ShowcaseSection.vue'
+import Tr from '../components/Tr.vue'
 import ContrastLive from '../a11y/ContrastLive.vue'
 import ContrastWhy from '../a11y/ContrastWhy.vue'
 import PaletteLab from '../a11y/PaletteLab.vue'

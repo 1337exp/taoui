@@ -1,6 +1,6 @@
 <script setup>
-import ShowcaseSection from './ShowcaseSection.vue'
-import Tr from './Tr.vue'
+import ShowcaseSection from '../components/ShowcaseSection.vue'
+import Tr from '../components/Tr.vue'
 import { tr } from '../i18n.js'
 
 defineOptions({ name: 'DemoBackgrounds' })

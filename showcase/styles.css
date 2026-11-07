@@ -364,11 +364,44 @@
   display: inline-flex;
 }
 
-/* at the top the bar says what it is, and the brand takes its place once it has stuck / вверху панель говорит, что она такое, а бренд занимает место, когда она прилипла */
-.showcase-bar__hint {
+/* the three books: a tab is the current one in the accent, as the menu links are / три книги: текущая вкладка акцентом, как ссылки меню */
+.showcase-books {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.showcase-books__tab {
+  padding: 4px 12px;
+  border-radius: var(--tao-radius-control);
   color: var(--tao-color-text-muted);
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
   white-space: nowrap;
+}
+
+.showcase-books__tab:hover {
+  background: var(--tao-color-surface-hover);
+  color: var(--tao-color-text);
+}
+
+.showcase-books__tab.active {
+  background: var(--tao-color-surface-sunken);
+  color: var(--tao-color-accent);
+}
+
+.showcase-books__tab:focus-visible {
+  outline: 2px solid var(--tao-color-accent);
+  outline-offset: 1px;
+}
+
+/* the rule of the open book, above its menu / правило открытой книги, над её меню */
+.showcase-book-lead {
+  margin: 0 0 20px;
+  max-width: 70ch;
+  color: var(--tao-color-text-muted);
+  font-size: 14px;
 }
 
 .showcase-bar__controls {
@@ -427,9 +460,5 @@
 @media (max-width: 860px) {
   .showcase-bar {
     position: static;
-  }
-
-  .showcase-bar__hint {
-    display: none;
   }
 }

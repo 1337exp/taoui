@@ -1,9 +1,9 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { TaoBlock, TaoButton, TaoCard, TaoSegmented, TaoSegmentedOption, confirm, toast } from '@1337exp/taoui'
-import ShowcaseSection from './ShowcaseSection.vue'
+import ShowcaseSection from '../components/ShowcaseSection.vue'
 import { tr } from '../i18n.js'
-import Tr from './Tr.vue'
+import Tr from '../components/Tr.vue'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoSurface' })

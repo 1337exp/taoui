@@ -21,14 +21,29 @@ otherwise the saved choice, then the browser language, then English.
 
 ## Layout
 
-- `App.vue` — shell: header, navigation, section list
-- `nav.js` — menu groups (titles and labels are `{ en, ru }`)
-- `sections.js` — which demo file goes where
+The showcase is three books under one shell. A page lives in exactly one of them; `tests/showcase.books.test.ts` keeps ids
+unique and every menu entry wired to a page.
+
+| Book | What goes in | Where the pages are |
+|---|---|---|
+| **Components** | one page per component: variants, states, props. A page about several components is a demo | `components/` |
+| **Demos** | complex scenes made of several components, on the public API only; each says what it proves | `demo/` |
+| **Guide** | what to use when and why: the foundations (layers, type, surfaces, language, contrast), recommendations and templates | `guide/` (the helper blocks of its pages stay in `layers/` and `a11y/`) |
+
+- `App.vue` — shell: header, settings bar with the book tabs, the open book. The address says the book (`#/guide`) or a section (`#button` opens the book that holds it)
+- `books/index.js` — the three books (title, rule, menu, lazy `load` of the pages)
+- `books/<book>.nav.js` — the menu groups of a book (titles and labels are `{ en, ru }`)
+- `books/<book>.sections.js` — which page file goes where; fetched only when the book is opened
+- `books/BookView.vue` — the menu, the search and the pages of one book
 - `i18n.js` — the showcase language: `lang`, `tr(en, ru)`
 - `propTables.js` — prop tables, Russian (the original); `propTables.en.js` — English overlay, same shape
 - `styles.css` — page chrome
-- `components/` — one section per library component (`DemoButton.vue`, ...), plus `Tr.vue`, `ShowcaseSection.vue`, `PropsTable.vue`
+- `components/` — one section per library component (`DemoButton.vue`, ...), plus the shared `Tr.vue`, `ShowcaseSection.vue`, `PropsTable.vue`
 - `demo/` — playgrounds that are *not* part of the npm package (`TypeaheadPlayground.vue` can be copied into a project)
+- `guide/` — the pages of the Guide (`DemoLayers.vue`, `DemoA11y.vue`, ...)
+
+A new page: put the file in its book's folder, add the menu entry to `books/<book>.nav.js` and the line to
+`books/<book>.sections.js` (the section `id` is the same in both, and in the address).
 
 ## Writing a section in two languages
 
