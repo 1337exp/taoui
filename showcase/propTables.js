@@ -135,6 +135,7 @@ export const propTables = {
         r('apply', 'boolean', 'true', 'Писать режим в <html>. Выключите, чтобы делать это самим из v-model (сохранить выбор, поменять класс)'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер кнопки'),
         r('variant', "'primary' | 'secondary' | 'ghost' | 'text'", "'ghost'", 'Вид кнопки'),
+        r('tone', "'accent' | 'neutral' | …", 'акцент', 'Цвет кнопки, как у TaoButton. neutral для тихого инструмента в панели'),
         r('toLightLabel', 'string', "'Включить светлую тему'", 'aria-label, пока тема тёмная (что сделает клик)'),
         r('toDarkLabel', 'string', "'Включить тёмную тему'", 'aria-label, пока тема светлая'),
       ],

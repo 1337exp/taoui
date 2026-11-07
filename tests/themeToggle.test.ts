@@ -89,4 +89,15 @@ describe('TaoThemeToggle', () => {
         const wrapper = mount(TaoThemeToggle, { props: { toLightLabel: 'Light please' } });
         expect(wrapper.attributes('aria-label')).toBe('Light please');
     });
+
+    it('5.32.0: tone goes to the button (neutral for a quiet tool), and is accent by default', () => {
+        const plain = mount(TaoThemeToggle);
+        expect(plain.find('button').classes().join(' ')).not.toContain('neutral');
+
+        const quiet = mount(TaoThemeToggle, { props: { tone: 'neutral' } });
+        expect(quiet.find('button').classes().join(' ')).toContain('neutral');
+
+        const custom = mount(TaoThemeToggle, { props: { tone: 'neutral' }, slots: { icon: '<b>x</b>' } });
+        expect(custom.find('button').classes().join(' ')).toContain('neutral');
+    });
 });

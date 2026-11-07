@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.32.0
+
+Nothing to migrate: a new optional prop, the default look is unchanged.
+
+- **`TaoThemeToggle` `tone`.** The toggle is a ghost button, and a ghost button without a tone is accent-coloured, so in a toolbar of quiet `ghost` + `neutral` tools the theme switch was the one amber thing. `tone` goes to the button as for `TaoButton` (`neutral` for a quiet tool); without it the look is as before.
+
 ## 5.31.0
 
 Nothing to migrate: `overflow` is off by default, and a toolbar without it works as before.

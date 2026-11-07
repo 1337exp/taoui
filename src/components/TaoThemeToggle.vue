@@ -4,6 +4,7 @@ import TaoButton from './TaoButton.vue';
 import { useLocaleText } from '../locale';
 import { applyTaoMode, readTaoMode, type TaoMode } from '../themeMode';
 import type { TaoSize } from '../size';
+import type { TaoToneName } from '../tone';
 
 defineOptions({ name: 'TaoThemeToggle' });
 
@@ -15,6 +16,8 @@ const props = withDefaults(
         apply?: boolean;
         size?: TaoSize;
         variant?: 'primary' | 'secondary' | 'ghost' | 'text';
+        /** The colour of the button, as for `TaoButton`. `neutral` for a quiet tool in a toolbar. / Цвет кнопки, как у `TaoButton`. `neutral` для тихого инструмента в панели. */
+        tone?: TaoToneName;
         /** aria-label while the page is dark (what a click does). / aria-label в тёмной теме (что сделает клик). */
         toLightLabel?: string;
         /** aria-label while the page is light. / aria-label в светлой теме. */
@@ -25,6 +28,7 @@ const props = withDefaults(
         apply: true,
         size: undefined,
         variant: 'ghost',
+        tone: undefined,
         toLightLabel: undefined,
         toDarkLabel: undefined,
     },
@@ -95,10 +99,10 @@ const label = computed(() => (mode.value === 'dark' ? l10n.value.toLightLabel : 
 </script>
 
 <template>
-    <TaoButton v-if="$slots.icon" class="tao-theme-toggle tao-theme-toggle--custom" :size="size" :variant="variant" :aria-label="label" @click="toggle">
+    <TaoButton v-if="$slots.icon" class="tao-theme-toggle tao-theme-toggle--custom" :size="size" :variant="variant" :tone="tone" :aria-label="label" @click="toggle">
         <slot name="icon" :mode="mode" :next="mode === 'dark' ? 'light' : 'dark'" />
     </TaoButton>
-    <TaoButton v-else class="tao-theme-toggle" :icon="icon" :size="size" :variant="variant" :aria-label="label" @click="toggle" />
+    <TaoButton v-else class="tao-theme-toggle" :icon="icon" :size="size" :variant="variant" :tone="tone" :aria-label="label" @click="toggle" />
 </template>
 
 <style>

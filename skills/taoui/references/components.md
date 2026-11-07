@@ -146,6 +146,7 @@ Showcase section: `#theme-toggle`
 | `apply` | `boolean` | true | Write the mode to <html>. Turn it off to do it yourself from v-model (save the choice, change a class) |
 | `size` | `'small' \| 'medium' \| 'large'` | from ancestors | Button size |
 | `variant` | `'primary' \| 'secondary' \| 'ghost' \| 'text'` | 'ghost' | Button look |
+| `tone` | `'accent' \| 'neutral' \| …` | accent | The colour of the button, as for TaoButton. neutral for a quiet tool in a toolbar |
 | `toLightLabel` | `string` | 'Switch to the light theme' | aria-label while the theme is dark (what a click does) |
 | `toDarkLabel` | `string` | 'Switch to the dark theme' | aria-label while the theme is light |
 
