@@ -176,7 +176,7 @@ onBeforeUnmount(() => {
     </header>
 
     <div ref="sentinelRef" class="showcase-bar-sentinel" aria-hidden="true"></div>
-    <div ref="barRef" class="showcase-bar tao-size-small" role="group" :aria-label="tr('Showcase settings', 'Настройки шоукейса')">
+    <div ref="barRef" class="showcase-bar" role="group" :aria-label="tr('Showcase settings', 'Настройки шоукейса')">
       <span class="showcase-bar__brand" :class="{ 'showcase-bar__brand--on': stuck }" aria-hidden="true">
         <img :src="logoSrc" alt="" width="22" height="22" />
         Tao UI
@@ -219,7 +219,7 @@ onBeforeUnmount(() => {
               <i v-if="viewChanged" class="showcase-bar__dot" :title="tr('Not the defaults', 'Не по умолчанию')" />
             </TaoButton>
           </template>
-          <div class="showcase-view tao-size-medium">
+          <div class="showcase-view">
             <template v-if="narrow">
               <div class="showcase-view__row">
                 <span class="showcase-view__label">{{ tr('Language', 'Язык') }}</span>

@@ -369,7 +369,11 @@
 }
 
 .showcase-books__tab {
-  padding: 4px 12px;
+  display: inline-flex;
+  align-items: center;
+  /* as tall as the controls beside it: from the size context, not a number / той же высоты, что контролы рядом: из контекста размера, не числом */
+  min-height: var(--tao-control-height);
+  padding: 0 12px;
   border-radius: var(--tao-radius-control);
   color: var(--tao-color-text-muted);
   font-size: 13px;
@@ -466,7 +470,7 @@
   }
 
   .showcase-books__tab {
-    padding: 4px 8px;
+    padding: 0 6px;
     font-size: 12px;
   }
 
