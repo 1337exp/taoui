@@ -1,11 +1,17 @@
 # Changelog
 
+## 5.30.2
+
+Nothing to migrate; the text of the skill only.
+
+- **The skill's `patterns.md`: small is for dense rows and power-user tools only.** A toolbar, an editor panel, a filter or settings bar, a popover or a menu stay medium: an editor people use all day, above all a client one, otherwise grows small buttons that are hard to hit. The toolbar pattern says to leave the size medium.
+
 ## 5.30.1
 
 Nothing to migrate.
 
 - **`TaoSegmented` keeps the width of its options in a flex row.** Beside a field that takes the room (`TaoSelect` is 100% wide) it was squeezed until its last option was cut off ("Li" instead of "List"). It no longer shrinks; a `block` one still fills its container.
-- **The skill's `patterns.md`: every "Don't" example says what is wrong in it, and the size guide narrows small to dense rows and power-user tools: a toolbar, an editor panel, a filter or settings bar, a popover or a menu stay medium (an editor people use all day, above all a client one, otherwise grows small buttons that are hard to hit).
+- **The skill's `patterns.md`: every "Don't" example says what is wrong in it.**
 
 ## 5.30.0
 
