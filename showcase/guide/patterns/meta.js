@@ -139,8 +139,8 @@ export const patterns = [
       ru: 'Полоса инструментов форматирования или правки: переключатели начертания, отмена и возврат, пара действий.',
     },
     rule: {
-      en: 'Every button is `variant="ghost" tone="neutral"`, an icon with an `aria-label`. A toggle is `v-model:pressed`. Group related tools with `TaoToolbarGroup` and split the groups with `TaoToolbarSeparator`. Leave the size medium: a small toolbar is hard to hit (see "Choosing a size").',
-      ru: 'Каждая кнопка — `variant="ghost" tone="neutral"`, иконка с `aria-label`. Переключатель — `v-model:pressed`. Связанные инструменты — в `TaoToolbarGroup`, группы разделяет `TaoToolbarSeparator`. Размер оставить medium: в мелкую панель трудно попасть (см. «Выбор размера»).',
+      en: 'Every button is `variant="ghost" tone="neutral"`, an icon with an `aria-label`. A toggle is `v-model:pressed`. Group related tools with `TaoToolbarGroup` and split the groups with `TaoToolbarSeparator`. Leave the size medium: a small toolbar is hard to hit (see "Choosing a size"). If it has to stay one row (a phone), add `overflow` to the toolbar instead of making the buttons smaller: the groups that do not fit go under «⋮», and `pinned` keeps a group (undo and redo) in sight.',
+      ru: 'Каждая кнопка — `variant="ghost" tone="neutral"`, иконка с `aria-label`. Переключатель — `v-model:pressed`. Связанные инструменты — в `TaoToolbarGroup`, группы разделяет `TaoToolbarSeparator`. Размер оставить medium: в мелкую панель трудно попасть (см. «Выбор размера»). Если панель должна остаться в одну строку (телефон), включить `overflow` у панели, а не уменьшать кнопки: группы, которые не влезли, уходят под «⋮», а `pinned` оставляет группу (отмену и возврат) на виду.',
     },
     wrong: {
       en: 'No `tone`: every tool is amber.',

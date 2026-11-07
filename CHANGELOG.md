@@ -1,5 +1,14 @@
 # Changelog
 
+## 5.31.0
+
+Nothing to migrate: `overflow` is off by default, and a toolbar without it works as before.
+
+- **`TaoToolbar` `overflow`: one row, the rest under «⋮».** The bar no longer wraps onto a second line (the height jumped, a phone lost half the screen). The `TaoToolbarGroup`s that do not fit go, the last one first, each with the separator before it, under a «⋮» button that shows only when something is hidden and opens them in a panel. They are the same elements as in the bar, teleported, not copies: a toggle keeps its state, `pressed`, `disabled`, `title`, `shortcut` and events work as they did. A group with `pinned` never goes; loose items (a `TaoSegmented`, a lone button) stay too. Only whole groups go, and only in a horizontal bar. The bar is measured before the first paint and follows the width (`ResizeObserver`), the set of groups and the size; the width of a group that went is remembered from when it was in the row. Without `window` (SSR) every group is drawn as it is.
+- **Keys and focus.** `role="toolbar"` stays; the arrows, Home and End walk the visible buttons and «⋮» (a folded group is not a stop). «⋮» is a button with `aria-label` (`overflowLabel`, the locale says «More» / «Ещё»), `aria-haspopup="dialog"` and `aria-expanded`; Enter / Space opens the panel, the first button gets the focus, Escape closes it and gives the focus back to «⋮». A press outside closes it, except on a panel above it (a list opened by a button inside it) and on what carries `data-tao-keep-open`. If the button that had the focus goes under «⋮» as the bar narrows, the focus moves to «⋮» instead of vanishing.
+- **A list that hangs from a button of a folded group.** The button is the same element in the bar and in the panel, so what hangs from it (`TaoPopover`, your own list) is anchored to what the person sees. For opening a list from the keyboard shortcut of a button that is folded, `toolbar.reveal(el)` (through a ref) opens the panel if needed and returns the same element.
+- **`TaoToolbar` with `overflow` fills the width it is given** (`width: 100%`), not `fit-content`: that width is what it measures, and a bar that shrank with the folded groups would never unfold them.
+
 ## 5.30.2
 
 Nothing to migrate; the text of the skill only.

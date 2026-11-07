@@ -44,7 +44,7 @@ Density is added on top of the size (the height and the padding, not the font), 
 
 **When.** A bar of formatting or editing tools: text style toggles, undo and redo, a few actions.
 
-**Rule.** Every button is `variant="ghost" tone="neutral"`, an icon with an `aria-label`. A toggle is `v-model:pressed`. Group related tools with `TaoToolbarGroup` and split the groups with `TaoToolbarSeparator`. Leave the size medium: a small toolbar is hard to hit (see "Choosing a size").
+**Rule.** Every button is `variant="ghost" tone="neutral"`, an icon with an `aria-label`. A toggle is `v-model:pressed`. Group related tools with `TaoToolbarGroup` and split the groups with `TaoToolbarSeparator`. Leave the size medium: a small toolbar is hard to hit (see "Choosing a size"). If it has to stay one row (a phone), add `overflow` to the toolbar instead of making the buttons smaller: the groups that do not fit go under «⋮», and `pinned` keeps a group (undo and redo) in sight.
 
 **Do:**
 

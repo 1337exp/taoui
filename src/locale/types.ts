@@ -110,6 +110,7 @@ export interface TaoLocale {
     inputNumber: { incrementLabel: string; decrementLabel: string };
     list: { emptyText: string };
     modal: { closeLabel: string };
+    toolbar: { overflowLabel: string };
     pagination: {
         ariaLabel: string;
         prevLabel: string;

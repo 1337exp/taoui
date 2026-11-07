@@ -9,7 +9,80 @@ import type { InjectionKey, Ref } from 'vue';
 
 export type TaoToolbarOrientation = 'horizontal' | 'vertical';
 
-export const toolbarKey: InjectionKey<{ orientation: Ref<TaoToolbarOrientation> }> = Symbol('tao-toolbar');
+/**
+ * A part of the toolbar that the overflow mode can move: a group, or a separator (it goes with the group after it).
+ * Часть панели, которую режим overflow умеет переносить: группа или разделитель (уходит вместе с группой после него).
+ */
+export interface ToolbarUnit {
+    kind: 'group' | 'separator';
+    /** The element in the row: for a group the host (its first child is the group itself). / Элемент в строке. */
+    el: Ref<HTMLElement | null>;
+    pinned: Ref<boolean>;
+    /** Set by the toolbar: the unit lives in the «⋮» menu. / Ставит панель: часть живёт в меню «⋮». */
+    away: Ref<boolean>;
+    /** Set by the toolbar: the place among the hidden groups, and whether it is the first of them. / Ставит панель. */
+    order: Ref<number>;
+    first: Ref<boolean>;
+    /** The last width seen in the row (a hidden group keeps it). / Последняя ширина в строке (скрытая группа её помнит). */
+    width: number;
+}
+
+export interface ToolbarContext {
+    orientation: Ref<TaoToolbarOrientation>;
+    /** The overflow mode is on and works: groups register and may leave. / Режим overflow включён и работает. */
+    overflow: Ref<boolean>;
+    /** Where the hidden groups are drawn while the menu is open; null while it is closed. / Куда рисуются скрытые группы, пока меню открыто. */
+    menuEl: Ref<HTMLElement | null>;
+    register: (unit: ToolbarUnit) => () => void;
+}
+
+export const toolbarKey: InjectionKey<ToolbarContext> = Symbol('tao-toolbar');
+
+/** One thing in the row, as the overflow plan sees it. / Одна вещь в строке, как её видит план переполнения. */
+export interface OverflowEntry {
+    kind: 'group' | 'separator' | 'loose';
+    width: number;
+    pinned?: boolean;
+}
+
+/**
+ * Which entries leave the row. If everything fits, none. Otherwise the groups that are not pinned go from the last one to the
+ * first, each with the separator before it, until what is left plus the «⋮» button fits. Loose items (a segmented control, a
+ * lone button) and pinned groups never go. Returns the indexes of the entries that leave.
+ * Какие части уходят из строки. Если всё влезает — никакие. Иначе незакреплённые группы уходят с последней к первой, каждая
+ * вместе с разделителем перед ней, пока остаток вместе с кнопкой «⋮» не влезет. Одиночные элементы и закреплённые группы не уходят.
+ */
+export function planOverflow(entries: OverflowEntry[], available: number, gap: number, moreWidth: number): Set<number> {
+    const away = new Set<number>();
+    const widthOf = (hidden: Set<number>) => {
+        let count = 0;
+        let sum = 0;
+        entries.forEach((entry, i) => {
+            if (!hidden.has(i)) {
+                count += 1;
+                sum += entry.width;
+            }
+        });
+        return sum + gap * Math.max(0, count - 1) + (hidden.size ? gap + moreWidth : 0);
+    };
+    if (widthOf(away) <= available) {
+        return away;
+    }
+    for (let i = entries.length - 1; i >= 0; i -= 1) {
+        const entry = entries[i];
+        if (entry.kind !== 'group' || entry.pinned) {
+            continue;
+        }
+        away.add(i);
+        if (entries[i - 1]?.kind === 'separator') {
+            away.add(i - 1);
+        }
+        if (widthOf(away) <= available) {
+            break;
+        }
+    }
+    return away;
+}
 
 const ITEMS = 'button, a[href], input, select, textarea, [role="button"], [data-tao-toolbar-item]';
 
@@ -26,7 +99,9 @@ export interface ToolbarStop {
 }
 
 function usable(el: HTMLElement): boolean {
-    if ((el as HTMLButtonElement).disabled || el.getAttribute('aria-disabled') === 'true' || el.hidden) {
+    // a group that went to the «⋮» menu sits hidden in the row while the menu is closed: not a stop
+    // группа, ушедшая в меню «⋮», пока оно закрыто, лежит скрытой в строке: не остановка
+    if ((el as HTMLButtonElement).disabled || el.getAttribute('aria-disabled') === 'true' || el.closest('[hidden], [data-tao-away]')) {
         return false;
     }
     // an element inside an inner widget's own stop (a button inside a link, a nested item) is that widget's business

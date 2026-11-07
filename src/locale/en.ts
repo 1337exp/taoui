@@ -70,6 +70,7 @@ export const localeEn: TaoLocale = {
     inputNumber: { incrementLabel: 'Increase', decrementLabel: 'Decrease' },
     list: { emptyText: 'Nothing here' },
     modal: { closeLabel: 'Close' },
+    toolbar: { overflowLabel: 'More' },
     pagination: {
         ariaLabel: 'Pagination',
         prevLabel: 'Previous',

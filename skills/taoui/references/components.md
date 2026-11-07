@@ -1035,8 +1035,10 @@ Showcase section: `#toolbar`
 | `orientation` | `'horizontal' \| 'vertical'` | 'horizontal' | Which arrows walk it (← → or ↑ ↓); the separators lie across |
 | `variant` | `'panel' \| 'plain'` | 'panel' | panel — a raised bar of its own with concentric corners; plain — only the layout, for a toolbar inside a header |
 | `bordered` | `boolean` | by context | The frame of a panel. Not set, it follows the frames context; false: no frame, the raised fill stays |
+| `overflow` | `boolean` | false | One row, never wrapped: the groups that do not fit go, the last one first, under a «⋮» button that opens them in a panel. Horizontal bars only. Off: the items wrap onto a new line |
+| `overflowLabel` | `string` | from the locale | Name of the «⋮» button for a screen reader (default «More») |
 
-**Slots, events, notes.** default — any controls: TaoButton (toggles with v-model:pressed), TaoSegmented, a select, TaoToolbarGroup, TaoToolbarSeparator. Keys: the bar is one Tab stop and remembers the last item; ← → (↑ ↓ when vertical) walk it and wrap, Home / End go to the ends, disabled items are skipped. Inside a radio group (TaoSegmented) the arrows pick the option and go on from its edge; a text field keeps its arrows. The items wrap onto a new line on a narrow screen.
+**Slots, events, notes.** default — any controls: TaoButton (toggles with v-model:pressed), TaoSegmented, a select, TaoToolbarGroup, TaoToolbarSeparator. Keys: the bar is one Tab stop and remembers the last item; ← → (↑ ↓ when vertical) walk it and wrap, Home / End go to the ends, disabled items are skipped. Inside a radio group (TaoSegmented) the arrows pick the option and go on from its edge; a text field keeps its arrows. Without overflow the items wrap onto a new line on a narrow screen. With overflow only whole TaoToolbarGroup go (the separator before a group goes with it); loose items and groups with pinned stay. A group that went keeps the width it had in the row, and is measured again only when it is back in it. The method reveal(el) (through a ref) makes an element visible: if it is in a group that went, it opens the menu and returns the same element, so a list can be anchored to it. A press on an element with data-tao-keep-open does not close the menu (for your own panels, not TaoUI ones).
 
 ## TaoToolbarGroup
 
@@ -1046,8 +1048,9 @@ Showcase section: `#toolbar`
 |---|---|---|---|
 | `label` | `string` | — | Accessible name of the group: Text style, Alignment |
 | `inset` | `boolean` | false | A sunken pill behind the group: its buttons read as one set |
+| `pinned` | `boolean` | false | In a bar with overflow: the group never goes under «⋮» (undo and redo, the main action) |
 
-**Slots, events, notes.** default — the tools of one kind. role="group".
+**Slots, events, notes.** default — the tools of one kind. role="group". In a bar with overflow the attributes (class, style, data-*) land on the group itself, not on its host.
 
 ## TaoToolbarSeparator
 

@@ -104,7 +104,8 @@ choose a text colour, WCAG 2 to promise a number.
   `{ type: 'checkbox' | 'radio', checked }`, `{ type: 'label' | 'separator' }`. `@select="id => …"`. `closeOnScroll`.
   With TaoUX, `createCommands().toMenu(layout)` builds this tree and binds the same shortcuts.
 - `TaoToolbar` (one tab stop, arrows walk it) with `TaoToolbarGroup` and `TaoToolbarSeparator`; toggles are
-  `TaoButton v-model:pressed`, a one-of-many choice inside it is `TaoSegmented`.
+  `TaoButton v-model:pressed`, a one-of-many choice inside it is `TaoSegmented`. A bar that must stay one row (an editor, a phone)
+  is `<TaoToolbar overflow>`: the groups that do not fit go under a «⋮» button, a `TaoToolbarGroup pinned` never does.
 - `toast().success().message('Saved')`, `toast().danger().title('Network').timeout(5000).message('…')`,
   `.action('Undo', fn)`. `await confirm().title('Delete?').message('…').danger()` resolves to a boolean.
   Their hosts `TaoToastViewport` / `TaoConfirmHost` mount themselves on the first call; place them yourself only to control

@@ -71,6 +71,7 @@ export const localeRu: TaoLocale = {
     inputNumber: { incrementLabel: 'Увеличить', decrementLabel: 'Уменьшить' },
     list: { emptyText: 'Ничего нет' },
     modal: { closeLabel: 'Закрыть' },
+    toolbar: { overflowLabel: 'Ещё' },
     pagination: {
         ariaLabel: 'Пагинация',
         prevLabel: 'Назад',
