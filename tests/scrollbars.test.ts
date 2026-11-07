@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 // @ts-expect-error Vite `?raw` import: the stylesheet as text
 import baseCss from '../src/styles/base.css?raw';
 // @ts-expect-error Vite `?raw` import
-import layersSource from '../showcase/components/DemoLayers.vue?raw';
+import layersSource from '../showcase/guide/DemoLayers.vue?raw';
 
 // 5.27.0: the scrollbars of the kit have four hooks and a class; the defaults are what they always were (5px, the accent).
 // 5.27.0: у полос прокрутки набора четыре крючка и класс; значения по умолчанию прежние (5px, акцент).

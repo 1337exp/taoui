@@ -11,11 +11,6 @@ export const navGroups = [
       { id: 'tour', label: 'TaoTour', aliases: ['tour', 'onboarding', 'coach', 'coachmark', 'spotlight', 'guide', 'walkthrough', 'тур', 'обучение', 'подсказки', 'гайд'] },
       { id: 'theme-toggle', label: 'TaoThemeToggle', aliases: ['theme', 'dark', 'light', 'mode', 'switch', 'тема', 'тёмная', 'светлая', 'режим', 'переключатель'] },
       { id: 'marquee', label: 'TaoMarquee', aliases: ['marquee', 'ticker', 'running line', 'бегущая строка'] },
-      { id: 'surface', label: { en: 'Surfaces', ru: 'Поверхности' }, aliases: ['glass', 'grain', 'lit', 'surface'] },
-      { id: 'layers', label: { en: 'Layers & theming', ru: 'Слои и темизация' }, aliases: ['layers', 'theme', 'theming', 'tokens', 'primitives', 'semantic', 'contexts', 'data-tao-theme', 'слои', 'тема', 'темизация', 'токены'] },
-      { id: 'backgrounds', label: { en: 'Backgrounds', ru: 'Фоны' }, aliases: ['background', 'gradient', 'noise', 'atmosphere', 'glow', 'фон', 'градиент', 'шум'] },
-      { id: 'typography', label: { en: 'Typography', ru: 'Типографика' }, aliases: ['prose', 'heading', 'tao-prose', 'заголовки', 'текст'] },
-      { id: 'locale', label: { en: 'Localization', ru: 'Локализация' }, aliases: ['locale', 'language', 'i18n', 'translation', 'setTaoLocale', 'provideTaoLocale', 'localeRu', 'localeEn', 'язык', 'перевод', 'локаль', 'интернационализация'] },
     ],
   },
   {
@@ -31,7 +26,6 @@ export const navGroups = [
       { id: 'select', label: 'Select / Switch / Radio', aliases: ['TaoSelect', 'TaoSwitch', 'TaoRadio', 'TaoFormField', 'FormField'] },
       { id: 'segmented', label: 'TaoSegmented', aliases: ['TaoSegmentedOption', 'Segmented'] },
       { id: 'combobox', label: 'TaoCombobox' },
-      { id: 'typeahead', label: 'Typeahead (demo)', aliases: ['autocomplete', 'remote', 'поиск'] },
       { id: 'date', label: 'TaoDate / Range', aliases: ['TaoDate', 'TaoDateRange', 'DateRange'] },
       { id: 'pincode', label: 'TaoPinCode' },
       { id: 'color', label: 'TaoColorPicker / Input', aliases: ['TaoColorPicker', 'TaoColorInput', 'colorModel', 'палитра', 'цвет'] },
@@ -112,13 +106,6 @@ export const navGroups = [
       { id: 'image', label: 'TaoImage' },
       { id: 'avatar', label: 'TaoAvatar' },
       { id: 'icon', label: 'TaoIcon' },
-    ],
-  },
-  {
-    id: 'a11y',
-    title: { en: 'Accessibility', ru: 'Доступность' },
-    items: [
-      { id: 'a11y', label: { en: 'Contrast & keyboard', ru: 'Контраст и клавиатура' }, aliases: ['contrast', 'wcag', 'apca', 'keyboard', 'keys', 'focus', 'palette', 'applyTaoPalette', 'contrastRatio', 'apcaContrast', 'a11y', 'accessibility', 'контраст', 'клавиатура', 'клавиши', 'доступность', 'палитра'] },
     ],
   },
 ]

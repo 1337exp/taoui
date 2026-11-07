@@ -1,10 +1,10 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { detectTaoLanguage, formatTaoText, localeEn, localeRu, matchTaoLanguage, TaoCopy, TaoInput, TaoInputNumber } from '@1337exp/taoui'
-import ShowcaseSection from './ShowcaseSection.vue'
+import ShowcaseSection from '../components/ShowcaseSection.vue'
 import LocaleBox from './LocaleBox.vue'
 import LocaleSpecimen from './LocaleSpecimen.vue'
-import Tr from './Tr.vue'
+import Tr from '../components/Tr.vue'
 import { tr } from '../i18n.js'
 
 defineOptions({ name: 'DemoLocale' })

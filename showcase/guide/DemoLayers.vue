@@ -1,6 +1,6 @@
 <script setup>
-import ShowcaseSection from './ShowcaseSection.vue'
-import Tr from './Tr.vue'
+import ShowcaseSection from '../components/ShowcaseSection.vue'
+import Tr from '../components/Tr.vue'
 import LayerStack from '../layers/LayerStack.vue'
 import OwnTheme from '../layers/OwnTheme.vue'
 import Scrollbars from '../layers/Scrollbars.vue'

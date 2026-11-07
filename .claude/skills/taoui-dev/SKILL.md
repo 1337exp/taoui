@@ -54,7 +54,8 @@ npm run smoke                      # the packed tarball in a fresh Vite app
 - **Prop tables:** change `showcase/propTables.js` (Russian, the source) first, then mirror it in `propTables.en.js`
   (same names, types, defaults); `tests/showcase.propTables.test.ts` holds them in step. Then `npm run skill`.
 - **A new component:** register it in `src/index.ts` (import, the `components` list, the named export), add its props to
-  `tests/ssr.test.ts`, a demo in `showcase/sections.js` + `showcase/nav.js` (with aliases, EN and RU), prop tables, a
+  `tests/ssr.test.ts`, a page in `showcase/books/components.sections.js` + `components.nav.js` (with aliases, EN and RU;
+  the showcase has three books, Components / Demos / Guide, see `showcase/README.md`), prop tables, a
   line in both READMEs, `skills/taoui/SKILL.md` names it (the skill test fails otherwise).
 - **A field is a wrapper around its control:** attributes given to it (`aria-label`, `name`, `autocomplete`, listeners)
   must reach the control, `class` / `style` the wrapper. Use `useControlAttrs()` (`src/controlAttrs.ts`) with

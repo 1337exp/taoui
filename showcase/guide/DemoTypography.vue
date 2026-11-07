@@ -1,8 +1,8 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { TaoSegmented, TaoSegmentedOption } from '@1337exp/taoui'
-import ShowcaseSection from './ShowcaseSection.vue'
-import Tr from './Tr.vue'
+import ShowcaseSection from '../components/ShowcaseSection.vue'
+import Tr from '../components/Tr.vue'
 import { tr } from '../i18n.js'
 import { propTables } from '../propTables.js'
 
