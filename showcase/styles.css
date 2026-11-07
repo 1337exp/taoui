@@ -153,7 +153,12 @@
 .showcase-nav--sheet {
   position: static;
   max-height: none;
-  padding: 0;
+  /* the wide column scrolls itself (overflow: auto) and clips what sticks out of it, so the 2px focus ring of the search was cut
+     at the edges (the "cut corners"); in the sheet the sheet scrolls, not this
+     широкая колонка прокручивается сама (overflow: auto) и обрезает всё, что выступает, поэтому 2px кольцо фокуса поиска
+     обрезалось по краям («срезанные углы»); в листе прокручивается лист, а не это */
+  overflow: visible;
+  padding: 4px;
   border: 0;
   background: transparent;
 }
