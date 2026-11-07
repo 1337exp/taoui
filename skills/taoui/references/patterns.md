@@ -60,7 +60,7 @@ Density is added on top of the size (the height and the padding, not the font), 
 </TaoToolbar>
 ```
 
-**Don't:**
+**Don't** (No `tone`: every tool is amber):
 
 ```vue
 <TaoToolbar label="Formatting">
@@ -91,7 +91,7 @@ Density is added on top of the size (the height and the padding, not the font), 
 </TaoFlex>
 ```
 
-**Don't:**
+**Don't** (Two filled accent buttons: Cancel looks as important as Save):
 
 ```vue
 <TaoFlex justify="flex-end" :gap="8">
@@ -121,7 +121,7 @@ Density is added on top of the size (the height and the padding, not the font), 
 </TaoFlex>
 ```
 
-**Don't:**
+**Don't** (On purpose: `size="small"` on the switch only, so it is shorter than the select and the button beside it):
 
 ```vue
 <TaoFlex align="center" :gap="8">
@@ -151,7 +151,7 @@ Density is added on top of the size (the height and the padding, not the font), 
 </TaoFlex>
 ```
 
-**Don't:**
+**Don't** (Red on the safe button, the accent on the one that deletes):
 
 ```vue
 <TaoFlex justify="flex-end" :gap="8">

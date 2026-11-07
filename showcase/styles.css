@@ -425,6 +425,13 @@
   min-width: 0;
 }
 
+/* a medium bar is wider: below 1100px the swatches (decoration, the select already names the palette) go, so the controls stay in one row */
+@media (max-width: 1100px) {
+  .showcase-bar .palette-swatches {
+    display: none;
+  }
+}
+
 /* the dot on the View button: one of the rare options is off the default / точка на кнопке «Вид»: одна из редких опций не по умолчанию */
 .showcase-bar__dot {
   display: inline-block;

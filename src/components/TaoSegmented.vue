@@ -170,9 +170,15 @@ onBeforeUnmount(() => {
     border: none;
     min-width: 0;
     vertical-align: top;
+    /* a switch keeps the width of its options: beside a field that takes the room (a select is 100% wide) in a flex row it must
+       not be squeezed until the last option is cut off. A `block` one fills its container instead (below).
+       переключатель держит ширину своих вариантов: рядом с полем, берущим всё место (select — 100%), в flex-ряду его нельзя
+       сжимать, пока последний вариант не обрежется. `block` заполняет контейнер (ниже). */
+    flex: 0 0 auto;
 }
 
 .tao-segmented--block {
+    flex: 1 1 auto;
     display: flex;
     width: 100%;
     align-items: stretch;
