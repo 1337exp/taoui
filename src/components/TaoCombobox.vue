@@ -95,8 +95,16 @@ const selected = computed((): TaoSelectOption | null => {
 
 const needle = computed(() => query.value.trim().toLowerCase());
 
+/**
+ * The user has typed since the list opened. Until then the field shows the picked label, and filtering by it would reduce
+ * the list to that one option; so the whole list is shown.
+ * Пользователь печатал с тех пор, как список открылся. До этого в поле подпись выбранного, и фильтр по ней оставил бы в
+ * списке один пункт; поэтому показывается весь список.
+ */
+const typed = ref(false);
+
 const filtered = computed(() => {
-    if (!needle.value) {
+    if (!needle.value || !typed.value) {
         return props.options;
     }
     return props.options.filter((option) => option.label.toLowerCase().includes(needle.value));
@@ -145,6 +153,10 @@ function resetActive() {
     }
     activeIndex.value = enabledIndexes.value[0] ?? -1;
 }
+
+watch(open, (isOpen) => {
+    if (!isOpen) typed.value = false;
+});
 
 async function setOpen(next: boolean) {
     if (props.disabled) {
@@ -304,6 +316,7 @@ function onInput() {
         return;
     }
 
+    typed.value = true;
     void setOpen(true);
     resetActive();
 }

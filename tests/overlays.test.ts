@@ -153,6 +153,14 @@ describe('TaoCombobox', () => {
         expect(w.emitted('update:modelValue')?.slice(-1)[0]).toEqual(['c']);
     });
 
+    it('a list opened over a picked value shows every option, not only the picked one', async () => {
+        const w = mountOverlay(TaoCombobox, { props: { options, modelValue: 'c' } });
+        const input = w.find('input');
+        await input.trigger('focus');
+        await key(input.element, 'ArrowDown');
+        expect($$('[role="option"]')).toHaveLength(options.length);
+    });
+
     it('Escape closes the list', async () => {
         const w = mountOverlay(TaoCombobox, { props: { options } });
         const input = w.find('input');

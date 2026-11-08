@@ -4,6 +4,7 @@
 
 Nothing to migrate: a new optional prop, the default look is unchanged.
 
+- **`TaoCombobox` shows the whole list when it opens over a picked value.** The field holds the picked label, and the list was filtered by it, so a list of sizes opened on «Auto» showed only «Auto». Now the list is filtered only after the user types; opening, the arrows and the picked value show every option.
 - **`TaoThemeToggle` `tone`.** The toggle is a ghost button, and a ghost button without a tone is accent-coloured, so in a toolbar of quiet `ghost` + `neutral` tools the theme switch was the one amber thing. `tone` goes to the button as for `TaoButton` (`neutral` for a quiet tool); without it the look is as before.
 
 ## 5.31.0
