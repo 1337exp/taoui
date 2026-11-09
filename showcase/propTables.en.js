@@ -363,7 +363,7 @@ export const propTablesEn = {
       title: 'FontSizeField',
       rows: [
         r('v-model', "'auto' | number", "'auto'", 'The size: Auto or a number. An emptied field is Auto'),
-        r('sizes', 'number[]', '[4, 8, 10, 12, 14, 18, 24, 32, 48, 64]', 'The sizes of the list and of the ring of the arrows; Auto always comes first'),
+        r('sizes', 'number[]', '[4, 8, 10, 12, 14, 18, 24, 32, 48, 64]', 'The sizes of the pop-up and of the ring of the arrows; Auto always comes first'),
         r('label', 'string', "'Font size'", 'aria-label of the field'),
       ],
       slots: 'Not part of the npm package, lives in showcase/demo. The arrows: «up» is the next size (from the last one to Auto), «down» is the previous one (from Auto to the last one). A number typed by hand (1–999) is kept, the arrows then go to the nearest size.',
