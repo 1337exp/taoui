@@ -9,18 +9,20 @@ defineOptions({ name: 'FontSizeField' })
  * Not part of the library: a font size field of three parts, a compact TaoInput, a block of two arrows and a small
  * pop-up with the sizes (not a dropdown: it is narrow, centred under the input, and the input keeps the focus, so typing
  * and the arrows work while it is open). The value is `'auto'` or a number. The arrows walk a line: 4, 8 … 64, Auto.
- * «Up» goes to the next one (from 64 to Auto, where it ends), «down» to the previous one (from Auto to 64, and it stops at 4). A number typed by
+ * «Up» goes to the next one (from 64 to Auto, where it ends), «down» to the previous one (from Auto to 64, and it stops at 4). With `loop` the line is a ring: «up» from Auto is 4, «down» from 4 is Auto. A number typed by
  * hand (1 to 999, Enter or leaving the field) is kept; the arrows then go to the nearest size.
  * Не часть библиотеки: поле размера шрифта из трёх деталей — компактный TaoInput, блок из двух стрелок и маленькое
  * всплывающее окно с размерами (не выпадающий список: оно узкое, по центру под полем, а фокус остаётся в поле, поэтому
  * ввод и стрелки работают при открытом окне). Значение — `'auto'` или число. Стрелки ходят по линии: 4, 8 … 64, Auto.
- * «Вверх» — к следующему (с 64 на Auto, где она кончается), «вниз» — к предыдущему (с Auto на 64, а на 4 останавливается). Число, набранное руками (от 1 до
+ * «Вверх» — к следующему (с 64 на Auto, где она кончается), «вниз» — к предыдущему (с Auto на 64, а на 4 останавливается). С `loop` линия — кольцо: «вверх» с Auto даёт 4, «вниз» с 4 — Auto. Число, набранное руками (от 1 до
  * 999, Enter или уход из поля), сохраняется; стрелки тогда идут к ближайшему размеру.
  */
 const model = defineModel({ default: 'auto' })
 const props = defineProps({
   sizes: { type: Array, default: () => [4, 8, 10, 12, 14, 18, 24, 32, 48, 64] },
   label: { type: String, default: '' },
+  // the arrows go round: Auto and then 4 again, 4 and then Auto / стрелки идут по кругу: после Auto снова 4, после 4 — Auto
+  loop: { type: Boolean, default: false },
 })
 
 const autoLabel = computed(() => tr('Auto', 'Авто'))
@@ -108,12 +110,13 @@ function step(direction) {
   const line = [...props.sizes, 'auto']
   const at = line.indexOf(model.value)
   if (at >= 0) {
-    model.value = line[Math.min(Math.max(at + direction, 0), line.length - 1)]
+    const to = at + direction
+    model.value = props.loop ? line[(to + line.length) % line.length] : line[Math.min(Math.max(to, 0), line.length - 1)]
   } else {
     // a size that is not in the list: the nearest one on that side (Auto above the biggest, nothing below the smallest)
     // размера нет в списке: ближайший с этой стороны (Auto над самым большим, ниже самого малого — ничего)
     const near = direction > 0 ? props.sizes.find((size) => size > model.value) : [...props.sizes].reverse().find((size) => size < model.value)
-    model.value = near ?? (direction > 0 ? 'auto' : model.value)
+    model.value = near ?? (direction > 0 || props.loop ? 'auto' : model.value)
   }
   text.value = labelOf(model.value)
 }
