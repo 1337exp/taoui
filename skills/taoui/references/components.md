@@ -147,7 +147,7 @@ Showcase section: `#theme-toggle`
 | `system` | `boolean` | false | A third state, "system": the page follows the operating system (prefers-color-scheme, live). The click goes system → light → dark; the icon is the state the toggle is in (a monitor for the system) |
 | `size` | `'small' \| 'medium' \| 'large'` | from ancestors | Button size |
 | `variant` | `'primary' \| 'secondary' \| 'ghost' \| 'text'` | 'ghost' | Button look |
-| `tone` | `'accent' \| 'neutral' \| …` | accent | The colour of the button, as for TaoButton. neutral for a quiet tool in a toolbar |
+| `tone` | `'accent' \| 'neutral' \| …` | 'neutral' | The colour of the button, as for TaoButton. neutral by default: a switch is a quiet tool, the accent is not for it |
 | `toLightLabel` | `string` | 'Switch to the light theme' | aria-label while a click leads to the light theme |
 | `toDarkLabel` | `string` | 'Switch to the dark theme' | aria-label while a click leads to the dark theme |
 | `toSystemLabel` | `string` | 'Switch to the system theme' | aria-label while a click leads to the system theme (system) |
