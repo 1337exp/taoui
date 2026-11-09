@@ -81,7 +81,6 @@ function onKeydown(event: KeyboardEvent) {
                     :aria-describedby="currentConfirm.message ? 'tao-confirm-message' : undefined"
                     tabindex="-1"
                 >
-                    <span class="tao-confirm__accent" aria-hidden="true"></span>
 
                     <span class="tao-confirm__icon" aria-hidden="true">
                         <TaoIcon :name="currentConfirm.danger ? 'tao-x-circle' : 'tao-info'" :size="22" />
@@ -165,13 +164,6 @@ function onKeydown(event: KeyboardEvent) {
     --tao-surface-fill: color-mix(in srgb, var(--tao-confirm-tone) 10%, var(--tao-glass-fill));
     border-color: var(--tao-glass-border);
     box-shadow: var(--tao-shadow-overlay);
-}
-
-.tao-confirm__accent {
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 3px;
-    background: var(--tao-confirm-tone);
 }
 
 .tao-confirm__icon {
