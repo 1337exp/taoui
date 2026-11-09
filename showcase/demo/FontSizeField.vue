@@ -39,8 +39,6 @@ watch([model, autoLabel], () => {
   text.value = labelOf(model.value)
 })
 
-const remToPx = (rem) => rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
-
 function place() {
   const field = fieldRef.value
   const panel = panelRef.value
@@ -53,9 +51,9 @@ function place() {
   const natural = panel.scrollHeight + 2
   const up = spaceBelow < natural && spaceAbove > spaceBelow
   const room = up ? spaceAbove : spaceBelow
-  const height = Math.min(natural, room, remToPx(22))
+  const height = Math.min(natural, room)
   const left = Math.min(Math.max(8, rect.left + rect.width / 2 - panel.offsetWidth / 2), window.innerWidth - panel.offsetWidth - 8)
-  panelStyle.value = { top: `${up ? rect.top - gap - height : rect.bottom + gap}px`, left: `${left}px`, maxHeight: `${Math.max(120, Math.min(room, remToPx(22)))}px` }
+  panelStyle.value = { top: `${up ? rect.top - gap - height : rect.bottom + gap}px`, left: `${left}px`, maxHeight: `${Math.max(120, room)}px` }
 }
 
 async function openPanel() {
@@ -153,6 +151,7 @@ function onBlur() {
       <TaoInput
         v-model="text"
         class="font-size-field__input"
+        variant="filled"
         inputmode="numeric"
         autocomplete="off"
         role="combobox"
@@ -189,7 +188,6 @@ function onBlur() {
 .font-size-field {
   display: inline-flex;
   align-items: center;
-  gap: var(--tao-space-1);
 }
 
 .font-size-field__input {
@@ -200,9 +198,21 @@ function onBlur() {
   text-align: center;
 }
 
+/* the input and the block of arrows read as one piece: the same fill, no frame until the field is edited (the filled
+   variant shows its frame on focus), and the joint is square. The shell class is the kit's own; this is a demo
+   поле и блок стрелок читаются как одно целое: та же заливка, рамка только пока поле правят (вариант filled показывает её
+   в фокусе), стык прямой. Класс оболочки — внутренний; это демо */
+.font-size-field__input :deep(.tao-input-shell) {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
 .font-size-field__steps {
   display: grid;
   height: var(--tao-control-height);
+  background: color-mix(in srgb, var(--tao-color-text) 7%, transparent);
+  border-start-end-radius: var(--tao-radius-control);
+  border-end-end-radius: var(--tao-radius-control);
 }
 
 .font-size-field__step {
@@ -211,7 +221,7 @@ function onBlur() {
   width: calc(var(--tao-control-height) * 0.6);
   padding: 0;
   border: 0;
-  border-radius: var(--tao-radius-sm);
+  border-radius: 0;
   background: transparent;
   color: var(--tao-color-text-muted);
   font-size: 0.9em;
@@ -235,10 +245,9 @@ function onBlur() {
   position: fixed;
   z-index: var(--tao-z-popup);
   display: grid;
-  gap: 2px;
   min-width: 4.5rem;
   margin: 0;
-  padding: var(--tao-space-2);
+  padding: var(--tao-space-1);
   overflow: auto;
   list-style: none;
   background: var(--tao-color-surface-raised);
@@ -249,8 +258,10 @@ function onBlur() {
 }
 
 .font-size-field__option {
-  padding: var(--tao-space-2) var(--tao-space-3);
-  border-radius: var(--tao-radius-md);
+  padding: var(--tao-space-1) var(--tao-space-3);
+  border-radius: var(--tao-radius-sm);
+  font-size: var(--tao-font-size-sm);
+  line-height: 1.5;
   text-align: center;
   cursor: pointer;
   user-select: none;
