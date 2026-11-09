@@ -379,18 +379,26 @@ Showcase section: `#combobox`
 
 **Slots, events, notes.** create — an event when a new value is typed: the parent extends options itself.
 
-## FontSizeField
+## TaoPresetInput
 
-Showcase section: `#font-size`
+Showcase section: `#preset-input`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `v-model` | `'auto' \| number` | 'auto' | The size: Auto or a number. An emptied field is Auto |
-| `sizes` | `number[]` | [4, 8, 10, 12, 14, 18, 24, 32, 48, 64] | The sizes of the pop-up and of the line of the arrows; Auto always comes first |
-| `loop` | `boolean` | false | The arrows go round: «up» from Auto is the first size, «down» from the first one is Auto. Without it Auto and the first size are the ends |
-| `label` | `string` | 'Font size' | aria-label of the field |
+| `v-model` | `string \| number \| null` | null | The value: the value of an option, or a number typed by hand (custom) |
+| `options` | `{ value, label, disabled?, default? }[]` | [] | The presets. They go in this order in the pop-up, and the arrows walk them in it («up» is the next one). The option with default is what an empty field means («Auto»): the pop-up shows it first, and the arrows reach it after the last one |
+| `loop` | `boolean` | false | The arrows go round: past the last one the first, before the first one the last. Without it the ends hold |
+| `custom` | `boolean` | true | A whole number that is not in the list is a value too (between min and max). Off: only the presets |
+| `min` | `number` | 1 | The lowest typed number (custom) |
+| `max` | `number` | 999 | The highest typed number (custom) |
+| `size` | `'small' \| 'medium' \| 'large'` | from ancestors | Size, the same scale as TaoButton |
+| `variant` | `'filled' \| 'outline'` | 'filled' | filled: a fill, the frame shows while the field is edited; outline: a frame |
+| `disabled` | `boolean` | false | Disabled |
+| `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `nextLabel` | `string` | 'Next value' | aria-label of the up arrow |
+| `prevLabel` | `string` | 'Previous value' | aria-label of the down arrow |
 
-**Slots, events, notes.** Not part of the npm package, lives in showcase/demo. The arrows: «up» is the next size (from the last one to Auto, where it ends), «down» is the previous one (from Auto to the last one, and it stops at the first). A number typed by hand (1–999) is kept, the arrows then go to the nearest size.
+**Slots, events, notes.** aria-label, name, autocomplete and listeners reach the input, class and style the wrapper. The width of the input is the variable --tao-preset-input-width (4.5rem). update:modelValue and change: the new value. Keys: ↑ ↓ step, Home End go to the ends, Enter applies, Esc throws the text away; Tab applies and goes on. The arrows are not tab stops.
 
 ## TypeaheadPlayground
 

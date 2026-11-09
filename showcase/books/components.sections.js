@@ -14,6 +14,7 @@ import DemoChecklist from '../components/DemoChecklist.vue'
 import DemoSelect from '../components/DemoSelect.vue'
 import DemoSegmented from '../components/DemoSegmented.vue'
 import DemoCombobox from '../components/DemoCombobox.vue'
+import DemoPresetInput from '../components/DemoPresetInput.vue'
 import DemoDate from '../components/DemoDate.vue'
 import DemoPinCode from '../components/DemoPinCode.vue'
 import DemoSlider from '../components/DemoSlider.vue'
@@ -77,6 +78,7 @@ export const demoById = {
   'select': DemoSelect,
   'segmented': DemoSegmented,
   'combobox': DemoCombobox,
+  'preset-input': DemoPresetInput,
   'date': DemoDate,
   'pincode': DemoPinCode,
   'slider': DemoSlider,

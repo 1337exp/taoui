@@ -8,7 +8,6 @@ export const navGroups = [
     title: { en: 'Scenes', ru: 'Сцены' },
     items: [
       { id: 'typeahead', label: 'Typeahead', aliases: ['autocomplete', 'remote', 'combobox', 'поиск', 'подсказки'] },
-      { id: 'font-size', label: { en: 'Font size field', ru: 'Поле размера шрифта' }, aliases: ['font size', 'stepper', 'combobox', 'размер шрифта', 'шрифт', 'стрелки'] },
     ],
   },
 ]

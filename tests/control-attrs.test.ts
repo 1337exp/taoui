@@ -9,6 +9,7 @@ import TaoFileDrop from '../src/components/TaoFileDrop.vue';
 import TaoPinCode from '../src/components/TaoPinCode.vue';
 import TaoQuantity from '../src/components/TaoQuantity.vue';
 import TaoCombobox from '../src/components/TaoCombobox.vue';
+import TaoPresetInput from '../src/components/TaoPresetInput.vue';
 import TaoDate from '../src/components/TaoDate.vue';
 import TaoDateRange from '../src/components/TaoDateRange.vue';
 import TaoInput from '../src/components/TaoInput.vue';
@@ -26,6 +27,7 @@ const cases: [string, unknown, Record<string, unknown>, string][] = [
     ['TaoTextarea', TaoTextarea, {}, 'textarea'],
     ['TaoInputNumber', TaoInputNumber, { modelValue: 1 }, 'input'],
     ['TaoCombobox', TaoCombobox, { options: [] }, 'input'],
+    ['TaoPresetInput', TaoPresetInput, { options: [] }, 'input'],
     ['TaoSelect', TaoSelect, { options: [] }, 'button.tao-select__trigger'],
     ['TaoDate', TaoDate, {}, 'button.tao-date__trigger'],
     ['TaoDate editable', TaoDate, { editable: true }, 'input.tao-date__input'],

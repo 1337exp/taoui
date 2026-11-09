@@ -358,16 +358,24 @@ export const propTablesEn = {
       slots: 'create — an event when a new value is typed: the parent extends options itself.',
     },
   ],
-  'font-size': [
+  'preset-input': [
     {
-      title: 'FontSizeField',
+      title: 'TaoPresetInput',
       rows: [
-        r('v-model', "'auto' | number", "'auto'", 'The size: Auto or a number. An emptied field is Auto'),
-        r('sizes', 'number[]', '[4, 8, 10, 12, 14, 18, 24, 32, 48, 64]', 'The sizes of the pop-up and of the line of the arrows; Auto always comes first'),
-        r('loop', 'boolean', 'false', 'The arrows go round: «up» from Auto is the first size, «down» from the first one is Auto. Without it Auto and the first size are the ends'),
-        r('label', 'string', "'Font size'", 'aria-label of the field'),
+        r('v-model', 'string | number | null', 'null', 'The value: the value of an option, or a number typed by hand (custom)'),
+        r('options', '{ value, label, disabled?, default? }[]', '[]', 'The presets. They go in this order in the pop-up, and the arrows walk them in it («up» is the next one). The option with default is what an empty field means («Auto»): the pop-up shows it first, and the arrows reach it after the last one'),
+        r('loop', 'boolean', 'false', 'The arrows go round: past the last one the first, before the first one the last. Without it the ends hold'),
+        r('custom', 'boolean', 'true', 'A whole number that is not in the list is a value too (between min and max). Off: only the presets'),
+        r('min', 'number', '1', 'The lowest typed number (custom)'),
+        r('max', 'number', '999', 'The highest typed number (custom)'),
+        r('size', "'small' | 'medium' | 'large'", 'from ancestors', 'Size, the same scale as TaoButton'),
+        r('variant', "'filled' | 'outline'", "'filled'", 'filled: a fill, the frame shows while the field is edited; outline: a frame'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
+        r('nextLabel', 'string', "'Next value'", 'aria-label of the up arrow'),
+        r('prevLabel', 'string', "'Previous value'", 'aria-label of the down arrow'),
       ],
-      slots: 'Not part of the npm package, lives in showcase/demo. The arrows: «up» is the next size (from the last one to Auto, where it ends), «down» is the previous one (from Auto to the last one, and it stops at the first). A number typed by hand (1–999) is kept, the arrows then go to the nearest size.',
+      slots: 'aria-label, name, autocomplete and listeners reach the input, class and style the wrapper. The width of the input is the variable --tao-preset-input-width (4.5rem). update:modelValue and change: the new value. Keys: ↑ ↓ step, Home End go to the ends, Enter applies, Esc throws the text away; Tab applies and goes on. The arrows are not tab stops.',
     },
   ],
   typeahead: [
