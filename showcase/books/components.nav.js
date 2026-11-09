@@ -26,6 +26,7 @@ export const navGroups = [
       { id: 'select', label: 'Select / Switch / Radio', aliases: ['TaoSelect', 'TaoSwitch', 'TaoRadio', 'TaoFormField', 'FormField'] },
       { id: 'segmented', label: 'TaoSegmented', aliases: ['TaoSegmentedOption', 'Segmented'] },
       { id: 'combobox', label: 'TaoCombobox' },
+      { id: 'preset-input', label: 'TaoPresetInput', aliases: ['presets', 'font size', 'zoom', 'stepper', 'spinbutton', 'размер шрифта', 'масштаб', 'заготовки', 'стрелки'] },
       { id: 'date', label: 'TaoDate / Range', aliases: ['TaoDate', 'TaoDateRange', 'DateRange'] },
       { id: 'pincode', label: 'TaoPinCode' },
       { id: 'color', label: 'TaoColorPicker / Input', aliases: ['TaoColorPicker', 'TaoColorInput', 'colorModel', 'палитра', 'цвет'] },

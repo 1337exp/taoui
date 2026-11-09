@@ -92,6 +92,7 @@
 - **TaoRadio** / **TaoRadioGroup** — classic radios: longer labels, can stack vertically
 - **TaoSegmented** / **TaoSegmentedOption** — compact exclusive choice among 2–5 short options. Not tabs
 - **TaoSelect** — dropdown with keyboard, same chrome as Input. `size` (`small` / `medium` / `large`, same scale as Button). Clear via “Clear” in the list or Delete; `clearable="false"` turns clearing off, `#clear` replaces the row content
+- **TaoPresetInput** — a field with presets, as in an editor (font size, zoom): a compact input, a block of two arrows and a narrow pop-up. The arrows walk the `options` (`default: true` marks what an empty field means, «Auto»; `loop` joins the ends), a number typed by hand is a value too (`custom`); Tab applies and goes on
 - **TaoCombobox** — Select with a field: type to filter, `allow-create` writes a custom value into `v-model`, `create` lets the parent append the list. Takes the same `size`, `clearable` and `#clear` as `TaoSelect`
 - **TaoDate** — a single day: `YYYY-MM-DD`, no time, no timezone. Calendar popup like Select. `editable` makes it a field you type into: `5`, `5.3`, `05.03.26` in the locale's order of day and month (`parseTaoDateInput` is exported, `parse` / `format` take your own)
 - **TaoDateRange** — a period: `v-model` is `{ start, end }` or `null`. First click is start, second is end (they swap if end is earlier). An incomplete pick is not written to the model
