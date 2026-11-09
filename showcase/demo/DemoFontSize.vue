@@ -21,9 +21,9 @@ const sampleStyle = computed(() => (size.value === 'auto' ? {} : { fontSize: `${
         <p>
           A field made of three parts, as in an editor: a compact <code>TaoInput</code>, a block of two arrows beside it and
           a small pop-up with the sizes. The pop-up is not a dropdown: it is narrow, centred under the input, and the input
-          keeps the focus, so typing a number (Enter) and the arrow keys work while it is open. The arrows walk a ring:
-          from <b>Auto</b> «down» goes to 64 and on to 4, «up» goes the other way, 4 … 64, and from 64 «up» once more is
-          <b>Auto</b> again. This is what the demo proves: a field the kit has no component for is one file on its public
+          keeps the focus, so typing a number (Enter) and the arrow keys work while it is open. The arrows walk a line:
+          from <b>Auto</b> «down» goes to 64 and on to 4, where it stops; «up» goes the other way, 4 … 64, and from 64
+          one more «up» is <b>Auto</b>, the end: there «up» does nothing. This is what the demo proves: a field the kit has no component for is one file on its public
           API. The file can be copied into a project.
         </p>
       </template>
@@ -31,9 +31,9 @@ const sampleStyle = computed(() => (size.value === 'auto' ? {} : { fontSize: `${
         <p>
           Поле из трёх деталей, как в редакторе: компактный <code>TaoInput</code>, блок из двух стрелок рядом и маленькое
           всплывающее окно с размерами. Окно — не выпадающий список: оно узкое, по центру под полем, а фокус остаётся в поле,
-          поэтому набор числа (Enter) и стрелки на клавиатуре работают при открытом окне. Стрелки ходят по кольцу: с
-          <b>Auto</b> «вниз» уходит на 64 и дальше к 4, «вверх» идёт в другую сторону, 4 … 64, а с 64 ещё одно «вверх» —
-          снова <b>Auto</b>. Демо доказывает: поле, под которое в наборе нет компонента, — один файл на публичном API.
+          поэтому набор числа (Enter) и стрелки на клавиатуре работают при открытом окне. Стрелки ходят по линии: с
+          <b>Auto</b> «вниз» уходит на 64 и дальше к 4, где останавливается; «вверх» идёт в другую сторону, 4 … 64, а с 64
+          ещё одно «вверх» — <b>Auto</b>, конец: там «вверх» ничего не делает. Демо доказывает: поле, под которое в наборе нет компонента, — один файл на публичном API.
           Файл можно скопировать в проект.
         </p>
       </template>
