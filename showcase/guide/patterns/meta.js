@@ -129,6 +129,65 @@ export const sizeGuide = {
   ],
 }
 
+/**
+ * The text contract: which step of the text ladder says what. The values are the dark theme's; the light theme mirrors
+ * the order (strong is the darkest). A quiet control at rest takes `text`, and hover moves it one step up.
+ * Контракт текста: какая ступень лестницы что говорит. Значения тёмной темы; светлая повторяет порядок (strong — самая
+ * тёмная). Тихий контрол в покое берёт `text`, а наведение поднимает его на одну ступень.
+ */
+export const textContract = {
+  title: { en: 'The text ladder', ru: 'Лестница текста' },
+  lead: {
+    en: 'Text has five steps, from `text-strong` to `text-disabled`, and each says one thing. Body copy and quiet controls sit on `text` (a soft grey, easy on a dark page); white is kept for what must stand out, so it still does. This is the order in the kit: pick the step by the job of the text, never by taste, and never write a colour of your own.',
+    ru: 'У текста пять ступеней, от `text-strong` до `text-disabled`, и каждая говорит одно. Основной текст и тихие контролы стоят на `text` (мягкий серый, не слепит на тёмной странице); белый остаётся тому, что должно выделяться, поэтому оно выделяется. Таков порядок в наборе: ступень выбирают по работе текста, не по вкусу, и своего цвета не пишут.',
+  },
+  steps: [
+    {
+      role: 'text-strong',
+      dark: '#ffffff',
+      use: { en: 'Headings, titles of a card, a modal or an alert, the value that is the point (a figure, a slider value), and the hover of a quiet control. Never a control at rest.', ru: 'Заголовки, названия карточки, модалки и алерта, значение, ради которого всё (цифра, значение слайдера), и наведение на тихий контрол. Не контрол в покое.' },
+    },
+    {
+      role: 'text',
+      dark: '#bfbfbf',
+      use: { en: 'Body copy and every control at rest: buttons (`secondary`, `ghost` and `text` with `tone="neutral"`), field values, form labels, menu items, table cells.', ru: 'Основной текст и каждый контрол в покое: кнопки (`secondary`, `ghost` и `text` с `tone="neutral"`), значения полей, подписи форм, пункты меню, ячейки таблицы.' },
+    },
+    {
+      role: 'text-subtle',
+      dark: '#999999',
+      use: { en: 'The option that is not chosen in a group: idle tabs and segments.', ru: 'Невыбранный вариант в группе: вкладки и сегменты в покое.' },
+    },
+    {
+      role: 'text-muted',
+      dark: '#8a8a8a',
+      use: { en: 'Captions, hints, descriptions, table headers, placeholders, breadcrumb links, icons that do nothing.', ru: 'Подписи, подсказки, описания, шапки таблиц, placeholder, ссылки хлебных крошек, значки без действия.' },
+    },
+    {
+      role: 'text-disabled',
+      dark: '#444444',
+      use: { en: 'What cannot be used now.', ru: 'То, чем сейчас нельзя пользоваться.' },
+    },
+  ],
+  rules: [
+    {
+      en: 'Hover moves one step up the ladder: `muted` to `text`, `text` to `strong`. A control never gets dimmer under the pointer.',
+      ru: 'Наведение поднимает на одну ступень: `muted` до `text`, `text` до `strong`. Под курсором контрол не тускнеет.',
+    },
+    {
+      en: 'The accent is not a step of the ladder. It is for the main action, what is selected or current, the focus and a link in running text. A quiet tool is never accent-coloured at rest.',
+      ru: 'Акцент — не ступень лестницы. Он для главного действия, выбранного или текущего, фокуса и ссылки в тексте. Тихий инструмент в покое не бывает акцентным.',
+    },
+    {
+      en: 'Status colours (`success`, `danger`, `warning`, `info`) say a status, with words beside them. They are not a way to make text louder.',
+      ru: 'Цвета статуса (`success`, `danger`, `warning`, `info`) говорят о состоянии, со словами рядом. Это не способ сделать текст громче.',
+    },
+    {
+      en: 'Your own markup takes the same roles: `color: var(--tao-color-text)` for body, `var(--tao-color-text-strong)` for a heading, `var(--tao-color-text-muted)` for a hint. Do not paint a whole block `strong` to make it important: when everything is white, nothing is.',
+      ru: 'Своя разметка берёт те же роли: `color: var(--tao-color-text)` для основного, `var(--tao-color-text-strong)` для заголовка, `var(--tao-color-text-muted)` для подсказки. Не красьте весь блок в `strong`, чтобы он был важным: когда всё белое, важного нет.',
+    },
+  ],
+}
+
 /** The patterns: a situation, the rule, why, and a good and a bad example. / Шаблоны: ситуация, правило, почему, пример «так» и «не так». */
 export const patterns = [
   {
@@ -149,6 +208,26 @@ export const patterns = [
     why: {
       en: 'In a toolbar every button is a tool and none is the main one, so none may take the accent. Left amber, the bar shouts, and the one thing that must stand out, which toggles are on, is lost: it is the same colour as the rest. In neutral the pressed toggle is the only lit thing.',
       ru: 'В панели инструментов каждая кнопка — инструмент, и ни одна не главная, поэтому акцент не принадлежит ни одной. Оставишь янтарь — панель кричит, а то единственное, что должно выделяться, — какие переключатели включены, — теряется: оно того же цвета, что и остальное. В нейтральной панели включённый переключатель — единственное, что подсвечено.',
+    },
+  },
+  {
+    id: 'text-steps',
+    title: { en: 'A block of text and a quiet action', ru: 'Блок текста и тихое действие' },
+    when: {
+      en: 'A panel with a title, a few lines of copy, a hint and one quiet action: a settings block, an info card.',
+      ru: 'Панель с названием, парой строк текста, подсказкой и одним тихим действием: блок настроек, информационная карточка.',
+    },
+    rule: {
+      en: 'Title `text-strong`, copy `text`, hint `text-muted`, and the action `variant="ghost" tone="neutral"`. Every step does its own job, and the colours are roles, not hex.',
+      ru: 'Название `text-strong`, текст `text`, подсказка `text-muted`, действие `variant="ghost" tone="neutral"`. Каждая ступень делает свою работу, а цвета — роли, не hex.',
+    },
+    wrong: {
+      en: 'The copy is `text-strong`, the hint is accent, the action has no `tone`: three colours, no order.',
+      ru: 'Текст в `text-strong`, подсказка акцентная, у действия нет `tone`: три цвета и никакого порядка.',
+    },
+    why: {
+      en: 'The eye reads the colour as rank. With the copy as bright as the title the title no longer leads; an accent hint and an amber action look like two main things on one panel. With the ladder the title leads, the copy reads, the hint steps back, and the one quiet action is found when it is needed.',
+      ru: 'Глаз читает цвет как ранг. Когда текст так же ярок, как название, название перестаёт вести; акцентная подсказка и янтарное действие выглядят как две главные вещи на одной панели. С лестницей название ведёт, текст читается, подсказка отходит назад, а единственное тихое действие находится, когда нужно.',
     },
   },
   {

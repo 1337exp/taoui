@@ -198,7 +198,7 @@ onBeforeUnmount(() => {
 /* A floating button needs a body to stay readable over content: a raised surface and a hairline border. */
 /* Плавающей кнопке нужно «тело», чтобы читаться поверх контента: приподнятая поверхность и тонкая рамка. */
 .tao-scroll-top--ghost {
-    color: var(--tao-color-text-strong);
+    color: var(--tao-color-text);
     background-color: var(--tao-color-surface-raised);
     border: 1px solid var(--tao-color-border);
 }
@@ -211,7 +211,7 @@ onBeforeUnmount(() => {
 
 .tao-scroll-top--text {
     padding: 0 var(--tao-space-2);
-    color: var(--tao-color-text-strong);
+    color: var(--tao-color-text);
     background: transparent;
 }
 

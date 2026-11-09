@@ -14,7 +14,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const dir = join(root, 'showcase/guide/patterns');
-const { accentBudget, sizeGuide, patterns, templateOf } = await import(pathToFileURL(join(dir, 'meta.js')).href);
+const { accentBudget, textContract, sizeGuide, patterns, templateOf } = await import(pathToFileURL(join(dir, 'meta.js')).href);
 
 /** The markdown of the patterns, the same text the test expects. / Markdown шаблонов. */
 export function patternsMarkdown(read = (name) => readFileSync(join(dir, name), 'utf8')) {
@@ -30,6 +30,16 @@ export function patternsMarkdown(read = (name) => readFileSync(join(dir, name), 
         accentBudget.lead.en,
         '',
         ...accentBudget.rules.map((rule, i) => `${i + 1}. ${rule.en}`),
+        '',
+        `## ${textContract.title.en}`,
+        '',
+        textContract.lead.en,
+        '',
+        '| Role | Dark theme | Use it for |',
+        '|---|---|---|',
+        ...textContract.steps.map((step) => `| \`--tao-color-${step.role}\` | ${step.dark} | ${step.use.en} |`),
+        '',
+        ...textContract.rules.map((rule, i) => `${i + 1}. ${rule.en}`),
         '',
         `## ${sizeGuide.title.en}`,
         '',

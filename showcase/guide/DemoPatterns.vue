@@ -6,7 +6,7 @@
 import { TaoTag } from '@1337exp/taoui'
 import ShowcaseSection from '../components/ShowcaseSection.vue'
 import { tr } from '../i18n.js'
-import { accentBudget, patterns, templateOf } from './patterns/meta.js'
+import { accentBudget, patterns, templateOf, textContract } from './patterns/meta.js'
 
 defineOptions({ name: 'DemoPatterns' })
 
@@ -50,6 +50,41 @@ const rich = (text) => String(text).split('`')
       </li>
     </ol>
 
+    <h3>{{ tr(textContract.title) }}</h3>
+    <p>
+      <template v-for="(part, i) in rich(tr(textContract.lead))" :key="i">
+        <code v-if="i % 2">{{ part }}</code>
+        <template v-else>{{ part }}</template>
+      </template>
+    </p>
+    <table class="patterns-ladder">
+      <thead>
+        <tr>
+          <th>{{ tr('Role', 'Роль') }}</th>
+          <th>{{ tr('Use it for', 'Для чего') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="step in textContract.steps" :key="step.role">
+          <td><code :style="{ color: 'var(--tao-color-' + step.role + ')' }">{{ step.role }}</code></td>
+          <td>
+            <template v-for="(part, i) in rich(tr(step.use))" :key="i">
+              <code v-if="i % 2">{{ part }}</code>
+              <template v-else>{{ part }}</template>
+            </template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ol class="patterns-rules">
+      <li v-for="(rule, r) in textContract.rules" :key="r">
+        <template v-for="(part, i) in rich(tr(rule))" :key="i">
+          <code v-if="i % 2">{{ part }}</code>
+          <template v-else>{{ part }}</template>
+        </template>
+      </li>
+    </ol>
+
     <article v-for="pattern in patterns" :key="pattern.id" :id="'pattern-' + pattern.id" class="pattern">
       <h3>{{ tr(pattern.title) }}</h3>
       <p class="pattern__when">{{ tr(pattern.when) }}</p>
@@ -84,6 +119,25 @@ const rich = (text) => String(text).split('`')
 </template>
 
 <style scoped>
+.patterns-ladder {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+}
+
+.patterns-ladder th,
+.patterns-ladder td {
+  padding: 8px 12px 8px 0;
+  text-align: start;
+  vertical-align: top;
+  border-bottom: 1px solid var(--tao-color-border);
+}
+
+.patterns-ladder th {
+  color: var(--tao-color-text-muted);
+  font-weight: 500;
+}
+
 .patterns-rules {
   display: grid;
   gap: 8px;
