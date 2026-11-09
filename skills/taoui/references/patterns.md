@@ -13,6 +13,23 @@ The accent colour (amber by default) is a signal, and a signal that is on everyw
 3. Status is `tone` (`success`, `danger`, `warning`, `info`), always with words, never colour alone. A destructive action is `tone="danger"` on the button that destroys; the safe button stays quiet.
 4. Colours come from roles (`var(--tao-color-…)`), never a hex or an `rgba()` in app CSS.
 
+## The text ladder
+
+Text has five steps, from `text-strong` to `text-disabled`, and each says one thing. Body copy and quiet controls sit on `text` (a soft grey, easy on a dark page); white is kept for what must stand out, so it still does. This is the order in the kit: pick the step by the job of the text, never by taste, and never write a colour of your own.
+
+| Role | Dark theme | Use it for |
+|---|---|---|
+| `--tao-color-text-strong` | #ffffff | Headings, titles of a card, a modal or an alert, the value that is the point (a figure, a slider value), and the hover of a quiet control. Never a control at rest. |
+| `--tao-color-text` | #bfbfbf | Body copy and every control at rest: buttons (`secondary`, `ghost` and `text` with `tone="neutral"`), field values, form labels, menu items, table cells. |
+| `--tao-color-text-subtle` | #999999 | The option that is not chosen in a group: idle tabs and segments. |
+| `--tao-color-text-muted` | #8a8a8a | Captions, hints, descriptions, table headers, placeholders, breadcrumb links, icons that do nothing. |
+| `--tao-color-text-disabled` | #444444 | What cannot be used now. |
+
+1. Hover moves one step up the ladder: `muted` to `text`, `text` to `strong`. A control never gets dimmer under the pointer.
+2. The accent is not a step of the ladder. It is for the main action, what is selected or current, the focus and a link in running text. A quiet tool is never accent-coloured at rest.
+3. Status colours (`success`, `danger`, `warning`, `info`) say a status, with words beside them. They are not a way to make text louder.
+4. Your own markup takes the same roles: `color: var(--tao-color-text)` for body, `var(--tao-color-text-strong)` for a heading, `var(--tao-color-text-muted)` for a hint. Do not paint a whole block `strong` to make it important: when everything is white, nothing is.
+
 ## Choosing a size
 
 Medium is the default, and the right answer unless there is a reason. A size is a decision about a region of the screen, not about a button: how many controls sit close together, how much they matter, and what presses them (a mouse or a finger).
@@ -75,6 +92,36 @@ Density is added on top of the size (the height and the padding, not the font), 
 ```
 
 **Why.** In a toolbar every button is a tool and none is the main one, so none may take the accent. Left amber, the bar shouts, and the one thing that must stand out, which toggles are on, is lost: it is the same colour as the rest. In neutral the pressed toggle is the only lit thing.
+
+## A block of text and a quiet action
+
+**When.** A panel with a title, a few lines of copy, a hint and one quiet action: a settings block, an info card.
+
+**Rule.** Title `text-strong`, copy `text`, hint `text-muted`, and the action `variant="ghost" tone="neutral"`. Every step does its own job, and the colours are roles, not hex.
+
+**Do:**
+
+```vue
+<div class="tao-panel" style="padding: 16px; display: grid; gap: 6px; justify-items: start">
+  <strong style="color: var(--tao-color-text-strong)">Billing</strong>
+  <span style="color: var(--tao-color-text)">Your plan renews on 1 December.</span>
+  <small style="color: var(--tao-color-text-muted)">Invoices go to the owner of the account.</small>
+  <TaoButton variant="ghost" tone="neutral">Change plan</TaoButton>
+</div>
+```
+
+**Don't** (The copy is `text-strong`, the hint is accent, the action has no `tone`: three colours, no order):
+
+```vue
+<div class="tao-panel" style="padding: 16px; display: grid; gap: 6px; justify-items: start">
+  <strong style="color: var(--tao-color-text-muted)">Billing</strong>
+  <span style="color: var(--tao-color-text-strong)">Your plan renews on 1 December.</span>
+  <small style="color: var(--tao-color-accent)">Invoices go to the owner of the account.</small>
+  <TaoButton variant="ghost">Change plan</TaoButton>
+</div>
+```
+
+**Why.** The eye reads the colour as rank. With the copy as bright as the title the title no longer leads; an accent hint and an amber action look like two main things on one panel. With the ladder the title leads, the copy reads, the hint steps back, and the one quiet action is found when it is needed.
 
 ## The footer of a form or dialog
 

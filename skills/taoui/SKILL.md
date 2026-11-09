@@ -31,6 +31,9 @@ createApp(App).use(TaoUI, { locale: localeRu }).mount('#app')   // locale option
 
 1. **Colours come from roles**, never hex: `var(--tao-color-text-muted)`, `--tao-color-accent`, `--tao-color-surface`,
    `--tao-color-border`, `--tao-color-danger`… A hex in app CSS breaks the light mode and every palette.
+   **Pick the text step by its job** (patterns.md, "The text ladder"): `text-strong` for headings and the value that is the
+   point, `text` for body copy and every control at rest, `text-muted` for hints and captions; hover goes one step up.
+   Never paint body copy `strong` to make it important.
 2. **Status is `tone`**, the same everywhere: `success | danger | warning | info | neutral` (the accent when omitted) on
    TaoButton, TaoAlert, TaoTag, the stripe of TaoCard / TaoBlock (`stripeTone`), TaoTimeline markers; `toast().danger()`. Say the status in words
    too: colour alone is not a message.
