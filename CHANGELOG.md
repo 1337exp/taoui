@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.32.1
+
+Nothing to migrate; one look changes: the confirm dialog has no bar on its left edge.
+
+- **`confirm()` has no accent bar on the left.** With a large `--tao-radius-panel` the curve of the corners cut the 3px bar into a broken line. As for `toast()`, the bar told nothing the icon and the tinted background do not: it is gone, and `.tao-confirm__accent` with it.
+
 ## 5.32.0
 
 Nothing to migrate, but two looks change: `TaoThemeToggle` is neutral now (it was amber; `tone="accent"` brings the old colour back), and a quiet control with `tone="neutral"` is the body colour at rest (it was white).
