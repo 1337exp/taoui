@@ -57,7 +57,7 @@ describe('the app icons', () => {
         expect(resolveTaoIcon(`tao-${name}`)?.body).toBeTruthy();
     });
 
-    it('42 built in, as the docs say', () => {
-        expect(taoIconNames).toHaveLength(42);
+    it('43 built in, as the docs say', () => {
+        expect(taoIconNames).toHaveLength(43);
     });
 });

@@ -51,6 +51,7 @@ const builtin: Record<string, TaoIconDef> = {
     copy: { body: '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M15 9V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7a2 2 0 002 2h3"/>' },
     sun: { body: '<circle cx="12" cy="12" r="4.25"/><path d="M12 3.75L12 1M18.45 6.86L20.6 5.14M20.04 13.84L22.72 14.45M15.58 19.43L16.77 21.91M8.42 19.43L7.23 21.91M3.96 13.84L1.28 14.45M5.55 6.86L3.4 5.14"/>' },
     moon: { body: '<path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/>' },
+    monitor: { body: '<rect x="2.5" y="4" width="19" height="12.5" rx="2"/><path d="M8 20.5h8M12 16.5v4"/>' },
     calendar: { body: '<rect x="4" y="5.5" width="16" height="14.5" rx="2"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/>' },
     info: { body: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5"/>' + dot(12, 7.8, 1.1) },
     'alert-triangle': { body: '<path d="M12 4L2.8 19.5h18.4z"/><path d="M12 10v4.5"/>' + dot(12, 17.2, 1.1) },

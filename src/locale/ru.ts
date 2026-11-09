@@ -36,7 +36,7 @@ export const localeRu: TaoLocale = {
     confirm: { ok: 'ОК', cancel: 'Отмена' },
     copy: { copyLabel: 'Копировать', successText: 'Скопировано!' },
     tour: { nextLabel: 'Далее', prevLabel: 'Назад', skipLabel: 'Пропустить', doneLabel: 'Готово', progressLabel: 'Шаг {n} из {count}' },
-    themeToggle: { toLightLabel: 'Включить светлую тему', toDarkLabel: 'Включить тёмную тему' },
+    themeToggle: { toLightLabel: 'Включить светлую тему', toDarkLabel: 'Включить тёмную тему', toSystemLabel: 'Включить системную тему' },
     loader: { label: 'Загрузка' },
     date: {
         placeholder: 'Дата',

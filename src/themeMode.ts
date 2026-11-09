@@ -28,3 +28,24 @@ export function applyTaoMode(el: Element, mode: TaoMode): void {
         el.setAttribute('data-tao-theme', mode);
     }
 }
+
+/**
+ * What a person picks: a mode, or `system` (follow the operating system). The page itself is always `dark` or `light`:
+ * `system` is resolved to one of them.
+ * Что выбирает человек: режим или `system` (идти за операционной системой). Сама страница всегда `dark` или `light`:
+ * `system` сводится к одному из них.
+ */
+export type TaoModeChoice = TaoMode | 'system';
+
+/** The mode the system asks for now (`prefers-color-scheme`); dark where there is no `matchMedia` (SSR). / Режим, который сейчас просит система. */
+export function systemTaoMode(): TaoMode {
+    if (typeof matchMedia === 'undefined') {
+        return 'dark';
+    }
+    return matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+}
+
+/** A choice as the mode to put on the page. / Выбор как режим для страницы. */
+export function resolveTaoMode(choice: TaoModeChoice): TaoMode {
+    return choice === 'system' ? systemTaoMode() : choice;
+}

@@ -142,15 +142,17 @@ Showcase section: `#theme-toggle`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `v-model` | `'dark' \| 'light'` | page mode | The mode. Without it the button reads the mode of <html> (data-tao-mode) and follows it |
+| `v-model` | `'dark' \| 'light' \| 'system'` | page mode | The mode ('system' only with system). Without it the button reads the mode of <html> (data-tao-mode) and follows it |
 | `apply` | `boolean` | true | Write the mode to <html>. Turn it off to do it yourself from v-model (save the choice, change a class) |
+| `system` | `boolean` | false | A third state, "system": the page follows the operating system (prefers-color-scheme, live). The click goes system → light → dark; the icon is the state the toggle is in (a monitor for the system) |
 | `size` | `'small' \| 'medium' \| 'large'` | from ancestors | Button size |
 | `variant` | `'primary' \| 'secondary' \| 'ghost' \| 'text'` | 'ghost' | Button look |
 | `tone` | `'accent' \| 'neutral' \| …` | accent | The colour of the button, as for TaoButton. neutral for a quiet tool in a toolbar |
-| `toLightLabel` | `string` | 'Switch to the light theme' | aria-label while the theme is dark (what a click does) |
-| `toDarkLabel` | `string` | 'Switch to the dark theme' | aria-label while the theme is light |
+| `toLightLabel` | `string` | 'Switch to the light theme' | aria-label while a click leads to the light theme |
+| `toDarkLabel` | `string` | 'Switch to the dark theme' | aria-label while a click leads to the dark theme |
+| `toSystemLabel` | `string` | 'Switch to the system theme' | aria-label while a click leads to the system theme (system) |
 
-**Slots, events, notes.** icon: your own glyph, { mode, next } (the current mode and the one a click leads to); the button stays a square and keeps its label. update:modelValue and change: the new mode ("dark" \| "light"). The icon is the theme a click leads to (a sun while dark, a moon while light).
+**Slots, events, notes.** icon: your own glyph, { mode, choice, next } (the mode on the page, the pick — "system" included —, and the pick a click leads to); the button stays a square and keeps its label. update:modelValue and change: the new pick ("dark" \| "light", and "system" with system). Without system the icon is the theme a click leads to (a sun while dark, a moon while light).
 
 ## TaoInput
 

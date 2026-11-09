@@ -59,7 +59,7 @@
 - **TaoButton** — `variant`: `primary` / `secondary` / `ghost` / `text`; `tone` colours any of them (accent by default, neutral, success, danger, warning, info). `v-model:pressed` makes it a toggle (`aria-pressed`); `shortcut="N"` shows the key at the end of the button (`aria-keyshortcuts`; listening to it is the app's job)
 - **TaoCard** — card with media / header / title / footer slots and a `#corner` (a tag, a menu button). `#media` can be a photo or `TaoCarousel`; `closable` adds a cross and the `close` event. `flush` is a tile (no padding/shadow, fills the cell); `#overlay` is a scrim on the media; `stripe="top | left | bottom"` with `stripeTone` (a tone or the palette `gradient`) draws a coloured stripe the corners clip
 - **TaoCopy** — clipboard icon. After a click, a “Copied” tooltip; if the trigger is gone, the tooltip is too
-- **TaoThemeToggle** — the light / dark switch as one icon button (a sun or a moon); reads and flips `data-tao-mode` of `<html>`, or works from `v-model`
+- **TaoThemeToggle** — the light / dark switch as one icon button (a sun or a moon); reads and flips `data-tao-mode` of `<html>`, or works from `v-model`; `system` adds a third, «follow the system» state (a monitor)
 - **TaoTour** — a guided tour: the page goes dim, the target stays lit, a card with an arrow says what it is (a step without a target is a card in the middle; `interactive` lets the user press the target). It only draws: the steps come from you or from TaoUX `tour`
 - **TaoMarquee** — one line that never wraps: when it does not fit it runs round with fading edges and a pause at the start of every round, when it fits it stands still. Stops on hover, on focus and on a tap (WCAG 2.2.2); wraps with «reduce motion»; a screen reader reads it once. `text` or inline content in the slot, `speed`, `gap`, `fade` (the left fade takes that much room left of the text: give the parent the padding), `paused`, `pauseOnHover`, `roundPause` (`false`: no rest at the start of a round), `decorative` (a ghost for a background line: hidden from a screen reader, no tab stop, no reaction to a cursor or a tap, no selection, no pause between rounds)
 - **TaoInput** — text field with v-model, validation, and `#prefix` / `#suffix` slots (icon or text inside the frame); `variant` `outline` / `filled` / `plain` (no frame: an item of a list being edited; `TaoInputNumber`, `TaoCombobox` and `TaoTextarea` take it too)
@@ -127,7 +127,7 @@
 - **TaoScrubber** — play / pause, a slider over time with event marks, a “time / length” label. Does not advance time by itself: drive `v-model` with your own clock
 - **TaoLoader** — the wait whose end is unknown: `variant` `dots` (default) / `ring` / `pulse` / `diamonds`, `tone`, `size` (a number or small / medium / large), says "Loading" to a screen reader (`label`), breathes under reduced motion; `TaoButton loading` wears the same ring
 - **TaoImage** — `<img>` wrapper: fade-in and placeholder. `lazy` turns on native `loading="lazy"`
-- **TaoIcon** — SVG icons (42 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)
+- **TaoIcon** — SVG icons (43 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)
 
 ### Navigation
 
@@ -220,9 +220,9 @@ The package ships a skill, `skills/taoui/SKILL.md` with `references/components.m
 
 ## Icons
 
-The library ships **42 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,
+The library ships **43 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,
 skip-back, copy, calendar, info, alert, circles, folder, file, alignment, and the app actions settings, edit, trash, bell, tag,
-repeat, undo, redo, sun, moon). They draw on `currentColor`, so an icon takes the text colour and the
+repeat, undo, redo, sun, moon, monitor). They draw on `currentColor`, so an icon takes the text colour and the
 font size, and live under the reserved prefix `tao-`: `<TaoIcon name="tao-check" />`, the list is `taoIconNames`.
 
 ```vue

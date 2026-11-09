@@ -17,6 +17,8 @@ defineOptions({ name: 'DemoThemeToggle' })
           the <code>aria-label</code> says the same in words. By default it reads <code>data-tao-mode</code> of
           <code>&lt;html&gt;</code>, flips it on a click and follows it when somebody else changes it; a palette keeps its name.
           For your own storage use <code>v-model</code> with <code>:apply="false"</code>; your own glyph goes in the <code>#icon="{ mode, next }"</code> slot (the last button shows the current theme). Try it: it changes this page.
+          With <code>system</code> there is a third state, «follow the system»: the click goes system → light → dark, the icon
+          is the state it is in (the monitor is the system), and <code>v-model</code> then also holds <code>'system'</code>.
         </p>
       </template>
       <template #ru>
@@ -25,7 +27,8 @@ defineOptions({ name: 'DemoThemeToggle' })
           страница тёмная), <code>aria-label</code> говорит то же словами. По умолчанию читает <code>data-tao-mode</code>
           у <code>&lt;html&gt;</code>, по клику переворачивает его и следует за ним, если режим меняет кто-то другой;
           палитра сохраняет своё имя. Для своего хранилища — <code>v-model</code> с <code>:apply="false"</code>; свой значок — слот <code>#icon="{ mode, next }"</code> (в последней кнопке он показывает текущую тему).
-          Попробуйте: он меняет эту страницу.
+          Попробуйте: он меняет эту страницу. С <code>system</code> появляется третье состояние «как в системе»: клик идёт
+          системная → светлая → тёмная, иконка показывает текущее состояние (монитор — системная), а <code>v-model</code> держит ещё и <code>'system'</code>.
         </p>
       </template>
     </Tr>
@@ -35,6 +38,7 @@ defineOptions({ name: 'DemoThemeToggle' })
       <TaoThemeToggle />
       <TaoThemeToggle size="large" />
       <TaoThemeToggle variant="secondary" />
+      <TaoThemeToggle system />
       <TaoThemeToggle>
         <template #icon="{ mode }"><TaoIcon :name="mode === 'dark' ? 'tao-moon' : 'tao-sun'" /></template>
       </TaoThemeToggle>
@@ -42,6 +46,9 @@ defineOptions({ name: 'DemoThemeToggle' })
 
     <div class="code-block">
       <pre><code>&lt;TaoThemeToggle /&gt;
+
+&lt;!-- a third state: follow the system (system → light → dark) --&gt;
+&lt;TaoThemeToggle system /&gt;
 
 &lt;!-- your own storage --&gt;
 &lt;TaoThemeToggle v-model="mode" :apply="false" /&gt;
