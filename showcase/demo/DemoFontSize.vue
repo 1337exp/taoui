@@ -19,20 +19,22 @@ const sampleStyle = computed(() => (size.value === 'auto' ? {} : { fontSize: `${
     <Tr>
       <template #en>
         <p>
-          A field made of two parts: a <code>TaoCombobox</code> (pick from the list or type a number) and a pair of
-          arrows beside it, as in an editor. The arrows walk a ring: from <b>Auto</b> «down» goes to 64 and on to 4, «up»
-          goes the other way, 4 … 64, and from 64 «up» once more is <b>Auto</b> again. The list opens whole over a picked
-          value. This is what the demo proves: a field the kit has no component for is a few lines on its public API.
-          The file can be copied into a project.
+          A field made of three parts, as in an editor: a compact <code>TaoInput</code>, a block of two arrows beside it and
+          a small pop-up with the sizes. The pop-up is not a dropdown: it is narrow, centred under the input, and the input
+          keeps the focus, so typing a number (Enter) and the arrow keys work while it is open. The arrows walk a ring:
+          from <b>Auto</b> «down» goes to 64 and on to 4, «up» goes the other way, 4 … 64, and from 64 «up» once more is
+          <b>Auto</b> again. This is what the demo proves: a field the kit has no component for is one file on its public
+          API. The file can be copied into a project.
         </p>
       </template>
       <template #ru>
         <p>
-          Поле из двух деталей: <code>TaoCombobox</code> (выбрать из списка или набрать число) и пара стрелок рядом, как в
-          редакторе. Стрелки ходят по кольцу: с <b>Auto</b> «вниз» уходит на 64 и дальше к 4, «вверх» идёт в другую сторону,
-          4 … 64, а с 64 ещё одно «вверх» — снова <b>Auto</b>. Список открывается целиком поверх выбранного значения. Демо
-          доказывает: поле, под которое в наборе нет компонента, — несколько строк на публичном API. Файл можно
-          скопировать в проект.
+          Поле из трёх деталей, как в редакторе: компактный <code>TaoInput</code>, блок из двух стрелок рядом и маленькое
+          всплывающее окно с размерами. Окно — не выпадающий список: оно узкое, по центру под полем, а фокус остаётся в поле,
+          поэтому набор числа (Enter) и стрелки на клавиатуре работают при открытом окне. Стрелки ходят по кольцу: с
+          <b>Auto</b> «вниз» уходит на 64 и дальше к 4, «вверх» идёт в другую сторону, 4 … 64, а с 64 ещё одно «вверх» —
+          снова <b>Auto</b>. Демо доказывает: поле, под которое в наборе нет компонента, — один файл на публичном API.
+          Файл можно скопировать в проект.
         </p>
       </template>
     </Tr>
