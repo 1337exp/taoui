@@ -1,10 +1,15 @@
 <script setup>
+import { ref } from 'vue'
 import { TaoIcon, TaoThemeToggle } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import Tr from './Tr.vue'
 import { propTables } from '../propTables.js'
 
 defineOptions({ name: 'DemoThemeToggle' })
+
+// three states side by side, each on its own (apply off: they do not touch this page)
+// три состояния рядом, каждое само по себе (apply выключен: страницу не трогают)
+const states = ref(['system', 'light', 'dark'])
 </script>
 
 <template>
@@ -39,6 +44,7 @@ defineOptions({ name: 'DemoThemeToggle' })
       <TaoThemeToggle size="large" />
       <TaoThemeToggle variant="secondary" />
       <TaoThemeToggle system />
+      <TaoThemeToggle v-for="(state, i) in states" :key="i" v-model="states[i]" system :apply="false" />
       <TaoThemeToggle>
         <template #icon="{ mode }"><TaoIcon :name="mode === 'dark' ? 'tao-moon' : 'tao-sun'" /></template>
       </TaoThemeToggle>

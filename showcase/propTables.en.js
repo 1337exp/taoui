@@ -143,7 +143,7 @@ export const propTablesEn = {
         r('system', 'boolean', 'false', 'A third state, "system": the page follows the operating system (prefers-color-scheme, live). The click goes system → light → dark; the icon is the state the toggle is in (a monitor for the system)'),
         r('size', "'small' | 'medium' | 'large'", 'from ancestors', 'Button size'),
         r('variant', "'primary' | 'secondary' | 'ghost' | 'text'", "'ghost'", 'Button look'),
-        r('tone', "'accent' | 'neutral' | …", 'accent', 'The colour of the button, as for TaoButton. neutral for a quiet tool in a toolbar'),
+        r('tone', "'accent' | 'neutral' | …", "'neutral'", 'The colour of the button, as for TaoButton. neutral by default: a switch is a quiet tool, the accent is not for it'),
         r('toLightLabel', 'string', "'Switch to the light theme'", 'aria-label while a click leads to the light theme'),
         r('toDarkLabel', 'string', "'Switch to the dark theme'", 'aria-label while a click leads to the dark theme'),
         r('toSystemLabel', 'string', "'Switch to the system theme'", 'aria-label while a click leads to the system theme (system)'),

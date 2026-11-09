@@ -173,9 +173,12 @@ describe('TaoThemeToggle', () => {
         });
     });
 
-    it('5.32.0: tone goes to the button (neutral for a quiet tool), and is accent by default', () => {
+    it('5.32.0: tone goes to the button, and is neutral by default (the accent is not for a quiet tool)', () => {
         const plain = mount(TaoThemeToggle);
-        expect(plain.find('button').classes().join(' ')).not.toContain('neutral');
+        expect(plain.find('button').classes().join(' ')).toContain('neutral');
+
+        const accent = mount(TaoThemeToggle, { props: { tone: 'accent' } });
+        expect(accent.find('button').classes().join(' ')).not.toContain('neutral');
 
         const quiet = mount(TaoThemeToggle, { props: { tone: 'neutral' } });
         expect(quiet.find('button').classes().join(' ')).toContain('neutral');

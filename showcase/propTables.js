@@ -136,7 +136,7 @@ export const propTables = {
         r('system', 'boolean', 'false', 'Третье состояние, «системная»: страница идёт за операционной системой (prefers-color-scheme, на лету). Клик: системная → светлая → тёмная; иконка — состояние переключателя (монитор для системной)'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер кнопки'),
         r('variant', "'primary' | 'secondary' | 'ghost' | 'text'", "'ghost'", 'Вид кнопки'),
-        r('tone', "'accent' | 'neutral' | …", 'акцент', 'Цвет кнопки, как у TaoButton. neutral для тихого инструмента в панели'),
+        r('tone', "'accent' | 'neutral' | …", "'neutral'", 'Цвет кнопки, как у TaoButton. По умолчанию neutral: переключатель — тихий инструмент, акцент не для него'),
         r('toLightLabel', 'string', "'Включить светлую тему'", 'aria-label, пока клик ведёт к светлой теме'),
         r('toDarkLabel', 'string', "'Включить тёмную тему'", 'aria-label, пока клик ведёт к тёмной теме'),
         r('toSystemLabel', 'string', "'Включить системную тему'", 'aria-label, пока клик ведёт к системной теме (system)'),

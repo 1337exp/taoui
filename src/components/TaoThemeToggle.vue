@@ -18,7 +18,7 @@ const props = withDefaults(
         system?: boolean;
         size?: TaoSize;
         variant?: 'primary' | 'secondary' | 'ghost' | 'text';
-        /** The colour of the button, as for `TaoButton`. `neutral` for a quiet tool in a toolbar. / Цвет кнопки, как у `TaoButton`. `neutral` для тихого инструмента в панели. */
+        /** The colour of the button, as for `TaoButton`. `neutral` by default: a switch is a quiet tool, the accent is not for it. / Цвет кнопки, как у `TaoButton`. По умолчанию `neutral`: переключатель — тихий инструмент, акцент не для него. */
         tone?: TaoToneName;
         /** aria-label while a click leads to the light theme. / aria-label, пока клик ведёт к светлой теме. */
         toLightLabel?: string;
@@ -33,7 +33,7 @@ const props = withDefaults(
         system: false,
         size: undefined,
         variant: 'ghost',
-        tone: undefined,
+        tone: 'neutral',
         toLightLabel: undefined,
         toDarkLabel: undefined,
         toSystemLabel: undefined,
@@ -177,8 +177,16 @@ const label = computed(() => {
 </template>
 
 <style>
-.tao-theme-toggle--custom {
+/* three classes: the scoped rules of TaoButton weigh two, and its padding and inline content line would win
+   три класса: scoped-правила TaoButton весят два, и его отступ и строчный контент победили бы */
+.tao-button.tao-theme-toggle.tao-theme-toggle--custom {
     width: var(--tao-control-height);
     padding: 0;
+}
+
+.tao-button.tao-theme-toggle--custom .tao-button__content {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 </style>

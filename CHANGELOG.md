@@ -2,11 +2,12 @@
 
 ## 5.32.0
 
-Nothing to migrate: new optional props, the default look is unchanged.
+Nothing to migrate, but one look changes: `TaoThemeToggle` is neutral now (it was amber); `tone="accent"` brings the old colour back.
 
 - **`TaoThemeToggle` `system`: the third state, a monitor.** With `system` the click goes system → light → dark → system, and the page follows the operating system (`prefers-color-scheme`) while «system» is picked, live. The icon is the state the toggle is in (a monitor, a sun, a moon), the `aria-label` says where the click leads (new `toSystemLabel`, the locale has it). `v-model` takes and gives `'system'` too; the page itself always gets `dark` or `light` in `data-tao-mode`, and `data-tao-mode-choice="system"` marks that it is the system's, so a remounted toggle shows the monitor again. The `#icon` slot gets `choice` and `next` is a choice now. Without `system` nothing changes. New: the `tao-monitor` icon (43 built in), `resolveTaoMode()`, `systemTaoMode()` and the `TaoModeChoice` type, for an app that applies the mode itself (`:apply="false"`).
 - **`TaoCombobox` shows the whole list when it opens over a picked value.** The field holds the picked label, and the list was filtered by it, so a list of sizes opened on «Auto» showed only «Auto». Now the list is filtered only after the user types; opening, the arrows and the picked value show every option.
-- **`TaoThemeToggle` `tone`.** The toggle is a ghost button, and a ghost button without a tone is accent-coloured, so in a toolbar of quiet `ghost` + `neutral` tools the theme switch was the one amber thing. `tone` goes to the button as for `TaoButton` (`neutral` for a quiet tool); without it the look is as before.
+- **`TaoThemeToggle` is neutral by default, and has `tone`.** The toggle is a ghost button, and a ghost button without a tone is accent-coloured, so the theme switch was the one amber thing in a toolbar of quiet `ghost` + `neutral` tools, against the guide (the accent is for the one main action, the selected item and the focus). It is `neutral` now; `tone` goes to the button as for `TaoButton`, `tone="accent"` gives the old look.
+- **`TaoThemeToggle` with the `#icon` slot: the glyph is centred.** The button kept the padding of a text button and the content sat on a text line, so the glyph stood 1.5px too high; the square is a square now.
 
 ## 5.31.0
 
