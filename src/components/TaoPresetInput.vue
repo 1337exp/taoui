@@ -435,7 +435,11 @@ function onKeydown(event: KeyboardEvent) {
     border-radius: 0;
     background: transparent;
     color: var(--tao-color-text-muted);
-    font-size: 0.9em;
+    /* the glyph is a share of the control, not of the text: each arrow is half of the height, and a 1em icon of a small
+       control (26px) did not fit in 13px / значок — доля высоты контрола, а не текста: каждая стрелка — половина высоты, и
+       иконка 1em в маленьком контроле (26px) не влезала в 13px */
+    font-size: calc(var(--tao-control-height) * 0.42);
+    line-height: 1;
     cursor: pointer;
     transition: color var(--tao-duration-fast) var(--tao-ease-base), background-color var(--tao-duration-fast) var(--tao-ease-base);
 }
