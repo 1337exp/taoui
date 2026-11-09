@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { TaoButton, TaoPopover, TaoScrollTop, TaoSegmented, TaoSegmentedOption, TaoSelect, TaoTag, TaoThemeToggle, readTaoMode, taoPalettes } from '@1337exp/taoui'
+import { TaoButton, TaoPopover, TaoScrollTop, TaoSegmented, TaoSegmentedOption, TaoSelect, TaoTag, TaoThemeToggle, readTaoMode, resolveTaoMode, taoPalettes } from '@1337exp/taoui'
 import { bookById, bookOfSection, books } from './books/index.js'
 import BookView from './books/BookView.vue'
 import { lang, LANGS, tr } from './i18n.js'
@@ -59,7 +59,10 @@ const saved = (() => {
 })()
 const known = new Set(['default', ...taoPalettes.map((p) => p.name)])
 const palette = ref(known.has(saved.palette) ? saved.palette : 'default')
-const theme = ref(saved.mode === 'light' ? 'light' : 'dark')
+// what the person picked (system, light or dark) and the mode that comes of it, which is what the page shows
+// что выбрал человек (системная, светлая или тёмная) и режим, который из этого вышел: его и показывает страница
+const choice = ref(['system', 'light', 'dark'].includes(saved.mode) ? saved.mode : 'dark')
+const theme = ref(resolveTaoMode(choice.value))
 // density is a second axis next to the size: one class on <html> changes every control on the page
 const DENSITIES = ['compact', 'default', 'comfortable', 'auto']
 const density = ref(DENSITIES.includes(saved.density) ? saved.density : 'default')
@@ -94,18 +97,23 @@ function applyTheme() {
   const el = document.documentElement
   el.setAttribute('data-tao-theme', palette.value === 'default' ? theme.value : palette.value)
   el.setAttribute('data-tao-mode', theme.value)
+  // the same mark TaoThemeToggle leaves, so a toggle in a demo and this bar agree on «system»
+  // та же метка, что оставляет TaoThemeToggle: переключатель в демо и эта панель согласны насчёт «системной»
+  if (choice.value === 'system') el.setAttribute('data-tao-mode-choice', 'system')
+  else el.removeAttribute('data-tao-mode-choice')
   document.body.classList.add('tao-atmosphere')
   DENSITIES.forEach((d) => el.classList.toggle(`tao-density-${d}`, d === density.value && d !== 'default'))
   el.classList.toggle('tao-frames-soft', frames.value === 'soft')
   try {
-    localStorage.setItem(STORE, JSON.stringify({ palette: palette.value, mode: theme.value, density: density.value, frames: frames.value }))
+    localStorage.setItem(STORE, JSON.stringify({ palette: palette.value, mode: choice.value, density: density.value, frames: frames.value }))
   } catch {
     // a private window: the choice is just not remembered
   }
 }
 
 function setTheme(value) {
-  theme.value = value
+  choice.value = value
+  theme.value = resolveTaoMode(value)
   applyTheme()
 }
 
@@ -129,14 +137,24 @@ applyTheme()
 let barObserver = null
 let stuckObserver = null
 let modeObserver = null
+let systemMedia = null
+
+function onSystemChange() {
+  if (choice.value === 'system') setTheme('system')
+}
 
 onMounted(() => {
   // a TaoThemeToggle in a demo changes <html> by itself: the bar follows and remembers it / переключатель в демо сам меняет <html>: панель идёт следом и запоминает
   modeObserver = new MutationObserver(() => {
-    const mode = readTaoMode(document.documentElement)
-    if (mode !== theme.value) setTheme(mode)
+    const root = document.documentElement
+    const next = root.getAttribute('data-tao-mode-choice') === 'system' ? 'system' : readTaoMode(root)
+    if (next !== choice.value) setTheme(next)
   })
-  modeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-tao-mode'] })
+  modeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-tao-mode', 'data-tao-mode-choice'] })
+  // «system» follows the operating system while it is picked (the toggle does not write the page here: apply is off)
+  // «системная» идёт за операционной системой, пока выбрана (переключатель тут страницу не пишет: apply выключен)
+  systemMedia = matchMedia('(prefers-color-scheme: light)')
+  systemMedia.addEventListener('change', onSystemChange)
   barObserver = new ResizeObserver(() => {
     const bar = barRef.value
     // a bar that does not stick (a narrow screen) takes no room from the section list / не липнущая панель не отнимает места
@@ -155,6 +173,7 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   modeObserver?.disconnect()
+  systemMedia?.removeEventListener('change', onSystemChange)
   barObserver?.disconnect()
   stuckObserver?.disconnect()
   window.removeEventListener('hashchange', readAddress)
@@ -211,7 +230,7 @@ onBeforeUnmount(() => {
             </span>
           </span>
         </template>
-        <TaoThemeToggle :model-value="theme" :apply="false" @update:model-value="setTheme" />
+        <TaoThemeToggle :model-value="choice" system :apply="false" @update:model-value="setTheme" />
         <TaoPopover placement="bottom-end">
           <template #trigger>
             <TaoButton variant="secondary" icon="tao-settings" :aria-label="narrow ? tr('View', 'Вид') : undefined">
