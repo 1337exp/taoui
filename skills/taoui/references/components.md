@@ -387,6 +387,7 @@ Showcase section: `#font-size`
 |---|---|---|---|
 | `v-model` | `'auto' \| number` | 'auto' | The size: Auto or a number. An emptied field is Auto |
 | `sizes` | `number[]` | [4, 8, 10, 12, 14, 18, 24, 32, 48, 64] | The sizes of the pop-up and of the line of the arrows; Auto always comes first |
+| `loop` | `boolean` | false | The arrows go round: «up» from Auto is the first size, «down» from the first one is Auto. Without it Auto and the first size are the ends |
 | `label` | `string` | 'Font size' | aria-label of the field |
 
 **Slots, events, notes.** Not part of the npm package, lives in showcase/demo. The arrows: «up» is the next size (from the last one to Auto, where it ends), «down» is the previous one (from Auto to the last one, and it stops at the first). A number typed by hand (1–999) is kept, the arrows then go to the nearest size.
