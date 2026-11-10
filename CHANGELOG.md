@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.32.2
+
+Nothing to migrate; a fix.
+
+- **`TaoSegmented`: the thumb in a scaled parent.** The thumb was measured with `getBoundingClientRect()` (screen px) and drawn in layout px, so inside a parent with `transform: scale(...)` (a zoomed canvas of nodes) it came out smaller by the scale and sat off its option. A change of the zoom does not resize the track, so the `ResizeObserver` stayed quiet and the thumb kept the size of the zoom it appeared at. The boxes are now divided by the scale (the screen size of the track over its layout size), so the thumb is in layout px and right at any zoom; without a layout (SSR, jsdom) the scale is 1 and nothing changes. Found in `kupona`, a calculator on a canvas of nodes.
+
 ## 5.32.1
 
 Nothing to migrate; one look changes: the confirm dialog has no bar on its left edge.

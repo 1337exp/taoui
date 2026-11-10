@@ -68,12 +68,18 @@ function updateThumb() {
         return;
     }
 
+    // The boxes are in screen px, the thumb is drawn in layout px: inside a scaled parent (a zoomed canvas, a CSS transform) they
+    // differ by the scale, which is the screen size of the track over its layout size. Without a layout (SSR, jsdom) it is 1.
+    // Рамки в экранных px, а плашка рисуется в px вёрстки: внутри масштабированного предка (холст с зумом, CSS transform) они
+    // отличаются на масштаб: экранный размер трека к его размеру в вёрстке. Без раскладки (SSR, jsdom) масштаб 1.
     const trackBox = track.getBoundingClientRect();
     const optionBox = selected.getBoundingClientRect();
+    const scaleX = track.offsetWidth > 0 && trackBox.width > 0 ? trackBox.width / track.offsetWidth : 1;
+    const scaleY = track.offsetHeight > 0 && trackBox.height > 0 ? trackBox.height / track.offsetHeight : 1;
     const next = {
-        width: `${optionBox.width}px`,
-        height: `${optionBox.height}px`,
-        transform: `translate(${optionBox.left - trackBox.left - track.clientLeft}px, ${optionBox.top - trackBox.top - track.clientTop}px)`,
+        width: `${optionBox.width / scaleX}px`,
+        height: `${optionBox.height / scaleY}px`,
+        transform: `translate(${(optionBox.left - trackBox.left) / scaleX - track.clientLeft}px, ${(optionBox.top - trackBox.top) / scaleY - track.clientTop}px)`,
         opacity: '1',
     };
 
