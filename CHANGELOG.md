@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.34.0
+
+Nothing to migrate for a plain `loop`. `centered` with `loop` changes: it was a rewind to the first slide, it is a cycle now.
+
+- **`TaoCarousel` `centered` + `loop`: a cycle with no end.** At the ends of a centered strip there was an empty place; now the slides from the other end stand in it. Forward from the last slide is the first one, back from the first is the last, with no rewind, for the arrows, the keys, a swipe and a drag, the autoplay and the model; a dot goes to the nearest copy of its slide, so the shortest way. The slides are drawn three times (more when there are few of them, so the frame is never empty): the middle set is the real one, the others are `inert` and `aria-hidden` and marked `data-tao-carousel-copy`, and a slide should not hold an `id` or a `ref`. Whenever the strip stops in a copy it jumps by whole sets back to the real one, which looks the same. The dots, `v-model` and the `change` event count only the real slides. The copies are drawn after the mount (the server draws the slides once, so hydration has nothing to differ in). A plain `loop` is a rewind as before.
+
 ## 5.33.0
 
 Nothing to migrate: `centered` is off by default, and a carousel without it works as before.

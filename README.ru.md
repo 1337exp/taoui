@@ -120,7 +120,7 @@
 - **TaoTimeline** — вертикальная лента событий: шаги заказа, релизы, журнал. `active` заливает линию до текущего события (`aria-current="step"`), без него лента — журнал прошедшего; `tone` и `icon` у маркера, слоты `#marker` / `#title` / `#content`; `align="alternate"` раскладывает события по обе стороны и складывается в одну уже 480px своей ширины
 - **TaoSkeleton** — плейсхолдер загрузки (text / title / circle / rect)
 - **TaoCounter** — витрина числа с переворотом цифр (не инпут)
-- **TaoCarousel** — лента: целый слайд с `autoplay`, карточка с `peek`, полоса с `per-view` или `centered` (текущий слайд по центру и крупнее всех, соседние меньше, дальние бледнее). Стрелки через `controls` или `#prev` / `#next`; метки под лентой — `indicator` (`dots`, `bars` или `progress`). С `autoplay` текущая метка заполняется за интервал, по заполнении слайд меняется; hover, фокус с клавиатуры, касание, скрытая вкладка и кнопка паузы останавливают, `prefers-reduced-motion` выключает
+- **TaoCarousel** — лента: целый слайд с `autoplay`, карточка с `peek`, полоса с `per-view` или `centered` (текущий слайд по центру и крупнее всех, соседние меньше, дальние бледнее; с `loop` — бесшовный цикл без конца). Стрелки через `controls` или `#prev` / `#next`; метки под лентой — `indicator` (`dots`, `bars` или `progress`). С `autoplay` текущая метка заполняется за интервал, по заполнении слайд меняется; hover, фокус с клавиатуры, касание, скрытая вкладка и кнопка паузы останавливают, `prefers-reduced-motion` выключает
 - **TaoAvatar** — фото или инициалы, размеры `small` / `medium` / `large`. Точка `dot` и счётчик `count`
 - **TaoTag** — тег/бейдж со статусами. `#prefix` (аватар), `closable` убирает чип, `flat` — без рамки
 - **TaoAlert** — инлайн-баннер страницы или ошибки формы (success / error / warning / info); `collapsible` сворачивает тело под заголовок (поиск по странице его всё равно находит)
@@ -618,6 +618,7 @@ const columns = [
 </TaoCarousel>
 <TaoCarousel :peek="72" :controls="false" indicator="dots">…</TaoCarousel>
 <TaoCarousel v-model="slide" centered :per-view="3" :peek="40" indicator="dots">…</TaoCarousel>
+<TaoCarousel v-model="slide" centered loop :per-view="3" :peek="40" indicator="dots">…</TaoCarousel>
 <TaoCarousel v-model="slide" :per-view="5" :peek="28">
   <template #prev></template>
   <template #next="{ go, disabled }">
