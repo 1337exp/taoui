@@ -273,6 +273,10 @@ describe('TaoCarousel centered', () => {
         track.scrollLeft = 1900; // the 20th: a copy of slide 1
         await w.find('.tao-carousel__track').trigger('scrollend');
         expect(track.scrollLeft).toBe(1000);
+        // the jump writes the distances itself: its own scroll event comes a frame later, and that frame must not flicker
+        // (the old distance of the copy that stood in the middle would be 0, now it is far, and the real slide is in the middle)
+        expect((track.children[10] as HTMLElement).style.getPropertyValue('--tao-carousel-d')).toBe('0.000');
+        expect((track.children[19] as HTMLElement).style.getPropertyValue('--tao-carousel-d')).toBe('2.000');
         track.scrollLeft = 300; // the 4th: a copy of slide 3
         await w.find('.tao-carousel__track').trigger('scrollend');
         expect(track.scrollLeft).toBe(1200);

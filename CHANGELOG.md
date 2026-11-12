@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.34.1
+
+Nothing to migrate; a fix.
+
+- **`TaoCarousel` `centered` + `loop`: no flicker at the seam.** When the strip stopped on a copy (going from the last slide to the first, or back) it jumped to the real set in `scrollend`, and the scale and the fade of the slides (`--tao-carousel-d`) were rewritten only by the `scroll` event of that jump, which comes a frame later; that one frame drew the slides in their new places with the old look, a flash. The distances are written in the same frame as the jump now.
+
 ## 5.34.0
 
 Nothing to migrate for a plain `loop`. `centered` with `loop` changes: it was a rewind to the first slide, it is a cycle now.

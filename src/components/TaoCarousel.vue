@@ -221,6 +221,11 @@ function recenterCycle() {
     const home = base.value + (((slot % total) + total) % total);
     if (home !== slot) {
         el.scrollLeft += (home - slot) * (width + gap);
+        // The jump happens in `scrollend`, after this frame's scroll events: its own `scroll` comes a frame later, and that
+        // frame would draw the slides in their new places with the old scale and fade. Write the distances now.
+        // Прыжок идёт в `scrollend`, после scroll-событий этого кадра: свой `scroll` придёт кадром позже, и этот кадр
+        // нарисовал бы слайды на новых местах со старым масштабом и бледностью (мерцание). Пишем расстояния сразу.
+        updateFocus();
     }
 }
 
