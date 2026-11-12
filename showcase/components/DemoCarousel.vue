@@ -177,6 +177,7 @@ const carouselProducts = [
                 <code>centered loop</code>: no end. Where the strip would be empty, the slides from the other end stand in, and the arrows,
                 the keys, a swipe and the autoplay go round seamlessly; a dot goes the shortest way. For that the slides are drawn three
                 times (the extra copies are <code>inert</code>), so a slide should not hold an <code>id</code> or a <code>ref</code>.
+                This one runs by itself (<code>:autoplay="2500"</code>): watch it pass from the last slide to the first. Hover pauses it.
               </p>
             </template>
             <template #ru>
@@ -184,10 +185,11 @@ const carouselProducts = [
                 <code>centered loop</code>: конца нет. Там, где лента была бы пустой, встают слайды с другого края, а стрелки, клавиши,
                 свайп и автопрокрутка идут по кругу без шва; точка едет кратчайшим путём. Для этого слайды рисуются трижды
                 (лишние копии <code>inert</code>), поэтому в слайде не нужны <code>id</code> и <code>ref</code>.
+                Эта крутится сама (<code>:autoplay="2500"</code>): видно, как она переходит с последнего слайда на первый. Наведи курсор — пауза.
               </p>
             </template>
           </Tr>
-          <TaoCarousel v-model="carouselCycle" centered loop :per-view="3" :peek="40" indicator="dots" :aria-label="tr('Centered, in a circle', 'По центру, по кругу')">
+          <TaoCarousel v-model="carouselCycle" centered loop :autoplay="2500" :per-view="3" :peek="40" indicator="dots" :aria-label="tr('Centered, in a circle', 'По центру, по кругу')">
             <article v-for="item in carouselProducts.slice(0, 9)" :key="'cycle-' + item.id" class="carousel-tile">{{ item.id }}</article>
           </TaoCarousel>
 
