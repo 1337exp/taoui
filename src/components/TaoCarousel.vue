@@ -10,8 +10,15 @@ const props = withDefaults(
     defineProps<{
         modelValue?: number;
         peek?: number;
-        /** How many slides fit in the viewport. 5 = product strip. 1 = one card. */
+        /** How many slides fit in the viewport. 5 = product strip. 1 = one card. With `centered`: how many whole slides around the middle one. */
         perView?: number;
+        /**
+         * The current slide stands in the middle and is the biggest; the ones beside it shrink and the outer ones fade
+         * (`peek` is how much of them shows at the edges). The arrows sit on the edges of the strip, move by one slide.
+         * Текущий слайд стоит по центру и крупнее всех; соседние уменьшаются, дальние бледнеют (`peek` — сколько их видно
+         * по краям). Стрелки лежат на краях ленты и листают по одному слайду.
+         */
+        centered?: boolean;
         controls?: boolean;
         /**
          * Time per slide in ms. 0 — off. The current indicator fills over this time and the slide changes when it is full.
@@ -41,6 +48,7 @@ const props = withDefaults(
         modelValue: 0,
         peek: 0,
         perView: 1,
+        centered: false,
         controls: true,
         autoplay: 0,
         loop: false,
@@ -92,7 +100,9 @@ let settleTimer = 0;
 let samples: { x: number; t: number }[] = [];
 let focusFrame = 0;
 
-const step = computed(() => Math.max(1, Math.round(props.perView)));
+const view = computed(() => Math.max(1, Math.round(props.perView)));
+// centered: one slide is current, so a step is one slide however many are in view / по центру шаг — один слайд
+const step = computed(() => (props.centered ? 1 : view.value));
 const lastIndex = computed(() => Math.max(count.value - step.value, 0));
 const atStart = computed(() => !props.loop && index.value <= 0);
 const atEnd = computed(() => !props.loop && index.value >= lastIndex.value);
@@ -119,7 +129,7 @@ const progressRatio = computed(() => (snapCount.value > 0 ? (index.value + 1) / 
 
 const trackStyle = computed(() => ({
     '--tao-carousel-peek': `${Math.max(props.peek, 0)}px`,
-    '--tao-carousel-per-view': String(step.value),
+    '--tao-carousel-per-view': String(view.value),
 }));
 
 function prefersReducedMotion() {
@@ -134,8 +144,42 @@ function metrics() {
 
     const styles = getComputedStyle(el);
     const gap = Number.parseFloat(styles.columnGap || styles.gap) || 0;
-    const width = (el.children[0] as HTMLElement).getBoundingClientRect().width;
+    const first = el.children[0] as HTMLElement;
+    let width = first.getBoundingClientRect().width;
+    if (props.centered) {
+        // the slide is drawn scaled by its distance from the middle: measure the layout width, not the drawn one
+        // слайд нарисован в масштабе по расстоянию до центра: нужна ширина в раскладке, не нарисованная
+        const scale = Number.parseFloat(getComputedStyle(first).scale);
+        if (scale > 0) {
+            width /= scale;
+        }
+    }
     return { width, gap, total: el.children.length };
+}
+
+/**
+ * Centered: tells every slide how far it is from the middle (`--tao-carousel-d`, 0 … 2 slides); the CSS turns
+ * that into a scale and a fade. Slide `i` stands in the middle at `scrollLeft = i * (width + gap)`, so the
+ * distance is plain arithmetic, no measuring of the slides.
+ * По центру: говорит каждому слайду, как далеко он от середины; CSS превращает это в масштаб и бледность.
+ * Слайд `i` по центру при `scrollLeft = i * (width + gap)`, поэтому расстояние — арифметика, без замеров слайдов.
+ */
+function updateFocus() {
+    const el = track.value;
+    if (!props.centered || !el) {
+        return;
+    }
+
+    const { width, gap, total } = metrics();
+    if (width <= 0) {
+        return;
+    }
+
+    const at = el.scrollLeft / (width + gap);
+    for (let i = 0; i < total; i++) {
+        const distance = Math.min(Math.abs(i - at), 2);
+        (el.children[i] as HTMLElement).style.setProperty('--tao-carousel-d', distance.toFixed(3));
+    }
 }
 
 function nearestIndex(scrollLeft?: number) {
@@ -242,6 +286,7 @@ function scheduleFocusPause(event: FocusEvent) {
 }
 
 function onScroll() {
+    updateFocus();
     if (dragging.value || gliding.value) {
         return;
     }
@@ -511,6 +556,18 @@ watch(
     },
 );
 
+// the slides change their width with the strip: keep the current one in the middle / слайды меняют ширину вместе с лентой
+let resizeObserver: ResizeObserver | null = null;
+
+function onTrackResize() {
+    if (!props.centered || dragging.value || gliding.value) {
+        return;
+    }
+
+    goTo(index.value, true);
+    updateFocus();
+}
+
 onMounted(() => {
     refreshCount();
     mounted.value = true;
@@ -518,15 +575,32 @@ onMounted(() => {
     pageHidden.value = document.hidden;
     nextTick(() => {
         goTo(props.modelValue);
+        updateFocus();
     });
+    if (typeof ResizeObserver !== 'undefined' && track.value) {
+        resizeObserver = new ResizeObserver(onTrackResize);
+        resizeObserver.observe(track.value);
+    }
     document.addEventListener('visibilitychange', onVisibilityChange);
     window.addEventListener('blur', onWindowBlur);
     window.addEventListener('pagehide', onWindowBlur);
 });
 
-onUpdated(refreshCount);
+onUpdated(() => {
+    refreshCount();
+    updateFocus();
+});
+
+watch(
+    () => props.centered,
+    () => nextTick(() => {
+        goTo(index.value, true);
+        updateFocus();
+    }),
+);
 
 onBeforeUnmount(() => {
+    resizeObserver?.disconnect();
     endDrag();
     cancelGlide();
     window.clearTimeout(settleTimer);
@@ -541,6 +615,7 @@ onBeforeUnmount(() => {
 <template>
     <div
         class="tao-carousel"
+        :class="{ 'tao-carousel--centered': centered }"
         :style="trackStyle"
         @mouseenter="onMouseEnter"
         @mouseleave="onMouseLeave"
@@ -552,7 +627,7 @@ onBeforeUnmount(() => {
                 <button
                     v-if="showControls"
                     type="button"
-                    class="tao-carousel__nav"
+                    class="tao-carousel__nav tao-carousel__nav--prev"
                     :aria-label="l10n.prevLabel"
                     :disabled="atStart"
                     @click="goPrev"
@@ -591,7 +666,7 @@ onBeforeUnmount(() => {
                 <button
                     v-if="showControls"
                     type="button"
-                    class="tao-carousel__nav"
+                    class="tao-carousel__nav tao-carousel__nav--next"
                     :aria-label="l10n.nextLabel"
                     :disabled="atEnd"
                     @click="goNext"
@@ -778,6 +853,72 @@ onBeforeUnmount(() => {
 .tao-carousel__nav:disabled {
     opacity: 0.4;
     cursor: not-allowed;
+}
+
+/*
+ * centered: the current slide in the middle, the neighbours smaller, the outer ones faded.
+ * The width of a slide leaves room for `peek` on both edges; two spacers let the first and the last stand in the middle.
+ * `--tao-carousel-d` (0 … 2 slides from the middle) is written by the script on scroll; its steps can be restyled:
+ * `--tao-carousel-scale-step` (scale lost per slide), `--tao-carousel-fade` (opacity lost between the 1st and 2nd slide),
+ * `--tao-carousel-ring` (the ring around an arrow, the colour of what lies under the carousel).
+ * По центру: текущий слайд посередине, соседние меньше, дальние бледнее. Ширина слайда оставляет место под `peek` с обеих
+ * сторон; две распорки дают первому и последнему встать в середину. `--tao-carousel-d` пишет скрипт при прокрутке.
+ */
+.tao-carousel--centered {
+    --_tao-carousel-nav: 40px;
+    --_tao-carousel-slide: max(
+        96px,
+        calc(
+            (100% - 2 * var(--tao-carousel-peek, 0px) - (var(--tao-carousel-per-view, 1) + 1) * var(--tao-space-3)) /
+                var(--tao-carousel-per-view, 1)
+        )
+    );
+    gap: var(--tao-space-4);
+}
+
+.tao-carousel--centered .tao-carousel__row {
+    position: relative;
+    /* the arrows hang half over the edge of the strip / стрелки наполовину свешиваются за край ленты */
+    padding-inline: calc(var(--_tao-carousel-nav) / 2);
+}
+
+.tao-carousel--centered .tao-carousel__track::before,
+.tao-carousel--centered .tao-carousel__track::after {
+    content: '';
+    flex: 0 0 auto;
+    width: max(0px, calc((100% - var(--_tao-carousel-slide)) / 2 - var(--tao-space-3)));
+}
+
+.tao-carousel--centered .tao-carousel__track > :deep(*) {
+    width: var(--_tao-carousel-slide);
+    scroll-snap-align: center;
+    scale: calc(1 - var(--tao-carousel-d, 0) * var(--tao-carousel-scale-step, 0.09));
+    opacity: calc(1 - max(var(--tao-carousel-d, 0) - 1, 0) * var(--tao-carousel-fade, 0.55));
+}
+
+.tao-carousel--centered .tao-carousel__nav {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    width: var(--_tao-carousel-nav);
+    height: var(--_tao-carousel-nav);
+    border: 3px solid var(--tao-carousel-ring, var(--tao-color-bg));
+    background: var(--tao-color-accent);
+    color: var(--tao-color-on-accent);
+    transform: translateY(-50%);
+}
+
+.tao-carousel--centered .tao-carousel__nav:hover:not(:disabled) {
+    background: var(--tao-color-accent-hover);
+    color: var(--tao-color-on-accent);
+}
+
+.tao-carousel--centered .tao-carousel__nav--prev {
+    inset-inline-start: 0;
+}
+
+.tao-carousel--centered .tao-carousel__nav--next {
+    inset-inline-end: 0;
 }
 
 .tao-carousel__footer {
