@@ -170,6 +170,60 @@ describe('TaoCarousel pauses', () => {
     });
 });
 
+describe('TaoCarousel centered', () => {
+    const nine = () => Array.from({ length: 9 }, (_, n) => h('div', { class: 'slide' }, `s${n}`));
+
+    it('the arrows go by one slide however many are in view, and the dots count every slide', async () => {
+        const w = await make({ centered: true, perView: 3, indicator: 'dots' }, { default: nine });
+        expect(w.findAll('.tao-carousel__dot')).toHaveLength(9);
+        await w.find('.tao-carousel__nav--next').trigger('click');
+        expect(w.emitted('update:modelValue')).toEqual([[1]]);
+        await w.find('.tao-carousel__nav--next').trigger('click');
+        expect(w.emitted('update:modelValue')).toEqual([[1], [2]]);
+    });
+
+    it('the strip is not the end until the last slide is in the middle', async () => {
+        const w = await make({ centered: true, perView: 3, modelValue: 7 }, { default: nine });
+        expect(w.find('.tao-carousel__nav--next').attributes('disabled')).toBeUndefined();
+        await w.find('.tao-carousel__nav--next').trigger('click');
+        expect(w.find('.tao-carousel__nav--next').attributes('disabled')).toBeDefined();
+    });
+
+    it('marks the root, keeps the full per-view for the CSS and leaves a plain strip alone', async () => {
+        const w = await make({ centered: true, perView: 3, peek: 40 }, { default: nine });
+        expect(w.classes()).toContain('tao-carousel--centered');
+        expect(w.attributes('style')).toContain('--tao-carousel-per-view: 3');
+        expect(w.attributes('style')).toContain('--tao-carousel-peek: 40px');
+        const plain = await make({ perView: 3 }, { default: nine });
+        expect(plain.classes()).not.toContain('tao-carousel--centered');
+        // a plain strip moves by the whole frame
+        await plain.find('.tao-carousel__nav--next').trigger('click');
+        expect(plain.emitted('update:modelValue')).toEqual([[3]]);
+    });
+
+    it('tells every slide how far it is from the middle', async () => {
+        const w = await make({ centered: true, perView: 3, modelValue: 0 }, { default: nine });
+        const track = w.find('.tao-carousel__track').element as HTMLElement;
+        track.scrollLeft = 116;
+        await w.find('.tao-carousel__track').trigger('scroll');
+        const distance = (n: number) => (track.children[n] as HTMLElement).style.getPropertyValue('--tao-carousel-d');
+        // every box is 100px and the gap is 0 in happy-dom: scrollLeft 116 = 1.16 slides
+        expect(distance(1)).toBe('0.160');
+        expect(distance(0)).toBe('1.160');
+        expect(distance(2)).toBe('0.840');
+        // the far ones stop at 2: no more shrinking
+        expect(distance(8)).toBe('2.000');
+    });
+
+    it('the look is CSS: the spacers, the snap to the middle, the scale and the fade by distance', () => {
+        const css = carouselSource as string;
+        expect(css).toMatch(/\.tao-carousel--centered \.tao-carousel__track::before/);
+        expect(css).toMatch(/scroll-snap-align:\s*center/);
+        expect(css).toMatch(/scale:\s*calc\(1 - var\(--tao-carousel-d, 0\)/);
+        expect(css).toMatch(/opacity:\s*calc\(1 - max\(var\(--tao-carousel-d, 0\) - 1, 0\)/);
+    });
+});
+
 describe('TaoCarousel cursor', () => {
     it('does not change the system cursor of the track: no grab, no grabbing (the developer decides; Opera shows a big black arrow)', () => {
         expect(carouselSource as string).not.toMatch(/cursor:\s*grab/);

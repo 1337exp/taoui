@@ -821,7 +821,8 @@ Showcase section: `#carousel`
 |---|---|---|---|
 | `v-model` | `number` | 0 | The index of the current snap |
 | `perView` | `number` | 1 | How many slides are in the frame. 5 — a product strip |
-| `peek` | `number` | 0 | How many px of the next card are visible on the right |
+| `peek` | `number` | 0 | How many px of the next card are visible on the right (with centered: on both sides) |
+| `centered` | `boolean` | false | The current slide in the middle and the biggest, the ones beside it shrink, the outer ones fade and are cut by the edge. perView is how many whole slides are in the frame, a step and the arrows go by one slide, the arrows lie on the edges of the strip. Restyle with --tao-carousel-scale-step (0.09), --tao-carousel-fade (0.55) and --tao-carousel-ring (the ring around an arrow, the page background by default) |
 | `autoplay` | `number` | 0 | Time per slide in ms. 0 — off. The current indicator fills over this time and the slide changes when it is full (the clock is a CSS animation). Pauses on hover / keyboard focus / touch and drag / a hidden tab; off with prefers-reduced-motion |
 | `loop` | `boolean` | false | Loop round in a circle |
 | `indicator` | `'dots' \| 'bars' \| 'progress'` | — | Marks under the strip: dots (the current one stretches into a pill) / equal bars / one bar (the fill of the slide, the position without autoplay) |

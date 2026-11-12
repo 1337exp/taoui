@@ -11,6 +11,7 @@ defineOptions({ name: 'DemoCarousel' })
 const carouselHero = ref(0)
 const carouselPeek = ref(0)
 const carouselStrip = ref(0)
+const carouselCentered = ref(3)
 const carouselBare = ref(0)
 const carouselCustom = ref(0)
 const carouselExample = computed(() => [
@@ -26,6 +27,9 @@ const carouselExample = computed(() => [
   '  <template #next-icon><TaoIcon name="arrow-right" /></template>',
   '  …',
   '</TaoCarousel>',
+  '',
+  tr('<!-- the current one in the middle: 3 whole slides and a 40px peek of the next ones -->', '<!-- текущий по центру: 3 целых слайда и 40px соседних по краям -->'),
+  '<TaoCarousel v-model="slide" centered :per-view="3" :peek="40" indicator="dots">…</TaoCarousel>',
   '',
   tr('/* the slide look is your article, not the carousel */', '/* вид слайда — ваш article, не карусель */'),
   '.hero {',
@@ -71,14 +75,14 @@ const carouselProducts = [
           <Tr>
             <template #en>
               <p>
-                Three modes of one strip: a whole slide with autoplay, a card with a peek of the next one,
-                a row of five squares. Arrows and dots can be hidden or replaced with slots.
+                Four modes of one strip: a whole slide with autoplay, a card with a peek of the next one,
+                a row of five squares, the current one in the middle. Arrows and dots can be hidden or replaced with slots.
               </p>
             </template>
             <template #ru>
               <p>
-                Три режима одной ленты: целый слайд с автопрокруткой, карточка с краешком следующей,
-                полоса из пяти квадратов. Стрелки и точки можно спрятать или подменить слотами.
+                Четыре режима одной ленты: целый слайд с автопрокруткой, карточка с краешком следующей,
+                полоса из пяти квадратов, текущий по центру. Стрелки и точки можно спрятать или подменить слотами.
               </p>
             </template>
           </Tr>
@@ -142,6 +146,27 @@ const carouselProducts = [
             </article>
           </TaoCarousel>
     
+          <h3 class="carousel-heading">{{ tr('The current one in the middle', 'Текущий по центру') }}</h3>
+          <Tr>
+            <template #en>
+              <p class="carousel-note">
+                <code>centered</code>: the current slide stands in the middle and is the biggest, the ones beside it shrink, the outer ones
+                fade and are cut by the edge (<code>peek</code> is how much of them shows). <code>per-view</code> is how many whole slides
+                are in the frame. The arrows lie on the edges and move by one slide; a mouse drag, a swipe and the keys work as usual.
+              </p>
+            </template>
+            <template #ru>
+              <p class="carousel-note">
+                <code>centered</code>: текущий слайд стоит по центру и крупнее всех, соседние уменьшаются, дальние бледнеют и обрезаются
+                краем (<code>peek</code> — сколько их видно). <code>per-view</code> — сколько целых слайдов в кадре. Стрелки лежат на краях
+                и листают по одному слайду; перетаскивание мышью, свайп и клавиши работают как обычно.
+              </p>
+            </template>
+          </Tr>
+          <TaoCarousel v-model="carouselCentered" centered :per-view="3" :peek="40" indicator="dots" :aria-label="tr('Centered', 'По центру')">
+            <article v-for="item in carouselProducts.slice(0, 9)" :key="'centered-' + item.id" class="carousel-tile">{{ item.id }}</article>
+          </TaoCarousel>
+
           <h3 class="carousel-heading">{{ tr('No arrows', 'Без стрелок') }}</h3>
           <Tr>
             <template #en>
@@ -231,6 +256,17 @@ const carouselProducts = [
   color: var(--tao-color-text-muted);
   font-size: 22px;
   font-weight: 700;
+}
+
+.carousel-tile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 220px;
+  border-radius: var(--tao-radius-panel);
+  background: var(--tao-color-accent);
+  color: var(--tao-color-on-accent);
+  font-size: 22px;
 }
 
 .carousel-card span {

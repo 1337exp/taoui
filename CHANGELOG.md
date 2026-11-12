@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.33.0
+
+Nothing to migrate: `centered` is off by default, and a carousel without it works as before.
+
+- **`TaoCarousel` `centered`: the current slide in the middle.** The strip the shop and gallery pages use: the current slide stands in the middle and is the biggest, the ones beside it are smaller, the outer ones fade and are cut by the edge of the strip, the arrows hang over its edges. `perView` is how many whole slides are in the frame, `peek` is how much of the outer ones shows on each side, and a step (the arrows, the keys, the autoplay) is one slide, the dots count every slide. The strip is still a scroll-snap strip, so the swipe, the mouse drag, the wheel and `loop` work as in the other modes; the first and the last slide can stand in the middle (two spacers), and a change of the width keeps the current one there. The script writes only one number to each slide, `--tao-carousel-d` (its distance from the middle, 0 … 2 slides), and the CSS turns it into `scale` and `opacity`, so the look is restyled with `--tao-carousel-scale-step` (0.09), `--tao-carousel-fade` (0.55) and `--tao-carousel-ring` (the ring around an arrow, the page background by default). The width of a slide is measured by its layout width (the drawn one is scaled).
+
 ## 5.32.2
 
 Nothing to migrate; a fix.
