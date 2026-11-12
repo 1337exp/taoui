@@ -26,6 +26,12 @@ const props = withDefaults(
          * Время на слайд в мс. 0 — выключено. Текущий индикатор заливается за это время, по заполнении слайд меняется.
          */
         autoplay?: number;
+        /**
+         * Go round in a circle. With `centered` it is a seamless cycle: the empty places at the ends are taken by the slides
+         * from the other end, so the slides are drawn 3 times (the extra copies are `inert` and `aria-hidden`; no ids, no refs in a slide).
+         * Крутить по кругу. С `centered` — бесшовный цикл: пустоту по краям занимают слайды с другого конца, поэтому слайды
+         * рисуются трижды (лишние копии `inert` и `aria-hidden`; id и ref в слайде не нужны).
+         */
         loop?: boolean;
         /**
          * Under the track, one mark per snap: `dots` (the current one stretches into a pill), `bars` (equal bars),
@@ -75,7 +81,10 @@ defineSlots<{
 
 const track = ref<HTMLElement | null>(null);
 const index = ref(props.modelValue);
+/** The real slides (the copies of a cycle are not counted). / Настоящие слайды (копии цикла не считаются). */
 const count = ref(0);
+/** How many times the slides are drawn: 1, or an odd number in a centered loop (the middle set is the real one). / Сколько раз нарисованы слайды. */
+const copies = ref(1);
 const dragging = ref(false);
 /** Momentum after a mouse drag: scroll-snap stays off until the glide lands on a slide. / Инерция после перетаскивания мышью. */
 const gliding = ref(false);
@@ -103,6 +112,9 @@ let focusFrame = 0;
 const view = computed(() => Math.max(1, Math.round(props.perView)));
 // centered: one slide is current, so a step is one slide however many are in view / по центру шаг — один слайд
 const step = computed(() => (props.centered ? 1 : view.value));
+const cyclic = computed(() => copies.value > 1);
+/** Where the real set starts, in slides: the copies stand before and after it. / Где начинается настоящий набор, в слайдах. */
+const base = computed(() => ((copies.value - 1) / 2) * count.value);
 const lastIndex = computed(() => Math.max(count.value - step.value, 0));
 const atStart = computed(() => !props.loop && index.value <= 0);
 const atEnd = computed(() => !props.loop && index.value >= lastIndex.value);
@@ -154,7 +166,62 @@ function metrics() {
             width /= scale;
         }
     }
-    return { width, gap, total: el.children.length };
+    return { width, gap, total: Math.round(el.children.length / copies.value) };
+}
+
+/** A cycle needs this many sets: on each side enough slides to fill the frame and a drag. / Сколько наборов нужно циклу. */
+function wantedCopies(real: number) {
+    if (!props.centered || !props.loop || real < 2) {
+        return 1;
+    }
+
+    return 2 * Math.ceil((view.value + 1) / real) + 1;
+}
+
+/** The copies of a cycle are not for reading or focusing. / Копии цикла не для чтения и фокуса. */
+function syncClones() {
+    const el = track.value;
+    if (!el) {
+        return;
+    }
+
+    const real = count.value;
+    const middle = (copies.value - 1) / 2;
+    for (let i = 0; i < el.children.length; i++) {
+        const slide = el.children[i] as HTMLElement;
+        const copy = real > 0 ? Math.floor(i / real) : 0;
+        if (copies.value > 1 && copy !== middle) {
+            slide.setAttribute('aria-hidden', 'true');
+            slide.setAttribute('inert', '');
+            slide.setAttribute('data-tao-carousel-copy', '');
+        } else if (slide.hasAttribute('data-tao-carousel-copy')) {
+            slide.removeAttribute('aria-hidden');
+            slide.removeAttribute('inert');
+            slide.removeAttribute('data-tao-carousel-copy');
+        }
+    }
+}
+
+/**
+ * A cycle rests in the middle set: after a move that ended in a copy, the strip jumps by whole sets, which looks the same.
+ * Цикл стоит в среднем наборе: после движения, закончившегося в копии, лента прыгает на целые наборы — выглядит так же.
+ */
+function recenterCycle() {
+    const el = track.value;
+    if (!cyclic.value || !el || dragging.value || gliding.value) {
+        return;
+    }
+
+    const { width, gap, total } = metrics();
+    if (width <= 0 || total <= 0) {
+        return;
+    }
+
+    const slot = Math.round(el.scrollLeft / (width + gap));
+    const home = base.value + (((slot % total) + total) % total);
+    if (home !== slot) {
+        el.scrollLeft += (home - slot) * (width + gap);
+    }
 }
 
 /**
@@ -170,13 +237,14 @@ function updateFocus() {
         return;
     }
 
-    const { width, gap, total } = metrics();
+    const { width, gap } = metrics();
     if (width <= 0) {
         return;
     }
 
     const at = el.scrollLeft / (width + gap);
-    for (let i = 0; i < total; i++) {
+    // every drawn slide, the copies of a cycle too / все нарисованные слайды, и копии цикла
+    for (let i = 0; i < el.children.length; i++) {
         const distance = Math.min(Math.abs(i - at), 2);
         (el.children[i] as HTMLElement).style.setProperty('--tao-carousel-d', distance.toFixed(3));
     }
@@ -189,8 +257,13 @@ function nearestIndex(scrollLeft?: number) {
     }
 
     const left = scrollLeft ?? track.value?.scrollLeft ?? 0;
+    const slot = Math.round(left / (width + gap));
+    if (cyclic.value) {
+        return ((slot % total) + total) % total;
+    }
+
     const last = Math.max(total - step.value, 0);
-    return Math.min(Math.max(Math.round(left / (width + gap)), 0), last);
+    return Math.min(Math.max(slot, 0), last);
 }
 
 function setIndex(next: number) {
@@ -204,7 +277,19 @@ function setIndex(next: number) {
 }
 
 function refreshCount() {
-    count.value = track.value?.children.length ?? 0;
+    // the children are what the last render drew: `copies.value` sets of the real slides
+    // дети — то, что нарисовал последний рендер: `copies.value` наборов настоящих слайдов
+    count.value = Math.round((track.value?.children.length ?? 0) / copies.value);
+    const wanted = wantedCopies(count.value);
+    if (wanted !== copies.value) {
+        copies.value = wanted;
+        // the sets before the real one moved it: stand on the current slide again / набор перед настоящим сдвинул его
+        nextTick(() => {
+            goTo(index.value, true);
+            updateFocus();
+        });
+    }
+    syncClones();
 }
 
 function goPrev() {
@@ -220,6 +305,26 @@ function goTo(next: number, instant = false) {
     const el = track.value;
     const { width, gap, total } = metrics();
     if (!el || width <= 0 || total <= 0) {
+        return;
+    }
+
+    if (cyclic.value && total > 1) {
+        // the nearest copy of the slide: forward from the last one is the first one, with no rewind
+        // ближайшая копия слайда: вперёд от последнего — первый, без перемотки
+        const slot = width + gap;
+        const at = el.scrollLeft / slot;
+        const home = ((next % total) + total) % total;
+        let target = base.value + home;
+        // an instant move (the start, a new width) stands in the real set; a smooth one takes the nearest copy
+        // мгновенный ход (старт, новая ширина) — в настоящий набор; плавный — в ближайшую копию
+        for (let copy = home; !instant && copy < total * copies.value; copy += total) {
+            if (Math.abs(copy - at) < Math.abs(target - at)) {
+                target = copy;
+            }
+        }
+
+        el.scrollTo({ left: target * slot, behavior: prefersReducedMotion() || dragging.value || instant ? 'auto' : 'smooth' });
+        setIndex(home);
         return;
     }
 
@@ -313,6 +418,7 @@ function supportsScrollEnd() {
  */
 function settle() {
     window.clearTimeout(settleTimer);
+    recenterCycle();
     const el = track.value;
     if (!el || dragging.value || gliding.value || getComputedStyle(el).scrollSnapType !== 'none') {
         return;
@@ -379,6 +485,7 @@ function glideTarget(from: number, velocity: number) {
 function finishGlide() {
     glideFrame = 0;
     gliding.value = false;
+    recenterCycle();
     setIndex(nearestIndex());
 }
 
@@ -591,12 +698,16 @@ onUpdated(() => {
     updateFocus();
 });
 
+// the look and the number of sets change: stand on the current slide again / вид и число наборов меняются
 watch(
-    () => props.centered,
-    () => nextTick(() => {
-        goTo(index.value, true);
-        updateFocus();
-    }),
+    () => [props.centered, props.loop, props.perView] as const,
+    () => {
+        refreshCount();
+        nextTick(() => {
+            goTo(index.value, true);
+            updateFocus();
+        });
+    },
 );
 
 onBeforeUnmount(() => {
@@ -659,7 +770,9 @@ onBeforeUnmount(() => {
                 @lostpointercapture="onLostPointerCapture"
                 @click.capture="onClickCapture"
             >
-                <slot />
+                <template v-for="copy in copies" :key="copy">
+                    <slot />
+                </template>
             </div>
 
             <slot name="next" :disabled="atEnd" :go="goNext">

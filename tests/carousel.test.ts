@@ -215,6 +215,93 @@ describe('TaoCarousel centered', () => {
         expect(distance(8)).toBe('2.000');
     });
 
+    // a cycle: 9 real slides, 3 in view → the slides are drawn 3 times and the real ones are the middle set
+    // цикл: 9 настоящих слайдов, 3 в кадре → слайды нарисованы 3 раза, настоящие — средний набор
+    async function cycle(props: Record<string, unknown> = {}) {
+        const scrollTo = vi.fn(function (this: HTMLElement, options: ScrollToOptions) {
+            this.scrollLeft = options.left ?? 0;
+        });
+        (HTMLElement.prototype as unknown as { scrollTo: unknown }).scrollTo = scrollTo;
+        const w = await make({ centered: true, loop: true, perView: 3, indicator: 'dots', ...props }, { default: nine });
+        await nextTick();
+        await nextTick();
+        return { w, scrollTo, track: w.find('.tao-carousel__track').element as HTMLElement };
+    }
+
+    it('loop draws the slides three times, the copies are inert, the dots and the arrows count the real ones', async () => {
+        const { w, track } = await cycle();
+        expect(track.children).toHaveLength(27);
+        expect(w.findAll('.tao-carousel__dot')).toHaveLength(9);
+        const copies = [...track.children].map((el) => el.hasAttribute('inert'));
+        expect(copies.slice(0, 9).every(Boolean)).toBe(true);
+        expect(copies.slice(9, 18).some(Boolean)).toBe(false);
+        expect(copies.slice(18).every(Boolean)).toBe(true);
+        expect(track.children[0]!.getAttribute('aria-hidden')).toBe('true');
+        expect(track.children[10]!.getAttribute('aria-hidden')).toBeNull();
+        // the real set is where the strip stands: slide 0 is the 10th, 9 × 100px
+        expect(track.scrollLeft).toBe(900);
+        expect(w.find('.tao-carousel__nav--prev').attributes('disabled')).toBeUndefined();
+    });
+
+    it('forward from the last slide is the first one, in the next copy, not a rewind', async () => {
+        const { w, scrollTo, track } = await cycle({ modelValue: 8 });
+        expect(track.scrollLeft).toBe(1700);
+        scrollTo.mockClear();
+        await w.find('.tao-carousel__nav--next').trigger('click');
+        expect(w.emitted('update:modelValue')).toEqual([[0]]);
+        expect(scrollTo).toHaveBeenCalledWith({ left: 1800, behavior: 'smooth' });
+    });
+
+    it('back from the first slide is the last one, in the previous copy', async () => {
+        const { w, scrollTo } = await cycle();
+        scrollTo.mockClear();
+        await w.find('.tao-carousel__nav--prev').trigger('click');
+        expect(w.emitted('update:modelValue')).toEqual([[8]]);
+        expect(scrollTo).toHaveBeenCalledWith({ left: 800, behavior: 'smooth' });
+    });
+
+    it('a dot goes to the nearest copy of its slide', async () => {
+        const { w, scrollTo } = await cycle({ modelValue: 7 });
+        scrollTo.mockClear();
+        // from 7 (the 17th) the shortest way to 1 is forward through the end, the copy of 1 that is the 20th: 3 slides, not 6 back
+        await w.findAll('.tao-carousel__dot')[1]!.trigger('click');
+        expect(scrollTo).toHaveBeenCalledWith({ left: 1900, behavior: 'smooth' });
+    });
+
+    it('a strip that stopped in a copy jumps back to the real set, to the same slide', async () => {
+        const { w, track } = await cycle();
+        track.scrollLeft = 1900; // the 20th: a copy of slide 1
+        await w.find('.tao-carousel__track').trigger('scrollend');
+        expect(track.scrollLeft).toBe(1000);
+        track.scrollLeft = 300; // the 4th: a copy of slide 3
+        await w.find('.tao-carousel__track').trigger('scrollend');
+        expect(track.scrollLeft).toBe(1200);
+    });
+
+    it('every drawn slide, the copies too, gets its distance from the middle', async () => {
+        const { w, track } = await cycle({ modelValue: 8 });
+        await w.find('.tao-carousel__track').trigger('scroll');
+        // the strip stands on the real slide 8 (the 18th); the first copy of slide 0 is the 19th, one slide away
+        expect((track.children[18] as HTMLElement).style.getPropertyValue('--tao-carousel-d')).toBe('1.000');
+        expect((track.children[26] as HTMLElement).style.getPropertyValue('--tao-carousel-d')).toBe('2.000');
+    });
+
+    it('a few slides are drawn more times, so the frame is never empty', async () => {
+        const w = await make({ centered: true, loop: true, perView: 3 });
+        await nextTick();
+        const track = w.find('.tao-carousel__track').element as HTMLElement;
+        // 3 real slides and 4 needed on each side: 2 sets on each side + the real one
+        expect(track.children).toHaveLength(15);
+    });
+
+    it('without centered, loop is still a rewind and draws the slides once', async () => {
+        const w = await make({ loop: true, modelValue: 2 });
+        await nextTick();
+        expect(w.findAll('.tao-carousel__track > .slide')).toHaveLength(3);
+        await w.find('.tao-carousel__nav--next').trigger('click');
+        expect(w.emitted('update:modelValue')).toEqual([[0]]);
+    });
+
     it('the look is CSS: the spacers, the snap to the middle, the scale and the fade by distance', () => {
         const css = carouselSource as string;
         expect(css).toMatch(/\.tao-carousel--centered \.tao-carousel__track::before/);
