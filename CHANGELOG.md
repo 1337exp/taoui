@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.37.3
+
+Nothing to migrate; a fix to the look.
+
+- **`TaoColorPicker`: the preview, the field and the eyedropper stand on one line.** Under the model switch the row has a preview, a field with its label («HEX» or «R», «G», «B») above it, and the eyedropper. The row was centred, so the preview and the button hung in the middle of «label + field» and stood higher than the field, and they were 36px beside a 26px field. It was so since 3.2.1, when the label was put over the HEX field (so that the row keeps its height in every mode). Now the row is one small size (`tao-size-small`, which the density also reaches), the preview, the fields and the button are one height, and `align-items: flex-end` puts them on one line under the labels. In HEX and in RGB / HSL alike.
+
 ## 5.37.2
 
 Nothing to migrate; two fixes.

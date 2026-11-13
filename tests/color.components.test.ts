@@ -4,6 +4,8 @@ import { nextTick } from 'vue';
 import TaoColorInput from '../src/components/TaoColorInput.vue';
 import TaoColorPicker from '../src/components/TaoColorPicker.vue';
 import TaoSegmented from '../src/components/TaoSegmented.vue';
+// @ts-expect-error Vite `?raw` import: the component source as text, to read its styles
+import pickerSource from '../src/components/TaoColorPicker.vue?raw';
 
 const last = <T,>(list: T[]): T => list[list.length - 1]!;
 
@@ -246,5 +248,26 @@ describe('ColorPicker: input modes', () => {
     it('a mode that is not in the list falls back to the first allowed one', () => {
         const w = mountPicker({ mode: 'hsl', modes: ['rgb'] });
         expect(channelInputs(w)).toEqual(['255', '136', '0']);
+    });
+});
+
+// 5.37.3: the preview, the field and the eyedropper stand on one line under the labels. The row was centred, so with a
+// label over the field the preview and the button hung in the middle of «label + field».
+// 5.37.3: образец, поле и пипетка стоят на одной линии под подписями. Строка была по центру, и при подписи над полем образец
+// и кнопка висели посередине «подпись + поле».
+describe('ColorPicker: the row of the preview and the fields', () => {
+    const source = (pickerSource as string).replace(/\r\n/g, '\n');
+
+    it('puts the preview, the fields and the button on the line of the fields, under the labels', () => {
+        const row = /\.tao-color-picker__row \{[^}]*\}/.exec(source)![0];
+        expect(row).toContain('align-items: flex-end');
+        expect(row).not.toContain('align-items: center');
+    });
+
+    it('the whole row is one small size, so the preview and the button are as tall as the fields', () => {
+        expect(source).toMatch(/class="tao-color-picker__row tao-size-small"/);
+        const w = mount(TaoColorPicker, { props: { modelValue: '#ff8800' }, attachTo: document.body });
+        expect(w.find('.tao-color-picker__row').classes()).toContain('tao-size-small');
+        w.unmount();
     });
 });
