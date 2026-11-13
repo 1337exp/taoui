@@ -228,6 +228,8 @@ function onRowClick(row: Record<string, unknown>, index: number) {
     position: relative;
     width: 100%;
     overflow: auto;
+    /* sideways at the end does not turn into the back gesture of the browser / боковая прокрутка в конце не превращается в жест «назад» */
+    overscroll-behavior-x: contain;
     border: 1px solid color-mix(in srgb, var(--tao-color-border) var(--tao-frame-alpha, 100%), transparent);
     border-radius: var(--tao-radius-panel);
     background: color-mix(in srgb, var(--tao-color-surface-raised) var(--tao-frame-fill, 0%), var(--tao-color-surface));

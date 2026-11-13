@@ -454,6 +454,8 @@ const has = (name: string) => slotHas(slots, name);
     flex: 1;
     min-height: 0;
     overflow: auto;
+    /* the wheel at the end does not go on to scroll the page behind / колесо в конце не листает страницу за окном */
+    overscroll-behavior: contain;
     padding: var(--tao-space-4);
 }
 

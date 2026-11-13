@@ -157,6 +157,8 @@
 .tao-prose :where(pre) {
     padding: var(--tao-space-3) var(--tao-space-4);
     overflow-x: auto;
+    /* sideways at the end does not turn into the back gesture of the browser / боковая прокрутка в конце не превращается в жест «назад» */
+    overscroll-behavior-x: contain;
     border-radius: var(--tao-radius-panel);
     background: var(--tao-color-surface-sunken);
     line-height: 1.5;

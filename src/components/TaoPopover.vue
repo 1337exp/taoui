@@ -115,6 +115,8 @@ watch(open, (isOpen) => {
     max-width: min(360px, calc(100vw - 16px));
     padding: var(--tao-space-3);
     overflow: auto;
+    /* the wheel at the end does not go on to scroll the page behind / колесо в конце не листает страницу за окном */
+    overscroll-behavior: contain;
     background: var(--tao-color-surface-raised);
     color: var(--tao-color-text);
     border: 1px solid var(--tao-color-border);

@@ -303,6 +303,8 @@ onBeforeUnmount(() => clearTimeout(closeSubTimer));
     max-width: min(360px, calc(100vw - 16px));
     max-height: calc(100vh - 16px);
     overflow-y: auto;
+    /* the wheel at the end does not go on to scroll the page behind / колесо в конце не листает страницу за окном */
+    overscroll-behavior: contain;
     padding: var(--tao-space-1);
     display: flex;
     flex-direction: column;

@@ -256,6 +256,8 @@ const has = (name: string) => slotHas(slots, name);
     flex: 1 1 auto;
     min-height: 0;
     overflow-y: auto;
+    /* the wheel at the end does not go on to scroll the page behind / колесо в конце не листает страницу за окном */
+    overscroll-behavior: contain;
     padding: var(--tao-space-5);
 }
 
@@ -291,6 +293,7 @@ const has = (name: string) => slotHas(slots, name);
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .tao-modal-overlay--fullscreen .tao-modal__footer {
@@ -322,6 +325,7 @@ const has = (name: string) => slotHas(slots, name);
         flex: 1;
         min-height: 0;
         overflow-y: auto;
+        overscroll-behavior: contain;
     }
 
     .tao-modal-overlay--fullscreen-narrow .tao-modal__footer {
