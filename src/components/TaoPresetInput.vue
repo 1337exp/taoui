@@ -312,6 +312,8 @@ function onKeydown(event: KeyboardEvent) {
     margin: 0;
     padding: var(--tao-space-1);
     overflow: auto;
+    /* the wheel at the end does not go on to scroll the page behind / колесо в конце не листает страницу за окном */
+    overscroll-behavior: contain;
     list-style: none;
     background: var(--tao-color-surface-raised);
     color: var(--tao-color-text);

@@ -287,6 +287,8 @@ watch(open, (isOpen) => {
     padding: var(--tao-space-1);
     max-height: 240px;
     overflow: auto;
+    /* the wheel at the end does not go on to scroll the page behind / колесо в конце не листает страницу за окном */
+    overscroll-behavior: contain;
     list-style: none;
 }
 

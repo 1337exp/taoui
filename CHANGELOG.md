@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.37.2
+
+Nothing to migrate; two fixes.
+
+- **A dialog no longer shifts the page sideways when it opens.** A lock of the page scroll (`TaoModal`, `TaoDrawer`, the modal `TaoCommandPalette`, the confirm window) sets `overflow: hidden` on the body, and a page with a classic scrollbar lost the bar and became wider by its width, so everything moved. The lock keeps the place of the bar now (`scrollbar-gutter: stable` on the root while it is locked, given back after) and only when the bar is there: on a short page, or with overlay scrollbars, nothing is reserved. A browser that does not know `scrollbar-gutter` (before Safari 18.2) shows the shift as before.
+- **The wheel at the end of a scrolling panel stays in the panel.** As in 5.37.1 for `TaoCommandList`, now the same for the other panels that float over the page or sit in a dialog: the lists of `TaoSelect`, `TaoCombobox` and `TaoPresetInput`, `TaoMenu` (and the menus built on it), `TaoPopover`, the overflow menu of `TaoToolbar`, and the content of `TaoModal` and `TaoDrawer` get `overscroll-behavior: contain`. `TaoTable` and the `pre` of `.tao-prose`, which scroll sideways inside the page, get `overscroll-behavior-x: contain` only: the sideways swipe at the end no longer turns into the back gesture of the browser, and the vertical wheel still goes on to the page.
+
 ## 5.37.1
 
 Nothing to migrate; a fix.
