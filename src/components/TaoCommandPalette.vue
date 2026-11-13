@@ -61,6 +61,12 @@ const rows = computed(() => {
     return out;
 });
 
+/**
+ * Some row has an icon: the rows without one keep an empty column for it, so every label stands in one column.
+ * Какая-то строка с иконкой: у остальных остаётся пустая колонка под неё, и все подписи стоят в одном столбце.
+ */
+const hasIcons = computed(() => results.value.some((m) => m.item.icon));
+
 const enabled = (index: number) => results.value[index] !== undefined && !results.value[index]!.item.disabled;
 const firstEnabled = () => results.value.findIndex((m) => !m.item.disabled);
 
@@ -178,14 +184,14 @@ useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscap
                         :placeholder="placeholder ?? l10n.placeholder"
                         @keydown="onKeydown"
                     />
-                    <ul :id="listId" ref="listRef" class="tao-command-palette__list" role="listbox" :aria-label="label ?? l10n.label">
+                    <ul :id="listId" ref="listRef" class="tao-command-palette__list" :class="{ 'has-icons': hasIcons }" role="listbox" :aria-label="label ?? l10n.label">
                         <template v-for="(row, i) in rows" :key="row.kind === 'group' ? `g-${i}` : row.match.item.id">
                             <li v-if="row.kind === 'group'" class="tao-command-palette__group" role="presentation">{{ row.title }}</li>
                             <li
                                 v-else
                                 :id="optionId(row.index)"
                                 class="tao-command-palette__option"
-                                :class="{ 'is-active': row.index === active, 'is-disabled': row.match.item.disabled }"
+                                :class="{ 'is-active': row.index === active, 'is-disabled': row.match.item.disabled, 'has-icon': row.match.item.icon }"
                                 role="option"
                                 :aria-selected="row.index === active"
                                 :aria-disabled="row.match.item.disabled || undefined"
@@ -230,8 +236,19 @@ useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscap
     background: var(--tao-color-overlay);
 }
 
+/*
+ * One scale for the whole panel. The panel is teleported to <body>, so it must set its own text size (otherwise the rows
+ * take the 16px of the page and the field stays at 14px): the field and the rows share --tao-control-font-size, the field is one
+ * step taller than a row, and its text starts exactly where the labels of the rows start (--_pad-x).
+ * Одна шкала на всю панель. Панель телепортирована в <body>, поэтому размер текста задаёт сама (иначе строки берут 16px
+ * страницы, а поле остаётся 14px): поле и строки на одном --tao-control-font-size, поле на ступень выше строки, а его
+ * текст начинается там же, где подписи строк (--_pad-x).
+ */
 .tao-command-palette {
     --tao-command-palette-bg: var(--tao-surface-fill, var(--tao-color-surface-raised));
+    --_pad-x: var(--tao-space-3);
+    --_icon: 16px;
+    --_row: var(--tao-control-height);
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -247,20 +264,22 @@ useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscap
     box-shadow: var(--tao-surface-inset, 0 0 #0000), var(--tao-shadow-overlay);
     color: var(--tao-color-text);
     font-family: var(--tao-font-family);
+    font-size: var(--tao-control-font-size);
+    line-height: 1.4;
 }
 
 .tao-command-palette__input {
     flex: none;
     box-sizing: border-box;
     width: 100%;
-    height: var(--tao-control-height, 36px);
-    padding: 0 var(--tao-space-4);
+    height: calc(var(--_row) + var(--tao-space-2));
+    /* the list padding plus the row padding: the text of the field is above the labels of the rows */
+    padding: 0 calc(var(--tao-space-2) + var(--_pad-x));
     border: 0;
     border-bottom: 1px solid var(--tao-color-border);
     background: transparent;
     color: var(--tao-color-text);
     font: inherit;
-    font-size: var(--tao-font-size-base, 14px);
 }
 
 .tao-command-palette__input::placeholder {
@@ -284,26 +303,42 @@ useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscap
     list-style: none;
 }
 
+/* a caption of a group: smaller, capitals, spaced, and a hairline above every group but the first, so it cannot pass for a row */
+/* подпись группы: мельче, капителью, с разрядкой, и линия над каждой группой, кроме первой: на строку она не похожа */
 .tao-command-palette__group {
-    padding: var(--tao-space-3) var(--tao-space-3) var(--tao-space-1);
+    padding: var(--tao-space-2) var(--_pad-x) var(--tao-space-1);
     color: var(--tao-color-text-muted);
-    font-size: var(--tao-font-size-sm, 12px);
+    font-size: var(--tao-font-size-xs);
     font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+.tao-command-palette__group:not(:first-child) {
+    margin-top: var(--tao-space-2);
+    padding-top: var(--tao-space-3);
+    border-top: 1px solid var(--tao-color-border);
 }
 
 .tao-command-palette__option {
     display: flex;
     align-items: center;
     gap: var(--tao-space-3);
-    min-height: var(--tao-control-height, 36px);
-    padding: 0 var(--tao-space-3);
-    border-radius: var(--tao-radius-control);
+    box-sizing: border-box;
+    min-height: var(--_row);
+    padding: var(--tao-space-1) var(--_pad-x);
+    /* concentric corners: the panel radius minus the list padding / концентричные углы */
+    border-radius: max(0px, calc(var(--tao-radius-panel) - var(--tao-space-2)));
     color: var(--tao-color-text);
     cursor: pointer;
+    user-select: none;
 }
 
-.tao-command-palette__option.is-active {
+/* the row under the pointer or the arrows goes one step up the text ladder / строка под указателем идёт на ступень выше */
+.tao-command-palette__option[aria-selected='true'] {
     background: var(--tao-color-accent-subtle, var(--tao-color-surface-hover));
+    color: var(--tao-color-text-strong);
 }
 
 .tao-command-palette__option.is-disabled {
@@ -313,7 +348,14 @@ useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscap
 
 .tao-command-palette__icon {
     flex: none;
+    width: var(--_icon);
+    height: var(--_icon);
     color: var(--tao-color-text-muted);
+}
+
+/* a row without an icon keeps its place: the labels of all rows stand in one column / строка без иконки хранит её место */
+.tao-command-palette__list.has-icons .tao-command-palette__option:not(.has-icon) .tao-command-palette__text {
+    padding-inline-start: calc(var(--_icon) + var(--tao-space-3));
 }
 
 .tao-command-palette__text {
@@ -338,7 +380,7 @@ useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscap
 .tao-command-palette__description {
     overflow: hidden;
     color: var(--tao-color-text-muted);
-    font-size: var(--tao-font-size-sm, 12px);
+    font-size: var(--tao-control-font-size-secondary);
     text-overflow: ellipsis;
     white-space: nowrap;
 }
@@ -346,18 +388,19 @@ useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscap
 .tao-command-palette__where {
     flex: none;
     color: var(--tao-color-text-muted);
-    font-size: var(--tao-font-size-sm, 12px);
+    font-size: var(--tao-control-font-size-secondary);
 }
 
 .tao-command-palette__shortcut {
     flex: none;
     color: var(--tao-color-text-muted);
     font: inherit;
-    font-size: var(--tao-font-size-sm, 12px);
+    font-size: var(--tao-control-font-size-secondary);
+    font-variant-numeric: tabular-nums;
 }
 
 .tao-command-palette__empty {
-    padding: var(--tao-space-4);
+    padding: var(--tao-space-6) var(--tao-space-4);
     color: var(--tao-color-text-muted);
     text-align: center;
 }
