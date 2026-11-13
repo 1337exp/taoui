@@ -104,7 +104,7 @@ export const propTablesEn = {
         r('fill', 'boolean', 'false', 'Run also when the line fits: it is repeated, with gap between the copies, until the copies cover the whole width (a ticker of quotes, a row of logos). Without it a line that fits stands still'),
         r('reverse', 'boolean', 'false', 'Run to the right instead of to the left'),
       ],
-      slots: 'default — the content of the line; its copies for the next rounds are hidden from a screen reader and inert. It runs only when it does not fit (always with fill); it stops on hover, on focus (a running line is a tab stop) and on a tap; with «reduce motion» it wraps. The content of the slot is watched: a new price, a font that came or an image measure the line again by themselves, measure() is only for rare cases (measure again by hand).',
+      slots: 'default — the content of the line; its copies for the next rounds are hidden from a screen reader and inert. It runs only when it does not fit (always with fill); it stops on hover, on focus (a running line is a tab stop) and on a tap; with «reduce motion» it wraps. The line is as wide as its content: when the width of a part changes (live prices), everything after it moves and the strip twitches, so give live items a block of fixed width (columns in ch, tabular-nums). The content of the slot is watched: a new price, a font that came or an image measure the line again by themselves, measure() is only for rare cases (measure again by hand).',
     },
   ],
   copy: [

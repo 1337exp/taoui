@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.39.1
+
+Nothing to migrate; the demo and the docs of `TaoMarquee`, no change in the component.
+
+- **The ticker of the demo no longer twitches.** The quotes of the showcase were bare text: a price that got longer or shorter moved everything after it, and the strip twitched back and forth, and the quotes had no space between them. Every quote is a block of fixed width now (the symbol, the price and the change each in a column of `ch`, `tabular-nums`, prices with a fixed count of decimals) with a gap after it. The docs of `TaoMarquee` say it: the line is as wide as its content, so live parts should have a fixed width.
+
 ## 5.39.0
 
 Nothing to migrate: `fill` and `reverse` are off by default, and a marquee without them runs as before. One fix: it now follows its content.
