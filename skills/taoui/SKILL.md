@@ -100,7 +100,7 @@ choose a text colour, WCAG 2 to promise a number.
 
 ## Overlays and feedback
 
-- `TaoCommandList` (the field and the list of the palette with no window, for a page, a panel or a `TaoPopover`; `@select` closes nothing), `TaoCommandPalette` (a dialog that searches `items` `{ id, label, group?, shortcut?, keywords?, disabled? }`, `Ctrl+K` style: you open it from your own key with `v-model`, `@select` runs the pick; the search alone is `matchCommands`), `TaoModal` (`fullscreen`, `fullscreen="narrow"` for a page on a phone), `TaoDrawer` (`side="bottom"` is the phone's
+- `TaoCommandList` (the field and the list of the palette with no window, for a page, a panel or a `TaoPopover`; `@select` closes nothing), `TaoCommandPalette` (a dialog, `modal="false"` for a panel with no dimming, the whole screen on a phone by default, that searches `items` `{ id, label, group?, shortcut?, keywords?, disabled? }`, `Ctrl+K` style: you open it from your own key with `v-model`, `@select` runs the pick; the search alone is `matchCommands`), `TaoModal` (`fullscreen`, `fullscreen="narrow"` for a page on a phone), `TaoDrawer` (`side="bottom"` is the phone's
   bottom sheet) — v-model; Escape closes the top layer only. `TaoPopover`, `TaoTooltip` (`placement`).
 - Menus share one engine: `TaoDropdownMenu`, `TaoMenubar`, `TaoContextMenu`, `TaoMenu` (the panel for your own shell).
   Items are a data tree `TaoMenuItem[]`: `{ id, label, icon?, shortcut?, disabled?, items? }`,
