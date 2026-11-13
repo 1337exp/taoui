@@ -107,8 +107,9 @@ const cards = computed(() => [
     <div class="marquee-demo__line">
       <TaoMarquee fill :reverse="reverse" :speed="Number(speed)" :paused="paused" :gap="32">
         <span v-for="q in quotes" :key="q.s" class="marquee-demo__quote">
-          <b>{{ q.s }}</b> {{ q.p }}
-          <span :class="q.d >= 0 ? 'marquee-demo__up' : 'marquee-demo__down'">{{ q.d >= 0 ? '▲' : '▼' }} {{ Math.abs(q.d) }}%</span>
+          <b>{{ q.s }}</b>
+          <span class="marquee-demo__price">{{ q.p.toFixed(2) }}</span>
+          <span :class="q.d >= 0 ? 'marquee-demo__up' : 'marquee-demo__down'">{{ q.d >= 0 ? '▲' : '▼' }} {{ Math.abs(q.d).toFixed(1) }}%</span>
         </span>
       </TaoMarquee>
     </div>
@@ -170,9 +171,23 @@ const cards = computed(() => [
   margin-bottom: 16px;
 }
 
+/* Every quote is a block of fixed width: the symbol, the price and the change each have their own column, so a price that
+   gets longer or shorter changes nothing around it, and the strip does not twitch. The strip is as wide as its content:
+   a width that changes moves everything after it. A gap after the block keeps the quotes apart.
+   Каждая котировка — блок фиксированной ширины: у символа, цены и изменения своя колонка, поэтому цена, ставшая длиннее или
+   короче, ничего вокруг не двигает, и лента не дёргается. Лента так же широка, как её содержимое: изменившаяся ширина сдвигает
+   всё после неё. Отступ после блока не даёт котировкам слипнуться. */
 .marquee-demo__quote {
+  display: inline-grid;
+  grid-template-columns: 5ch 10ch 8ch;
+  column-gap: 0.75em;
+  margin-inline-end: 2.5em;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+}
+
+.marquee-demo__price {
+  text-align: right;
 }
 
 .marquee-demo__up {
