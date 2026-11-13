@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.38.1
+
+Nothing to migrate; a polish of 5.38.0. One thing changes: tabs are draggable (and Alt + ← → moves them) only when you listen to `reorder`.
+
+- **`TaoDocTabs`: icons instead of glyphs.** The cross is `TaoIcon` (`tao-close`) and the unsaved dot is a circle drawn by the CSS, no `×` or `●` is in the text of a tab; the hidden text for a screen reader is the shared `tao-sr-only`.
+- **`TaoDocTabs`: the active tab is brought into view by scrolling the row, not the page.** `scrollIntoView` scrolled every ancestor too: with the row partly off the screen, switching a tab pulled the page. The row now sets its own `scrollLeft`.
+- **`TaoDocTabs`: the sideways swipe at the end of the row stays in the row** (`overscroll-behavior-x: contain`), it no longer turns into the back gesture of the browser.
+- **`TaoDocTabs`: the cross is always visible on a touch screen** (`hover: none`); before it showed on hover and on the active tab only, so a tab that was not open could not be closed by a finger.
+- **`TaoDocTabs`: a tab that cannot be moved is not draggable.** `draggable` and Alt + ← → work only when the app listens to `reorder` and there is more than one tab: a tab dragged nowhere showed a drop mark that did nothing, and Alt + ← was taken from the browser («back») for nothing. A touch screen has no dragging: the app's own menu (`menu`) is the way there.
+
 ## 5.38.0
 
 Nothing to migrate: a new component.

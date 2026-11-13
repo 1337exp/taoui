@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, useId, watch } from 'vue';
+import { getCurrentInstance, nextTick, ref, useId, watch } from 'vue';
 import { moveTarget, type TaoDocTab } from '../docTabs';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
+import TaoIcon from './TaoIcon.vue';
 
 defineOptions({ name: 'TaoDocTabs' });
 
@@ -42,8 +43,14 @@ const uid = useId();
 const tabId = (value: string) => `${uid}-${value}`;
 const listRef = ref<HTMLElement | null>(null);
 
-const list = computed(() => props.items);
 const closable = (tab: TaoDocTab) => tab.closable !== false;
+
+// A tab can be dragged (and moved with Alt + arrows) only when the app listens to `reorder` and there is more than one tab:
+// a tab that can be dragged nowhere would only show a drop mark that does nothing.
+// Вкладку можно тащить (и двигать Alt + стрелками), только если приложение слушает `reorder` и вкладок больше одной: вкладка,
+// которую некуда тащить, показывала бы метку, за которой ничего не следует.
+const instance = getCurrentInstance();
+const reorderable = () => Boolean(instance?.vnode.props?.onReorder) && props.items.length > 1;
 
 function select(value: string, focus = false) {
     emit('update:modelValue', value);
@@ -52,23 +59,25 @@ function select(value: string, focus = false) {
 }
 
 function indexOf(value: string) {
-    return list.value.findIndex((t) => t.value === value);
+    return props.items.findIndex((t) => t.value === value);
 }
 
 function move(delta: number, from: string) {
-    const n = list.value.length;
+    const n = props.items.length;
     if (!n) return;
     const here = indexOf(from);
-    select(list.value[(here + delta + n) % n]!.value, true);
+    select(props.items[(here + delta + n) % n]!.value, true);
 }
 
 function onKeydown(event: KeyboardEvent, tab: TaoDocTab) {
     const key = event.key;
     const index = indexOf(tab.value);
-    // Alt + arrows moves the tab itself: the keyboard way to what the pointer does by dragging
+    // Alt + arrows moves the tab itself: the keyboard way to what the pointer does by dragging. Without a `reorder` listener
+    // the keys are left alone (Alt + ← is «back» in a browser).
     if (event.altKey && (key === 'ArrowLeft' || key === 'ArrowRight')) {
+        if (!reorderable()) return;
         event.preventDefault();
-        const to = moveTarget(index, key === 'ArrowLeft' ? index - 1 : index + 1, key === 'ArrowRight', list.value.length);
+        const to = moveTarget(index, key === 'ArrowLeft' ? index - 1 : index + 1, key === 'ArrowRight', props.items.length);
         if (to !== null) {
             emit('reorder', index, to);
             void nextTick(() => document.getElementById(tabId(tab.value))?.focus());
@@ -83,10 +92,10 @@ function onKeydown(event: KeyboardEvent, tab: TaoDocTab) {
         move(-1, tab.value);
     } else if (key === 'Home') {
         event.preventDefault();
-        select(list.value[0]!.value, true);
+        select(props.items[0]!.value, true);
     } else if (key === 'End') {
         event.preventDefault();
-        select(list.value[list.value.length - 1]!.value, true);
+        select(props.items[props.items.length - 1]!.value, true);
     } else if (key === 'Delete' && closable(tab)) {
         event.preventDefault();
         emit('close', tab.value);
@@ -133,7 +142,7 @@ function onDragOver(event: DragEvent, tab: TaoDocTab) {
 function onDrop(event: DragEvent) {
     if (!dropMark.value) return; // a mark exists only while one of our own tabs is dragged
     event.preventDefault();
-    const to = moveTarget(dragFrom.value, dropMark.value.index, dropMark.value.after, list.value.length);
+    const to = moveTarget(dragFrom.value, dropMark.value.index, dropMark.value.after, props.items.length);
     if (to !== null) emit('reorder', dragFrom.value, to);
     onDragEnd();
 }
@@ -151,21 +160,40 @@ function onWheel(event: WheelEvent) {
     event.preventDefault();
 }
 
+/**
+ * Brings the active tab into view by scrolling the row itself. `scrollIntoView` would scroll every ancestor too, the page
+ * among them, when the row is partly off the screen.
+ * Показывает активную вкладку, прокручивая сам ряд. `scrollIntoView` листал бы и всех предков, страницу в том числе, когда ряд
+ * виден не целиком.
+ */
+function reveal() {
+    const el = listRef.value;
+    const tab = document.getElementById(tabId(props.modelValue));
+    if (!el || !tab) return;
+    const row = el.getBoundingClientRect();
+    const box = tab.getBoundingClientRect();
+    if (box.left < row.left) el.scrollLeft -= row.left - box.left;
+    else if (box.right > row.right) el.scrollLeft += box.right - row.right;
+}
+
 // the active tab is always in view, also when it was opened off the edge / активная вкладка всегда на виду
 watch(
-    () => [props.modelValue, list.value.length],
+    () => [props.modelValue, props.items.length],
     async () => {
         await nextTick();
-        document.getElementById(tabId(props.modelValue))?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
+        reveal();
     },
 );
+
+const tabindex = (tab: TaoDocTab, index: number) =>
+    tab.value === props.modelValue || (!props.items.some((t) => t.value === props.modelValue) && index === 0) ? 0 : -1;
 </script>
 
 <template>
     <div class="tao-doc-tabs" :class="sizeClass(size)">
         <div ref="listRef" class="tao-doc-tabs__list" role="tablist" :aria-label="label ?? l10n.label" @wheel="onWheel" @drop="onDrop">
             <div
-                v-for="(tab, index) in list"
+                v-for="(tab, index) in items"
                 :id="tabId(tab.value)"
                 :key="tab.value"
                 class="tao-doc-tabs__tab"
@@ -180,9 +208,9 @@ watch(
                 role="tab"
                 :aria-selected="tab.value === modelValue"
                 :aria-controls="tab.value === modelValue ? controls : undefined"
-                :tabindex="tab.value === modelValue || (!list.some((t) => t.value === modelValue) && index === 0) ? 0 : -1"
+                :tabindex="tabindex(tab, index)"
                 :title="tab.title"
-                draggable="true"
+                :draggable="reorderable()"
                 @click="select(tab.value)"
                 @dblclick="tab.preview && emit('pin', tab.value)"
                 @auxclick="onAuxClick($event, tab)"
@@ -196,10 +224,10 @@ watch(
                     ><span class="tao-doc-tabs__label">{{ tab.label }}</span></slot
                 >
                 <template v-if="tab.dirty"
-                    ><span class="tao-doc-tabs__dot" aria-hidden="true">●</span><span class="tao-doc-tabs__sr">{{ dirtyLabel ?? l10n.dirtyLabel }}</span></template
+                    ><span class="tao-doc-tabs__dot" aria-hidden="true"></span><span class="tao-sr-only">{{ dirtyLabel ?? l10n.dirtyLabel }}</span></template
                 >
                 <button v-if="closable(tab)" type="button" class="tao-doc-tabs__close" tabindex="-1" aria-hidden="true" :aria-label="`${closeLabel ?? l10n.closeLabel} ${tab.label}`" @click.stop="emit('close', tab.value)">
-                    ×
+                    <TaoIcon name="tao-close" aria-hidden="true" />
                 </button>
             </div>
         </div>
@@ -216,6 +244,8 @@ watch(
     gap: var(--tao-space-1);
     min-width: 0;
     overflow-x: auto;
+    /* sideways at the end of the row does not turn into the back gesture of the browser / боковая прокрутка в конце ряда не превращается в жест «назад» */
+    overscroll-behavior-x: contain;
     border-bottom: 1px solid var(--tao-color-border);
     scrollbar-width: none;
 }
@@ -225,6 +255,7 @@ watch(
 }
 
 .tao-doc-tabs__tab {
+    position: relative;
     display: flex;
     flex: none;
     align-items: center;
@@ -276,10 +307,13 @@ watch(
     white-space: nowrap;
 }
 
+/* the unsaved dot is a shape, not a glyph: a circle the size of half a letter / точка «не сохранено» — фигура, а не символ */
 .tao-doc-tabs__dot {
     flex: none;
-    color: var(--tao-color-warning);
-    font-size: 0.7em;
+    width: 0.5em;
+    height: 0.5em;
+    border-radius: var(--tao-radius-full);
+    background: var(--tao-color-warning);
 }
 
 .tao-doc-tabs__close {
@@ -306,17 +340,15 @@ watch(
     opacity: 1;
 }
 
+/* a finger does not hover: without this a tab that is not open could not be closed at all / палец не наводит: без этого закрыть неоткрытую вкладку было бы нечем */
+@media (hover: none) {
+    .tao-doc-tabs__close {
+        opacity: 1;
+    }
+}
+
 .tao-doc-tabs__close:hover {
     background: var(--tao-color-surface-hover);
     color: var(--tao-color-text);
-}
-
-.tao-doc-tabs__sr {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
 }
 </style>
