@@ -261,6 +261,63 @@ describe('TaoCommandPalette', () => {
         expect(document.body.style.overflow).not.toBe('hidden');
     });
 
+    // 5.37.0: modal and fullscreen. / 5.37.0: modal и fullscreen.
+    it('is modal by default: the page is locked, the dialog says so', () => {
+        make();
+        expect($('[role="dialog"]')!.getAttribute('aria-modal')).toBe('true');
+        expect($('.tao-command-palette-overlay')!.classList.contains('tao-command-palette-overlay--float')).toBe(false);
+        expect(document.body.style.overflow).toBe('hidden');
+    });
+
+    it('modal=false is a panel over a living page: no lock, no dimming class, a press outside closes it, inside does not', async () => {
+        const { events } = make({ modal: false });
+        expect($('[role="dialog"]')!.getAttribute('aria-modal')).toBe('false');
+        expect($('.tao-command-palette-overlay')!.classList.contains('tao-command-palette-overlay--float')).toBe(true);
+        expect(document.body.style.overflow).not.toBe('hidden');
+
+        input().dispatchEvent(new Event('pointerdown', { bubbles: true }));
+        await nextTick();
+        expect(events.model).toEqual([]);
+
+        const page = document.createElement('button');
+        document.body.append(page);
+        page.dispatchEvent(new Event('pointerdown', { bubbles: true }));
+        await nextTick();
+        expect(events.model).toEqual([false]);
+    });
+
+    it('a modal palette is not closed by a press outside the panel handled as a dismiss, only by the backdrop', async () => {
+        const { events } = make();
+        const page = document.createElement('button');
+        document.body.append(page);
+        page.dispatchEvent(new Event('pointerdown', { bubbles: true }));
+        await nextTick();
+        expect(events.model).toEqual([]);
+    });
+
+    it('a panel that is not modal still closes on Escape', async () => {
+        const { events } = make({ modal: false });
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        await nextTick();
+        expect(events.model).toEqual([false]);
+    });
+
+    it('fullscreen is the whole screen on a phone by default, always with true, never with false', () => {
+        const overlay = () => $('.tao-command-palette-overlay')!.classList;
+        make();
+        expect(overlay().contains('tao-command-palette-overlay--fullscreen-narrow')).toBe(true);
+        expect(overlay().contains('tao-command-palette-overlay--fullscreen')).toBe(false);
+        wrappers.splice(0).forEach((w) => w.unmount());
+        document.body.innerHTML = '';
+        make({ fullscreen: true });
+        expect(overlay().contains('tao-command-palette-overlay--fullscreen')).toBe(true);
+        wrappers.splice(0).forEach((w) => w.unmount());
+        document.body.innerHTML = '';
+        make({ fullscreen: false });
+        expect(overlay().contains('tao-command-palette-overlay--fullscreen')).toBe(false);
+        expect(overlay().contains('tao-command-palette-overlay--fullscreen-narrow')).toBe(false);
+    });
+
     it('attributes go to the panel, not to the overlay', () => {
         make({ class: 'mine', 'data-x': '1' });
         expect($('.tao-command-palette')!.classList.contains('mine')).toBe(true);

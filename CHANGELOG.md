@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.37.0
+
+Nothing to migrate: `modal` is `true` as before. One thing looks different: on a screen narrower than 600px the palette takes the whole screen now (`fullscreen="narrow"`); `:fullscreen="false"` keeps it a floating panel there too. (The palette is not on npm yet, so no app has seen the old look.)
+
+- **`TaoCommandPalette` `modal`: a panel with no dimming.** `:modal="false"` makes it what the quick open of VS Code is: a panel at the top over a living page, with no dimming and no scroll lock, outlined with a hairline because nothing dims the page behind it. A press outside the panel closes it (there is no backdrop to press), Escape closes it as before, and the dialog says `aria-modal="false"`. The page can be read, scrolled and clicked while it is open.
+- **`TaoCommandPalette` `fullscreen`: the whole screen on a phone.** As on `TaoModal`: `true` — always the whole screen, `'narrow'` (the default here) — only below 600px, `false` — never. The panel is the page then: square corners, the field at the top and the list under it taking what is left, the safe areas of the phone kept. The default is `'narrow'` and not `false` (the default of `TaoModal`) because a command list on a phone is a page in every app that has one.
+
 ## 5.36.0
 
 Nothing to migrate: `TaoCommandPalette` takes the same props, slots and events and looks the same; the new component is added beside it. (The look of the palette changed in 5.35.1 and 5.35.2, which are not on npm yet.)

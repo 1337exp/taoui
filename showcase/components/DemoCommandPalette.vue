@@ -22,6 +22,7 @@ const items = computed(() => [
 ])
 
 const open = ref(false)
+const panelOpen = ref(false)
 const picked = ref('')
 const popoverOpen = ref(false)
 
@@ -52,6 +53,12 @@ function pickInPopover(item) {
           <kbd>Esc</kbd> closes; the focus never leaves the field. The search itself is exported as
           <code>matchCommands</code>, for any list you filter by typing.
         </p>
+        <p>
+          By default it is a modal dialog, and on a screen narrower than 600px it takes the whole screen (<code>fullscreen</code>:
+          <code>'narrow'</code>, as on <code>TaoModal</code>; <code>true</code> always, <code>false</code> never). With
+          <code>:modal="false"</code> it is a panel over a living page, as in VS Code: no dimming, no scroll lock, and a press
+          outside the panel closes it.
+        </p>
       </template>
       <template #ru>
         <p>
@@ -68,14 +75,22 @@ function pickInPopover(item) {
           <kbd>Esc</kbd> закрывает; фокус из поля не уходит. Сам поиск вынесен как <code>matchCommands</code>, для любого
           списка, который фильтруют набором.
         </p>
+        <p>
+          По умолчанию это модальное окно, а на экране уже 600px оно занимает весь экран (<code>fullscreen</code>:
+          <code>'narrow'</code>, как у <code>TaoModal</code>; <code>true</code> всегда, <code>false</code> никогда). С
+          <code>:modal="false"</code> это панель поверх живой страницы, как в VS Code: без затемнения и запрета прокрутки, а
+          нажатие вне панели закрывает её.
+        </p>
       </template>
     </Tr>
 
     <div class="palette-row">
       <TaoButton variant="primary" @click="open = true">{{ tr('Open the palette', 'Открыть палитру') }}</TaoButton>
+      <TaoButton variant="secondary" @click="panelOpen = true">{{ tr('As a panel, no dimming', 'Панелью, без затемнения') }}</TaoButton>
       <span class="palette-note">{{ picked ? tr('Picked: ', 'Выбрано: ') + picked : tr('nothing picked yet', 'пока ничего не выбрано') }}</span>
     </div>
     <TaoCommandPalette v-model="open" :items="items" @select="(item) => (picked = item.id)" />
+    <TaoCommandPalette v-model="panelOpen" :items="items" :modal="false" @select="(item) => (picked = item.id)" />
 
     <div class="code-block">
       <pre><code>&lt;script setup&gt;

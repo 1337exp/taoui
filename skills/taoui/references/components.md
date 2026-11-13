@@ -407,6 +407,8 @@ Showcase section: `#command-palette`
 | `label` | `string` | 'Commands' | The name of the dialog and the list for a screen reader |
 | `limit` | `number` | 50 | The most rows shown |
 | `surface` | `'flat' \| 'grain' \| 'glass'` | 'flat' | What the panel is made of, as on TaoModal |
+| `modal` | `boolean` | true | true — a modal dialog: the page is dimmed and locked, a press on the dimmed part closes it. false — a panel over a living page, as in VS Code: no dimming, no scroll lock, a press outside the panel closes it |
+| `fullscreen` | `boolean \| 'narrow'` | 'narrow' | As on TaoModal: true — the whole screen, 'narrow' — the whole screen only below 600px (a phone), false — never |
 
 **Slots, events, notes.** #item="{ item, active, ranges }" — your own row (ranges are the stretches of the label the query found). #empty — nothing found. select(item) — a command was picked (Enter or a click), the palette closes after it; update:modelValue and close — closing. class, style and the other attributes go to the dialog panel. Every word of the query must fit: the start of the label scores higher, then the start of a word, then any place, then the letters in order; the group, the description and keywords find a command too. Keys: ↑ ↓ (a disabled row is skipped, the ends join), Home End, Enter, Esc; the focus never leaves the field. The search is exported as matchCommands(items, query, limit).
 
