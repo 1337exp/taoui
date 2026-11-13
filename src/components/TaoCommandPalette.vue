@@ -358,14 +358,23 @@ useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscap
     padding-inline-start: calc(var(--_icon) + var(--tao-space-3));
 }
 
+/*
+ * The description stands in the same line, after the label, and gives way first: it is cut with an ellipsis and never
+ * pushes the label or makes the row taller, so every row has one height and the arrows walk in equal steps.
+ * Описание стоит в той же строке, после подписи, и уступает место первым: обрезается многоточием и не двигает
+ * подпись и не делает строку выше, поэтому у всех строк одна высота, а стрелки ходят равными шагами.
+ */
 .tao-command-palette__text {
     display: flex;
     flex: 1;
-    flex-direction: column;
+    align-items: baseline;
+    gap: var(--tao-space-3);
     min-width: 0;
 }
 
 .tao-command-palette__label {
+    flex: none;
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -378,6 +387,8 @@ useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscap
 }
 
 .tao-command-palette__description {
+    flex: 0 1 auto;
+    min-width: 0;
     overflow: hidden;
     color: var(--tao-color-text-muted);
     font-size: var(--tao-control-font-size-secondary);

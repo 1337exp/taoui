@@ -288,6 +288,15 @@ describe('TaoCommandPalette', () => {
         expect(source).toMatch(/\.tao-command-palette__group:not\(:first-child\) \{[^}]*border-top/);
     });
 
+    // 5.35.2: the description is in the line of the label and never makes a row taller. / 5.35.2: описание в одной строке с подписью.
+    it('the description stays in the line of the label and gives way first', () => {
+        const source = (rawSource as string).replace(/\r\n/g, '\n');
+        const text = /\.tao-command-palette__text \{[^}]*\}/.exec(source)![0];
+        expect(text).not.toContain('flex-direction: column');
+        expect(/\.tao-command-palette__description \{[^}]*\}/.exec(source)![0]).toContain('text-overflow: ellipsis');
+        expect(/\.tao-command-palette__label \{[^}]*\}/.exec(source)![0]).toContain('flex: none');
+    });
+
     it('attributes go to the panel, not to the overlay', () => {
         make({ class: 'mine', 'data-x': '1' });
         expect($('.tao-command-palette')!.classList.contains('mine')).toBe(true);

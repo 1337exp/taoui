@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.35.2
+
+Nothing to migrate; a fix to the look.
+
+- **`TaoCommandPalette`: the description stands in the line of the label.** It was a second line under the label, so a command with a description was taller than its neighbours and the list lost its rhythm (and the arrows walked in unequal steps). Now the description follows the label in the same line (muted, the secondary size of a control) and gives way first: it is cut with an ellipsis and never pushes the label. Every row is one height. For a two-line row of your own use the `#item` slot.
+
 ## 5.35.1
 
 Nothing to migrate; the look of `TaoCommandPalette` is put in order.
