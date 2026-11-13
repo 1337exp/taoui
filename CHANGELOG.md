@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.37.1
+
+Nothing to migrate; a fix.
+
+- **`TaoCommandList` (and the palette): the wheel at the end of the list does not scroll the page.** When the list was scrolled to its last row, the next turn of the wheel went on to the page behind it (a list in a popover, a panel with `modal="false"`, a list laid in a page). The list has `overscroll-behavior: contain` now: it scrolls by itself and keeps the wheel. In the modal palette the page was locked already, so nothing changes there.
+
 ## 5.37.0
 
 Nothing to migrate: `modal` is `true` as before. One thing looks different: on a screen narrower than 600px the palette takes the whole screen now (`fullscreen="narrow"`); `:fullscreen="false"` keeps it a floating panel there too. (The palette is not on npm yet, so no app has seen the old look.)

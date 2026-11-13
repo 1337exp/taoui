@@ -136,6 +136,13 @@ describe('TaoCommandList', () => {
         expect(source).toMatch(/\.tao-command-list__group:not\(:first-child\) \{[^}]*border-top/);
     });
 
+    // 5.37.1: the wheel at the end of the list does not scroll the page. / 5.37.1: колесо в конце списка не листает страницу.
+    it('the list scrolls by itself and does not hand the wheel on to the page at its end', () => {
+        const list = /\.tao-command-list__list \{[^}]*\}/.exec(source)![0];
+        expect(list).toContain('overflow-y: auto');
+        expect(list).toContain('overscroll-behavior: contain');
+    });
+
     // 5.35.2: the description is in the line of the label and never makes a row taller. / 5.35.2: описание в одной строке с подписью.
     it('the description stays in the line of the label and gives way first', () => {
         const text = /\.tao-command-list__text \{[^}]*\}/.exec(source)![0];

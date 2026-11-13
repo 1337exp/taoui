@@ -267,6 +267,8 @@ defineExpose({
     margin: 0;
     padding: var(--tao-space-2);
     overflow-y: auto;
+    /* the wheel at the end of the list does not go on to scroll the page behind it / колесо в конце списка не листает страницу */
+    overscroll-behavior: contain;
     list-style: none;
 }
 
