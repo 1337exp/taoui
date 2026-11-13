@@ -353,6 +353,18 @@ export const propTables = {
   ],
   'command-palette': [
     {
+      title: 'TaoCommandList',
+      rows: [
+        r('items', '{ id, label, group?, shortcut?, icon?, description?, keywords?, disabled? }[]', '[]', 'Команды. Список их только ищет и показывает; запуск — @select'),
+        r('placeholder', 'string', "'Введите команду…'", 'Подсказка в пустом поле'),
+        r('emptyText', 'string', "'Команд не найдено'", 'Текст, когда ничего не подошло'),
+        r('label', 'string', "'Команды'", 'Имя поля и списка для скринридера'),
+        r('limit', 'number', '50', 'Сколько строк показывать не больше'),
+        r('autofocus', 'boolean', 'false', 'Поставить фокус в поле, когда список появился'),
+      ],
+      slots: '#item="{ item, active, ranges }" — своя строка (ranges — отрезки подписи, которые нашёл запрос). #empty — ничего не нашлось. select(item) — выбрана команда (Enter или клик), список ничего не закрывает; escape — нажат Esc в поле. Методы: focus(), reset() (очищает запрос). Это поле и список без окна: кладите в страницу, панель или TaoPopover, высоту ему даёт родитель (список прокручивается сам); class и style идут корню. TaoCommandPalette — он же внутри диалога. Поиск и клавиши те же, что у палитры (ниже).',
+    },
+    {
       title: 'TaoCommandPalette',
       rows: [
         r('v-model', 'boolean', 'false', 'Открыта или закрыта. Палитра сама никаких клавиш не слушает: открывайте своей'),

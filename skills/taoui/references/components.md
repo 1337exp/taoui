@@ -379,6 +379,21 @@ Showcase section: `#combobox`
 
 **Slots, events, notes.** create — an event when a new value is typed: the parent extends options itself.
 
+## TaoCommandList
+
+Showcase section: `#command-palette`
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `items` | `{ id, label, group?, shortcut?, icon?, description?, keywords?, disabled? }[]` | [] | The commands. The list only searches and shows them; running one is @select |
+| `placeholder` | `string` | 'Type a command…' | The hint in the empty field |
+| `emptyText` | `string` | 'No commands found' | The text when nothing fits |
+| `label` | `string` | 'Commands' | The name of the field and the list for a screen reader |
+| `limit` | `number` | 50 | The most rows shown |
+| `autofocus` | `boolean` | false | Put the focus in the field when the list appears |
+
+**Slots, events, notes.** #item="{ item, active, ranges }" — your own row (ranges are the stretches of the label the query found). #empty — nothing found. select(item) — a command was picked (Enter or a click), the list closes nothing; escape — Escape was pressed in the field. Methods: focus(), reset() (clears the query). The field and the list with no window: lay it in a page, a panel or a TaoPopover, its parent gives it a height (the list scrolls itself); class and style go to the root. TaoCommandPalette is this inside a dialog. The search and the keys are the palette's (below).
+
 ## TaoCommandPalette
 
 Showcase section: `#command-palette`

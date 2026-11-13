@@ -2,11 +2,10 @@ import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import { defineComponent, h, nextTick, ref } from 'vue';
 import TaoCommandPalette from '../src/components/TaoCommandPalette.vue';
-// @ts-expect-error Vite `?raw` import: the component as text, to read its styles
-import rawSource from '../src/components/TaoCommandPalette.vue?raw';
 import type { TaoCommandItem } from '../src/commandPalette';
 
 // 5.35.0: TaoCommandPalette, a dialog that searches a list of commands. / 5.35.0: окно поиска по списку команд.
+// 5.36.0: the dialog is TaoCommandList in a window (the list has its own test). / 5.36.0: диалог — это TaoCommandList в окне.
 
 const items: TaoCommandItem[] = [
     { id: 'new', label: 'New', group: 'File', shortcut: 'Ctrl+N' },
@@ -45,7 +44,7 @@ const $ = <T extends Element = HTMLElement>(selector: string) => document.body.q
 const $$ = (selector: string) => [...document.body.querySelectorAll<HTMLElement>(selector)];
 const input = () => $<HTMLInputElement>('input')!;
 const options = () => $$('[role="option"]');
-const labels = () => options().map((o) => o.querySelector('.tao-command-palette__label')?.textContent);
+const labels = () => options().map((o) => o.querySelector('.tao-command-list__label')?.textContent);
 async function type(text: string) {
     input().value = text;
     input().dispatchEvent(new Event('input', { bubbles: true }));
@@ -85,9 +84,9 @@ describe('TaoCommandPalette', () => {
     it('an empty query lists everything under captions of its groups, with shortcuts', () => {
         make();
         expect(labels()).toEqual(['New', 'Save', 'Save as…', 'Undo', 'Zoom to fit']);
-        expect($$('.tao-command-palette__group').map((g) => g.textContent)).toEqual(['File', 'Edit', 'View']);
+        expect($$('.tao-command-list__group').map((g) => g.textContent)).toEqual(['File', 'Edit', 'View']);
         expect($$('kbd').map((k) => k.textContent)).toEqual(['Ctrl+N', 'Ctrl+S', 'Ctrl+Z']);
-        expect($('.tao-command-palette__description')!.textContent).toBe('Show everything');
+        expect($('.tao-command-list__description')!.textContent).toBe('Show everything');
     });
 
     it('typing filters, lights the letters and names the group beside each row instead of captions', async () => {
@@ -95,8 +94,8 @@ describe('TaoCommandPalette', () => {
         await type('sa');
         expect(labels()).toEqual(['Save', 'Save as…']);
         expect($$('mark').map((m) => m.textContent)).toEqual(['Sa', 'Sa']);
-        expect($$('.tao-command-palette__group')).toHaveLength(0);
-        expect($$('.tao-command-palette__where').map((g) => g.textContent)).toEqual(['File', 'File']);
+        expect($$('.tao-command-list__group')).toHaveLength(0);
+        expect($$('.tao-command-list__where').map((g) => g.textContent)).toEqual(['File', 'File']);
     });
 
     it('a new query starts from the best row that can be picked', async () => {
@@ -193,14 +192,14 @@ describe('TaoCommandPalette', () => {
         make();
         await type('zzzz');
         expect(options()).toHaveLength(0);
-        expect($('.tao-command-palette__empty')!.textContent).toContain('No commands found');
+        expect($('.tao-command-list__empty')!.textContent).toContain('No commands found');
         expect(activeId()).toBeNull();
 
         wrappers.splice(0).forEach((w) => w.unmount());
         document.body.innerHTML = '';
         make({ emptyText: 'Пусто', placeholder: 'Команда', label: 'Палитра' });
         await type('zzzz');
-        expect($('.tao-command-palette__empty')!.textContent).toBe('Пусто');
+        expect($('.tao-command-list__empty')!.textContent).toBe('Пусто');
         expect(input().placeholder).toBe('Команда');
         expect($('[role="dialog"]')!.getAttribute('aria-label')).toBe('Палитра');
     });
@@ -244,8 +243,8 @@ describe('TaoCommandPalette', () => {
     it('a query of spaces is an empty one: groups as captions, no group beside the rows', async () => {
         make();
         await type('   ');
-        expect($$('.tao-command-palette__group')).toHaveLength(3);
-        expect($$('.tao-command-palette__where')).toHaveLength(0);
+        expect($$('.tao-command-list__group')).toHaveLength(3);
+        expect($$('.tao-command-list__where')).toHaveLength(0);
         expect(options()).toHaveLength(5);
     });
 
@@ -260,41 +259,6 @@ describe('TaoCommandPalette', () => {
         await w.setProps({ modelValue: false });
         await nextTick();
         expect(document.body.style.overflow).not.toBe('hidden');
-    });
-
-    // 5.35.1: one scale for the field and the rows, a column for the icons, groups that do not pass for rows.
-    // 5.35.1: одна шкала для поля и строк, колонка под иконки, группы, не похожие на строки.
-    it('keeps a column for the icon while any row has one, and marks the rows that have it', () => {
-        make();
-        const list = $('[role="listbox"]')!;
-        expect(list.classList.contains('has-icons')).toBe(true);
-        const marked = options().filter((o) => o.classList.contains('has-icon'));
-        expect(marked.map((o) => o.textContent)).toEqual([expect.stringContaining('Zoom to fit')]);
-    });
-
-    it('draws no icon column when no row has an icon', () => {
-        make({ items: items.filter((i) => !i.icon) });
-        expect($('[role="listbox"]')!.classList.contains('has-icons')).toBe(false);
-    });
-
-    it('the panel sets its own text size and the field is on the same scale as the rows', () => {
-        const source = (rawSource as string).replace(/\r\n/g, '\n');        const panel = /\.tao-command-palette \{[^}]*\}/.exec(source)![0];
-        expect(panel).toContain('font-size: var(--tao-control-font-size)');
-        const field = /\.tao-command-palette__input \{[^}]*\}/.exec(source)![0];
-        expect(field).toContain('--_row');
-        expect(field).not.toMatch(/font-size/);
-        const group = /\.tao-command-palette__group \{[^}]*\}/.exec(source)![0];
-        expect(group).toContain('text-transform: uppercase');
-        expect(source).toMatch(/\.tao-command-palette__group:not\(:first-child\) \{[^}]*border-top/);
-    });
-
-    // 5.35.2: the description is in the line of the label and never makes a row taller. / 5.35.2: описание в одной строке с подписью.
-    it('the description stays in the line of the label and gives way first', () => {
-        const source = (rawSource as string).replace(/\r\n/g, '\n');
-        const text = /\.tao-command-palette__text \{[^}]*\}/.exec(source)![0];
-        expect(text).not.toContain('flex-direction: column');
-        expect(/\.tao-command-palette__description \{[^}]*\}/.exec(source)![0]).toContain('text-overflow: ellipsis');
-        expect(/\.tao-command-palette__label \{[^}]*\}/.exec(source)![0]).toContain('flex: none');
     });
 
     it('attributes go to the panel, not to the overlay', () => {

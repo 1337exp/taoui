@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.36.0
+
+Nothing to migrate: `TaoCommandPalette` takes the same props, slots and events and looks the same; the new component is added beside it. (The look of the palette changed in 5.35.1 and 5.35.2, which are not on npm yet.)
+
+- **`TaoCommandList`: the field and the list of the command palette with no window around them.** The palette is a dialog, and a dialog is only one of the places such a list lives: it can be a block of a page, a side panel, a popover under a button. `TaoCommandList` is exactly what is inside the palette (the search, the lit letters, the groups, the rows with an icon, a description and a shortcut, ↑ ↓ Home End Enter, the `combobox` and `listbox` roles for a screen reader, the `#item` and `#empty` slots) and nothing else. `@select` picks a command and closes nothing; `@escape` tells that Escape was pressed in the field; `autofocus` puts the focus in the field when the list appears; `focus()` and `reset()` are for the parent. The list takes the height its parent gives it and scrolls inside it; `class` and `style` go to the root. `TaoCommandPalette` is now this list in a dialog (the overlay, the page scroll lock, Escape, the focus return), made anew at every opening, so it still starts with an empty query and the focus in the field. The texts are the same (`commandPalette` in the locale), and the class names of the rows are `tao-command-list__*` now (they were `tao-command-palette__*`, which no app should have styled).
+
 ## 5.35.2
 
 Nothing to migrate; a fix to the look.

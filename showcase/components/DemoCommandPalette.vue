@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { TaoButton, TaoCommandPalette } from '@1337exp/taoui'
+import { TaoButton, TaoCommandList, TaoCommandPalette, TaoPopover } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { tr } from '../i18n.js'
 import Tr from './Tr.vue'
@@ -23,6 +23,14 @@ const items = computed(() => [
 
 const open = ref(false)
 const picked = ref('')
+const popoverOpen = ref(false)
+
+// the same list in a popover: the pick is the app's, and the popover is closed by the app too
+// тот же список в поповере: выбор за приложением, и поповер закрывает тоже оно
+function pickInPopover(item) {
+  picked.value = item.id
+  popoverOpen.value = false
+}
 </script>
 
 <template>
@@ -81,6 +89,52 @@ const open = ref(false)
 &lt;!-- the palette does not listen to a key: open it from yours --&gt;
 &lt;TaoCommandPalette v-model="open" :items="items" @select="(item) =&gt; commands.run(item.id)" /&gt;</code></pre>
     </div>
+
+    <h3>TaoCommandList</h3>
+    <Tr>
+      <template #en>
+        <p>
+          The field and the list of the palette with no window around them, for a place that is not a dialog: a block of a page,
+          a side panel, a popover. It searches and walks exactly as the palette does; <code>@select</code> picks, and it closes
+          nothing, so closing is yours. Its parent gives it a height, and the list scrolls inside it.
+        </p>
+      </template>
+      <template #ru>
+        <p>
+          Поле и список палитры без окна вокруг, для места, которое не диалог: блок страницы, боковая панель, поповер. Он ищет и
+          ходит по строкам так же, как палитра; <code>@select</code> выбирает и ничего не закрывает, закрывать вам. Высоту ему
+          даёт родитель, а список прокручивается внутри.
+        </p>
+      </template>
+    </Tr>
+    <div class="palette-row">
+      <div class="palette-inline">
+        <TaoCommandList :items="items" @select="(item) => (picked = item.id)" />
+      </div>
+      <TaoPopover v-model="popoverOpen">
+        <template #trigger>
+          <TaoButton variant="secondary">{{ tr('In a popover', 'В поповере') }}</TaoButton>
+        </template>
+        <div class="palette-popover">
+          <TaoCommandList :items="items" autofocus @select="pickInPopover" @escape="popoverOpen = false" />
+        </div>
+      </TaoPopover>
+    </div>
+
+    <div class="code-block">
+      <pre><code>&lt;!-- in a page: the parent gives the height --&gt;
+&lt;div style="height: 320px"&gt;
+  &lt;TaoCommandList :items="items" @select="(item) =&gt; commands.run(item.id)" /&gt;
+&lt;/div&gt;
+
+&lt;!-- in a popover: the app closes it --&gt;
+&lt;TaoPopover v-model="open"&gt;
+  &lt;template #trigger&gt;&lt;TaoButton&gt;Commands&lt;/TaoButton&gt;&lt;/template&gt;
+  &lt;div style="width: 360px; height: 320px"&gt;
+    &lt;TaoCommandList :items="items" autofocus @select="pick" @escape="open = false" /&gt;
+  &lt;/div&gt;
+&lt;/TaoPopover&gt;</code></pre>
+    </div>
   </ShowcaseSection>
 </template>
 
@@ -91,6 +145,19 @@ const open = ref(false)
   align-items: center;
   gap: var(--tao-space-3);
   margin: var(--tao-space-2) 0;
+}
+
+.palette-inline,
+.palette-popover {
+  box-sizing: border-box;
+  width: min(360px, 100%);
+  height: 320px;
+  border: 1px solid var(--tao-color-border);
+  border-radius: var(--tao-radius-panel);
+}
+
+.palette-popover {
+  border: 0;
 }
 
 .palette-note {

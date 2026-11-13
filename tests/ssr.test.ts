@@ -21,6 +21,8 @@ const props: Record<string, Record<string, unknown>> = {
     TaoTabs: { modelValue: 'a', items: [{ value: 'a', label: 'A' }] },
     TaoModal: { modelValue: true },
     TaoDrawer: { modelValue: true },
+    TaoCommandList: { items: [{ id: 'a', label: 'A', icon: 'tao-info' }] },
+    TaoCommandPalette: { modelValue: true, items: [{ id: 'a', label: 'A' }] },
     TaoTooltip: { content: 'hint' },
     TaoIcon: { name: 'x' },
     TaoSlider: { modelValue: 1 },
