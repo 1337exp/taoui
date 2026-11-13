@@ -360,6 +360,18 @@ export const propTablesEn = {
   ],
   'command-palette': [
     {
+      title: 'TaoCommandList',
+      rows: [
+        r('items', '{ id, label, group?, shortcut?, icon?, description?, keywords?, disabled? }[]', '[]', 'The commands. The list only searches and shows them; running one is @select'),
+        r('placeholder', 'string', "'Type a command…'", 'The hint in the empty field'),
+        r('emptyText', 'string', "'No commands found'", 'The text when nothing fits'),
+        r('label', 'string', "'Commands'", 'The name of the field and the list for a screen reader'),
+        r('limit', 'number', '50', 'The most rows shown'),
+        r('autofocus', 'boolean', 'false', 'Put the focus in the field when the list appears'),
+      ],
+      slots: '#item="{ item, active, ranges }" — your own row (ranges are the stretches of the label the query found). #empty — nothing found. select(item) — a command was picked (Enter or a click), the list closes nothing; escape — Escape was pressed in the field. Methods: focus(), reset() (clears the query). The field and the list with no window: lay it in a page, a panel or a TaoPopover, its parent gives it a height (the list scrolls itself); class and style go to the root. TaoCommandPalette is this inside a dialog. The search and the keys are the palette\'s (below).',
+    },
+    {
       title: 'TaoCommandPalette',
       rows: [
         r('v-model', 'boolean', 'false', 'Open or closed. The palette listens to no key itself: open it from yours'),

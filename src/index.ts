@@ -61,6 +61,7 @@ import TaoColorInput from './components/TaoColorInput.vue';
 import TaoColorPicker from './components/TaoColorPicker.vue';
 import TaoCombobox from './components/TaoCombobox.vue';
 import TaoPresetInput from './components/TaoPresetInput.vue';
+import TaoCommandList from './components/TaoCommandList.vue';
 import TaoCommandPalette from './components/TaoCommandPalette.vue';
 import TaoCalendar from './components/TaoCalendar.vue';
 import TaoDate from './components/TaoDate.vue';
@@ -158,6 +159,7 @@ const components = [
     TaoColorPicker,
     TaoCombobox,
     TaoPresetInput,
+    TaoCommandList,
     TaoCommandPalette,
     TaoCalendar,
     TaoDate,
@@ -271,6 +273,7 @@ export {
     TaoColorPicker,
     TaoCombobox,
     TaoPresetInput,
+    TaoCommandList,
     TaoCommandPalette,
     TaoCalendar,
     TaoDate,
