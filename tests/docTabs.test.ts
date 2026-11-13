@@ -2,6 +2,8 @@ import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import TaoDocTabs from '../src/components/TaoDocTabs.vue';
+// @ts-expect-error Vite `?raw` import: the component as text, to read its styles
+import rawSource from '../src/components/TaoDocTabs.vue?raw';
 import { moveTarget, type TaoDocTab } from '../src/docTabs';
 
 // 5.38.0: TaoDocTabs, the tabs of open documents. / 5.38.0: вкладки открытых документов.
@@ -256,14 +258,62 @@ describe('TaoDocTabs', () => {
         expect(events.filter((e) => e.name === 'menu').map((e) => e.args[0])).toEqual(['b', 'c', 'a']);
     });
 
-    it('the active tab is scrolled into view when it changes', async () => {
+    it('the active tab is brought into view by scrolling the row itself, never the page', async () => {
         const { w } = make();
+        const list = document.body.querySelector<HTMLElement>('[role="tablist"]')!;
+        const tab = tabEls()[2]!;
         const spy = vi.fn();
-        tabEls()[2]!.scrollIntoView = spy;
+        tab.scrollIntoView = spy; // it would scroll every ancestor, the page among them
+        list.getBoundingClientRect = () => ({ left: 100, right: 300, top: 0, bottom: 36, width: 200, height: 36, x: 100, y: 0, toJSON: () => ({}) });
+        tab.getBoundingClientRect = () => ({ left: 280, right: 380, top: 0, bottom: 36, width: 100, height: 36, x: 280, y: 0, toJSON: () => ({}) });
         await w.setProps({ modelValue: 'c' });
         await nextTick();
         await nextTick();
-        expect(spy).toHaveBeenCalledWith({ block: 'nearest', inline: 'nearest' });
+        expect(list.scrollLeft).toBe(80); // the right edge of the tab met the right edge of the row
+        expect(spy).not.toHaveBeenCalled();
+
+        const last = tabEls()[3]!;
+        last.getBoundingClientRect = () => ({ left: 60, right: 160, top: 0, bottom: 36, width: 100, height: 36, x: 60, y: 0, toJSON: () => ({}) });
+        await w.setProps({ modelValue: 'd' });
+        await nextTick();
+        await nextTick();
+        expect(list.scrollLeft).toBe(40); // and back: the left edge of the tab met the left edge of the row
+    });
+
+    // 5.38.1: a polish of the first version. / 5.38.1: доводка первой версии.
+    it('draws the cross as an icon and the unsaved dot as a shape, with no text glyph in the tab', () => {
+        make();
+        const dirty = tabEls()[1]!;
+        const dot = dirty.querySelector('.tao-doc-tabs__dot')!;
+        expect(dot.textContent).toBe('');
+        expect(dirty.querySelector('.tao-sr-only')!.textContent).toBe('unsaved changes');
+        const cross = dirty.querySelector('.tao-doc-tabs__close')!;
+        expect(cross.querySelector('svg')).not.toBeNull();
+        for (const el of tabEls()) expect(el.textContent).not.toMatch(/[×●]/);
+    });
+
+    it('is draggable only when the app listens to reorder and there is more than one tab', async () => {
+        make();
+        expect(tabEls().map((t) => t.getAttribute('draggable'))).toEqual(['true', 'true', 'true', 'true']);
+        wrappers.splice(0).forEach((w) => w.unmount());
+        document.body.innerHTML = '';
+
+        const events: string[] = [];
+        mount(TaoDocTabs, { props: { modelValue: 'a', items: tabs, onClose: () => events.push('close') } as never, attachTo: document.body });
+        expect(tabEls().map((t) => t.getAttribute('draggable'))).toEqual(['false', 'false', 'false', 'false']);
+        const alt = new KeyboardEvent('keydown', { key: 'ArrowRight', altKey: true, bubbles: true, cancelable: true });
+        tabEls()[1]!.dispatchEvent(alt);
+        expect(alt.defaultPrevented).toBe(false); // Alt + arrow is the browser's «back» when the tab cannot be moved
+        document.body.innerHTML = '';
+
+        make({ items: [tabs[0]!] });
+        expect(tabEls().map((t) => t.getAttribute('draggable'))).toEqual(['false']);
+    });
+
+    it('the row keeps the sideways swipe to itself, and a finger always sees the cross', () => {
+        const source = (rawSource as string).replace(/\r\n/g, '\n');
+        expect(/\.tao-doc-tabs__list \{[^}]*\}/.exec(source)![0]).toContain('overscroll-behavior-x: contain');
+        expect(source).toMatch(/@media \(hover: none\) \{\s*\.tao-doc-tabs__close \{\s*opacity: 1;/);
     });
 
     it('the wheel scrolls the row sideways only when it overflows and the wheel is vertical', () => {
