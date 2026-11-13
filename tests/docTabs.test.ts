@@ -211,14 +211,15 @@ describe('TaoDocTabs', () => {
             return e;
         };
         fire(tabEls()[0]!, 'dragstart');
-        const dragOver = fire(over, 'dragover', 180); // the right half
+        const dragOver = fire(over, 'dragover', 180); // the right half: the place between this tab and the next one
         expect(dragOver.defaultPrevented).toBe(true);
         await nextTick();
-        expect(over.classList.contains('drop-after')).toBe(true);
-        fire(over, 'dragover', 120); // the left half: the mark moves to the other side
+        expect(tabEls()[3]!.classList.contains('drop-before')).toBe(true); // drawn at the left edge of the next tab
+        expect(over.classList.contains('drop-after')).toBe(false);
+        fire(over, 'dragover', 120); // the left half: the place between the previous tab and this one
         await nextTick();
         expect(over.classList.contains('drop-before')).toBe(true);
-        expect(over.classList.contains('drop-after')).toBe(false);
+        expect(tabEls()[3]!.classList.contains('drop-before')).toBe(false);
         fire(over, 'dragover', 180);
         await nextTick();
         fire(over, 'drop');
@@ -226,6 +227,35 @@ describe('TaoDocTabs', () => {
         expect(events.filter((e) => e.name === 'reorder')).toEqual([{ name: 'reorder', args: [0, 2] }]);
         expect(over.classList.contains('drop-after')).toBe(false);
         expect(tabEls()[0]!.classList.contains('is-dragging')).toBe(false);
+    });
+
+    // 5.38.2: one place between two tabs is one mark. / 5.38.2: одно место между двумя вкладками — одна метка.
+    it('the place between two tabs is drawn once, at the left edge of the right one, whichever of the two the pointer is over', async () => {
+        make();
+        const rect = (left: number) => ({ left, width: 100, right: left + 100, top: 0, bottom: 30, height: 30, x: left, y: 0, toJSON: () => ({}) }) as DOMRect;
+        tabEls().forEach((el, i) => (el.getBoundingClientRect = () => rect(i * 100)));
+        const dt = { effectAllowed: '', setData: vi.fn() } as unknown as DataTransfer;
+        const fire = (el: Element, type: string, clientX = 0) => {
+            const e = new Event(type, { bubbles: true, cancelable: true }) as DragEvent;
+            Object.assign(e, { dataTransfer: dt, clientX });
+            el.dispatchEvent(e);
+        };
+        const marked = () => tabEls().map((el, i) => (el.classList.contains('drop-before') ? `before ${i}` : el.classList.contains('drop-after') ? `after ${i}` : '')).filter(Boolean);
+
+        fire(tabEls()[0]!, 'dragstart');
+        fire(tabEls()[1]!, 'dragover', 190); // the right half of the second tab
+        await nextTick();
+        expect(marked()).toEqual(['before 2']);
+        fire(tabEls()[2]!, 'dragover', 210); // the left half of the third: the same place
+        await nextTick();
+        expect(marked()).toEqual(['before 2']);
+        fire(tabEls()[3]!, 'dragover', 390); // the right half of the last one: the end of the row
+        await nextTick();
+        expect(marked()).toEqual(['after 3']);
+        fire(tabEls()[0]!, 'dragover', 90); // the place the dragged tab already has is no place to drop: no mark
+        fire(tabEls()[1]!, 'dragover', 110);
+        await nextTick();
+        expect(marked()).toEqual([]);
     });
 
     it('a drag that did not start here, or ends on the same place, asks for nothing', async () => {

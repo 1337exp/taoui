@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.38.2
+
+Nothing to migrate; a fix to the look.
+
+- **`TaoDocTabs`: one place between two tabs is one mark.** While a tab was dragged, the drop mark stood on the right edge of the tab A when the pointer was in its right half, and on the left edge of the next tab B when the pointer was in the left half of B: two marks for one place between A and B, and a mark that jumped across the gap, so it looked as if there were two places to drop. Now both are drawn once, at the left edge of B (after the last tab, at its right edge). A place where the tab would stay as it is (next to its own place) is no place to drop and has no mark.
+
 ## 5.38.1
 
 Nothing to migrate; a polish of 5.38.0. One thing changes: tabs are draggable (and Alt + ← → moves them) only when you listen to `reorder`.
