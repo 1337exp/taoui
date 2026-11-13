@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.39.0
+
+Nothing to migrate: `fill` and `reverse` are off by default, and a marquee without them runs as before. One fix: it now follows its content.
+
+- **`TaoMarquee` follows its content.** It measured the line when the text or the gap changed and when its box was resized, but not when the content of the slot changed (a new price, a font that came late, an image): the line kept the old width, so a line that had grown stood still, or one that had shrunk ran with a hole. The hidden copy that measures the natural width is watched now (`ResizeObserver`), so nobody has to call `measure()`; it stays for the rare case.
+- **`TaoMarquee` `fill`: a short line runs too.** A line that fits stood still; with `fill` it is repeated, with `gap` between the copies, until the copies cover the whole width (and one more, since the strip moves by one round), so there is never a hole in the strip. A ticker of quotes, a row of logos. A line wider than the box still has two copies as before; an empty one has nothing to repeat and stands; with «reduce motion» it stands still, as every marquee does. The extra copies are hidden from a screen reader and inert, like the second one always was.
+- **`TaoMarquee` `reverse`: to the right.** The same round backwards (the pause at the start of a round goes with it).
+
 ## 5.38.2
 
 Nothing to migrate; a fix to the look.

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { TaoCard, TaoMarquee, TaoSegmented, TaoSegmentedOption, TaoSwitch } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import Tr from './Tr.vue'
@@ -9,6 +9,28 @@ import { propTables } from '../propTables.js'
 defineOptions({ name: 'DemoMarquee' })
 
 const speed = ref('40')
+const reverse = ref(false)
+
+// a ticker of quotes: a short strip that is repeated to the whole width, and the prices change under it, with nobody asking
+// the marquee to measure again
+// биржевая лента: короткая полоса, повторённая на всю ширину, а цены меняются под ней, и перемерять строку никто не просит
+const quotes = ref([
+  { s: 'AAPL', p: 189.2, d: 0.4 },
+  { s: 'TSLA', p: 241.0, d: -1.1 },
+  { s: 'BTC', p: 61250, d: 2.3 },
+  { s: 'EUR', p: 1.08, d: -0.1 },
+])
+let timer = null
+onMounted(() => {
+  timer = setInterval(() => {
+    for (const q of quotes.value) {
+      const move = (Math.random() - 0.5) * 0.02
+      q.p = Math.round(q.p * (1 + move) * 100) / 100
+      q.d = Math.round((q.d + move * 100) * 10) / 10
+    }
+  }, 1500)
+})
+onBeforeUnmount(() => clearInterval(timer))
 const paused = ref(false)
 const cards = computed(() => [
   { id: 'a', title: 'Inktune' },
@@ -66,6 +88,34 @@ const cards = computed(() => [
     <Tr>
       <template #en>
         <p class="marquee-demo__note">
+          A ticker: <code>fill</code> repeats a line that fits until the copies cover the whole width, so a short strip of
+          quotes runs too, and <code>reverse</code> runs it the other way. The prices change under it every second and a half, and
+          the marquee follows the content by itself.
+        </p>
+      </template>
+      <template #ru>
+        <p class="marquee-demo__note">
+          Лента: <code>fill</code> повторяет помещающуюся строку, пока копии не закроют всю ширину, так что короткая полоса
+          котировок тоже бежит, а <code>reverse</code> пускает её в другую сторону. Цены меняются под ней каждые полторы секунды,
+          а марки следит за содержимым сам.
+        </p>
+      </template>
+    </Tr>
+    <div class="marquee-demo__controls">
+      <TaoSwitch v-model="reverse" :label="tr('To the right', 'Вправо')" />
+    </div>
+    <div class="marquee-demo__line">
+      <TaoMarquee fill :reverse="reverse" :speed="Number(speed)" :paused="paused" :gap="32">
+        <span v-for="q in quotes" :key="q.s" class="marquee-demo__quote">
+          <b>{{ q.s }}</b> {{ q.p }}
+          <span :class="q.d >= 0 ? 'marquee-demo__up' : 'marquee-demo__down'">{{ q.d >= 0 ? '▲' : '▼' }} {{ Math.abs(q.d) }}%</span>
+        </span>
+      </TaoMarquee>
+    </div>
+
+    <Tr>
+      <template #en>
+        <p class="marquee-demo__note">
           As a design feature, in the background: <code>decorative</code>. A ghost: hidden from a screen reader, not a tab stop, the
           cursor and a tap do nothing, the text cannot be selected, and it runs without a pause between rounds, like a looped
           picture. Only for text nobody needs to read. <code>:pause-on-hover="false"</code> alone just stops the stopping under
@@ -87,10 +137,15 @@ const cards = computed(() => [
     </div>
 
     <div class="code-block">
-      <pre><code>&lt;TaoMarquee :text="project.title" /&gt;
+      <pre v-pre><code>&lt;TaoMarquee :text="project.title" /&gt;
 
 &lt;TaoMarquee :speed="60" :gap="64"&gt;
   Now playing: &lt;b&gt;Nils Frahm — Says&lt;/b&gt; · &lt;a href="…"&gt;open&lt;/a&gt;
+&lt;/TaoMarquee&gt;
+
+&lt;!-- a ticker: a short strip is repeated to the whole width; the prices may change under it --&gt;
+&lt;TaoMarquee fill :gap="32"&gt;
+  &lt;span v-for="q in quotes" :key="q.s"&gt;&lt;b&gt;{{ q.s }}&lt;/b&gt; {{ q.p }}&lt;/span&gt;
 &lt;/TaoMarquee&gt;
 
 &lt;!-- a decorative line: a ghost, no pause between rounds --&gt;
@@ -113,6 +168,19 @@ const cards = computed(() => [
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 12px;
   margin-bottom: 16px;
+}
+
+.marquee-demo__quote {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.marquee-demo__up {
+  color: var(--tao-color-success-text);
+}
+
+.marquee-demo__down {
+  color: var(--tao-color-danger-text);
 }
 
 .marquee-demo__line {

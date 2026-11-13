@@ -103,8 +103,10 @@ Showcase section: `#marquee`
 | `roundPause` | `boolean` | true | A pause at the start of every round, to read the beginning. false — the line runs without a stop, like a looped picture. Not set: a decorative line has no pause, an ordinary one has |
 | `decorative` | `boolean` | false | The line is only decoration (a background, a design feature) with no meaning: a ghost. Hidden from a screen reader, not a tab stop, a cursor and a tap are nothing to it, the text cannot be selected, it runs without pauses. Only for text nobody needs to read. With «reduce motion» it stands still, clipped |
 | `paused` | `boolean` | false | Stopped by the app |
+| `fill` | `boolean` | false | Run also when the line fits: it is repeated, with gap between the copies, until the copies cover the whole width (a ticker of quotes, a row of logos). Without it a line that fits stands still |
+| `reverse` | `boolean` | false | Run to the right instead of to the left |
 
-**Slots, events, notes.** default — the content of the line; its copies for the second round are hidden from a screen reader and inert. It runs only when it does not fit; it stops on hover, on focus (a running line is a tab stop) and on a tap; with «reduce motion» it wraps. measure() — measure again by hand.
+**Slots, events, notes.** default — the content of the line; its copies for the next rounds are hidden from a screen reader and inert. It runs only when it does not fit (always with fill); it stops on hover, on focus (a running line is a tab stop) and on a tap; with «reduce motion» it wraps. The content of the slot is watched: a new price, a font that came or an image measure the line again by themselves, measure() is only for rare cases (measure again by hand).
 
 ## TaoCopy
 
