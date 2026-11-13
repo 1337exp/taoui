@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { getCurrentInstance, nextTick, ref, useId, watch } from 'vue';
+import { computed, getCurrentInstance, nextTick, ref, useId, watch } from 'vue';
 import { moveTarget, type TaoDocTab } from '../docTabs';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
@@ -132,6 +132,20 @@ function onDragStart(event: DragEvent, tab: TaoDocTab) {
     }
 }
 
+/**
+ * The one place the mark is drawn at: the number of the tab it stands before (`items.length` is after the last one), or -1
+ * for no mark. «After the tab A» and «before the tab B» are one place between A and B, so both are drawn as the left edge of B,
+ * and a place where the tab would stay is not drawn at all (it is no place to drop).
+ * Единственное место метки: номер вкладки, перед которой она стоит (`items.length` — после последней), или -1, если метки нет.
+ * «После A» и «перед B» — одно место между A и B, поэтому обе рисуются левым краем B, а место, где вкладка осталась бы на своём,
+ * не рисуется вовсе (бросать туда нечего).
+ */
+const dropSlot = computed(() => {
+    const mark = dropMark.value;
+    if (!mark || moveTarget(dragFrom.value, mark.index, mark.after, props.items.length) === null) return -1;
+    return mark.after ? mark.index + 1 : mark.index;
+});
+
 function onDragOver(event: DragEvent, tab: TaoDocTab) {
     if (dragFrom.value < 0) return;
     event.preventDefault();
@@ -202,8 +216,8 @@ const tabindex = (tab: TaoDocTab, index: number) =>
                     'is-preview': tab.preview,
                     'is-dirty': tab.dirty,
                     'is-dragging': dragFrom === index,
-                    'drop-before': dropMark && dropMark.index === index && !dropMark.after && dragFrom !== index,
-                    'drop-after': dropMark && dropMark.index === index && dropMark.after && dragFrom !== index,
+                    'drop-before': dropSlot === index,
+                    'drop-after': dropSlot === items.length && index === items.length - 1,
                 }"
                 role="tab"
                 :aria-selected="tab.value === modelValue"
