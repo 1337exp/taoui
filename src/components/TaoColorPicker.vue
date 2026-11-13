@@ -314,14 +314,14 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
             <TaoSegmentedOption v-for="m in modes" :key="m" :value="m" :label="m.toUpperCase()" />
         </TaoSegmented>
 
-        <div class="tao-color-picker__row">
+        <!-- the row is one small size: the preview, the field and the button are one height, and `align-items: flex-end` puts them on one line under the labels / строка одного малого размера: образец, поле и кнопка одной высоты, а `align-items: flex-end` ставит их на одну линию под подписями -->
+        <div class="tao-color-picker__row tao-size-small">
             <span class="tao-color-picker__preview"><span :style="{ backgroundColor: hex }"></span></span>
             <!-- The label is the same as over the RGB / HSL channels, so the row has the same height in every mode. / Подпись как над каналами RGB / HSL: так высота строки одинакова во всех режимах. -->
             <label v-if="activeMode === 'hex'" class="tao-color-picker__hex">
                 <span>HEX</span>
                 <TaoInput
                     v-model="hexText"
-                    size="small"
                     :error="hexInvalid"
                     :disabled="disabled"
                     :aria-label="l10n.hexLabel"
@@ -333,7 +333,6 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
                 <label v-for="c in channels" :key="c.key" class="tao-color-picker__channel">
                     <span>{{ c.label }}</span>
                     <TaoInputNumber
-                        size="small"
                         :controls="false"
                         :min="0"
                         :max="c.max"
@@ -434,9 +433,11 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
     --tao-slider-thumb-bg: #fff;
 }
 
+/* the labels hang over the fields, so the preview and the button stand on the line of the field, not in the middle of the label and the field together */
+/* подписи висят над полями, поэтому образец и кнопка стоят на линии поля, а не посередине между подписью и полем */
 .tao-color-picker__row {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: var(--tao-space-2);
 }
 
