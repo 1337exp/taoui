@@ -148,4 +148,69 @@ describe('TaoMarquee', () => {
         expect(source).toMatch(/@keyframes tao-marquee \{[^@]*transform: translateX\(var\(--_shift\)\)/);
         expect(source).toContain('@media (prefers-reduced-motion: no-preference)');
     });
+
+    // 5.39.0: fill, reverse, and the content is watched. / 5.39.0: fill, reverse и слежение за содержимым.
+    it('fill: a line that fits runs too, repeated until the copies cover the box and one more', async () => {
+        const w = await marquee(300, 100, { fill: true, gap: 48 }); // a round is 148px: 3 cover 300px, plus one
+        expect(w.classes()).toContain('tao-marquee--run');
+        const items = w.findAll('.tao-marquee__item');
+        expect(items).toHaveLength(4);
+        expect(items[0]!.attributes('aria-hidden')).toBeUndefined();
+        for (const copy of items.slice(1)) {
+            expect(copy.attributes('aria-hidden')).toBe('true');
+            expect(copy.attributes('inert')).toBeDefined();
+        }
+        expect(w.attributes('tabindex')).toBe('0');
+        expect(w.find('.tao-marquee__track').attributes('style')).toContain('--_shift: -148px');
+    });
+
+    it('fill: a line wider than the box still has two copies, an empty one has nothing to repeat, reduced motion stands still', async () => {
+        expect((await marquee(100, 240, { fill: true })).findAll('.tao-marquee__item')).toHaveLength(2);
+        expect((await marquee(300, 0, { fill: true, text: '' })).classes()).not.toContain('tao-marquee--run');
+        const still = await marquee(300, 100, { fill: true }, true);
+        expect(still.classes()).not.toContain('tao-marquee--run');
+        expect(still.findAll('.tao-marquee__item')).toHaveLength(1);
+    });
+
+    it('reverse runs the same round the other way', async () => {
+        const w = await marquee(100, 240, { reverse: true });
+        expect(w.classes()).toContain('tao-marquee--reverse');
+        expect((await marquee(100, 240)).classes()).not.toContain('tao-marquee--reverse');
+        expect(source).toMatch(/\.tao-marquee--run\.tao-marquee--reverse \.tao-marquee__track \{[^}]*animation-direction: reverse/);
+    });
+
+    it('measures again when the content changes, with nobody calling measure()', async () => {
+        const watched: Element[] = [];
+        let notify: () => void = () => {};
+        class FakeObserver {
+            constructor(callback: () => void) {
+                notify = callback;
+            }
+            observe(el: Element) {
+                watched.push(el);
+            }
+            disconnect() {}
+        }
+        vi.stubGlobal('ResizeObserver', FakeObserver);
+        vi.spyOn(window, 'matchMedia').mockImplementation((query: string) => ({ matches: false, media: query, addEventListener() {}, removeEventListener() {} }) as unknown as MediaQueryList);
+        vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(function (this: HTMLElement) {
+            return this.classList.contains('tao-marquee') ? 200 : 0;
+        });
+        let line = 120;
+        vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+            const width = this.classList.contains('tao-marquee__meter') ? line : 0;
+            return { width, height: 20, top: 0, left: 0, right: width, bottom: 20, x: 0, y: 0, toJSON: () => ({}) } as DOMRect;
+        });
+        const w = mount(TaoMarquee, { props: { text: 'AAPL 189.20' }, attachTo: document.body });
+        wrappers.push(w);
+        await nextTick();
+        expect(watched.map((el) => el.className)).toEqual(expect.arrayContaining([expect.stringContaining('tao-marquee'), 'tao-marquee__meter']));
+        expect(w.classes()).not.toContain('tao-marquee--run');
+
+        line = 320; // the prices changed and the line grew; the box did not
+        notify();
+        await nextTick();
+        expect(w.classes()).toContain('tao-marquee--run');
+        vi.unstubAllGlobals();
+    });
 });

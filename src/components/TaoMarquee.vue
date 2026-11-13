@@ -6,7 +6,7 @@ defineOptions({ name: 'TaoMarquee' });
 
 // One line that never wraps. When it does not fit, it runs round and round with soft fading edges; when it fits, it
 // stands still and does nothing. Only transform moves (compositing, no repaint). Every round starts with a short
-// pause to read the beginning. It stops on hover, on focus (a keyboard can stop it: when it runs it is a tab stop) and
+// pause to read the beginning (with `fill` a short line is repeated and runs too, as a ticker). It stops on hover, on focus (a keyboard can stop it: when it runs it is a tab stop) and
 // on a tap (touch has no hover): moving content longer than 5 s must be stoppable (WCAG 2.2.2). With «reduce motion»
 // it does not run at all, the line wraps like plain text. A screen reader reads it once: the moving copy is hidden.
 // Одна строка без переносов. Не помещается — бежит по кругу с мягко гаснущими краями; помещается — стоит на месте.
@@ -58,6 +58,15 @@ const props = withDefaults(
         decorative?: boolean;
         /** Stopped by the app. / Остановлена приложением. */
         paused?: boolean;
+        /**
+         * Run also when the line fits: it is repeated, with `gap` between the copies, until the copies cover the whole
+         * width, so the strip never has a hole (a ticker of quotes, a row of logos). Without it a line that fits stands still.
+         * Бежать и тогда, когда строка помещается: она повторяется, с `gap` между копиями, пока копии не закроют всю ширину,
+         * и в ленте не бывает дыры (биржевая лента, ряд логотипов). Без него помещающаяся строка стоит на месте.
+         */
+        fill?: boolean;
+        /** Run to the right instead of to the left. / Бежать вправо, а не влево. */
+        reverse?: boolean;
     }>(),
     {
         text: '',
@@ -68,6 +77,8 @@ const props = withDefaults(
         roundPause: undefined,
         decorative: false,
         paused: false,
+        fill: false,
+        reverse: false,
     },
 );
 
@@ -90,10 +101,23 @@ let observer: ResizeObserver | null = null;
 let motionQuery: MediaQueryList | null = null;
 
 const overflowing = computed(() => itemWidth.value > boxWidth.value + 1);
-const running = computed(() => overflowing.value && !reduce.value);
+// with `fill` a line that fits runs too, but an empty one has nothing to repeat / с `fill` бежит и помещающаяся, но пустой нечего повторять
+const running = computed(() => (overflowing.value || (props.fill && itemWidth.value > 0)) && !reduce.value);
 const wrapping = computed(() => overflowing.value && reduce.value && !props.decorative);
 const restAtStart = computed(() => props.roundPause ?? !props.decorative);
 const stopped = computed(() => props.paused || tapped.value);
+
+/**
+ * How many copies the track holds: a line wider than the box needs two (the second one comes in as the first goes out); a
+ * short line under `fill` needs enough of them to cover the box and one more, since the track moves by one round.
+ * Сколько копий в ленте: строке шире блока хватает двух; короткой при `fill` нужно столько, чтобы закрыть блок, и ещё одна,
+ * потому что лента сдвигается на один круг.
+ */
+const copies = computed(() => {
+    if (!running.value) return 1;
+    if (overflowing.value) return 2;
+    return Math.min(100, Math.ceil(boxWidth.value / (itemWidth.value + props.gap)) + 1);
+});
 
 const trackStyle = computed(() => {
     const shift = itemWidth.value + props.gap;
@@ -139,6 +163,11 @@ onMounted(() => {
     if (box.value && 'ResizeObserver' in window) {
         observer = new ResizeObserver(measure);
         observer.observe(box.value);
+        // the hidden copy has the natural width of the content, so a change of the content (a new price, a font that came,
+        // an image) is seen here, and nobody has to call `measure()`
+        // скрытая копия имеет естественную ширину содержимого, поэтому изменение содержимого (новая цена, пришедший шрифт,
+        // картинка) видно здесь, и вызывать `measure()` никому не нужно
+        if (meter.value) observer.observe(meter.value);
     }
 });
 
@@ -171,6 +200,7 @@ const hasSlot = computed(() => has('default'));
             'tao-marquee--hover-pause': pauseOnHover && !decorative,
             'tao-marquee--seamless': !restAtStart,
             'tao-marquee--ghost': decorative,
+            'tao-marquee--reverse': reverse,
         }"
         :style="{ '--_fade': `${fade}px` }"
         :tabindex="running && !decorative ? 0 : undefined"
@@ -188,8 +218,8 @@ const hasSlot = computed(() => has('default'));
                 <slot v-if="hasSlot" />
                 <template v-else>{{ text }}</template>
             </span>
-            <!-- the second round: hidden from a screen reader and out of the tab order / второй круг: скрыт и без Tab -->
-            <span v-if="running" class="tao-marquee__item" aria-hidden="true" inert>
+            <!-- the next rounds: hidden from a screen reader and out of the tab order / следующие круги: скрыты и без Tab -->
+            <span v-for="n in copies - 1" :key="n" class="tao-marquee__item" aria-hidden="true" inert>
                 <slot v-if="hasSlot" />
                 <template v-else>{{ text }}</template>
             </span>
@@ -269,6 +299,11 @@ const hasSlot = computed(() => has('default'));
 
     .tao-marquee--run.tao-marquee--seamless .tao-marquee__track {
         animation-name: tao-marquee-seamless;
+    }
+
+    /* the other way: the same round backwards, the pause at the start of a round moves with it / в другую сторону: тот же круг назад */
+    .tao-marquee--run.tao-marquee--reverse .tao-marquee__track {
+        animation-direction: reverse;
     }
 
     .tao-marquee--stopped .tao-marquee__track,
