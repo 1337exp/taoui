@@ -61,6 +61,7 @@ import TaoColorInput from './components/TaoColorInput.vue';
 import TaoColorPicker from './components/TaoColorPicker.vue';
 import TaoCombobox from './components/TaoCombobox.vue';
 import TaoPresetInput from './components/TaoPresetInput.vue';
+import TaoCommandPalette from './components/TaoCommandPalette.vue';
 import TaoCalendar from './components/TaoCalendar.vue';
 import TaoDate from './components/TaoDate.vue';
 import TaoDateRange from './components/TaoDateRange.vue';
@@ -157,6 +158,7 @@ const components = [
     TaoColorPicker,
     TaoCombobox,
     TaoPresetInput,
+    TaoCommandPalette,
     TaoCalendar,
     TaoDate,
     TaoDateRange,
@@ -269,6 +271,7 @@ export {
     TaoColorPicker,
     TaoCombobox,
     TaoPresetInput,
+    TaoCommandPalette,
     TaoCalendar,
     TaoDate,
     TaoDateRange,
@@ -339,6 +342,8 @@ export type { TaoTourStep } from './tour';
 export { readTaoMode, applyTaoMode, resolveTaoMode, systemTaoMode } from './themeMode';
 export type { TaoMode, TaoModeChoice } from './themeMode';
 export type { TaoPresetOption, TaoPresetValue } from './presetInput';
+export { matchCommands, mergeRanges, splitByRanges } from './commandPalette';
+export type { TaoCommandItem, TaoCommandMatch } from './commandPalette';
 export { apcaContrast, applyTaoPalette, contrastRatio, paletteCss as taoPaletteCss } from './palette';
 export { taoPalettes } from './palettes';
 export type { TaoPaletteDef, TaoPaletteMode, TaoStatusName } from './palette';

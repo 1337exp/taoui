@@ -379,6 +379,22 @@ Showcase section: `#combobox`
 
 **Slots, events, notes.** create — an event when a new value is typed: the parent extends options itself.
 
+## TaoCommandPalette
+
+Showcase section: `#command-palette`
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `v-model` | `boolean` | false | Open or closed. The palette listens to no key itself: open it from yours |
+| `items` | `{ id, label, group?, shortcut?, icon?, description?, keywords?, disabled? }[]` | [] | The commands. The palette only searches and shows them; running one is @select. group gives captions while the query is empty; shortcut is the text of the shortcut; keywords are words that find it though they are not shown; disabled is shown but cannot be picked |
+| `placeholder` | `string` | 'Type a command…' | The hint in the empty field |
+| `emptyText` | `string` | 'No commands found' | The text when nothing fits |
+| `label` | `string` | 'Commands' | The name of the dialog and the list for a screen reader |
+| `limit` | `number` | 50 | The most rows shown |
+| `surface` | `'flat' \| 'grain' \| 'glass'` | 'flat' | What the panel is made of, as on TaoModal |
+
+**Slots, events, notes.** #item="{ item, active, ranges }" — your own row (ranges are the stretches of the label the query found). #empty — nothing found. select(item) — a command was picked (Enter or a click), the palette closes after it; update:modelValue and close — closing. class, style and the other attributes go to the dialog panel. Every word of the query must fit: the start of the label scores higher, then the start of a word, then any place, then the letters in order; the group, the description and keywords find a command too. Keys: ↑ ↓ (a disabled row is skipped, the ends join), Home End, Enter, Esc; the focus never leaves the field. The search is exported as matchCommands(items, query, limit).
+
 ## TaoPresetInput
 
 Showcase section: `#preset-input`

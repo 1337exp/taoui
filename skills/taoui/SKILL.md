@@ -100,7 +100,7 @@ choose a text colour, WCAG 2 to promise a number.
 
 ## Overlays and feedback
 
-- `TaoModal` (`fullscreen`, `fullscreen="narrow"` for a page on a phone), `TaoDrawer` (`side="bottom"` is the phone's
+- `TaoCommandPalette` (a dialog that searches `items` `{ id, label, group?, shortcut?, keywords?, disabled? }`, `Ctrl+K` style: you open it from your own key with `v-model`, `@select` runs the pick; the search alone is `matchCommands`), `TaoModal` (`fullscreen`, `fullscreen="narrow"` for a page on a phone), `TaoDrawer` (`side="bottom"` is the phone's
   bottom sheet) — v-model; Escape closes the top layer only. `TaoPopover`, `TaoTooltip` (`placement`).
 - Menus share one engine: `TaoDropdownMenu`, `TaoMenubar`, `TaoContextMenu`, `TaoMenu` (the panel for your own shell).
   Items are a data tree `TaoMenuItem[]`: `{ id, label, icon?, shortcut?, disabled?, items? }`,

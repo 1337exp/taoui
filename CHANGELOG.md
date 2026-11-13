@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.35.0
+
+Nothing to migrate: a new component.
+
+- **`TaoCommandPalette`: a dialog that searches a list of commands.** The `Ctrl+K` of an editor, without the editor: `items` (`{ id, label, group?, shortcut?, icon?, description?, keywords?, disabled? }`) are searched and shown, the app runs the pick (`@select`) and opens the palette from a key of its own (the palette listens to no key, so it takes no shortcut from the app). Every word of the query must fit, in any order: the start of the label scores highest, then the start of a word in it (after a space, a dot, a dash, an underscore, a slash or a colon), then any place, then the letters in order with gaps (`sv` finds «Save», fewer gaps rank higher); the group, the description and `keywords` find a command too, with nothing to light; `е` and `ё` are one letter, case does not matter. The matched letters of the label are lit. With an empty query the list goes under captions of its groups, with a query each row names its group. A disabled command is shown and cannot be picked. Keys: ↑ ↓ walk the rows that can be picked (the ends join), Home End, Enter picks, Esc closes (through the layer stack: a menu opened from it closes first), Tab keeps the focus in the field, a key during text composition is not taken. A role map for a screen reader: a dialog with a `combobox` field (`aria-controls`, `aria-activedescendant`) and a `listbox` of `option`s. Slots `#item` (your own row: the item, whether it is active, the lit stretches) and `#empty`; `surface`, `limit`, `placeholder`, `emptyText`, `label` (texts also in the locale: `commandPalette`). The search is exported alone as `matchCommands(items, query, limit)` (with `mergeRanges`, `splitByRanges`) for any list you filter by typing. Made for the command registry of TaoUX (`taoux/commands`): its commands map to `items` one to one.
+
 ## 5.34.1
 
 Nothing to migrate; a fix.

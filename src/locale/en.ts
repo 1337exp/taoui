@@ -71,6 +71,7 @@ export const localeEn: TaoLocale = {
     inputNumber: { incrementLabel: 'Increase', decrementLabel: 'Decrease' },
     list: { emptyText: 'Nothing here' },
     modal: { closeLabel: 'Close' },
+    commandPalette: { label: 'Commands', placeholder: 'Type a command…', emptyText: 'No commands found' },
     toolbar: { overflowLabel: 'More' },
     pagination: {
         ariaLabel: 'Pagination',
