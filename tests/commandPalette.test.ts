@@ -2,6 +2,8 @@ import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import { defineComponent, h, nextTick, ref } from 'vue';
 import TaoCommandPalette from '../src/components/TaoCommandPalette.vue';
+// @ts-expect-error Vite `?raw` import: the component as text, to read its styles
+import rawSource from '../src/components/TaoCommandPalette.vue?raw';
 import type { TaoCommandItem } from '../src/commandPalette';
 
 // 5.35.0: TaoCommandPalette, a dialog that searches a list of commands. / 5.35.0: окно поиска по списку команд.
@@ -258,6 +260,32 @@ describe('TaoCommandPalette', () => {
         await w.setProps({ modelValue: false });
         await nextTick();
         expect(document.body.style.overflow).not.toBe('hidden');
+    });
+
+    // 5.35.1: one scale for the field and the rows, a column for the icons, groups that do not pass for rows.
+    // 5.35.1: одна шкала для поля и строк, колонка под иконки, группы, не похожие на строки.
+    it('keeps a column for the icon while any row has one, and marks the rows that have it', () => {
+        make();
+        const list = $('[role="listbox"]')!;
+        expect(list.classList.contains('has-icons')).toBe(true);
+        const marked = options().filter((o) => o.classList.contains('has-icon'));
+        expect(marked.map((o) => o.textContent)).toEqual([expect.stringContaining('Zoom to fit')]);
+    });
+
+    it('draws no icon column when no row has an icon', () => {
+        make({ items: items.filter((i) => !i.icon) });
+        expect($('[role="listbox"]')!.classList.contains('has-icons')).toBe(false);
+    });
+
+    it('the panel sets its own text size and the field is on the same scale as the rows', () => {
+        const source = (rawSource as string).replace(/\r\n/g, '\n');        const panel = /\.tao-command-palette \{[^}]*\}/.exec(source)![0];
+        expect(panel).toContain('font-size: var(--tao-control-font-size)');
+        const field = /\.tao-command-palette__input \{[^}]*\}/.exec(source)![0];
+        expect(field).toContain('--_row');
+        expect(field).not.toMatch(/font-size/);
+        const group = /\.tao-command-palette__group \{[^}]*\}/.exec(source)![0];
+        expect(group).toContain('text-transform: uppercase');
+        expect(source).toMatch(/\.tao-command-palette__group:not\(:first-child\) \{[^}]*border-top/);
     });
 
     it('attributes go to the panel, not to the overlay', () => {

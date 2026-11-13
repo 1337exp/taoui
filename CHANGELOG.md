@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.35.1
+
+Nothing to migrate; the look of `TaoCommandPalette` is put in order.
+
+- **`TaoCommandPalette`: the field and the rows are one scale, the groups read as groups, every row is on one rhythm.** The panel is teleported to `<body>` and set no text size of its own, so the rows took the 16px of the page while the field stayed at 14px: the field looked small beside big rows. The panel sets `--tao-control-font-size` now, the field is one step taller than a row (row height + `--tao-space-2`) and its text starts where the labels of the rows start. A caption of a group is small capitals with spacing (`--tao-font-size-xs`, 600, muted) with a hairline above every group but the first, so it no longer passes for a row. A row is one height (`--tao-control-height`), and a row with a description is the same row with a second line, not a different one. While any row has an icon the rows without one keep an empty column for it, so every label stands in one column. The row under the pointer or the arrows goes one step up the text ladder (`text-strong`), the corners are concentric with the panel, the description, the group name and the shortcut are on the secondary size of a control.
+
 ## 5.35.0
 
 Nothing to migrate: a new component.
