@@ -379,6 +379,22 @@ Showcase section: `#combobox`
 
 **Slots, events, notes.** create — an event when a new value is typed: the parent extends options itself.
 
+## TaoDocTabs
+
+Showcase section: `#doc-tabs`
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `v-model` | `string` | — | The value of the active tab. It may be none of them (no document open): then the first one is the way in by Tab |
+| `items` | `{ value, label, title?, dirty?, preview?, closable? }[]` | [] | The tabs. value is the id of the document; title the full name for a hint; dirty the unsaved dot; preview a preview (italics, pinned by a double click or Enter); closable: false has no cross and cannot be closed |
+| `controls` | `string` | — | The id of the element the active tab controls (the document view): aria-controls |
+| `label` | `string` | 'Open documents' | The name of the row for a screen reader |
+| `closeLabel` | `string` | 'Close' | The label of the cross (the tab name follows it) |
+| `dirtyLabel` | `string` | 'unsaved changes' | What is read instead of the dot |
+| `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, same scale as TaoButton |
+
+**Slots, events, notes.** #label="{ tab }" — your own content of a tab instead of the label. update:modelValue and change — a tab was picked (a click, the arrows, Home, End). close(value) — a request to close (the cross, the middle button, Delete): the app closes it. pin(value) — a preview was pinned (a double click, Enter). reorder(from, to) — a tab was moved (by dragging or Alt + arrows): to is the place once the tab is taken out and put back (splice(to, 0, ...splice(from, 1))). menu(value, event) — a right click or the menu key: the app draws the menu. Tabs that do not fit scroll sideways, the wheel too; the active one is always in view. The cross is for the pointer only (aria-hidden), a keyboard user closes with Delete.
+
 ## TaoCommandList
 
 Showcase section: `#command-palette`

@@ -69,6 +69,7 @@ export const navGroups = [
     title: { en: 'Overlays', ru: 'Оверлеи' },
     items: [
       { id: 'modal', label: 'TaoModal' },
+      { id: 'doc-tabs', label: 'TaoDocTabs', aliases: ['tabs', 'documents', 'editor tabs', 'close', 'preview tab', 'вкладки документов', 'документы', 'закрытие вкладок'] },
       { id: 'command-palette', label: 'TaoCommandPalette', aliases: ['TaoCommandList', 'command list', 'palette', 'command', 'commands', 'ctrl+k', 'search', 'quick open', 'палитра', 'команды', 'поиск команд'] },
       { id: 'drawer', label: 'TaoDrawer' },
       { id: 'confirm', label: 'confirm()' },

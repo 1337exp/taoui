@@ -72,6 +72,7 @@ export const localeRu: TaoLocale = {
     inputNumber: { incrementLabel: 'Увеличить', decrementLabel: 'Уменьшить' },
     list: { emptyText: 'Ничего нет' },
     modal: { closeLabel: 'Закрыть' },
+    docTabs: { label: 'Открытые документы', closeLabel: 'Закрыть', dirtyLabel: 'есть несохранённые изменения' },
     commandPalette: { label: 'Команды', placeholder: 'Введите команду…', emptyText: 'Команд не найдено' },
     toolbar: { overflowLabel: 'Ещё' },
     pagination: {

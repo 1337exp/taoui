@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.38.0
+
+Nothing to migrate: a new component.
+
+- **`TaoDocTabs`: the tabs of open documents.** The row of an editor with several documents: a tab per document (`items`: `{ value, label, title?, dirty?, preview?, closable? }`), a cross to close it, a dot while it has unsaved changes (read aloud as `dirtyLabel`), a **preview** tab in italics (the next preview replaces it: that rule is the app's, the tab only shows it) that a double click or Enter pins, and tabs that can be dragged into another order. The component draws the row and asks, the app does: a close, a pin, a move, a menu are events (`close`, `pin`, `reorder(from, to)`, `menu(value, event)`), because the list and what closing a document means (a question, a save) are the app's. `reorder`'s `to` is the place once the tab is taken out and put back, so `list.splice(to, 0, ...list.splice(from, 1))` is the whole handler (`moveTarget` is exported for your own lists). Keys: ← → walk the tabs and open them (the ends join), Home End, Delete closes (a tab with `closable: false` ignores it and has no cross), Enter pins a preview, Alt + ← → moves the tab itself (the keyboard way to the drag), the menu key or Shift + F10 and a right click ask for the app's menu; the middle button closes. Tabs that do not fit scroll sideways (the wheel scrolls the row when it overflows) and the active one is always brought into view. A tab is a `div role="tab"` with the cross inside it (`aria-hidden`, no Tab stop): the cross is for the pointer, the keyboard has Delete. Slot `#label` for the content of a tab; texts in the locale (`docTabs`) and as props.
+
 ## 5.37.3
 
 Nothing to migrate; a fix to the look.

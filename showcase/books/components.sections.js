@@ -16,6 +16,7 @@ import DemoSegmented from '../components/DemoSegmented.vue'
 import DemoCombobox from '../components/DemoCombobox.vue'
 import DemoPresetInput from '../components/DemoPresetInput.vue'
 import DemoCommandPalette from '../components/DemoCommandPalette.vue'
+import DemoDocTabs from '../components/DemoDocTabs.vue'
 import DemoDate from '../components/DemoDate.vue'
 import DemoPinCode from '../components/DemoPinCode.vue'
 import DemoSlider from '../components/DemoSlider.vue'
@@ -104,6 +105,7 @@ export const demoById = {
   'animated-border': DemoAnimatedBorder,
   'modal': DemoModal,
   'command-palette': DemoCommandPalette,
+  'doc-tabs': DemoDocTabs,
   'drawer': DemoDrawer,
   'confirm': DemoConfirm,
   'tooltip': DemoTooltip,
