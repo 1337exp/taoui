@@ -380,16 +380,27 @@
   min-height: var(--tao-control-height);
   padding: 0 12px;
   border-radius: var(--tao-radius-control);
-  color: var(--tao-color-text-muted);
-  font-size: 13px;
-  font-weight: 600;
+  /* One ladder for the whole bar (the Guide's text contract): every control at rest is `text`, weight 500, the size of the
+     controls beside it; hover goes one step up, the accent is only for the current one. A muted 600 tab beside a strong
+     400 select was the zoo.
+     Одна лестница на всю панель (договор о тексте из Guide): контрол в покое — `text`, вес 500, размер соседних контролов;
+     hover на ступень выше, акцент только у текущего. Бледная вкладка 600 рядом с чёрным селектом 400 и была зоопарком. */
+  color: var(--tao-color-text);
+  font-size: var(--tao-control-font-size);
+  font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
 }
 
 .showcase-books__tab:hover {
   background: var(--tao-color-surface-hover);
+  color: var(--tao-color-text-strong);
+}
+
+/* the value of the palette select reads like the labels beside it, not like a strong value of a form / значение селекта читается как подписи рядом, не как «сильное» значение формы */
+.showcase-bar .palette-select .tao-select__value {
   color: var(--tao-color-text);
+  font-weight: 500;
 }
 
 .showcase-books__tab.active {

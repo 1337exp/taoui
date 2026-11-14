@@ -230,7 +230,6 @@ onBeforeUnmount(() => {
             </span>
           </span>
         </template>
-        <TaoThemeToggle :model-value="choice" system :apply="false" @update:model-value="setTheme" />
         <TaoPopover placement="bottom-end">
           <template #trigger>
             <TaoButton variant="secondary" icon="tao-settings" :aria-label="narrow ? tr('View', 'Вид') : undefined">
@@ -272,6 +271,8 @@ onBeforeUnmount(() => {
             </div>
           </div>
         </TaoPopover>
+        <!-- last in the row: it is a switch, not a setting of the page, so it does not stand between the settings / последним в ряду: это переключатель, а не настройка страницы, он не стоит среди настроек -->
+        <TaoThemeToggle :model-value="choice" system :apply="false" @update:model-value="setTheme" />
       </div>
       <!-- the book puts its page menu button here on a phone (books/BookView.vue) / книга кладёт сюда кнопку меню страниц на телефоне -->
       <div v-if="narrow" id="showcase-pages-slot" class="showcase-bar__pages"></div>
