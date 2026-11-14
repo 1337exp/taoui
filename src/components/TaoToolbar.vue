@@ -207,7 +207,17 @@ async function measure() {
     }
     const style = getComputedStyle(el);
     const gap = parseFloat(style.columnGap) || 0;
-    const available = el.clientWidth - (parseFloat(style.paddingLeft) || 0) - (parseFloat(style.paddingRight) || 0);
+    const padding = (parseFloat(style.paddingLeft) || 0) + (parseFloat(style.paddingRight) || 0);
+    // The room the bar has. A bar that shrinks to its content (a floating bar, an inline-flex one) is as wide as what is left
+    // in it, so its current width is a verdict on the last measurement, not the room: take the room from its `max-width`
+    // in px when it has one. Otherwise folding one group narrowed the bar, the narrower bar folded the next, and so on.
+    // Место у панели. Панель, которая сжимается до содержимого (плавающая, inline-flex), шириной равна тому, что в ней
+    // осталось, и её текущая ширина — приговор прошлого замера, а не место: если у неё есть `max-width` в px, берём место
+    // оттуда. Иначе сворачивание группы сужало панель, узкая панель сворачивала следующую, и так далее.
+    const limit = parseFloat(style.maxWidth);
+    const border = (parseFloat(style.borderLeftWidth) || 0) + (parseFloat(style.borderRightWidth) || 0);
+    const fromLimit = Number.isFinite(limit) ? (style.boxSizing === 'border-box' ? limit - border - padding : limit) : 0;
+    const available = Math.max(el.clientWidth - padding, fromLimit);
     if (moreHost.value && !moreHost.value.hasAttribute('data-tao-away')) {
         moreWidth = outerWidth(moreHost.value);
     }

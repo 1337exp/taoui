@@ -133,6 +133,67 @@ const awayHosts = () => root().querySelectorAll('.tao-toolbar-host[data-tao-away
 const button = (id: string) => document.getElementById(id) as HTMLElement;
 const inRow = (id: string) => root().contains(button(id)) && !button(id).closest('[data-tao-away]');
 
+describe('TaoToolbar overflow: a bar that shrinks to its content', () => {
+    /** The bar is only as wide as it is now (`data-cw`) but may grow to its `max-width`. */
+    function shrinking(cw: number, maxWidth?: string) {
+        const w = mount(
+            {
+                render: () =>
+                    h(
+                        TaoToolbar,
+                        { 'data-cw': cw, label: 'Tools', overflow: true, style: maxWidth ? `max-width: ${maxWidth}` : undefined },
+                        () => [
+                            h(TaoToolbarGroup, { label: 'A', 'data-w': 100 }, () => h('button', { id: 'a1' }, 'a')),
+                            h(TaoToolbarSeparator),
+                            h(TaoToolbarGroup, { label: 'B', 'data-w': 100 }, () => h('button', { id: 'b1' }, 'b')),
+                            h(TaoToolbarSeparator),
+                            h(TaoToolbarGroup, { label: 'C', 'data-w': 100 }, () => h('button', { id: 'c1' }, 'c')),
+                        ],
+                    ),
+            },
+            { attachTo: document.body },
+        );
+        return w;
+    }
+
+    it('takes the room from max-width, not from its current (narrow) width: nothing folds when everything fits the limit', async () => {
+        const w = shrinking(120, '400px');
+        await settle();
+        expect(awayHosts()).toBe(0);
+        expect(moreShown()).toBe(false);
+        w.unmount();
+    });
+
+    it('still folds what does not fit the max-width', async () => {
+        const w = shrinking(120, '250px');
+        await settle();
+        expect(moreShown()).toBe(true);
+        expect(inRow('a1') && inRow('b1')).toBe(true);
+        expect(inRow('c1')).toBe(false);
+        w.unmount();
+    });
+
+    it('a bar without max-width keeps using the width it has (as before)', async () => {
+        const w = shrinking(250);
+        await settle();
+        expect(moreShown()).toBe(true);
+        expect(inRow('c1')).toBe(false);
+        w.unmount();
+    });
+
+    it('does not collapse step by step: the same room gives the same answer after a re-measure', async () => {
+        const w = shrinking(120, '250px');
+        await settle();
+        const first = awayHosts();
+        fireResize();
+        await settle();
+        fireResize();
+        await settle();
+        expect(awayHosts()).toBe(first);
+        w.unmount();
+    });
+});
+
 describe('TaoToolbar overflow', () => {
     it('shows no «⋮» and folds nothing when everything fits', async () => {
         const { w } = bar({ width: 400 });

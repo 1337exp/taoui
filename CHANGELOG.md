@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.39.2
+
+Nothing to migrate: a bar without `max-width` measures as before.
+
+- **`TaoToolbar` `overflow`: a bar that shrinks to its content no longer folds away group by group.** The bar took the room it had from its current width. A floating bar (`position: absolute`, `inline-flex`, `width: max-content`) is exactly as wide as what is left in it, so after a group went under «⋮» the bar was narrower, the narrower bar folded the next group, and so on down to the pinned one (and, if the bar moved while it shrank, the room could shrink with it). Now the room is taken from the bar's own `max-width` in px when it has one: give the bar `max-width` (a number of px, the room you can give it) and it folds only what does not fit that, and the answer does not depend on how wide it was a moment ago. A `max-width` that is a percentage or `calc()` is not a number of px and is ignored, so the width the bar has is used as before.
+
 ## 5.39.1
 
 Nothing to migrate; the demo and the docs of `TaoMarquee`, no change in the component.
