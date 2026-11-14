@@ -181,6 +181,10 @@
     --tao-duration-base: 0.2s;
     --tao-duration-slow: 0.3s;
     --tao-ease-base: ease;
+    /* The tooltip: its fade is the base duration times this number (0: it appears at once), its text weight. The prop `animated` on one
+       tooltip wins over the number. Подсказка: плавность это базовое время на это число (0: сразу) и вес текста; проп `animated` главнее. */
+    --tao-tooltip-motion: 0;
+    --tao-tooltip-weight: 600;
 
     /* ---------- Font ---------- */
     --tao-font-family-base: "Roboto", sans-serif;

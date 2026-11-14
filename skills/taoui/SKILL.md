@@ -101,7 +101,7 @@ choose a text colour, WCAG 2 to promise a number.
 ## Overlays and feedback
 
 - `TaoDocTabs` (the tabs of open documents: `items` `{ value, label, dirty?, preview?, closable? }`, `v-model` the active one; it only draws the row: `@close`, `@pin`, `@reorder(from, to)`, `@menu` are requests the app carries out), `TaoCommandList` (the field and the list of the palette with no window, for a page, a panel or a `TaoPopover`; `@select` closes nothing), `TaoCommandPalette` (a dialog, `modal="false"` for a panel with no dimming, the whole screen on a phone by default, that searches `items` `{ id, label, group?, shortcut?, keywords?, disabled? }`, `Ctrl+K` style: you open it from your own key with `v-model`, `@select` runs the pick; the search alone is `matchCommands`), `TaoModal` (`fullscreen`, `fullscreen="narrow"` for a page on a phone), `TaoDrawer` (`side="bottom"` is the phone's
-  bottom sheet) — v-model; Escape closes the top layer only. `TaoPopover`, `TaoTooltip` (`placement`).
+  bottom sheet) — v-model; Escape closes the top layer only. `TaoPopover`, `TaoTooltip` (`placement`; the tip is the opposite of the theme; `shortcut` adds the key as a key cap; `bold` is on, semi-bold text; `animated` is the fade, off by default: a share of the base duration, `0` off, `1` base, `2` twice, or the token `--tao-tooltip-motion`). `TaoKbd` is the one look for a key (`variant` `cap` / `plain`): do not draw your own `<kbd>`.
 - Menus share one engine: `TaoDropdownMenu`, `TaoMenubar`, `TaoContextMenu`, `TaoMenu` (the panel for your own shell).
   Items are a data tree `TaoMenuItem[]`: `{ id, label, icon?, shortcut?, disabled?, items? }`,
   `{ type: 'checkbox' | 'radio', checked }`, `{ type: 'label' | 'separator' }`. `@select="id => …"`. `closeOnScroll`.
@@ -157,6 +157,7 @@ Which language to start with: `detectTaoLanguage(['en', 'ru'], { fallback?, requ
 - Using colour alone for a status; forgetting `aria-label` on an icon-only button (`TaoButton icon="tao-plus"` needs one).
 - Global `h1 { … }` styles fighting `.tao-prose` (its rules are `:where()`, so yours win by design).
 - Expecting `variant="danger"` on a button: the colour is `tone="danger"`, the shape is `variant`.
+- Tinting a hover, a highlighted row or a wash with the accent (`--tao-color-accent-subtle`, `accent-text`): what the pointer is over is neutral (`--tao-color-hover`, `--tao-tone-wash`, text up to `text-strong`); the accent is for what is chosen or current. A test (`tests/accent-budget.test.ts`) keeps it for the components.
 - A `ghost` or `text` button without `tone` is accent-coloured (amber): in a toolbar, a row or a header it must be
   `tone="neutral"`. The accent is for the one main action, the selected item and the focus (patterns.md, the accent budget).
 - Importing from deep paths (`@1337exp/taoui/dist/...`); only the package root, `styles.css`, `palettes.css` and

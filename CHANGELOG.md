@@ -4,6 +4,7 @@
 
 The text of a tip is semi-bold now. To keep the regular weight: `:bold="false"` on the tooltip, or `:root { --tao-tooltip-weight: 400 }` for all of them.
 
+- **The skill is up to date.** `skills/taoui/SKILL.md` names `TaoKbd`, the new `TaoTooltip` props (`shortcut`, `bold`, `animated`) and the rule that a hover is never the accent; `references/components.md` and `patterns.md` are regenerated.
 - **`TaoTooltip` `bold`, on by default.** A hint is small (12 px) and short, and at the regular weight it is thin on its inverted background. The text is weight 600 now, the weight of the key cap next to it. `bold="false"` returns the regular weight; the token `--tao-tooltip-weight` sets the weight for every tooltip.
 
 ## 5.43.0
