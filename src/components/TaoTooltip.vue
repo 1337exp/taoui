@@ -128,7 +128,9 @@ onBeforeUnmount(() => {
     position: fixed;
     box-sizing: border-box;
     display: flex;
-    align-items: center;
+    /* the text and the key share one baseline in any font (centring only matched it by luck of the metrics)
+       текст и клавиша на одной базовой линии в любом шрифте (центровка совпадала с ней лишь по случайности метрик) */
+    align-items: baseline;
     gap: var(--tao-space-2);
     width: max-content;
     max-width: min(280px, calc(100vw - 16px));
