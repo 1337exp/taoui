@@ -26,6 +26,13 @@ const props = withDefaults(
          */
         size?: TaoSize;
         /**
+         * The three dots of the button: `vertical` (⋮, a narrow column, a toolbar) or `horizontal` (⋯, a row of a table or a
+         * list, the corner of a card). Ignored when the `#icon` or `#button` slot is given.
+         * Три точки кнопки: `vertical` (⋮, узкая колонка, тулбар) или `horizontal` (⋯, строка таблицы или списка, угол
+         * карточки). Игнорируется, если передан слот `#icon` или `#button`.
+         */
+        dots?: 'vertical' | 'horizontal';
+        /**
          * The button is a Tab stop. Turn it off when the row has its own key for the menu (a menu key, Shift+F10): the
          * button leaves the Tab order and still opens by a click.
          * Кнопка — остановка Tab. Выключите, когда у строки своя клавиша для меню (клавиша меню, Shift+F10): кнопка
@@ -38,6 +45,7 @@ const props = withDefaults(
         placement: 'bottom-end',
         closeOnScroll: false,
         size: undefined,
+        dots: 'vertical',
         tabbable: true,
     },
 );
@@ -96,7 +104,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
         >
             <slot v-if="$slots.button" name="button" />
             <span v-else aria-hidden="true">
-                <slot name="icon"><TaoIcon name="tao-more-vertical" /></slot>
+                <slot name="icon"><TaoIcon :name="dots === 'horizontal' ? 'tao-more-horizontal' : 'tao-more-vertical'" /></slot>
             </span>
         </button>
 

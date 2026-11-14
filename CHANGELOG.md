@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.45.0
+
+Nothing to migrate: the dots stand upright by default, as before.
+
+- **`TaoDropdownMenu` `dots`: upright or lying three dots.** `dots="horizontal"` gives ⋯ (a row of a table or a list, the corner of a card), the default `vertical` gives ⋮ (a narrow column, a toolbar). It is only the default face of the button: your own `#icon` or `#button` slot wins and `dots` is ignored.
+
 ## 5.44.0
 
 The text of a tip is semi-bold now. To keep the regular weight: `:bold="false"` on the tooltip, or `:root { --tao-tooltip-weight: 400 }` for all of them.
