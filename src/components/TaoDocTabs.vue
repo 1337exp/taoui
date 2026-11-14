@@ -290,7 +290,7 @@ const tabindex = (tab: TaoDocTab, index: number) =>
 
 .tao-doc-tabs__tab.is-active {
     box-shadow: inset 0 -2px 0 var(--tao-color-accent);
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
 }
 
 .tao-doc-tabs__tab.is-preview .tao-doc-tabs__label {

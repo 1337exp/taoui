@@ -353,7 +353,7 @@ defineExpose({
 
 .tao-command-list__label mark {
     background: none;
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
     font-weight: 600;
 }
 

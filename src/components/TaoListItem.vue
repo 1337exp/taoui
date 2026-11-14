@@ -206,7 +206,7 @@ button.tao-list-item__hit:focus-visible {
 }
 
 .tao-list-item--selected .tao-list-item__title {
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
 }
 
 .tao-list-item--clickable .tao-list-item__title {

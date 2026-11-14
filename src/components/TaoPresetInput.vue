@@ -339,7 +339,7 @@ function onKeydown(event: KeyboardEvent) {
 }
 
 .tao-preset-input__option--selected {
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
 }
 
 .tao-preset-input__option--disabled {

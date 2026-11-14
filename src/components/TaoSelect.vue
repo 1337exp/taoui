@@ -331,7 +331,7 @@ watch(open, (isOpen) => {
 }
 
 .tao-select__option--selected {
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
 }
 
 .tao-select__option--disabled {

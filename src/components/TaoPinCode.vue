@@ -385,7 +385,7 @@ watch(
     font-family: inherit;
     text-align: center;
     letter-spacing: 0;
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
     background: var(--tao-color-input-bg);
     transition: var(--tao-transition-base);
     cursor: text;

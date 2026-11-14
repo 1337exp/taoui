@@ -36,7 +36,8 @@
        Подкраска, а не серый: на белой странице тот же #f5f5f5, на поднятой панели (тоже #f5f5f5) темнее, поэтому поле, дорожка
        или блок кода, вдавленные в панель, по-прежнему видны вдавленными. Как в dark.css. */
     --tao-color-surface-sunken: color-mix(in srgb, var(--tao-gray-900) 4.3%, transparent);
-    --tao-segmented-thumb: var(--tao-gray-0);
+    /* a soft white over the track, not pure white: pure white shouted beside a grey track and the white page / мягкий белый поверх дорожки, а не чистый: чистый белый кричал рядом с серой дорожкой и белой страницей */
+    --tao-segmented-thumb: color-mix(in srgb, var(--tao-gray-0) 60%, transparent);
     --tao-color-surface-hover: var(--tao-gray-100);
     /* see dark.css / см. dark.css */
     --tao-color-hover: color-mix(in srgb, var(--tao-color-text-strong) 9%, transparent);

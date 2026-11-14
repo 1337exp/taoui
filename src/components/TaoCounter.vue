@@ -134,7 +134,7 @@ const slots = computed<Slot[]>((previous) => {
 <style scoped>
 .tao-counter {
     display: inline-flex;
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
     font-size: 28px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
