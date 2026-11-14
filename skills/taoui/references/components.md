@@ -527,7 +527,6 @@ Showcase section: `#slider`
 | `minWidth / maxWidth` | `number` | 200 / — | The bar width in px |
 | `height` | `number` | 8 | The thickness in px |
 | `showPercentage` | `boolean \| 'top' \| 'right'` | true | true/top — above the bar, right — on the right, false — hide |
-| `bold` | `boolean` | true | The text in semi-bold (600): a hint is small and short. `false` is the regular weight; the token `--tao-tooltip-weight` sets the weight |
 | `animated` | `boolean` | true | Smooth filling |
 
 **Slots, events, notes.** #left / #right — captions. If #right is present, the percentage goes on the right in brackets.
@@ -1058,6 +1057,7 @@ Showcase section: `#tooltip`
 | `content` | `string` | — | The hint text. Required |
 | `placement` | `TaoPlacement` | 'top' | Side and alignment: top / bottom / left / right and -start / -end. Flips at the screen edge |
 | `shortcut` | `string` | — | The key that does the same: a key cap after the text (`T`, `Ctrl+K`) |
+| `bold` | `boolean` | true | The text in semi-bold (600): a hint is small and short. `false` is the regular weight; the token `--tao-tooltip-weight` sets the weight |
 | `animated` | `boolean \| number` | off | The fade-in: a number is a share of the base duration (`0` off, `1` the base time, `2` twice as long, `0.5` half), `true` is `1`. Without the prop the token `--tao-tooltip-motion` decides |
 
 **Slots, events, notes.** default — the trigger (a button, an icon…). Colours: `--tao-tooltip-bg` and `--tao-tooltip-text`, by default the opposite of the theme.
