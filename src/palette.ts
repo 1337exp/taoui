@@ -34,6 +34,17 @@ export interface Oklch {
 
 // ------------------------------------------------------------------ colour maths (OKLab, Björn Ottosson)
 
+/** `top` laid over `under` at `alpha` (what `color-mix(in srgb, top alpha, transparent)` gives on `under`), as #rrggbb. */
+function mixOver(top: string, under: string, alpha: number): string {
+    const a = parseColor(top);
+    const b = parseColor(under);
+    if (!a || !b) {
+        throw new Error(`[TaoUI] palette: "${top}" or "${under}" is not a colour`);
+    }
+    const channel = (x: number, y: number) => Math.round(x * alpha + y * (1 - alpha));
+    return toHex({ r: channel(a.r, b.r), g: channel(a.g, b.g), b: channel(a.b, b.b), a: 1 });
+}
+
 const WHITE = '#ffffff';
 const BLACK = '#0d0d0d';
 
@@ -247,10 +258,17 @@ export function buildPaletteRoles(def: TaoPaletteDef, mode: TaoPaletteMode): Pal
         const toward = onAccent === WHITE ? -1 : 1;
         accent = shiftUntil(accent, toward, (c) => contrastRatio(c, onAccent) >= 4.5);
     }
-    // text-sized use of the accent (ghost / text buttons, links): 4.5:1 on the page and on a raised surface
+    // `accent-subtle` and its hover lay the accent over a surface at 8 to 16 %: a chosen item, a tag, a hovered row. The
+    // text on them is a little darker ground than the page, so it has to clear the same bar there
+    // `accent-subtle` и его hover кладут акцент на поверхность на 8–16 %: выбранный пункт, тег, строка под курсором.
+    // Текст на них стоит на чуть более тёмной основе, чем страница, и должен брать ту же планку и там
+    const tinted = [bg, raised].flatMap((surface) => (dark ? [0.08, 0.14] : [0.1, 0.16]).map((t) => mixOver(accent, surface, t)));
+    const inkTinted = (c: string) => Math.min(ink(c), ...tinted.map((tint) => contrastRatio(c, tint)));
+    // text-sized use of the accent (ghost / text buttons, links, a chosen item): 4.5:1 on the page, on a raised surface and
+    // on the tints of the accent
     const accentText = dark
-        ? shiftUntil(accent, 1, (c) => ink(c) >= 4.6)
-        : shiftUntil(accent, -1, (c) => ink(c) >= 4.6);
+        ? shiftUntil(accent, 1, (c) => inkTinted(c) >= 4.6)
+        : shiftUntil(accent, -1, (c) => inkTinted(c) >= 4.6);
     // hover and active move the way that increases the contrast of the text on the fill
     const away = onAccent === WHITE ? -1 : 1;
     const accentHover = shiftUntil(accent, away, (c) => hexToOklch(c).L * away >= hexToOklch(accent).L * away + 0.04);

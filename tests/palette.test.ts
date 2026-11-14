@@ -252,3 +252,27 @@ describe('the label on a fill', () => {
     });
 });
 
+
+// The text of a chosen item or a tag stands on a tint of the accent, not on the page: the accent text has to read there too
+// Текст выбранного пункта или тега стоит на подкраске акцента, а не на странице: акцентный текст должен читаться и там
+describe('palettes: the accent text on a tint of the accent', () => {
+    const mix = (top: string, under: string, alpha: number) => {
+        const channels = (hex: string) => [1, 3, 5].map((i) => Number.parseInt(hex.slice(i, i + 2), 16));
+        const [a, b] = [channels(top), channels(under)];
+        return `#${a.map((x, i) => Math.round(x! * alpha + b[i]! * (1 - alpha)).toString(16).padStart(2, '0')).join('')}`;
+    };
+
+    for (const def of taoPalettes) {
+        for (const mode of modes) {
+            it(`${def.name}, ${mode}: 4.5:1 on accent-subtle and its hover, over the page and a raised surface`, () => {
+                const { parts } = buildPaletteRoles(def, mode);
+                const alphas = mode === 'dark' ? [0.08, 0.14] : [0.1, 0.16];
+                for (const surface of [parts.bg, parts.raised]) {
+                    for (const alpha of alphas) {
+                        expect(contrastRatio(parts.accentText, mix(parts.accent, surface, alpha))).toBeGreaterThanOrEqual(4.5);
+                    }
+                }
+            });
+        }
+    }
+});

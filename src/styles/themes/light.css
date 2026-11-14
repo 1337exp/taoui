@@ -53,7 +53,8 @@
 
     /* Plain black links that turn rose on hover; no glow (that one is for the dark theme) */
     --tao-color-link: #000000;
-    --tao-color-link-hover: var(--tao-pink-400);
+    /* a rose that reads on a grey panel too (pink-400 was 3.7:1 there) / розовый, который читается и на серой панели (pink-400 давал там 3,7:1) */
+    --tao-color-link-hover: var(--tao-color-accent-text-hover);
     --tao-color-link-shadow: none;
 
     --tao-color-danger: var(--tao-red-500);
@@ -107,7 +108,8 @@
     /* the same role as in the dark theme: a field is the sunken surface, like the segmented track next to it (it was pure white, so a field stood out from its neighbours)
        та же роль, что в тёмной теме: поле — «утопленная» поверхность, как дорожка сегментов рядом (раньше было чисто белым, и поле выбивалось из соседей) */
     --tao-color-input-bg: var(--tao-color-surface-sunken);
-    --tao-color-input-text: var(--tao-gray-950);
+    /* the text of a field is `text`, as the ladder says (gray-950 was `text-strong`: a field read brighter than the buttons beside it) / текст поля — `text`, как говорит лестница */
+    --tao-color-input-text: var(--tao-color-text);
     --tao-color-input-placeholder: var(--tao-gray-300);
     /* a translucent tone, as in the dark theme: gray-50 is the field itself now, and a disabled field has to differ
        полупрозрачный тон, как в тёмной теме: gray-50 теперь сам фон поля, а выключенное должно отличаться */
