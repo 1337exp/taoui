@@ -108,7 +108,7 @@ function onClose(event: MouseEvent) {
        она была 15px в 16px, то есть 1.5px от края, и на дробной позиции страницы рамка и текст округлялись к разным
        пикселям: текст «прыгал» вверх-вниз от тега к тегу. */
     line-height: calc(var(--tao-tag-height) - 2px);
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
     background: var(--tao-color-accent-subtle);
     border: 1px solid var(--tao-color-border);
     border-radius: var(--tao-radius-sm);

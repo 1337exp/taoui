@@ -154,12 +154,12 @@ function onKeydown(event: KeyboardEvent) {
 }
 
 .tao-tabs__tab[aria-selected='true'] {
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
     border-bottom-color: var(--tao-color-accent);
 }
 
 .tao-tabs__tab[aria-selected='true']:hover:not(:disabled) {
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
 }
 
 .tao-tabs__tab:disabled {

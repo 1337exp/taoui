@@ -147,7 +147,7 @@ function onImgError() {
     width: 100%;
     height: 100%;
     background: var(--tao-color-accent-subtle);
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
     border-radius: var(--tao-radius-full);
     font-weight: 600;
     line-height: 1;

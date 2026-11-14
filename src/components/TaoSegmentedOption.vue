@@ -173,7 +173,7 @@ function onChange() {
     padding: 0 4px;
     border-radius: var(--tao-radius-full);
     background: var(--tao-color-accent-subtle);
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
     font-size: 10px;
     font-weight: 700;
     line-height: 1;
@@ -184,7 +184,7 @@ function onChange() {
 }
 
 .tao-segmented-option--checked {
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
 }
 
 .tao-segmented-option--checked .tao-segmented-option__count {

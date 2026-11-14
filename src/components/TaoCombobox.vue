@@ -600,11 +600,11 @@ onBeforeUnmount(() => {
 }
 
 .tao-combobox__option--selected {
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
 }
 
 .tao-combobox__option--create {
-    color: var(--tao-color-accent);
+    color: var(--tao-color-accent-text);
 }
 
 .tao-combobox__option--disabled {
