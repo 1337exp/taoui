@@ -124,7 +124,7 @@ function measure() {
       hex: rest?.hex ?? null,
       step: rest?.step ?? null,
       ratio: rest?.ratio ?? null,
-      hover: hovered ? { ...hovered, problem: hoverProblem(rest, hovered) } : null,
+      hover: hovered ? { ...hovered, problem: hoverProblem(control.ownColour ? { ...rest, step: null } : rest, hovered) } : null,
       size: style ? Number.parseFloat(style.fontSize) : null,
       weight: style ? Number(style.fontWeight) : null,
       height: box ? box.getBoundingClientRect().height : null,

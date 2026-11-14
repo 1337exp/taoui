@@ -77,7 +77,11 @@ a {
     transition: color var(--tao-duration-base) var(--tao-ease-base);
 }
 
-a:hover {
+/* `a:where(:hover)` weighs as `a` and no more: a class on a link (a menu link, a card, a button) keeps its own colour on hover.
+   A bare `a:hover` (0,1,1) beat any class (0,1,0) and painted the link rose on whatever it stood on.
+   `a:where(:hover)` весит как `a` и не больше: класс на ссылке (пункт меню, карточка, кнопка) сохраняет свой цвет при наведении.
+   Голый `a:hover` (0,1,1) бил любой класс (0,1,0) и красил ссылку розовым на чём угодно. */
+a:where(:hover) {
     color: var(--tao-color-link-hover);
 }
 

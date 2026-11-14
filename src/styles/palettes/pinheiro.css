@@ -7,8 +7,8 @@
     --tao-color-accent: #2e9e7e;
     --tao-color-accent-hover: #3eab8a;
     --tao-color-accent-active: #4eb998;
-    --tao-color-accent-text: #2e9e7e;
-    --tao-color-accent-text-hover: #42ae8d;
+    --tao-color-accent-text: #3aa787;
+    --tao-color-accent-text-hover: #4cb796;
     --tao-color-on-accent: #0d0d0d;
     --tao-color-accent-2: #2e9e7e;
     --tao-glow: #2e9e7e;
@@ -17,8 +17,8 @@
     --tao-color-surface: #021410;
     --tao-color-surface-raised: #0c201c;
     --tao-color-surface-hover: #182c28;
-    --tao-color-link: #2e9e7e;
-    --tao-color-link-hover: #42ae8d;
+    --tao-color-link: #3aa787;
+    --tao-color-link-hover: #4cb796;
     --tao-color-accent-subtle: color-mix(in srgb, var(--tao-color-accent) 8%, transparent);
     --tao-color-accent-subtle-hover: color-mix(in srgb, var(--tao-color-accent) 14%, transparent);
     --tao-color-selection: var(--tao-color-accent);
@@ -63,8 +63,8 @@
     --tao-color-accent: #008567;
     --tao-color-accent-hover: #00765b;
     --tao-color-accent-active: #006951;
-    --tao-color-accent-text: #007d60;
-    --tao-color-accent-text-hover: #006b52;
+    --tao-color-accent-text: #006e55;
+    --tao-color-accent-text-hover: #005e48;
     --tao-color-on-accent: #ffffff;
     --tao-color-accent-2: #27997a;
     --tao-glow: #008567;
@@ -74,7 +74,7 @@
     --tao-color-surface-raised: #edf6f3;
     --tao-color-surface-hover: #dce5e3;
     --tao-color-link: var(--tao-color-text-strong);
-    --tao-color-link-hover: #006b52;
+    --tao-color-link-hover: #005e48;
     --tao-color-accent-subtle: color-mix(in srgb, var(--tao-color-accent) 10%, transparent);
     --tao-color-accent-subtle-hover: color-mix(in srgb, var(--tao-color-accent) 16%, transparent);
     --tao-color-selection: var(--tao-color-accent);

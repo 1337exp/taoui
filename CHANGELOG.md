@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.48.0
+
+A link with a class keeps its own colour on hover (it used to turn rose). Three looks change: the text of a field in the light theme is softer, the rose of a link on hover is a shade deeper, the accent text of a palette is a shade darker where it stands on a tint. To give your own link the rose on hover as before: `.my-link:hover { color: var(--tao-color-link-hover); }`.
+
+- **`a:hover` no longer beats a class.** `base.css` had `a:hover { color: link-hover }`, weight 0,1,1, and any class on a link weighs 0,1,0, so a menu link, a card that is a link or a link of your own turned rose on hover whatever its class said. Now it is `a:where(:hover)`, which weighs as `a` and no more: a bare link still turns rose, a link with a class keeps its colour. `TaoNav` and `TaoLink` are not affected.
+- **Light theme: `--tao-color-input-text` is `text`.** It was `gray-950`, which is `text-strong`, so the value of a field, a number input and a select read brighter than the buttons beside it, against the text ladder («field values: `text`»). The dark theme already had the same colour.
+- **Light theme: the rose of a link on hover is `accent-text-hover`.** It was `pink-400`, 3.7 to 4.0:1 on a page and on a grey panel; now it is above 4.5:1, as in the palettes.
+- **Palettes: `accent-text` reads on the tints of the accent too.** A chosen item, a tag and a hovered row stand on `accent-subtle` (8 to 16 % of the accent over the surface), which is a little darker ground than the page, and a generated `accent-text` that was 4.6:1 on the page came out 4.0 to 4.4:1 there. The generator now asks 4.6:1 on the page, on a raised surface and on both tints; the seven palettes are regenerated (`npm run palettes`), and `tests/palette.test.ts` holds it for every palette and mode.
+- **The bench of the Guide.** A select is a field (its value is regular weight, like an input), so the weight 500 is asked of the labels of controls only; the plain link, which turns rose by design, is judged by how it reads, not by the step. With these, the bench is clean on every palette and both modes on the page and on a panel; one known edge is left: a chosen segment in the dark theme on a sunken surface (1.0:1 to its track).
+
 ## 5.47.0
 
 Nothing to migrate. One look changes in the light theme and in palettes: the text of a chosen item is a shade darker.
