@@ -124,7 +124,11 @@ onBeforeUnmount(() => {
     gap: var(--tao-space-2);
     width: max-content;
     max-width: min(280px, calc(100vw - 16px));
-    padding: var(--tao-space-2) var(--tao-space-3);
+    /* the box is symmetric, but a line of text sits a little above the middle of its line box (the room under it is for the
+       descenders), so the text takes 0.06em more on top and less below: the capitals then look centred
+       блок симметричен, но строка текста стоит чуть выше середины своего ящика (место под ней для хвостов), поэтому сверху текст
+       получает на 0.06em больше, а снизу меньше: заглавные тогда выглядят по центру */
+    padding: calc(var(--tao-space-2) + 0.06em) var(--tao-space-3) calc(var(--tao-space-2) - 0.06em);
     /* the tip is the opposite of the theme (dark on light, light on dark): it floats over the interface and must not melt into the panels it hangs over; it is not a control
        подсказка обратна теме (тёмная на светлой, светлая на тёмной): она парит над интерфейсом и не должна сливаться с панелями под ней; она не контрол */
     background: var(--tao-tooltip-bg, var(--tao-color-text-strong));
