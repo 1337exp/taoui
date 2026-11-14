@@ -20,6 +20,7 @@ export const navGroups = [
       { id: 'surface', label: { en: 'Surfaces', ru: 'Поверхности' }, aliases: ['glass', 'grain', 'lit', 'surface'] },
       { id: 'backgrounds', label: { en: 'Backgrounds', ru: 'Фоны' }, aliases: ['background', 'gradient', 'noise', 'atmosphere', 'glow', 'фон', 'градиент', 'шум'] },
       { id: 'locale', label: { en: 'Localization', ru: 'Локализация' }, aliases: ['locale', 'language', 'i18n', 'translation', 'setTaoLocale', 'provideTaoLocale', 'localeRu', 'localeEn', 'язык', 'перевод', 'локаль', 'интернационализация'] },
+      { id: 'harmony', label: { en: 'Controls side by side', ru: 'Контролы рядом' }, aliases: ['harmony', 'bench', 'controls', 'row', 'weight', 'ladder', 'text ladder', 'sunken', 'raised', 'surface', 'стенд', 'контролы', 'ряд', 'вес', 'лестница', 'сочетание'] },
       { id: 'a11y', label: { en: 'Contrast & keyboard', ru: 'Контраст и клавиатура' }, aliases: ['contrast', 'wcag', 'apca', 'keyboard', 'keys', 'focus', 'palette', 'applyTaoPalette', 'contrastRatio', 'apcaContrast', 'a11y', 'accessibility', 'контраст', 'клавиатура', 'клавиши', 'доступность', 'палитра'] },
     ],
   },

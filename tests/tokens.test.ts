@@ -30,7 +30,7 @@ const semantic = new Map([...declarations(semanticCss), ...declarations(darkCss)
 const light = declarations(lightCss);
 
 /** Hooks a theme may set without them being part of semantic.css (read with a fallback by one component). */
-const COMPONENT_HOOKS = new Set(['--tao-button-primary-text-shadow']);
+const COMPONENT_HOOKS = new Set(['--tao-button-primary-text-shadow', '--tao-segmented-thumb']);
 
 describe('theme overrides', () => {
     it('light.css only sets tokens that semantic.css defines (or a documented component hook)', () => {

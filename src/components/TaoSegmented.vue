@@ -231,7 +231,8 @@ onBeforeUnmount(() => {
     top: 0;
     left: 0;
     z-index: 0;
-    background: var(--tao-color-surface-raised);
+    /* the light theme sets --tao-segmented-thumb: a raised grey thumb on a sunken grey track is one colour there / светлая тема задаёт --tao-segmented-thumb: поднятый серый бегунок на вдавленной серой дорожке там одного цвета */
+    background: var(--tao-segmented-thumb, var(--tao-color-surface-raised));
     border: 1px solid var(--tao-color-border);
     border-radius: calc(var(--tao-radius-control) - 1px);
     box-shadow: var(--tao-shadow-sm);
