@@ -262,7 +262,7 @@ function handleClick(event: MouseEvent) {
     min-width: round(up, calc(var(--tao-control-height) * 0.56), 2px);
     height: round(up, calc(var(--tao-control-height) * 0.56), 2px);
     margin-inline-start: auto;
-    padding: 0.1em 0.4em 0; /* the letter a little lower: see TaoKbd */
+    padding: 0 0.4em;
     line-height: 1;
 }
 

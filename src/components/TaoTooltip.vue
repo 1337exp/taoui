@@ -141,7 +141,12 @@ onBeforeUnmount(() => {
     pointer-events: none;
 }
 
+/* a little smaller than a key elsewhere and pulled into the line: a tip with a key is as tall as one without
+   чуть меньше значка в других местах и втянут в строку: подсказка с клавишей той же высоты, что и без */
 .tao-tooltip__shortcut {
+    height: round(up, 1.5em, 2px);
+    min-width: round(up, 1.5em, 2px);
+    margin-block: -0.1em;
     background: color-mix(in srgb, currentColor 22%, transparent);
 }
 

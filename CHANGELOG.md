@@ -6,7 +6,7 @@ The tip now appears at once, without the fade. To keep the old fade: `animated` 
 
 - **`TaoTooltip` appears at once; `animated` brings the fade back.** A hint was fading in over 0.2 s, and on a toolbar, where the pointer goes from one button to the next, every hint began from nothing and the bar felt slow. The fade is off by default now. `animated` is a share of the base duration (`--tao-duration-base`): `0` off, `1` the base time, `2` twice as long, `0.5` half; `true` is `1`. Without the prop the token `--tao-tooltip-motion` (the same number) decides, so an app sets the time once for every tooltip.
 - **The text of a tooltip sits in the middle.** The box was symmetric, but a line of text sits a little above the middle of its line box, so the hint looked raised; the text takes 0.06em more room on top and less below.
-- **The letter in a key cap sits in the middle.** A capital letter sits a little above the middle of its line box (the room below it is for the descenders), so the key in `TaoKbd`, in a tooltip and in a button looked raised. The cap takes a bit more room on top, and the letter is centred.
+- **A key is the same height everywhere, and the letter is in the middle.** The key in a button, a tooltip and on its own had three heights, and the letter was nudged by a padding that fitted only one of them. `TaoKbd` is now one single line (`line-height: 1`, which puts a capital almost exactly in the middle) of an even height of whole pixels (`1.7em`, 22 px at the usual size); in a tooltip it is a little smaller and pulled into the line, so a tip with a key is as tall as one without.
 
 ## 5.42.0
 

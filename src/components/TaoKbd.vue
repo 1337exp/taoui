@@ -30,17 +30,19 @@ withDefaults(
     display: inline-grid;
     place-items: center;
     box-sizing: border-box;
-    min-width: 1.6em;
-    /* the capital of a letter sits a little above the middle of its line box (the room under it is for the descenders), so the cap
-       takes a bit more room on top: the letter then looks centred
-       заглавная буква стоит чуть выше середины строки (место под ней для хвостов), поэтому сверху значку чуть больше места */
-    padding: 0.22em 0.45em 0.15em;
+    /* one height everywhere (the key is a single line, line-height 1 puts the capital almost exactly in the middle of the box: the room
+       under a letter for the descenders is balanced by the line-height); whole even pixels keep the letter on the pixel grid
+       одна высота везде (клавиша однострочная, при line-height 1 заглавная стоит почти точно по центру ящика); чётные целые
+       пиксели держат букву на сетке */
+    height: round(up, 1.7em, 2px);
+    min-width: round(up, 1.7em, 2px);
+    padding: 0 0.45em;
     border-radius: max(4px, calc(var(--tao-radius-control) * 0.6));
     background: color-mix(in srgb, currentColor 16%, transparent);
     font: inherit;
     font-size: var(--tao-font-size-xs);
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1;
     white-space: nowrap;
 }
 
