@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.46.0
+
+Nothing to migrate. One look changes in the light theme: a field, a track or a code block sunk into a panel is seen now (it was the colour of the panel).
+
+- **Light theme: `--tao-color-surface-sunken` is a tint, as in the dark one.** `--tao-color-surface-raised` and `--tao-color-surface-sunken` were both `gray-50` there, and a popover, a modal and a card are raised, so a `TaoSegmented` track, a `TaoInput` and the like sunk into one had the colour of the panel they stood on and were held by a hairline border alone. Now `sunken` is `gray-900` at 4.3 % over what is under it: on the white page it is the same `#f5f5f5` as before, on a raised panel it is darker. The dark theme already did so.
+- **`TaoSegmented`: the hook `--tao-segmented-thumb`.** The thumb was `surface-raised`, the colour of the track on a page in the light theme. The light theme sets the hook to white, so the thumb is seen on the track on the page, on a panel and in a popover; with no hook the thumb is `surface-raised` as before (the dark theme).
+- **The Guide has a bench, «Controls side by side» (`#harmony`).** It stands the controls of the kit in a row on a surface of your choice (page, panel, sunken) in a size of your choice, measures them with the browser and judges the row: one step of the text ladder per role, one weight for the labels, one height for a size, a fill that is seen on its surface. It follows the theme and the palette. It shows what is left to decide: the text of a field and a select is `input-text` (`text-strong` in the light theme), not the `text` the ladder promises, and a select is weight 400 where the others are 500. The rules are in `showcase/harmony/measure.js` with a test, the controls in `showcase/harmony/controls.js`.
+
 ## 5.45.0
 
 Nothing to migrate: the dots stand upright by default, as before.

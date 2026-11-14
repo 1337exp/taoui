@@ -5,6 +5,7 @@ import DemoTypography from '../guide/DemoTypography.vue'
 import DemoSurface from '../guide/DemoSurface.vue'
 import DemoBackgrounds from '../guide/DemoBackgrounds.vue'
 import DemoLocale from '../guide/DemoLocale.vue'
+import DemoHarmony from '../guide/DemoHarmony.vue'
 import DemoA11y from '../guide/DemoA11y.vue'
 
 export const demoById = {
@@ -15,5 +16,6 @@ export const demoById = {
   'surface': DemoSurface,
   'backgrounds': DemoBackgrounds,
   'locale': DemoLocale,
+  'harmony': DemoHarmony,
   'a11y': DemoA11y,
 }

@@ -31,7 +31,12 @@
     --tao-color-bg: var(--tao-gray-0);
     --tao-color-surface: var(--tao-gray-0);
     --tao-color-surface-raised: var(--tao-gray-50);
-    --tao-color-surface-sunken: var(--tao-gray-50);
+    /* A tint, not a grey: on the white page it is the same #f5f5f5, on a raised panel (also #f5f5f5) it is darker, so a field,
+       a track or a code block sunk into a panel is still seen as sunk. As in dark.css.
+       Подкраска, а не серый: на белой странице тот же #f5f5f5, на поднятой панели (тоже #f5f5f5) темнее, поэтому поле, дорожка
+       или блок кода, вдавленные в панель, по-прежнему видны вдавленными. Как в dark.css. */
+    --tao-color-surface-sunken: color-mix(in srgb, var(--tao-gray-900) 4.3%, transparent);
+    --tao-segmented-thumb: var(--tao-gray-0);
     --tao-color-surface-hover: var(--tao-gray-100);
     /* see dark.css / см. dark.css */
     --tao-color-hover: color-mix(in srgb, var(--tao-color-text-strong) 9%, transparent);
