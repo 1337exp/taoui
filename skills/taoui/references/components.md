@@ -1056,8 +1056,9 @@ Showcase section: `#tooltip`
 |---|---|---|---|
 | `content` | `string` | — | The hint text. Required |
 | `placement` | `TaoPlacement` | 'top' | Side and alignment: top / bottom / left / right and -start / -end. Flips at the screen edge |
+| `shortcut` | `string` | — | The key that does the same: a key cap after the text (`T`, `Ctrl+K`) |
 
-**Slots, events, notes.** default — the trigger (a button, an icon…).
+**Slots, events, notes.** default — the trigger (a button, an icon…). Colours: `--tao-tooltip-bg` and `--tao-tooltip-text`, by default the opposite of the theme.
 
 ## TaoPopover
 

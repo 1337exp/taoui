@@ -10,6 +10,10 @@ const props = withDefaults(
         content: string;
         /** Side and alignment against the trigger; flips when there is no room. / Сторона и выравнивание; при нехватке места переворачивается. */
         placement?: TaoPlacement;
+        /**
+         * The key that does the same, shown as a key cap after the text (`T`, `Ctrl+K`). / Клавиша, которая делает то же: значок после текста (`T`, `Ctrl+K`).
+         */
+        shortcut?: string;
     }>(),
     {
         placement: 'top',
@@ -79,7 +83,8 @@ onBeforeUnmount(() => {
                     role="tooltip"
                     :style="panelStyle"
                 >
-                    {{ content }}
+                    <span class="tao-tooltip__text">{{ content }}</span>
+                    <kbd v-if="shortcut" class="tao-tooltip__shortcut">{{ shortcut }}</kbd>
                     <span class="tao-tooltip__arrow" :style="arrowStyle" aria-hidden="true"></span>
                 </div>
             </Transition>
@@ -92,11 +97,16 @@ onBeforeUnmount(() => {
     z-index: var(--tao-z-tooltip);
     position: fixed;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    gap: var(--tao-space-2);
     width: max-content;
     max-width: min(280px, calc(100vw - 16px));
     padding: var(--tao-space-2) var(--tao-space-3);
-    background: var(--tao-color-surface-raised);
-    color: var(--tao-color-text-strong);
+    /* the tip is the opposite of the theme (dark on light, light on dark): it floats over the interface and must not melt into the panels it hangs over; it is not a control
+       подсказка обратна теме (тёмная на светлой, светлая на тёмной): она парит над интерфейсом и не должна сливаться с панелями под ней; она не контрол */
+    background: var(--tao-tooltip-bg, var(--tao-color-text-strong));
+    color: var(--tao-tooltip-text, var(--tao-color-bg));
     font-size: var(--tao-font-size-xs);
     font-family: var(--tao-font-family);
     line-height: 1.3;
@@ -105,11 +115,25 @@ onBeforeUnmount(() => {
     pointer-events: none;
 }
 
+.tao-tooltip__shortcut {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.6em;
+    padding: 0.15em 0.45em;
+    border-radius: max(4px, calc(var(--tao-radius-control) * 0.6));
+    background: color-mix(in srgb, currentColor 22%, transparent);
+    font: inherit;
+    font-size: var(--tao-font-size-xs);
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
 .tao-tooltip__arrow {
     position: absolute;
     width: 8px;
     height: 8px;
-    background: var(--tao-color-surface-raised);
+    background: var(--tao-tooltip-bg, var(--tao-color-text-strong));
 }
 
 .tao-tooltip--top .tao-tooltip__arrow {

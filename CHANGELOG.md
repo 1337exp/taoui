@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.40.0
+
+The look changes, not the API: a tooltip is now the opposite of the theme. To keep the old look, set `--tao-tooltip-bg: var(--tao-color-surface-raised); --tao-tooltip-text: var(--tao-color-text-strong);` on `:root`.
+
+- **`TaoTooltip`: the tip is the opposite of the theme.** It was the colour of the panels (`surface-raised`), so in a dark theme a grey tip hung over grey panels and melted into them; it looked like one more piece of the panel, not like a hint. Now it is dark on a light theme and light on a dark one (the background is `--tao-tooltip-bg`, by default the strong text colour; the text is `--tao-tooltip-text`, by default the page background), the arrow follows the background. A hint floats over the interface, is temporary and is not a control, and the opposite colour says so at once.
+- **`TaoTooltip` `shortcut`.** The key that does the same, as a key cap after the text (`Text` and `T`, `Ctrl+K`), instead of putting it into the text in brackets. The cap takes the colour of the tip, so it fits any theme and any token of your own. The showcase shows it with the other examples.
+
 ## 5.39.2
 
 Nothing to migrate: a bar without `max-width` measures as before.

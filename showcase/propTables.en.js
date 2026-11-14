@@ -978,8 +978,9 @@ export const propTablesEn = {
       rows: [
         r('content', 'string', '—', 'The hint text. Required'),
         r('placement', 'TaoPlacement', "'top'", 'Side and alignment: top / bottom / left / right and -start / -end. Flips at the screen edge'),
+        r('shortcut', 'string', '—', 'The key that does the same: a key cap after the text (`T`, `Ctrl+K`)'),
       ],
-      slots: 'default — the trigger (a button, an icon…).',
+      slots: 'default — the trigger (a button, an icon…). Colours: `--tao-tooltip-bg` and `--tao-tooltip-text`, by default the opposite of the theme.',
     },
   ],
   popover: [

@@ -971,8 +971,9 @@ export const propTables = {
       rows: [
         r('content', 'string', '—', 'Текст подсказки. Обязательный'),
         r('placement', 'TaoPlacement', "'top'", 'Сторона и выравнивание: top / bottom / left / right и -start / -end. У края экрана переворачивается'),
+        r('shortcut', 'string', '—', 'Клавиша, которая делает то же: значок после текста (`T`, `Ctrl+K`)'),
       ],
-      slots: 'default — триггер (кнопка, иконка…).',
+      slots: 'default — триггер (кнопка, иконка…). Цвета: `--tao-tooltip-bg` и `--tao-tooltip-text`, по умолчанию обратные теме.',
     },
   ],
   popover: [

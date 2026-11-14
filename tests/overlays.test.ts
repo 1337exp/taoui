@@ -10,6 +10,7 @@ import TaoModal from '../src/components/TaoModal.vue';
 import TaoPopover from '../src/components/TaoPopover.vue';
 import TaoSelect from '../src/components/TaoSelect.vue';
 import TaoTooltip from '../src/components/TaoTooltip.vue';
+import { readFileSync } from 'node:fs';
 
 // Characterization tests for the floating / overlay family (Phase 0 of v5).
 // They pin what users can observe — roles, keys, emitted events, focus — not class names or markup,
@@ -246,6 +247,29 @@ describe('TaoTooltip', () => {
         expect($('[role="tooltip"]')).not.toBeNull();
         await w.trigger('focusout');
         expect($('[role="tooltip"]')).toBeNull();
+    });
+});
+
+describe('TaoTooltip: the shortcut and the colours', () => {
+    it('shows the key as a key cap after the text, and no key cap without it', async () => {
+        const w = mountOverlay(TaoTooltip, { props: { content: 'Text', shortcut: 'T' }, slots: { default: () => h('button', 'x') } });
+        await w.trigger('mouseenter');
+        const tip = $('[role="tooltip"]')!;
+        expect(tip.querySelector('kbd.tao-tooltip__shortcut')?.textContent).toBe('T');
+        expect(tip.textContent).toContain('Text');
+        await w.trigger('mouseleave');
+
+        const plain = mountOverlay(TaoTooltip, { props: { content: 'Hint' }, slots: { default: () => h('button', 'x') } });
+        await plain.trigger('mouseenter');
+        expect($('[role="tooltip"]')?.querySelector('kbd')).toBeNull();
+    });
+
+    it('takes its colours from its own tokens, by default the opposite of the theme', async () => {
+        const css = readFileSync('src/components/TaoTooltip.vue', 'utf8');
+        expect(css).toContain('background: var(--tao-tooltip-bg, var(--tao-color-text-strong))');
+        expect(css).toContain('color: var(--tao-tooltip-text, var(--tao-color-bg))');
+        // the arrow is the same colour as the body
+        expect(css.match(/var\(--tao-tooltip-bg, var\(--tao-color-text-strong\)\)/g)!.length).toBeGreaterThanOrEqual(2);
     });
 });
 

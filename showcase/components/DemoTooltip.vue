@@ -44,6 +44,31 @@ defineOptions({ name: 'DemoTooltip' })
             </TaoTooltip>
           </div>
     
+          <Tr>
+            <template #en>
+              <p>
+                The tip is the opposite of the theme: dark on a light one, light on a dark one, so it does not melt into the
+                panels it hangs over. <code>shortcut</code> adds the key as a key cap. The colours are
+                <code>--tao-tooltip-bg</code> and <code>--tao-tooltip-text</code>.
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                Подсказка обратна теме: тёмная на светлой, светлая на тёмной, чтобы не сливаться с панелями, над которыми
+                висит. <code>shortcut</code> добавляет клавишу значком. Цвета — <code>--tao-tooltip-bg</code> и
+                <code>--tao-tooltip-text</code>.
+              </p>
+            </template>
+          </Tr>
+          <div style="display: flex; gap: 24px; align-items: center; flex-wrap: wrap;">
+            <TaoTooltip :content="tr('Create freehand drawings', 'Рисовать от руки')" shortcut="P" placement="right">
+              <TaoButton variant="secondary">{{ tr('With a key', 'С клавишей') }}</TaoButton>
+            </TaoTooltip>
+            <TaoTooltip :content="tr('Command palette', 'Палитра команд')" shortcut="Ctrl+K">
+              <TaoButton variant="secondary">Ctrl+K</TaoButton>
+            </TaoTooltip>
+          </div>
+
           <div style="display: flex; justify-content: space-between; margin-top: 16px;">
             <TaoTooltip :content="tr('No room on the left — it opens on the right', 'Слева некуда — откроется справа')" placement="left">
               <TaoButton variant="secondary" size="small">{{ tr('At the left edge', 'У левого края') }}</TaoButton>
