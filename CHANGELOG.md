@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.43.0
+
+The tip now appears at once, without the fade. To keep the old fade: `animated` on the tooltip, or `:root { --tao-tooltip-motion: 1 }` for all of them.
+
+- **`TaoTooltip` appears at once; `animated` brings the fade back.** A hint was fading in over 0.2 s, and on a toolbar, where the pointer goes from one button to the next, every hint began from nothing and the bar felt slow. The fade is off by default now. `animated` is a share of the base duration (`--tao-duration-base`): `0` off, `1` the base time, `2` twice as long, `0.5` half; `true` is `1`. Without the prop the token `--tao-tooltip-motion` (the same number) decides, so an app sets the time once for every tooltip.
+- **The letter in a key cap sits in the middle.** A capital letter sits a little above the middle of its line box (the room below it is for the descenders), so the key in `TaoKbd`, in a tooltip and in a button looked raised. The cap takes a bit more room on top, and the letter is centred.
+
 ## 5.42.0
 
 The look changes in a few places: what a pointer is over is no longer accent-coloured. To keep the old look, restore the accent in your own CSS for the selectors listed below.

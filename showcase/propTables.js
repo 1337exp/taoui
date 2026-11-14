@@ -972,6 +972,7 @@ export const propTables = {
         r('content', 'string', '—', 'Текст подсказки. Обязательный'),
         r('placement', 'TaoPlacement', "'top'", 'Сторона и выравнивание: top / bottom / left / right и -start / -end. У края экрана переворачивается'),
         r('shortcut', 'string', '—', 'Клавиша, которая делает то же: значок после текста (`T`, `Ctrl+K`)'),
+        r('animated', 'boolean | number', 'off', 'Плавное появление: число это доля базового времени (`0` выкл., `1` базовое, `2` вдвое дольше, `0.5` вдвое быстрее), `true` это `1`. Без пропа решает токен `--tao-tooltip-motion`'),
       ],
       slots: 'default — триггер (кнопка, иконка…). Цвета: `--tao-tooltip-bg` и `--tao-tooltip-text`, по умолчанию обратные теме.',
     },

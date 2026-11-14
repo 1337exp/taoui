@@ -31,7 +31,10 @@ withDefaults(
     place-items: center;
     box-sizing: border-box;
     min-width: 1.6em;
-    padding: 0.15em 0.45em;
+    /* the capital of a letter sits a little above the middle of its line box (the room under it is for the descenders), so the cap
+       takes a bit more room on top: the letter then looks centred
+       заглавная буква стоит чуть выше середины строки (место под ней для хвостов), поэтому сверху значку чуть больше места */
+    padding: 0.22em 0.45em 0.15em;
     border-radius: max(4px, calc(var(--tao-radius-control) * 0.6));
     background: color-mix(in srgb, currentColor 16%, transparent);
     font: inherit;

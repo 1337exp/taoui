@@ -264,6 +264,30 @@ describe('TaoTooltip: the shortcut and the colours', () => {
         expect($('[role="tooltip"]')?.querySelector('kbd')).toBeNull();
     });
 
+    it('appears at once by default; `animated` is a share of the base duration (0 off, 1 base, 2 twice, true is 1)', async () => {
+        const mountWith = async (props: Record<string, unknown>) => {
+            const w = mountOverlay(TaoTooltip, { props: { content: 'Hint', ...props }, slots: { default: () => h('button', 'x') } });
+            await w.trigger('mouseenter');
+            const tip = $('[role="tooltip"]') as HTMLElement;
+            const motion = tip.style.getPropertyValue('--tao-tooltip-motion');
+            await w.trigger('mouseleave');
+            return motion;
+        };
+        expect(await mountWith({})).toBe(''); // the token decides (0 by default in the CSS)
+        expect(await mountWith({ animated: 0 })).toBe('0');
+        expect(await mountWith({ animated: 1 })).toBe('1');
+        expect(await mountWith({ animated: 2 })).toBe('2');
+        expect(await mountWith({ animated: 0.5 })).toBe('0.5');
+        expect(await mountWith({ animated: true })).toBe('1');
+        expect(await mountWith({ animated: false })).toBe('0');
+        expect(await mountWith({ animated: -3 })).toBe('0');
+    });
+
+    it('the CSS takes the time from the base duration times the motion token, 0 when it is not set', () => {
+        const css = readFileSync('src/components/TaoTooltip.vue', 'utf8');
+        expect(css).toContain('calc(var(--tao-duration-base) * var(--tao-tooltip-motion, 0))');
+    });
+
     it('takes its colours from its own tokens, by default the opposite of the theme', async () => {
         const css = readFileSync('src/components/TaoTooltip.vue', 'utf8');
         expect(css).toContain('background: var(--tao-tooltip-bg, var(--tao-color-text-strong))');

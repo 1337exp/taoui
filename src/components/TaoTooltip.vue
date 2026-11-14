@@ -15,11 +15,28 @@ const props = withDefaults(
          * The key that does the same, shown as a key cap after the text (`T`, `Ctrl+K`). / Клавиша, которая делает то же: значок после текста (`T`, `Ctrl+K`).
          */
         shortcut?: string;
+        /**
+         * The fade-in. Off by default: a hint that appears at once is what a hover asks for. A number is a share of the base
+         * duration (`--tao-duration-base`): `0` off, `1` the base time, `2` twice as long, `0.5` half; `true` is `1`. Without
+         * the prop the token `--tao-tooltip-motion` (the same number) decides, so an app sets it once.
+         * Плавное появление. По умолчанию выключено: наведение просит подсказку сразу. Число — доля базового времени
+         * (`--tao-duration-base`): `0` выкл., `1` базовое, `2` вдвое дольше, `0.5` вдвое быстрее; `true` это `1`. Без пропа
+         * решает токен `--tao-tooltip-motion` (то же число), так что приложение задаёт его один раз.
+         */
+        animated?: boolean | number;
     }>(),
     {
         placement: 'top',
+        animated: undefined,
     },
 );
+
+/** The share of the base duration, or undefined when the prop is not given (then the token decides). / Доля базового времени или undefined. */
+const motion = computed(() => {
+    if (props.animated === undefined) return undefined;
+    const n = props.animated === true ? 1 : Number(props.animated);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+});
 
 const wrapperRef = ref<HTMLElement | null>(null);
 const tooltipRef = ref<HTMLElement | null>(null);
@@ -31,7 +48,11 @@ const { style, side, anchorOffset, placed } = useFloating(wrapperRef, tooltipRef
 });
 
 // hidden until the first measurement, so it does not flash in the corner / скрыта до первого замера
-const panelStyle = computed(() => ({ ...style.value, visibility: (placed.value ? 'visible' : 'hidden') as 'visible' | 'hidden' }));
+const panelStyle = computed(() => ({
+    ...style.value,
+    visibility: (placed.value ? 'visible' : 'hidden') as 'visible' | 'hidden',
+    ...(motion.value === undefined ? {} : { '--tao-tooltip-motion': String(motion.value) }),
+}));
 
 // the arrow points at the middle of the trigger, kept off the rounded corners
 const arrowStyle = computed(() => {
@@ -151,11 +172,12 @@ onBeforeUnmount(() => {
     transform: translateY(-50%) rotate(45deg);
 }
 
+/* the time is the base duration times --tao-tooltip-motion (0 by default: at once) / время — базовое, умноженное на --tao-tooltip-motion (по умолчанию 0: сразу) */
 .tao-tooltip-fade-enter-active,
 .tao-tooltip-fade-leave-active {
     transition:
-        opacity var(--tao-duration-base) var(--tao-ease-base),
-        transform var(--tao-duration-base) var(--tao-ease-base);
+        opacity calc(var(--tao-duration-base) * var(--tao-tooltip-motion, 0)) var(--tao-ease-base),
+        transform calc(var(--tao-duration-base) * var(--tao-tooltip-motion, 0)) var(--tao-ease-base);
 }
 
 .tao-tooltip--top.tao-tooltip-fade-enter-from,

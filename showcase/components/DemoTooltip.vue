@@ -67,6 +67,12 @@ defineOptions({ name: 'DemoTooltip' })
             <TaoTooltip :content="tr('Command palette', 'Палитра команд')" shortcut="Ctrl+K">
               <TaoButton variant="secondary">Ctrl+K</TaoButton>
             </TaoTooltip>
+            <TaoTooltip :content="tr('Fades in (animated = 1)', 'Появляется плавно (animated = 1)')" :animated="1">
+              <TaoButton variant="secondary">animated 1</TaoButton>
+            </TaoTooltip>
+            <TaoTooltip :content="tr('A slow fade (animated = 3)', 'Медленно (animated = 3)')" :animated="3">
+              <TaoButton variant="secondary">animated 3</TaoButton>
+            </TaoTooltip>
           </div>
 
           <div style="display: flex; justify-content: space-between; margin-top: 16px;">
