@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.44.0
+
+The text of a tip is semi-bold now. To keep the regular weight: `:bold="false"` on the tooltip, or `:root { --tao-tooltip-weight: 400 }` for all of them.
+
+- **`TaoTooltip` `bold`, on by default.** A hint is small (12 px) and short, and at the regular weight it is thin on its inverted background. The text is weight 600 now, the weight of the key cap next to it. `bold="false"` returns the regular weight; the token `--tao-tooltip-weight` sets the weight for every tooltip.
+
 ## 5.43.0
 
 The tip now appears at once, without the fade. To keep the old fade: `animated` on the tooltip, or `:root { --tao-tooltip-motion: 1 }` for all of them.

@@ -24,10 +24,18 @@ const props = withDefaults(
          * решает токен `--tao-tooltip-motion` (то же число), так что приложение задаёт его один раз.
          */
         animated?: boolean | number;
+        /**
+         * The text in semi-bold (600, the weight of the key cap). On by default: a hint is small and short, and at the regular weight it
+         * is thin on its inverted background. `false` for the regular weight; the token `--tao-tooltip-weight` sets the weight.
+         * Текст полужирным (600, как у значка клавиши). Включено по умолчанию: подсказка мелкая и короткая, и обычным весом на
+         * инверсном фоне она тонкая. `false` — обычный вес; токен `--tao-tooltip-weight` задаёт вес.
+         */
+        bold?: boolean;
     }>(),
     {
         placement: 'top',
         animated: undefined,
+        bold: true,
     },
 );
 
@@ -101,7 +109,7 @@ onBeforeUnmount(() => {
                     v-if="showTooltip"
                     ref="tooltipRef"
                     class="tao-tooltip"
-                    :class="`tao-tooltip--${side}`"
+                    :class="[`tao-tooltip--${side}`, { 'tao-tooltip--regular': !bold }]"
                     role="tooltip"
                     :style="panelStyle"
                 >
@@ -133,6 +141,7 @@ onBeforeUnmount(() => {
        подсказка обратна теме (тёмная на светлой, светлая на тёмной): она парит над интерфейсом и не должна сливаться с панелями под ней; она не контрол */
     background: var(--tao-tooltip-bg, var(--tao-color-text-strong));
     color: var(--tao-tooltip-text, var(--tao-color-bg));
+    font-weight: var(--tao-tooltip-weight, 600);
     font-size: var(--tao-font-size-xs);
     font-family: var(--tao-font-family);
     line-height: 1.3;
@@ -143,6 +152,10 @@ onBeforeUnmount(() => {
 
 /* a little smaller than a key elsewhere and pulled into the line: a tip with a key is as tall as one without
    чуть меньше значка в других местах и втянут в строку: подсказка с клавишей той же высоты, что и без */
+.tao-tooltip.tao-tooltip--regular {
+    font-weight: 400;
+}
+
 .tao-tooltip__shortcut {
     height: round(up, 1.5em, 2px);
     min-width: round(up, 1.5em, 2px);

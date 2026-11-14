@@ -283,6 +283,18 @@ describe('TaoTooltip: the shortcut and the colours', () => {
         expect(await mountWith({ animated: -3 })).toBe('0');
     });
 
+    it('the text is semi-bold by default; bold=false gives the regular weight, the token sets the weight', async () => {
+        const w = mountOverlay(TaoTooltip, { props: { content: 'Hint' }, slots: { default: () => h('button', 'x') } });
+        await w.trigger('mouseenter');
+        expect($('[role="tooltip"]')!.classList.contains('tao-tooltip--regular')).toBe(false);
+        await w.trigger('mouseleave');
+        const plain = mountOverlay(TaoTooltip, { props: { content: 'Hint', bold: false }, slots: { default: () => h('button', 'x') } });
+        await plain.trigger('mouseenter');
+        expect($('[role="tooltip"]')!.classList.contains('tao-tooltip--regular')).toBe(true);
+        const css = readFileSync('src/components/TaoTooltip.vue', 'utf8');
+        expect(css).toContain('font-weight: var(--tao-tooltip-weight, 600)');
+    });
+
     it('the CSS takes the time from the base duration times the motion token, 0 when it is not set', () => {
         const css = readFileSync('src/components/TaoTooltip.vue', 'utf8');
         expect(css).toContain('calc(var(--tao-duration-base) * var(--tao-tooltip-motion, 0))');

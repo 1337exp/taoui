@@ -527,6 +527,7 @@ Showcase section: `#slider`
 | `minWidth / maxWidth` | `number` | 200 / — | The bar width in px |
 | `height` | `number` | 8 | The thickness in px |
 | `showPercentage` | `boolean \| 'top' \| 'right'` | true | true/top — above the bar, right — on the right, false — hide |
+| `bold` | `boolean` | true | The text in semi-bold (600): a hint is small and short. `false` is the regular weight; the token `--tao-tooltip-weight` sets the weight |
 | `animated` | `boolean` | true | Smooth filling |
 
 **Slots, events, notes.** #left / #right — captions. If #right is present, the percentage goes on the right in brackets.

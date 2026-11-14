@@ -492,6 +492,7 @@ export const propTablesEn = {
         r('minWidth / maxWidth', 'number', '200 / —', 'The bar width in px'),
         r('height', 'number', '8', 'The thickness in px'),
         r('showPercentage', "boolean | 'top' | 'right'", 'true', 'true/top — above the bar, right — on the right, false — hide'),
+        r('bold', 'boolean', 'true', 'The text in semi-bold (600): a hint is small and short. `false` is the regular weight; the token `--tao-tooltip-weight` sets the weight'),
         r('animated', 'boolean', 'true', 'Smooth filling'),
       ],
       slots: '#left / #right — captions. If #right is present, the percentage goes on the right in brackets.',

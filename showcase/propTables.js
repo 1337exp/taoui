@@ -485,6 +485,7 @@ export const propTables = {
         r('minWidth / maxWidth', 'number', '200 / —', 'Ширина бара в px'),
         r('height', 'number', '8', 'Толщина в px'),
         r('showPercentage', "boolean | 'top' | 'right'", 'true', 'true/top — над полосой, right — справа, false — скрыть'),
+        r('bold', 'boolean', 'true', 'Текст полужирным (600): подсказка мелкая и короткая. `false` — обычный вес; токен `--tao-tooltip-weight` задаёт вес'),
         r('animated', 'boolean', 'true', 'Плавное заполнение'),
       ],
       slots: '#left / #right — подписи. Если есть #right, процент справа в скобках.',
