@@ -17,7 +17,8 @@ import {
 import A11yPanel from '../a11y/A11yPanel.vue'
 import { useRoles } from '../a11y/colors.js'
 import { CONTROLS } from './controls.js'
-import { LADDER_ROLES, judge, ladderStep } from './measure.js'
+import { whileHovered } from './hover.js'
+import { LADDER_ROLES, hoverProblem, judge, ladderStep } from './measure.js'
 import { toHexOver } from './paint.js'
 import { tr } from '../i18n.js'
 
@@ -73,6 +74,22 @@ function pageHex() {
   return toHexOver(bg === 'rgba(0, 0, 0, 0)' ? '#ffffff' : bg, '#ffffff')
 }
 
+/** What a text stands on: the fills of its box and of its ancestors up to the stage, laid one over another. */
+function backdrop(el, host, ground) {
+  const chain = []
+  for (let node = el; node && node !== host; node = node.parentElement) chain.unshift(node)
+  let hex = ground
+  for (const node of chain) hex = toHexOver(getComputedStyle(node).backgroundColor, hex)
+  return hex
+}
+
+/** The colour of a text as seen on its backdrop: the step it is, the ratio it reads with. */
+function readText(el, host, ground, prefer) {
+  const back = backdrop(el, host, ground)
+  const hex = toHexOver(getComputedStyle(el).color, back)
+  return { hex, step: ladderStep(hex, colors.value, prefer), ratio: contrastRatio(hex, back) }
+}
+
 function measure() {
   const host = stage.value
   if (!host) return
@@ -97,12 +114,17 @@ function measure() {
     const underEl = control.on ? cell?.querySelector(control.on) : null
     const standsOn = underEl ? toHexOver(getComputedStyle(underEl).backgroundColor, ground) : ground
     const fillColour = fillEl ? toHexOver(getComputedStyle(fillEl).backgroundColor, standsOn) : null
+    const rest = read ? readText(read, host, ground, control.expect.step) : null
+    const target = control.hover && read ? cell.querySelector(control.hover) : null
+    const hovered = target ? whileHovered(target, () => readText(read, host, ground, control.expect.step)) : null
     measured.push({
       id: control.id,
       name: tr(control.en, control.ru),
       expect: control.expect,
-      hex: style ? toHexOver(style.color, ground) : null,
-      step: style ? ladderStep(toHexOver(style.color, ground), colors.value) : null,
+      hex: rest?.hex ?? null,
+      step: rest?.step ?? null,
+      ratio: rest?.ratio ?? null,
+      hover: hovered ? { ...hovered, problem: hoverProblem(rest, hovered) } : null,
       size: style ? Number.parseFloat(style.fontSize) : null,
       weight: style ? Number(style.fontWeight) : null,
       height: box ? box.getBoundingClientRect().height : null,
@@ -127,6 +149,8 @@ onBeforeUnmount(() => window.clearTimeout(timer))
 
 const PROMISE_TEXT = {
   step: ['One step of the ladder per role', 'Одна ступень лестницы на роль'],
+  read: ['The text reads on what it stands on (4.5:1)', 'Текст читается на своём фоне (4,5:1)'],
+  hover: ['A hover keeps the text readable and goes up the ladder', 'Hover не портит чтение и идёт вверх по лестнице'],
   weight: ['One weight for the labels', 'Один вес у подписей'],
   height: ['One height for the controls of a size', 'Одна высота у контролов размера'],
   fill: ['A fill that is seen on its surface', 'Заливка, видная на своей поверхности'],
@@ -182,6 +206,13 @@ const failed = (row, id) => promises.value.find((p) => p.id === id)?.offenders.s
       <div class="harmony-cell" data-harmony="tabs"><TaoTabs v-model="tab" :items="tabs" /></div>
       <div class="harmony-cell" data-harmony="dropdown"><TaoDropdownMenu :items="menu" :size="size" /></div>
       <div class="harmony-cell" data-harmony="theme-toggle"><TaoThemeToggle system :apply="false" model-value="system" /></div>
+      <div class="harmony-cell" data-harmony="menu">
+        <nav class="showcase-nav harmony-menu" aria-label="Sample">
+          <a class="showcase-nav__link" href="#harmony" @click.prevent>Page</a>
+          <a class="showcase-nav__link active" href="#harmony" @click.prevent>Current page</a>
+        </nav>
+      </div>
+      <div class="harmony-cell" data-harmony="link"><a href="#harmony" @click.prevent>Link</a></div>
       <div class="harmony-cell" data-harmony="checkbox"><TaoCheckbox v-model="checked">Checkbox</TaoCheckbox></div>
       <div class="harmony-cell" data-harmony="tag"><TaoTag>Tag</TaoTag></div>
     </div>
@@ -192,6 +223,8 @@ const failed = (row, id) => promises.value.find((p) => p.id === id)?.offenders.s
           <tr>
             <th scope="col">{{ tr('Control', 'Контрол') }}</th>
             <th scope="col">{{ tr('Text', 'Текст') }}</th>
+            <th scope="col">{{ tr('Reads', 'Читается') }}</th>
+            <th scope="col">{{ tr('Hover', 'Hover') }}</th>
             <th scope="col">{{ tr('Size', 'Размер') }}</th>
             <th scope="col">{{ tr('Weight', 'Вес') }}</th>
             <th scope="col">{{ tr('Height', 'Высота') }}</th>
@@ -206,6 +239,14 @@ const failed = (row, id) => promises.value.find((p) => p.id === id)?.offenders.s
               <code>{{ row.step ?? (row.hex ? 'other ' + row.hex : '—') }}</code>
               <small v-if="row.expect.step" class="harmony-want">{{ tr('want', 'надо') }} {{ row.expect.step }}</small>
             </td>
+            <td :class="{ 'harmony-bad': failed(row, 'read') }">{{ row.ratio == null ? '—' : row.ratio.toFixed(2) + ':1' }}</td>
+            <td :class="{ 'harmony-bad': failed(row, 'hover') }">
+              <template v-if="row.hover">
+                <span class="harmony-dot" :style="{ background: row.hover.hex }" aria-hidden="true" />
+                <code>{{ row.hover.step ?? 'other' }}</code> · {{ row.hover.ratio.toFixed(2) }}:1
+              </template>
+              <template v-else>—</template>
+            </td>
             <td>{{ num(row.size, 'px') }}</td>
             <td :class="{ 'harmony-bad': failed(row, 'weight') }">{{ num(row.weight) }}</td>
             <td :class="{ 'harmony-bad': failed(row, 'height') }">{{ num(row.height) }}</td>
@@ -217,8 +258,8 @@ const failed = (row, id) => promises.value.find((p) => p.id === id)?.offenders.s
     <p class="harmony-note">
       {{
         tr(
-          'Fields and a select take their text from one token (input-text), the others from the ladder; tabs and segments that are not chosen are `subtle` on purpose. A red cell is a place where the kit says one thing and draws another.',
-          'Поля и селект берут текст из одного токена (input-text), остальные — из лестницы; невыбранные вкладки и сегменты намеренно `subtle`. Красная ячейка — место, где набор говорит одно, а рисует другое.',
+          'Hover is read without a pointer: the rules with :hover are copied for the moment, so the colours are the ones the hover ends with. Fields and a select take their text from one token (input-text), the others from the ladder; tabs and segments that are not chosen are `subtle` on purpose. A red cell is a place where the kit says one thing and draws another.',
+          'Hover читается без указателя: правила с :hover на миг копируются, так что цвета — те, которыми hover заканчивается. Поля и селект берут текст из одного токена (input-text), остальные — из лестницы; невыбранные вкладки и сегменты намеренно `subtle`. Красная ячейка — место, где набор говорит одно, а рисует другое.',
         )
       }}
     </p>
@@ -291,6 +332,18 @@ const failed = (row, id) => promises.value.find((p) => p.id === id)?.offenders.s
 .harmony-cell {
   display: inline-flex;
   align-items: center;
+}
+
+/* the real sidebar links of this page, without its frame: the bench measures the menu itself / настоящие ссылки боковой панели этой страницы без её рамки: стенд мерит само меню */
+.harmony-menu {
+  position: static;
+  display: flex;
+  flex-direction: column;
+  width: 160px;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 .harmony-table-wrap {

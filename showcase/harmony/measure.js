@@ -19,15 +19,44 @@ export const LADDER_ROLES = LADDER.map(([, role]) => role)
 
 /**
  * A fill that is closer to its surface than this (a WCAG 2 ratio) is not seen as a fill: the control is held by its
- * border alone. White against #f5f5f5 is 1.09, so a deliberate quiet fill passes.
+ * border alone. White against #f5f5f5 is 1.09 and the dark layers are 1.04 to 1.06 apart, so a deliberate quiet fill passes.
  * Заливка ближе к своей поверхности, чем это (отношение WCAG 2), не видна как заливка: контрол держится одной рамкой.
  * Белое на #f5f5f5 — 1,09, так что намеренная тихая заливка проходит.
  */
-export const MELT_RATIO = 1.04
+export const MELT_RATIO = 1.03
 
-/** The ladder step a colour is, by name (`null`: not one of the steps). / Какая это ступень лестницы (`null` — никакая). */
-export function ladderStep(hex, resolved) {
-  const found = LADDER.find(([, role]) => resolved[role] && resolved[role].toLowerCase() === String(hex).toLowerCase())
+/** WCAG 2 for text of this size: the promise of the kit (the contrast section of the Guide). / Обещание набора для текста. */
+export const TEXT_RATIO = 4.5
+
+/** Brighter is a smaller rank: a hover may keep the step or go up, never down. / Ярче — меньший ранг: hover не опускает ступень. */
+const RANK = { strong: 0, text: 1, subtle: 2, muted: 3, disabled: 4 }
+
+/**
+ * What is wrong with a hover, or `null`. The text must stay readable on the hover fill, and on a ladder it goes one step up
+ * or stays: a hover that turns the text into a colour from no step (a stray link colour) or makes it dimmer is wrong.
+ * Что не так с hover, или `null`. Текст читается на заливке hover и по лестнице идёт на ступень вверх или остаётся:
+ * hover, красящий текст в цвет вне лестницы (чужой цвет ссылки) или тусклее, — ошибка.
+ */
+export function hoverProblem(rest, hover) {
+  if (hover.ratio < TEXT_RATIO) return `${hover.ratio.toFixed(2)}:1`
+  if (rest.step in RANK) {
+    if (!(hover.step in RANK)) return `${rest.step} → ${hover.step ?? 'other'}`
+    if (RANK[hover.step] > RANK[rest.step]) return `${rest.step} → ${hover.step}`
+  }
+  return null
+}
+
+/**
+ * The ladder step a colour is, by name (`null`: not one of the steps). Two roles may be one colour (the accent and the accent
+ * text in the dark theme): `prefer` is the step the control is expected to be, and wins when it is one of them.
+ * Какая это ступень лестницы (`null` — никакая). Две роли могут быть одним цветом (акцент и акцентный текст в тёмной теме):
+ * `prefer` — ожидаемая ступень контрола, она выигрывает, если подходит.
+ */
+export function ladderStep(hex, resolved, prefer) {
+  const same = (role) => resolved[role] && resolved[role].toLowerCase() === String(hex).toLowerCase()
+  const wanted = LADDER.find(([name]) => name === prefer)
+  if (wanted && same(wanted[1])) return wanted[0]
+  const found = LADDER.find(([, role]) => same(role))
   return found ? found[0] : null
 }
 
@@ -73,8 +102,20 @@ export function judge(items) {
     (item) => `${item.fill.toFixed(2)}:1`,
   )
 
+  const read = offenders(
+    items.filter((item) => item.ratio != null && item.expect.step !== 'disabled' && item.ratio < TEXT_RATIO),
+    (item) => `${item.ratio.toFixed(2)}:1`,
+  )
+  const hovered = items.filter((item) => item.hover != null)
+  const hover = offenders(
+    hovered.filter((item) => item.hover.problem),
+    (item) => item.hover.problem,
+  )
+
   return [
     { id: 'step', offenders: step, checked: stepped.length },
+    { id: 'read', offenders: read, checked: items.filter((item) => item.ratio != null).length },
+    { id: 'hover', offenders: hover, checked: hovered.length },
     { id: 'weight', offenders: weight, checked: weighted.length, house },
     { id: 'height', offenders: height, checked: tall.length },
     { id: 'fill', offenders: fill, checked: filled.length },

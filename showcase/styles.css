@@ -77,10 +77,24 @@
   background: var(--tao-color-surface-hover);
 }
 
+/* A hover goes one step up the ladder and stays a step of it. The link needs its own colour here: the kit's `a:hover` (a rose link,
+   weight 0,1,1) beats a class (0,1,0) and painted the label rose on the grey, 3:1. The Harmony bench measures this row.
+   Hover идёт на ступень вверх и остаётся ступенью. Ссылке нужен свой цвет: `a:hover` набора (розовая ссылка, вес 0,1,1) бьёт
+   класс (0,1,0) и красил подпись розовым по серому, 3:1. Стенд «Контролы рядом» мерит эту строку. */
+.showcase-nav__all:hover,
+.showcase-nav__link:hover {
+  color: var(--tao-color-text-strong);
+}
+
+.showcase-nav__group-title:hover {
+  color: var(--tao-color-text);
+}
+
+/* the current one is text in the accent: the role made for text (4.5:1), not the fill colour / текущий — текст акцентом: роль для текста (4,5:1), а не цвет заливки */
 .showcase-nav__all.active,
 .showcase-nav__group-title.active {
   background: var(--tao-color-surface-sunken);
-  color: var(--tao-color-accent);
+  color: var(--tao-color-accent-text);
 }
 
 .showcase-nav__link {
@@ -94,8 +108,13 @@
 }
 
 .showcase-nav__link.active {
-  color: var(--tao-color-accent);
+  color: var(--tao-color-accent-text);
   font-weight: 600;
+}
+
+/* on the grey of a hover the plain accent text is 4.4:1, its hover role is darker / на сером hover простой акцентный текст — 4,4:1, его hover-роль темнее */
+.showcase-nav__link.active:hover {
+  color: var(--tao-color-accent-text-hover);
 }
 
 .showcase-banner {
@@ -405,7 +424,7 @@
 
 .showcase-books__tab.active {
   background: var(--tao-color-surface-sunken);
-  color: var(--tao-color-accent);
+  color: var(--tao-color-accent-text);
 }
 
 .showcase-books__tab:focus-visible {
