@@ -312,7 +312,7 @@ watch(open, (isOpen) => {
 }
 
 .tao-select__clear:hover {
-    color: var(--tao-color-accent);
+    color: var(--tao-color-text-strong);
     background: var(--tao-color-hover);
 }
 

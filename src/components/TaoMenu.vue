@@ -338,7 +338,7 @@ onBeforeUnmount(() => clearTimeout(closeSubTimer));
 }
 
 .tao-menu__item--active {
-    color: var(--tao-color-accent-text);
+    color: var(--tao-color-text-strong);
     background-color: var(--tao-color-hover);
 }
 

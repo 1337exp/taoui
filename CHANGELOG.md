@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.42.0
+
+The look changes in a few places: what a pointer is over is no longer accent-coloured. To keep the old look, restore the accent in your own CSS for the selectors listed below.
+
+- **The accent is not for hover.** A wash behind a neutral control was amber under the pointer (fixed in 5.41.0 for `tone="neutral"`), and the same slip was in a dozen other places: the highlighted row of `TaoMenu` (accent text) and of `TaoCommandList` (accent wash), the hover of a `TaoTabs` tab, a `TaoQuantity` button, a `TaoScrollTop` ghost / text button, a slider mark, the clear buttons of `TaoSelect` / `TaoCombobox` / `TaoColorInput`, the `TaoCopy` button, the eyedropper of `TaoColorPicker`, the border of a `TaoColorInput` and the ring of a hover `TaoCard`. Under the pointer they are now neutral: the wash is `--tao-color-hover`, the text goes up to `text-strong`, a border to `border-strong`. The accent stays where a thing is chosen or current (the selected tab, the checked box, the open colour input, the chosen card), for the focus ring and for a solid accent control (whose hover is `accent-hover`).
+- **A rule in the guide, and a test that keeps it.** The accent budget got a rule: hover, the row under the arrows and a pressed toggle are neutral, a wash or a fill is never the accent. `tests/accent-budget.test.ts` reads the CSS of every component and fails when a rule for `:hover`, or for the highlighted row of a menu or a list, uses the accent roles (`accent`, `accent-subtle`, `accent-text`).
+
 ## 5.41.0
 
 Nothing to migrate for the new component. Two looks change: a neutral control under the pointer is grey, not amber (see below), and a key in a button, a menu and a list is drawn by one component. To keep the old amber wash: `.tao-tone-neutral { --tao-tone-wash: var(--tao-color-accent-subtle-hover); }`.

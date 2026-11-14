@@ -270,8 +270,8 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value
 
 .tao-quantity__btn:hover:not(:disabled) {
     z-index: 1;
-    color: var(--tao-color-accent);
-    border-color: var(--tao-color-accent);
+    color: var(--tao-color-text-strong);
+    border-color: var(--tao-color-border-strong);
 }
 
 .tao-quantity__btn:focus-visible {

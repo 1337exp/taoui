@@ -125,7 +125,11 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
     transition: var(--tao-transition-base);
 }
 
-.tao-color-input:hover:not(:disabled),
+.tao-color-input:hover:not(:disabled) {
+    border-color: var(--tao-color-border-strong);
+}
+
+/* open is like focus: the accent / открытое как фокус: акцент */
 .tao-color-input--open {
     border-color: var(--tao-color-accent);
 }
@@ -186,7 +190,7 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
 }
 
 .tao-color-input__clear:hover:not(:disabled) {
-    color: var(--tao-color-accent);
+    color: var(--tao-color-text-strong);
     background: var(--tao-color-hover);
 }
 

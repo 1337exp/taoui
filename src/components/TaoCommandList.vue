@@ -305,9 +305,10 @@ defineExpose({
     user-select: none;
 }
 
-/* the row under the pointer or the arrows goes one step up the text ladder / строка под указателем идёт на ступень выше */
+/* the row under the pointer or the arrows goes one step up the text ladder; the wash is neutral, the accent is not for a highlight
+   строка под указателем идёт на ступень выше; подложка нейтральная, акцент не для подсветки */
 .tao-command-list__option[aria-selected='true'] {
-    background: var(--tao-color-accent-subtle, var(--tao-color-surface-hover));
+    background: var(--tao-color-hover);
     color: var(--tao-color-text-strong);
 }
 

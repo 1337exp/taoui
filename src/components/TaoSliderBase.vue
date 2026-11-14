@@ -877,7 +877,7 @@ onBeforeUnmount(() => {
 }
 
 .tao-slider__mark:hover:not(:disabled) {
-    color: var(--tao-color-accent);
+    color: var(--tao-color-text-strong);
 }
 
 /* Вертикальный: полоса стоит, максимум сверху, метки справа */

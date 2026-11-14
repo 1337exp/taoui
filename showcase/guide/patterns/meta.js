@@ -25,6 +25,10 @@ export const accentBudget = {
       ru: 'Тихие инструменты (панель инструментов, действия строки, иконки в шапке) — `variant="ghost" tone="neutral"`. `ghost` или `text` без `tone` окрашены акцентом: брать их только для действия, которое на своём месте и правда главное.',
     },
     {
+      en: 'Hover, the row under the arrows and a pressed toggle are neutral: the wash behind them is the text colour at a low alpha (`--tao-tone-wash`, `--tao-color-hover`), and the text goes up to `text-strong`. A wash or a fill is never the accent. The accent appears when a thing is chosen, not when the pointer is over it. A component must not tint its hover with the accent, and your own styles must not either.',
+      ru: 'Наведение, строка под стрелками и нажатый переключатель нейтральны: подложка за ними — цвет текста с малой прозрачностью (`--tao-tone-wash`, `--tao-color-hover`), а текст поднимается до `text-strong`. Подложка и заливка никогда не акцентные. Акцент появляется, когда вещь выбрана, а не когда над ней курсор. Компонент не должен красить наведение акцентом, и ваши стили тоже.',
+    },
+    {
       en: 'Status is `tone` (`success`, `danger`, `warning`, `info`), always with words, never colour alone. A destructive action is `tone="danger"` on the button that destroys; the safe button stays quiet.',
       ru: 'Статус — это `tone` (`success`, `danger`, `warning`, `info`), всегда со словами, не одним цветом. Разрушающее действие — `tone="danger"` на кнопке, которая разрушает; безопасная кнопка остаётся тихой.',
     },

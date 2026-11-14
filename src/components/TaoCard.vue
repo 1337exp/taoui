@@ -187,7 +187,11 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
     cursor: pointer;
 }
 
-.tao-card--hover:hover,
+.tao-card--hover:hover {
+    box-shadow: var(--tao-surface-inset, 0 0 #0000), 0 0 0 1px var(--tao-color-border-strong), var(--tao-shadow-lg);
+}
+
+/* the chosen card is the accent; under the pointer it is only lifted / выбранная карточка акцентная; под указателем только приподнята */
 .tao-card--hover.tao-card--active {
     box-shadow: var(--tao-surface-inset, 0 0 #0000), 0 0 0 1px var(--tao-color-accent), var(--tao-shadow-lg);
 }

@@ -10,8 +10,9 @@ The accent colour (amber by default) is a signal, and a signal that is on everyw
 
 1. One filled accent button (`variant="primary"`) per region. Next to it: `secondary`, or `ghost` with `tone="neutral"`, or `text`.
 2. Quiet tools (a toolbar, the actions of a row, icon buttons in a header) are `variant="ghost" tone="neutral"`. A `ghost` or `text` button without `tone` is accent-coloured: use it only for an action that really is the main one in its place.
-3. Status is `tone` (`success`, `danger`, `warning`, `info`), always with words, never colour alone. A destructive action is `tone="danger"` on the button that destroys; the safe button stays quiet.
-4. Colours come from roles (`var(--tao-color-…)`), never a hex or an `rgba()` in app CSS.
+3. Hover, the row under the arrows and a pressed toggle are neutral: the wash behind them is the text colour at a low alpha (`--tao-tone-wash`, `--tao-color-hover`), and the text goes up to `text-strong`. A wash or a fill is never the accent. The accent appears when a thing is chosen, not when the pointer is over it. A component must not tint its hover with the accent, and your own styles must not either.
+4. Status is `tone` (`success`, `danger`, `warning`, `info`), always with words, never colour alone. A destructive action is `tone="danger"` on the button that destroys; the safe button stays quiet.
+5. Colours come from roles (`var(--tao-color-…)`), never a hex or an `rgba()` in app CSS.
 
 ## The text ladder
 

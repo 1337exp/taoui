@@ -204,9 +204,9 @@ onBeforeUnmount(() => {
 }
 
 .tao-scroll-top--ghost:hover {
-    color: var(--tao-color-accent);
-    background-color: var(--tao-color-accent-subtle);
-    border-color: var(--tao-color-accent);
+    color: var(--tao-color-text-strong);
+    background-color: var(--tao-color-hover);
+    border-color: var(--tao-color-border-strong);
 }
 
 .tao-scroll-top--text {
@@ -216,7 +216,7 @@ onBeforeUnmount(() => {
 }
 
 .tao-scroll-top--text:hover {
-    color: var(--tao-color-accent);
+    color: var(--tao-color-text-strong);
 }
 
 /* the same tactile press as TaoButton / такое же вжатие, как у TaoButton */

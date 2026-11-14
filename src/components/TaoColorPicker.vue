@@ -504,8 +504,8 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
 }
 
 .tao-color-picker__eyedropper:hover:not(:disabled) {
-    border-color: var(--tao-color-accent);
-    color: var(--tao-color-accent);
+    border-color: var(--tao-color-border-strong);
+    color: var(--tao-color-text-strong);
 }
 
 .tao-color-picker__swatches {
