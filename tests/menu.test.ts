@@ -2,6 +2,7 @@ import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import { defineComponent, h, nextTick, ref } from 'vue';
 import TaoDropdownMenu from '../src/components/TaoDropdownMenu.vue';
+import TaoIcon from '../src/components/TaoIcon.vue';
 import TaoModal from '../src/components/TaoModal.vue';
 import TaoSelect from '../src/components/TaoSelect.vue';
 import { openLayerCount } from '../src/layers';
@@ -13,6 +14,28 @@ function mountMenu(items: TaoMenuItem[]) {
     wrappers.push(w);
     return w;
 }
+describe('TaoDropdownMenu dots', () => {
+    const trigger = (props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) =>
+        mount(TaoDropdownMenu, { props: { items: [{ id: 'a', label: 'A' }], ...props }, slots: slots as never }).find('button');
+    // the dots of an upright icon share one x, of a lying one one y / у стоячих точек один x, у лежачих один y
+    const centres = (button: ReturnType<typeof trigger>, axis: 'cx' | 'cy') => button.findAll('circle').map((c) => c.attributes(axis));
+
+    it('three dots stand upright by default and lie down with dots="horizontal"', () => {
+        const upright = trigger();
+        expect(new Set(centres(upright, 'cx')).size).toBe(1);
+        expect(new Set(centres(upright, 'cy')).size).toBe(3);
+        const lying = trigger({ dots: 'horizontal' });
+        expect(new Set(centres(lying, 'cy')).size).toBe(1);
+        expect(new Set(centres(lying, 'cx')).size).toBe(3);
+    });
+
+    it('the #icon slot wins over dots', () => {
+        const button = trigger({ dots: 'horizontal' }, { icon: () => h('i', { class: 'mine' }) });
+        expect(button.find('.mine').exists()).toBe(true);
+        expect(button.find('circle').exists()).toBe(false);
+    });
+});
+
 afterEach(() => {
     wrappers.splice(0).forEach((w) => w.unmount());
     document.body.innerHTML = '';

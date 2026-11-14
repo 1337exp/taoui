@@ -57,7 +57,8 @@ function onEditorSelect(id) {
           <div style="display: flex; align-items: center; gap: 12px;">
             <TaoDropdownMenu :items="dropdownItems" @select="(id) => console.log('selected:', id)" />
             <TaoDropdownMenu :items="dropdownItems" size="small" @select="(id) => console.log('selected:', id)" />
-            <span style="color: var(--tao-color-text-muted); font-size: 13px;">{{ tr('size="small": a compact square for a list row; :tabbable="false" when the row has its own menu key', 'size="small": компактный квадрат для строки списка; :tabbable="false", когда у строки своя клавиша меню') }}</span>
+            <TaoDropdownMenu :items="dropdownItems" dots="horizontal" @select="(id) => console.log('selected:', id)" />
+            <span style="color: var(--tao-color-text-muted); font-size: 13px;">{{ tr('size="small": a compact square for a list row; dots="horizontal": the dots lie down (a table row, the corner of a card); :tabbable="false" when the row has its own menu key', 'size="small": компактный квадрат для строки списка; dots="horizontal": точки лежат (строка таблицы, угол карточки); :tabbable="false", когда у строки своя клавиша меню') }}</span>
           </div>
 
           <h3>{{ tr('Submenus, checkboxes, radios, shortcuts', 'Подменю, чекбоксы, радио, сочетания') }}</h3>

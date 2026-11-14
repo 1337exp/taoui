@@ -1014,6 +1014,7 @@ export const propTablesEn = {
         r('menuLabel', 'string', "'Menu'", 'aria-label of the button and of the menu'),
         r('closeOnScroll', 'boolean', 'false', 'Close when the page scrolls. Off: the menu follows its button'),
         r('size', "'small' | 'medium' | 'large'", '—', 'The button becomes a square of that control height: a compact kebab for a list row. Without it — the padding round the icon'),
+        r('dots', "'vertical' | 'horizontal'", "'vertical'", 'The three dots of the button: upright ⋮ (a narrow column, a toolbar) or lying ⋯ (a row of a table or a list, the corner of a card). Ignored when #icon or #button is given'),
         r('tabbable', 'boolean', 'true', 'The button is a Tab stop. Off: it leaves the Tab order (the row has its own menu key) and still opens by a click'),
       ],
       slots: '#icon — the trigger icon, #button — the whole button content, #item="{ item, id, label, icon }" — your own item face. The select event — the item id. shortcut is a ready string to show: the menu neither parses nor listens to it.',
