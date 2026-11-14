@@ -5,6 +5,7 @@ import { sizeClass, type TaoSize } from '../size';
 import { slotHasContent } from '../slots';
 import { toneClass, type TaoToneName } from '../tone';
 import TaoIcon from './TaoIcon.vue';
+import TaoKbd from './TaoKbd.vue';
 import TaoLoader from './TaoLoader.vue';
 
 defineOptions({ name: 'TaoButton' });
@@ -132,7 +133,7 @@ function handleClick(event: MouseEvent) {
         <span v-if="hasContent()" class="tao-button__content"><slot /></span>
         <TaoIcon v-if="iconEnd" class="tao-button__icon" :name="iconEnd" />
         <!-- read once, as aria-keyshortcuts; not printed in an icon-only square (it is in the title) / читается один раз, как aria-keyshortcuts; в квадрате с одной иконкой не печатается (она в title) -->
-        <kbd v-if="shortcut && !isIconOnly()" class="tao-button__shortcut" aria-hidden="true">{{ shortcut }}</kbd>
+        <TaoKbd v-if="shortcut && !isIconOnly()" class="tao-button__shortcut" aria-hidden="true">{{ shortcut }}</TaoKbd>
     </button>
 </template>
 
@@ -258,20 +259,11 @@ function handleClick(event: MouseEvent) {
    клавиша в конце: в широкой кнопке уходит к дальнему краю, текст остаётся в начале; заливка из цвета текста кнопки,
    поэтому подходит к любому тону и варианту; чётная высота в целых пикселях держит букву по центру */
 .tao-button__shortcut {
-    display: inline-grid;
-    place-items: center;
-    box-sizing: border-box;
     min-width: round(up, calc(var(--tao-control-height) * 0.56), 2px);
     height: round(up, calc(var(--tao-control-height) * 0.56), 2px);
     margin-inline-start: auto;
     padding: 0 0.4em;
-    border-radius: max(4px, calc(var(--tao-radius-control) * 0.6));
-    background: color-mix(in srgb, currentColor 14%, transparent);
-    font: inherit;
-    font-size: var(--tao-font-size-xs);
-    font-weight: 600;
     line-height: 1;
-    white-space: nowrap;
 }
 
 .tao-button__icon {

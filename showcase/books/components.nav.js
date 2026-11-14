@@ -74,6 +74,7 @@ export const navGroups = [
       { id: 'drawer', label: 'TaoDrawer' },
       { id: 'confirm', label: 'confirm()' },
       { id: 'tooltip', label: 'TaoTooltip' },
+      { id: 'kbd', label: 'TaoKbd', aliases: ['key', 'keyboard', 'shortcut', 'hotkey', 'key cap', 'клавиша', 'горячая клавиша', 'сочетание'] },
       { id: 'popover', label: 'TaoPopover' },
       { id: 'dropdown', label: 'TaoDropdownMenu' },
       { id: 'menubar', label: 'Menubar / Context menu', aliases: ['TaoMenubar', 'TaoContextMenu', 'menu bar', 'context', 'меню', 'контекстное'] },

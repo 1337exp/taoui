@@ -10,6 +10,7 @@ import TaoModal from './components/TaoModal.vue';
 import TaoTabs from './components/TaoTabs.vue';
 import TaoScrubber from './components/TaoScrubber.vue';
 import TaoTooltip from './components/TaoTooltip.vue';
+import TaoKbd from './components/TaoKbd.vue';
 import TaoPopover from './components/TaoPopover.vue';
 import TaoSpoiler from './components/TaoSpoiler.vue';
 import TaoSpoilerGroup from './components/TaoSpoilerGroup.vue';
@@ -109,6 +110,7 @@ const components = [
     TaoTabs,
     TaoScrubber,
     TaoTooltip,
+    TaoKbd,
     TaoPopover,
     TaoSpoiler,
     TaoSpoilerGroup,
@@ -224,6 +226,7 @@ export {
     TaoTabs,
     TaoScrubber,
     TaoTooltip,
+    TaoKbd,
     TaoPopover,
     TaoSpoiler,
     TaoSpoilerGroup,

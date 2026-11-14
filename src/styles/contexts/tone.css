@@ -65,8 +65,10 @@
     --tao-tone-wash: var(--tao-color-accent-subtle-hover);
 }
 
-/* Neutral: the quiet action next to a primary one. Strong text, only the wash takes the theme colour.
-   Нейтральный: тихое действие рядом с главным. Сильный текст, цвет темы — только у подложки при наведении. */
+/* Neutral: the quiet action next to a primary one. Strong text, and the wash is grey too (the text colour, quiet), the same as the
+   pressed state: a neutral control must not turn amber under the pointer, the accent is for what is chosen or primary.
+   Нейтральный: тихое действие рядом с главным. Сильный текст, и подложка тоже серая (цвет текста, тихо), как у нажатого
+   состояния: нейтральный контрол не должен желтеть под курсором, акцент для выбранного и главного. */
 .tao-tone-neutral {
     --tao-tone: var(--tao-color-neutral);
     --tao-tone-hover: var(--tao-color-neutral-hover);
@@ -78,7 +80,7 @@
     --tao-tone-text: var(--tao-color-text);
     --tao-tone-text-hover: var(--tao-color-text-strong);
     --tao-tone-subtle: color-mix(in srgb, var(--tao-color-neutral) 15%, transparent);
-    --tao-tone-wash: var(--tao-color-accent-subtle-hover);
+    --tao-tone-wash: color-mix(in srgb, var(--tao-color-text) 10%, transparent);
 }
 
 .tao-tone-success {

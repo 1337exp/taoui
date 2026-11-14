@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.41.0
+
+Nothing to migrate for the new component. Two looks change: a neutral control under the pointer is grey, not amber (see below), and a key in a button, a menu and a list is drawn by one component. To keep the old amber wash: `.tao-tone-neutral { --tao-tone-wash: var(--tao-color-accent-subtle-hover); }`.
+
+- **New `TaoKbd`: one look for a key.** A key was drawn in four places, each with its own `<kbd>` and its own CSS (the button, the tooltip, the menu, the command list). Now it is one component: `variant="cap"` (default) is a key cap with a quiet fill of the text colour, `variant="plain"` is muted text with no cap for a column of keys. `TaoButton` (`shortcut`), `TaoTooltip` (`shortcut`), `TaoMenu` and `TaoCommandList` use it; the look of each stays as it was (a cap in the button and the tooltip, plain text in the menu and the list). The base style has zero specificity (`:where`), so the place that holds a key sets its own size.
+- **A neutral control's wash is grey.** The neutral tone's hover wash (`--tao-tone-wash`) was the accent tint, so a `tone="neutral"` ghost button (a toolbar tool) turned amber under the pointer while the pressed state next to it was grey. The wash is now the text colour at 10%, the same family as the pressed state. The accent stays for what is chosen or primary.
+
 ## 5.40.0
 
 The look changes, not the API: a tooltip is now the opposite of the theme. To keep the old look, set `--tao-tooltip-bg: var(--tao-color-surface-raised); --tao-tooltip-text: var(--tao-color-text-strong);` on `:root`.

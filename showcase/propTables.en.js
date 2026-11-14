@@ -983,6 +983,15 @@ export const propTablesEn = {
       slots: 'default — the trigger (a button, an icon…). Colours: `--tao-tooltip-bg` and `--tao-tooltip-text`, by default the opposite of the theme.',
     },
   ],
+  kbd: [
+    {
+      title: 'TaoKbd',
+      rows: [
+        r('variant', "'cap' | 'plain'", "'cap'", 'Look: `cap` a key cap (a quiet fill of the text colour), `plain` the key as muted text with no cap, for a column of keys in a menu or a list'),
+      ],
+      slots: 'default — the key: `T`, `Ctrl+K`, `⌘`. One look for a button (`shortcut`), a tooltip (`shortcut`), a menu and a command list.',
+    },
+  ],
   popover: [
     {
       title: 'TaoPopover',

@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useFloating, type TaoPlacement } from '../floating';
 import { listenFocusLoss } from '../focusLoss';
+import TaoKbd from './TaoKbd.vue';
 
 defineOptions({ name: 'TaoTooltip' });
 
@@ -84,7 +85,7 @@ onBeforeUnmount(() => {
                     :style="panelStyle"
                 >
                     <span class="tao-tooltip__text">{{ content }}</span>
-                    <kbd v-if="shortcut" class="tao-tooltip__shortcut">{{ shortcut }}</kbd>
+                    <TaoKbd v-if="shortcut" class="tao-tooltip__shortcut">{{ shortcut }}</TaoKbd>
                     <span class="tao-tooltip__arrow" :style="arrowStyle" aria-hidden="true"></span>
                 </div>
             </Transition>
@@ -116,17 +117,7 @@ onBeforeUnmount(() => {
 }
 
 .tao-tooltip__shortcut {
-    display: inline-grid;
-    place-items: center;
-    min-width: 1.6em;
-    padding: 0.15em 0.45em;
-    border-radius: max(4px, calc(var(--tao-radius-control) * 0.6));
     background: color-mix(in srgb, currentColor 22%, transparent);
-    font: inherit;
-    font-size: var(--tao-font-size-xs);
-    font-weight: 600;
-    line-height: 1.2;
-    white-space: nowrap;
 }
 
 .tao-tooltip__arrow {

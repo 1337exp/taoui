@@ -3,6 +3,7 @@ import { computed, nextTick, onMounted, ref, useId, watch } from 'vue';
 import { matchCommands, splitByRanges, type TaoCommandItem, type TaoCommandMatch } from '../commandPalette';
 import { useLocaleText } from '../locale';
 import TaoIcon from './TaoIcon.vue';
+import TaoKbd from './TaoKbd.vue';
 
 // The search field and the list of commands, with no window around them: lay it in a page, a panel or a TaoPopover.
 // TaoCommandPalette is this inside a dialog.
@@ -200,7 +201,7 @@ defineExpose({
                             <span v-if="row.match.item.description" class="tao-command-list__description">{{ row.match.item.description }}</span>
                         </span>
                         <span v-if="query.trim() && row.match.item.group" class="tao-command-list__where">{{ row.match.item.group }}</span>
-                        <kbd v-if="row.match.item.shortcut" class="tao-command-list__shortcut">{{ row.match.item.shortcut }}</kbd>
+                        <TaoKbd v-if="row.match.item.shortcut" variant="plain" class="tao-command-list__shortcut">{{ row.match.item.shortcut }}</TaoKbd>
                     </slot>
                 </li>
             </template>

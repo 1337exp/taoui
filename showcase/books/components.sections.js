@@ -43,6 +43,7 @@ import DemoModal from '../components/DemoModal.vue'
 import DemoDrawer from '../components/DemoDrawer.vue'
 import DemoConfirm from '../components/DemoConfirm.vue'
 import DemoTooltip from '../components/DemoTooltip.vue'
+import DemoKbd from '../components/DemoKbd.vue'
 import DemoPopover from '../components/DemoPopover.vue'
 import DemoDropdown from '../components/DemoDropdown.vue'
 import DemoMenubar from '../components/DemoMenubar.vue'
@@ -109,6 +110,7 @@ export const demoById = {
   'drawer': DemoDrawer,
   'confirm': DemoConfirm,
   'tooltip': DemoTooltip,
+  'kbd': DemoKbd,
   'popover': DemoPopover,
   'dropdown': DemoDropdown,
   'menubar': DemoMenubar,

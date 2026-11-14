@@ -5,6 +5,7 @@ import { useDismiss } from '../dismiss';
 import { useFloating, type TaoPlacement } from '../floating';
 import { useLayer } from '../layers';
 import { useListNav } from '../listNav';
+import TaoKbd from './TaoKbd.vue';
 import {
     isMenuSelectable,
     menuItemLabel,
@@ -276,7 +277,7 @@ onBeforeUnmount(() => clearTimeout(closeSubTimer));
                             <TaoIcon v-if="'icon' in item && item.icon" class="tao-menu__icon" :name="item.icon" />
                             <span class="tao-menu__text">{{ item.label }}</span>
                         </slot>
-                        <span v-if="'shortcut' in item && item.shortcut" class="tao-menu__shortcut">{{ item.shortcut }}</span>
+                        <TaoKbd v-if="'shortcut' in item && item.shortcut" variant="plain" class="tao-menu__shortcut">{{ item.shortcut }}</TaoKbd>
                         <span v-if="'items' in item && item.items" class="tao-menu__arrow" aria-hidden="true"></span>
                     </div>
                     <TaoMenu

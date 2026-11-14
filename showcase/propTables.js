@@ -976,6 +976,15 @@ export const propTables = {
       slots: 'default — триггер (кнопка, иконка…). Цвета: `--tao-tooltip-bg` и `--tao-tooltip-text`, по умолчанию обратные теме.',
     },
   ],
+  kbd: [
+    {
+      title: 'TaoKbd',
+      rows: [
+        r('variant', "'cap' | 'plain'", "'cap'", 'Вид: `cap` значок клавиши (тихая заливка цветом текста), `plain` клавиша приглушённым текстом без значка, для колонки клавиш в меню или списке'),
+      ],
+      slots: 'default — клавиша: `T`, `Ctrl+K`, `⌘`. Один вид для кнопки (`shortcut`), подсказки (`shortcut`), меню и списка команд.',
+    },
+  ],
   popover: [
     {
       title: 'TaoPopover',
