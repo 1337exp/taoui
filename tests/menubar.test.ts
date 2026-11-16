@@ -247,9 +247,9 @@ describe('TaoContextMenu', () => {
         expect(event.defaultPrevented).toBe(true);
         expect(menus()).toHaveLength(1);
         expect(menus()[0]!.getAttribute('aria-label')).toBe('Context menu');
-        const anchor = w.find('.tao-context-menu__anchor');
-        expect(anchor.attributes('style')).toContain('left: 120px');
-        expect(anchor.attributes('style')).toContain('top: 80px');
+        // the point is a virtual anchor now: the panel stands at it (4px gap below)
+        expect(menus()[0]!.style.left).toBe('120px');
+        expect(menus()[0]!.style.top).toBe('84px');
     });
 
     it('does not wrap the layout: the content is where it was', async () => {
@@ -281,7 +281,7 @@ describe('TaoContextMenu', () => {
         await rightClick(document.getElementById('inside')!, 10, 10);
         await rightClick(document.getElementById('inside')!, 200, 150);
         expect(menus()).toHaveLength(1);
-        expect(w.find('.tao-context-menu__anchor').attributes('style')).toContain('left: 200px');
+        expect(menus()[0]!.style.left).toBe('200px');
         expect(w.emitted('open')).toEqual([[{ x: 10, y: 10 }], [{ x: 200, y: 150 }]]);
     });
 

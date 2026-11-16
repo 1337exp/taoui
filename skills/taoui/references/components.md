@@ -1081,6 +1081,7 @@ Showcase section: `#popover`
 | `v-model` | `boolean` | uncontrolled | Open state. Without v-model it holds its own |
 | `placement` | `TaoPlacement` | 'bottom-start' | Side and alignment of the panel: top / bottom / left / right and -start / -end. Flips at the edge |
 | `disabled` | `boolean` | false | Does not open |
+| `anchor` | `HTMLElement \| { x, y, width?, height? } \| null` | null | A virtual anchor instead of the trigger: a point of the screen (viewport coordinates) or another element. A point stays put, Esc gives the focus back to what had it before opening |
 
 **Slots, events, notes.** #trigger — the button. default — the panel content. Not a tooltip and not an action menu.
 
@@ -1108,8 +1109,9 @@ Showcase section: `#dropdown`
 |---|---|---|---|
 | `items` | `TaoMenuItem[]` |  | The same entries |
 | `open` | `boolean` |  | Whether it is open. The owner closes it on the close event |
-| `anchor` | `HTMLElement \| null` |  | What the panel hangs from |
-| `placement` | `TaoPlacement` | 'bottom-end' | Side and alignment |
+| `anchor` | `HTMLElement \| { x, y, width?, height? } \| null` |  | What the panel hangs from: an element, or a point of the screen in viewport coordinates (a menu at the pointer, no anchor element). A point follows nothing: the panel is fixed, flips and shifts at the edges, and on close the focus goes back to where it was before opening. Change the point and the menu moves; an element can be swapped for a point and back |
+| `placement` | `TaoPlacement` | 'bottom-end'; 'bottom-start' at a point | Side and alignment. At a point the default puts the top-left corner at it, 4px below (the point is not covered by the first item) |
+| `closeOnScroll` | `boolean` | false | Close when the page or a scroll container scrolls. Off: a panel on an element follows it, a panel at a point stays at its screen point |
 | `label` | `string` | — | Accessible name of the menu |
 
 **Slots, events, notes.** Event select — the item id, close(reason) — the menu asks to be closed (escape / select / outside / tab). The panel for your own shells: a button, a context menu, a menu bar.

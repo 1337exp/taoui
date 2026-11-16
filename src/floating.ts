@@ -1,4 +1,4 @@
-import { nextTick, onBeforeUnmount, ref, toValue, watch, type MaybeRefOrGetter, type Ref } from 'vue';
+import { nextTick, onBeforeUnmount, ref, toValue, watch, type MaybeRefOrGetter } from 'vue';
 
 /**
  * Where a floating panel sits against its anchor: a side, optionally aligned to the start or the end of it
@@ -12,6 +12,41 @@ export type TaoPlacement =
     | 'right' | 'right-start' | 'right-end';
 
 export type TaoSide = 'top' | 'bottom' | 'left' | 'right';
+
+/**
+ * A virtual anchor: a point (or a box) in viewport coordinates instead of an element, for a menu at the pointer.
+ * `width` and `height` default to 0. It follows nothing: the panel is `fixed` and stays where the point is on the screen.
+ * Виртуальный якорь: точка (или рамка) в координатах окна вместо элемента, для меню у указателя.
+ * `width` и `height` по умолчанию 0. Ни за чем не следует: панель `fixed` и стоит в точке экрана.
+ */
+export interface TaoVirtualAnchor {
+    x: number;
+    y: number;
+    width?: number;
+    height?: number;
+}
+
+/** What a panel hangs from: an element or a virtual anchor. / К чему крепится панель: элемент или виртуальный якорь. */
+export type TaoAnchor = HTMLElement | TaoVirtualAnchor;
+
+/** Is it a virtual anchor (not an element)? Safe without `window`. / Виртуальный ли это якорь (не элемент). */
+export function isVirtualAnchor(anchor: TaoAnchor | null | undefined): anchor is TaoVirtualAnchor {
+    return (
+        anchor != null &&
+        typeof anchor === 'object' &&
+        typeof (anchor as TaoVirtualAnchor).x === 'number' &&
+        typeof (anchor as TaoVirtualAnchor).y === 'number' &&
+        typeof (anchor as Partial<HTMLElement>).getBoundingClientRect !== 'function'
+    );
+}
+
+/** The box of an anchor in viewport coordinates. / Рамка якоря в координатах окна. */
+export function anchorRect(anchor: TaoAnchor): { left: number; top: number; width: number; height: number } {
+    if (isVirtualAnchor(anchor)) {
+        return { left: anchor.x, top: anchor.y, width: anchor.width ?? 0, height: anchor.height ?? 0 };
+    }
+    return anchor.getBoundingClientRect();
+}
 
 export interface FloatingInput {
     /** The anchor box in viewport coordinates (getBoundingClientRect). / Рамка якоря. */
@@ -153,8 +188,8 @@ function documentOrigin(): { x: number; y: number } {
  * Держит телепортированную панель рядом с якорем, пока `open`: меряет после рендера и следит за scroll и resize.
  */
 export function useFloating(
-    anchor: Ref<HTMLElement | null>,
-    panel: Ref<HTMLElement | null>,
+    anchor: MaybeRefOrGetter<TaoAnchor | null | undefined>,
+    panel: MaybeRefOrGetter<HTMLElement | null>,
     open: MaybeRefOrGetter<boolean>,
     options: UseFloatingOptions = {},
 ) {
@@ -166,13 +201,13 @@ export function useFloating(
     let strategy: 'fixed' | 'absolute' = 'absolute';
 
     function update() {
-        const anchorEl = anchor.value;
-        const panelEl = panel.value;
+        const anchorEl = toValue(anchor);
+        const panelEl = toValue(panel);
         if (!anchorEl || !panelEl || typeof window === 'undefined') {
             return;
         }
 
-        const rect = anchorEl.getBoundingClientRect();
+        const rect = anchorRect(anchorEl);
         const result = computePosition({
             anchor: rect,
             size: { width: options.matchWidth ? rect.width : panelEl.offsetWidth, height: panelEl.offsetHeight },
@@ -225,10 +260,32 @@ export function useFloating(
             window.addEventListener('resize', onViewportChange);
             window.addEventListener('scroll', onViewportChange, true);
             await nextTick();
-            strategy = options.fixed || (anchor.value && pinnedToScreen(anchor.value)) ? 'fixed' : 'absolute';
+            pickStrategy();
             update();
         },
         { immediate: true },
+    );
+
+    // a virtual anchor is a point on the screen: nothing scrolls it, so the panel is fixed
+    // виртуальный якорь — точка экрана: его ничто не прокручивает, панель fixed
+    function pickStrategy() {
+        const el = toValue(anchor);
+        strategy = options.fixed || isVirtualAnchor(el) || (el && pinnedToScreen(el)) ? 'fixed' : 'absolute';
+    }
+
+    // the anchor moved (a new point) or was swapped (an element for a point): measure again
+    // якорь сдвинулся (новая точка) или заменён (элемент на точку): меряем заново
+    watch(
+        () => {
+            const el = toValue(anchor);
+            return isVirtualAnchor(el) ? `${el.x},${el.y},${el.width ?? 0},${el.height ?? 0}` : el;
+        },
+        () => {
+            if (toValue(open)) {
+                pickStrategy();
+                update();
+            }
+        },
     );
 
     watch(() => toValue(options.placement), () => onViewportChange());

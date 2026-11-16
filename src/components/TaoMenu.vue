@@ -2,13 +2,14 @@
 import { computed, inject, nextTick, onBeforeUnmount, provide, ref, useId, watch } from 'vue';
 import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
 import { useDismiss } from '../dismiss';
-import { useFloating, type TaoPlacement } from '../floating';
+import { isVirtualAnchor, useFloating, type TaoAnchor, type TaoPlacement } from '../floating';
 import { useLayer } from '../layers';
 import { useListNav } from '../listNav';
 import TaoKbd from './TaoKbd.vue';
 import {
     isMenuSelectable,
     menuItemLabel,
+    menuReturnsFocus,
     menuTreeKey,
     type TaoMenuCloseReason,
     type TaoMenuItem,
@@ -26,8 +27,21 @@ const props = withDefaults(
     defineProps<{
         items: TaoMenuItem[];
         open: boolean;
-        /** What the panel hangs from: a button, or the item a submenu opens from. / К чему крепится панель. */
-        anchor: HTMLElement | null;
+        /**
+         * What the panel hangs from: a button, the item a submenu opens from, or a point `{ x, y }` on the screen (viewport
+         * coordinates, optionally `width` / `height`) for a menu at the pointer. A point follows nothing: the panel stays at that
+         * screen point (it is `fixed`), flips and shifts at the edges, and the focus goes back to where it was before the menu
+         * opened. Change the point and the menu moves; swap an element for a point and back.
+         * К чему крепится панель: кнопка, пункт, из которого открыто подменю, или точка `{ x, y }` экрана (координаты окна, при
+         * желании `width` / `height`) для меню у указателя. Точка ни за чем не следует: панель стоит в этой точке экрана
+         * (`fixed`), у краёв переворачивается и сдвигается, а фокус при закрытии возвращается туда, где был до открытия.
+         * Сменили точку — меню переехало; элемент можно менять на точку и обратно.
+         */
+        anchor: TaoAnchor | null;
+        /**
+         * Default `bottom-end` for an element, `bottom-start` for a point (the top-left corner at the point, 4px under it).
+         * По умолчанию `bottom-end` для элемента, `bottom-start` для точки (левый верхний угол у точки, на 4px ниже).
+         */
         placement?: TaoPlacement;
         /** Accessible name of the menu. / Имя меню для скринридера. */
         label?: string;
@@ -38,7 +52,7 @@ const props = withDefaults(
         closeOnScroll?: boolean;
     }>(),
     {
-        placement: 'bottom-end',
+        placement: undefined,
         label: undefined,
         closeOnScroll: false,
     },
@@ -60,6 +74,11 @@ defineSlots<{
     item?(props: { item: TaoMenuItem; id: string; label: string; icon?: string }): unknown;
 }>();
 
+// With a virtual anchor there is no trigger to give the focus back to: the menu remembers what had it before it opened.
+// У виртуального якоря нет кнопки, куда вернуть фокус: меню запоминает, у кого он был до открытия.
+let returnTo: HTMLElement | null = null;
+let lastReason: TaoMenuCloseReason | undefined;
+
 const parent = inject(menuTreeKey, null);
 const isSub = parent !== null;
 const ownRootId = useId();
@@ -70,12 +89,14 @@ const tree: TaoMenuTree = parent ?? {
             emit('select', item.id);
         }
     },
-    closeAll: (reason) => emit('close', reason),
+    closeAll: (reason) => {
+        lastReason = reason;
+        emit('close', reason);
+    },
 };
 provide(menuTreeKey, tree);
 
 const panelRef = ref<HTMLElement | null>(null);
-const anchorRef = computed(() => props.anchor);
 const itemRefs = ref<(HTMLElement | null)[]>([]);
 const activeIndex = ref(-1);
 const openSub = ref(-1);
@@ -88,15 +109,15 @@ const enabled = computed(() => props.items.map(isMenuSelectable));
 const itemId = (index: number) => `${menuId}-item-${index}`;
 const activeId = computed(() => (activeIndex.value >= 0 ? itemId(activeIndex.value) : undefined));
 
-const { style: panelStyle } = useFloating(anchorRef, panelRef, () => props.open, {
-    placement: () => props.placement,
+const { style: panelStyle } = useFloating(() => props.anchor, panelRef, () => props.open, {
+    placement: () => props.placement ?? (isVirtualAnchor(props.anchor) ? 'bottom-start' : 'bottom-end'),
     gap: isSub ? 0 : 4,
 });
 
 // the root closes on a press outside the whole tree, a submenu leaves that to its root
 useDismiss(
     () => props.open && !isSub,
-    () => [props.anchor, ...document.querySelectorAll(`[data-tao-menu-root="${tree.rootId}"]`)],
+    () => [props.anchor instanceof Element ? props.anchor : null, ...document.querySelectorAll(`[data-tao-menu-root="${tree.rootId}"]`)],
     () => tree.closeAll('outside'),
 );
 
@@ -201,15 +222,33 @@ watch(
     async (isOpen) => {
         if (!isOpen) {
             closeSub();
+            restoreFocus();
             return;
         }
+        lastReason = undefined;
+        returnTo = !isSub && isVirtualAnchor(props.anchor) && document.activeElement instanceof HTMLElement ? document.activeElement : null;
         activeIndex.value = enabled.value.indexOf(true);
-        density.value = resolveDensity(props.anchor);
+        density.value = resolveDensity(props.anchor instanceof Element ? props.anchor : null);
         await nextTick();
         panelRef.value?.focus({ preventScroll: true });
     },
     { immediate: true },
 );
+
+function restoreFocus() {
+    const target = returnTo;
+    returnTo = null;
+    if (!target || !target.isConnected) {
+        return;
+    }
+    // went elsewhere on purpose (a press, a scroll): leave the focus; closed from outside with no reason: only if it was in the menu
+    // ушёл нарочно (нажатие, прокрутка): не трогаем; закрыто владельцем без причины: только если фокус был в меню
+    const active = document.activeElement;
+    const lost = !active || active === document.body || Boolean(panelRef.value?.contains(active));
+    if (lastReason ? menuReturnsFocus(lastReason) : lost) {
+        target.focus({ preventScroll: true });
+    }
+}
 
 watch(
     () => props.open && props.closeOnScroll && !isSub,
