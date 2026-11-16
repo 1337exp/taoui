@@ -2,7 +2,7 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
 import { useDismiss } from '../dismiss';
-import { useFloating, type TaoPlacement } from '../floating';
+import { isVirtualAnchor, useFloating, type TaoAnchor, type TaoPlacement } from '../floating';
 import { useLayer } from '../layers';
 import { resolveSize, sizeClass, type TaoSize } from '../size';
 
@@ -14,9 +14,17 @@ const props = withDefaults(
         /** Side and alignment against the trigger; flips when there is no room. / Сторона и выравнивание; при нехватке места переворачивается. */
         placement?: TaoPlacement;
         disabled?: boolean;
+        /**
+         * A virtual anchor: a point `{ x, y }` in viewport coordinates (optionally `width` / `height`) or an element to hang from
+         * instead of the trigger. A point stays at its screen point; the focus goes back to what had it before opening.
+         * Виртуальный якорь: точка `{ x, y }` в координатах окна (при желании `width` / `height`) или элемент вместо триггера.
+         * Точка стоит на своём месте экрана; фокус возвращается туда, где был до открытия.
+         */
+        anchor?: TaoAnchor | null;
     }>(),
     {
         modelValue: undefined,
+        anchor: null,
         placement: 'bottom-start',
         disabled: false,
     },
@@ -60,6 +68,10 @@ function close() {
 }
 
 function focusTrigger() {
+    if (isVirtualAnchor(props.anchor)) {
+        returnTo?.focus?.({ preventScroll: true });
+        return;
+    }
     const root = triggerRef.value;
     const focusable = root?.querySelector<HTMLElement>(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
@@ -67,8 +79,12 @@ function focusTrigger() {
     (focusable ?? root)?.focus?.();
 }
 
-const { style: panelStyle } = useFloating(triggerRef, panelRef, open, { placement: () => props.placement });
-useDismiss(open, () => [triggerRef.value, panelRef.value], close);
+// with a point there is no trigger to return to: remember who had the focus
+// у точки нет триггера, куда вернуть фокус: запоминаем, у кого он был
+let returnTo: HTMLElement | null = null;
+
+const { style: panelStyle } = useFloating(() => props.anchor ?? triggerRef.value, panelRef, open, { placement: () => props.placement });
+useDismiss(open, () => [triggerRef.value, props.anchor instanceof Element ? props.anchor : null, panelRef.value], close);
 useLayer(open, {
     onEscape: () => {
         close();
@@ -78,8 +94,10 @@ useLayer(open, {
 
 watch(open, (isOpen) => {
     if (isOpen) {
-        panelSize.value = resolveSize(triggerRef.value);
-        panelDensity.value = resolveDensity(triggerRef.value);
+        const host = props.anchor instanceof Element ? props.anchor : triggerRef.value;
+        returnTo = isVirtualAnchor(props.anchor) && document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        panelSize.value = resolveSize(host);
+        panelDensity.value = resolveDensity(host);
         void nextTick(() => panelRef.value?.focus({ preventScroll: true }));
     }
 });

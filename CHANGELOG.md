@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.49.0
+
+Nothing to migrate: an `anchor` that is an element works as before.
+
+- **`TaoMenu` opens at a point of the screen.** `anchor` is now an element or a virtual anchor `{ x, y, width?, height? }` in viewport coordinates (types `TaoAnchor`, `TaoVirtualAnchor`, helpers `isVirtualAnchor`, `anchorRect` in `floating.ts`): a menu at a drop point of a canvas or at the pointer needs no empty positioned element any more. With a point the default `placement` is `bottom-start` (the top-left corner 4px under the point, so the click that opened the menu does not hit the first item; with an element it stays `bottom-end`); the panel is `fixed`, flips and shifts at the viewport edges like an anchored one, stays at its screen point on scroll (`closeOnScroll` closes it, as with an element), moves when the point changes, and the point can be swapped for an element and back. With a point the menu gives the focus back, on close, to what had it before opening (not after a press elsewhere or a scroll). Escape, outside press, arrows, type-ahead and submenus are the same as before.
+- **`TaoPopover` takes the same `anchor`** (a point or an element instead of the trigger); Escape gives the focus back to what had it before opening.
+- **`useFloating`** accepts a ref, a getter or a value as the anchor and re-measures when the anchor changes.
+- **`TaoContextMenu`** is built on it: the hidden `.tao-context-menu__anchor` span and its own focus bookkeeping are gone (a private detail, the behaviour is the same).
+- **Recipe, a context menu of your own:** `@contextmenu.prevent="e => { point = { x: e.clientX, y: e.clientY }; open = true }"` and `<TaoMenu :items :open :anchor="point" @close="open = false" />` (the demo of `TaoMenubar / TaoContextMenu` shows it). Not tested in real browsers or on touch.
+
 ## 5.48.0
 
 A link with a class keeps its own colour on hover (it used to turn rose). Three looks change: the text of a field in the light theme is softer, the rose of a link on hover is a shade deeper, the accent text of a palette is a shade darker where it stands on a tint. To give your own link the rose on hover as before: `.my-link:hover { color: var(--tao-color-link-hover); }`.

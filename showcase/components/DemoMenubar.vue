@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { TaoContextMenu, TaoMenubar } from '@1337exp/taoui'
+import { TaoContextMenu, TaoMenu, TaoMenubar } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import Tr from './Tr.vue'
 import { tr } from '../i18n.js'
@@ -13,6 +13,18 @@ const grid = ref(true)
 const snap = ref(false)
 const tool = ref('move')
 const log = ref([])
+
+// a menu at a point of the screen: no anchor element, a point { x, y } in viewport coordinates
+const pointOpen = ref(false)
+const point = ref({ x: 0, y: 0 })
+const pointItems = computed(() => [
+  { id: 'note', label: tr('New note here', 'Новая заметка здесь') },
+  { id: 'link', label: tr('Link to…', 'Связать с…'), items: [{ id: 'depends', label: tr('Depends on', 'Зависит от') }, { id: 'blocks', label: tr('Blocks', 'Блокирует') }] },
+])
+function openAt(event) {
+  point.value = { x: event.clientX, y: event.clientY }
+  pointOpen.value = true
+}
 
 const menubar = computed(() => [
   {
@@ -128,6 +140,42 @@ const menu = [
 &lt;TaoContextMenu :items="contextItems" @select="run"&gt;
   &lt;div class="canvas"&gt;…&lt;/div&gt;
 &lt;/TaoContextMenu&gt;</code></pre>
+          </div>
+
+          <Tr>
+            <template #en>
+              <h3>A menu at a point</h3>
+              <p>
+                <code>TaoMenu</code> hangs from an element or from a point <code>{ x, y }</code> in viewport coordinates (optionally
+                <code>width</code> and <code>height</code>): a drop point on a canvas, a menu of your own. By default the top-left
+                corner is 4px under the point, so the click that opened it does not hit the first item; it flips and shifts at the
+                edges like an anchored menu. A point follows nothing (the panel is fixed; <code>closeOnScroll</code> closes it on a
+                scroll, as with an element), a new point moves the menu, and on close the focus goes back to what had it. A context
+                menu in three lines — listen to <code>contextmenu</code>, prevent the default, open at <code>clientX</code> / <code>clientY</code>
+                (<code>TaoContextMenu</code> above is exactly that). <code>TaoPopover</code> takes the same <code>anchor</code>.
+              </p>
+            </template>
+            <template #ru>
+              <h3>Меню в точке</h3>
+              <p>
+                <code>TaoMenu</code> крепится к элементу или к точке <code>{ x, y }</code> в координатах окна (при желании
+                <code>width</code> и <code>height</code>): точка сброса на холсте, своё меню. По умолчанию левый верхний угол на 4px
+                ниже точки, поэтому клик, открывший меню, не попадает в первый пункт; у краёв оно переворачивается и сдвигается, как
+                меню с якорем. Точка ни за чем не следует (панель fixed; <code>closeOnScroll</code> закрывает её при прокрутке, как у
+                элемента), новая точка двигает меню, при закрытии фокус возвращается тому, у кого он был. Контекстное меню в три
+                строки — слушать <code>contextmenu</code>, отменить действие по умолчанию, открыть в <code>clientX</code> /
+                <code>clientY</code> (<code>TaoContextMenu</code> выше делает ровно это). <code>TaoPopover</code> принимает тот же
+                <code>anchor</code>.
+              </p>
+            </template>
+          </Tr>
+          <div class="menubar-demo__canvas" tabindex="0" @contextmenu.prevent="openAt" @click="openAt">
+            <span>{{ tr('Click or right click anywhere here', 'Клик или правый клик где угодно здесь') }}</span>
+          </div>
+          <TaoMenu :items="pointItems" :open="pointOpen" :anchor="point" @close="pointOpen = false" @select="onSelect" />
+          <div class="code-block">
+            <pre><code>&lt;div @contextmenu.prevent="(e) =&gt; { point = { x: e.clientX, y: e.clientY }; open = true }"&gt;…&lt;/div&gt;
+&lt;TaoMenu :items="items" :open="open" :anchor="point" @close="open = false" @select="run" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

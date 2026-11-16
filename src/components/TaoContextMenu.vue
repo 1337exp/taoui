@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { nextTick, ref } from 'vue';
 import { useLocaleText } from '../locale';
-import { menuReturnsFocus, type TaoMenuCloseReason, type TaoMenuItem } from '../menu';
+import type { TaoMenuItem } from '../menu';
 import TaoMenu from './TaoMenu.vue';
 
 defineOptions({ name: 'TaoContextMenu' });
@@ -47,16 +47,13 @@ defineSlots<{
 }>();
 
 const isOpen = ref(false);
-const anchor = ref<HTMLElement | null>(null);
 const point = ref({ x: 0, y: 0 });
-let returnTo: HTMLElement | null = null;
 
 async function onContextMenu(event: MouseEvent) {
     if (props.disabled || !props.items.length) {
         return;
     }
     event.preventDefault();
-    returnTo = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     // the keyboard sends the event with no pointer: open at the element that has the focus
     const target = event.target instanceof HTMLElement ? event.target : null;
     const fromKeyboard = event.clientX === 0 && event.clientY === 0 && target;
@@ -68,13 +65,10 @@ async function onContextMenu(event: MouseEvent) {
     emit('open', { ...point.value });
 }
 
-function onClose(reason: TaoMenuCloseReason) {
+// TaoMenu gives the focus back itself (a press elsewhere or a scroll leaves it where the user put it)
+// TaoMenu возвращает фокус сам (нажатие в другом месте или прокрутка оставляют его там, где он есть)
+function onClose() {
     isOpen.value = false;
-    // a press elsewhere or a scroll leaves the focus where the user put it / нажатие в другом месте или прокрутка оставляют фокус там, где он есть
-    if (menuReturnsFocus(reason)) {
-        returnTo?.focus?.();
-    }
-    returnTo = null;
 }
 
 </script>
@@ -82,18 +76,10 @@ function onClose(reason: TaoMenuCloseReason) {
 <template>
     <div class="tao-context-menu" @contextmenu="onContextMenu">
         <slot />
-        <!-- the menu hangs from a point: an empty fixed element at the pointer -->
-        <span
-            ref="anchor"
-            class="tao-context-menu__anchor"
-            aria-hidden="true"
-            :style="{ left: `${point.x}px`, top: `${point.y}px` }"
-        />
         <TaoMenu
             :items="items"
             :open="isOpen"
-            :anchor="anchor"
-            placement="bottom-start"
+            :anchor="point"
             :label="menuLabel ?? l10n.menuLabel"
             :close-on-scroll="closeOnScroll"
             @select="emit('select', $event)"
@@ -110,12 +96,5 @@ function onClose(reason: TaoMenuCloseReason) {
 /* it does not take part in the layout: the content looks as if it were not wrapped */
 .tao-context-menu {
     display: contents;
-}
-
-.tao-context-menu__anchor {
-    position: fixed;
-    width: 0;
-    height: 0;
-    pointer-events: none;
 }
 </style>
