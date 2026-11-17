@@ -44,6 +44,9 @@ withDefaults(
     font-weight: 600;
     line-height: 1;
     white-space: nowrap;
+    /* a key is a hint, not content: a double click on a menu row or a button must not select it, and a copied row carries no key
+       клавиша подсказка, а не содержимое: двойной клик по строке меню или кнопке не должен её выделять, а скопированная строка без клавиши */
+    user-select: none;
 }
 
 :where(.tao-kbd--plain) {
