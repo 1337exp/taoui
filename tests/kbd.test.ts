@@ -31,6 +31,12 @@ describe('TaoKbd', () => {
         expect(css).toContain(':where(.tao-kbd--plain)');
     });
 
+    it('is not selectable (a hint, not content); both variants, the plain one inherits the rule', () => {
+        const css = readFileSync('src/components/TaoKbd.vue', 'utf8');
+        expect(css).toMatch(/:where\(\.tao-kbd\) \{[^}]*user-select: none/);
+        expect(css).not.toMatch(/:where\(\.tao-kbd--plain\) \{[^}]*user-select: auto/);
+    });
+
     it('a neutral tone has a grey wash, not the accent one', () => {
         const css = readFileSync('src/styles/contexts/tone.css', 'utf8');
         const neutral = css.match(/\.tao-tone-neutral \{[\s\S]*?\n\}/)![0];

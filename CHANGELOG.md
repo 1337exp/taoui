@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.49.1
+
+Nothing to migrate. To make a key selectable again (a page of documentation that wants it copied): `.my-doc .tao-kbd { user-select: text; }`.
+
+- **`TaoKbd` is not selectable.** A key is a hint, not content: a double click on a menu row or a button no longer selects the key with it, and a copied row carries no key. `user-select: none` sits on the zero-specificity `:where(.tao-kbd)` rule, so both `cap` and `plain` have it and the place that holds a key can override it.
+
 ## 5.49.0
 
 Nothing to migrate: an `anchor` that is an element works as before.
