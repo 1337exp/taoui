@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { TaoButton, TaoPopover, TaoScrollTop, TaoSegmented, TaoSegmentedOption, TaoSelect, TaoTag, TaoThemeToggle, readTaoMode, resolveTaoMode, taoPalettes } from '@1337exp/taoui'
+import { TaoButton, TaoLanguageSwitch, TaoPopover, TaoScrollTop, TaoSegmented, TaoSegmentedOption, TaoSelect, TaoTag, TaoThemeToggle, readTaoMode, resolveTaoMode, taoPalettes } from '@1337exp/taoui'
 import { bookById, bookOfSection, books } from './books/index.js'
 import BookView from './books/BookView.vue'
 import { lang, LANGS, tr } from './i18n.js'
@@ -218,9 +218,6 @@ onBeforeUnmount(() => {
       <div class="showcase-bar__controls">
         <!-- a phone keeps only the theme in the bar (it is what you test while you scroll); the rest folds into the popover / телефон оставляет в панели только тему (её проверяют на ходу), остальное складывается в поповер -->
         <template v-if="!narrow">
-          <TaoSegmented :model-value="lang" :aria-label="tr('Language', 'Язык')" @update:model-value="lang = $event">
-            <TaoSegmentedOption v-for="code in LANGS" :key="code" :value="code">{{ code.toUpperCase() }}</TaoSegmentedOption>
-          </TaoSegmented>
           <span class="showcase-bar__palette">
             <span class="palette-select">
               <TaoSelect :model-value="palette" :options="paletteOptions" :clearable="false" :aria-label="tr('Palette', 'Палитра')" @update:model-value="setPalette" />
@@ -239,12 +236,6 @@ onBeforeUnmount(() => {
           </template>
           <div class="showcase-view">
             <template v-if="narrow">
-              <div class="showcase-view__row">
-                <span class="showcase-view__label">{{ tr('Language', 'Язык') }}</span>
-                <TaoSegmented :model-value="lang" :aria-label="tr('Language', 'Язык')" @update:model-value="lang = $event">
-                  <TaoSegmentedOption v-for="code in LANGS" :key="code" :value="code">{{ code.toUpperCase() }}</TaoSegmentedOption>
-                </TaoSegmented>
-              </div>
               <div class="showcase-view__row">
                 <span class="showcase-view__label">{{ tr('Palette', 'Палитра') }}</span>
                 <span class="showcase-bar__palette">
@@ -271,7 +262,8 @@ onBeforeUnmount(() => {
             </div>
           </div>
         </TaoPopover>
-        <!-- last in the row: it is a switch, not a setting of the page, so it does not stand between the settings / последним в ряду: это переключатель, а не настройка страницы, он не стоит среди настроек -->
+        <!-- the two switches come last in the row: they are not settings of the page, so they do not stand between the settings; a phone gets only the globe. The language is written to <html lang> by i18n.js / два переключателя последними в ряду: это не настройки страницы, они не стоят среди настроек; на телефоне только глобус. Язык в <html lang> пишет i18n.js -->
+        <TaoLanguageSwitch :model-value="lang" :languages="LANGS" :icon-only="narrow" :apply="false" @update:model-value="lang = $event" />
         <TaoThemeToggle :model-value="choice" system :apply="false" @update:model-value="setTheme" />
       </div>
       <!-- the book puts its page menu button here on a phone (books/BookView.vue) / книга кладёт сюда кнопку меню страниц на телефоне -->

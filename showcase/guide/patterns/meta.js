@@ -295,6 +295,26 @@ export const patterns = [
     },
   },
   {
+    id: 'language-switch',
+    title: { en: 'Switching the language', ru: 'Переключение языка' },
+    when: {
+      en: 'The person can change the language of the interface: a header, the footer of a side panel, a settings page.',
+      ru: 'Человек может сменить язык интерфейса: шапка, подвал боковой панели, страница настроек.',
+    },
+    rule: {
+      en: 'Use `TaoLanguageSwitch`: a globe (`tao-globe`) that opens a list of the languages, each under its own name (`Русский`, `Deutsch`, `日本語`), the current one checked. Beside the globe it shows the name of the current language where there is room, and `icon-only` where there is not (a phone). Put it next to the theme toggle: the two are switches of the whole interface, not settings of a screen. The switch writes `<html lang>` and says the code in `v-model`; the texts, where the choice is stored and `setTaoLocale` for the built-in texts are the app\'s. Not flags, not codes in a `TaoSegmented`.',
+      ru: 'Брать `TaoLanguageSwitch`: глобус (`tao-globe`), который открывает список языков, каждый под своим названием (`Русский`, `Deutsch`, `日本語`), текущий отмечен. Рядом с глобусом он показывает название текущего языка, где есть место, и `icon-only`, где нет (телефон). Ставить рядом с переключателем темы: оба — переключатели всего интерфейса, а не настройки экрана. Переключатель пишет `<html lang>` и говорит код в `v-model`; тексты, место хранения выбора и `setTaoLocale` для встроенных текстов — дело приложения. Не флаги и не коды в `TaoSegmented`.',
+    },
+    wrong: {
+      en: 'Five two-letter codes in a segmented control: it fills the bar and grows with every new language.',
+      ru: 'Пять двухбуквенных кодов в сегментном переключателе: он занимает всю панель и растёт с каждым новым языком.',
+    },
+    why: {
+      en: 'Each language is named in itself because a person who cannot read the current one must still find theirs: «Deutsch» is found by a German speaker on a page in any language, «German» only by someone who reads the page already. The W3C Internationalization guidance says the same, and adds why not flags: a flag is a country, and a language is not (many countries share one, and many have several). A code (`RU`, `JA`) is a name for programmers. A segmented control is for 2 to 5 short options that are compared at a glance (see «A segmented switch: short captions»), and a list of languages only grows, so it is a menu from the start. The globe is the sign everyone has learned for it, and `<html lang>` is what the browser, a screen reader and hyphenation read: it is easy to forget by hand, so the switch writes it.',
+      ru: 'Каждый язык назван на себе, потому что человек, который не читает текущий, всё равно должен найти свой: «Deutsch» найдёт немец на странице на любом языке, «German» — только тот, кто уже читает страницу. То же говорит руководство W3C по интернационализации и добавляет, почему не флаги: флаг — это страна, а язык не страна (один язык у многих стран, а у многих стран несколько языков). Код (`RU`, `JA`) — название для программистов. Сегментный переключатель — для 2–5 коротких вариантов, которые сравнивают одним взглядом (см. «Сегментный переключатель: короткие подписи»), а список языков только растёт, поэтому сразу меню. Глобус — знак, который все уже выучили, а `<html lang>` читают браузер, скринридер и переносы: руками его легко забыть, поэтому переключатель пишет его сам.',
+    },
+  },
+  {
     id: 'destructive',
     title: { en: 'A destructive action', ru: 'Разрушающее действие' },
     when: {

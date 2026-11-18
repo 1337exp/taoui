@@ -214,6 +214,38 @@ Density is added on top of the size (the height and the padding, not the font), 
 
 **Why.** A segmented switch is a row of equal-width buttons that you compare at a glance, and that only works when the options are short and alike. Apple's Human Interface Guidelines ask for no more than about five segments on iPhone, for segments of similar size ("it doesn't look good if content fills some segments but not others") and for nouns as labels; the GitLab Pajamas design system wants 2 or 3 options, never over 5, with a one-word label, and sends longer lists to a select. One long caption has two bad outcomes: it widens every segment (all are equal) until the control no longer fits, or it wraps, and then the user reads the options instead of seeing them, which is the job of a radio list. The cause is almost always in the design, not in the component, so the cheap fix is a shorter word and a legend, before any code.
 
+## Switching the language
+
+**When.** The person can change the language of the interface: a header, the footer of a side panel, a settings page.
+
+**Rule.** Use `TaoLanguageSwitch`: a globe (`tao-globe`) that opens a list of the languages, each under its own name (`Русский`, `Deutsch`, `日本語`), the current one checked. Beside the globe it shows the name of the current language where there is room, and `icon-only` where there is not (a phone). Put it next to the theme toggle: the two are switches of the whole interface, not settings of a screen. The switch writes `<html lang>` and says the code in `v-model`; the texts, where the choice is stored and `setTaoLocale` for the built-in texts are the app's. Not flags, not codes in a `TaoSegmented`.
+
+**Do:**
+
+```vue
+<TaoFlex align="center" :gap="8">
+  <TaoLanguageSwitch v-model="lang" :languages="['en', 'ru', 'de', 'fr', 'ja']" />
+  <TaoThemeToggle :apply="false" />
+</TaoFlex>
+```
+
+**Don't** (Five two-letter codes in a segmented control: it fills the bar and grows with every new language):
+
+```vue
+<TaoFlex align="center" :gap="8">
+  <TaoSegmented v-model="lang" aria-label="Language">
+    <TaoSegmentedOption value="en">EN</TaoSegmentedOption>
+    <TaoSegmentedOption value="ru">RU</TaoSegmentedOption>
+    <TaoSegmentedOption value="de">DE</TaoSegmentedOption>
+    <TaoSegmentedOption value="fr">FR</TaoSegmentedOption>
+    <TaoSegmentedOption value="ja">JA</TaoSegmentedOption>
+  </TaoSegmented>
+  <TaoThemeToggle :apply="false" />
+</TaoFlex>
+```
+
+**Why.** Each language is named in itself because a person who cannot read the current one must still find theirs: «Deutsch» is found by a German speaker on a page in any language, «German» only by someone who reads the page already. The W3C Internationalization guidance says the same, and adds why not flags: a flag is a country, and a language is not (many countries share one, and many have several). A code (`RU`, `JA`) is a name for programmers. A segmented control is for 2 to 5 short options that are compared at a glance (see «A segmented switch: short captions»), and a list of languages only grows, so it is a menu from the start. The globe is the sign everyone has learned for it, and `<html lang>` is what the browser, a screen reader and hyphenation read: it is easy to forget by hand, so the switch writes it.
+
 ## A destructive action
 
 **When.** Delete, discard, reset: something that cannot be taken back.

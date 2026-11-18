@@ -10,6 +10,7 @@ export const navGroups = [
       { id: 'copy', label: 'TaoCopy' },
       { id: 'tour', label: 'TaoTour', aliases: ['tour', 'onboarding', 'coach', 'coachmark', 'spotlight', 'guide', 'walkthrough', 'тур', 'обучение', 'подсказки', 'гайд'] },
       { id: 'theme-toggle', label: 'TaoThemeToggle', aliases: ['theme', 'dark', 'light', 'mode', 'switch', 'тема', 'тёмная', 'светлая', 'режим', 'переключатель'] },
+      { id: 'language-switch', label: 'TaoLanguageSwitch', aliases: ['language', 'lang', 'locale', 'i18n', 'globe', 'translate', 'язык', 'локаль', 'глобус', 'перевод'] },
       { id: 'marquee', label: 'TaoMarquee', aliases: ['marquee', 'ticker', 'running line', 'бегущая строка'] },
     ],
   },

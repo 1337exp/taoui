@@ -81,6 +81,16 @@ describe('Guide patterns', () => {
         expect(bad.every((c) => c.split(/\s+/).length > 4)).toBe(true);
     });
 
+    it('a language do is the switch component, the don\'t is codes in a segmented control', () => {
+        const good = templateOf(read('language-switch.good.vue'));
+        const bad = templateOf(read('language-switch.bad.vue'));
+        expect(good).toContain('<TaoLanguageSwitch');
+        expect(good).not.toContain('TaoSegmented');
+        expect(bad).not.toContain('<TaoLanguageSwitch');
+        expect(bad.match(/<TaoSegmentedOption\b/g)?.length).toBeGreaterThan(4);
+        expect(bad.match(/>[A-Z]{2}</g)?.length).toBe(bad.match(/<TaoSegmentedOption\b/g)?.length);
+    });
+
     it('a destructive do puts the danger on the button that destroys; the don\'t puts it on the safe one', () => {
         const good = buttons(templateOf(read('destructive.good.vue')));
         const bad = buttons(templateOf(read('destructive.bad.vue')));

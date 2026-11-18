@@ -3,6 +3,7 @@ import DemoButton from '../components/DemoButton.vue'
 import DemoCard from '../components/DemoCard.vue'
 import DemoCopy from '../components/DemoCopy.vue'
 import DemoThemeToggle from '../components/DemoThemeToggle.vue'
+import DemoLanguageSwitch from '../components/DemoLanguageSwitch.vue'
 import DemoTour from '../components/DemoTour.vue'
 import DemoMarquee from '../components/DemoMarquee.vue'
 import DemoInput from '../components/DemoInput.vue'
@@ -70,6 +71,7 @@ export const demoById = {
   'card': DemoCard,
   'copy': DemoCopy,
   'theme-toggle': DemoThemeToggle,
+  'language-switch': DemoLanguageSwitch,
   'tour': DemoTour,
   'marquee': DemoMarquee,
   'input': DemoInput,

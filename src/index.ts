@@ -16,6 +16,7 @@ import TaoSpoiler from './components/TaoSpoiler.vue';
 import TaoSpoilerGroup from './components/TaoSpoilerGroup.vue';
 import TaoCopy from './components/TaoCopy.vue';
 import TaoThemeToggle from './components/TaoThemeToggle.vue';
+import TaoLanguageSwitch from './components/TaoLanguageSwitch.vue';
 import TaoTour from './components/TaoTour.vue';
 import TaoContainer from './components/TaoContainer.vue';
 import TaoFlex from './components/TaoFlex.vue';
@@ -116,6 +117,7 @@ const components = [
     TaoSpoilerGroup,
     TaoCopy,
     TaoThemeToggle,
+    TaoLanguageSwitch,
     TaoTour,
     TaoContainer,
     TaoFlex,
@@ -232,6 +234,7 @@ export {
     TaoSpoilerGroup,
     TaoCopy,
     TaoThemeToggle,
+    TaoLanguageSwitch,
     TaoTour,
     TaoContainer,
     TaoFlex,
@@ -350,6 +353,8 @@ export { resolveTourTarget } from './tour';
 export type { TaoTourStep } from './tour';
 export { readTaoMode, applyTaoMode, resolveTaoMode, systemTaoMode } from './themeMode';
 export type { TaoMode, TaoModeChoice } from './themeMode';
+export { taoLanguageName } from './languageName';
+export type { TaoLanguageOption } from './languageName';
 export type { TaoPresetOption, TaoPresetValue } from './presetInput';
 export { moveTarget } from './docTabs';
 export type { TaoDocTab } from './docTabs';

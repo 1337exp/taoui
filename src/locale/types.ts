@@ -68,6 +68,8 @@ export interface TaoLocale {
     tour: { nextLabel: string; prevLabel: string; skipLabel: string; doneLabel: string; progressLabel: string };
     presetInput: { nextLabel: string; prevLabel: string };
     themeToggle: { toLightLabel: string; toDarkLabel: string; toSystemLabel: string };
+    /** The name of the language switch: the label of its button and of its list. / Имя переключателя языка: подпись кнопки и списка. */
+    languageSwitch: { label: string };
     loader: { label: string };
     date: {
         placeholder: string;

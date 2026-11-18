@@ -45,6 +45,7 @@ const props: Record<string, Record<string, unknown>> = {
     TaoColorPicker: { modelValue: '#ff8800' },
     TaoCopy: { text: 'copy me' },
     TaoThemeToggle: {},
+    TaoLanguageSwitch: { languages: ['ru', 'en'], modelValue: 'ru' },
     TaoTour: { step: { id: 'a', target: '#x', title: 'T', text: 'text' }, index: 0, count: 2 },
     TaoSparkline: { values: [1, 3, null, 2], area: true, dot: true, label: 'Trend' },
     TaoMeter: { value: 70, low: 20, high: 80, label: 'Disk', valueText: true },

@@ -35,12 +35,22 @@ describe('showcase settings bar', () => {
         const source = app as string;
         const bar = source.slice(source.indexOf('<div ref="barRef"'), source.indexOf('<Suspense>'));
         const segmented = bar.match(/<TaoSegmented [^>]*>/g) ?? [];
-        // language (in the bar, and in the popover on a phone), density, frames / язык (в панели и в поповере на телефоне), плотность, рамки
-        expect(segmented.length).toBe(4);
+        // density and frames; the language is a TaoLanguageSwitch since 5.50.0 (its name is «Language: …» by itself)
+        // плотность и рамки; язык с 5.50.0 — TaoLanguageSwitch (его имя «Язык: …» он даёт сам)
+        expect(segmented.length).toBe(2);
         for (const tag of segmented) {
             expect(tag).toContain(':aria-label=');
             expect(tag).not.toContain(':legend=');
         }
+    });
+
+    it('the language is a globe switch beside the theme, the globe alone on a phone, outside the popover', () => {
+        const source = app as string;
+        const bar = source.slice(source.indexOf('<div ref="barRef"'), source.indexOf('<Suspense>'));
+        const popover = bar.slice(bar.indexOf('<TaoPopover'), bar.indexOf('</TaoPopover>'));
+        expect(bar).toMatch(/<TaoLanguageSwitch [^>]*:icon-only="narrow"/);
+        expect(popover).not.toContain('TaoLanguageSwitch');
+        expect(bar.indexOf('<TaoLanguageSwitch')).toBeLessThan(bar.indexOf('<TaoThemeToggle'));
     });
 
     it('the brand in the bar carries the version of the build, so it is clear what you work with', () => {
