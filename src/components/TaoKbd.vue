@@ -51,6 +51,9 @@ withDefaults(
 
 :where(.tao-kbd--plain) {
     display: inline;
+    /* no box: in a flex row (a menu, a command list) the kbd becomes a block, and a leftover height would pin the text to the top of it
+       без ящика: во flex-строке (меню, список команд) kbd становится блоком, и оставшаяся высота прижмёт текст к его верху */
+    height: auto;
     min-width: 0;
     padding: 0;
     border-radius: 0;
