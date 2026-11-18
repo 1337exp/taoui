@@ -75,6 +75,16 @@ describe('TaoLanguageSwitch', () => {
         w.unmount();
     });
 
+    // 5.50.0: every name is marked with its own language, so a screen reader reads «Deutsch» in German
+    it('marks each name with its own language', async () => {
+        const w = mountSwitch({ languages: ['ru', 'en', 'de'] });
+        await w.find('button').trigger('click');
+        await nextTick();
+        const radios = [...document.querySelectorAll('[role="menuitemradio"]')];
+        expect(radios.map((r) => r.getAttribute('lang'))).toEqual(['ru', 'en', 'de']);
+        w.unmount();
+    });
+
     it('picking the language in use says nothing', async () => {
         const w = mountSwitch();
         await w.find('button').trigger('click');
