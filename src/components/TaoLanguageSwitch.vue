@@ -58,7 +58,7 @@ const current = computed(() => props.modelValue ?? own.value ?? options.value[0]
 const currentName = computed(() => options.value.find((o) => o.code === current.value)?.label ?? taoLanguageName(current.value));
 
 const items = computed<TaoMenuItem[]>(() =>
-    options.value.map((o) => ({ type: 'radio', id: o.code, group: 'language', label: o.label, checked: o.code === current.value })),
+    options.value.map((o) => ({ type: 'radio', id: o.code, group: 'language', label: o.label, lang: o.code, checked: o.code === current.value })),
 );
 
 function write(code: string) {

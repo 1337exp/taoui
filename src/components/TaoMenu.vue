@@ -291,7 +291,7 @@ onBeforeUnmount(() => clearTimeout(closeSubTimer));
         >
             <template v-for="(item, index) in items" :key="'id' in item ? item.id : `${item.type}-${index}`">
                 <div v-if="item.type === 'separator'" class="tao-menu__separator" role="separator"></div>
-                <div v-else-if="item.type === 'label'" class="tao-menu__label" role="presentation">{{ item.label }}</div>
+                <div v-else-if="item.type === 'label'" class="tao-menu__label" role="presentation" :lang="item.lang">{{ item.label }}</div>
                 <template v-else>
                     <div
                         :id="itemId(index)"
@@ -303,6 +303,7 @@ onBeforeUnmount(() => clearTimeout(closeSubTimer));
                             'tao-menu__item--checked': 'checked' in item && item.checked,
                         }"
                         :role="role(item)"
+                        :lang="item.lang"
                         :aria-checked="'checked' in item ? item.checked : undefined"
                         :aria-disabled="item.disabled || undefined"
                         :aria-haspopup="'items' in item && item.items ? 'menu' : undefined"

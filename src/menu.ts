@@ -10,6 +10,8 @@ export interface TaoMenuActionItem {
     type?: 'item';
     id: string;
     label: string;
+    /** The language of the label when it differs from the page (`lang` of the row): a screen reader reads it in that language. / Язык подписи, если он не язык страницы (`lang` строки): скринридер читает её на этом языке. */
+    lang?: string;
     /** Icon name for TaoIcon. / Имя иконки для TaoIcon. */
     icon?: string;
     /** Shortcut as a ready string to show («Ctrl+S», «⌘S»); the menu does not parse or listen to it. / Готовая строка для показа. */
@@ -23,6 +25,8 @@ export interface TaoMenuCheckboxItem {
     type: 'checkbox';
     id: string;
     label: string;
+    /** The language of the label when it differs from the page (`lang` of the row): a screen reader reads it in that language. / Язык подписи, если он не язык страницы (`lang` строки): скринридер читает её на этом языке. */
+    lang?: string;
     checked: boolean;
     shortcut?: string;
     disabled?: boolean;
@@ -34,6 +38,8 @@ export interface TaoMenuRadioItem {
     /** Radios of one group: the checked one is the value. / Радио одной группы. */
     group: string;
     label: string;
+    /** The language of the label when it differs from the page (`lang` of the row): a screen reader reads it in that language. / Язык подписи, если он не язык страницы (`lang` строки): скринридер читает её на этом языке. */
+    lang?: string;
     checked: boolean;
     shortcut?: string;
     disabled?: boolean;
@@ -43,6 +49,8 @@ export interface TaoMenuRadioItem {
 export interface TaoMenuLabelItem {
     type: 'label';
     label: string;
+    /** The language of the label when it differs from the page (`lang` of the row): a screen reader reads it in that language. / Язык подписи, если он не язык страницы (`lang` строки): скринридер читает её на этом языке. */
+    lang?: string;
 }
 
 export interface TaoMenuSeparatorItem {
