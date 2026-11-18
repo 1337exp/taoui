@@ -15,6 +15,12 @@ describe('icon registry', () => {
         }
     });
 
+    // 5.50.0: the language of the interface has an icon, beside sun / moon / monitor for the theme
+    it('has a globe for the language switch', () => {
+        expect(taoIconNames).toContain('tao-globe');
+        expect(resolveTaoIcon('tao-globe')?.body).toContain('<circle cx="12" cy="12" r="9"/>');
+    });
+
     it('a name without the prefix is not a built-in icon', () => {
         expect(resolveTaoIcon('check')).toBeUndefined();
         expect(resolveTaoIcon('tao-no-such-icon')).toBeUndefined();

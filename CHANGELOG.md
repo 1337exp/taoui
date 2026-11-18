@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.50.0
+
+Nothing to migrate: one icon is added. 5.49.2 was not published on its own, so its changes (the captions of `TaoSegmented`, the Guide pattern) come with this version.
+
+- **Icon `tao-globe`:** the language of the interface, beside `tao-sun`, `tao-moon` and `tao-monitor` for the theme. A switch of the language is a globe that opens a menu of the languages by their own names (`Русский`, `English`), not a segmented `RU | EN`: a segmented control holds 2 to 5 short options (see the Guide, «A segmented switch: short captions»), and a language list only grows. Put the current language's name beside the globe where there is room, and give the button an `aria-label`: `<TaoDropdownMenu :items="languages" menu-label="Language"><template #button><TaoIcon name="tao-globe" /> Русский</template></TaoDropdownMenu>`.
+
 ## 5.49.2
 
 Nothing to migrate. A segmented control whose captions fit looks and measures as before; one that did not fit used to lose its last words, and now wraps them.
