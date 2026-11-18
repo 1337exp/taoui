@@ -132,7 +132,7 @@ library and feed it `taoChartTheme()` / `watchTaoChartTheme(apply)`; do not buil
 
 ## Icons
 
-`<TaoIcon name="tao-check" />`: 43 built-in SVG icons under the `tao-` prefix (incl. `tao-settings`, `tao-edit`, `tao-trash`, `tao-bell`, `tao-tag`, `tao-repeat`, `tao-undo`, `tao-redo`, `tao-sun`, `tao-moon`, `tao-monitor`) (`taoIconNames`). Your own:
+`<TaoIcon name="tao-check" />`: 44 built-in SVG icons under the `tao-` prefix (incl. `tao-settings`, `tao-edit`, `tao-trash`, `tao-bell`, `tao-tag`, `tao-repeat`, `tao-undo`, `tao-redo`, `tao-sun`, `tao-moon`, `tao-monitor`, `tao-globe` for the language) (`taoIconNames`). Your own:
 `registerTaoIcons({ rocket: { body: '<path d="…"/>' } })` on a 24 grid with `currentColor`; add `grid: true` for icons made
 only of straight lines through the middle (a plus), so they stay crisp when small. Any other name renders the class
 `icon-<name>` for an icon font you bring.

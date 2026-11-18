@@ -132,7 +132,7 @@
 - **TaoScrubber** — play / pause, a slider over time with event marks, a “time / length” label. Does not advance time by itself: drive `v-model` with your own clock
 - **TaoLoader** — the wait whose end is unknown: `variant` `dots` (default) / `ring` / `pulse` / `diamonds`, `tone`, `size` (a number or small / medium / large), says "Loading" to a screen reader (`label`), breathes under reduced motion; `TaoButton loading` wears the same ring
 - **TaoImage** — `<img>` wrapper: fade-in and placeholder. `lazy` turns on native `loading="lazy"`
-- **TaoIcon** — SVG icons (43 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)
+- **TaoIcon** — SVG icons (44 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)
 
 ### Navigation
 
