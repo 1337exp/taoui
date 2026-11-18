@@ -94,7 +94,7 @@
 - **TaoChecklist** — checkboxes with one model (the checked values): `select-all` with a mixed state, a `counter` «3 of 5», `strike` for a to-do list (a look only, the checkbox tells the state), `description` per item. A fieldset: in a `TaoFormField` the group takes the label and the error
 - **TaoSwitch** — boolean toggle (`role="switch"`)
 - **TaoRadio** / **TaoRadioGroup** — classic radios: longer labels, can stack vertically
-- **TaoSegmented** / **TaoSegmentedOption** — compact exclusive choice among 2–5 short options. Not tabs
+- **TaoSegmented** / **TaoSegmentedOption** — compact exclusive choice among 2–5 short options. Not tabs. A caption that does not fit wraps to a second line, then ends in an ellipsis (the full text is the hover `title`)
 - **TaoSelect** — dropdown with keyboard, same chrome as Input. `size` (`small` / `medium` / `large`, same scale as Button). Clear via “Clear” in the list or Delete; `clearable="false"` turns clearing off, `#clear` replaces the row content
 - **TaoPresetInput** — a field with presets, as in an editor (font size, zoom): a compact input, a block of two arrows and a narrow pop-up. The arrows walk the `options` (`default: true` marks what an empty field means, «Auto»; `loop` joins the ends), a number typed by hand is a value too (`custom`); Tab applies and goes on
 - **TaoCombobox** — Select with a field: type to filter, `allow-create` writes a custom value into `v-model`, `create` lets the parent append the list. Takes the same `size`, `clearable` and `#clear` as `TaoSelect`
