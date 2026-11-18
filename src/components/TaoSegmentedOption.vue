@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
-import { computed, inject, useId, useSlots } from 'vue';
+import { computed, inject, ref, useId, useSlots } from 'vue';
 import { type TaoRadioValue } from '../radio';
 import { segmentedKey } from '../segmented';
 import { slotHas } from '../slots';
@@ -62,6 +62,16 @@ const countLabel = computed(() => {
     return String(props.count);
 });
 
+const labelRef = ref<HTMLElement | null>(null);
+/** The full caption, only while the label is cut (wrapped past two lines): the native tooltip is the way to read the rest. / Полная подпись, только пока подпись обрезана: остаток читают во всплывающей подсказке. */
+const clippedTitle = ref<string | undefined>(undefined);
+
+function syncTitle() {
+    const el = labelRef.value;
+    const cut = Boolean(el) && (el!.scrollHeight > el!.clientHeight + 1 || el!.scrollWidth > el!.clientWidth + 1);
+    clippedTitle.value = cut ? (el!.textContent ?? '').trim() || undefined : undefined;
+}
+
 function onChange() {
     if (isDisabled.value) {
         return;
@@ -86,6 +96,8 @@ function onChange() {
             'tao-segmented-option--icon-only': isIconOnly,
         }"
         :for="localId"
+        :title="clippedTitle"
+        @mouseenter="syncTitle"
     >
         <input
             :id="localId"
@@ -102,7 +114,7 @@ function onChange() {
             <span v-if="icon || has('icon')" class="tao-segmented-option__icon" aria-hidden="true">
                 <slot name="icon"><TaoIcon :name="icon" /></slot>
             </span>
-            <span v-if="hasLabel" class="tao-segmented-option__label">
+            <span v-if="hasLabel" ref="labelRef" class="tao-segmented-option__label">
                 <slot>{{ label }}</slot>
             </span>
             <span v-else-if="ariaLabel" class="tao-segmented-option__sr">{{ ariaLabel }}</span>
@@ -116,8 +128,13 @@ function onChange() {
     position: relative;
     z-index: 1;
     display: inline-flex;
-    flex: 0 0 auto;
-    align-items: center;
+    /* an option keeps its width while the track has room, and gives way only when the track is at its `max-width: 100%`: the label
+       then wraps and clamps (below) instead of being cut off by the track
+       вариант держит ширину, пока у дорожки есть место, и уступает, только когда дорожка упёрлась в `max-width: 100%`: подпись
+       тогда переносится и обрезается многоточием (ниже), а не срезается дорожкой */
+    flex: 0 1 auto;
+    /* the face fills the option, so a focus ring and the hit area are as tall as a two-line neighbour / грань заполняет вариант: кольцо фокуса и зона нажатия той же высоты, что у двухстрочного соседа */
+    align-items: stretch;
     min-width: var(--tao-segmented-option-min-width, 0);
     cursor: pointer;
     user-select: none;
@@ -134,9 +151,9 @@ function onChange() {
     font-family: inherit;
     font-weight: 500;
     line-height: 1.25;
-    white-space: nowrap;
     /* the track adds 6px: padding 2 + border 1 on each side / дорожка добавляет 6px */
     min-height: calc(var(--tao-control-height) - 6px);
+    min-width: 0;
     padding: 0 var(--tao-control-padding-x);
     font-size: var(--tao-control-font-size-secondary);
     transition:
@@ -161,6 +178,17 @@ function onChange() {
 .tao-segmented-option__label {
     min-width: 0;
     line-height: 1.25;
+    /* A caption that does not fit wraps to a second line, then ends in an ellipsis (the full text is the `title`, see the script).
+       When it fits, it is one line as before: the natural width of a wrapping text is its width on one line.
+       Подпись, которая не влезла, переносится на вторую строку и кончается многоточием (полный текст — в `title`, см. скрипт).
+       Если влезает — одна строка, как раньше: естественная ширина переносимого текста — его ширина в одну строку. */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    text-align: center;
 }
 
 .tao-segmented-option__count {

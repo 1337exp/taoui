@@ -11,6 +11,7 @@ defineOptions({ name: 'DemoSegmented' })
 const period = ref('month')
 const layoutView = ref('list')
 const inboxFilter = ref('all')
+const frequency = ref('month')
 </script>
 
 <template>
@@ -89,6 +90,32 @@ const inboxFilter = ref('all')
             </TaoSegmented>
           </div>
     
+          <h3>{{ tr('When the captions do not fit', 'Когда подписи не влезают') }}</h3>
+          <Tr>
+            <template #en>
+              <p>
+                A caption wraps to a second line, then ends in an ellipsis; the hover shows the full text.
+                It is a safety net, not a layout: if it happens in the design, use <code>TaoRadioGroup</code> or a shorter caption.
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                Подпись переносится на вторую строку, затем кончается многоточием; при наведении виден полный текст.
+                Это страховка, а не вёрстка: если так выходит в макете — <code>TaoRadioGroup</code> или подпись покороче.
+              </p>
+            </template>
+          </Tr>
+          <div class="demo-stack" style="max-width: 260px">
+            <TaoSegmented v-model="frequency" :legend="tr('How often', 'Как часто')" block>
+              <TaoSegmentedOption value="month">{{ tr('every month without fail', 'каждый месяц без пропусков') }}</TaoSegmentedOption>
+              <TaoSegmentedOption value="once">{{ tr('once', 'один раз') }}</TaoSegmentedOption>
+            </TaoSegmented>
+            <TaoSegmented v-model="frequency" :legend="tr('Not block', 'Без block')">
+              <TaoSegmentedOption value="month">{{ tr('every month without fail', 'каждый месяц без пропусков') }}</TaoSegmentedOption>
+              <TaoSegmentedOption value="once">{{ tr('once', 'один раз') }}</TaoSegmentedOption>
+            </TaoSegmented>
+          </div>
+
           <div class="code-block">
             <pre><code>&lt;TaoSegmented v-model="period" legend="{{ tr('Period', 'Период') }}"&gt;
   &lt;TaoSegmentedOption value="week"&gt;{{ tr('Week', 'Неделя') }}&lt;/TaoSegmentedOption&gt;

@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.49.2
+
+Nothing to migrate. A segmented control whose captions fit looks and measures as before; one that did not fit used to lose its last words, and now wraps them.
+
+- **`TaoSegmented`: a caption that does not fit is no longer cut off.** When the track hits `max-width: 100%` (a narrow column, a long Russian caption beside a short one) the options give way: the label wraps to a second line, then ends in an ellipsis, and the option shows the full text as a native `title` on hover (set only while it is cut). With room, an option keeps its natural width, as before (`flex: 0 1 auto`, it was `0 0 auto`); the face fills the option, so the focus ring is as tall as a two-line neighbour. The `block` ellipsis rule never matched (it looked for the label as a child of the track, where it is a great-grandchild) and is gone: `block` gets the same wrapping.
+- **A safety net, not a layout.** Two lines are for the unforeseen (a language, a font, a narrow container); a caption that does not fit by design belongs in a shorter word, `TaoRadioGroup` or `TaoSelect`. The showcase section «When the captions do not fit» shows it.
+
 ## 5.49.1
 
 Nothing to migrate. To make a key selectable again (a page of documentation that wants it copied): `.my-doc .tao-kbd { user-select: text; }`.
