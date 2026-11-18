@@ -223,6 +223,8 @@ defineExpose({
  */
 .tao-command-list {
     --_pad-x: var(--tao-space-3);
+    /* the gap between the list edge and a row: the highlight is inset by it, and its corners are the panel radius minus it, as in TaoMenu (the panel padding there is the same 4px) / отступ от края списка до строки: подсветка отодвинута на него, а углы — радиус панели минус он, как в TaoMenu */
+    --_inset: var(--tao-space-1);
     --_icon: 16px;
     --_row: var(--tao-control-height);
     display: flex;
@@ -242,7 +244,7 @@ defineExpose({
     width: 100%;
     height: calc(var(--_row) + var(--tao-space-2));
     /* the list padding plus the row padding: the text of the field is above the labels of the rows */
-    padding: 0 calc(var(--tao-space-2) + var(--_pad-x));
+    padding: 0 calc(var(--_inset) + var(--_pad-x));
     border: 0;
     border-bottom: 1px solid var(--tao-color-border);
     background: transparent;
@@ -266,7 +268,7 @@ defineExpose({
     flex: 1;
     min-height: 0;
     margin: 0;
-    padding: var(--tao-space-2);
+    padding: var(--_inset);
     overflow-y: auto;
     /* the wheel at the end of the list does not go on to scroll the page behind it / колесо в конце списка не листает страницу */
     overscroll-behavior: contain;
@@ -299,7 +301,7 @@ defineExpose({
     min-height: var(--_row);
     padding: var(--tao-space-1) var(--_pad-x);
     /* concentric corners: the panel radius minus the list padding / концентричные углы */
-    border-radius: max(0px, calc(var(--tao-radius-panel) - var(--tao-space-2)));
+    border-radius: max(0px, calc(var(--tao-radius-panel) - var(--_inset)));
     color: var(--tao-color-text);
     cursor: pointer;
     user-select: none;
