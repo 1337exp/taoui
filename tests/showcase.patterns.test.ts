@@ -70,6 +70,17 @@ describe('Guide patterns', () => {
         expect(bad.match(/<Tao(Segmented|Select|Button)\b/g)?.length).toBeGreaterThan(1);
     });
 
+    it('a segmented do has 2 to 5 short captions; the don\'t has sentences', () => {
+        const captions = (code: string) => [...code.matchAll(/<TaoSegmentedOption\b[^>]*>([^<]*)</g)].map((m) => m[1]!.trim());
+        const good = captions(templateOf(read('segmented-captions.good.vue')));
+        const bad = captions(templateOf(read('segmented-captions.bad.vue')));
+        expect(good.length).toBeGreaterThanOrEqual(2);
+        expect(good.length).toBeLessThanOrEqual(5);
+        expect(good.every((c) => c.length <= 12 && !/\s/.test(c))).toBe(true);
+        expect(bad.length).toBeGreaterThanOrEqual(2);
+        expect(bad.every((c) => c.split(/\s+/).length > 4)).toBe(true);
+    });
+
     it('a destructive do puts the danger on the button that destroys; the don\'t puts it on the safe one', () => {
         const good = buttons(templateOf(read('destructive.good.vue')));
         const bad = buttons(templateOf(read('destructive.bad.vue')));

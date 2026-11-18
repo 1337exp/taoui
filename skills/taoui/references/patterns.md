@@ -184,6 +184,36 @@ Density is added on top of the size (the height and the padding, not the font), 
 
 **Why.** `size` is a prop with a default of medium. Set it on the controls you remember and the rest stay medium: the row comes out uneven, a small switch beside a tall select. A pinned height is the same thing by hand. The class makes them one by construction, also for the controls added later and for a panel in the body.
 
+## A segmented switch: short captions
+
+**When.** A short choice with every option in view: a period, a mode, a view of a list, how often.
+
+**Rule.** `TaoSegmented` takes 2 to 5 options (about five on a phone), each a single word or a short noun phrase, and of a similar length. What needs explaining goes into the `legend` or a hint of the field, not into a caption. A caption that is a sentence, or more than five options, is a `TaoRadioGroup` (or a `TaoSelect` for many). Test with your longest language: a Russian or a German caption is usually longer than the English one. Since 5.49.2 a caption that still does not fit wraps to a second line and ends in an ellipsis, with the full text in `title`: that is a safety net for the unforeseen, not a layout to design for.
+
+**Do:**
+
+```vue
+<div style="width: 240px">
+  <TaoSegmented v-model="every" legend="How often will we charge you?" block>
+    <TaoSegmentedOption value="month">Monthly</TaoSegmentedOption>
+    <TaoSegmentedOption value="once">Once</TaoSegmentedOption>
+  </TaoSegmented>
+</div>
+```
+
+**Don't** (Whole sentences as captions in a narrow column: they wrap, and the switch turns into two blocks of text):
+
+```vue
+<div style="width: 240px">
+  <TaoSegmented v-model="every" legend="Billing" block>
+    <TaoSegmentedOption value="month">Charge me every month until I cancel</TaoSegmentedOption>
+    <TaoSegmentedOption value="once">Charge me once, at the end of the year</TaoSegmentedOption>
+  </TaoSegmented>
+</div>
+```
+
+**Why.** A segmented switch is a row of equal-width buttons that you compare at a glance, and that only works when the options are short and alike. Apple's Human Interface Guidelines ask for no more than about five segments on iPhone, for segments of similar size ("it doesn't look good if content fills some segments but not others") and for nouns as labels; the GitLab Pajamas design system wants 2 or 3 options, never over 5, with a one-word label, and sends longer lists to a select. One long caption has two bad outcomes: it widens every segment (all are equal) until the control no longer fits, or it wraps, and then the user reads the options instead of seeing them, which is the job of a radio list. The cause is almost always in the design, not in the component, so the cheap fix is a shorter word and a legend, before any code.
+
 ## A destructive action
 
 **When.** Delete, discard, reset: something that cannot be taken back.

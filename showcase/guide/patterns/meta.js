@@ -275,6 +275,26 @@ export const patterns = [
     },
   },
   {
+    id: 'segmented-captions',
+    title: { en: 'A segmented switch: short captions', ru: 'Сегментный переключатель: короткие подписи' },
+    when: {
+      en: 'A short choice with every option in view: a period, a mode, a view of a list, how often.',
+      ru: 'Короткий выбор, где все варианты на виду: период, режим, вид списка, как часто.',
+    },
+    rule: {
+      en: '`TaoSegmented` takes 2 to 5 options (about five on a phone), each a single word or a short noun phrase, and of a similar length. What needs explaining goes into the `legend` or a hint of the field, not into a caption. A caption that is a sentence, or more than five options, is a `TaoRadioGroup` (or a `TaoSelect` for many). Test with your longest language: a Russian or a German caption is usually longer than the English one. Since 5.49.2 a caption that still does not fit wraps to a second line and ends in an ellipsis, with the full text in `title`: that is a safety net for the unforeseen, not a layout to design for.',
+      ru: '`TaoSegmented` берёт от 2 до 5 вариантов (около пяти на телефоне), каждый — одно слово или короткое существительное с пояснением, и примерно одной длины. Что требует объяснения — в `legend` или подсказку поля, а не в подпись. Подпись-предложение или больше пяти вариантов — это `TaoRadioGroup` (или `TaoSelect`, если их много). Проверять на самом длинном языке: русская или немецкая подпись обычно длиннее английской. С 5.49.2 подпись, которая всё же не влезла, переносится на вторую строку и кончается многоточием, полный текст — в `title`: это страховка на непредвиденное, а не вёрстка, на которую можно рассчитывать.',
+    },
+    wrong: {
+      en: 'Whole sentences as captions in a narrow column: they wrap, and the switch turns into two blocks of text.',
+      ru: 'Целые предложения в подписях в узкой колонке: они переносятся, и переключатель превращается в два блока текста.',
+    },
+    why: {
+      en: 'A segmented switch is a row of equal-width buttons that you compare at a glance, and that only works when the options are short and alike. Apple\'s Human Interface Guidelines ask for no more than about five segments on iPhone, for segments of similar size ("it doesn\'t look good if content fills some segments but not others") and for nouns as labels; the GitLab Pajamas design system wants 2 or 3 options, never over 5, with a one-word label, and sends longer lists to a select. One long caption has two bad outcomes: it widens every segment (all are equal) until the control no longer fits, or it wraps, and then the user reads the options instead of seeing them, which is the job of a radio list. The cause is almost always in the design, not in the component, so the cheap fix is a shorter word and a legend, before any code.',
+      ru: 'Сегментный переключатель — ряд кнопок равной ширины, которые сравнивают одним взглядом, а это работает, только когда варианты короткие и похожи. Human Interface Guidelines Apple просят не больше примерно пяти сегментов на iPhone, сегменты схожего размера («плохо смотрится, когда содержимое заполняет одни сегменты, а другие нет») и существительные в подписях; дизайн-система GitLab Pajamas хочет 2–3 варианта, не больше 5, подпись из одного слова, а списки длиннее отправляет в select. У одной длинной подписи два плохих исхода: она растягивает все сегменты (они равны), пока контрол не перестаёт помещаться, либо переносится, и тогда варианты не видят, а читают, а это работа списка радио. Причина почти всегда в макете, а не в компоненте, поэтому дешёвое лечение — слово покороче и `legend`, ещё до всякого кода.',
+    },
+  },
+  {
     id: 'destructive',
     title: { en: 'A destructive action', ru: 'Разрушающее действие' },
     when: {
