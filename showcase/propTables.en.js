@@ -153,6 +153,21 @@ export const propTablesEn = {
       slots: 'icon: your own glyph, { mode, choice, next } (the mode on the page, the pick — "system" included —, and the pick a click leads to); the button stays a square and keeps its label. update:modelValue and change: the new pick ("dark" | "light", and "system" with system). Without system the icon is the theme a click leads to (a sun while dark, a moon while light).',
     },
   ],
+  'language-switch': [
+    {
+      title: 'TaoLanguageSwitch',
+      rows: [
+        r('v-model', 'string', 'first language', 'The code of the language in use. Without it the switch keeps the choice itself and starts on the first language of the list'),
+        r('languages', "(string | { code, label? })[]", '—', 'The languages: codes (\'ru\') or { code, label }. The name of a code is the language in itself (English, Deutsch, Español), given by the engine (Intl.DisplayNames); label is for when the autonym is not what you want'),
+        r('apply', 'boolean', 'true', 'Write the language to <html lang> on mount and on a change (the browser, a screen reader and the hyphenation take it from there). Turn it off to do it yourself'),
+        r('iconOnly', 'boolean', 'false', 'Only the globe, no name beside it: a phone, a narrow rail. The name stays in the accessible name of the button'),
+        r('size', "'small' | 'medium' | 'large'", 'from ancestors', 'Button size'),
+        r('placement', 'TaoPlacement', "'bottom-end'", 'Where the list opens; flips when there is no room (top-start in the footer of a panel)'),
+        r('label', 'string', "'Language'", 'The name of the switch: the label of the button and of the list (from the locale)'),
+      ],
+      slots: 'update:modelValue and change: the code of the picked language (not sent when the one in use is picked). The switch knows none of your texts and stores nothing: the texts of the app, the storage and setTaoLocale for the built-in texts are yours. The accessible name of the button is «Language: English» (the visible word is inside it). The helper taoLanguageName(code) gives the autonym for your own lists.',
+    },
+  ],
   input: [
     {
       title: 'TaoInput',

@@ -38,6 +38,7 @@ export const localeRu: TaoLocale = {
     tour: { nextLabel: 'Далее', prevLabel: 'Назад', skipLabel: 'Пропустить', doneLabel: 'Готово', progressLabel: 'Шаг {n} из {count}' },
     presetInput: { nextLabel: 'Следующее значение', prevLabel: 'Предыдущее значение' },
     themeToggle: { toLightLabel: 'Включить светлую тему', toDarkLabel: 'Включить тёмную тему', toSystemLabel: 'Включить системную тему' },
+    languageSwitch: { label: 'Язык' },
     loader: { label: 'Загрузка' },
     date: {
         placeholder: 'Дата',

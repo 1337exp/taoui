@@ -37,6 +37,7 @@ export const localeEn: TaoLocale = {
     tour: { nextLabel: 'Next', prevLabel: 'Back', skipLabel: 'Skip', doneLabel: 'Done', progressLabel: 'Step {n} of {count}' },
     presetInput: { nextLabel: 'Next value', prevLabel: 'Previous value' },
     themeToggle: { toLightLabel: 'Switch to the light theme', toDarkLabel: 'Switch to the dark theme', toSystemLabel: 'Switch to the system theme' },
+    languageSwitch: { label: 'Language' },
     loader: { label: 'Loading' },
     date: {
         placeholder: 'Date',
