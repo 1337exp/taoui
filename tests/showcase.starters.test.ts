@@ -64,6 +64,21 @@ describe('Guide starters', () => {
         expect(source).not.toMatch(/matchMedia|innerWidth/);
     });
 
+    it('the list and the item: measured on an outer box, laid out on the inner one, quiet actions, a way back', () => {
+        const source = read('list-detail.vue');
+        // a container query cannot ask an element about its own width: the room and the grid are two boxes
+        expect(source).toMatch(/\.ld-room \{\s*container: list-detail \/ inline-size;/);
+        expect(source).toContain('@container list-detail (width < 640px)');
+        expect(source).not.toMatch(/\.ld-room \{[^}]*grid-template-columns/);
+        expect(source).toMatch(/<TaoList\b[^>]*\sroving\b/);
+        expect(source).toMatch(/<TaoListItem\b[\s\S]*?\sclickable\b[\s\S]*?:selected=/);
+        const buttons = source.match(/<TaoButton\b[^>]*>/g) ?? [];
+        expect(buttons.length).toBeGreaterThan(2);
+        expect(buttons.every((tag) => tag.includes('variant="ghost"') && tag.includes('aria-label='))).toBe(true);
+        expect(buttons.find((tag) => tag.includes('tao-trash'))).toContain('tone="danger"');
+        expect(source).not.toMatch(/matchMedia|innerWidth/);
+    });
+
     it('is wired into the Guide: a menu entry and a page', () => {
         expect(guideNav).toContain("id: 'starters'");
         expect(guideSections).toContain("'starters': DemoStarters");

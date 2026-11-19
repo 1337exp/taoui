@@ -46,7 +46,8 @@ const code = (id) => String(raw[`./starters/${id}.vue`]).replace(/\r\n/g, '\n').
       <TaoSegmented v-model="width[starter.id]" size="small" :aria-label="tr('Frame width', 'Ширина фрейма')">
         <TaoSegmentedOption v-for="w in widths" :key="w.value" :value="w.value">{{ tr(w.en, w.ru) }}</TaoSegmentedOption>
       </TaoSegmented>
-      <div class="starter__frame" :style="{ width: width[starter.id] }">
+      <!-- showcase-free: the headings and paragraphs of the page chrome do not reach the app inside -->
+      <div class="starter__frame showcase-free" :style="{ width: width[starter.id] }">
         <component :is="live[`./starters/${starter.id}.vue`]" />
       </div>
 
