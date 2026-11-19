@@ -338,7 +338,7 @@ function onLanguageChange(lang) {
 
 Without the plugin (individual components) `setTaoLocale()` is the only call you need.
 
-Scrollbars are thin (5px) with the accent thumb. To change them, set `--tao-scrollbar-size`, `--tao-scrollbar-thumb`, `--tao-scrollbar-track` (and `--tao-scrollbar-width` for Firefox) on the page or on a block; the class `tao-native-scrollbars` on `<html>` or on a block gives the browser's own back. A panel with sliders is in the showcase, under «Layers and theming».
+Scrollbars are thin (6px) with the accent thumb. To change them, set `--tao-scrollbar-size`, `--tao-scrollbar-thumb`, `--tao-scrollbar-track` (and `--tao-scrollbar-width` for Firefox) on the page or on a block; the class `tao-native-scrollbars` on `<html>` or on a block gives the browser's own back. A panel with sliders is in the showcase, under «Layers and theming».
 
 Which language to start with: `detectTaoLanguage(['en', 'ru'])` answers with the one of your languages that the browser prefers (`ru-RU` fits `ru`), for example `saved ?? detectTaoLanguage(['en', 'ru'])`; on a server pass the wishes of the request: `{ requested: parseAcceptLanguage(header) }`.
 
@@ -712,7 +712,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-color-text*` — text (default / strong / subtle / muted / disabled)
 - `--tao-color-danger*`, `--tao-color-success*`, `--tao-color-warning*`, `--tao-color-info*` — status colors
 - `--tao-color-input-*` — fields, because input bg/text often differs from surface/text
-- `--tao-radius-control`, `--tao-radius-panel` — radii (small controls vs large panels)
+- `--tao-radius-control`, `--tao-radius-panel` — radii (small controls vs large panels; 10px and 18px, from the scale `--tao-radius-sm` / `-md` / `-lg` / `-xl` = 6 / 10 / 14 / 18px)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — shadows
 - `--tao-font-size-*` — type scale in `primitives.css`: `xs`–`xl` controls, `2xl`–`4xl` titles / prose
 - `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — the size scale in `primitives.css`. Components read the current values from `contexts/size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Use them in your own controls to match the size around them.

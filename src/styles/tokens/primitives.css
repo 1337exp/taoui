@@ -128,10 +128,13 @@
     --tao-space-8: 32px;
     --tao-space-10: 40px;
 
-    /* ---------- Radius scale ---------- */
-    --tao-radius-sm: 4px;
-    --tao-radius-md: 8px;
-    --tao-radius-lg: 12px;
+    /* ---------- Radius scale ----------
+       Soft corners since 5.51.0 (they were 4 / 8 / 12): every app of ours set these same values over the kit.
+       Мягкие углы с 5.51.0 (были 4 / 8 / 12): все наши приложения ставили поверх набора ровно эти значения. */
+    --tao-radius-sm: 6px;
+    --tao-radius-md: 10px;
+    --tao-radius-lg: 14px;
+    --tao-radius-xl: 18px;
     --tao-radius-full: 999px;
 
     /* ---------- Font size scale ---------- */
@@ -161,7 +164,7 @@
        --tao-scrollbar-track: <colour>;   the track, transparent by default
        Тонкая полоса из base.css. Размер и ширина для Firefox заданы здесь; цвета — крючки, которые не заданы (читаются с запасным
        значением там, где прокрутка, поэтому блок с другой темой получает свой акцент). */
-    --tao-scrollbar-size: 5px;
+    --tao-scrollbar-size: 6px;
     --tao-scrollbar-width: thin; /* Firefox has no pixels: thin | auto | none */
 
     /* ---------- Layers / Слои ----------
