@@ -180,6 +180,46 @@ describe('TaoContextMenu on a point', () => {
     });
 });
 
+describe('closeOnScroll closes only for a scroll that moves the anchor', () => {
+    // the showcase bug: an autoplaying carousel elsewhere on the page scrolled its track every few seconds and closed every
+    // open context menu, which looked like «the menu closes when the pointer leaves it»
+    // ошибка showcase: карусель с автопрокруткой в другом месте страницы прокручивала ленту и закрывала любое меню
+    const scroll = (target: EventTarget) => target.dispatchEvent(new Event('scroll', { bubbles: false }));
+
+    it('a point: a container elsewhere does not close it; the container under the point and the page do', async () => {
+        const holder = document.createElement('div');
+        const row = document.createElement('div');
+        const carousel = document.createElement('div');
+        holder.append(row);
+        document.body.append(holder, carousel);
+        const spy = vi.spyOn(document, 'elementFromPoint').mockReturnValue(row);
+        const w = await mountAt({ x: 100, y: 100 }, { closeOnScroll: true });
+        scroll(carousel);
+        expect(w.emitted('close')).toBeUndefined();
+        scroll(holder);
+        expect(w.emitted('close')![0]).toEqual(['scroll']);
+        await w.setProps({ open: false });
+        await w.setProps({ open: true });
+        await flush();
+        scroll(document);
+        expect(w.emitted('close')![1]).toEqual(['scroll']);
+        spy.mockRestore();
+    });
+
+    it('an element anchor: only a scroll of something that holds it', async () => {
+        const pane = document.createElement('div');
+        const button = document.createElement('button');
+        pane.append(button);
+        const other = document.createElement('div');
+        document.body.append(pane, other);
+        const w = await mountAt(button, { closeOnScroll: true });
+        scroll(other);
+        expect(w.emitted('close')).toBeUndefined();
+        scroll(pane);
+        expect(w.emitted('close')![0]).toEqual(['scroll']);
+    });
+});
+
 describe('TaoPopover at a point', () => {
     it('hangs from the point instead of the trigger', async () => {
         const open = ref(true);

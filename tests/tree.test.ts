@@ -242,6 +242,52 @@ describe('TaoTree', () => {
         expect(w.emitted('update:selected')).toBeUndefined();
     });
 
+    it('a single click selects; a double click opens a branch or emits open for a leaf; Enter does the same after it selects', async () => {
+        const w = tree();
+        await items(w)[0]!.trigger('click');
+        expect(w.emitted('update:expanded')).toBeUndefined();
+        await items(w)[0]!.trigger('dblclick');
+        expect(w.emitted('update:expanded')).toEqual([[['src']]]);
+        const byText = (text: string) => items(w).find((i) => i.text() === text)!;
+        await byText('README.md').trigger('dblclick');
+        expect(w.emitted('open')![0]![0]).toMatchObject({ id: 'readme' });
+        await key(byText('README.md').element, 'Enter');
+        expect(w.emitted('open')).toHaveLength(2);
+        expect(w.emitted('update:selected')!.at(-1)).toEqual(['readme']);
+        await byText('package-lock.json').trigger('dblclick'); // disabled
+        expect(w.emitted('open')).toHaveLength(2);
+    });
+
+    it('a double click on the chevron or the box is not a second toggle of the row', async () => {
+        const w = tree({ checkable: true });
+        const toggle = items(w)[0]!.find('.tao-tree__toggle');
+        await toggle.trigger('click');
+        await toggle.trigger('click');
+        await toggle.trigger('dblclick');
+        expect(w.emitted('update:expanded')).toEqual([[['src']], [[]]]);
+    });
+
+    it('multiple selection: the two clicks of a double click do not leave the row unselected', async () => {
+        const w = tree({ selection: 'multiple' });
+        const row = items(w)[2]!;
+        await row.trigger('click');
+        await w.setProps({ selected: ['readme'] });
+        await row.trigger('click');
+        await w.setProps({ selected: [] });
+        await row.trigger('dblclick');
+        expect(w.emitted('update:selected')!.at(-1)).toEqual([['readme']]);
+        expect(w.emitted('open')).toHaveLength(1);
+    });
+
+    it('selection none: a double click on a branch is not a third toggle; a leaf opens', async () => {
+        const w = tree({ selection: 'none' });
+        await items(w)[0]!.trigger('click');
+        await items(w)[0]!.trigger('dblclick');
+        expect(w.emitted('update:expanded')).toEqual([[['src']]]);
+        await items(w).find((i) => i.text() === 'README.md')!.trigger('dblclick');
+        expect(w.emitted('open')![0]![0]).toMatchObject({ id: 'readme' });
+    });
+
     it('hint: a quiet note after the label, part of the row text; tone: a class on the row', () => {
         const w = tree({
             nodes: [

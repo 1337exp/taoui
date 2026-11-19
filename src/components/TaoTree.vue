@@ -79,6 +79,11 @@ const emit = defineEmits<{
     'update:checked': [ids: string[]];
     /** A node was picked (click, Enter, Space without checkboxes). / Узел выбран. */
     select: [node: TaoTreeNode];
+    /**
+     * A node without children was opened: a double click or Enter (a file into an editor). A branch opens and closes instead.
+     * Узел без детей открыт: двойной клик или Enter (файл в редактор). Ветка вместо этого раскрывается и сворачивается.
+     */
+    open: [node: TaoTreeNode];
     /** `load` failed; the node stays closed. / `load` упал; узел остаётся закрытым. */
     'load-error': [node: TaoTreeNode, error: unknown];
     /**
@@ -309,11 +314,10 @@ function onKeydown(event: KeyboardEvent, index: number) {
     }
     if (event.key === 'Enter') {
         event.preventDefault();
-        if (props.selection === 'none') {
-            toggle(row);
-        } else {
+        if (props.selection !== 'none') {
             pick(row);
         }
+        activateRow(row);
         return;
     }
     if (event.key === ' ' && !(event.target as HTMLElement).closest('.tao-tree__actions')) {
@@ -328,6 +332,37 @@ function onKeydown(event: KeyboardEvent, index: number) {
         return;
     }
     nav.onKeydown(event);
+}
+
+/** The default action of a row: a branch opens or closes, a leaf is opened. / Действие строки по умолчанию. */
+function activateRow(row: TaoTreeRow) {
+    if (row.node.disabled) {
+        return;
+    }
+    if (row.branch) {
+        toggle(row);
+    } else {
+        emit('open', row.node);
+    }
+}
+
+// A single click selects, a double click acts, as in a file manager. The two clicks of a double click came first: in a
+// multiple selection they toggled the row twice, so it is put back; with selection none the first click already toggled
+// the branch, so only a leaf is opened.
+// Одинарный клик выбирает, двойной действует, как в файловом менеджере. Два клика двойного пришли раньше: во
+// множественном выборе они переключили строку дважды, её возвращаем; при selection none первый клик уже переключил
+// ветку, поэтому открывается только лист.
+function onRowDblClick(row: TaoTreeRow) {
+    if (row.node.disabled) {
+        return;
+    }
+    if (props.selection === 'multiple' && !selectedSet.value.has(row.node.id)) {
+        setSelected([...selectedSet.value, row.node.id]);
+    }
+    if (props.selection === 'none' && row.branch) {
+        return;
+    }
+    activateRow(row);
 }
 
 function onRowClick(row: TaoTreeRow, index: number) {
@@ -481,6 +516,7 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
             :style="{ '--_level': row.level - 1 }"
             @keydown="onKeydown($event, index)"
             @click="onRowClick(row, index)"
+            @dblclick="onRowDblClick(row)"
             @contextmenu="onRowContextMenu($event, row, index)"
             @focus="current = index"
         >
@@ -490,6 +526,7 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
                 :class="{ 'tao-tree__toggle--open': row.expanded }"
                 aria-hidden="true"
                 @click.stop="row.branch && toggle(row)"
+                @dblclick.stop
             >
                 <span v-if="loading.has(row.node.id)" class="tao-tree__spinner" :title="l10n.loadingLabel"></span>
                 <TaoIcon v-else-if="row.branch" name="tao-chevron-right" />
@@ -500,6 +537,7 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
                 :class="`tao-tree__check--${stateOf(row)}`"
                 aria-hidden="true"
                 @click.stop="check(row)"
+                @dblclick.stop
             ></span>
             <span v-if="$slots.icon || row.node.icon" class="tao-tree__icon" aria-hidden="true">
                 <slot name="icon" v-bind="slotProps(row)">
@@ -512,7 +550,7 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
             <!-- the hidden comma keeps the name and the hint two words for a screen reader («App.vue, changed»)
                  скрытая запятая не даёт скринридеру слить имя и подсказку в одно слово -->
             <span v-if="row.node.hint" class="tao-tree__hint"><span class="tao-sr-only">, </span>{{ row.node.hint }}</span>
-            <span v-if="$slots.actions" class="tao-tree__actions" @click.stop @keydown.stop>
+            <span v-if="$slots.actions" class="tao-tree__actions" @click.stop @dblclick.stop @keydown.stop>
                 <slot name="actions" v-bind="slotProps(row)" />
             </span>
         </li>
