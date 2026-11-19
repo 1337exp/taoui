@@ -38,6 +38,15 @@ const props = withDefaults(
          */
         floating?: boolean;
         /**
+         * The shell of an app that fills its box (give the parent a height: `html, body, #app { height: 100% }`): TaoNav
+         * takes all of it, the page scrolls inside its own panes instead of the document, and the footer stands at the
+         * bottom of the side panel. Nothing scrolls as a document, so no page scrollbar comes and goes and nothing shifts.
+         * Оболочка приложения на всю высоту своего блока (дайте родителю высоту: `html, body, #app { height: 100% }`):
+         * TaoNav занимает её целиком, страница прокручивается внутри своих панелей, а не документом, подвал стоит внизу
+         * боковой панели. Документ не прокручивается, поэтому полоса страницы не появляется и не исчезает, ничего не сдвигается.
+         */
+        fill?: boolean;
+        /**
          * How the current section is marked: `pill` — a tint behind the item; `line` — the accent colour and a short line
          * (under the item in the bar look, along its start edge in the rail and the side panel).
          * Как отмечен текущий раздел: `pill` — подложка под пунктом; `line` — цвет акцента и короткая черта (под пунктом
@@ -67,6 +76,7 @@ const props = withDefaults(
         ariaLabel: undefined,
         moreLabel: undefined,
         floating: false,
+        fill: false,
         indicator: 'pill',
         surface: 'flat',
         badgeTone: 'accent',
@@ -159,7 +169,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
 </script>
 
 <template>
-    <div class="tao-nav" :class="[`tao-nav--${layout}`, `tao-nav--indicator-${indicator}`, { 'tao-nav--standalone': standalone, 'tao-nav--floating': floating, 'tao-nav--badges-neutral': badgeTone === 'neutral' }]">
+    <div class="tao-nav" :class="[`tao-nav--${layout}`, `tao-nav--indicator-${indicator}`, { 'tao-nav--standalone': standalone, 'tao-nav--floating': floating, 'tao-nav--fill': fill && !standalone, 'tao-nav--badges-neutral': badgeTone === 'neutral' }]">
         <div class="tao-nav__shell">
             <nav class="tao-nav__panel" :class="surfaceClass(surface)" :aria-label="l10n.ariaLabel">
                 <div class="tao-nav__column">
@@ -458,11 +468,40 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     display: grid;
     flex: 1 1 auto;
     grid-template: var(--_grid);
+    /* public: 1 on the bar and the rail (round, icons only), 0 on the side panel; for your own pieces in the slots
+       публичная: 1 в нижней панели и рейке (круглое, только иконки), 0 в боковой панели; для своих вещей в слотах */
+    --tao-nav-compact: var(--_compact);
 }
 
 .tao-nav__content {
     grid-area: content;
     min-width: 0;
+}
+
+/*
+ * fill: the shell of an app. TaoNav takes the height of its parent, the page scrolls inside .tao-nav__content (or inside
+ * its own panes) and the side column runs the full height, so the footer stands at the bottom (the list between them
+ * grows and scrolls when the items do not fit).
+ * fill: оболочка приложения. TaoNav берёт высоту родителя, страница прокручивается внутри .tao-nav__content (или своих
+ * панелей), колонка сбоку во всю высоту, поэтому подвал стоит внизу (список между ними растёт и прокручивается, если
+ * пункты не помещаются).
+ */
+.tao-nav--fill {
+    height: 100%;
+}
+
+.tao-nav--fill > .tao-nav__shell {
+    min-height: 0;
+}
+
+.tao-nav--fill .tao-nav__content {
+    min-height: 0;
+    overflow: auto;
+}
+
+.tao-nav--fill .tao-nav__column {
+    height: 100%;
+    max-height: none;
 }
 
 .tao-nav__panel {
@@ -576,8 +615,12 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     bottom: calc(100% + var(--tao-space-3));
     inset-inline-end: var(--tao-space-3);
     z-index: 1;
+    /* more than one child (the action, then a project or account chip) stand one under the other
+       несколько детей (действие, под ним фишка проекта или аккаунта) стоят друг под другом */
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--tao-space-2);
     /* on the rail it stands off the top edge as from the items under it; the side panel has its own inset
        на рейке отступает от верха, как от пунктов под ним; у боковой панели свой отступ */
     margin-top: calc(var(--_compact) * (1 - var(--_bar)) * var(--tao-space-2));

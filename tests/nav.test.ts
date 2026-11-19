@@ -310,3 +310,36 @@ describe('the fields hold their hidden inputs', () => {
         expect(src.replace(/\r\n/g, '\n')).toMatch(rule);
     });
 });
+
+// 5.51.0: the shell of an app without reaching into TaoNav. Axis needed six `:deep(.tao-nav__…)` rules and the private
+// `--_compact` for this; the Guide starter «App shell» now stands on `fill`, the stacked action and `--tao-nav-compact`.
+// 5.51.0: оболочка приложения без правок внутренностей TaoNav (Axis держал для этого шесть правил `:deep` и приватную `--_compact`).
+describe('TaoNav fill', () => {
+    const page = { default: () => h('p', 'page') };
+    const css = (navSource as string).replace(/\r\n/g, '\n');
+
+    it('fill adds its class with a page in the slot; a standalone panel has no window to fill', () => {
+        expect(nav({ fill: true }, page).classes()).toContain('tao-nav--fill');
+        expect(nav({}, page).classes()).not.toContain('tao-nav--fill');
+        expect(nav({ fill: true }).classes()).not.toContain('tao-nav--fill');
+    });
+
+    it('takes the height of its parent and scrolls the page inside the content, not the document', () => {
+        expect(css).toMatch(/\.tao-nav--fill \{\s*height: 100%;/);
+        expect(css).toMatch(/\.tao-nav--fill > \.tao-nav__shell \{\s*min-height: 0;/);
+        expect(css).toMatch(/\.tao-nav--fill \.tao-nav__content \{\s*min-height: 0;\s*overflow: auto;/);
+    });
+
+    it('the side column runs the full height, so the footer stands at the bottom under a list that grows', () => {
+        expect(css).toMatch(/\.tao-nav--fill \.tao-nav__column \{\s*height: 100%;\s*max-height: none;/);
+        expect(css).toMatch(/\.tao-nav__list \{\s*flex: 1 1 auto;/);
+    });
+
+    it('the children of #action stand one under the other', () => {
+        expect(css).toMatch(/\.tao-nav__action \{[^}]*flex-direction: column;[^}]*gap: var\(--tao-space-2\);/);
+    });
+
+    it('--tao-nav-compact is public and follows the look', () => {
+        expect(css).toMatch(/\.tao-nav__shell \{[^}]*--tao-nav-compact: var\(--_compact\);/);
+    });
+});

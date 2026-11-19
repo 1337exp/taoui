@@ -1,7 +1,7 @@
 // The Guide: what to use when, and why. Pages about the ground the components stand on (layers, type, surfaces, language,
-// accessibility); recommendations and ready templates join them here as their own group.
+// accessibility); recommendations and the starters (whole screens to begin a project from) are their own groups.
 // Руководство: что, когда и почему. Страницы про основу, на которой стоят компоненты (слои, шрифт, поверхности, язык,
-// доступность); рекомендации и готовые шаблоны добавятся сюда отдельной группой.
+// доступность); рекомендации и каркасы (целые экраны, с которых начинают проект) — свои группы.
 export const navGroups = [
   {
     id: 'recommendations',
@@ -9,6 +9,13 @@ export const navGroups = [
     items: [
       { id: 'size-choice', label: { en: 'Choosing a size', ru: 'Выбор размера' }, aliases: ['size', 'sizes', 'small', 'medium', 'large', 'density', 'compact', 'comfortable', 'touch', 'height', 'размер', 'размеры', 'маленький', 'плотность', 'высота', 'кнопка'] },
       { id: 'patterns', label: { en: 'Patterns', ru: 'Шаблоны' }, aliases: ['patterns', 'recommendations', 'design', 'accent', 'toolbar', 'form', 'footer', 'destructive', 'delete', 'ghost', 'neutral', 'шаблоны', 'рекомендации', 'дизайн', 'акцент', 'панель', 'подвал', 'удаление'] },
+    ],
+  },
+  {
+    id: 'starters',
+    title: { en: 'Starters', ru: 'Каркасы' },
+    items: [
+      { id: 'starters', label: { en: 'App starters', ru: 'Каркасы приложений' }, aliases: ['starters', 'starter', 'templates', 'template', 'shell', 'app shell', 'layout', 'sidebar', 'side menu', 'scaffold', 'boilerplate', 'каркас', 'каркасы', 'заготовка', 'оболочка', 'меню слева', 'боковое меню', 'начать проект'] },
     ],
   },
   {

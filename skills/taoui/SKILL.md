@@ -10,7 +10,9 @@ theme, a palette or a context class changes every component under it. The props 
 defaults, are in [references/components.md](references/components.md); read the section you need before writing a
 component you have not used yet. **How to put them together** (the accent budget, choosing a size: small / medium / large and
 density, a toolbar, the footer of a form, a destructive action: what to use when, with a do and a don't) is in [references/patterns.md](references/patterns.md); read
-it before you compose a screen.
+it before you compose a screen. **A new app starts from a starter** (a whole screen in one file, with the decisions it makes
+and why: the app shell with a side menu, `TaoNav fill`) in [references/starters.md](references/starters.md); copy the one
+that fits instead of composing the shell from scratch.
 
 ## Setup
 
@@ -78,7 +80,10 @@ choose a text colour, WCAG 2 to promise a number.
   number is one column on compact. `rowHeight` is the exact row height (a mosaic: pictures are cropped).
 - `TaoNav` — app navigation from one list: a bottom bar, a rail or a drawer, `layout="auto"` by its own width; put the page
   in its default slot and it lays it out. `floating` makes the bar a detached pill (the FAB is your own button beside
-  it). `select(id, event)` + `event.preventDefault()` to route with a router. Widths `--tao-nav-rail-width` /
+  it). `fill` makes it the shell of an app: it takes its parent's height (`html, body, #app { height: 100% }`), the
+  page scrolls inside `.tao-nav__content` and the footer stands at the bottom of the side panel; more than one child of
+  `#action` stack one under the other; `--tao-nav-compact` (1 on the bar and the rail, 0 on the side panel) is there for
+  your own pieces in the slots. `select(id, event)` + `event.preventDefault()` to route with a router. Widths `--tao-nav-rail-width` /
   `--tao-nav-drawer-width`; the action button may take `shortcut="N"` (shown in the side panel, hidden when round). `surface="glass"` for a
   translucent bar over the page (as on TaoCard; it turns solid where blur is off). `#footer`: a small line under the
   items (version, About) in the rail and the side panel. `badgeTone="neutral"`: grey counters, the accent on the
