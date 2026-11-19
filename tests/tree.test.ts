@@ -326,6 +326,34 @@ describe('TaoTree', () => {
         expect(docs().attributes('aria-busy')).toBeUndefined();
     });
 
+    it('a saved expanded with lazy folders: they load by themselves, level by level, and the chain opens', async () => {
+        // the view an app saved: docs and its lazy child api open / вид, который сохранило приложение
+        const load = vi.fn(async (node: TaoTreeNode) =>
+            node.id === 'docs' ? [{ id: 'api', label: 'api', hasChildren: true }] : [{ id: 'ref', label: 'ref.md' }],
+        );
+        const w = tree({ load, expanded: ['docs', 'api'] });
+        expect(load).toHaveBeenCalledWith(expect.objectContaining({ id: 'docs' }));
+        for (let i = 0; i < 4; i++) {
+            await new Promise((r) => setTimeout(r));
+            await nextTick();
+        }
+        expect(load.mock.calls.map(([n]) => n.id)).toEqual(['docs', 'api']);
+        expect(ids(w)).toEqual(['src', 'docs', 'api', 'ref.md', 'README.md', 'package-lock.json']);
+        expect(w.emitted('update:expanded')).toBeUndefined(); // the saved view is not touched / сохранённый вид не трогается
+    });
+
+    it('a saved lazy folder whose load fails is closed again, with load-error, and not loaded in a loop', async () => {
+        const load = vi.fn(() => Promise.reject(new Error('gone')));
+        const w = tree({ load, expanded: ['docs'] });
+        await new Promise((r) => setTimeout(r));
+        await nextTick();
+        expect(w.emitted('load-error')).toHaveLength(1);
+        expect(w.emitted('update:expanded')!.at(-1)).toEqual([[]]);
+        await w.setProps({ expanded: [] });
+        await new Promise((r) => setTimeout(r));
+        expect(load).toHaveBeenCalledTimes(1);
+    });
+
     it('a failed load reports load-error and leaves the node closed', async () => {
         const w = tree({ load: () => Promise.reject(new Error('offline')) });
         await items(w)[1]!.find('.tao-tree__toggle').trigger('click');

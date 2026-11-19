@@ -210,36 +210,69 @@ const children = (node: TaoTreeNode) => {
 const rows = computed(() => visibleRows(order.value(props.nodes), expandedSet.value, children));
 const rowIndex = computed(() => new Map(rows.value.map((row, index) => [row.node.id, index])));
 
+/** Loads the children of a lazy node; false when `load` failed (reported as `load-error`). / Подгружает детей. */
+async function loadChildren(node: TaoTreeNode): Promise<boolean> {
+    loading.add(node.id);
+    try {
+        const list = await props.load!(node);
+        loaded.set(node.id, list);
+        // a checked lazy node hands its check to the children it turned out to have
+        // отмеченный ленивый узел передаёт отметку детям, которые у него оказались
+        if (checkedSet.value.has(node.id) && list.length) {
+            const next = new Set(checkedSet.value);
+            next.delete(node.id);
+            list.filter((child) => !child.disabled).forEach((child) => next.add(child.id));
+            setChecked(next);
+        }
+        return true;
+    } catch (error) {
+        emit('load-error', node, error);
+        return false;
+    } finally {
+        loading.delete(node.id);
+    }
+}
+
 async function expand(row: TaoTreeRow) {
     const { node } = row;
     if (!row.branch || row.expanded || loading.has(node.id)) {
         return;
     }
     if (children(node) === undefined && node.hasChildren) {
-        if (!props.load) {
+        if (!props.load || !(await loadChildren(node))) {
             return;
-        }
-        loading.add(node.id);
-        try {
-            const list = await props.load(node);
-            loaded.set(node.id, list);
-            // a checked lazy node hands its check to the children it turned out to have
-            // отмеченный ленивый узел передаёт отметку детям, которые у него оказались
-            if (checkedSet.value.has(node.id) && list.length) {
-                const next = new Set(checkedSet.value);
-                next.delete(node.id);
-                list.filter((child) => !child.disabled).forEach((child) => next.add(child.id));
-                setChecked(next);
-            }
-        } catch (error) {
-            emit('load-error', node, error);
-            return;
-        } finally {
-            loading.delete(node.id);
         }
     }
     setExpanded(new Set([...expandedSet.value, node.id]));
 }
+
+// An `expanded` that came from outside (a saved view, the app) can hold lazy folders whose children are not loaded yet:
+// they are loaded here, the visible ones first; their own open children show up as rows and are loaded in turn, so a
+// saved chain (node_modules / vue / dist) opens level by level. A folder whose load fails is closed again.
+// `expanded`, пришедший снаружи (сохранённый вид, приложение), может держать ленивые папки без загруженных детей: они
+// подгружаются здесь, видимые; их раскрытые дети появляются строками и подгружаются следом, так сохранённая цепочка
+// (node_modules / vue / dist) раскрывается уровень за уровнем. Папка, у которой загрузка упала, снова закрывается.
+watch(
+    rows,
+    (list) => {
+        if (!props.load) {
+            return;
+        }
+        for (const row of list) {
+            const { node } = row;
+            if (row.expanded && node.hasChildren && raw(node) === undefined && !loading.has(node.id)) {
+                void loadChildren(node).then((ok) => {
+                    if (!ok && expandedSet.value.has(node.id)) {
+                        const next = new Set(expandedSet.value);
+                        next.delete(node.id);
+                        setExpanded(next);
+                    }
+                });
+            }
+        }
+    },
+    { immediate: true },
+);
 
 function collapse(row: TaoTreeRow) {
     // read before closing: the rows are recomputed as soon as the set changes
