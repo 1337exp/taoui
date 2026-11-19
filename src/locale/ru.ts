@@ -59,7 +59,7 @@ export const localeRu: TaoLocale = {
     dropdownMenu: { menuLabel: 'Меню' },
     menubar: { ariaLabel: 'Строка меню' },
     nav: { ariaLabel: 'Навигация', moreLabel: 'Ещё' },
-    tree: { ariaLabel: 'Дерево', loadingLabel: 'Загрузка…' },
+    tree: { ariaLabel: 'Дерево', loadingLabel: 'Загрузка…', menuLabel: 'Контекстное меню' },
     checklist: { selectAllLabel: 'Выбрать всё', counterText: '{checked} из {total}' },
     contextMenu: { menuLabel: 'Контекстное меню' },
     empty: { title: 'Ничего нет' },
