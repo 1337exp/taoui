@@ -791,7 +791,7 @@ Showcase section: `#tree`
 | Prop | Type | Default | Notes |
 |---|---|---|---|
 | `nodes` | `TaoTreeNode[]` | — | { id, label, icon?, children?, hasChildren?, disabled?, hint?, tone? }. hasChildren without children — the children come from load when it opens. hint — a quiet note after the label («library root»). tone — the colour of the label: 'muted' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'danger' |
-| `v-model:expanded` | `string[]` | own | Ids of the expanded nodes. Without a model the tree keeps them itself |
+| `v-model:expanded` | `string[]` | own | Ids of the expanded nodes. Without a model the tree keeps them itself. A saved view can be put back: open lazy folders load by themselves, level by level; a failed load closes the folder (load-error) |
 | `selection` | `'none' \| 'single' \| 'multiple'` | 'single' | Selection mode. none — a click on a folder toggles it |
 | `v-model:selected` | `string \| string[] \| null` | own | An id (single) or a list of ids (multiple) |
 | `checkable` | `boolean` | false | Checkboxes. A parent is checked, unchecked or mixed by its leaves; a click on a parent toggles the whole branch |

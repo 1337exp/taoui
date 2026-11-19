@@ -725,7 +725,7 @@ export const propTables = {
       title: 'TaoTree',
       rows: [
         r('nodes', 'TaoTreeNode[]', '—', "{ id, label, icon?, children?, hasChildren?, disabled?, hint?, tone? }. hasChildren без children — дети подгрузятся через load при раскрытии. hint — тихая подпись после имени («library root»). tone — цвет подписи: 'muted' | 'accent' | 'info' | 'success' | 'warning' | 'danger'"),
-        r('v-model:expanded', 'string[]', 'свой', 'id раскрытых узлов. Без модели дерево хранит их само'),
+        r('v-model:expanded', 'string[]', 'свой', 'id раскрытых узлов. Без модели дерево хранит их само. Можно восстановить сохранённый вид: раскрытые ленивые папки подгрузятся сами, уровень за уровнем; упавшая загрузка закроет папку (load-error)'),
         r('selection', "'none' | 'single' | 'multiple'", "'single'", 'Режим выбора. none — клик по папке раскрывает её'),
         r('v-model:selected', 'string | string[] | null', 'свой', 'id (single) или список id (multiple)'),
         r('checkable', 'boolean', 'false', 'Чекбоксы. Родитель отмечен, снят или в промежуточном состоянии по своим листьям; клик по родителю переключает всю ветку'),
