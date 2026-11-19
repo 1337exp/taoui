@@ -2,12 +2,15 @@ import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { h, nextTick } from 'vue';
 import TaoTree from '../src/components/TaoTree.vue';
+// @ts-expect-error Vite `?raw` import: the component as text, to read its styles
+import css from '../src/components/TaoTree.vue?raw';
 import {
     checkState,
     checkUnits,
     dropTarget,
     menuSelection,
     moveTreeNodes,
+    sortTreeNodes,
     toggleCheck,
     topmostIds,
     visibleRows,
@@ -132,6 +135,31 @@ describe('moving rows: the pure part', () => {
         const locked: TaoTreeNode = { id: 'box', label: 'box', children: [], disabled: true };
         const r = visibleRows([locked], new Set(), own);
         expect(dropTarget({ rows: r, over: 0, fraction: 0.5, dragged: ['x'], childIds: () => [], parentOf: () => null })!.position).toBe('after');
+    });
+
+    it('sortTreeNodes: none keeps the data, name puts folders first and reads numbers as numbers', () => {
+        const list: TaoTreeNode[] = [
+            { id: '10', label: 'file 10' },
+            { id: 'b', label: 'beta', children: [] },
+            { id: '2', label: 'File 2' },
+            { id: 'a', label: 'Alpha', hasChildren: true },
+        ];
+        expect(sortTreeNodes(list, 'none')).toBe(list);
+        expect(sortTreeNodes(list, 'name', 'en').map((n) => n.id)).toEqual(['a', 'b', '2', '10']);
+        // your own compare as it is: a plain descending localeCompare, «File 2» after «file 10»
+        expect(sortTreeNodes(list, (x, y) => y.label.localeCompare(x.label)).map((n) => n.id)).toEqual(['2', '10', 'b', 'a']);
+        expect(list[0]!.id).toBe('10'); // the input is left alone
+    });
+
+    it('sorted: only the folder changes — a folder takes the rows, a leaf hands them to its folder, the top level has no row', () => {
+        const sorted = (over: string, fraction: number, dragged: string[]) =>
+            dropTarget({ rows, over: at(over), fraction, dragged, childIds, parentOf, sorted: true });
+        expect(sorted('lib', 0.05, ['readme'])).toMatchObject({ parentId: 'lib', position: 'inside', index: 2, mark: { rowId: 'lib', side: 'inside' } });
+        expect(sorted('a', 0.05, ['readme'])).toMatchObject({ parentId: 'lib', targetId: 'a', mark: { rowId: 'lib' } });
+        expect(sorted('readme', 0.5, ['a'])).toMatchObject({ parentId: null, mark: { rowId: '', level: 0 } });
+        // the same folder: a sort would put it back, so nothing to do / та же папка: сортировка вернёт на место
+        expect(sorted('b', 0.9, ['a'])).toBeNull();
+        expect(sorted('app', 0.1, ['lib'])).toBeNull();
     });
 
     it('moveTreeNodes: takes the nodes out, puts them at the index of the new parent, leaves the input alone', () => {
@@ -389,6 +417,16 @@ describe('TaoTree', () => {
     });
 });
 
+describe('TaoTree look', () => {
+    it('the selection is a tint only: no rule of a selected row sets the colour of its text or icon', () => {
+        // the accent of the text is left to what the app marks on purpose (tone): a walk through the tree must not shine
+        // акцент текста оставлен тому, что приложение отмечает нарочно (tone): прогулка по дереву не должна светиться
+        const rules = [...css.matchAll(/([^{}]+)\{([^}]*)\}/g)].filter(([, selector]) => /--selected/.test(selector!));
+        expect(rules.length).toBeGreaterThan(0);
+        expect(rules.filter(([, , body]) => /(^|;|\s)color\s*:/.test(body!)).map(([s]) => s.trim())).toEqual([]);
+    });
+});
+
 describe('TaoTree moving rows', () => {
     // happy-dom has no layout: every row is 24px tall, one under another, the chevron 16px wide
     // у happy-dom нет раскладки: строка 24px высотой, одна под другой, стрелка 16px шириной
@@ -542,6 +580,21 @@ describe('TaoTree moving rows', () => {
         expect(document.querySelector('[role="status"]')?.textContent).toContain('cannot go');
         row(w, 'README.md').dispatchEvent(new KeyboardEvent('keydown', { key: 'v', ctrlKey: true, bubbles: true, cancelable: true }));
         expect(onMove).toHaveBeenCalledWith(expect.objectContaining({ ids: ['src'], parentId: null, index: 2, position: 'after' }));
+    });
+
+    it('sort="name": the rows stand folders first by name; a drag between rows goes into their folder, no line', async () => {
+        const onMove = vi.fn();
+        const w = moveTree({ onMove, sort: 'name' });
+        expect(items(w).map((i) => i.find('.tao-tree__label').text())).toEqual(['docs', 'src', 'lib', 'a.ts', 'b.ts', 'App.vue', 'package-lock.json', 'README.md']);
+        expect(nodes.map((n) => n.id)).toEqual(['src', 'docs', 'readme', 'lock']); // the data is not touched
+        await drag(w, 'README.md', 'a.ts', 0.1);
+        expect(w.find('.tao-tree__row--drop-before').exists()).toBe(false);
+        expect(row(w, 'lib').classList).toContain('tao-tree__row--drop-inside');
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        await drag(w, 'a.ts', 'README.md', 0.9);
+        expect(w.classes()).toContain('tao-tree--drop-root');
+        pointer('pointerup', document, 200, y(w, 'README.md', 0.9));
+        expect(onMove).toHaveBeenCalledWith(expect.objectContaining({ ids: ['a'], parentId: null, position: 'inside' }));
     });
 
     it('without @move nothing drags and Ctrl+X is left alone', async () => {

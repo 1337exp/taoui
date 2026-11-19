@@ -80,7 +80,7 @@ export interface TaoTreeRow {
 }
 
 /** Children of a node: its own, or the ones loaded for it. / Дети узла: свои или подгруженные. */
-export type TaoTreeChildren = (node: TaoTreeNode) => TaoTreeNode[] | undefined;
+export type TaoTreeChildren = (node: TaoTreeNode) => readonly TaoTreeNode[] | undefined;
 
 /**
  * The rows a reader sees: the roots and the children of every expanded node, depth first.
@@ -195,6 +195,35 @@ export function isTreeContainer(node: TaoTreeNode): boolean {
 }
 
 /**
+ * The order of the rows: `none` keeps the order of the data (and rows can be dragged between each other), `name` puts
+ * folders first and sorts by name as people read it («file 2» before «file 10»), a function is your own compare. With a
+ * sort the order is the tree's, so a drag only changes the folder, never the place among siblings.
+ * Порядок строк: `none` держит порядок данных (и строки можно ставить между другими), `name` ставит папки первыми и
+ * сортирует по имени так, как читают люди («файл 2» раньше «файл 10»), функция — своё сравнение. С сортировкой порядок
+ * задаёт дерево, поэтому перенос меняет только папку, а не место среди соседей.
+ */
+export type TaoTreeSort = 'none' | 'name' | ((a: TaoTreeNode, b: TaoTreeNode) => number);
+
+/** Folders first, then the labels by `Intl.Collator` with numbers as numbers. / Папки первыми, затем подписи. */
+export function compareTreeNodes(locale?: string): (a: TaoTreeNode, b: TaoTreeNode) => number {
+    let collator: Intl.Collator;
+    try {
+        collator = new Intl.Collator(locale, { numeric: true, sensitivity: 'base' });
+    } catch {
+        collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+    }
+    return (a, b) => Number(isTreeContainer(b)) - Number(isTreeContainer(a)) || collator.compare(a.label, b.label);
+}
+
+/** One level of nodes in the order of `sort`: a sorted copy, or the list itself for `none`. / Один уровень в порядке sort. */
+export function sortTreeNodes(list: readonly TaoTreeNode[], sort: TaoTreeSort, locale?: string): readonly TaoTreeNode[] {
+    if (sort === 'none') {
+        return list;
+    }
+    return list.slice().sort(sort === 'name' ? compareTreeNodes(locale) : sort);
+}
+
+/**
  * Keeps the topmost of the ids: a node whose ancestor is in the list goes with that ancestor. `parentOf` knows every node,
  * not only the visible ones. / Оставляет верхние: узел, чей предок в списке, едет вместе с ним.
  */
@@ -227,6 +256,11 @@ export interface TaoTreeDropInput {
     /** The ids of the children of a node (null: the roots), known or loaded. / id детей узла. */
     childIds: (parentId: string | null) => readonly string[] | undefined;
     parentOf: (id: string) => string | null | undefined;
+    /**
+     * The tree keeps a sort: only the folder changes. A folder takes the rows, any other row hands them to its own folder.
+     * Дерево держит сортировку: меняется только папка. Папка принимает строки, любая другая строка отдаёт их своей папке.
+     */
+    sorted?: boolean;
 }
 
 /**
@@ -250,6 +284,24 @@ export function dropTarget(input: TaoTreeDropInput): TaoTreeDrop | null {
         }
     }
     const container = isTreeContainer(hovered.node) && !hovered.node.disabled;
+    if (input.sorted) {
+        // no place among siblings to pick: the folder of the row, or the row itself when it is one
+        // места среди соседей не выбрать: папка строки или сама строка, если она папка
+        const parentId = container ? hovered.node.id : hovered.parentId;
+        const now = childIds(parentId) ?? [];
+        if (dragged.every((id) => now.includes(id))) {
+            return null; // already there: a sort would put them back where they are / уже там
+        }
+        const parentRow = parentId === null ? undefined : rows.find((row) => row.node.id === parentId);
+        return {
+            parentId,
+            index: now.filter((id) => !moving.has(id)).length,
+            targetId: hovered.node.id,
+            position: 'inside',
+            // the top level has no row: the mark is the whole tree (an empty rowId) / у верхнего уровня нет строки
+            mark: { rowId: parentRow ? parentId! : '', side: 'inside', level: parentRow?.level ?? 0 },
+        };
+    }
     let position: TaoTreeDropPosition = container
         ? fraction < 0.25
             ? 'before'
