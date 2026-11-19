@@ -152,3 +152,204 @@ export function toggleCheck(node: TaoTreeNode, checked: ReadonlySet<string>, chi
     }
     return next;
 }
+
+// ---------- moving rows / перенос строк ----------
+
+/** How a drop meets the row it is aimed at. / Как перенос встаёт относительно строки. */
+export type TaoTreeDropPosition = 'before' | 'after' | 'inside';
+
+/**
+ * A move the tree asks the app to make (`@move`). The tree never changes `nodes`: the app moves the data (or sends it to a
+ * server), and the tree shows the result. `index` is the place among the children of `parentId` once the moved nodes
+ * are taken out of it, so `moveTreeNodes` (or a `splice`) can use it as it is.
+ * Перенос, который дерево просит сделать приложение (`@move`). Дерево не меняет `nodes`: данные переносит приложение (или
+ * отправляет на сервер), а дерево показывает результат. `index` — место среди детей `parentId`, когда переносимые узлы
+ * из них уже вынуты, поэтому `moveTreeNodes` (или `splice`) берёт его как есть.
+ */
+export interface TaoTreeMove {
+    /** The moved nodes, the topmost only (a child goes with its parent), in the order of the rows. / Переносимые узлы. */
+    ids: string[];
+    /** The new parent; null for the top level. / Новый родитель; null — верхний уровень. */
+    parentId: string | null;
+    index: number;
+    /** The row the drop was aimed at, and how. / Строка, на которую целились, и как. */
+    targetId: string;
+    position: TaoTreeDropPosition;
+    /** Ctrl or Alt was held (or Ctrl+C was used): the app puts copies with new ids. / Копия, а не перенос. */
+    copy: boolean;
+}
+
+/** Where a drop goes and where its mark is drawn. / Куда встаёт перенос и где рисуется его метка. */
+export interface TaoTreeDrop {
+    parentId: string | null;
+    index: number;
+    targetId: string;
+    position: TaoTreeDropPosition;
+    /** The row the mark is drawn on, the side, and the level the line starts at. / Строка метки, сторона и уровень линии. */
+    mark: { rowId: string; side: TaoTreeDropPosition; level: number };
+}
+
+/** Can the node hold children: it has a list (an empty one too) or children still to load. / Может ли узел держать детей. */
+export function isTreeContainer(node: TaoTreeNode): boolean {
+    return Array.isArray(node.children) || Boolean(node.hasChildren);
+}
+
+/**
+ * Keeps the topmost of the ids: a node whose ancestor is in the list goes with that ancestor. `parentOf` knows every node,
+ * not only the visible ones. / Оставляет верхние: узел, чей предок в списке, едет вместе с ним.
+ */
+export function topmostIds(ids: readonly string[], parentOf: (id: string) => string | null | undefined): string[] {
+    const set = new Set(ids);
+    return ids.filter((id) => {
+        for (let p = parentOf(id); p != null; p = parentOf(p)) {
+            if (set.has(p)) {
+                return false;
+            }
+        }
+        return true;
+    });
+}
+
+export interface TaoTreeDropInput {
+    rows: readonly TaoTreeRow[];
+    /** The row under the pointer (or the keyboard target). / Строка под указателем. */
+    over: number;
+    /** Where on it, 0 at the top to 1 at the bottom. / Где на ней: 0 сверху, 1 снизу. */
+    fraction: number;
+    /**
+     * The level the pointer's x stands at: below the last row of a branch a smaller level puts the drop after an ancestor,
+     * so a node can be taken out of a folder. / Уровень по x указателя: под последней строкой ветки меньший уровень ставит
+     * перенос после предка, так узел можно вынуть из папки.
+     */
+    level?: number;
+    /** The dragged nodes, topmost, in the order of the rows. / Переносимые узлы. */
+    dragged: readonly string[];
+    /** The ids of the children of a node (null: the roots), known or loaded. / id детей узла. */
+    childIds: (parentId: string | null) => readonly string[] | undefined;
+    parentOf: (id: string) => string | null | undefined;
+}
+
+/**
+ * Where rows dragged over a row land. A folder takes its top quarter as «before», the bottom quarter as «after» and the
+ * middle as «inside» (at the end); a leaf splits in halves. «After» an open folder is its first child. Null where they
+ * cannot go: onto themselves or into their own descendants, or where nothing would change.
+ * Куда встают строки, которые тащат над строкой. У папки верхняя четверть — «перед», нижняя — «после», середина — «внутрь»
+ * (в конец); у листа — половины. «После» раскрытой папки — её первый ребёнок. Null, куда нельзя: на самих себя или в
+ * своих потомков, и туда, где ничего не изменится.
+ */
+export function dropTarget(input: TaoTreeDropInput): TaoTreeDrop | null {
+    const { rows, fraction, dragged, childIds, parentOf } = input;
+    const hovered = rows[input.over];
+    if (!hovered) {
+        return null;
+    }
+    const moving = new Set(dragged);
+    for (let p: string | null | undefined = hovered.node.id; p != null; p = parentOf(p)) {
+        if (moving.has(p)) {
+            return null;
+        }
+    }
+    const container = isTreeContainer(hovered.node) && !hovered.node.disabled;
+    let position: TaoTreeDropPosition = container
+        ? fraction < 0.25
+            ? 'before'
+            : fraction > 0.75
+              ? 'after'
+              : 'inside'
+        : fraction < 0.5
+          ? 'before'
+          : 'after';
+    const rest = (parentId: string | null) => (childIds(parentId) ?? []).filter((id) => !moving.has(id));
+
+    let drop: TaoTreeDrop;
+    if (position === 'after' && hovered.expanded && (childIds(hovered.node.id)?.length ?? 0) > 0) {
+        // below an open folder is the start of its children / под раскрытой папкой — начало её детей
+        position = 'inside';
+        drop = {
+            parentId: hovered.node.id,
+            index: 0,
+            targetId: hovered.node.id,
+            position,
+            mark: { rowId: hovered.node.id, side: 'after', level: hovered.level + 1 },
+        };
+    } else if (position === 'inside') {
+        drop = {
+            parentId: hovered.node.id,
+            index: rest(hovered.node.id).length,
+            targetId: hovered.node.id,
+            position,
+            mark: { rowId: hovered.node.id, side: 'inside', level: hovered.level },
+        };
+    } else {
+        let target = hovered;
+        if (position === 'after' && input.level !== undefined) {
+            // out of the branches the row is the last of, as far as the pointer went left
+            // из веток, последней строкой которых она стоит, насколько указатель ушёл влево
+            while (target.level > input.level && target.posinset === target.setsize && target.parentId !== null) {
+                const parent = rows.find((row) => row.node.id === target.parentId);
+                if (!parent) {
+                    break;
+                }
+                target = parent;
+            }
+        }
+        const siblings = rest(target.parentId);
+        const at = siblings.indexOf(target.node.id);
+        drop = {
+            parentId: target.parentId,
+            index: position === 'before' ? at : at + 1,
+            targetId: target.node.id,
+            position,
+            mark: { rowId: hovered.node.id, side: position, level: target.level },
+        };
+    }
+
+    // nothing would change: the nodes are already there, in that order / ничего не изменится
+    const now = childIds(drop.parentId) ?? [];
+    if (dragged.every((id) => now.includes(id))) {
+        const others = now.filter((id) => !moving.has(id));
+        const after = [...others.slice(0, drop.index), ...dragged, ...others.slice(drop.index)];
+        if (after.length === now.length && after.every((id, i) => id === now[i])) {
+            return null;
+        }
+    }
+    return drop;
+}
+
+/**
+ * The tree with a move made, for an app that keeps its data as `TaoTreeNode[]`: a new array, the nodes it passes
+ * through copied, the others kept. A copy (`move.copy`) needs new ids, so it is the app's to make; this helper moves.
+ * Children loaded by `load` are not in `nodes`: such an app moves them in its own store.
+ * Дерево с выполненным переносом, для приложения, которое хранит данные как `TaoTreeNode[]`: новый массив, узлы по пути
+ * скопированы, остальные те же. Копии (`move.copy`) нужны новые id, их делает приложение; помощник переносит.
+ * Дети, подгруженные через `load`, не лежат в `nodes`: такое приложение переносит их в своём хранилище.
+ */
+export function moveTreeNodes(nodes: readonly TaoTreeNode[], move: Pick<TaoTreeMove, 'ids' | 'parentId' | 'index'>): TaoTreeNode[] {
+    const moving = new Set(move.ids);
+    const taken = new Map<string, TaoTreeNode>();
+    const strip = (list: readonly TaoTreeNode[]): TaoTreeNode[] =>
+        list
+            .filter((node) => {
+                if (moving.has(node.id)) {
+                    taken.set(node.id, node);
+                    return false;
+                }
+                return true;
+            })
+            .map((node) => (node.children ? { ...node, children: strip(node.children) } : node));
+    const stripped = strip(nodes);
+    const items = move.ids.map((id) => taken.get(id)).filter((node): node is TaoTreeNode => Boolean(node));
+    const insert = (list: readonly TaoTreeNode[]) => {
+        const next = list.slice();
+        next.splice(Math.max(0, Math.min(move.index, next.length)), 0, ...items);
+        return next;
+    };
+    if (move.parentId === null) {
+        return insert(stripped);
+    }
+    const put = (list: readonly TaoTreeNode[]): TaoTreeNode[] =>
+        list.map((node) =>
+            node.id === move.parentId ? { ...node, children: insert(node.children ?? []) } : node.children ? { ...node, children: put(node.children) } : node,
+        );
+    return put(stripped);
+}

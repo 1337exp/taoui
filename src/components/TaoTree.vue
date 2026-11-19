@@ -2,7 +2,7 @@
 import { computed, nextTick, ref, shallowReactive, shallowRef, useId, watch } from 'vue';
 import type { TaoVirtualAnchor } from '../floating';
 import { useListNav } from '../listNav';
-import { useLocaleText } from '../locale';
+import { formatText, localeEn, useLocaleText } from '../locale';
 import type { TaoMenuItem } from '../menu';
 import { sizeClass, type TaoSize } from '../size';
 import {
@@ -12,10 +12,12 @@ import {
     visibleRows,
     type TaoTreeCheckState,
     type TaoTreeMenu,
+    type TaoTreeMove,
     type TaoTreeNode,
     type TaoTreeRow,
     type TaoTreeSelection,
 } from '../tree';
+import { useTreeMove } from '../treeMove';
 import TaoIcon from './TaoIcon.vue';
 import TaoMenu from './TaoMenu.vue';
 
@@ -51,6 +53,22 @@ const props = withDefaults(
          * Правый клик вне выбора сначала выбирает строку; выбранный пункт приходит в `menu-select`.
          */
         menu?: TaoTreeMenu;
+        /**
+         * `@move`: the rows can be dragged to another place, and cut / copied and pasted with Ctrl+X / Ctrl+C / Ctrl+V. The
+         * tree changes nothing: make the move in your data (`moveTreeNodes`); return a promise and the rows wait for it,
+         * a rejected one comes as `move-error`. A prop, not only an event, so the tree can wait for what it returns.
+         * `@move`: строки можно перетащить в другое место, а также вырезать / скопировать и вставить (Ctrl+X / Ctrl+C /
+         * Ctrl+V). Дерево ничего не меняет: перенос делаете вы в своих данных (`moveTreeNodes`); верните обещание, и
+         * строки его подождут, отклонённое придёт в `move-error`. Проп, а не только событие: дерево ждёт его ответ.
+         */
+        onMove?: (move: TaoTreeMove) => unknown;
+        /** Which rows can be moved (with `@move`); all but disabled ones by default. / Какие строки можно переносить. */
+        movable?: boolean | ((node: TaoTreeNode) => boolean);
+        /**
+         * May the rows go there: false shows a «no» cursor and no mark (a file into a file is already refused).
+         * Можно ли туда: false — курсор «нельзя» и нет метки (файл в файл и так не принимается).
+         */
+        canDrop?: (move: TaoTreeMove) => boolean;
         /** Accessible name of the tree. / Имя дерева для скринридера. */
         ariaLabel?: string;
         loadingLabel?: string;
@@ -66,12 +84,17 @@ const props = withDefaults(
         load: undefined,
         size: undefined,
         menu: undefined,
+        onMove: undefined,
+        movable: true,
+        canDrop: undefined,
         ariaLabel: undefined,
         loadingLabel: undefined,
         menuLabel: undefined,
     },
 );
 const l10n = useLocaleText(props, 'tree');
+/** A text of the tree, English for a locale written before 5.51.0. / Текст дерева; английский для старой локали. */
+const text = <K extends keyof typeof localeEn.tree>(key: K) => (l10n.value[key] ?? localeEn.tree[key])!;
 
 const emit = defineEmits<{
     'update:expanded': [ids: string[]];
@@ -95,6 +118,8 @@ const emit = defineEmits<{
     menu: [node: TaoTreeNode, event: MouseEvent | KeyboardEvent];
     /** An item of `menu` was picked: its id, the row and the ids it acts on. / Выбран пункт `menu`. */
     'menu-select': [id: string, node: TaoTreeNode, selected: string[]];
+    /** The promise `@move` returned was rejected; the data is as it was. / Обещание `@move` отклонено; данные прежние. */
+    'move-error': [move: TaoTreeMove, error: unknown];
 }>();
 
 interface NodeSlot {
@@ -253,6 +278,7 @@ const ariaChecked = (row: TaoTreeRow) => {
 
 const treeId = useId();
 const rowRefs = ref<(HTMLElement | null)[]>([]);
+const treeRef = ref<HTMLElement | null>(null);
 const current = ref(0);
 const rowDomId = (row: TaoTreeRow) => `${treeId}-${row.node.id}`;
 
@@ -285,7 +311,7 @@ function onKeydown(event: KeyboardEvent, index: number) {
         return;
     }
     current.value = index;
-    if (onMenuKey(event, row, index)) {
+    if (onMenuKey(event, row, index) || moveRows.onKeydown(event, index)) {
         return;
     }
     if (event.key === '*') {
@@ -366,6 +392,9 @@ function onRowDblClick(row: TaoTreeRow) {
 }
 
 function onRowClick(row: TaoTreeRow, index: number) {
+    if (moveRows.swallowClick()) {
+        return;
+    }
     current.value = index;
     if (props.selection === 'none') {
         if (row.branch) {
@@ -473,6 +502,100 @@ function onMenuClose() {
     menuOpen.value = false;
 }
 
+// ---------- moving rows ----------
+
+// Every known node (closed branches and loaded children too): the parent, the children in order, the node by id.
+// Каждый известный узел (и в свёрнутых ветках, и подгруженные): родитель, дети по порядку, узел по id.
+const known = computed(() => {
+    const parent = new Map<string, string | null>();
+    const kids = new Map<string | null, string[]>();
+    const byId = new Map<string, TaoTreeNode>();
+    const walk = (list: readonly TaoTreeNode[], parentId: string | null) => {
+        kids.set(
+            parentId,
+            list.map((node) => node.id),
+        );
+        for (const node of list) {
+            if (byId.has(node.id)) {
+                continue; // a repeated id (a wrong load) is a leaf, as in visibleRows / повтор id — лист
+            }
+            byId.set(node.id, node);
+            parent.set(node.id, parentId);
+            const own = children(node);
+            if (own) {
+                walk(own, node.id);
+            }
+        }
+    };
+    walk(props.nodes, null);
+    return { parent, kids, byId };
+});
+
+/** Children loaded for a folder a move touched are stale: load them again if it is open. / Подгружает заново. */
+async function reload(id: string) {
+    const node = known.value.byId.get(id);
+    if (!node || node.children || !loaded.has(id)) {
+        return;
+    }
+    loaded.delete(id);
+    if (!expandedSet.value.has(id) || !props.load) {
+        return;
+    }
+    loading.add(id);
+    try {
+        loaded.set(id, await props.load(node));
+    } catch (error) {
+        emit('load-error', node, error);
+    } finally {
+        loading.delete(id);
+    }
+}
+
+const canMove = computed(() => Boolean(props.onMove));
+const liveText = ref('');
+function announce(message: string) {
+    // a new text each time, so the same words are read again / каждый раз новый текст, чтобы те же слова прочли снова
+    liveText.value = '';
+    void nextTick(() => (liveText.value = message));
+}
+
+const moveRows = useTreeMove({
+    root: treeRef,
+    rows: () => rows.value,
+    rowEl: (index) => rowRefs.value[index],
+    enabled: () => canMove.value,
+    movable: (node) => (typeof props.movable === 'function' ? props.movable(node) : props.movable),
+    canDrop: (move) => props.canDrop?.(move) ?? true,
+    selected: () => selectedSet.value,
+    childIds: (id) => known.value.kids.get(id),
+    parentOf: (id) => known.value.parent.get(id),
+    node: (id) => known.value.byId.get(id),
+    expand: (row) => expand(row),
+    move: (move) => props.onMove?.(move),
+    moved: (move, from) => new Set([move.parentId, ...from]).forEach((id) => id !== null && void reload(id)),
+    failed: (move, error) => emit('move-error', move, error),
+    announce,
+    texts: () => ({
+        count: (count) => formatText(text('countLabel'), { count }),
+        root: text('rootLabel'),
+        cut: text('cutText'),
+        copy: text('copyText'),
+        moved: text('movedText'),
+        copied: text('copiedText'),
+        canceled: text('canceledText'),
+        refused: text('refusedText'),
+    }),
+});
+
+// top-level refs, so the template unwraps them / верхнеуровневые ref, чтобы шаблон их разворачивал
+const { dragging, refused, ghost, pending, clipboard } = moveRows;
+const isCut = (id: string) => Boolean(clipboard.value && !clipboard.value.copy && clipboard.value.ids.includes(id));
+
+const dropClass = (row: TaoTreeRow) => {
+    const mark = moveRows.drop.value?.mark;
+    return mark && mark.rowId === row.node.id ? `tao-tree__row--drop-${mark.side}` : undefined;
+};
+
 const slotProps = (row: TaoTreeRow): NodeSlot => ({
     node: row.node,
     level: row.level,
@@ -483,8 +606,12 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
 
 <template>
     <ul
+        ref="treeRef"
         class="tao-tree"
-        :class="[sizeClass(size), { 'tao-tree--menu-open': menuOpen }]"
+        :class="[
+            sizeClass(size),
+            { 'tao-tree--menu-open': menuOpen, 'tao-tree--dragging': dragging.size > 0, 'tao-tree--refused': refused },
+        ]"
         role="tree"
         :aria-label="l10n.ariaLabel"
         :aria-multiselectable="selection === 'multiple' || undefined"
@@ -497,10 +624,14 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
             class="tao-tree__row"
             :class="[
                 row.node.tone && `tao-tree__row--toned tao-tree__row--${row.node.tone}`,
+                dropClass(row),
                 {
                     'tao-tree__row--selected': selectedSet.has(row.node.id),
                     'tao-tree__row--disabled': row.node.disabled,
                     'tao-tree__row--menu': menuOpen && menuNode?.id === row.node.id,
+                    'tao-tree__row--dragged': dragging.has(row.node.id),
+                    'tao-tree__row--pending': pending.has(row.node.id),
+                    'tao-tree__row--cut': isCut(row.node.id),
                 },
             ]"
             role="treeitem"
@@ -512,9 +643,10 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
             :aria-selected="selection === 'none' ? undefined : selectedSet.has(row.node.id)"
             :aria-checked="checkable ? ariaChecked(row) : undefined"
             :aria-disabled="row.node.disabled || undefined"
-            :aria-busy="loading.has(row.node.id) || undefined"
-            :style="{ '--_level': row.level - 1 }"
+            :aria-busy="loading.has(row.node.id) || pending.has(row.node.id) || undefined"
+            :style="{ '--_level': row.level - 1, '--_drop-level': (moveRows.drop.value?.mark.level ?? 1) - 1 }"
             @keydown="onKeydown($event, index)"
+            @pointerdown="moveRows.onPointerDown($event, index)"
             @click="onRowClick(row, index)"
             @dblclick="onRowDblClick(row)"
             @contextmenu="onRowContextMenu($event, row, index)"
@@ -560,11 +692,25 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
             :items="menuItems"
             :open="menuOpen"
             :anchor="menuAnchor"
-            :label="l10n.menuLabel"
+            :label="text('menuLabel')"
             close-on-scroll
             @select="onMenuSelect"
             @close="onMenuClose"
         />
+        <Teleport v-if="canMove" to="body">
+            <!-- what is being dragged, under the pointer / что тащат, у указателя -->
+            <div
+                v-if="ghost"
+                class="tao-tree__ghost"
+                :class="sizeClass(size)"
+                aria-hidden="true"
+                :style="{ left: `${ghost.x + 14}px`, top: `${ghost.y + 10}px` }"
+            >
+                <span v-if="ghost.copy" class="tao-tree__ghost-copy">+</span>{{ ghost.text }}
+            </div>
+            <!-- moves said aloud: cut, moved, refused / переносы вслух -->
+            <div class="tao-sr-only" role="status" aria-live="polite">{{ liveText }}</div>
+        </Teleport>
     </ul>
 </template>
 
@@ -621,6 +767,86 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
 .tao-tree__row--menu:not(.tao-tree__row--selected) {
     background: var(--tao-color-hover);
     box-shadow: inset 0 0 0 1px var(--tao-color-border-strong);
+}
+
+/* ---------- moving rows / перенос строк ---------- */
+
+.tao-tree--dragging,
+.tao-tree--dragging .tao-tree__row {
+    cursor: grabbing;
+}
+
+.tao-tree--refused,
+.tao-tree--refused .tao-tree__row {
+    cursor: not-allowed;
+}
+
+/* while dragging the pointer sweeps over everything: no hover under it, only the mark
+   при перетаскивании указатель проходит по всему: никакой подсветки под ним, только метка */
+.tao-tree--dragging .tao-tree__row:hover:not(.tao-tree__row--selected):not(.tao-tree__row--drop-inside) {
+    background: none;
+}
+
+.tao-tree__row--dragged,
+.tao-tree__row--cut {
+    opacity: 0.5;
+}
+
+.tao-tree__row--pending {
+    opacity: 0.6;
+    cursor: progress;
+}
+
+/* inside a folder: the whole row; before or after: a line from the level the rows will stand at
+   внутрь папки — вся строка; перед или после — линия от уровня, на котором встанут строки */
+.tao-tree__row.tao-tree__row--drop-inside {
+    background: var(--tao-color-accent-subtle);
+    box-shadow: inset 0 0 0 1px var(--tao-color-accent);
+}
+
+.tao-tree__row--drop-before::after,
+.tao-tree__row--drop-after::after {
+    content: '';
+    position: absolute;
+    left: calc(var(--tao-space-1) + var(--_drop-level) * var(--_indent));
+    right: 0;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--tao-color-accent);
+    pointer-events: none;
+}
+
+.tao-tree__row--drop-before::after {
+    top: -1px;
+}
+
+.tao-tree__row--drop-after::after {
+    bottom: -1px;
+}
+
+.tao-tree__ghost {
+    position: fixed;
+    z-index: var(--tao-z-tooltip);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--tao-space-1);
+    max-width: 16rem;
+    padding: var(--tao-space-1) var(--tao-space-2);
+    overflow: hidden;
+    border: 1px solid var(--tao-color-border);
+    border-radius: var(--tao-radius-control);
+    background: var(--tao-color-surface-raised);
+    box-shadow: var(--tao-shadow-panel);
+    color: var(--tao-color-text);
+    font-size: var(--tao-control-font-size);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    pointer-events: none;
+}
+
+.tao-tree__ghost-copy {
+    color: var(--tao-color-accent-text);
+    font-weight: 600;
 }
 
 .tao-tree__row:focus-visible {

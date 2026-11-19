@@ -95,7 +95,24 @@ export interface TaoLocale {
     dropdownMenu: { menuLabel: string };
     menubar: { ariaLabel: string };
     nav: { ariaLabel: string; moreLabel: string };
-    tree: { ariaLabel: string; loadingLabel: string; menuLabel: string };
+    tree: {
+        ariaLabel: string;
+        loadingLabel: string;
+        /** The context menu (5.51.0; optional for locales written before, English then). / Контекстное меню. */
+        menuLabel?: string;
+        /**
+         * Moving rows (5.51.0, optional): `{item}` is the name of a row or `countLabel`, `{target}` the folder or `rootLabel`.
+         * Перенос строк (5.51.0, необязательно): `{item}` — имя строки или `countLabel`, `{target}` — папка или `rootLabel`.
+         */
+        countLabel?: TaoText;
+        rootLabel?: string;
+        cutText?: string;
+        copyText?: string;
+        movedText?: string;
+        copiedText?: string;
+        canceledText?: string;
+        refusedText?: string;
+    };
     /** `counterText`: `{checked}`, `{total}`. */
     checklist: { selectAllLabel: string; counterText: string };
     contextMenu: { menuLabel: string };

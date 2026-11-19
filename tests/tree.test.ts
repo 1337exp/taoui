@@ -2,7 +2,17 @@ import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { h, nextTick } from 'vue';
 import TaoTree from '../src/components/TaoTree.vue';
-import { checkState, checkUnits, menuSelection, toggleCheck, visibleRows, type TaoTreeNode } from '../src/tree';
+import {
+    checkState,
+    checkUnits,
+    dropTarget,
+    menuSelection,
+    moveTreeNodes,
+    toggleCheck,
+    topmostIds,
+    visibleRows,
+    type TaoTreeNode,
+} from '../src/tree';
 
 const nodes: TaoTreeNode[] = [
     {
@@ -62,6 +72,76 @@ describe('tree data', () => {
         expect(rows.map((r) => `${r.node.id}:${r.level}`)).toEqual(['vue:1', 'vue:2']);
         expect(rows[1]).toMatchObject({ branch: false, expanded: false });
         expect(checkUnits(vue, loadedChildren)).toEqual(['vue']);
+    });
+});
+
+describe('moving rows: the pure part', () => {
+    const parents = new Map<string, string | null>();
+    const kids = new Map<string | null, string[]>();
+    const index = (list: TaoTreeNode[], parent: string | null) => {
+        kids.set(parent, list.map((n) => n.id));
+        list.forEach((n) => {
+            parents.set(n.id, parent);
+            if (n.children) index(n.children, n.id);
+        });
+    };
+    index(nodes, null);
+    const childIds = (id: string | null) => kids.get(id);
+    const parentOf = (id: string) => parents.get(id);
+    const rows = visibleRows(nodes, new Set(['src', 'lib']), own); // src app lib a b docs readme lock
+    const at = (id: string) => rows.findIndex((r) => r.node.id === id);
+    const drop = (over: string, fraction: number, dragged: string[], level?: number) =>
+        dropTarget({ rows, over: at(over), fraction, level, dragged, childIds, parentOf });
+
+    it('topmostIds: a child goes with its parent', () => {
+        expect(topmostIds(['a', 'lib', 'readme'], parentOf)).toEqual(['lib', 'readme']);
+    });
+
+    it('a leaf splits in halves: before / after, the index among the siblings without the moved ones', () => {
+        expect(drop('readme', 0.2, ['a'])).toMatchObject({ parentId: null, index: 2, position: 'before', targetId: 'readme' });
+        expect(drop('readme', 0.8, ['a'])).toMatchObject({ parentId: null, index: 3, position: 'after' });
+        // moving a root down: it is taken out first, so readme is at 1, after it is 2
+        expect(drop('readme', 0.8, ['src'])).toMatchObject({ parentId: null, index: 2 });
+    });
+
+    it('a folder: the top quarter before, the middle inside at the end, the bottom quarter after (a closed one)', () => {
+        expect(drop('docs', 0.1, ['app'])).toMatchObject({ position: 'before', parentId: null, index: 1 });
+        expect(drop('docs', 0.5, ['app'])).toMatchObject({ position: 'inside', parentId: 'docs', index: 0, mark: { side: 'inside' } });
+        expect(drop('docs', 0.9, ['app'])).toMatchObject({ position: 'after', parentId: null, index: 2 });
+        expect(drop('lib', 0.5, ['readme'])).toMatchObject({ position: 'inside', parentId: 'lib', index: 2 });
+    });
+
+    it('below an open folder is its first child, the mark one level in', () => {
+        expect(drop('lib', 0.9, ['readme'])).toMatchObject({ position: 'inside', parentId: 'lib', index: 0, mark: { rowId: 'lib', side: 'after', level: 3 } });
+    });
+
+    it('after the last row of a branch, the pointer level takes the drop out of it', () => {
+        expect(drop('b', 0.9, ['readme'])).toMatchObject({ parentId: 'lib', index: 2 });
+        expect(drop('b', 0.9, ['readme'], 2)).toMatchObject({ parentId: 'src', index: 2, targetId: 'lib', mark: { rowId: 'b', level: 2 } });
+        expect(drop('b', 0.9, ['readme'], 1)).toMatchObject({ parentId: null, index: 1, targetId: 'src', mark: { level: 1 } });
+        // a, not the last of lib, keeps its level / a не последняя в lib и остаётся на своём уровне
+        expect(drop('a', 0.9, ['readme'], 1)).toMatchObject({ parentId: 'lib', index: 1 });
+    });
+
+    it('not onto itself, not into its own descendants, not where nothing changes; a disabled folder is a leaf', () => {
+        expect(drop('lib', 0.5, ['lib'])).toBeNull();
+        expect(drop('a', 0.5, ['src'])).toBeNull();
+        expect(drop('app', 0.9, ['lib'])).toBeNull(); // lib is already right after app
+        expect(drop('app', 0.2, ['lib'])).toMatchObject({ parentId: 'src', index: 0 });
+        expect(drop('src', 0.5, ['readme'])).toMatchObject({ position: 'inside' });
+        const locked: TaoTreeNode = { id: 'box', label: 'box', children: [], disabled: true };
+        const r = visibleRows([locked], new Set(), own);
+        expect(dropTarget({ rows: r, over: 0, fraction: 0.5, dragged: ['x'], childIds: () => [], parentOf: () => null })!.position).toBe('after');
+    });
+
+    it('moveTreeNodes: takes the nodes out, puts them at the index of the new parent, leaves the input alone', () => {
+        const moved = moveTreeNodes(nodes, { ids: ['a', 'readme'], parentId: 'src', index: 0 });
+        expect(moved.map((n) => n.id)).toEqual(['src', 'docs', 'lock']);
+        expect(moved[0]!.children!.map((n) => n.id)).toEqual(['a', 'readme', 'app', 'lib']);
+        expect(moved[0]!.children![3]!.children!.map((n) => n.id)).toEqual(['b']);
+        expect(nodes[0]!.children!.map((n) => n.id)).toEqual(['app', 'lib']);
+        expect(moveTreeNodes(nodes, { ids: ['app'], parentId: null, index: 99 }).map((n) => n.id)).toEqual(['src', 'docs', 'readme', 'lock', 'app']);
+        expect(moveTreeNodes(nodes, { ids: ['readme'], parentId: 'docs', index: 0 })[1]!.children!.map((n) => n.id)).toEqual(['readme']);
     });
 });
 
@@ -308,6 +388,177 @@ describe('TaoTree', () => {
         expect(w.attributes('aria-label')).toBe('Files');
     });
 });
+
+describe('TaoTree moving rows', () => {
+    // happy-dom has no layout: every row is 24px tall, one under another, the chevron 16px wide
+    // у happy-dom нет раскладки: строка 24px высотой, одна под другой, стрелка 16px шириной
+    const ROW = 24;
+    let restore: (() => void) | undefined;
+    function layout() {
+        const spy = vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (this: HTMLElement) {
+            const row = this.closest('[role="treeitem"]') as HTMLElement | null;
+            const all = [...document.querySelectorAll('[role="treeitem"]')];
+            const i = row ? all.indexOf(row) : 0;
+            const width = this.classList.contains('tao-tree__toggle') ? 16 : 300;
+            return { top: i * ROW, bottom: (i + 1) * ROW, left: 0, right: width, width, height: ROW, x: 0, y: i * ROW, toJSON: () => ({}) } as DOMRect;
+        });
+        restore = () => spy.mockRestore();
+    }
+    afterEach(() => {
+        restore?.();
+        restore = undefined;
+        vi.useRealTimers();
+    });
+    const pointer = (type: string, target: EventTarget, x: number, y: number, extra: PointerEventInit = {}) => {
+        target.dispatchEvent(new PointerEvent(type, { clientX: x, clientY: y, button: 0, pointerId: 1, pointerType: 'mouse', bubbles: true, cancelable: true, ...extra }));
+    };
+    const row = (w: VueWrapper, label: string) => items(w).find((i) => i.find('.tao-tree__label').text() === label)!.element;
+    const y = (w: VueWrapper, label: string, fraction: number) => items(w).findIndex((i) => i.find('.tao-tree__label').text() === label) * ROW + fraction * ROW;
+    async function drag(w: VueWrapper, from: string, to: string, fraction: number, extra: PointerEventInit = {}) {
+        pointer('pointerdown', row(w, from), 200, y(w, from, 0.5));
+        pointer('pointermove', document, 200, y(w, from, 0.5) + 10, extra);
+        pointer('pointermove', document, 200, y(w, to, fraction), extra);
+        await nextTick();
+    }
+    const moveTree = (props: Record<string, unknown> = {}) => {
+        layout();
+        return tree({ expanded: ['src', 'lib'], ...props });
+    };
+
+    it('a row dropped in the middle of a folder goes inside it, at the end; the click after the drop is not a pick', async () => {
+        const onMove = vi.fn();
+        const w = moveTree({ onMove });
+        await drag(w, 'README.md', 'lib', 0.5);
+        expect(row(w, 'lib').classList).toContain('tao-tree__row--drop-inside');
+        expect(row(w, 'README.md').classList).toContain('tao-tree__row--dragged');
+        expect(document.querySelector('.tao-tree__ghost')?.textContent).toBe('README.md');
+        pointer('pointerup', document, 200, y(w, 'lib', 0.5));
+        row(w, 'lib').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        await nextTick();
+        expect(onMove).toHaveBeenCalledWith({ ids: ['readme'], parentId: 'lib', index: 2, targetId: 'lib', position: 'inside', copy: false });
+        expect(w.emitted('update:selected')).toBeUndefined();
+        expect(document.querySelector('.tao-tree__ghost')).toBeNull();
+        expect(w.find('.tao-tree__row--drop-inside').exists()).toBe(false);
+    });
+
+    it('a press that hardly moves is a click, not a drag', async () => {
+        const onMove = vi.fn();
+        const w = moveTree({ onMove });
+        pointer('pointerdown', row(w, 'README.md'), 200, 150);
+        pointer('pointermove', document, 202, 152);
+        pointer('pointerup', document, 202, 152);
+        await row(w, 'README.md').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        expect(onMove).not.toHaveBeenCalled();
+        expect(w.emitted('update:selected')).toEqual([['readme']]);
+    });
+
+    it('a selected row takes the whole selection with it (the topmost only); Ctrl makes it a copy', async () => {
+        const onMove = vi.fn();
+        const w = moveTree({ onMove, selection: 'multiple', selected: ['a', 'lib', 'readme'] });
+        await drag(w, 'README.md', 'docs', 0.1, { ctrlKey: true });
+        expect(document.querySelector('.tao-tree__ghost')?.textContent).toBe('+2 items');
+        pointer('pointerup', document, 200, y(w, 'docs', 0.1), { ctrlKey: true });
+        expect(onMove).toHaveBeenCalledWith(expect.objectContaining({ ids: ['lib', 'readme'], parentId: null, index: 1, position: 'before', copy: true }));
+    });
+
+    it('Escape cancels a drag', async () => {
+        const onMove = vi.fn();
+        const w = moveTree({ onMove });
+        await drag(w, 'README.md', 'lib', 0.5);
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        pointer('pointerup', document, 200, y(w, 'lib', 0.5));
+        expect(onMove).not.toHaveBeenCalled();
+        await nextTick();
+        expect(w.find('.tao-tree__row--dragged').exists()).toBe(false);
+    });
+
+    it('canDrop false: no mark, a «no» cursor, nothing is moved', async () => {
+        const onMove = vi.fn();
+        const w = moveTree({ onMove, canDrop: () => false });
+        await drag(w, 'README.md', 'lib', 0.5);
+        expect(w.classes()).toContain('tao-tree--refused');
+        expect(w.find('.tao-tree__row--drop-inside').exists()).toBe(false);
+        pointer('pointerup', document, 200, y(w, 'lib', 0.5));
+        expect(onMove).not.toHaveBeenCalled();
+    });
+
+    it('a promise: the rows wait (aria-busy) and cannot be dragged again; a rejected one comes as move-error', async () => {
+        let reject!: (error: Error) => void;
+        const onMove = vi.fn(() => new Promise((_, r) => (reject = r)));
+        const w = moveTree({ onMove });
+        await drag(w, 'README.md', 'lib', 0.5);
+        pointer('pointerup', document, 200, y(w, 'lib', 0.5));
+        await nextTick();
+        expect(row(w, 'README.md').getAttribute('aria-busy')).toBe('true');
+        expect(row(w, 'README.md').classList).toContain('tao-tree__row--pending');
+        await drag(w, 'README.md', 'docs', 0.1);
+        pointer('pointerup', document, 200, y(w, 'docs', 0.1));
+        expect(onMove).toHaveBeenCalledTimes(1);
+        reject(new Error('offline'));
+        await new Promise((r) => setTimeout(r));
+        await nextTick();
+        expect(w.emitted('move-error')![0]![1]).toBeInstanceOf(Error);
+        expect(row(w, 'README.md').getAttribute('aria-busy')).toBeNull();
+    });
+
+    it('a closed folder under the pointer opens after a moment, a lazy one loads', async () => {
+        vi.useFakeTimers();
+        const load = vi.fn(async () => [{ id: 'guide', label: 'guide.md' }]);
+        const w = moveTree({ onMove: vi.fn(), load });
+        await drag(w, 'README.md', 'docs', 0.5);
+        expect(load).not.toHaveBeenCalled();
+        await vi.advanceTimersByTimeAsync(700);
+        expect(load).toHaveBeenCalled();
+        expect(w.emitted('update:expanded')!.at(-1)![0]).toContain('docs');
+        pointer('pointerup', document, 0, 0);
+    });
+
+    it('the keyboard: Ctrl+X on a row, Ctrl+V on a folder moves it to its end, said in the live region; Escape forgets the cut', async () => {
+        const onMove = vi.fn();
+        const w = moveTree({ onMove });
+        await key(row(w, 'README.md'), 'x'); // without Ctrl: type-ahead, nothing cut
+        row(w, 'README.md').dispatchEvent(new KeyboardEvent('keydown', { key: 'x', ctrlKey: true, bubbles: true, cancelable: true }));
+        await flushAll();
+        expect(row(w, 'README.md').classList).toContain('tao-tree__row--cut');
+        expect(document.querySelector('[role="status"]')?.textContent).toContain('README.md cut');
+        row(w, 'lib').dispatchEvent(new KeyboardEvent('keydown', { key: 'v', ctrlKey: true, bubbles: true, cancelable: true }));
+        await flushAll();
+        expect(onMove).toHaveBeenCalledWith(expect.objectContaining({ ids: ['readme'], parentId: 'lib', index: 2, position: 'inside' }));
+        expect(document.querySelector('[role="status"]')?.textContent).toBe('README.md moved to lib.');
+        row(w, 'App.vue').dispatchEvent(new KeyboardEvent('keydown', { key: 'c', ctrlKey: true, bubbles: true, cancelable: true }));
+        await key(row(w, 'App.vue'), 'Escape');
+        expect(document.querySelector('[role="status"]')?.textContent).toBe('Move canceled.');
+        row(w, 'README.md').dispatchEvent(new KeyboardEvent('keydown', { key: 'v', ctrlKey: true, bubbles: true, cancelable: true }));
+        expect(onMove).toHaveBeenCalledTimes(1);
+    });
+
+    it('Ctrl+V on a leaf puts the rows after it; a place they cannot go is said, not done', async () => {
+        const onMove = vi.fn();
+        const w = moveTree({ onMove });
+        row(w, 'src').dispatchEvent(new KeyboardEvent('keydown', { key: 'x', ctrlKey: true, bubbles: true, cancelable: true }));
+        row(w, 'a.ts').dispatchEvent(new KeyboardEvent('keydown', { key: 'v', ctrlKey: true, bubbles: true, cancelable: true }));
+        await flushAll();
+        expect(onMove).not.toHaveBeenCalled();
+        expect(document.querySelector('[role="status"]')?.textContent).toContain('cannot go');
+        row(w, 'README.md').dispatchEvent(new KeyboardEvent('keydown', { key: 'v', ctrlKey: true, bubbles: true, cancelable: true }));
+        expect(onMove).toHaveBeenCalledWith(expect.objectContaining({ ids: ['src'], parentId: null, index: 2, position: 'after' }));
+    });
+
+    it('without @move nothing drags and Ctrl+X is left alone', async () => {
+        const w = moveTree();
+        await drag(w, 'README.md', 'lib', 0.5);
+        expect(document.querySelector('.tao-tree__ghost')).toBeNull();
+        const event = new KeyboardEvent('keydown', { key: 'x', ctrlKey: true, bubbles: true, cancelable: true });
+        row(w, 'README.md').dispatchEvent(event);
+        expect(event.defaultPrevented).toBe(false);
+        pointer('pointerup', document, 0, 0);
+    });
+});
+
+const flushAll = async () => {
+    await nextTick();
+    await nextTick();
+};
 
 describe('TaoTree context menu', () => {
     const flush = async () => {
