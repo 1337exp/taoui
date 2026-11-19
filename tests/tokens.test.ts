@@ -222,3 +222,13 @@ describe('component styles use tokens', () => {
         expect(offenders).toEqual([]);
     });
 });
+
+// 5.51.0: the soft corners NextUp, Axis and fin-view each set over the kit became the default (they were 4 / 8 / 12).
+// 5.51.0: мягкие углы, которые NextUp, Axis и fin-view ставили поверх набора, стали значениями по умолчанию (были 4 / 8 / 12).
+describe('radii', () => {
+    it('the scale is 6 / 10 / 14 / 18, a control takes md and a panel xl', () => {
+        expect(['sm', 'md', 'lg', 'xl'].map((step) => primitives.get(`--tao-radius-${step}`))).toEqual(['6px', '10px', '14px', '18px']);
+        expect(semantic.get('--tao-radius-control')).toBe('var(--tao-radius-md)');
+        expect(semantic.get('--tao-radius-panel')).toBe('var(--tao-radius-xl)');
+    });
+});

@@ -9,8 +9,9 @@
  */
 :root {
     /* ---------- Radii / spacing / shadows (aliasable per-theme too) ---------- */
-    --tao-radius-control: var(--tao-radius-sm);
-    --tao-radius-panel: var(--tao-radius-md);
+    /* a control 10px, a panel 18px (5.51.0; they were 4px and 8px) / поле 10px, панель 18px (5.51.0; было 4px и 8px) */
+    --tao-radius-control: var(--tao-radius-md);
+    --tao-radius-panel: var(--tao-radius-xl);
     /* The coloured stripe of a panel (Card / Block `stripe`). / Цветная полоса панели. */
     --tao-stripe-width: 4px;
     --tao-shadow-panel: var(--tao-shadow-md);

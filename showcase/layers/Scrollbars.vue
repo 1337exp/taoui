@@ -6,11 +6,11 @@ import { tr } from '../i18n.js'
 
 defineOptions({ name: 'Scrollbars' })
 
-// The scrollbars of the kit are thin (5px) and wear the accent. Four hooks change that, on the page or on one block; a class gives the
+// The scrollbars of the kit are thin (6px) and wear the accent. Four hooks change that, on the page or on one block; a class gives the
 // browser's own back. The sample below wears the hooks on itself, so only it changes; the code is what you would write.
-// Полосы прокрутки набора тонкие (5px) и носят акцент. Четыре крючка это меняют, на странице или на одном блоке; класс возвращает
+// Полосы прокрутки набора тонкие (6px) и носят акцент. Четыре крючка это меняют, на странице или на одном блоке; класс возвращает
 // родные. Образец носит крючки на себе, поэтому меняется только он; код — то, что вы бы написали.
-const DEFAULT_SIZE = 5
+const DEFAULT_SIZE = 6
 const size = ref(DEFAULT_SIZE)
 const thumb = ref('')
 const track = ref(false)

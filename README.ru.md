@@ -338,7 +338,7 @@ function onLanguageChange(lang) {
 
 Без плагина (отдельные компоненты) достаточно одного вызова `setTaoLocale()`.
 
-Полосы прокрутки тонкие (5px) с акцентным бегунком. Чтобы изменить, задайте `--tao-scrollbar-size`, `--tao-scrollbar-thumb`, `--tao-scrollbar-track` (и `--tao-scrollbar-width` для Firefox) на странице или на блоке; класс `tao-native-scrollbars` на `<html>` или на блоке возвращает родные. Панель с ползунками есть в шоукейсе, в разделе «Слои и темизация».
+Полосы прокрутки тонкие (6px) с акцентным бегунком. Чтобы изменить, задайте `--tao-scrollbar-size`, `--tao-scrollbar-thumb`, `--tao-scrollbar-track` (и `--tao-scrollbar-width` для Firefox) на странице или на блоке; класс `tao-native-scrollbars` на `<html>` или на блоке возвращает родные. Панель с ползунками есть в шоукейсе, в разделе «Слои и темизация».
 
 С какого языка начать: `detectTaoLanguage(['en', 'ru'])` отвечает тем из ваших языков, который предпочитает браузер (`ru-RU` подходит к `ru`), например `saved ?? detectTaoLanguage(['en', 'ru'])`; на сервере передайте пожелания запроса: `{ requested: parseAcceptLanguage(header) }`.
 
@@ -714,7 +714,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-color-text*` — текст (обычный / усиленный / subtle / приглушённый / disabled)
 - `--tao-color-danger*`, `--tao-color-success*`, `--tao-color-warning*`, `--tao-color-info*` — статусные цвета
 - `--tao-color-input-*` — поля ввода отдельно, т.к. фон/текст полей часто не совпадают с surface/text
-- `--tao-radius-control`, `--tao-radius-panel` — скругления (мелкие контролы vs крупные панели)
+- `--tao-radius-control`, `--tao-radius-panel` — скругления (мелкие контролы vs крупные панели; 10px и 18px, из шкалы `--tao-radius-sm` / `-md` / `-lg` / `-xl` = 6 / 10 / 14 / 18px)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — тени
 - `--tao-font-size-*` — шкала кегля в `primitives.css`: `xs`–`xl` контролы, `2xl`–`4xl` заголовки / проза
 - `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — шкала размеров в `primitives.css`. Компоненты читают текущие значения из `contexts/size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Используйте их в своих контролах, чтобы попасть в размер окружения.

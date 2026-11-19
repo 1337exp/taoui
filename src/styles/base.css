@@ -38,17 +38,17 @@ html {
 }
 
 /* Scrollbar: thin, the accent for the thumb. Four hooks set on the page, a block or a component, nothing else to override:
-   --tao-scrollbar-size (px, 5px), --tao-scrollbar-thumb (the accent), --tao-scrollbar-track (transparent),
+   --tao-scrollbar-size (px, 6px), --tao-scrollbar-thumb (the accent), --tao-scrollbar-track (transparent),
    --tao-scrollbar-width (Firefox, which has no pixels: thin | auto | none). The class tao-native-scrollbars on <html>, or on any
    block, gives the browser's own scrollbars back for everything inside it. The colours are read where the scroll is, so a block
    with another theme gets its own accent.
    Полоса прокрутки: тонкая, бегунок акцентный. Четыре крючка на странице, блоке или компоненте, больше ничего переопределять
-   не нужно: --tao-scrollbar-size (px, 5px), --tao-scrollbar-thumb (акцент), --tao-scrollbar-track (прозрачная),
+   не нужно: --tao-scrollbar-size (px, 6px), --tao-scrollbar-thumb (акцент), --tao-scrollbar-track (прозрачная),
    --tao-scrollbar-width (Firefox, у него нет пикселей: thin | auto | none). Класс tao-native-scrollbars на <html> или на любом блоке
    возвращает родные полосы всему внутри. Цвета читаются там, где прокрутка, поэтому блок с другой темой получает свой акцент. */
 :not(.tao-native-scrollbars, .tao-native-scrollbars *)::-webkit-scrollbar {
-    width: var(--tao-scrollbar-size, 5px);
-    height: var(--tao-scrollbar-size, 5px);
+    width: var(--tao-scrollbar-size, 6px);
+    height: var(--tao-scrollbar-size, 6px);
 }
 
 :not(.tao-native-scrollbars, .tao-native-scrollbars *)::-webkit-scrollbar-track {

@@ -6,14 +6,15 @@ import layersSource from '../showcase/guide/DemoLayers.vue?raw';
 
 // 5.27.0: the scrollbars of the kit have four hooks and a class; the defaults are what they always were (5px, the accent).
 // 5.27.0: у полос прокрутки набора четыре крючка и класс; значения по умолчанию прежние (5px, акцент).
+// 5.51.0: 6px by default, a pixel easier to catch with the mouse. / 6px по умолчанию: на пиксель легче поймать мышью.
 
 const css = baseCss as string;
 const OFF = ':not(.tao-native-scrollbars, .tao-native-scrollbars *)';
 
 describe('scrollbars', () => {
-    it('are thin (5px) by default, with a thickness that can really grow: width, not max-width', () => {
-        expect(css).toMatch(new RegExp(`${OFF.replace(/[()*.]/g, '\\$&')}::-webkit-scrollbar \\{\\s*width: var\\(--tao-scrollbar-size, 5px\\);\\s*height: var\\(--tao-scrollbar-size, 5px\\);`));
-        expect(css).not.toMatch(/max-width: 5px/);
+    it('are thin (6px) by default, with a thickness that can really grow: width, not max-width', () => {
+        expect(css).toMatch(new RegExp(`${OFF.replace(/[()*.]/g, '\\$&')}::-webkit-scrollbar \\{\\s*width: var\\(--tao-scrollbar-size, 6px\\);\\s*height: var\\(--tao-scrollbar-size, 6px\\);`));
+        expect(css).not.toMatch(/max-width: 6px/);
     });
 
     it('the thumb is the accent and the track is clear by default, both through hooks', () => {
