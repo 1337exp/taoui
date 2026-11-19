@@ -1,16 +1,19 @@
 <script setup>
-// The starters page of the Guide: each starter of showcase/guide/starters/meta.js rendered live in a frame whose width you
-// pick (the starter lays itself out by its own width, as an app does by the window), the decisions it makes and why, and
-// the whole file to copy.
-// Страница каркасов Guide: каждый каркас из showcase/guide/starters/meta.js вживую во фрейме выбранной ширины (каркас
-// раскладывается по своей ширине, как приложение по окну), его решения с причинами и файл целиком, чтобы скопировать.
-import { reactive } from 'vue'
+// A page of the Guide for one starter of showcase/guide/starters/meta.js (`id`; each starter is its own entry of the menu,
+// see books/guide.sections.js): rendered live in a frame whose width you pick (the starter lays itself out by its own
+// width, as an app does by the window), the decisions it makes and why, and the whole file to copy.
+// Страница Guide для одного каркаса из showcase/guide/starters/meta.js (`id`; у каждого каркаса свой пункт меню): вживую
+// во фрейме выбранной ширины, его решения с причинами и файл целиком, чтобы скопировать.
+import { computed, ref } from 'vue'
 import { TaoSegmented, TaoSegmentedOption } from '@1337exp/taoui'
 import ShowcaseSection from '../components/ShowcaseSection.vue'
 import { tr } from '../i18n.js'
 import { starters } from './starters/meta.js'
 
 defineOptions({ name: 'DemoStarters' })
+
+const props = defineProps({ id: { type: String, required: true } })
+const starter = computed(() => starters.find((s) => s.id === props.id))
 
 const live = import.meta.glob('./starters/*.vue', { eager: true, import: 'default' })
 const raw = import.meta.glob('./starters/*.vue', { eager: true, query: '?raw', import: 'default' })
@@ -20,7 +23,7 @@ const widths = [
   { value: '720px', en: 'Tablet', ru: 'Планшет' },
   { value: '100%', en: 'Wide', ru: 'Широкий' },
 ]
-const width = reactive(Object.fromEntries(starters.map((s) => [s.id, '100%'])))
+const width = ref('100%')
 
 // `text` in backticks is code / `текст` в обратных кавычках — код
 const rich = (text) => String(text).split('`')
@@ -28,26 +31,24 @@ const code = (id) => String(raw[`./starters/${id}.vue`]).replace(/\r\n/g, '\n').
 </script>
 
 <template>
-  <ShowcaseSection id="starters">
-    <h2>{{ tr('Starters', 'Каркасы') }}</h2>
-    <p>
+  <ShowcaseSection :id="'starter-' + id">
+    <h2>{{ tr(starter.title) }}</h2>
+    <p class="starter__when">{{ tr(starter.when) }}</p>
+    <p class="starter__what">
       {{
         tr(
-          'Whole screens to start a project from. Each one is a single file you copy as is, live below at the width you pick, with the decisions it makes and why: so a new project starts from the shape that worked, and nobody has to guess why it is built this way. A starter uses the public API only; where it could not, the kit got the missing piece first.',
-          'Целые экраны, с которых начинают проект. Каждый — один файл, который копируют как есть, ниже вживую на выбранной ширине, с решениями и причинами: новый проект начинается с формы, которая уже сработала, и никому не нужно гадать, почему здесь так. Каркас берёт только публичный API; где не получалось, недостающее сначала получил набор.',
+          'A starter is a whole screen to begin a project from: one file you copy as is, live below at the width you pick, with the decisions it makes and why. It uses the public API only; where it could not, the kit got the missing piece first.',
+          'Каркас — целый экран, с которого начинают проект: один файл, который копируют как есть, ниже вживую на выбранной ширине, с решениями и причинами. Он берёт только публичный API; где не получалось, недостающее сначала получил набор.',
         )
       }}
     </p>
 
-    <article v-for="starter in starters" :key="starter.id" :id="'starter-' + starter.id" class="starter">
-      <h3>{{ tr(starter.title) }}</h3>
-      <p class="starter__when">{{ tr(starter.when) }}</p>
-
-      <TaoSegmented v-model="width[starter.id]" size="small" :aria-label="tr('Frame width', 'Ширина фрейма')">
+    <article class="starter">
+      <TaoSegmented v-model="width" size="small" :aria-label="tr('Frame width', 'Ширина фрейма')">
         <TaoSegmentedOption v-for="w in widths" :key="w.value" :value="w.value">{{ tr(w.en, w.ru) }}</TaoSegmentedOption>
       </TaoSegmented>
       <!-- showcase-free: the headings and paragraphs of the page chrome do not reach the app inside -->
-      <div class="starter__frame showcase-free" :style="{ width: width[starter.id] }">
+      <div class="starter__frame showcase-free" :style="{ width }">
         <component :is="live[`./starters/${starter.id}.vue`]" />
       </div>
 
@@ -75,7 +76,11 @@ const code = (id) => String(raw[`./starters/${id}.vue`]).replace(/\r\n/g, '\n').
 
 <style scoped>
 .starter {
-  margin-top: 28px;
+  margin-top: 20px;
+}
+
+.starter__what {
+  font-size: 13px;
 }
 
 .starter__when {

@@ -79,9 +79,13 @@ describe('Guide starters', () => {
         expect(source).not.toMatch(/matchMedia|innerWidth/);
     });
 
-    it('is wired into the Guide: a menu entry and a page', () => {
+    it('every starter is its own entry of the Guide menu, in the group Starters, with its own page', () => {
         expect(guideNav).toContain("id: 'starters'");
-        expect(guideSections).toContain("'starters': DemoStarters");
+        for (const s of all) {
+            expect(guideNav, s.id).toContain(`id: 'starter-${s.id}'`);
+            expect(guideSections, s.id).toMatch(new RegExp(`'starter-${s.id}': DemoStarter\\w+,`));
+            expect(guideSections, s.id).toContain(`starterPage('${s.id}')`);
+        }
     });
 
     it('the reference for assistants is exactly what `npm run skill` writes, and SKILL.md points at it', () => {

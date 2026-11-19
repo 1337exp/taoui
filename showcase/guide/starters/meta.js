@@ -39,8 +39,8 @@ export const starters = [
         ru: 'Счётчики `badge-tone="neutral"`: серые у всех пунктов, акцент только у текущего, чтобы внимание не бегало по меню.',
       },
       {
-        en: 'The language and the theme are quiet tools in `#footer`, at the bottom of the side panel (`fill` puts it there). The bar has no room for a footer, so on a phone the same tools go up into a thin header, shown by a container query on `tao-nav`, the same 600px as the bar: no JavaScript, no second breakpoint to keep in step.',
-        ru: 'Язык и тема — тихие инструменты в `#footer`, внизу боковой панели (туда его ставит `fill`). В нижней панели места для подвала нет, поэтому на телефоне те же инструменты поднимаются в тонкую шапку, её показывает container query по `tao-nav` на тех же 600px, что и панель: без JavaScript и без второй границы, которую надо держать в ногу.',
+        en: 'The language and the theme are quiet tools in `#footer`, at the bottom of the side panel (`fill` puts it there). The language shows its name on the side panel and folds to the globe on the rail by itself (it reads `--tao-nav-compact`), so no `icon-only` there. The bar has no room for a footer, so on a phone the same tools go up into a thin header, shown by a container query on `tao-nav`, the same 600px as the bar: no JavaScript, no second breakpoint to keep in step.',
+        ru: 'Язык и тема — тихие инструменты в `#footer`, внизу боковой панели (туда его ставит `fill`). Язык показывает своё название в боковой панели и сам сворачивается до глобуса на рейке (он читает `--tao-nav-compact`), поэтому `icon-only` там не нужен. В нижней панели места для подвала нет, поэтому на телефоне те же инструменты поднимаются в тонкую шапку, её показывает container query по `tao-nav` на тех же 600px, что и панель: без JavaScript и без второй границы, которую надо держать в ногу.',
       },
       {
         en: 'Settings are a section of the menu with their own page, in a column one can read (560px), not a modal and not a drawer from the far edge: on a wide screen the menu is where the eye already is.',

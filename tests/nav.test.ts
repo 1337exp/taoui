@@ -339,7 +339,8 @@ describe('TaoNav fill', () => {
         expect(css).toMatch(/\.tao-nav__action \{[^}]*flex-direction: column;[^}]*gap: var\(--tao-space-2\);/);
     });
 
-    it('--tao-nav-compact is public and follows the look', () => {
-        expect(css).toMatch(/\.tao-nav__shell \{[^}]*--tao-nav-compact: var\(--_compact\);/);
+    it('--tao-nav-compact is public, follows the look and stays on the navigation: the page beside it keeps 0', () => {
+        expect(css).toMatch(/\n\.tao-nav__panel \{[^}]*--tao-nav-compact: var\(--_compact\);/);
+        expect(css).not.toMatch(/\.tao-nav__shell \{[^}]*--tao-nav-compact/);
     });
 });
