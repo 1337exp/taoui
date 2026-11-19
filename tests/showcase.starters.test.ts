@@ -58,6 +58,10 @@ describe('Guide starters', () => {
         const action = /<TaoNav\b[\s\S]*?<template #action>([\s\S]*?)<\/template>/.exec(source)?.[1] ?? '';
         expect(action.match(/<TaoButton\b/g)).toHaveLength(1);
         expect(action).not.toMatch(/variant="/);
+        // the project chip under it is a block dropdown that folds by the public variable, not by reaching into the menu
+        expect(action).toMatch(/<TaoDropdownMenu\b[^>]*\sblock\b/);
+        expect(source).toMatch(/\.shell-chip__text \{[^}]*max-width: calc\(\(1 - var\(--tao-nav-compact\)\)/);
+        expect(source).not.toContain('tao-dropdown-menu__');
         expect(source).toContain('class="tao-nav__action-label"');
         // the phone header follows the bar of TaoNav: the same container and breakpoint, no JavaScript
         expect(source).toContain('@container tao-nav (width < 600px)');

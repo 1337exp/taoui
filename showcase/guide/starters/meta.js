@@ -35,6 +35,10 @@ export const starters = [
         ru: 'Главное действие (`#action`) — одна залитая кнопка над пунктами: она идёт за навигацией, круглая над панелью на телефоне, круглая на рейке, широкая с текстом в боковой панели. Текст в `tao-nav__action-label`, поэтому он остаётся именем круглой кнопки. Одно акцентное действие на экран: остальная оболочка тихая.',
       },
       {
+        en: 'The project the app works in (a workspace, a portfolio, an account) is a chip under the main action: the folder, the name, a chevron, and a menu of the projects with the current one checked and «New project». The whole chip is the button of a `TaoDropdownMenu block`, so the hover and the focus ring go round it; on the rail it folds to a round icon by `--tao-nav-compact`, on a phone it moves up into the header. Its name for a screen reader is «Project: Home», with the word hidden (`tao-sr-only`).',
+        ru: 'Проект, в котором работает приложение (пространство, портфель, аккаунт), — фишка под главным действием: папка, название, стрелка и меню проектов с отмеченным текущим и «Новым проектом». Вся фишка — кнопка `TaoDropdownMenu block`, поэтому наведение и рамка фокуса обходят её; на рейке она сворачивается в круглую иконку по `--tao-nav-compact`, на телефоне поднимается в шапку. Для скринридера её имя — «Project: Home», слово скрыто (`tao-sr-only`).',
+      },
+      {
         en: 'Counters are `badge-tone="neutral"`: grey on every item, the accent only on the current one, so the eye is not pulled round the menu.',
         ru: 'Счётчики `badge-tone="neutral"`: серые у всех пунктов, акцент только у текущего, чтобы внимание не бегало по меню.',
       },
