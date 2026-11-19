@@ -1120,6 +1120,7 @@ Showcase section: `#dropdown`
 | `size` | `'small' \| 'medium' \| 'large'` | — | The button becomes a square of that control height: a compact kebab for a list row. Without it — the padding round the icon |
 | `dots` | `'vertical' \| 'horizontal'` | 'vertical' | The three dots of the button: upright ⋮ (a narrow column, a toolbar) or lying ⋯ (a row of a table or a list, the corner of a card). Ignored when #icon or #button is given |
 | `tabbable` | `boolean` | true | The button is a Tab stop. Off: it leaves the Tab order (the row has its own menu key) and still opens by a click |
+| `block` | `boolean` | false | The button fills the width and the height of its place and draws nothing of its own (no padding, no background, the corners of its parent): for a trigger that is a whole chip of yours in #button, the project under the main action of TaoNav, an account in a header. The hover and the focus ring go round the chip, the ring inside, so a clipping box does not cut it |
 
 **Slots, events, notes.** #icon — the trigger icon, #button — the whole button content, #item="{ item, id, label, icon }" — your own item face. The select event — the item id. shortcut is a ready string to show: the menu neither parses nor listens to it.
 

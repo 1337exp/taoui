@@ -39,6 +39,16 @@ const props = withDefaults(
          * уходит из порядка Tab и по-прежнему открывается нажатием.
          */
         tabbable?: boolean;
+        /**
+         * The button fills the width (and the height) of its place and draws nothing of its own: no padding, no
+         * background, the corners of its parent. For a trigger that is a whole chip of your own in `#button` (the
+         * project of an app under the main action of TaoNav, an account in a header): the chip is the button, the hover
+         * and the focus ring go round it.
+         * Кнопка занимает ширину (и высоту) своего места и не рисует ничего своего: без отступа, без фона, с углами
+         * родителя. Для кнопки, которая целиком ваша «фишка» в `#button` (проект приложения под главным действием TaoNav,
+         * аккаунт в шапке): фишка и есть кнопка, наведение и рамка фокуса обходят её.
+         */
+        block?: boolean;
     }>(),
     {
         items: () => [],
@@ -47,6 +57,7 @@ const props = withDefaults(
         size: undefined,
         dots: 'vertical',
         tabbable: true,
+        block: false,
     },
 );
 const l10n = useLocaleText(props, 'dropdownMenu');
@@ -89,7 +100,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-    <div class="tao-dropdown-menu">
+    <div class="tao-dropdown-menu" :class="{ 'tao-dropdown-menu--block': block }">
         <button
             ref="triggerRef"
             type="button"
@@ -155,6 +166,35 @@ function onTriggerKeydown(event: KeyboardEvent) {
 
 .tao-dropdown-menu__button:hover {
     background: var(--tao-color-hover);
+}
+
+/* block: the place of the menu is the button; the chip in #button draws the rest
+   block: место меню — это кнопка; остальное рисует фишка в #button */
+.tao-dropdown-menu--block {
+    display: block;
+    border-radius: var(--tao-radius-control);
+}
+
+.tao-dropdown-menu--block > .tao-dropdown-menu__button {
+    display: flex;
+    align-items: stretch;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border-radius: inherit;
+    text-align: start;
+}
+
+/* the button fills its place, often a box that clips (the action of TaoNav): the ring goes inside, as on a list row
+   кнопка занимает своё место, часто внутри обрезающего блока (действие TaoNav): рамка внутри, как у строки списка */
+.tao-dropdown-menu--block > .tao-dropdown-menu__button:focus-visible {
+    outline-offset: -2px;
+}
+
+.tao-dropdown-menu--block > .tao-dropdown-menu__button > :slotted(*) {
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .tao-dropdown-menu__button:focus-visible {

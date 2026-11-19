@@ -649,6 +649,15 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     box-shadow: var(--_action-shadow);
 }
 
+/* a chip of your own in a block TaoDropdownMenu (the project under the action): its inside is its own, and it is as
+   tall as a control, so the rail squares it like the button above
+   ваша фишка в блочном TaoDropdownMenu (проект под действием): отступы у неё свои, высота как у контрола, поэтому рейка
+   делает её квадратной, как кнопку над ней */
+.tao-nav .tao-nav__action > :deep(.tao-dropdown-menu--block) {
+    padding-inline: 0;
+    height: var(--tao-control-height);
+}
+
 .tao-nav__action :deep(.tao-nav__action-label),
 .tao-nav__action :deep(.tao-button__shortcut) {
     position: var(--_action-label-position);
