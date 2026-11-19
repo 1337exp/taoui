@@ -28,7 +28,7 @@ unique and every menu entry wired to a page.
 |---|---|---|
 | **Components** | one page per component: variants, states, props. A page about several components is a demo | `components/` |
 | **Demos** | complex scenes made of several components, on the public API only; each says what it proves | `demo/` |
-| **Guide** | what to use when and why: the foundations (layers, type, surfaces, language, contrast), recommendations and templates | `guide/` (the helper blocks of its pages stay in `layers/` and `a11y/`) |
+| **Guide** | what to use when and why: the foundations (layers, type, surfaces, language, contrast), recommendations and the starters (whole screens to begin a project from) | `guide/` (the helper blocks of its pages stay in `layers/` and `a11y/`) |
 
 - `App.vue` — shell: header, settings bar with the book tabs, the open book. The address says the book (`#/guide`) or a section (`#button` opens the book that holds it)
 - `books/index.js` — the three books (title, rule, menu, lazy `load` of the pages)
@@ -45,6 +45,11 @@ unique and every menu entry wired to a page.
   rule, why; EN and RU) and `<id>.good.vue` / `<id>.bad.vue` (the do and the don't: rendered live on the page, their
   `<template>` is the code shown). `npm run skill` writes `skills/taoui/references/patterns.md` from the same files for AI
   assistants (`tests/showcase.patterns.test.ts` holds it). A new rule is added after something broke, not in advance
+- `guide/starters/` — the starters of the Guide: `meta.js` (per starter the situation, the decisions and why, how to use the
+  file; EN and RU) and `<id>.vue` (the whole screen, rendered live in a frame of a chosen width and shown whole: people copy
+  it as is). `npm run skill` writes `skills/taoui/references/starters.md`; `tests/showcase.starters.test.ts` holds it and the
+  promise of the section: a starter uses the public API only (no `:deep(.tao-…)`, no `--_…`), and where it cannot, the kit
+  gets the missing piece first
 
 A new page: put the file in its book's folder, add the menu entry to `books/<book>.nav.js` and the line to
 `books/<book>.sections.js` (the section `id` is the same in both, and in the address).

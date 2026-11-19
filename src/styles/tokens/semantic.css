@@ -45,4 +45,9 @@
     --tao-nav-rail-width: 80px;
     --tao-nav-drawer-width: 240px;
     --tao-nav-action-radius: var(--tao-radius-control);
+    /* Read, not set: TaoNav sets it to 1 on the bar and the rail and to 0 on the side panel, for your own pieces in its
+       slots (a chip that shows only its icon on the rail). 0 outside a TaoNav.
+       Читается, а не задаётся: TaoNav ставит 1 в нижней панели и рейке и 0 в боковой, для своих вещей в его слотах
+       (фишка, у которой на рейке видна только иконка). Вне TaoNav — 0. */
+    --tao-nav-compact: 0;
 }
