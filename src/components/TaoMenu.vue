@@ -46,8 +46,12 @@ const props = withDefaults(
         /** Accessible name of the menu. / Имя меню для скринридера. */
         label?: string;
         /**
-         * Close when the page (or a scroll container) scrolls; scrolling inside the menu does not count. A root menu only.
-         * Закрывать при прокрутке страницы (или контейнера); прокрутка внутри меню не считается. Только корневое меню.
+         * Close when the page, or a scroll container that holds the anchor, scrolls: the place the menu is for moves away.
+         * A scroll elsewhere (an autoplaying carousel, a live log) and inside the menu does not count. For a point the holder
+         * is the element under it when the menu opens. A root menu only.
+         * Закрывать при прокрутке страницы или контейнера, в котором лежит якорь: место, для которого меню, уезжает.
+         * Прокрутка в другом месте (карусель с автопрокруткой, живой лог) и внутри меню не считается. Для точки держатель —
+         * элемент под ней в момент открытия. Только корневое меню.
          */
         closeOnScroll?: boolean;
     }>(),
@@ -256,10 +260,23 @@ watch(
         if (!listen || typeof window === 'undefined') {
             return;
         }
+        // what the menu is for: the anchor element, or the element under the point (read now, before the panel covers it)
+        // то, для чего меню: элемент-якорь или элемент под точкой (читаем сейчас, пока панель его не закрыла)
+        const anchor = props.anchor;
+        const holder: Element | null = isVirtualAnchor(anchor)
+            ? (document.elementFromPoint?.(anchor.x + (anchor.width ?? 0) / 2, anchor.y + (anchor.height ?? 0) / 2) ?? returnTo)
+            : anchor;
         const onScroll = (event: Event) => {
+            const target = event.target;
             // a long menu scrolls its own list: that is not the page moving away
             // длинное меню прокручивает свой список: это не уезжающая страница
-            if (event.target instanceof Element && event.target.closest('.tao-menu')) {
+            if (target instanceof Element && target.closest('.tao-menu')) {
+                return;
+            }
+            // a container that does not hold the anchor (a carousel elsewhere on the page) moves nothing under the menu
+            // контейнер, в котором якоря нет (карусель в другом месте страницы), ничего под меню не двигает
+            const page = !(target instanceof Element) || target === document.documentElement || target === document.body;
+            if (!page && holder && !target.contains(holder)) {
                 return;
             }
             tree.closeAll('scroll');

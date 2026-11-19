@@ -141,6 +141,7 @@ function setSelection(value) {
         :menu="menu"
         :aria-label="tr('Project files', 'Файлы проекта')"
         @menu-select="onMenuSelect"
+        @open="(node) => (log = `${tr('open', 'открыть')} → ${node.label}`)"
       >
         <template #icon="{ node, expanded: open }">
           <TaoIcon :name="isFolder(node) ? 'tao-folder' : 'tao-file'" :class="{ 'tree-demo__open': open }" />
