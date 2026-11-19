@@ -52,4 +52,46 @@ export const starters = [
       },
     ],
   },
+  {
+    id: 'list-detail',
+    title: { en: 'A list and the open item', ru: 'Список и открытая запись' },
+    when: {
+      en: 'A section of records people go through one by one: notes, mail, tasks, clients. The model is the notes of NextUp.',
+      ru: 'Раздел записей, которые просматривают по одной: заметки, почта, задачи, клиенты. Образец — заметки NextUp.',
+    },
+    file: {
+      en: 'Put it in the page of the app shell (or any box with a height): it fills its parent and lays itself out by the room it gets.',
+      ru: 'Положите его в страницу оболочки приложения (или в любой блок с высотой): он занимает родителя и раскладывается по месту, которое ему дали.',
+    },
+    decisions: [
+      {
+        en: 'Side by side when there is room, one at a time when there is not: the list, then the item with a back button. The width is the room of the starter, measured on an outer box by a container query (`list-detail`), not the window: in the shell beside a side panel it switches later than the window would say. A container query cannot ask an element about its own width, so the outer box measures and the inner grid lays out.',
+        ru: 'Рядом, когда есть место, по одному, когда нет: список, потом запись с кнопкой «назад». Ширина — это место самого каркаса, его мерит container query (`list-detail`) на внешнем блоке, а не окно: в оболочке рядом с боковой панелью он переключается позже, чем сказало бы окно. Container query не может спросить элемент о его же ширине, поэтому мерит внешний блок, а раскладывает внутренняя сетка.',
+      },
+      {
+        en: 'Each pane scrolls by itself (`overflow: auto` on both, `min-height: 0` so a grid row can be shorter than its content): the list keeps its place while the item is read.',
+        ru: 'Каждая панель прокручивается сама (`overflow: auto` у обеих, `min-height: 0`, чтобы строка сетки могла быть короче содержимого): список не теряет места, пока читают запись.',
+      },
+      {
+        en: 'The list is `TaoList roving` with `clickable` rows: one Tab stop, the arrows move between the rows, Tab comes back to the open one. The open row is `selected` (a tint and `aria-current`), not an accent text.',
+        ru: 'Список — `TaoList roving` с `clickable` строками: одна остановка Tab, стрелки ходят по строкам, Tab возвращается к открытой. Открытая строка — `selected` (подложка и `aria-current`), а не акцентный текст.',
+      },
+      {
+        en: 'The focus follows the eye in the single pane: opening an item moves it to the item heading (`tabindex="-1"`), Back and Escape bring it to the row it came from. Side by side the focus stays in the list, so the arrows keep walking it.',
+        ru: 'В одной панели фокус идёт за взглядом: открытие записи ставит его на её заголовок (`tabindex="-1"`), «Назад» и Escape возвращают к строке, с которой пришли. Когда панели рядом, фокус остаётся в списке, и стрелки продолжают по нему ходить.',
+      },
+      {
+        en: 'The actions of the item are quiet icon buttons (`variant="ghost" tone="neutral"`, each with an `aria-label`); the one that destroys is `tone="danger"`. The accent of the screen stays for the main action of the shell.',
+        ru: 'Действия записи — тихие кнопки-иконки (`variant="ghost" tone="neutral"`, у каждой `aria-label`); та, что удаляет, — `tone="danger"`. Акцент экрана остаётся главному действию оболочки.',
+      },
+      {
+        en: 'Nothing open on a wide screen is a `TaoEmpty` that says what opens there; a search with no match says so in the `#empty` slot of the list, with the query.',
+        ru: 'Пустое место справа на широком экране — `TaoEmpty`, который говорит, что там откроется; поиск без совпадений говорит об этом в слоте `#empty` списка, вместе с запросом.',
+      },
+      {
+        en: 'The text of the item is a column one can read (640px), not a line across a wide screen.',
+        ru: 'Текст записи — колонка удобной для чтения ширины (640px), а не строка через весь широкий экран.',
+      },
+    ],
+  },
 ]

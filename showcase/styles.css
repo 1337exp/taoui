@@ -218,21 +218,23 @@
   line-height: 1.4;
 }
 
-.showcase-main h2:not(.tao-prose *) {
+/* the headings and text of the page chrome; not inside .tao-prose (its own scale) or .showcase-free (a whole app shown
+   live, a Guide starter, whose own styles must be what you see) / оформление страницы; не внутри .tao-prose и .showcase-free */
+.showcase-main h2:not(.tao-prose *, .showcase-free *) {
   font-size: var(--tao-font-size-2xl);
   font-weight: 600;
   color: var(--tao-color-accent);
   margin-bottom: 8px;
 }
 
-.showcase-main h3:not(.tao-prose *) {
+.showcase-main h3:not(.tao-prose *, .showcase-free *) {
   font-size: var(--tao-font-size-lg);
   font-weight: 500;
   color: var(--tao-color-text);
   margin: 24px 0 12px;
 }
 
-.showcase-main p:not(.tao-prose *) {
+.showcase-main p:not(.tao-prose *, .showcase-free *) {
   color: var(--tao-color-text);
   line-height: 1.6;
 }
