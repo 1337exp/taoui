@@ -2,12 +2,13 @@
 import { computed, nextTick, ref, shallowReactive, shallowRef, useId, watch } from 'vue';
 import type { TaoVirtualAnchor } from '../floating';
 import { useListNav } from '../listNav';
-import { formatText, localeEn, useLocaleText } from '../locale';
+import { formatText, localeEn, useLocaleText, useTaoLocale } from '../locale';
 import type { TaoMenuItem } from '../menu';
 import { sizeClass, type TaoSize } from '../size';
 import {
     checkState,
     menuSelection,
+    sortTreeNodes,
     toggleCheck,
     visibleRows,
     type TaoTreeCheckState,
@@ -16,6 +17,7 @@ import {
     type TaoTreeNode,
     type TaoTreeRow,
     type TaoTreeSelection,
+    type TaoTreeSort,
 } from '../tree';
 import { useTreeMove } from '../treeMove';
 import TaoIcon from './TaoIcon.vue';
@@ -62,6 +64,15 @@ const props = withDefaults(
          * строки его подождут, отклонённое придёт в `move-error`. Проп, а не только событие: дерево ждёт его ответ.
          */
         onMove?: (move: TaoTreeMove) => unknown;
+        /**
+         * The order of the rows: `none` the data's (a drag can put a row between others), `name` folders first and by
+         * name, or your compare. With a sort a drag only changes the folder: onto a folder puts the rows in it, onto
+         * any other row into that row's folder. The tree sorts what it shows; `nodes` stays as it is.
+         * Порядок строк: `none` — как в данных (перенос ставит строку между другими), `name` — папки первыми и по имени,
+         * или своё сравнение. С сортировкой перенос меняет только папку: на папку — в неё, на другую строку — в её
+         * папку. Дерево сортирует то, что показывает; `nodes` не меняется.
+         */
+        sort?: TaoTreeSort;
         /** Which rows can be moved (with `@move`); all but disabled ones by default. / Какие строки можно переносить. */
         movable?: boolean | ((node: TaoTreeNode) => boolean);
         /**
@@ -85,6 +96,7 @@ const props = withDefaults(
         size: undefined,
         menu: undefined,
         onMove: undefined,
+        sort: 'none',
         movable: true,
         canDrop: undefined,
         ariaLabel: undefined,
@@ -93,6 +105,7 @@ const props = withDefaults(
     },
 );
 const l10n = useLocaleText(props, 'tree');
+const locale = useTaoLocale();
 /** A text of the tree, English for a locale written before 5.51.0. / Текст дерева; английский для старой локали. */
 const text = <K extends keyof typeof localeEn.tree>(key: K) => (l10n.value[key] ?? localeEn.tree[key])!;
 
@@ -172,9 +185,29 @@ function setSelected(value: string | string[] | null) {
 
 const loaded = shallowReactive(new Map<string, TaoTreeNode[]>());
 const loading = shallowReactive(new Set<string>());
-const children = (node: TaoTreeNode) => node.children ?? loaded.get(node.id);
+const raw = (node: TaoTreeNode) => node.children ?? loaded.get(node.id);
 
-const rows = computed(() => visibleRows(props.nodes, expandedSet.value, children));
+// the order the rows stand in: the data's, or the sort's; one sorted copy per list until the sort or the data change
+// порядок строк: как в данных или по сортировке; одна отсортированная копия на список, пока не сменились сортировка и данные
+const order = computed(() => {
+    const sort = props.sort;
+    const code = locale.value.code;
+    const cache = new WeakMap<readonly TaoTreeNode[], readonly TaoTreeNode[]>();
+    return (list: readonly TaoTreeNode[]) => {
+        let sorted = cache.get(list);
+        if (!sorted) {
+            sorted = sortTreeNodes(list, sort, code);
+            cache.set(list, sorted);
+        }
+        return sorted;
+    };
+});
+const children = (node: TaoTreeNode) => {
+    const own = raw(node);
+    return own && order.value(own);
+};
+
+const rows = computed(() => visibleRows(order.value(props.nodes), expandedSet.value, children));
 const rowIndex = computed(() => new Map(rows.value.map((row, index) => [row.node.id, index])));
 
 async function expand(row: TaoTreeRow) {
@@ -527,7 +560,7 @@ const known = computed(() => {
             }
         }
     };
-    walk(props.nodes, null);
+    walk(order.value(props.nodes), null);
     return { parent, kids, byId };
 });
 
@@ -570,6 +603,7 @@ const moveRows = useTreeMove({
     childIds: (id) => known.value.kids.get(id),
     parentOf: (id) => known.value.parent.get(id),
     node: (id) => known.value.byId.get(id),
+    sorted: () => props.sort !== 'none',
     expand: (row) => expand(row),
     move: (move) => props.onMove?.(move),
     moved: (move, from) => new Set([move.parentId, ...from]).forEach((id) => id !== null && void reload(id)),
@@ -610,7 +644,12 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
         class="tao-tree"
         :class="[
             sizeClass(size),
-            { 'tao-tree--menu-open': menuOpen, 'tao-tree--dragging': dragging.size > 0, 'tao-tree--refused': refused },
+            {
+                'tao-tree--menu-open': menuOpen,
+                'tao-tree--dragging': dragging.size > 0,
+                'tao-tree--refused': refused,
+                'tao-tree--drop-root': moveRows.drop.value?.mark.rowId === '',
+            },
         ]"
         role="tree"
         :aria-label="l10n.ariaLabel"
@@ -743,23 +782,21 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
     background: var(--tao-color-hover);
 }
 
+/* The selection is an everyday state: a tint behind the row, the text keeps its colour. The accent of the text is left
+   to what the app marks on purpose (`tone`), or every walk through the tree would shine as much as a mark.
+   Выбор — рядовое состояние: подложка под строкой, текст своего цвета. Акцент текста оставлен тому, что приложение
+   отмечает нарочно (`tone`), иначе каждая прогулка по дереву светилась бы как метка. */
 .tao-tree__row--selected,
 .tao-tree__row--selected:hover {
     background: var(--tao-color-accent-subtle);
-    color: var(--tao-color-accent-text);
 }
 
-/* the selection of a tree without the focus is grey, as in an IDE or a file manager: the accent says where the keys go.
-   An open context menu has the focus, but it is the tree's own: the selection keeps its accent then.
-   Выбор в дереве без фокуса серый, как в IDE и файловом менеджере: акцент говорит, куда идут клавиши.
-   Открытое контекстное меню забирает фокус, но оно часть дерева: тогда выбор остаётся с акцентом. */
+/* the selection of a tree without the focus is grey, as in an IDE or a file manager: the tint says where the keys go.
+   An open context menu has the focus, but it is the tree's own: the selection keeps its tint then.
+   Выбор в дереве без фокуса серый, как в IDE и файловом менеджере: подложка говорит, куда идут клавиши.
+   Открытое контекстное меню забирает фокус, но оно часть дерева: тогда выбор остаётся с подложкой. */
 .tao-tree:not(:focus-within):not(.tao-tree--menu-open) .tao-tree__row--selected {
     background: var(--tao-color-hover);
-    color: inherit;
-}
-
-.tao-tree:not(:focus-within):not(.tao-tree--menu-open) .tao-tree__row--selected .tao-tree__icon {
-    color: var(--tao-color-text-muted);
 }
 
 /* the row a context menu was opened for, when it is not the selection (no selection mode, a disabled row)
@@ -801,6 +838,12 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
    внутрь папки — вся строка; перед или после — линия от уровня, на котором встанут строки */
 .tao-tree__row.tao-tree__row--drop-inside {
     background: var(--tao-color-accent-subtle);
+    box-shadow: inset 0 0 0 1px var(--tao-color-accent);
+}
+
+/* a sorted tree taking rows to its top level: the frame is the whole tree / сортированное дерево на верхний уровень: рамка — всё дерево */
+.tao-tree--drop-root {
+    border-radius: var(--tao-radius-control);
     box-shadow: inset 0 0 0 1px var(--tao-color-accent);
 }
 
@@ -944,10 +987,6 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
     flex: none;
     display: inline-flex;
     color: var(--tao-color-text-muted);
-}
-
-.tao-tree__row--selected .tao-tree__icon {
-    color: inherit;
 }
 
 .tao-tree__label {

@@ -803,6 +803,7 @@ Showcase section: `#tree`
 | `menu` | `TaoMenuItem[] \| (node, selected) => TaoMenuItem[]` | — | The context menu of a row: right click, the Menu key, Shift+F10. A right click outside the selection selects the row first (no select event), inside it keeps the selection. An empty list leaves the browser's menu |
 | `menuLabel` | `string` | 'Context menu' | Accessible name of the menu |
 | `@move` | `(move: TaoTreeMove) => void \| Promise` | — | Turns moving rows on: dragging and Ctrl+X / Ctrl+C / Ctrl+V. move = { ids, parentId, index, targetId, position, copy }; index is the place among the children of parentId once the moved ones are taken out. The tree changes nothing: make the move yourself (moveTreeNodes(nodes, move)); return a promise and the rows wait, a rejected one comes as move-error |
+| `sort` | `'none' \| 'name' \| (a, b) => number` | 'none' | The order of the rows. none — the data's, a drag puts a row between others. name — folders first, by name, numbers as numbers («file 2» before «file 10»); a function — your own compare. With a sort a drag only changes the folder: onto a folder puts the rows in it, onto any other row into its folder, no line between rows. nodes is not changed |
 | `movable` | `boolean \| (node) => boolean` | true | Which rows can be moved (disabled ones never) |
 | `canDrop` | `(move) => boolean` | — | May the rows go there: false shows a «no» cursor and no mark. Into itself and its descendants the tree refuses anyway |
 

@@ -42,6 +42,8 @@ export interface TreeMoveOptions {
     childIds: (parentId: string | null) => readonly string[] | undefined;
     parentOf: (id: string) => string | null | undefined;
     node: (id: string) => TaoTreeNode | undefined;
+    /** The tree sorts its rows: a move only changes the folder. / Дерево сортирует строки: перенос меняет только папку. */
+    sorted: () => boolean;
     expand: (row: TaoTreeRow) => unknown;
     move: (move: TaoTreeMove) => unknown;
     /** After the app settled the move: `from` are the old parents. / После того как приложение выполнило перенос. */
@@ -191,6 +193,7 @@ export function useTreeMove(o: TreeMoveOptions) {
                 dragged: ids,
                 childIds: o.childIds,
                 parentOf: o.parentOf,
+                sorted: o.sorted(),
             });
             if (next && !o.canDrop(moveOf(next, ids, copy))) {
                 next = null;
@@ -407,6 +410,7 @@ export function useTreeMove(o: TreeMoveOptions) {
                 dragged: alive,
                 childIds: o.childIds,
                 parentOf: o.parentOf,
+                sorted: o.sorted(),
             });
             const move = d && moveOf(d, alive, asCopy);
             if (!move || !alive.length || !o.canDrop(move)) {

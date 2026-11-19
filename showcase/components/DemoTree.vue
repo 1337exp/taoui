@@ -75,6 +75,9 @@ async function onMove(move) {
   log.value = `${move.copy ? tr('copy', 'копия') : tr('move', 'перенос')}: ${move.ids.join(', ')} → ${move.parentId ?? tr('top', 'верх')} [${move.index}]`
 }
 const slow = ref(false)
+// sorted, a drag only changes the folder: there is no place among the siblings to pick
+// с сортировкой перенос меняет только папку: места среди соседей не выбрать
+const byName = ref(false)
 
 // the menu is built for the row it opens on: a folder can take a new file, the delete counts the selection
 // меню строится для строки, на которой открылось: в папке можно создать файл, удаление считает выбранное
@@ -151,7 +154,9 @@ function setSelection(value) {
           list scrolls at its edge, <kbd>Ctrl</kbd> or <kbd>Alt</kbd> makes a copy, <kbd>Esc</kbd> cancels. From the keyboard:
           <kbd>Ctrl</kbd>+<kbd>X</kbd> (or <kbd>C</kbd>) on the rows, <kbd>Ctrl</kbd>+<kbd>V</kbd> on a folder or a row. The
           tree changes nothing: <code>@move</code> does it (here with a wait, as a server would take; the rows dim meanwhile),
-          and <code>node_modules</code> is refused by <code>canDrop</code>.
+          and <code>node_modules</code> is refused by <code>canDrop</code>. With «Sort by name» (<code>sort="name"</code>:
+          folders first, «file 2» before «file 10») the order is the tree's, so a drag only changes the folder: onto a folder
+          puts the rows in it, onto any other row into that row's folder; the top level is framed as a whole.
         </p>
       </template>
       <template #ru>
@@ -174,7 +179,9 @@ function setSelection(value) {
           список прокручивается, <kbd>Ctrl</kbd> или <kbd>Alt</kbd> — копия, <kbd>Esc</kbd> отменяет. С клавиатуры:
           <kbd>Ctrl</kbd>+<kbd>X</kbd> (или <kbd>C</kbd>) на строках, <kbd>Ctrl</kbd>+<kbd>V</kbd> на папке или строке. Дерево
           ничего не меняет: переносит <code>@move</code> (здесь с ожиданием, как у сервера; строки пока бледные), а
-          <code>node_modules</code> не принимает <code>canDrop</code>.
+          <code>node_modules</code> не принимает <code>canDrop</code>. С «Сортировкой по имени» (<code>sort="name"</code>:
+          папки первыми, «файл 2» раньше «файл 10») порядок задаёт дерево, поэтому перенос меняет только папку: на папку —
+          в неё, на другую строку — в папку этой строки; верхний уровень обводится целиком.
         </p>
       </template>
     </Tr>
@@ -187,6 +194,7 @@ function setSelection(value) {
       </TaoSegmented>
       <TaoSwitch v-model="checkable" :label="tr('Checkboxes', 'Чекбоксы')" />
       <TaoSwitch v-model="slow" :label="tr('Slow server', 'Медленный сервер')" />
+      <TaoSwitch v-model="byName" :label="tr('Sort by name', 'Сортировка по имени')" />
     </div>
 
     <div class="tree-demo">
@@ -200,13 +208,14 @@ function setSelection(value) {
         :load="load"
         :menu="menu"
         :can-drop="canDrop"
+        :sort="byName ? 'name' : 'none'"
         :aria-label="tr('Project files', 'Файлы проекта')"
         @move="onMove"
         @menu-select="onMenuSelect"
         @open="(node) => (log = `${tr('open', 'открыть')} → ${node.label}`)"
       >
-        <template #icon="{ node, expanded: open }">
-          <TaoIcon :name="isFolder(node) ? 'tao-folder' : 'tao-file'" :class="{ 'tree-demo__open': open }" />
+        <template #icon="{ node }">
+          <TaoIcon :name="isFolder(node) ? 'tao-folder' : 'tao-file'" />
         </template>
         <template #actions="{ node }">
           <TaoButton size="small" variant="ghost" icon="tao-copy" :aria-label="tr('Copy the name', 'Скопировать имя')" @click="log = node.label" />
@@ -278,9 +287,6 @@ const nodes = [
   color: var(--tao-color-text-muted);
 }
 
-.tree-demo__open {
-  color: var(--tao-color-accent-text);
-}
 
 @media (max-width: 600px) {
   .tree-demo {
