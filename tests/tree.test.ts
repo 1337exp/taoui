@@ -2,7 +2,7 @@ import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { h, nextTick } from 'vue';
 import TaoTree from '../src/components/TaoTree.vue';
-import { checkState, checkUnits, toggleCheck, visibleRows, type TaoTreeNode } from '../src/tree';
+import { checkState, checkUnits, menuSelection, toggleCheck, visibleRows, type TaoTreeNode } from '../src/tree';
 
 const nodes: TaoTreeNode[] = [
     {
@@ -242,9 +242,109 @@ describe('TaoTree', () => {
         expect(w.emitted('update:selected')).toBeUndefined();
     });
 
+    it('hint: a quiet note after the label, part of the row text; tone: a class on the row', () => {
+        const w = tree({
+            nodes: [
+                { id: 'nm', label: 'node_modules', hint: 'library root', tone: 'muted' },
+                { id: 'x', label: 'x.ts', tone: 'danger' },
+            ],
+        });
+        // a hidden comma between them: the row reads «node_modules, library root», not one word
+        expect(items(w)[0]!.text()).toBe('node_modules, library root');
+        expect(items(w)[0]!.classes()).toContain('tao-tree__row--muted');
+        expect(items(w)[1]!.find('.tao-tree__hint').exists()).toBe(false);
+        expect(items(w)[1]!.classes()).toContain('tao-tree__row--danger');
+    });
+
     it('size and ariaLabel', () => {
         const w = tree({ size: 'small', ariaLabel: 'Files' });
         expect(w.classes()).toContain('tao-size-small');
         expect(w.attributes('aria-label')).toBe('Files');
+    });
+});
+
+describe('TaoTree context menu', () => {
+    const flush = async () => {
+        await nextTick();
+        await nextTick();
+        await nextTick();
+    };
+    const rightClick = async (el: Element, x = 120, y = 40) => {
+        const event = new MouseEvent('contextmenu', { clientX: x, clientY: y, bubbles: true, cancelable: true });
+        el.dispatchEvent(event);
+        await flush();
+        return event;
+    };
+    const menuItems = () => [...document.querySelectorAll<HTMLElement>('[role="menuitem"]')];
+    const menuFor = () => vi.fn((node: TaoTreeNode, selected: string[]) => [
+        { id: 'rename', label: `Rename ${node.label}` },
+        { id: 'delete', label: `Delete ${selected.length}` },
+    ]);
+
+    it('menuSelection: a node outside the selection becomes the selection; inside it, the selection stays', () => {
+        expect(menuSelection('single', new Set(['a']), { id: 'b' })).toBe('b');
+        expect(menuSelection('multiple', new Set(['a']), { id: 'b' })).toEqual(['b']);
+        expect(menuSelection('multiple', new Set(['a', 'b']), { id: 'b' })).toBeUndefined();
+        expect(menuSelection('none', new Set(), { id: 'b' })).toBeUndefined();
+        expect(menuSelection('single', new Set(), { id: 'b', disabled: true })).toBeUndefined();
+    });
+
+    it('a right click on a row opens the menu built for it, selects the row without a select event, prevents the default', async () => {
+        const menu = menuFor();
+        const w = tree({ menu, selected: 'src' });
+        const event = await rightClick(items(w)[2]!.element);
+        expect(event.defaultPrevented).toBe(true);
+        expect(menu).toHaveBeenCalledWith(expect.objectContaining({ id: 'readme' }), ['readme']);
+        expect(menuItems().map((i) => i.textContent?.trim())).toEqual(['Rename README.md', 'Delete 1']);
+        expect(w.emitted('update:selected')).toEqual([['readme']]);
+        expect(w.emitted('select')).toBeUndefined();
+        expect(w.emitted('menu')![0]![0]).toMatchObject({ id: 'readme' });
+        expect(w.classes()).toContain('tao-tree--menu-open');
+        menuItems()[1]!.click();
+        await flush();
+        expect(w.emitted('menu-select')![0]).toEqual(['delete', expect.objectContaining({ id: 'readme' }), ['readme']]);
+    });
+
+    it('a right click inside a multiple selection keeps it, and the menu acts on all of it', async () => {
+        const menu = menuFor();
+        const w = tree({ menu, selection: 'multiple', selected: ['src', 'readme'] });
+        await rightClick(items(w)[2]!.element);
+        expect(menu).toHaveBeenCalledWith(expect.objectContaining({ id: 'readme' }), ['src', 'readme']);
+        expect(w.emitted('update:selected')).toBeUndefined();
+        expect(menuItems()[1]!.textContent?.trim()).toBe('Delete 2');
+    });
+
+    it('Shift+F10 and the Menu key open it from the keyboard; the contextmenu the browser sends after is not a second request', async () => {
+        const w = tree({ menu: [{ id: 'open', label: 'Open' }] });
+        const row = items(w)[0]!.element;
+        (row as HTMLElement).focus();
+        await key(row, 'F10'); // no Shift: nothing
+        expect(menuItems()).toHaveLength(0);
+        row.dispatchEvent(new KeyboardEvent('keydown', { key: 'F10', shiftKey: true, bubbles: true, cancelable: true }));
+        await flush();
+        expect(menuItems().map((i) => i.textContent?.trim())).toEqual(['Open']);
+        const after = await rightClick(row, 0, 0);
+        expect(after.defaultPrevented).toBe(true);
+        expect(w.emitted('menu')).toHaveLength(1);
+    });
+
+    it('without menu, or with an empty list, the browser keeps its own menu; the menu event still comes', async () => {
+        const plain = tree();
+        const event = await rightClick(items(plain)[0]!.element);
+        expect(event.defaultPrevented).toBe(false);
+        expect(plain.emitted('menu')![0]![0]).toMatchObject({ id: 'src' });
+        const empty = tree({ menu: () => [] });
+        expect((await rightClick(items(empty)[0]!.element)).defaultPrevented).toBe(false);
+        expect(empty.emitted('update:selected')).toBeUndefined();
+    });
+
+    it('a menu handler that prevents the default takes the request: no menu of ours', async () => {
+        const w = mount(TaoTree, {
+            props: { nodes, menu: [{ id: 'open', label: 'Open' }], onMenu: (_node: TaoTreeNode, e: Event) => e.preventDefault() },
+            attachTo: document.body,
+        });
+        wrappers.push(w);
+        await rightClick(items(w)[0]!.element);
+        expect(menuItems()).toHaveLength(0);
     });
 });

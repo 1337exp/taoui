@@ -731,7 +731,7 @@ export const propTablesEn = {
     {
       title: 'TaoTree',
       rows: [
-        r('nodes', 'TaoTreeNode[]', '—', '{ id, label, icon?, children?, hasChildren?, disabled? }. hasChildren without children — the children come from load when it opens'),
+        r('nodes', 'TaoTreeNode[]', '—', "{ id, label, icon?, children?, hasChildren?, disabled?, hint?, tone? }. hasChildren without children — the children come from load when it opens. hint — a quiet note after the label («library root»). tone — the colour of the label: 'muted' | 'accent' | 'info' | 'success' | 'warning' | 'danger'"),
         r('v-model:expanded', 'string[]', 'own', 'Ids of the expanded nodes. Without a model the tree keeps them itself'),
         r('selection', "'none' | 'single' | 'multiple'", "'single'", 'Selection mode. none — a click on a folder toggles it'),
         r('v-model:selected', 'string | string[] | null', 'own', 'An id (single) or a list of ids (multiple)'),
@@ -741,8 +741,10 @@ export const propTablesEn = {
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Row height, as for the controls; the density works too'),
         r('ariaLabel', 'string', "'Tree'", 'Accessible name of the tree'),
         r('loadingLabel', 'string', "'Loading…'", 'The hint of the spinner'),
+        r('menu', 'TaoMenuItem[] | (node, selected) => TaoMenuItem[]', '—', "The context menu of a row: right click, the Menu key, Shift+F10. A right click outside the selection selects the row first (no select event), inside it keeps the selection. An empty list leaves the browser's menu"),
+        r('menuLabel', 'string', "'Context menu'", 'Accessible name of the menu'),
       ],
-      slots: '#icon, #label, #actions — { node, level, expanded, selected }; the actions show on hover and focus (always on a touch screen). Events: update:expanded / selected / checked, select(node) — a click, Enter, Space without checkboxes; load-error(node, error) — the node stays closed. Keys: ↑ ↓, → opens or goes in, ← closes or goes to the parent, Home / End, * opens the siblings, letters search, Enter selects, Space checks.',
+      slots: '#icon, #label, #actions — { node, level, expanded, selected }; the actions show on hover and focus (always on a touch screen). Events: update:expanded / selected / checked, select(node) — a click, Enter, Space without checkboxes; load-error(node, error) — the node stays closed; menu(node, event) — a menu was asked for on a row (preventDefault — a menu of your own instead of ours and the browser\'s); menu-select(id, node, selected) — an item of menu. The selection of a tree without the focus is grey, with the focus the accent. Keys: ↑ ↓, → opens or goes in, ← closes or goes to the parent, Home / End, * opens the siblings, letters search, Enter selects, Space checks, Menu / Shift+F10 — the menu.',
     },
   ],
   list: [

@@ -724,7 +724,7 @@ export const propTables = {
     {
       title: 'TaoTree',
       rows: [
-        r('nodes', 'TaoTreeNode[]', '—', '{ id, label, icon?, children?, hasChildren?, disabled? }. hasChildren без children — дети подгрузятся через load при раскрытии'),
+        r('nodes', 'TaoTreeNode[]', '—', "{ id, label, icon?, children?, hasChildren?, disabled?, hint?, tone? }. hasChildren без children — дети подгрузятся через load при раскрытии. hint — тихая подпись после имени («library root»). tone — цвет подписи: 'muted' | 'accent' | 'info' | 'success' | 'warning' | 'danger'"),
         r('v-model:expanded', 'string[]', 'свой', 'id раскрытых узлов. Без модели дерево хранит их само'),
         r('selection', "'none' | 'single' | 'multiple'", "'single'", 'Режим выбора. none — клик по папке раскрывает её'),
         r('v-model:selected', 'string | string[] | null', 'свой', 'id (single) или список id (multiple)'),
@@ -734,8 +734,10 @@ export const propTables = {
         r('size', "'small' | 'medium' | 'large'", 'наследуется', 'Высота строк, как у контролов; плотность тоже действует'),
         r('ariaLabel', 'string', "'Дерево'", 'Имя дерева для скринридера'),
         r('loadingLabel', 'string', "'Загрузка…'", 'Подсказка у спиннера'),
+        r('menu', 'TaoMenuItem[] | (node, selected) => TaoMenuItem[]', '—', 'Контекстное меню строки: правый клик, клавиша Menu, Shift+F10. Правый клик вне выбора сначала выбирает строку (без события select), внутри выбора оставляет его. Пустой список — меню браузера'),
+        r('menuLabel', 'string', "'Контекстное меню'", 'Имя меню для скринридера'),
       ],
-      slots: '#icon, #label, #actions — { node, level, expanded, selected }; действия видны при наведении и фокусе (на тач-экране всегда). События: update:expanded / selected / checked, select(node) — клик, Enter, Space без чекбоксов; load-error(node, error) — узел остаётся закрытым. Клавиши: ↑ ↓, → раскрывает или входит, ← сворачивает или к родителю, Home / End, * раскрывает соседей, буквы — поиск, Enter выбирает, Space отмечает.',
+      slots: '#icon, #label, #actions — { node, level, expanded, selected }; действия видны при наведении и фокусе (на тач-экране всегда). События: update:expanded / selected / checked, select(node) — клик, Enter, Space без чекбоксов; load-error(node, error) — узел остаётся закрытым; menu(node, event) — на строке попросили меню (preventDefault — своё меню вместо нашего и браузерного); menu-select(id, node, selected) — пункт menu. Выбор в дереве без фокуса серый, с фокусом — акцент. Клавиши: ↑ ↓, → раскрывает или входит, ← сворачивает или к родителю, Home / End, * раскрывает соседей, буквы — поиск, Enter выбирает, Space отмечает, Menu / Shift+F10 — меню.',
     },
   ],
   list: [

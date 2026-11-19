@@ -1,18 +1,23 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, shallowReactive, useId, watch } from 'vue';
+import { computed, nextTick, ref, shallowReactive, shallowRef, useId, watch } from 'vue';
+import type { TaoVirtualAnchor } from '../floating';
 import { useListNav } from '../listNav';
 import { useLocaleText } from '../locale';
+import type { TaoMenuItem } from '../menu';
 import { sizeClass, type TaoSize } from '../size';
 import {
     checkState,
+    menuSelection,
     toggleCheck,
     visibleRows,
     type TaoTreeCheckState,
+    type TaoTreeMenu,
     type TaoTreeNode,
     type TaoTreeRow,
     type TaoTreeSelection,
 } from '../tree';
 import TaoIcon from './TaoIcon.vue';
+import TaoMenu from './TaoMenu.vue';
 
 defineOptions({ name: 'TaoTree' });
 
@@ -39,9 +44,18 @@ const props = withDefaults(
         load?: (node: TaoTreeNode) => Promise<TaoTreeNode[]>;
         /** Without it the size of ancestors. / Без него — размер предков. */
         size?: TaoSize;
+        /**
+         * The context menu of a row (right click, the Menu key, Shift+F10): a list, or `(node, selected) => items`.
+         * A right click outside the selection selects that row first; the pick comes as `menu-select`.
+         * Контекстное меню строки (правый клик, клавиша Menu, Shift+F10): список или `(node, selected) => items`.
+         * Правый клик вне выбора сначала выбирает строку; выбранный пункт приходит в `menu-select`.
+         */
+        menu?: TaoTreeMenu;
         /** Accessible name of the tree. / Имя дерева для скринридера. */
         ariaLabel?: string;
         loadingLabel?: string;
+        /** Accessible name of the context menu. / Имя контекстного меню для скринридера. */
+        menuLabel?: string;
     }>(),
     {
         expanded: undefined,
@@ -51,8 +65,10 @@ const props = withDefaults(
         checked: undefined,
         load: undefined,
         size: undefined,
+        menu: undefined,
         ariaLabel: undefined,
         loadingLabel: undefined,
+        menuLabel: undefined,
     },
 );
 const l10n = useLocaleText(props, 'tree');
@@ -65,6 +81,15 @@ const emit = defineEmits<{
     select: [node: TaoTreeNode];
     /** `load` failed; the node stays closed. / `load` упал; узел остаётся закрытым. */
     'load-error': [node: TaoTreeNode, error: unknown];
+    /**
+     * A context menu was asked for on a row. Without `menu` the browser's own menu follows unless you call
+     * `event.preventDefault()`: the place for a menu of your own.
+     * На строке попросили контекстное меню. Без `menu` дальше откроется меню браузера, если не вызвать
+     * `event.preventDefault()`: место для своего меню.
+     */
+    menu: [node: TaoTreeNode, event: MouseEvent | KeyboardEvent];
+    /** An item of `menu` was picked: its id, the row and the ids it acts on. / Выбран пункт `menu`. */
+    'menu-select': [id: string, node: TaoTreeNode, selected: string[]];
 }>();
 
 interface NodeSlot {
@@ -255,6 +280,9 @@ function onKeydown(event: KeyboardEvent, index: number) {
         return;
     }
     current.value = index;
+    if (onMenuKey(event, row, index)) {
+        return;
+    }
     if (event.key === '*') {
         event.preventDefault();
         // every sibling of this row opens / открываются все соседи этой строки
@@ -313,6 +341,103 @@ function onRowClick(row: TaoTreeRow, index: number) {
     pick(row);
 }
 
+// ---------- the context menu ----------
+
+const menuOpen = ref(false);
+const menuAnchor = ref<TaoVirtualAnchor | null>(null);
+const menuItems = shallowRef<TaoMenuItem[]>([]);
+const menuNode = shallowRef<TaoTreeNode | null>(null);
+const menuIds = ref<string[]>([]);
+// the Menu key opens the menu on keydown; the contextmenu event the browser sends after it is the same request
+// клавиша Menu открывает меню на keydown; событие contextmenu, которое браузер шлёт следом, — та же просьба
+let keyMenuAt = -Infinity;
+
+/** Under the row, from the start of its label: where a menu opened from the keyboard hangs. / Под строкой, от начала подписи. */
+function rowAnchor(index: number): TaoVirtualAnchor | null {
+    const el = rowRefs.value[index];
+    if (!el) {
+        return null;
+    }
+    const box = el.getBoundingClientRect();
+    const label = el.querySelector('.tao-tree__label')?.getBoundingClientRect();
+    return { x: label ? label.left : box.left, y: box.top, width: 0, height: box.height };
+}
+
+/** Opens `menu` for a row; false when there is nothing to show (no `menu`, an empty list). */
+function openMenu(row: TaoTreeRow, index: number, anchor: TaoVirtualAnchor | null): boolean {
+    if (!props.menu || !anchor) {
+        return false;
+    }
+    const change = menuSelection(props.selection, selectedSet.value, row.node);
+    const ids =
+        change !== undefined
+            ? [row.node.id]
+            : selectedSet.value.has(row.node.id)
+              ? [...selectedSet.value]
+              : [row.node.id];
+    const items = typeof props.menu === 'function' ? props.menu(row.node, ids) : props.menu;
+    if (!items.length) {
+        return false;
+    }
+    if (change !== undefined) {
+        setSelected(change);
+    }
+    current.value = index;
+    menuNode.value = row.node;
+    menuIds.value = ids;
+    menuItems.value = items;
+    menuAnchor.value = anchor;
+    // a second right click while the menu is open moves it: close, then open at the new point
+    // второй правый клик при открытом меню переносит его: закрыть и открыть в новой точке
+    menuOpen.value = false;
+    void nextTick(() => (menuOpen.value = true));
+    return true;
+}
+
+function onRowContextMenu(event: MouseEvent, row: TaoTreeRow, index: number) {
+    if (performance.now() - keyMenuAt < 500) {
+        event.preventDefault();
+        return;
+    }
+    emit('menu', row.node, event);
+    if (event.defaultPrevented) {
+        return;
+    }
+    // a contextmenu from the keyboard (where the keydown did not reach us) has no pointer: hang it from the row
+    // contextmenu с клавиатуры (когда keydown до нас не дошёл) без указателя: вешаем меню на строку
+    const fromKeyboard = event.clientX === 0 && event.clientY === 0;
+    const anchor = fromKeyboard ? rowAnchor(index) : { x: event.clientX, y: event.clientY };
+    if (openMenu(row, index, anchor)) {
+        event.preventDefault();
+    }
+}
+
+function onMenuKey(event: KeyboardEvent, row: TaoTreeRow, index: number): boolean {
+    if (!props.menu || !(event.key === 'ContextMenu' || (event.key === 'F10' && event.shiftKey))) {
+        return false;
+    }
+    emit('menu', row.node, event);
+    // the app took it (a menu of its own), or ours opened: either way the contextmenu that follows is not a new request
+    // приложение взяло его на себя (своё меню) или открылось наше: contextmenu следом — не новая просьба
+    if (!event.defaultPrevented && !openMenu(row, index, rowAnchor(index))) {
+        return false;
+    }
+    event.preventDefault();
+    keyMenuAt = performance.now();
+    return true;
+}
+
+function onMenuSelect(id: string) {
+    if (menuNode.value) {
+        emit('menu-select', id, menuNode.value, menuIds.value);
+    }
+}
+
+// TaoMenu gives the focus back to the row itself / TaoMenu сам возвращает фокус строке
+function onMenuClose() {
+    menuOpen.value = false;
+}
+
 const slotProps = (row: TaoTreeRow): NodeSlot => ({
     node: row.node,
     level: row.level,
@@ -324,7 +449,7 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
 <template>
     <ul
         class="tao-tree"
-        :class="sizeClass(size)"
+        :class="[sizeClass(size), { 'tao-tree--menu-open': menuOpen }]"
         role="tree"
         :aria-label="l10n.ariaLabel"
         :aria-multiselectable="selection === 'multiple' || undefined"
@@ -335,10 +460,14 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
             :key="row.node.id"
             :ref="(el) => (rowRefs[index] = el as HTMLElement | null)"
             class="tao-tree__row"
-            :class="{
-                'tao-tree__row--selected': selectedSet.has(row.node.id),
-                'tao-tree__row--disabled': row.node.disabled,
-            }"
+            :class="[
+                row.node.tone && `tao-tree__row--toned tao-tree__row--${row.node.tone}`,
+                {
+                    'tao-tree__row--selected': selectedSet.has(row.node.id),
+                    'tao-tree__row--disabled': row.node.disabled,
+                    'tao-tree__row--menu': menuOpen && menuNode?.id === row.node.id,
+                },
+            ]"
             role="treeitem"
             :tabindex="current === index ? 0 : -1"
             :aria-level="row.level"
@@ -352,6 +481,7 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
             :style="{ '--_level': row.level - 1 }"
             @keydown="onKeydown($event, index)"
             @click="onRowClick(row, index)"
+            @contextmenu="onRowContextMenu($event, row, index)"
             @focus="current = index"
         >
             <span v-for="n in row.level - 1" :key="n" class="tao-tree__guide" aria-hidden="true"></span>
@@ -379,10 +509,24 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
             <span class="tao-tree__label">
                 <slot name="label" v-bind="slotProps(row)">{{ row.node.label }}</slot>
             </span>
+            <!-- the hidden comma keeps the name and the hint two words for a screen reader («App.vue, changed»)
+                 скрытая запятая не даёт скринридеру слить имя и подсказку в одно слово -->
+            <span v-if="row.node.hint" class="tao-tree__hint"><span class="tao-sr-only">, </span>{{ row.node.hint }}</span>
             <span v-if="$slots.actions" class="tao-tree__actions" @click.stop @keydown.stop>
                 <slot name="actions" v-bind="slotProps(row)" />
             </span>
         </li>
+        <!-- teleported to the body: only two comment marks stay in the list / уходит в body, в списке остаются две метки -->
+        <TaoMenu
+            v-if="menu"
+            :items="menuItems"
+            :open="menuOpen"
+            :anchor="menuAnchor"
+            :label="l10n.menuLabel"
+            close-on-scroll
+            @select="onMenuSelect"
+            @close="onMenuClose"
+        />
     </ul>
 </template>
 
@@ -419,6 +563,26 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
 .tao-tree__row--selected:hover {
     background: var(--tao-color-accent-subtle);
     color: var(--tao-color-accent-text);
+}
+
+/* the selection of a tree without the focus is grey, as in an IDE or a file manager: the accent says where the keys go.
+   An open context menu has the focus, but it is the tree's own: the selection keeps its accent then.
+   Выбор в дереве без фокуса серый, как в IDE и файловом менеджере: акцент говорит, куда идут клавиши.
+   Открытое контекстное меню забирает фокус, но оно часть дерева: тогда выбор остаётся с акцентом. */
+.tao-tree:not(:focus-within):not(.tao-tree--menu-open) .tao-tree__row--selected {
+    background: var(--tao-color-hover);
+    color: inherit;
+}
+
+.tao-tree:not(:focus-within):not(.tao-tree--menu-open) .tao-tree__row--selected .tao-tree__icon {
+    color: var(--tao-color-text-muted);
+}
+
+/* the row a context menu was opened for, when it is not the selection (no selection mode, a disabled row)
+   строка, для которой открыто контекстное меню, когда она не в выборе (режим none, выключенная строка) */
+.tao-tree__row--menu:not(.tao-tree__row--selected) {
+    background: var(--tao-color-hover);
+    box-shadow: inset 0 0 0 1px var(--tao-color-border-strong);
 }
 
 .tao-tree__row:focus-visible {
@@ -528,6 +692,77 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+/* with a hint the label takes its own width and the hint the rest; short of room the hint gives way first
+   с подсказкой подпись занимает свою ширину, подсказка — остальное; при нехватке места первой уступает подсказка */
+.tao-tree__label:has(+ .tao-tree__hint) {
+    flex: 0 1 auto;
+}
+
+.tao-tree__hint {
+    flex: 1 1000 auto;
+    min-width: 0;
+    margin-inline-start: var(--tao-space-1);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--_quiet);
+}
+
+/* The tone colours the label. On a filled row (hover, selection, menu) the plain text roles fall under 4.5:1 (dark
+   danger-text 4.1, text-muted 4.3), so a filled row takes the hover roles and a quiet colour a third of the way to the
+   text: every pair stays at 4.5:1 or more in both themes. A disabled row stays disabled.
+   Тон красит подпись. На залитой строке (наведение, выбор, меню) обычные роли текста опускаются ниже 4.5:1 (тёмная
+   danger-text 4.1, text-muted 4.3), поэтому залитая строка берёт роли наведения и тихий цвет на треть ближе к тексту:
+   все пары держат 4.5:1 и больше в обеих темах. Выключенная строка остаётся выключенной. */
+.tao-tree__row {
+    --_quiet: var(--tao-color-text-muted);
+}
+
+.tao-tree__row--muted {
+    --_tone: var(--_quiet);
+    --_tone-filled: var(--_quiet);
+}
+
+.tao-tree__row--accent {
+    --_tone: var(--tao-color-accent-text);
+    --_tone-filled: var(--tao-color-accent-text-hover);
+}
+
+.tao-tree__row--info {
+    --_tone: var(--tao-color-info-text);
+    --_tone-filled: var(--tao-color-info-text-hover);
+}
+
+.tao-tree__row--success {
+    --_tone: var(--tao-color-success-text);
+    --_tone-filled: var(--tao-color-success-text-hover);
+}
+
+.tao-tree__row--warning {
+    --_tone: var(--tao-color-warning-text);
+    --_tone-filled: var(--tao-color-warning-text-hover);
+}
+
+.tao-tree__row--danger {
+    --_tone: var(--tao-color-danger-text);
+    --_tone-filled: var(--tao-color-danger-text-hover);
+}
+
+/* :is() keeps this above the tone classes, whatever their order / :is() ставит это выше классов тона при любом порядке */
+.tao-tree__row:is(:hover, .tao-tree__row--selected, .tao-tree__row--menu) {
+    --_quiet: color-mix(in srgb, var(--tao-color-text-muted) 65%, var(--tao-color-text));
+    --_tone: var(--_tone-filled);
+}
+
+.tao-tree__row--toned .tao-tree__label {
+    color: var(--_tone);
+}
+
+.tao-tree__row--disabled .tao-tree__label,
+.tao-tree__row--disabled .tao-tree__hint {
+    color: var(--tao-color-text-disabled);
 }
 
 .tao-tree__actions {

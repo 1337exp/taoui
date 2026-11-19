@@ -95,7 +95,7 @@ export interface TaoLocale {
     dropdownMenu: { menuLabel: string };
     menubar: { ariaLabel: string };
     nav: { ariaLabel: string; moreLabel: string };
-    tree: { ariaLabel: string; loadingLabel: string };
+    tree: { ariaLabel: string; loadingLabel: string; menuLabel: string };
     /** `counterText`: `{checked}`, `{total}`. */
     checklist: { selectAllLabel: string; counterText: string };
     contextMenu: { menuLabel: string };
