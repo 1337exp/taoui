@@ -15,7 +15,8 @@ export const navGroups = [
     id: 'starters',
     title: { en: 'Starters', ru: 'Каркасы' },
     items: [
-      { id: 'starters', label: { en: 'App starters', ru: 'Каркасы приложений' }, aliases: ['starters', 'starter', 'templates', 'template', 'shell', 'app shell', 'layout', 'sidebar', 'side menu', 'scaffold', 'boilerplate', 'каркас', 'каркасы', 'заготовка', 'оболочка', 'меню слева', 'боковое меню', 'начать проект'] },
+      { id: 'starter-app-shell', label: { en: 'App shell', ru: 'Оболочка приложения' }, aliases: ['starters', 'starter', 'templates', 'template', 'shell', 'app shell', 'layout', 'sidebar', 'side menu', 'scaffold', 'boilerplate', 'fill', 'каркас', 'каркасы', 'заготовка', 'оболочка', 'меню слева', 'боковое меню', 'начать проект'] },
+      { id: 'starter-list-detail', label: { en: 'List and item', ru: 'Список и запись' }, aliases: ['starters', 'starter', 'master detail', 'list detail', 'list', 'detail', 'notes', 'mail', 'inbox', 'split', 'каркас', 'каркасы', 'список', 'запись', 'карточка', 'заметки', 'почта'] },
     ],
   },
   {

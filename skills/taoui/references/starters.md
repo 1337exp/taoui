@@ -2,7 +2,7 @@
 
 Generated from the Guide of the showcase (`showcase/guide/starters/`) by `npm run skill`; do not edit by hand.
 Start a new app from the starter that fits instead of composing the shell from scratch, and keep its decisions unless
-the app has a reason not to. The page with the starters live: showcase `#starters` (the Guide book).
+the app has a reason not to. Each starter is live on its own page of the showcase, `#starter-<id>` (the Guide book).
 A starter uses the public API only: no `:deep(.tao-…)`, no private `--_…` variables of a component.
 
 ## App shell with a side menu
@@ -15,7 +15,7 @@ A starter uses the public API only: no `:deep(.tao-…)`, no private `--_…` va
 2. `fill`: the app takes the window and the page scrolls inside its own box, not as a document. The navigation never moves, a list and an editor side by side can each scroll on their own, and no page scrollbar comes and goes between a short section and a long one, so nothing shifts sideways.
 3. The main action (`#action`) is one filled button above the items: it follows the navigation, round above the bar on a phone, round on the rail, wide with its text on the side panel. Its text is in `tao-nav__action-label`, so it stays the name of the round button. One accent action per screen: the rest of the shell is quiet.
 4. Counters are `badge-tone="neutral"`: grey on every item, the accent only on the current one, so the eye is not pulled round the menu.
-5. The language and the theme are quiet tools in `#footer`, at the bottom of the side panel (`fill` puts it there). The bar has no room for a footer, so on a phone the same tools go up into a thin header, shown by a container query on `tao-nav`, the same 600px as the bar: no JavaScript, no second breakpoint to keep in step.
+5. The language and the theme are quiet tools in `#footer`, at the bottom of the side panel (`fill` puts it there). The language shows its name on the side panel and folds to the globe on the rail by itself (it reads `--tao-nav-compact`), so no `icon-only` there. The bar has no room for a footer, so on a phone the same tools go up into a thin header, shown by a container query on `tao-nav`, the same 600px as the bar: no JavaScript, no second breakpoint to keep in step.
 6. Settings are a section of the menu with their own page, in a column one can read (560px), not a modal and not a drawer from the far edge: on a wide screen the menu is where the eye already is.
 7. An empty section says what lands in it and offers the action (`TaoEmpty`), instead of a blank page.
 
@@ -57,7 +57,7 @@ function create() {
 
     <template #footer>
       <div class="shell-tools">
-        <TaoLanguageSwitch v-model="lang" :languages="['en', 'ru']" icon-only placement="top-start" />
+        <TaoLanguageSwitch v-model="lang" :languages="['en', 'ru']" placement="top-start" />
         <TaoThemeToggle />
       </div>
     </template>

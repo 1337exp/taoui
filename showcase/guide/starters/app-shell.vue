@@ -33,7 +33,7 @@ function create() {
 
     <template #footer>
       <div class="shell-tools">
-        <TaoLanguageSwitch v-model="lang" :languages="['en', 'ru']" icon-only placement="top-start" />
+        <TaoLanguageSwitch v-model="lang" :languages="['en', 'ru']" placement="top-start" />
         <TaoThemeToggle />
       </div>
     </template>

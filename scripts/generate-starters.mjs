@@ -23,7 +23,7 @@ export function startersMarkdown(read = (name) => readFileSync(join(dir, name), 
         '',
         'Generated from the Guide of the showcase (`showcase/guide/starters/`) by `npm run skill`; do not edit by hand.',
         'Start a new app from the starter that fits instead of composing the shell from scratch, and keep its decisions unless',
-        'the app has a reason not to. The page with the starters live: showcase `#starters` (the Guide book).',
+        'the app has a reason not to. Each starter is live on its own page of the showcase, `#starter-<id>` (the Guide book).',
         'A starter uses the public API only: no `:deep(.tao-…)`, no private `--_…` variables of a component.',
         '',
     ];

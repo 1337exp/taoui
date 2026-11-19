@@ -224,6 +224,31 @@ watch(
     border-radius: var(--tao-radius-sm);
 }
 
+/*
+ * A plain list has rounded rows that take a tint (hover, selected): with the line as their own bottom border the tint
+ * ran into it. The line stands in a gap between the rows instead, shorter than the row by the text inset on both sides,
+ * with air above and below, as the thread list of hub has it.
+ * У списка без рамки строки скруглены и получают подложку (наведение, выбор): с линией как их нижней границей подложка
+ * в неё упиралась. Линия стоит в зазоре между строками, короче строки на отступ текста с обеих сторон, с воздухом сверху
+ * и снизу, как в списке тем hub.
+ */
+.tao-list--plain.tao-list--divided :deep(.tao-list-item:not(:last-child)) {
+    position: relative;
+    margin-bottom: calc(var(--tao-space-1) * 2);
+    border-bottom: 0;
+}
+
+.tao-list--plain.tao-list--divided :deep(.tao-list-item:not(:last-child))::after {
+    content: '';
+    position: absolute;
+    inset-inline: var(--tao-control-padding-x);
+    /* in the 8px gap: 3px of air above the line, 4px below / в зазоре 8px: 3px воздуха над линией, 4px под ней */
+    bottom: calc(-1 * var(--tao-space-1));
+    height: 1px;
+    background: var(--tao-color-border);
+    pointer-events: none;
+}
+
 .tao-list__empty {
     margin: 0;
     padding: var(--tao-space-3);

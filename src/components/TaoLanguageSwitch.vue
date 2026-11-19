@@ -121,6 +121,24 @@ watch(current, write);
     min-width: calc(var(--tao-control-height) - var(--tao-space-2) * 2);
 }
 
+/*
+ * In a TaoNav the name folds where the navigation is compact (the rail; the bar has no footer) and shows on the side
+ * panel: --tao-nav-compact is 1 or 0 there and 0 everywhere else. Folded by width, not hidden: it stays in the name of
+ * the button («Language: English»), as with icon-only.
+ * В TaoNav название сворачивается там, где навигация компактная (рейка), и видно в боковой панели: --tao-nav-compact
+ * там 1 или 0, а везде ещё 0. Сворачивается по ширине, а не прячется: остаётся в имени кнопки, как с icon-only.
+ */
+.tao-language-switch__face:not(.tao-language-switch__face--icon) {
+    justify-content: center;
+    gap: calc((1 - var(--tao-nav-compact, 0)) * var(--tao-space-2));
+    min-width: calc(var(--tao-nav-compact, 0) * (var(--tao-control-height) - var(--tao-space-2) * 2));
+}
+
+.tao-language-switch__face:not(.tao-language-switch__face--icon) .tao-language-switch__name {
+    max-width: calc((1 - var(--tao-nav-compact, 0)) * 20em);
+    overflow: hidden;
+}
+
 .tao-language-switch__sr {
     position: absolute;
     width: 1px;

@@ -468,9 +468,6 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     display: grid;
     flex: 1 1 auto;
     grid-template: var(--_grid);
-    /* public: 1 on the bar and the rail (round, icons only), 0 on the side panel; for your own pieces in the slots
-       публичная: 1 в нижней панели и рейке (круглое, только иконки), 0 в боковой панели; для своих вещей в слотах */
-    --tao-nav-compact: var(--_compact);
 }
 
 .tao-nav__content {
@@ -512,6 +509,11 @@ function onMoreClose(reason: TaoMenuCloseReason) {
     z-index: 1;
     box-sizing: border-box;
     width: var(--_panel-width);
+    /* public, on the navigation only (the page beside it stays 0): 1 on the bar and the rail (round, icons only), 0 on the
+       side panel; for your pieces in #action, #footer and #label. TaoLanguageSwitch folds its name by it.
+       публичная, только на навигации (страница рядом остаётся 0): 1 в нижней панели и рейке, 0 в боковой; для своих вещей
+       в #action, #footer и #label. TaoLanguageSwitch сворачивает по ней название. */
+    --tao-nav-compact: var(--_compact);
     /* 4px in the bar and the rail, 12px in the side panel, so its items stand off the edges like a list in a card
        4px в нижней панели и рейке, 12px в боковой, чтобы её пункты отступали от краёв, как список в карточке */
     --_pad: calc(var(--tao-space-1) + (1 - var(--_compact)) * (var(--tao-space-3) - var(--tao-space-1)));
