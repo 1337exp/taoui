@@ -369,10 +369,31 @@ function onRowKeydown(event: KeyboardEvent, row: T, index: number) {
     cursor: pointer;
 }
 
-/* the focus of a row: inside its edge, so the box of the table does not cut it / фокус строки: внутри её края, чтобы рамка таблицы не обрезала */
+/* The focus of a row is a tint and a bar of the accent at its start, not a ring: a ring is a rectangle, and the rounded frame of the
+   table cut its corners on the first and the last row (a row cannot have a radius of its own in a collapsed table). The tint and the
+   bar are clipped by the frame as any fill is. The bar is a pseudo-element on the logical edge, so it stands at the right in RTL.
+   Фокус строки — заливка и полоса акцента в её начале, а не кольцо: кольцо прямоугольное, и скруглённая рамка таблицы резала его
+   углы у первой и последней строки (у строки в схлопнутой таблице своего радиуса не бывает). Заливку и полосу рамка обрезает, как
+   любую заливку. Полоса — псевдоэлемент на логическом краю, поэтому в RTL она справа. */
 .tao-table--clickable tbody tr:focus-visible {
-    outline: 2px solid var(--tao-color-accent);
-    outline-offset: -2px;
+    outline: none;
+}
+
+.tao-table--clickable tbody tr:focus-visible td {
+    background: var(--tao-color-accent-subtle);
+}
+
+.tao-table--clickable tbody tr:focus-visible td:first-child {
+    position: relative;
+}
+
+.tao-table--clickable tbody tr:focus-visible td:first-child::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: 2px;
+    background: var(--tao-color-accent);
 }
 
 .tao-table__sort-btn {
@@ -501,6 +522,20 @@ function onRowKeydown(event: KeyboardEvent, row: T, index: number) {
         font-size: var(--tao-control-font-size-secondary);
         font-weight: 600;
         color: var(--tao-color-text-muted);
+    }
+
+    /* a focused card has the bar along all its cells (they are blocks one under the other) / у карточки с фокусом полоса идёт вдоль всех её ячеек */
+    .tao-table--clickable.tao-table--stack tbody tr:focus-visible td {
+        position: relative;
+    }
+
+    .tao-table--clickable.tao-table--stack tbody tr:focus-visible td::after {
+        content: '';
+        position: absolute;
+        inset-block: 0;
+        inset-inline-start: 0;
+        inline-size: 2px;
+        background: var(--tao-color-accent);
     }
 
     /* the line stands between the cards, not under every cell */

@@ -130,10 +130,25 @@ describe('tableRowTarget', () => {
 });
 
 describe('TaoTable clickable: the stylesheet', () => {
-    it('shows the focus of a row inside its edge, where the box of the table does not cut it', () => {
-        const css = (raw as string).match(/<style[^>]*>([\s\S]*)<\/style>/)![1]!.replace(/\/\*[\s\S]*?\*\//g, '');
-        const rule = css.match(/\.tao-table--clickable tbody tr:focus-visible\s*\{([^}]*)\}/)?.[1] ?? '';
-        expect(rule).toMatch(/outline:\s*2px solid var\(--tao-color-accent\)/);
-        expect(rule).toMatch(/outline-offset:\s*-2px/);
+    const css = (raw as string).match(/<style[^>]*>([\s\S]*)<\/style>/)![1]!.replace(/\/\*[\s\S]*?\*\//g, '');
+    const rule = (selector: string) => css.match(new RegExp(String.raw`${selector}\s*\{([^}]*)\}`))?.[1] ?? '';
+    const base = String.raw`\.tao-table--clickable tbody tr:focus-visible`;
+
+    it('the focus of a row is a tint and a bar, not a ring: the rounded frame cut the corners of a ring', () => {
+        expect(rule(base)).toMatch(/outline:\s*none/);
+        expect(rule(`${base} td`)).toMatch(/background:\s*var\(--tao-color-accent-subtle\)/);
+    });
+
+    it('the bar stands on the logical start edge (RTL puts it at the right) and is 2px of the accent', () => {
+        const bar = rule(`${base} td:first-child::after`);
+        expect(bar).toMatch(/inset-inline-start:\s*0/);
+        expect(bar).toMatch(/inline-size:\s*2px/);
+        expect(bar).toMatch(/background:\s*var\(--tao-color-accent\)/);
+        expect(bar).not.toMatch(/\bleft:|\bright:/);
+    });
+
+    it('a card of stack has the bar along all its cells', () => {
+        const block = css.slice(css.indexOf('@container tao-table (width < 600px)'));
+        expect(block).toMatch(/\.tao-table--clickable\.tao-table--stack tbody tr:focus-visible td::after\s*\{[^}]*inset-inline-start:\s*0/);
     });
 });
