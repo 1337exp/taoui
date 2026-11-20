@@ -29,6 +29,7 @@ export const PAIRS = [
   { en: 'text on the page', ru: 'текст на странице', fg: R('text'), bg: R('bg'), need: TEXT_RATIO },
   { en: 'strong text', ru: 'сильный текст', fg: R('text-strong'), bg: R('bg'), need: TEXT_RATIO },
   { en: 'caption on a card', ru: 'подпись на карточке', fg: R('text-muted'), bg: R('surface-raised'), need: TEXT_RATIO },
+  { en: 'link on the page', ru: 'ссылка на странице', fg: R('link'), bg: R('bg'), need: TEXT_RATIO },
   { en: 'accent as text', ru: 'акцент как текст', fg: R('accent-text'), bg: R('bg'), need: TEXT_RATIO },
   { en: 'label on the accent', ru: 'подпись на акценте', fg: R('on-accent'), bg: R('accent'), need: TEXT_RATIO },
   { en: 'accent fill on the page', ru: 'заливка акцента на странице', fg: R('accent'), bg: R('bg'), need: FILL_RATIO },

@@ -13,6 +13,8 @@ interface Props {
     newTab?: boolean;
     private?: boolean;
     exactPath?: boolean;
+    /** As in TaoLink; here `none`: the card is the sign of a link, not the line. / Как у TaoLink; здесь `none`: ссылку показывает карточка, а не линия. */
+    underline?: 'always' | 'hover' | 'none';
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -20,6 +22,7 @@ const props = withDefaults(defineProps<Props>(), {
     newTab: false,
     private: false,
     exactPath: false,
+    underline: 'none',
 });
 </script>
 
