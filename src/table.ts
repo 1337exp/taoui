@@ -44,3 +44,27 @@ export function tableRowId<T extends object>(rowKey: TaoTableRowKey<T>, row: T, 
     const key = (row as Record<string, unknown>)[rowKey];
     return key == null ? index : String(key);
 }
+
+/**
+ * Where a key moves the focus among the rows of a clickable table: the arrows one row (no wrap at the ends, as in a list), Home and
+ * End the first and the last. `-1`: not a key of the walk; the row stays where it is when the walk cannot go further.
+ * Куда ключ ведёт фокус по строкам кликабельной таблицы: стрелки на одну строку (по кругу не ходит, как в списке), Home и End на
+ * первую и последнюю. `-1`: клавиша не из этой ходьбы; дальше конца строка остаётся на месте.
+ */
+export function tableRowTarget(key: string, from: number, count: number): number {
+    if (count <= 0) {
+        return -1;
+    }
+    switch (key) {
+        case 'ArrowDown':
+            return Math.min(from + 1, count - 1);
+        case 'ArrowUp':
+            return Math.max(from - 1, 0);
+        case 'Home':
+            return 0;
+        case 'End':
+            return count - 1;
+        default:
+            return -1;
+    }
+}

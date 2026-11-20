@@ -103,8 +103,8 @@ function flashTableLoading() {
   <ShowcaseSection id="table" :tables="propTables['table']">
     <h2>TaoTable</h2>
           <Tr>
-            <template #en><p>A simple table for lists of entities. It neither sorts nor paginates — the parent does that, so the same component works with a server too. Header highlight — <code>head</code>, lines — <code>lines</code>. Zebra — <code>striped</code> (from the first row) or <code>striped="even"</code>.</p></template>
-            <template #ru><p>Простая таблица для списков сущностей. Сама не сортирует и не режет страницы — это делает родитель, поэтому тот же компонент работает и с сервером. Подсветка шапки — <code>head</code>, линии — <code>lines</code>. Зебра — <code>striped</code> (с первой строки) или <code>striped="even"</code>.</p></template>
+            <template #en><p>A simple table for lists of entities. It neither sorts nor paginates — the parent does that, so the same component works with a server too. Header highlight — <code>head</code>, lines — <code>lines</code>. Zebra — <code>striped</code> (from the first row) or <code>striped="even"</code>. With <code>clickable</code> the rows work from the keyboard too: Tab to the table, the arrows walk the rows, Enter or Space is a click.</p></template>
+            <template #ru><p>Простая таблица для списков сущностей. Сама не сортирует и не режет страницы — это делает родитель, поэтому тот же компонент работает и с сервером. Подсветка шапки — <code>head</code>, линии — <code>lines</code>. Зебра — <code>striped</code> (с первой строки) или <code>striped="even"</code>. С <code>clickable</code> строки работают и с клавиатуры: Tab к таблице, стрелки ходят по строкам, Enter или Space — клик.</p></template>
           </Tr>
     
           <div class="button-row">
