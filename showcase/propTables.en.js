@@ -683,7 +683,7 @@ export const propTablesEn = {
     {
       title: 'TaoTable',
       rows: [
-        r('columns', 'TaoTableColumn<T>[]', '—', 'Required. { key, label, sortable?, align?, width?, value?(row) }. A list shared by tables of any rows: TaoTableColumn[] without T'),
+        r('columns', 'TaoTableColumn<T>[]', '—', 'Required. { key, label, sortable?, align?, width?, minWidth?, nowrap?, value?(row) }. A list shared by tables of any rows: TaoTableColumn[] without T'),
         r('rows', 'T[]', '[]', 'The data. The table is generic: T comes from here (an interface, a class, a readonly array), and the row in the slots and in row-click is a T'),
         r('v-model:sort', '{ key, dir } | null', 'null', 'Sorting. dir: asc | desc'),
         r('loading', 'boolean', 'false', 'The loading overlay'),
@@ -697,6 +697,8 @@ export const propTablesEn = {
         r('sticky', 'boolean', 'false', 'A sticky header (needs maxHeight)'),
         r('rowKey', 'string | fn', "'id'", 'The row key'),
         r('maxHeight', 'number | string', '—', 'Scroll. A number is px'),
+        r('minWidth', 'number | string', '—', 'The table is never narrower than this (a number is px): in a narrower place it scrolls sideways instead of squeezing the columns into thin stacks. Not under stack cards'),
+        r('stack', 'boolean', 'false', 'Under 600px (the width of the table itself, not of the window) a row turns into a card: each cell under its column label. A container query, no JavaScript. The header stays for a screen reader'),
       ],
       slots: 'Cell: #cell-{key}="{ row, value }" (row is a T, value is unknown). Events: change — the sorting changed, row-click, if clickable.',
     },

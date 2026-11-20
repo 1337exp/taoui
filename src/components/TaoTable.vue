@@ -34,6 +34,20 @@ const props = withDefaults(
         caption?: string;
         /** The outer frame; not set, it follows the frames context (`.tao-frames-soft`). / Внешняя рамка; не задан — идёт за контекстом рамок. */
         bordered?: boolean;
+        /**
+         * The table is never narrower than this (a number is px, a string any CSS length); in a narrower place it scrolls sideways
+         * instead of squeezing its columns into words. Not under `stack` cards.
+         * Таблица не уже этого (число — px, строка — любая CSS-длина); в более узком месте она прокручивается вбок, а не сжимает колонки
+         * в столбики. В карточках `stack` не действует.
+         */
+        minWidth?: TaoLength;
+        /**
+         * In a place narrower than 600px (the width of the table itself, not of the window) every row turns into a card: each cell is
+         * shown under its column label. No JavaScript: a container query.
+         * В месте уже 600px (ширина самой таблицы, не окна) каждая строка становится карточкой: ячейка под подписью своей колонки.
+         * Без JavaScript: контейнерный запрос.
+         */
+        stack?: boolean;
     }>(),
     {
         rows: () => [],
@@ -49,6 +63,8 @@ const props = withDefaults(
         sort: null,
         caption: '',
         bordered: undefined,
+        minWidth: '',
+        stack: false,
     },
 );
 const l10n = useLocaleText(props, 'table');
@@ -77,6 +93,16 @@ function columnWidth(column: TaoTableColumn<T>) {
         return undefined;
     }
     return typeof column.width === 'number' ? `${column.width}px` : column.width;
+}
+
+// The alignment goes in a private variable and not in `text-align` itself: the cards (`stack`) put everything at the start by a rule.
+// Выравнивание идёт в приватной переменной, а не в самом `text-align`: карточки (`stack`) правилом ставят всё к началу.
+function cellStyle(column: TaoTableColumn<T>, head = false) {
+    return {
+        '--_tao-align': column.align || 'left',
+        width: head ? columnWidth(column) : undefined,
+        minWidth: toCssLength(column.minWidth),
+    };
 }
 
 const cellValue = (row: T, column: TaoTableColumn<T>) => tableCellValue(row, column);
@@ -118,10 +144,12 @@ function onRowClick(row: T, index: number) {
             {
                 'tao-table-wrap--sticky': sticky,
                 'tao-table-wrap--loading': loading,
+                'tao-table-wrap--stack': stack,
             },
         ]"
         :style="[frameStyle(bordered), maxHeight ? { maxHeight: toCssLength(maxHeight) } : undefined]"
     >
+        <!-- the roles: a table that turns into blocks loses its table semantics in some browsers; named, it keeps them -->
         <table
             class="tao-table"
             :class="{
@@ -132,16 +160,21 @@ function onRowClick(row: T, index: number) {
                 'tao-table--lines': lines,
                 'tao-table--clickable': clickable,
                 'tao-table--sticky': sticky,
+                'tao-table--stack': stack,
             }"
+            :style="minWidth !== '' ? { '--_tao-table-min': toCssLength(minWidth) } : undefined"
+            :role="stack ? 'table' : undefined"
         >
             <caption v-if="caption">{{ caption }}</caption>
             <thead>
-                <tr>
+                <tr :role="stack ? 'row' : undefined">
                     <th
                         v-for="column in columns"
                         :key="column.key"
-                        :style="{ width: columnWidth(column), textAlign: column.align || 'left' }"
+                        :class="{ 'tao-table__nowrap': column.nowrap }"
+                        :style="cellStyle(column, true)"
                         scope="col"
+                        :role="stack ? 'columnheader' : undefined"
                         :aria-sort="
                             column.sortable
                                 ? sortDir(column) === 'asc'
@@ -173,20 +206,24 @@ function onRowClick(row: T, index: number) {
                 </tr>
             </thead>
             <tbody>
-                <tr v-if="isEmpty">
-                    <td class="tao-table__empty" :colspan="colCount">
+                <tr v-if="isEmpty" :role="stack ? 'row' : undefined">
+                    <td class="tao-table__empty" :colspan="colCount" :role="stack ? 'cell' : undefined">
                         <slot name="empty">{{ l10n.emptyText }}</slot>
                     </td>
                 </tr>
                 <tr
                     v-for="(row, index) in rows"
                     :key="rowId(row, index)"
+                    :role="stack ? 'row' : undefined"
                     @click="onRowClick(row, index)"
                 >
                     <td
                         v-for="column in columns"
                         :key="column.key"
-                        :style="{ textAlign: column.align || 'left' }"
+                        :class="{ 'tao-table__nowrap': column.nowrap }"
+                        :style="cellStyle(column)"
+                        :data-label="stack ? column.label : undefined"
+                        :role="stack ? 'cell' : undefined"
                     >
                         <slot
                             :name="`cell-${column.key}`"
@@ -230,6 +267,8 @@ function onRowClick(row: T, index: number) {
 
 .tao-table {
     width: 100%;
+    /* `minWidth`: a table narrower than this scrolls in its wrap instead of squeezing the columns / `minWidth`: уже этого таблица прокручивается в обёртке, а не сжимает колонки */
+    min-width: var(--_tao-table-min, 0);
     border-collapse: collapse;
     font-size: var(--tao-control-font-size);
     color: var(--tao-color-text);
@@ -248,6 +287,11 @@ function onRowClick(row: T, index: number) {
     /* 12 / 16 at medium / 12 / 16 в medium */
     padding: calc(var(--tao-control-padding-y) + var(--tao-space-1)) calc(var(--tao-control-padding-x) + var(--tao-space-1));
     vertical-align: middle;
+    text-align: var(--_tao-align, left);
+}
+
+.tao-table__nowrap {
+    white-space: nowrap;
 }
 
 .tao-table--lines th,
@@ -260,7 +304,6 @@ function onRowClick(row: T, index: number) {
     font-size: var(--tao-control-font-size-secondary);
     color: var(--tao-color-text-muted);
     white-space: nowrap;
-    text-align: left;
 }
 
 .tao-table--head th {
@@ -368,5 +411,75 @@ function onRowClick(row: T, index: number) {
     align-items: center;
     justify-content: center;
     background: color-mix(in srgb, var(--tao-color-surface) 72%, transparent);
+}
+
+/* `stack`: under 600px of the table's own width a row is a card. The wrap is the container: a container cannot ask about its own
+   width, so the table inside lays out by the width of the wrap. The header stays in the DOM, hidden by sight (the roles on the
+   cells keep it for a screen reader), and every cell gets its label above it from `data-label`.
+   `stack`: при ширине самой таблицы меньше 600px строка становится карточкой. Контейнер это обёртка (контейнер не спросит про
+   свою ширину), таблица внутри раскладывается по ширине обёртки. Шапка остаётся в DOM, скрытая для глаз (роли на ячейках
+   сохраняют её для скринридера), а у каждой ячейки над значением подпись из `data-label`. */
+.tao-table-wrap--stack {
+    container: tao-table / inline-size;
+}
+
+@container tao-table (width < 600px) {
+    .tao-table--stack {
+        min-width: 0;
+    }
+
+    .tao-table--stack,
+    .tao-table--stack caption,
+    .tao-table--stack tbody,
+    .tao-table--stack tr,
+    .tao-table--stack td {
+        display: block;
+    }
+
+    .tao-table--stack thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+    }
+
+    .tao-table--stack td {
+        padding-block: var(--tao-space-1);
+        text-align: start;
+        white-space: normal;
+    }
+
+    .tao-table--stack td:first-child {
+        padding-block-start: var(--tao-space-3);
+    }
+
+    .tao-table--stack td:last-child {
+        padding-block-end: var(--tao-space-3);
+    }
+
+    .tao-table--stack td[data-label]::before {
+        content: attr(data-label);
+        /* the empty alternative takes the label out of the speech: the hidden header already says it (older browsers keep the line above) */
+        content: attr(data-label) / '';
+        display: block;
+        font-size: var(--tao-control-font-size-secondary);
+        font-weight: 600;
+        color: var(--tao-color-text-muted);
+    }
+
+    /* the line stands between the cards, not under every cell */
+    .tao-table--lines.tao-table--stack td {
+        border-bottom: none;
+    }
+
+    .tao-table--lines.tao-table--stack tbody tr {
+        border-bottom: 1px solid var(--tao-color-border);
+    }
+
+    .tao-table--lines.tao-table--stack tbody tr:last-child {
+        border-bottom: none;
+    }
 }
 </style>
