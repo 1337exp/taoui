@@ -698,7 +698,7 @@ export const propTablesEn = {
         r('rowKey', 'string | fn', "'id'", 'The row key'),
         r('maxHeight', 'number | string', '—', 'Scroll. A number is px'),
         r('minWidth', 'number | string', '—', 'The table is never narrower than this (a number is px): in a narrower place it scrolls sideways instead of squeezing the columns into thin stacks. Not under stack cards'),
-        r('clickable', 'boolean', 'false', 'The rows can be clicked: a pointer cursor and the row-click event. From the keyboard the table is one Tab stop: the arrows and Home / End walk the rows, Enter and Space do what a click does (a key inside a button or a field of the row stays with it). The focus ring is inside the edge of the row'),
+        r('clickable', 'boolean', 'false', 'The rows can be clicked: a pointer cursor and the row-click event. From the keyboard the table is one Tab stop: the arrows and Home / End walk the rows, Enter and Space do what a click does (a key inside a button or a field of the row stays with it). The focus of a row is a tint of the accent and a 2px bar at its start (not a ring: the rounded frame of the table would cut its corners)'),
         r('stack', 'boolean', 'false', 'Under 600px (the width of the table itself, not of the window) a row turns into a card: each cell under its column label. A container query, no JavaScript. The header stays for a screen reader'),
       ],
       slots: 'Cell: #cell-{key}="{ row, value }" (row is a T, value is unknown). Events: change — the sorting changed, row-click, if clickable.',
