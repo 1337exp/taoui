@@ -37,6 +37,39 @@ function build(name, appSource) {
     return { js: sum('.js'), css: sum('.css'), cssText: files.filter((x) => x.f.endsWith('.css')).map((x) => x.text.toString()).join('\n') };
 }
 
+/**
+ * The types the way a consumer's compiler sees them (skipLibCheck on, as everyone has it). A generic component (TaoTable) went through
+ * the declaration emit once with `Awaited<typeof __VLS_setup>["props"]` and the props became `any`: a wrong row passed silently. So
+ * a right file must compile, and a file with a wrong row, handler and slot must fail on exactly those lines.
+ * Типы глазами компилятора потребителя. Generic-компонент (TaoTable) однажды ушёл в декларации с `Awaited<…>["props"]`, props стали
+ * `any`, и неверная строка проходила молча. Верный файл должен собираться, файл с неверной строкой, обработчиком и слотом — падать.
+ */
+function checkTypes() {
+    const project = join(dir, 'types');
+    mkdirSync(join(project, 'src'), { recursive: true });
+    writeFileSync(join(project, 'package.json'), JSON.stringify({ name: 'types', private: true, type: 'module' }));
+    writeFileSync(
+        join(project, 'tsconfig.json'),
+        JSON.stringify({ compilerOptions: { target: 'ES2020', module: 'ESNext', moduleResolution: 'bundler', strict: true, skipLibCheck: true, noEmit: true, lib: ['ES2020', 'DOM'] }, include: ['src/*.vue'] }),
+    );
+    const head = `<script setup lang="ts">\nimport { TaoTable, type TaoTableColumn } from '@1337exp/taoui';\ninterface Flag { flag: string; n: number }\nconst rows: readonly Flag[] = [{ flag: '--a', n: 1 }];\nconst columns: TaoTableColumn[] = [{ key: 'flag', label: 'Flag' }];\n`;
+    writeFileSync(join(project, 'src/Good.vue'), `${head}const open = (row: Flag) => row.n;\n</script>\n<template><TaoTable :columns="columns" :rows="rows" row-key="flag" @row-click="open"><template #cell-flag="{ row }">{{ row.flag.toUpperCase() }}</template></TaoTable></template>\n`);
+    run(`npm install vue typescript vue-tsc ${join(dir, tgz)}`, project);
+    run('npx vue-tsc --noEmit', project);
+
+    writeFileSync(join(project, 'src/Good.vue'), '<template><p>x</p></template>\n');
+    writeFileSync(join(project, 'src/Bad.vue'), `${head}const open = (row: { zzz: number }) => row.zzz;\n</script>\n<template><TaoTable :columns="columns" :rows="rows" @row-click="open"><template #cell="{ row }">{{ row.nope }}</template></TaoTable><TaoTable :columns="columns" :rows="3" /></template>\n`);
+    let failed = '';
+    try {
+        run('npx vue-tsc --noEmit', project);
+    } catch (error) {
+        failed = String(error.stdout ?? '');
+    }
+    for (const mark of ["'nope'", "'zzz'", "'readonly any[]'"]) {
+        if (!failed.includes(mark)) throw new Error(`the types of TaoTable let a wrong use pass: no error with ${mark}\n${failed}`);
+    }
+}
+
 let tgz;
 try {
     tgz = run('npm pack --silent --ignore-scripts --pack-destination .', root).trim().split('\n').pop();
@@ -51,7 +84,8 @@ try {
     console.log(`one component : JS ${kb(one.js.raw)} (${kb(one.js.gz)} gzip), CSS ${kb(one.css.raw)} (${kb(one.css.gz)} gzip)`);
     console.log(`whole entry   : JS ${kb(all.js.raw)} (${kb(all.js.gz)} gzip), CSS ${kb(all.css.raw)} (${kb(all.css.gz)} gzip)`);
     console.log(`tarball       : ${kb(statSync(join(dir, tgz)).size)}`);
-    console.log('smoke ok: tarball installed, public paths resolved, app built, CSS shipped');
+    checkTypes();
+    console.log('smoke ok: tarball installed, public paths resolved, app built, CSS shipped, types of TaoTable checked');
 } finally {
     rmSync(dir, { recursive: true, force: true });
 }

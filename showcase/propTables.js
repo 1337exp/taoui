@@ -676,8 +676,8 @@ export const propTables = {
     {
       title: 'TaoTable',
       rows: [
-        r('columns', 'TaoTableColumn[]', '—', 'Обязательный. { key, label, sortable?, align?, width? }'),
-        r('rows', 'object[]', '[]', 'Данные'),
+        r('columns', 'TaoTableColumn<T>[]', '—', 'Обязательный. { key, label, sortable?, align?, width?, value?(row) }. Общий список строк всех таблиц: TaoTableColumn[] без T'),
+        r('rows', 'T[]', '[]', 'Данные. Таблица обобщённая: T берётся отсюда (interface, класс, readonly-массив), строка в слотах и в row-click имеет тип T'),
         r('v-model:sort', '{ key, dir } | null', 'null', 'Сортировка. dir: asc | desc'),
         r('loading', 'boolean', 'false', 'Оверлей загрузки'),
         r('emptyText', 'string', "'Нет данных'", 'Если rows пустой и не loading'),
@@ -691,7 +691,7 @@ export const propTables = {
         r('rowKey', 'string | fn', "'id'", 'Ключ ряда'),
         r('maxHeight', 'number | string', '—', 'Скролл. Число — px'),
       ],
-      slots: 'Ячейка: #cell-{key}="{ row, value }". События: change — сменили сортировку, row-click, если clickable.',
+      slots: 'Ячейка: #cell-{key}="{ row, value }" (row типа T, value unknown). События: change — сменили сортировку, row-click, если clickable.',
     },
   ],
   pagination: [
