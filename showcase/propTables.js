@@ -676,7 +676,7 @@ export const propTables = {
     {
       title: 'TaoTable',
       rows: [
-        r('columns', 'TaoTableColumn<T>[]', '—', 'Обязательный. { key, label, sortable?, align?, width?, value?(row) }. Общий список строк всех таблиц: TaoTableColumn[] без T'),
+        r('columns', 'TaoTableColumn<T>[]', '—', 'Обязательный. { key, label, sortable?, align?, width?, minWidth?, nowrap?, value?(row) }. Общий список строк всех таблиц: TaoTableColumn[] без T'),
         r('rows', 'T[]', '[]', 'Данные. Таблица обобщённая: T берётся отсюда (interface, класс, readonly-массив), строка в слотах и в row-click имеет тип T'),
         r('v-model:sort', '{ key, dir } | null', 'null', 'Сортировка. dir: asc | desc'),
         r('loading', 'boolean', 'false', 'Оверлей загрузки'),
@@ -690,6 +690,8 @@ export const propTables = {
         r('sticky', 'boolean', 'false', 'Липкая шапка (нужен maxHeight)'),
         r('rowKey', 'string | fn', "'id'", 'Ключ ряда'),
         r('maxHeight', 'number | string', '—', 'Скролл. Число — px'),
+        r('minWidth', 'number | string', '—', 'Таблица не уже этого (число — px): в более узком месте она прокручивается вбок, а не сжимает колонки в столбики. В карточках stack не действует'),
+        r('stack', 'boolean', 'false', 'Уже 600px (ширина самой таблицы, не окна) строка становится карточкой: ячейка под подписью колонки. Контейнерный запрос, без JavaScript. Шапка остаётся для скринридера'),
       ],
       slots: 'Ячейка: #cell-{key}="{ row, value }" (row типа T, value unknown). События: change — сменили сортировку, row-click, если clickable.',
     },

@@ -17,6 +17,10 @@ export interface TaoTableColumn<T extends object = any> {
     align?: TaoTableAlign;
     width?: string | number;
     sortable?: boolean;
+    /** No line break in the cells of this column (a code, a date, a flag); in the cards of `stack` they wrap again. / Без переноса строк в ячейках колонки (код, дата, флаг); в карточках `stack` перенос возвращается. */
+    nowrap?: boolean;
+    /** The column is never narrower than this (a number is px, a string any CSS length). / Колонка не уже этого (число — px, строка — любая CSS-длина). */
+    minWidth?: string | number;
     /** What the cell shows instead of `row[key]`. / Что показать в ячейке вместо `row[key]`. */
     value?(row: T): unknown;
 }

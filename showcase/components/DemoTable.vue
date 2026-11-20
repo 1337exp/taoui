@@ -31,6 +31,19 @@ const tableColumns = computed(() => [
   { key: 'orders', label: tr('Orders', 'Заказы'), align: 'right', sortable: true, width: 110 },
   { key: 'status', label: tr('Status', 'Статус'), width: 140 },
 ])
+// a table with prose in its cells: what a narrow place does to it
+const flagRows = computed(() => [
+  { flag: '--out', value: tr('a folder', 'папка'), def: './art', note: tr('Where the pictures go. The seed is written into the file name.', 'Куда падают картинки. Зерно пишется в имя файла.') },
+  { flag: '--seed', value: tr('a number', 'число'), def: tr('random', 'случайное'), note: tr('The same seed and the same prompt give the same picture.', 'Одно зерно и тот же промпт дают ту же картинку.') },
+  { flag: '--steps', value: tr('a number', 'число'), def: '20', note: tr('More steps are slower and not always better; each model has its own default.', 'Больше шагов — дольше, но не всегда лучше; у каждой модели своё значение.') },
+])
+const flagColumns = computed(() => [
+  { key: 'flag', label: tr('Flag', 'Флаг'), nowrap: true },
+  { key: 'value', label: tr('Value', 'Значение') },
+  { key: 'def', label: tr('Default', 'По умолчанию'), nowrap: true },
+  { key: 'note', label: tr('What it does', 'Что делает') },
+])
+const narrowMode = ref('stack')
 const tablePage = ref(1)
 const tablePageSize = 8
 const tableSort = ref({ key: 'name', dir: 'asc' })
@@ -140,6 +153,33 @@ function flashTableLoading() {
             style="margin-top: 12px;"
           />
     
+          <h3>{{ tr('A narrow place', 'Узкое место') }}</h3>
+          <Tr>
+            <template #en><p>A table keeps its columns as wide as the words allow, so on a phone prose is squeezed into thin stacks. Two ways out: <code>stack</code> turns every row into a card under 600px of the table's own width (a container query, so it follows the room it is given, not the window), and <code>min-width</code> keeps the table readable and lets it scroll sideways. A column can say <code>nowrap</code> (a code, a date) or its own <code>minWidth</code>. Narrow the window, or the preview of the page, to see it.</p></template>
+            <template #ru><p>Таблица держит колонки настолько широкими, насколько позволяют слова, и на телефоне текст сжимается в тонкие столбики. Два выхода: <code>stack</code> превращает каждую строку в карточку при ширине самой таблицы меньше 600px (контейнерный запрос: идёт за местом, которое дали, а не за окном), а <code>min-width</code> оставляет таблицу читаемой и даёт ей прокрутку вбок. Колонка может сказать <code>nowrap</code> (код, дата) или свой <code>minWidth</code>. Сузьте окно или превью страницы, чтобы увидеть.</p></template>
+          </Tr>
+          <div class="button-row">
+            <TaoButton size="small" :variant="narrowMode === 'stack' ? 'secondary' : 'ghost'" @click="narrowMode = 'stack'">stack</TaoButton>
+            <TaoButton size="small" :variant="narrowMode === 'scroll' ? 'secondary' : 'ghost'" @click="narrowMode = 'scroll'">min-width</TaoButton>
+            <TaoButton size="small" :variant="narrowMode === 'none' ? 'secondary' : 'ghost'" @click="narrowMode = 'none'">{{ tr('neither', 'ничего') }}</TaoButton>
+          </div>
+          <div id="table-narrow" style="max-width: 420px;">
+            <TaoTable
+              :columns="flagColumns"
+              :rows="flagRows"
+              row-key="flag"
+              size="small"
+              :stack="narrowMode === 'stack'"
+              :min-width="narrowMode === 'scroll' ? 640 : undefined"
+            />
+          </div>
+
+          <div class="code-block">
+            <pre><code>&lt;TaoTable :columns="columns" :rows="flags" stack /&gt;          &lt;!-- {{ tr('cards under 600px', 'карточки уже 600px') }} --&gt;
+&lt;TaoTable :columns="columns" :rows="flags" :min-width="640" /&gt;  &lt;!-- {{ tr('scrolls sideways', 'прокрутка вбок') }} --&gt;
+const columns = [{ key: 'flag', label: 'Flag', nowrap: true }, …]</code></pre>
+          </div>
+
           <div class="code-block">
             <pre><code>&lt;TaoTable :columns="columns" :rows="pageRows" v-model:sort="sort" empty-text="No records yet"&gt;
   &lt;template #cell-status="{ row }"&gt;
