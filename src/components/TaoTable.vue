@@ -1,9 +1,9 @@
 <script lang="ts" setup generic="T extends object = any">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import TaoLoader from './TaoLoader.vue';
 import { sizeClass, type TaoSize } from '../size';
 import { toCssLength, type TaoLength } from '../length';
-import { tableCellValue, tableRowId, type TaoTableColumn, type TaoTableRowKey, type TaoTableSort } from '../table';
+import { tableCellValue, tableRowId, tableRowTarget, type TaoTableColumn, type TaoTableRowKey, type TaoTableSort } from '../table';
 import { useLocaleText } from '../locale';
 import { frameStyle } from '../frames';
 
@@ -134,6 +134,31 @@ function onRowClick(row: T, index: number) {
     }
     emit('row-click', row, index);
 }
+
+// A clickable table is one Tab stop: the arrows walk the rows (a roving tabindex), Enter and Space do what a click does.
+// Кликабельная таблица — одна остановка Tab: по строкам ходят стрелки (roving tabindex), Enter и Space делают то же, что клик.
+const body = ref<HTMLElement | null>(null);
+const stopRow = ref(0);
+const tabStop = computed(() => Math.min(stopRow.value, Math.max(props.rows.length - 1, 0)));
+
+function onRowKeydown(event: KeyboardEvent, row: T, index: number) {
+    // a key inside a control of the row (a button, an input, a menu) stays with that control / клавиша внутри контрола строки остаётся ему
+    if (!props.clickable || event.target !== event.currentTarget || event.altKey || event.ctrlKey || event.metaKey) {
+        return;
+    }
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        emit('row-click', row, index);
+        return;
+    }
+    const to = tableRowTarget(event.key, index, props.rows.length);
+    if (to < 0) {
+        return;
+    }
+    event.preventDefault();
+    stopRow.value = to;
+    (body.value?.children[to] as HTMLElement | undefined)?.focus();
+}
 </script>
 
 <template>
@@ -205,7 +230,7 @@ function onRowClick(row: T, index: number) {
                     </th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody ref="body">
                 <tr v-if="isEmpty" :role="stack ? 'row' : undefined">
                     <td class="tao-table__empty" :colspan="colCount" :role="stack ? 'cell' : undefined">
                         <slot name="empty">{{ l10n.emptyText }}</slot>
@@ -215,7 +240,10 @@ function onRowClick(row: T, index: number) {
                     v-for="(row, index) in rows"
                     :key="rowId(row, index)"
                     :role="stack ? 'row' : undefined"
+                    :tabindex="clickable ? (index === tabStop ? 0 : -1) : undefined"
                     @click="onRowClick(row, index)"
+                    @keydown="onRowKeydown($event, row, index)"
+                    @focusin="stopRow = index"
                 >
                     <td
                         v-for="column in columns"
@@ -339,6 +367,12 @@ function onRowClick(row: T, index: number) {
 
 .tao-table--clickable tbody tr {
     cursor: pointer;
+}
+
+/* the focus of a row: inside its edge, so the box of the table does not cut it / фокус строки: внутри её края, чтобы рамка таблицы не обрезала */
+.tao-table--clickable tbody tr:focus-visible {
+    outline: 2px solid var(--tao-color-accent);
+    outline-offset: -2px;
 }
 
 .tao-table__sort-btn {
