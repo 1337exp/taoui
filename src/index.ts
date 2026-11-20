@@ -375,7 +375,7 @@ export type { TaoDateCell, TaoDateField, TaoDateInputOptions, TaoDateParts, TaoD
 export type { TaoRadioValue } from './radio';
 export type { TaoSpoilerName } from './spoiler';
 export type { TaoFormFieldContext } from './formField';
-export type { TaoTableAlign, TaoTableColumn, TaoTableSort } from './table';
+export type { TaoTableAlign, TaoTableColumn, TaoTableRowKey, TaoTableSort } from './table';
 export type { TaoPaginationItem } from './pagination';
 export type { TaoBreadcrumbItem } from './breadcrumb';
 export type {

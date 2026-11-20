@@ -683,8 +683,8 @@ export const propTablesEn = {
     {
       title: 'TaoTable',
       rows: [
-        r('columns', 'TaoTableColumn[]', '—', 'Required. { key, label, sortable?, align?, width? }'),
-        r('rows', 'object[]', '[]', 'The data'),
+        r('columns', 'TaoTableColumn<T>[]', '—', 'Required. { key, label, sortable?, align?, width?, value?(row) }. A list shared by tables of any rows: TaoTableColumn[] without T'),
+        r('rows', 'T[]', '[]', 'The data. The table is generic: T comes from here (an interface, a class, a readonly array), and the row in the slots and in row-click is a T'),
         r('v-model:sort', '{ key, dir } | null', 'null', 'Sorting. dir: asc | desc'),
         r('loading', 'boolean', 'false', 'The loading overlay'),
         r('emptyText', 'string', "'No data'", 'If rows is empty and not loading'),
@@ -698,7 +698,7 @@ export const propTablesEn = {
         r('rowKey', 'string | fn', "'id'", 'The row key'),
         r('maxHeight', 'number | string', '—', 'Scroll. A number is px'),
       ],
-      slots: 'Cell: #cell-{key}="{ row, value }". Events: change — the sorting changed, row-click, if clickable.',
+      slots: 'Cell: #cell-{key}="{ row, value }" (row is a T, value is unknown). Events: change — the sorting changed, row-click, if clickable.',
     },
   ],
   pagination: [

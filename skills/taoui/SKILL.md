@@ -123,7 +123,7 @@ choose a text colour, WCAG 2 to promise a number.
 
 ## Data and display
 
-`TaoTable` (columns, sort, row click), `TaoPagination` (`pageInput` for hundreds of pages), `TaoList` / `TaoListItem` (`roving`: one Tab stop, arrows between the rows),
+`TaoTable` (columns, sort, row click; generic: the row type comes from `rows`, an interface or a `readonly` array will do), `TaoPagination` (`pageInput` for hundreds of pages), `TaoList` / `TaoListItem` (`roving`: one Tab stop, arrows between the rows),
 `TaoTree` (expand, select, tri-state `checkable`, lazy `load`, a row context `menu`, `hint` / `tone` on a node, rows moved by drag and Ctrl+X / Ctrl+V through `@move` + `moveTreeNodes`), `TaoStages`, `TaoTimeline` (`active` makes it a progress),
 `TaoTag`, `TaoAvatar`, `TaoImage`, `TaoCarousel`, `TaoCard` (`#media`, `#title`, `#sub`, `#footer`, `#corner`, `closable`,
 `stripe` + `stripeTone`), `TaoBlock`, `TaoTabs`, `TaoBreadcrumb`, `TaoLink` (underlined by default, `underline="hover"` or `"none"` for a link that is clear from its place), `TaoStretchedLink` (a whole card or row as one link, the buttons inside still work: `tao-stretched` on the container, `tao-stretched-raise` on a control that must click by itself; never `filter` / `transform` on the link), `TaoSpoiler` / `TaoSpoilerGroup`, `TaoCounter`,

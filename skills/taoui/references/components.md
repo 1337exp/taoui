@@ -740,8 +740,8 @@ Showcase section: `#table`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `columns` | `TaoTableColumn[]` | — | Required. { key, label, sortable?, align?, width? } |
-| `rows` | `object[]` | [] | The data |
+| `columns` | `TaoTableColumn<T>[]` | — | Required. { key, label, sortable?, align?, width?, value?(row) }. A list shared by tables of any rows: TaoTableColumn[] without T |
+| `rows` | `T[]` | [] | The data. The table is generic: T comes from here (an interface, a class, a readonly array), and the row in the slots and in row-click is a T |
 | `v-model:sort` | `{ key, dir } \| null` | null | Sorting. dir: asc \| desc |
 | `loading` | `boolean` | false | The loading overlay |
 | `emptyText` | `string` | 'No data' | If rows is empty and not loading |
@@ -755,7 +755,7 @@ Showcase section: `#table`
 | `rowKey` | `string \| fn` | 'id' | The row key |
 | `maxHeight` | `number \| string` | — | Scroll. A number is px |
 
-**Slots, events, notes.** Cell: #cell-{key}="{ row, value }". Events: change — the sorting changed, row-click, if clickable.
+**Slots, events, notes.** Cell: #cell-{key}="{ row, value }" (row is a T, value is unknown). Events: change — the sorting changed, row-click, if clickable.
 
 ## TaoPagination
 

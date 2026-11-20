@@ -1,9 +1,9 @@
-<script lang="ts" setup>
+<script lang="ts" setup generic="T extends object = any">
 import { computed } from 'vue';
 import TaoLoader from './TaoLoader.vue';
 import { sizeClass, type TaoSize } from '../size';
 import { toCssLength, type TaoLength } from '../length';
-import type { TaoTableColumn, TaoTableSort } from '../table';
+import { tableCellValue, tableRowId, type TaoTableColumn, type TaoTableRowKey, type TaoTableSort } from '../table';
 import { useLocaleText } from '../locale';
 import { frameStyle } from '../frames';
 
@@ -11,9 +11,10 @@ defineOptions({ name: 'TaoTable' });
 
 const props = withDefaults(
     defineProps<{
-        columns: TaoTableColumn[];
-        rows?: Record<string, unknown>[];
-        rowKey?: string | ((row: Record<string, unknown>, index: number) => string | number);
+        /** `T` is inferred from `rows`: an interface, a class or a plain object. / `T` берётся из `rows`: interface, класс или обычный объект. */
+        columns: readonly TaoTableColumn<NoInfer<T>>[];
+        rows?: readonly T[];
+        rowKey?: TaoTableRowKey<T>;
         loading?: boolean;
         emptyText?: string;
         /** Зебра. `true` / `odd` — с первой строки, `even` — со второй. */
@@ -56,7 +57,7 @@ const emit = defineEmits<{
     'update:sort': [value: TaoTableSort | null];
     /** The user changed the sort. / Пользователь сменил сортировку. */
     change: [value: TaoTableSort | null];
-    'row-click': [row: Record<string, unknown>, index: number];
+    'row-click': [row: T, index: number];
 }>();
 
 const colCount = computed(() => Math.max(props.columns.length, 1));
@@ -71,36 +72,24 @@ const stripeFrom = computed(() => {
     return null;
 });
 
-function columnWidth(column: TaoTableColumn) {
+function columnWidth(column: TaoTableColumn<T>) {
     if (column.width == null) {
         return undefined;
     }
     return typeof column.width === 'number' ? `${column.width}px` : column.width;
 }
 
-function cellValue(row: Record<string, unknown>, column: TaoTableColumn) {
-    if (column.value) {
-        return column.value(row);
-    }
-    return row[column.key];
-}
+const cellValue = (row: T, column: TaoTableColumn<T>) => tableCellValue(row, column);
+const rowId = (row: T, index: number) => tableRowId(props.rowKey, row, index);
 
-function rowId(row: Record<string, unknown>, index: number) {
-    if (typeof props.rowKey === 'function') {
-        return props.rowKey(row, index);
-    }
-    const key = row[props.rowKey];
-    return key == null ? index : String(key);
-}
-
-function sortDir(column: TaoTableColumn) {
+function sortDir(column: TaoTableColumn<T>) {
     if (!props.sort || props.sort.key !== column.key) {
         return null;
     }
     return props.sort.dir;
 }
 
-function toggleSort(column: TaoTableColumn) {
+function toggleSort(column: TaoTableColumn<T>) {
     if (!column.sortable) {
         return;
     }
@@ -113,7 +102,7 @@ function toggleSort(column: TaoTableColumn) {
     emit('change', next);
 }
 
-function onRowClick(row: Record<string, unknown>, index: number) {
+function onRowClick(row: T, index: number) {
     if (!props.clickable) {
         return;
     }
