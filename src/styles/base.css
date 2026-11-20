@@ -85,6 +85,29 @@ a:where(:hover) {
     color: var(--tao-color-link-hover);
 }
 
+/* `TaoLink`: underlined unless it says otherwise. In the light theme the link colour is the text colour (1.4:1), so in a line of
+   text the underline is the only sign of a link (WCAG 1.4.1). Not under `a:where(…)` on purpose: a class on the link (0,1,0) of
+   your own, written later, still wins. `hover` shows the line under the pointer and the focus, `none` never.
+   `TaoLink`: подчёркнут, пока не сказано иное. В светлой теме цвет ссылки равен цвету текста (1.4:1), и в строке текста
+   подчёркивание — единственный признак ссылки (WCAG 1.4.1). Класс ссылки (0,1,0), написанный позже, перебивает это правило.
+   `hover` рисует линию под курсором и фокусом, `none` не рисует. */
+.tao-link {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+}
+
+.tao-link--hover,
+.tao-link--none {
+    text-decoration: none;
+}
+
+.tao-link--hover:where(:hover, :focus-visible) {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+}
+
 /* Number input spinners */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {

@@ -9,6 +9,13 @@ interface Props {
     newTab?: boolean;
     private?: boolean;
     exactPath?: boolean;
+    /**
+     * Underline: `always` (the default: in a line of text a link must not rest on colour alone), `hover` (only under the pointer
+     * and the keyboard focus: for a link that is clear from its place, a menu, a card title), `none`.
+     * Подчёркивание: `always` (по умолчанию: в строке текста ссылка не должна держаться на одном цвете), `hover` (только под
+     * курсором и фокусом: ссылка, понятная по месту, пункт меню, заголовок карточки), `none`.
+     */
+    underline?: 'always' | 'hover' | 'none';
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -16,6 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
     newTab: false,
     private: false,
     exactPath: false,
+    underline: 'always',
 });
 
 const globals = getCurrentInstance()?.appContext.components ?? {};
@@ -51,7 +59,13 @@ const linkProps = computed(() => {
 </script>
 
 <template>
-    <component :is="linkComponent" v-bind="linkProps" draggable="false">
+    <component
+        :is="linkComponent"
+        v-bind="linkProps"
+        class="tao-link"
+        :class="{ 'tao-link--hover': underline === 'hover', 'tao-link--none': underline === 'none' }"
+        draggable="false"
+    >
         <slot />
     </component>
 </template>

@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.52.0
+
+One look changes by default: a `TaoLink` is underlined now. To keep the old look on a link: `<TaoLink underline="none">` (or `hover`). `TaoStretchedLink` keeps its look (no line); a crumb of `TaoBreadcrumb` gets the line under the pointer.
+
+- **`TaoLink` is underlined, `underline="always" | "hover" | "none"`.** In the light theme the link colour is the text colour (`--tao-color-link` is black, 1.4:1 to the text; in the dark theme 1.1:1, the hue alone), so a link in a list or a line of text did not read as a link without the underline: not by sight and not by WCAG 1.4.1 (a link is told from text by a line or by 3:1). The line was only in `.tao-prose`. Now the link has the class `tao-link` and the line by default (the same one as `.tao-prose`: 1px, offset 0.18em); `hover` shows it only under the pointer and the focus (a menu entry, a card title, anything clear from its place), `none` never. The rule weighs one class, so a class of your own, written later, wins. `TaoStretchedLink` is `none` by default (the card is the sign of a link), a crumb of `TaoBreadcrumb` is `hover`. The «Contrast & keyboard» bench of the showcase rates the new pair «link on the page» (4.5:1) too. Found by an agent that made the cheat sheet ai-gen: it had added the line with its own CSS.
+
 ## 5.51.0
 
 Nothing to migrate: `menu`, `hint`, `tone` and `@move` are new and do nothing until set; Enter on a folder now also opens or closes it. One look changes by default: the selected row of a tree without the focus is grey (`--tao-color-hover`) instead of the accent; to keep the accent always, `.my-tree:not(:focus-within) .tao-tree__row--selected { background: var(--tao-color-accent-subtle); color: var(--tao-color-accent-text); }`. The corners are softer and the scrollbars a pixel thicker (below); the old look is `:root { --tao-radius-sm: 4px; --tao-radius-md: 8px; --tao-radius-lg: 12px; --tao-radius-control: 4px; --tao-radius-panel: 8px; --tao-scrollbar-size: 5px; }`.

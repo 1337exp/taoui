@@ -1172,8 +1172,9 @@ export const propTables = {
         r('newTab', 'boolean', 'false', 'target=_blank + rel=noopener'),
         r('private', 'boolean', 'false', 'rel=noopener noreferrer'),
         r('exactPath', 'boolean', 'false', 'Точное совпадение пути для active (vue-router)'),
+        r('underline', "'always' | 'hover' | 'none'", "'always'", 'Подчёркивание. always: в строке текста ссылка не держится на одном цвете (в светлой теме она цвета текста). hover: линия только под курсором и фокусом, для ссылки, понятной по месту (меню, заголовок карточки). none: без линии'),
       ],
-      slots: 'default — текст ссылки.',
+      slots: 'default — текст ссылки. Класс tao-link (и tao-link--hover / tao-link--none).',
     },
   ],
   'stretched-link': [
@@ -1184,6 +1185,7 @@ export const propTables = {
         r('newTab', 'boolean', 'false', 'target=_blank + rel=noopener'),
         r('private', 'boolean', 'false', 'rel=noopener noreferrer'),
         r('exactPath', 'boolean', 'false', 'Точное совпадение пути для active (vue-router)'),
+        r('underline', "'always' | 'hover' | 'none'", "'none'", 'Как у TaoLink; здесь ссылку показывает карточка, поэтому по умолчанию без линии'),
       ],
       slots: 'default — текст ссылки. Классы: tao-stretched на контейнере (position: relative), tao-stretched-raise на кнопках, которые должны нажиматься сами; --tao-stretched-radius — скругление кольца фокуса. Ссылке нельзя давать filter, transform, perspective, will-change: transform и contain (и на :hover): курсор начнёт мигать.',
     },

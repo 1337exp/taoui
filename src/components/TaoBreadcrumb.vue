@@ -24,7 +24,7 @@ const l10n = useLocaleText(props, 'breadcrumb');
                 <span v-if="index === items.length - 1" class="tao-breadcrumb__current" aria-current="page">
                     {{ item.label }}
                 </span>
-                <TaoLink v-else-if="item.to" class="tao-breadcrumb__link" :to="item.to">{{ item.label }}</TaoLink>
+                <TaoLink v-else-if="item.to" class="tao-breadcrumb__link" underline="hover" :to="item.to">{{ item.label }}</TaoLink>
                 <span v-else class="tao-breadcrumb__link">{{ item.label }}</span>
             </li>
         </ol>

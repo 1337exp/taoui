@@ -1278,8 +1278,9 @@ Showcase section: `#link`
 | `newTab` | `boolean` | false | target=_blank + rel=noopener |
 | `private` | `boolean` | false | rel=noopener noreferrer |
 | `exactPath` | `boolean` | false | An exact path match for active (vue-router) |
+| `underline` | `'always' \| 'hover' \| 'none'` | 'always' | Underline. always: in a line of text a link does not rest on colour alone (in the light theme it is the text colour). hover: the line only under the pointer and the focus, for a link that is clear from its place (a menu, a card title). none: no line |
 
-**Slots, events, notes.** default — the link text.
+**Slots, events, notes.** default — the link text. Class tao-link (and tao-link--hover / tao-link--none).
 
 ## TaoStretchedLink
 
@@ -1291,6 +1292,7 @@ Showcase section: `#stretched-link`
 | `newTab` | `boolean` | false | target=_blank + rel=noopener |
 | `private` | `boolean` | false | rel=noopener noreferrer |
 | `exactPath` | `boolean` | false | An exact path match for active (vue-router) |
+| `underline` | `'always' \| 'hover' \| 'none'` | 'none' | As in TaoLink; the card is the sign of a link here, so no line by default |
 
 **Slots, events, notes.** default — the link text. Classes: tao-stretched on the container (position: relative), tao-stretched-raise on the controls that must stay clickable by themselves; --tao-stretched-radius is the corner of the focus ring. Never give the link filter, transform, perspective, will-change: transform or contain (on :hover too): the cursor flickers.
 
