@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
@@ -168,11 +168,39 @@ watch(
     },
 );
 
+let resizeObserver: ResizeObserver | undefined;
+let lastWidth = -1;
+let frame = 0;
+
 onMounted(() => {
     if (props.autofocus) {
         textareaRef.value?.focus();
     }
     nextTick(autoResize);
+
+    // The height depends on the width too (wrapping): measure again when the width changes. Our own height write
+    // changes only the height, so entries without a new width are ignored (no loop). No ResizeObserver (SSR, tests): skip.
+    // Высота зависит и от ширины (перенос строк): меряем заново, когда меняется ширина. Наша запись высоты меняет
+    // только высоту, поэтому записи без новой ширины игнорируются (без петли). Нет ResizeObserver (SSR, тесты): пропускаем.
+    const textarea = textareaRef.value;
+    if (textarea && typeof ResizeObserver !== 'undefined') {
+        resizeObserver = new ResizeObserver((entries) => {
+            const width = entries[entries.length - 1]?.contentRect.width ?? textarea.offsetWidth;
+            if (width === lastWidth) {
+                return;
+            }
+            lastWidth = width;
+            cancelAnimationFrame(frame);
+            frame = requestAnimationFrame(autoResize);
+        });
+        resizeObserver.observe(textarea);
+    }
+});
+
+onBeforeUnmount(() => {
+    cancelAnimationFrame(frame);
+    resizeObserver?.disconnect();
+    resizeObserver = undefined;
 });
 </script>
 
