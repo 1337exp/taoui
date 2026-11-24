@@ -342,4 +342,12 @@ const has = (name: string) => slotHas(slots, name);
 .tao-modal-fade-leave-to {
     opacity: 0;
 }
+
+/* reduced motion: the dialog appears and goes at once / уменьшенное движение: окно появляется и уходит сразу */
+@media (prefers-reduced-motion: reduce) {
+    .tao-modal-fade-enter-active,
+    .tao-modal-fade-leave-active {
+        transition: none;
+    }
+}
 </style>

@@ -58,7 +58,8 @@
     --tao-glass-border: rgb(255 255 255 / 0.08);
 }
 
-[data-tao-theme="pinheiro"][data-tao-mode="light"] {
+[data-tao-theme="pinheiro"][data-tao-mode="light"],
+[data-tao-mode="light"] [data-tao-theme="pinheiro"]:not([data-tao-mode]) {
     color-scheme: light;
     --tao-color-accent: #008567;
     --tao-color-accent-hover: #00765b;

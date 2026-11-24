@@ -737,7 +737,7 @@ import '@1337exp/taoui/palettes.css'          // all of them, or '@1337exp/taoui
 ```
 
 `data-tao-mode="light" | "dark"` also works on its own, with the default colours; `data-tao-theme="light"` is the old spelling of the same.
-Put it on `<html>` (so modals and tooltips teleported to `body` follow) or on any element for a part of the page.
+Put it on `<html>` (so modals and tooltips teleported to `body` follow) or on any element for a part of the page. A palette on a section keeps the mode of the page (light page, light palette); give the section its own `data-tao-mode` to make it differ.
 
 What a palette decides, so you do not have to:
 

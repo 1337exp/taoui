@@ -283,8 +283,11 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
     height: var(--tao-control-height-small);
     padding: 0;
     border: none;
-    /* concentric to the top right corner of the card (the corners can differ), minus the gap to it / концентрично правому верхнему углу карточки (углы могут различаться) */
-    border-radius: var(--tao-radius-inner-tr, var(--tao-radius-inner, var(--tao-radius-control)));
+    /* concentric to the top right corner of the card (the corners can differ): the corner minus the gap the button sits from it, which is
+       the offset of `.tao-card__corner` (space-3), NOT the padding of the card (the padding is 20px, which is more than the corner: a square hover)
+       концентрично правому верхнему углу карточки (углы могут различаться): угол минус отступ кнопки от него, а это отступ
+       `.tao-card__corner` (space-3), а НЕ отступ карточки (он 20px, больше угла: квадратный hover) */
+    border-radius: max(0px, calc(var(--tao-radius-tr) - var(--tao-space-3)));
     background: transparent;
     color: var(--tao-color-text-muted);
     cursor: pointer;

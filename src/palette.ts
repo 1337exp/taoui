@@ -401,7 +401,12 @@ export function buildPaletteRoles(def: TaoPaletteDef, mode: TaoPaletteMode): Pal
 export function paletteCss(def: TaoPaletteDef): string {
     const block = (mode: TaoPaletteMode) => {
         const { roles } = buildPaletteRoles(def, mode);
-        const selector = mode === 'dark' ? `[data-tao-theme="${def.name}"]` : `[data-tao-theme="${def.name}"][data-tao-mode="light"]`;
+        // light: the element says so itself, or it has no mode of its own and sits in a light page (a palette on a section keeps the mode of the page)
+        // светлая: так сказано на самом элементе, либо своего режима у него нет и он стоит в светлой странице (палитра на секции держит режим страницы)
+        const selector =
+            mode === 'dark'
+                ? `[data-tao-theme="${def.name}"]`
+                : `[data-tao-theme="${def.name}"][data-tao-mode="light"],\n[data-tao-mode="light"] [data-tao-theme="${def.name}"]:not([data-tao-mode])`;
         const lines = [
             `    color-scheme: ${mode};`,
             ...Object.entries(roles).map(([name, value]) => `    ${name}: ${value};`),

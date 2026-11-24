@@ -41,10 +41,14 @@ const showEndPercent = computed(() => percentPlace.value === 'right');
 const endPercentLabel = computed(() =>
     hasRight.value ? `(${props.progress}%)` : `${props.progress}%`,
 );
+// The root is the progressbar, so an `aria-label` you give the component lands on the element that has the role (no comment before the root in the template: it would make the component a fragment).
+// Корень — progressbar, поэтому `aria-label`, который вы дали компоненту, попадает на элемент с ролью (комментария перед корнем в шаблоне нет: он сделал бы компонент фрагментом).
+// What a screen reader says: the share, kept inside 0..100 / что читает скринридер: доля, зажатая в 0..100
+const valueNow = computed(() => Math.min(100, Math.max(0, Number.isFinite(props.progress) ? props.progress : 0)));
 </script>
 
 <template>
-    <div class="tao-progress">
+    <div class="tao-progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" :aria-valuenow="valueNow">
         <div
             class="tao-progress__container"
             :class="{ 'tao-progress__container--over': showOverPercent }"

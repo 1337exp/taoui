@@ -1,5 +1,15 @@
 # Changelog
 
+## 5.57.2
+
+Five fixes, found by a Grok review of the repository and checked by hand. One look changes: in the light theme the placeholder of a field is darker (it was below the contrast the kit promises).
+
+- **The close button of a `TaoCard` has a round hover.** Its corner was worked out as the radius of the card minus the **padding** of the card (20px, more than the 18px radius: so 0, a square hover), but the button sits at the offset of its corner box, `--tao-space-3` (12px) from the edge. It is now the top right corner minus that offset (6px at the default radius, and it follows `radius` and `square`). Found by the owner on a screenshot.
+- **The placeholder of a field reads at 4.5:1 in the light theme.** It was `--tao-gray-300`, `#999999`, the colour of a disabled item: 2.85:1 on the page and 2.6:1 on the field. It is `--tao-color-text-muted` now (5.7:1 and 5.3:1), and `tests/tokens.test.ts` rates the placeholder on the page and on a card in both themes. The dark one was already above.
+- **A palette on a section keeps the mode of the page.** `data-tao-theme="lagoon"` on a section of a light page painted the section dark (the light block of a palette needed `data-tao-mode="light"` on that very element, and the dark block matched anything). The light block now also reaches an element that has a palette and no mode of its own inside a light page: `[data-tao-mode="light"] [data-tao-theme="…"]:not([data-tao-mode])`. A section that says `data-tao-mode="dark"` itself still stays dark. The seven palette files are regenerated.
+- **`TaoProgress` is a `progressbar` for a screen reader.** It had no role and no value, so it was silent. The root has `role="progressbar"` with `aria-valuemin`, `aria-valuemax` and `aria-valuenow` (the share kept inside 0..100); an `aria-label` you give the component lands on it. The width defaults (200–400px) are not touched: that is a look.
+- **`prefers-reduced-motion` reaches the overlays.** The fade of `TaoModal`, the sliding panel and the scrim of `TaoDrawer`, and the bounce and the fold of the row of a toast (`TaoToastViewport`) had no rule: they moved whatever the system said. With reduced motion they appear and go at once. `tests/reducedMotion.test.ts` holds it.
+
 ## 5.57.1
 
 Two fixes.

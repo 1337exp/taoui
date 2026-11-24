@@ -58,7 +58,8 @@
     --tao-glass-border: rgb(255 255 255 / 0.08);
 }
 
-[data-tao-theme="violet-dusk"][data-tao-mode="light"] {
+[data-tao-theme="violet-dusk"][data-tao-mode="light"],
+[data-tao-mode="light"] [data-tao-theme="violet-dusk"]:not([data-tao-mode]) {
     color-scheme: light;
     --tao-color-accent: #935073;
     --tao-color-accent-hover: #864567;

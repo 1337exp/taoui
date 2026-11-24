@@ -152,8 +152,10 @@ describe('the corners of a panel', () => {
         expect(w.classes()).toEqual(expect.arrayContaining(['tao-stripe-top', 'tao-panel--corners']));
     });
 
-    it('the close button sits in the top right corner and is concentric to it', () => {
-        expect(cardSource).toMatch(/\.tao-card__close \{[^}]*border-radius: var\(--tao-radius-inner-tr, var\(--tao-radius-inner, var\(--tao-radius-control\)\)\)/);
+    it('the close button sits in the top right corner and is concentric to it: the corner minus its offset, so the hover is round', () => {
+        expect(cardSource).toMatch(/\.tao-card__close \{[^}]*border-radius: max\(0px, calc\(var\(--tao-radius-tr\) - var\(--tao-space-3\)\)\);/);
+        // the gap it is measured by is the offset of the corner box it sits in, not the padding of the card
+        expect(cardSource).toMatch(/\.tao-card__corner \{[^}]*top: var\(--tao-space-3\);[^}]*right: var\(--tao-space-3\);/);
     });
 });
 

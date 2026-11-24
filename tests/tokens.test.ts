@@ -149,6 +149,22 @@ describe('muted text colour', () => {
     }
 });
 
+// 5.57.2: a placeholder is text too: in the light theme it was the disabled grey, #999999, 2.85:1 on the page. Only a disabled field may read below 4.5:1.
+// 5.57.2: placeholder — тоже текст: в светлой теме он был серым неактивного, #999999, 2,85:1 на странице. Ниже 4,5:1 можно только неактивному полю.
+describe('placeholder colour', () => {
+    for (const [theme, scope] of Object.entries(themes)) {
+        for (const surface of ['--tao-color-bg', '--tao-color-surface-raised']) {
+            it(`${theme}: --tao-color-input-placeholder on ${surface} has at least 4.5:1 contrast`, () => {
+                expect(contrast(resolveValue('--tao-color-input-placeholder', scope), resolveValue(surface, scope))).toBeGreaterThanOrEqual(4.5);
+            });
+        }
+    }
+
+    it('is not the colour of a disabled field in the light theme', () => {
+        expect(declarations(lightCss).get('--tao-color-input-placeholder')).not.toBe(declarations(lightCss).get('--tao-color-input-disabled-text'));
+    });
+});
+
 // styles/tone.css: `.tao-tone-<name>` sets the `--tao-tone*` tokens, and a component reads only those.
 const TONE_TOKENS = ['', '-hover', '-on', '-text', '-text-hover', '-subtle', '-wash'].map((suffix) => `--tao-tone${suffix}`);
 const toneBlocks = new Map<string, Map<string, string>>(

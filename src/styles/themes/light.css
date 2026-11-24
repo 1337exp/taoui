@@ -110,7 +110,7 @@
     --tao-color-input-bg: var(--tao-color-surface-sunken);
     /* the text of a field is `text`, as the ladder says (gray-950 was `text-strong`: a field read brighter than the buttons beside it) / текст поля — `text`, как говорит лестница */
     --tao-color-input-text: var(--tao-color-text);
-    --tao-color-input-placeholder: var(--tao-gray-300);
+    --tao-color-input-placeholder: var(--tao-color-text-muted);
     /* a translucent tone, as in the dark theme: gray-50 is the field itself now, and a disabled field has to differ
        полупрозрачный тон, как в тёмной теме: gray-50 теперь сам фон поля, а выключенное должно отличаться */
     --tao-color-input-disabled-bg: color-mix(in srgb, var(--tao-gray-400) 12%, transparent);

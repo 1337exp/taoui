@@ -168,7 +168,16 @@ describe('the pinned files', () => {
     it('dark and light blocks use the selectors the docs promise', () => {
         const css = paletteCss(taoPalettes[0]!);
         expect(css).toContain('[data-tao-theme="sunset"] {');
-        expect(css).toContain('[data-tao-theme="sunset"][data-tao-mode="light"] {');
+        // the light block: the element says so itself, or it has no mode of its own and sits in a light page
+        expect(css).toContain('[data-tao-theme="sunset"][data-tao-mode="light"],\n[data-tao-mode="light"] [data-tao-theme="sunset"]:not([data-tao-mode]) {');
+    });
+
+    it('a palette on a section keeps the mode of the page: the light block reaches an element with no mode of its own, not one that says dark', () => {
+        const css = paletteCss(taoPalettes[0]!);
+        const selector = /\n(\[data-tao-theme="sunset"\]\[data-tao-mode="light"\],\n[^{]*) \{/.exec(css)?.[1] ?? '';
+        expect(selector).toContain('[data-tao-mode="light"] [data-tao-theme="sunset"]:not([data-tao-mode])');
+        // an island that sets dark itself is not matched by the descendant selector, so the dark block holds
+        expect(selector.split(',\n')).toHaveLength(2);
     });
 });
 

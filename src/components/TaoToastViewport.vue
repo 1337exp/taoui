@@ -248,4 +248,26 @@ function enterName(position: TaoToastPosition) {
         transform: translateY(8px) scale(0.98);
     }
 }
+
+/* reduced motion: no bounce, no fold of the row: a toast appears and goes at once (the same setting the toast item reads for its own look) */
+/* уменьшенное движение: без отскока и без сворачивания ряда: тост появляется и уходит сразу (ту же настройку читает и сам тост) */
+@media (prefers-reduced-motion: reduce) {
+    .tao-toast-top-enter-active,
+    .tao-toast-bottom-enter-active,
+    .tao-toast-center-enter-active,
+    .tao-toast-top-enter-active :deep(.tao-toast),
+    .tao-toast-bottom-enter-active :deep(.tao-toast),
+    .tao-toast-center-enter-active :deep(.tao-toast),
+    .tao-toast-top-leave-active :deep(.tao-toast),
+    .tao-toast-bottom-leave-active :deep(.tao-toast),
+    .tao-toast-center-leave-active :deep(.tao-toast) {
+        animation: none;
+    }
+
+    .tao-toast-top-leave-active,
+    .tao-toast-bottom-leave-active,
+    .tao-toast-center-leave-active {
+        transition: none;
+    }
+}
 </style>

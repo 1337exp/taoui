@@ -508,4 +508,23 @@ const has = (name: string) => slotHas(slots, name);
 .tao-drawer-bottom-leave-to .tao-drawer__panel {
     transform: translateY(100%);
 }
+
+/* reduced motion: the panel does not slide and the scrim does not fade, it appears and goes at once (the swipe settle checks the same setting in script) */
+/* уменьшенное движение: панель не выезжает и подложка не гаснет, всё появляется и уходит сразу (доводка свайпа проверяет ту же настройку в скрипте) */
+@media (prefers-reduced-motion: reduce) {
+    .tao-drawer-right-enter-active,
+    .tao-drawer-right-leave-active,
+    .tao-drawer-left-enter-active,
+    .tao-drawer-left-leave-active,
+    .tao-drawer-bottom-enter-active,
+    .tao-drawer-bottom-leave-active,
+    .tao-drawer-right-enter-active .tao-drawer__panel,
+    .tao-drawer-right-leave-active .tao-drawer__panel,
+    .tao-drawer-left-enter-active .tao-drawer__panel,
+    .tao-drawer-left-leave-active .tao-drawer__panel,
+    .tao-drawer-bottom-enter-active .tao-drawer__panel,
+    .tao-drawer-bottom-leave-active .tao-drawer__panel {
+        transition: none;
+    }
+}
 </style>
