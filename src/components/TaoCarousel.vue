@@ -5,6 +5,7 @@ import { glideDuration, glideTarget as snapTarget } from '../carousel';
 import { usePointerDrag } from '../primitives/usePointerDrag';
 import { clamp } from '../primitives/number';
 import { useLocaleText } from '../locale';
+import { useReducedMotion } from '../primitives/useReducedMotion';
 
 defineOptions({ name: 'TaoCarousel' });
 
@@ -128,7 +129,7 @@ const focusPaused = ref(false);
 const userPaused = ref(false);
 const pageHidden = ref(false);
 const mounted = ref(false);
-const reducedMotion = ref(false);
+const reducedMotion = useReducedMotion();
 /** Restarts the fill: a new key for every slide. / Перезапускает заливку: новый ключ на каждый слайд. */
 const fillEpoch = ref(0);
 
@@ -176,10 +177,6 @@ const trackStyle = computed(() => ({
     '--tao-carousel-peek': `${Math.max(props.peek, 0)}px`,
     '--tao-carousel-per-view': String(view.value),
 }));
-
-function prefersReducedMotion() {
-    return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
 
 function metrics() {
     const el = track.value;
@@ -361,7 +358,7 @@ function goTo(next: number, instant = false) {
             }
         }
 
-        el.scrollTo({ left: target * slot, behavior: prefersReducedMotion() || dragging.value || instant ? 'auto' : 'smooth' });
+        el.scrollTo({ left: target * slot, behavior: reducedMotion.value || dragging.value || instant ? 'auto' : 'smooth' });
         setIndex(home);
         return;
     }
@@ -383,7 +380,7 @@ function goTo(next: number, instant = false) {
 
     el.scrollTo({
         left: page * (width + gap),
-        behavior: prefersReducedMotion() || dragging.value || wrapping || instant ? 'auto' : 'smooth',
+        behavior: reducedMotion.value || dragging.value || wrapping || instant ? 'auto' : 'smooth',
     });
     setIndex(page);
 }
@@ -543,7 +540,7 @@ function glideTo(target: number, velocity: number) {
     const distance = target - from;
     setIndex(nearestIndex(target));
 
-    if (Math.abs(distance) < 1 || prefersReducedMotion()) {
+    if (Math.abs(distance) < 1 || reducedMotion.value) {
         el.scrollLeft = target;
         return;
     }
@@ -642,7 +639,6 @@ function onTrackResize() {
 onMounted(() => {
     refreshCount();
     mounted.value = true;
-    reducedMotion.value = prefersReducedMotion();
     pageHidden.value = document.hidden;
     nextTick(() => {
         goTo(props.modelValue);

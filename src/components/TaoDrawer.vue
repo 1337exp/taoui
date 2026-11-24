@@ -7,6 +7,7 @@ import { useLocaleText } from '../locale';
 import { releaseVelocity, sheetOffset, shouldDismissSheet, type SheetSample } from '../sheetDrag';
 import { surfaceClass, type TaoSurface } from '../surface';
 import { slotHas } from '../slots';
+import { useReducedMotion } from '../primitives/useReducedMotion';
 
 // class, style and the other attributes go to the panel, not to the layer around it
 // class, style и остальные атрибуты — панели, а не слою вокруг неё
@@ -98,14 +99,14 @@ interface SheetDrag {
 }
 let drag: SheetDrag | null = null;
 
-const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+const reducedMotion = useReducedMotion();
 
 function setSheet(offset: number | null, animate: boolean) {
     const panel = panelRef.value;
     if (!panel) {
         return;
     }
-    panel.style.transition = animate && !reducedMotion() ? 'transform var(--tao-duration-base) var(--tao-ease-base)' : 'none';
+    panel.style.transition = animate && !reducedMotion.value ? 'transform var(--tao-duration-base) var(--tao-ease-base)' : 'none';
     panel.style.transform = offset === null ? '' : `translateY(${offset}px)`;
     const height = panel.offsetHeight;
     rootRef.value?.style.setProperty('--_sheet-progress', offset && height ? String(Math.min(1, offset / height)) : '0');

@@ -6,8 +6,11 @@ import { getFocusable, trapTab } from '../focusTrap';
 import { useLayer } from '../layers';
 import { formatText, useLocaleText } from '../locale';
 import { holeClipPath, isInView, resolveTourTarget, spotlightRect, type TaoTourStep, type TourRect } from '../tour';
+import { useReducedMotion } from '../primitives/useReducedMotion';
 
 defineOptions({ name: 'TaoTour' });
+
+const reducedMotion = useReducedMotion();
 
 interface Props {
     /** The step on screen; `null` closes the tour. / Шаг на экране; `null` закрывает тур. */
@@ -180,8 +183,7 @@ async function showStep() {
         const r = el.getBoundingClientRect();
         const inView = isInView(r, { width: window.innerWidth, height: window.innerHeight }, 8);
         if (!inView) {
-            const calm = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-            el.scrollIntoView({ block: 'center', inline: 'nearest', behavior: calm ? 'auto' : 'smooth' });
+            el.scrollIntoView({ block: 'center', inline: 'nearest', behavior: reducedMotion.value ? 'auto' : 'smooth' });
         }
         window.addEventListener('scroll', onViewportChange, true);
         window.addEventListener('resize', onViewportChange);

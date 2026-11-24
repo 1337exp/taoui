@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useSlots, watch } from 'vue';
 import { slotHas } from '../slots';
+import { useReducedMotion } from '../primitives/useReducedMotion';
 
 defineOptions({ name: 'TaoMarquee' });
 
@@ -94,11 +95,10 @@ const box = ref<HTMLElement | null>(null);
 const meter = ref<HTMLElement | null>(null);
 const itemWidth = ref(0);
 const boxWidth = ref(0);
-const reduce = ref(false);
+const reduce = useReducedMotion();
 /** A tap stopped it (touch has no hover). / Остановлена тапом. */
 const tapped = ref(false);
 let observer: ResizeObserver | null = null;
-let motionQuery: MediaQueryList | null = null;
 
 const overflowing = computed(() => itemWidth.value > boxWidth.value + 1);
 // with `fill` a line that fits runs too, but an empty one has nothing to repeat / с `fill` бежит и помещающаяся, но пустой нечего повторять
@@ -140,10 +140,6 @@ function measure() {
     itemWidth.value = meter.value.getBoundingClientRect().width;
 }
 
-function onMotionChange() {
-    reduce.value = Boolean(motionQuery?.matches);
-}
-
 function onPointerUp(event: PointerEvent) {
     // a finger stops and starts it; a mouse has hover for that / палец останавливает и запускает; у мыши есть наведение
     if (!props.decorative && props.pauseOnHover && running.value && event.pointerType !== 'mouse') {
@@ -155,9 +151,6 @@ onMounted(() => {
     if (typeof window === 'undefined') {
         return;
     }
-    motionQuery = window.matchMedia?.('(prefers-reduced-motion: reduce)') ?? null;
-    onMotionChange();
-    motionQuery?.addEventListener?.('change', onMotionChange);
     measure();
     void document.fonts?.ready.then(measure);
     if (box.value && 'ResizeObserver' in window) {
@@ -178,7 +171,6 @@ watch(
 
 onBeforeUnmount(() => {
     observer?.disconnect();
-    motionQuery?.removeEventListener?.('change', onMotionChange);
 });
 
 defineExpose({
