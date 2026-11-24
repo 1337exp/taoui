@@ -27,7 +27,7 @@ createApp(App).use(TaoUI, { locale: localeRu }).mount('#app')   // locale option
 
 - Nuxt 3: the same `app.use` in a plugin, the CSS in `app.vue`. Everything is SSR-safe.
 - Components can also be imported one by one: `import { TaoButton } from '@1337exp/taoui'`.
-- Browser floor: Chrome / Edge 111, Safari 16.4, Firefox 128 (`@property`, container queries, `color-mix()`).
+- Browser floor: Chrome / Edge 130, Safari 18, Firefox 132 (the last two years: Popover API, `<dialog>`, `@layer`, nesting, `color-mix()`, `light-dark()`, `@property`, container queries).
 
 ## Rules that keep an app consistent
 

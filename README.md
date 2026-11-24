@@ -258,11 +258,12 @@ Requires Vue 3.5+ (the kit uses `useId`). The package is **ESM-only** (Vite, Nux
 
 ### Browser support
 
-The CSS uses `color-mix()`, container queries and registered custom properties (`@property`), so the floor is
-**Chrome / Edge 111, Safari 16.4, Firefox 128**: the browsers of 2023–2024. Firefox 128 is the limiting one (`@property`).
-On an older browser everything stays readable; what you lose is small: a registered property is what keeps a tone
-(`.tao-tone-*`) and a surface from leaking into the children, so without it a Button inside a red Alert may turn red.
-The same list is the `browserslist` field of the package and the build target.
+The kit is built for the browsers of the last two years: **Chrome / Edge 130, Safari 18, Firefox 132** (November 2024 and later).
+That floor is what lets 6.0 lean on the platform instead of on its own code: the Popover API and `<dialog>` for overlays, `@layer`, native CSS
+nesting, `color-mix()`, relative colours (`oklch(from …)`), `light-dark()`, container queries and registered custom properties (`@property`).
+Anchor positioning and `field-sizing` are not in the floor yet (Safari and Firefox) and the kit does not use them.
+On an older browser a registered property is what keeps a tone (`.tao-tone-*`) and a surface from leaking into the children, so without it a
+Button inside a red Alert may turn red; the rest is not promised. The same list is the `browserslist` field of the package and the build target.
 
 From a local folder:
 

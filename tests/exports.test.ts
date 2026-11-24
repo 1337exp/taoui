@@ -75,8 +75,8 @@ describe('package.json', () => {
     });
 
     it('states the browsers it supports, and the build targets the same ones', () => {
-        expect(pkg.browserslist).toEqual(['chrome >= 111', 'edge >= 111', 'safari >= 16.4', 'firefox >= 128']);
-        expect(read('vite.config.ts')).toContain("target: ['chrome111', 'edge111', 'safari16.4', 'firefox128']");
+        expect(pkg.browserslist).toEqual(['chrome >= 130', 'edge >= 130', 'safari >= 18', 'firefox >= 132']);
+        expect(read('vite.config.ts')).toContain("target: ['chrome130', 'edge130', 'safari18', 'firefox132']");
     });
 
     it('the style entry imports every layer that exists', () => {

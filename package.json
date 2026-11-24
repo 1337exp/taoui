@@ -58,10 +58,10 @@
     "skills"
   ],
   "browserslist": [
-    "chrome >= 111",
-    "edge >= 111",
-    "safari >= 16.4",
-    "firefox >= 128"
+    "chrome >= 130",
+    "edge >= 130",
+    "safari >= 18",
+    "firefox >= 132"
   ],
   "engines": {
     "node": ">=18"
