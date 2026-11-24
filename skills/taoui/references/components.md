@@ -10,7 +10,7 @@ Showcase section: `#block`
 | Prop | Type | Default | Notes |
 |---|---|---|---|
 | `padding` | `number \| string \| (…)[]` | 16 | Inner padding. A number is px, a string is any CSS length. An array works like CSS padding (1–4 values) |
-| `radius` | `number \| string` | 8 | Corner radius. A number is px, a string is CSS |
+| `radius` | `number \| string \| (…)[]` | 8 | Corner radius. A number is px, a string is CSS: all corners. An array or a string of 1 to 4 lengths gives the corners one by one, in the order of CSS border-radius: [0, 0, 12, 12] is a square top and a rounded bottom |
 | `shadow` | `boolean` | true | Panel shadow |
 | `hover` | `boolean` | false | Stronger shadow on hover, pointer cursor |
 | `surface` | `'flat' \| 'grain' \| 'glass'` | 'flat' | What the block is made of: fill / grain / glass. See “Surfaces” |
@@ -74,7 +74,7 @@ Showcase section: `#card`
 | Prop | Type | Default | Notes |
 |---|---|---|---|
 | `padding` | `number \| string \| (…)[]` | var(--tao-space-5) | Padding of the card body. A number is px, a string is CSS. With flush — 0. Published as --tao-pad |
-| `radius` | `number \| string` | var(--tao-radius-panel) | Corner radius. A number is px, a string is CSS. Published as --tao-radius; children get --tao-radius-inner |
+| `radius` | `number \| string \| (…)[]` | var(--tao-radius-panel) | Corner radius. A number is px, a string is CSS: all corners. An array or a string of 1 to 4 lengths gives the corners one by one, in the order of CSS border-radius ([top-left, top-right, bottom-right, bottom-left], two values are the diagonals): [0, 0, 12, 12] is a square top and a rounded bottom, and a stripe on a sharp side stays straight. Published as --tao-radius (and --tao-radius-tl / -tr / -br / -bl when the corners differ); children get --tao-radius-inner (one length) and --tao-radius-inner-tl / -tr / -br / -bl for a child in a corner |
 | `shadow` | `boolean` | true | The regular shadow. Off with flush |
 | `shadowBottomOnly` | `boolean` | false | A line at the bottom of the card, not a scrim over the photo |
 | `flush` | `boolean` | false | A tile: no padding and no shadow, cover/body fill the whole cell |
@@ -1046,7 +1046,7 @@ Showcase section: `#animated-border`
 | `variant` | `'rainbow' \| 'tone'` | 'rainbow' | What the border is made of: the rainbow or the colours of a tone |
 | `tone` | `TaoToneName` | 'accent' | The tone for variant="tone"; the theme accent without it |
 | `colors` | `string[]` | — | Your own colours (any CSS colour), they win over variant |
-| `radius` | `number \| string` | var(--tao-radius-panel) | Corner radius of the content; the border outside is that plus its width |
+| `radius` | `number \| string \| (…)[]` | var(--tao-radius-panel) | Corner radius of the content; the border outside is that plus its width. An array or a string of 1 to 4 lengths gives the corners one by one, as on TaoCard |
 | `borderWidth` | `number` | 3 | The outline thickness in px |
 | `speed` | `number` | 6 | The duration of one turn in seconds |
 | `light` | `boolean` | false | A soft glow around the frame |

@@ -69,11 +69,32 @@
    A panel is also a stacking context: the stripe layer and the Card corner use `z-index: 1`, and without isolation
    they would join the page's layer and paint over any sticky bar with the same `z-index` (TaoNav's bottom bar).
    Панель — ещё и контекст наложения: слой полосы и угол Card имеют `z-index: 1`, и без изоляции они попадали бы в слой
-   страницы и рисовались бы поверх любой закреплённой панели с тем же `z-index` (нижняя панель TaoNav). */
+   страницы и рисовались бы поверх любой закреплённой панели с тем же `z-index` (нижняя панель TaoNav).
+
+   The corners can differ (`radius` as an array: a sharp side next to a stripe, a tab). Then the panel also publishes each corner,
+   `--tao-radius-tl / -tr / -br / -bl`, and each inner radius, `--tao-radius-inner-tl / -tr / -br / -bl`, for a child that sits in
+   one corner (the close button of a Card sits in the top right one). `--tao-radius-inner` stays ONE length, as it always was: with
+   equal corners the same number, with different ones it follows the largest corner (a child that is not in a corner keeps a
+   fair guess). On your own `.tao-panel` with different corners set the four corner properties yourself (`--tao-radius` alone, a
+   value of four lengths, cannot be turned into an inner radius).
+   Углы могут различаться (`radius` массивом: прямая сторона рядом с полосой, вкладка). Тогда панель публикует и каждый угол,
+   `--tao-radius-tl / -tr / -br / -bl`, и каждый внутренний радиус, `--tao-radius-inner-tl / -tr / -br / -bl`, для ребёнка,
+   сидящего в одном углу (кнопка закрытия Card сидит в правом верхнем). `--tao-radius-inner` остаётся ОДНОЙ длиной, как и был:
+   при равных углах то же число, при разных — по самому большому углу (ребёнок не в углу получает честную прикидку). На своём
+   `.tao-panel` с разными углами задайте четыре свойства углов сами (одно `--tao-radius` из четырёх длин во внутренний радиус
+   не превратить). */
 .tao-panel {
     --tao-radius: var(--tao-radius-panel);
+    --tao-radius-tl: var(--tao-radius);
+    --tao-radius-tr: var(--tao-radius);
+    --tao-radius-br: var(--tao-radius);
+    --tao-radius-bl: var(--tao-radius);
     --tao-pad: var(--tao-space-4);
-    --tao-radius-inner: max(0px, calc(var(--tao-radius) - var(--tao-pad)));
+    --tao-radius-inner-tl: max(0px, calc(var(--tao-radius-tl) - var(--tao-pad)));
+    --tao-radius-inner-tr: max(0px, calc(var(--tao-radius-tr) - var(--tao-pad)));
+    --tao-radius-inner-br: max(0px, calc(var(--tao-radius-br) - var(--tao-pad)));
+    --tao-radius-inner-bl: max(0px, calc(var(--tao-radius-bl) - var(--tao-pad)));
+    --tao-radius-inner: max(0px, calc(max(var(--tao-radius-tl), var(--tao-radius-tr), var(--tao-radius-br), var(--tao-radius-bl)) - var(--tao-pad)));
     border-radius: var(--tao-radius);
     isolation: isolate;
 }

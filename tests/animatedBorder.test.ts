@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import TaoAnimatedBorder from '../src/components/TaoAnimatedBorder.vue';
+// @ts-expect-error Vite `?raw` import: the component source as text
+import borderSource from '../src/components/TaoAnimatedBorder.vue?raw';
 
 const style = (props: Record<string, unknown> = {}) => mount(TaoAnimatedBorder, { props, slots: { default: 'x' } }).attributes('style') ?? '';
 
@@ -27,5 +29,15 @@ describe('TaoAnimatedBorder', () => {
         expect(s).toContain('--tao-animated-border-speed: 2s');
         expect(s).toContain('--tao-radius: 16px');
         expect(style()).not.toContain('--tao-radius:');
+    });
+
+    it('radius by corner: the shorthand and the four corners; the border outside adds its width to each', () => {
+        const s = style({ radius: [0, 0, 12, 12] });
+        expect(s).toContain('--tao-radius: 0px 0px 12px 12px');
+        expect(s).toContain('--tao-radius-br: 12px');
+        expect(style({ radius: 16 })).not.toContain('--tao-radius-tl');
+        // the glow and the ring read the same outer radius: each corner plus the width
+        expect(borderSource).toMatch(/--_tao-outer-radius:\s*calc\(var\(--tao-radius-tl\) \+ var\(--tao-animated-border-width\)\) calc\(var\(--tao-radius-tr\)/);
+        expect(borderSource.match(/border-radius: var\(--_tao-outer-radius\)/g)).toHaveLength(2);
     });
 });

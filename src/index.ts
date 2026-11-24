@@ -370,6 +370,7 @@ export { registerTaoIcons, taoIconNames } from './icons';
 export type { TaoIconDef } from './icons';
 export type { TaoSurface } from './surface';
 export type { TaoLength } from './length';
+export type { TaoRadius } from './radius';
 export type { TaoJustify } from './layout';
 export type { TaoSelectOption } from './select';
 export type { TaoPlacement, TaoAnchor, TaoVirtualAnchor } from './floating';

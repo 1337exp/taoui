@@ -2,6 +2,10 @@ import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
 import TaoBlock from '../src/components/TaoBlock.vue';
 import TaoCard from '../src/components/TaoCard.vue';
+// @ts-expect-error Vite `?raw` import: the component source and the surface styles as text
+import cardSource from '../src/components/TaoCard.vue?raw';
+// @ts-expect-error Vite `?raw` import
+import surfaceCss from '../src/styles/contexts/surface.css?raw';
 
 describe('TaoCard slots', () => {
     it('media, header, title, sub, body and footer render in their places', () => {
@@ -56,6 +60,64 @@ describe('the panel contract', () => {
             expect(style).toContain('--tao-radius: 20px');
             expect(style).toContain('--tao-pad: 12px'); // the first value, for concentric corners
         }
+    });
+});
+
+// 5.56.0: `radius` by corner: a sharp side next to a stripe, a rounded other one
+// 5.56.0: `radius` по углам: прямая сторона рядом с полосой, скруглённая другая
+describe('the corners of a panel', () => {
+    const style = (component: typeof TaoCard | typeof TaoBlock, radius: unknown) =>
+        mount(component, { props: { radius: radius as never }, slots: { default: 'x' } }).attributes('style') ?? '';
+
+    it('an array gives the corners one by one, in the order of CSS border-radius', () => {
+        for (const component of [TaoCard, TaoBlock]) {
+            const s = style(component, [0, 0, 12, 12]);
+            expect(s).toContain('--tao-radius: 0px 0px 12px 12px');
+            expect(s).toContain('--tao-radius-tl: 0px');
+            expect(s).toContain('--tao-radius-tr: 0px');
+            expect(s).toContain('--tao-radius-br: 12px');
+            expect(s).toContain('--tao-radius-bl: 12px');
+        }
+    });
+
+    it('a string of four lengths means the same; two are the diagonals', () => {
+        const s = style(TaoCard, '0 16px');
+        // a string is split into corners; a bare 0 becomes 0px, so calc() and max() of the inner radii stay valid
+        expect(s).toContain('--tao-radius-tl: 0px;');
+        expect(s).toContain('--tao-radius-tr: 16px;');
+        expect(s).toContain('--tao-radius-br: 0px;');
+        expect(s).toContain('--tao-radius-bl: 16px');
+    });
+
+    it('one length, or four equal ones, is the single property it always was', () => {
+        for (const component of [TaoCard, TaoBlock]) {
+            expect(style(component, 20)).toContain('--tao-radius: 20px');
+            expect(style(component, 20)).not.toContain('--tao-radius-tl');
+            expect(style(component, [8, 8, 8, 8])).not.toContain('--tao-radius-tl');
+        }
+    });
+
+    it('a stripe follows the corners: the layer takes the radius of the panel', () => {
+        const w = mount(TaoCard, { props: { stripe: 'top', radius: [0, 0, 12, 12] }, slots: { default: 'x' } });
+        expect(w.classes()).toContain('tao-stripe-top');
+        expect(w.attributes('style')).toContain('--tao-radius: 0px 0px 12px 12px');
+        // the layer is `border-radius: inherit` (contexts/surface.css), so it clips by the same corners
+        expect(surfaceCss).toMatch(/\.tao-stripe-top::after[\s\S]*?border-radius: inherit/);
+    });
+
+    it('the panel contract publishes each corner and each inner radius; --tao-radius-inner stays one length', () => {
+        const panel = /\.tao-panel \{([^}]*)\}/.exec(surfaceCss)?.[1] ?? '';
+        for (const corner of ['tl', 'tr', 'br', 'bl']) {
+            expect(panel).toContain(`--tao-radius-${corner}: var(--tao-radius);`);
+            expect(panel).toContain(`--tao-radius-inner-${corner}: max(0px, calc(var(--tao-radius-${corner}) - var(--tao-pad)));`);
+        }
+        // one length, the largest corner, so a child that sits in no corner keeps a fair value
+        expect(panel).toMatch(/--tao-radius-inner: max\(0px, calc\(max\(var\(--tao-radius-tl\), var\(--tao-radius-tr\), var\(--tao-radius-br\), var\(--tao-radius-bl\)\) - var\(--tao-pad\)\)\);/);
+        expect(panel).toContain('border-radius: var(--tao-radius);');
+    });
+
+    it('the close button sits in the top right corner and is concentric to it', () => {
+        expect(cardSource).toMatch(/\.tao-card__close \{[^}]*border-radius: var\(--tao-radius-inner-tr, var\(--tao-radius-inner, var\(--tao-radius-control\)\)\)/);
     });
 });
 

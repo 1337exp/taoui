@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.56.0
+
+Nothing changes for existing code: a single `radius` (a number or a length) is drawn exactly as before.
+
+- **`radius` of `TaoCard`, `TaoBlock` and `TaoAnimatedBorder` takes the corners one by one.** A design often wants a sharp corner or a sharp side (above all with `stripe`: a straight stripe on a card whose other side is rounded), and `radius` was one length. Now it is also an array of 1 to 4 lengths in the order of CSS `border-radius`: `[0, 0, 12, 12]` is a sharp top and a rounded bottom, `[top-left, top-right, bottom-right, bottom-left]`, two values are the diagonals (`[0, 24]`), three are `[top-left, top-right and bottom-left, bottom-right]`. A string of 1 to 4 lengths means the same (`"0 0 12px 12px"`, which already worked for the outline but broke the inner radius: it does not any more); `:radius="0"` makes all corners sharp. The stripe follows: its layer takes the radius of the panel, so it stays straight on a sharp side. `TaoAnimatedBorder` adds its width to every corner. The type is `TaoRadius`.
+- **The panel contract publishes every corner.** `.tao-panel` (the class of `TaoCard` and `TaoBlock`, and of your own panel) now has `--tao-radius-tl / -tr / -br / -bl` and the inner radius of each corner, `--tao-radius-inner-tl / -tr / -br / -bl`, for a child that sits in one corner: the close button of a `TaoCard` is concentric to the top right corner, whatever the others are. `--tao-radius-inner` stays **one length**, as it was: with equal corners the same number, with different ones it follows the largest corner (a child in no corner keeps a fair value). A bare `0` in a corner is turned into `0px`, because `calc()` and `max()` of the inner radii do not take a unitless zero. On your own `.tao-panel` with different corners set the four corner properties yourself: `--tao-radius` alone, a value of four lengths, cannot be turned into an inner radius. The new pure part is in `radius.ts` (`cornerRadii`, `radiusVars`, tested).
+
 ## 5.55.0
 
 One look changes by default: the tip of `TaoCopy`, the tip over a cell of `TaoHeatmap` and the tooltip colours of `taoChartTheme()` are the opposite of the theme now, like `TaoTooltip`. To keep the old look for all of them: `:root { --tao-tooltip-bg: var(--tao-color-surface-raised); --tao-tooltip-text: var(--tao-color-text-strong) }`.

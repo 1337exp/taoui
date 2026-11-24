@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { toCssLength, type TaoLength } from '../length';
+import { radiusVars, type TaoRadius } from '../radius';
 import { toneClass, type TaoToneName } from '../tone';
 
 defineOptions({ name: 'TaoAnimatedBorder' });
@@ -22,8 +22,13 @@ interface Props {
      * компонент остаётся именно рамкой (переливается только контур),
      * без "света", выходящего за её пределы. */
     light?: boolean;
-    /** Corner radius of the content; the border outside it is that plus its width. Number — px, string — CSS. / Скругление содержимого; рамка снаружи — оно плюс её ширина. */
-    radius?: TaoLength;
+    /**
+     * Corner radius of the content; the border outside it is that plus its width. Number — px, string — CSS: all corners; an array
+     * (or a string) of 1 to 4 lengths gives them one by one, in the order of CSS `border-radius`.
+     * Скругление содержимого; рамка снаружи — оно плюс её ширина. Число — px, строка — CSS: все углы; массив (или строка) из 1–4
+     * длин задаёт их по отдельности в порядке CSS `border-radius`.
+     */
+    radius?: TaoRadius;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -55,7 +60,7 @@ const style = computed(() => ({
     '--tao-animated-border-speed': `${props.speed}s`,
     '--tao-animated-border-glow': `${props.glow}px`,
     '--tao-animated-border-gradient': gradient.value,
-    '--tao-radius': toCssLength(props.radius),
+    ...radiusVars(props.radius),
 }));
 </script>
 
@@ -72,6 +77,15 @@ const style = computed(() => ({
 <style scoped>
 .tao-animated-border {
     --tao-radius: var(--tao-radius-panel);
+    /* the corners, which `radius` as an array sets one by one; the border outside takes each plus its width */
+    /* углы, которые `radius` массивом задаёт по отдельности; рамка снаружи берёт каждый плюс свою ширину */
+    --tao-radius-tl: var(--tao-radius);
+    --tao-radius-tr: var(--tao-radius);
+    --tao-radius-br: var(--tao-radius);
+    --tao-radius-bl: var(--tao-radius);
+    --_tao-outer-radius:
+        calc(var(--tao-radius-tl) + var(--tao-animated-border-width)) calc(var(--tao-radius-tr) + var(--tao-animated-border-width))
+        calc(var(--tao-radius-br) + var(--tao-animated-border-width)) calc(var(--tao-radius-bl) + var(--tao-animated-border-width));
 
     background: var(--tao-color-surface-raised);
     position: relative;
@@ -88,7 +102,7 @@ const style = computed(() => ({
     inset: calc(-1 * var(--tao-animated-border-width));
     background: var(--tao-animated-border-gradient);
     background-size: 300% 300%;
-    border-radius: calc(var(--tao-radius) + var(--tao-animated-border-width));
+    border-radius: var(--_tao-outer-radius);
     filter: blur(var(--tao-animated-border-glow));
     opacity: 0.65;
     z-index: -2;
@@ -105,7 +119,7 @@ const style = computed(() => ({
     inset: calc(-1 * var(--tao-animated-border-width));
     background: var(--tao-animated-border-gradient);
     background-size: 300% 300%;
-    border-radius: calc(var(--tao-radius) + var(--tao-animated-border-width));
+    border-radius: var(--_tao-outer-radius);
     padding: var(--tao-animated-border-width);
     -webkit-mask:
         linear-gradient(#000 0 0) content-box,

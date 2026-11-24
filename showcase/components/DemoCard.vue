@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { TaoBlock, TaoCard, TaoButton, TaoCarousel, TaoTag } from '@1337exp/taoui'
+import { TaoAnimatedBorder, TaoBlock, TaoCard, TaoButton, TaoCarousel, TaoTag } from '@1337exp/taoui'
 import { stubPhoto } from '../stubPhoto.js'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { tr } from '../i18n.js'
@@ -95,6 +95,63 @@ const closed = ref(false)
               <b>TaoBlock</b>
               <div style="color: var(--tao-color-text-muted); font-size: 13px;">stripe="bottom" stripe-tone="info"</div>
             </TaoBlock>
+          </div>
+
+          <h3>{{ tr('Sharp corners', 'Прямые углы') }}</h3>
+          <Tr>
+            <template #en>
+              <p class="card-stripe-note">
+                <code>radius</code> takes the corners one by one: an array of 1 to 4 lengths in the order of CSS
+                <code>border-radius</code> (<code>[top-left, top-right, bottom-right, bottom-left]</code>; two values are the
+                diagonals), or the same as a string, <code>"0 0 12px 12px"</code>. A stripe on a sharp side stays straight, the
+                layer takes the corners of the panel. The inner radius for children (<code>--tao-radius-inner</code>) stays one
+                length; a child in a corner reads <code>--tao-radius-inner-tl / -tr / -br / -bl</code>, as the close button of the
+                card does. <code>:radius="0"</code> makes every corner sharp.
+              </p>
+            </template>
+            <template #ru>
+              <p class="card-stripe-note">
+                <code>radius</code> принимает углы по отдельности: массив из 1–4 длин в порядке CSS
+                <code>border-radius</code> (<code>[верх-лево, верх-право, низ-право, низ-лево]</code>; два значения — диагонали)
+                или то же строкой, <code>"0 0 12px 12px"</code>. Полоса на прямой стороне остаётся прямой: слой берёт углы панели.
+                Внутренний радиус для детей (<code>--tao-radius-inner</code>) остаётся одной длиной; ребёнок в углу читает
+                <code>--tao-radius-inner-tl / -tr / -br / -bl</code>, как кнопка закрытия карточки. <code>:radius="0"</code> —
+                все углы прямые.
+              </p>
+            </template>
+          </Tr>
+          <div style="display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+            <TaoCard stripe="top" :radius="[0, 0, 12, 12]">
+              <template #title>{{ tr('A sharp top', 'Прямой верх') }}</template>
+              <template #sub>stripe="top" :radius="[0, 0, 12, 12]"</template>
+            </TaoCard>
+            <TaoCard stripe="left" stripe-tone="success" :radius="[0, 12, 12, 0]">
+              <template #title>{{ tr('A sharp left side', 'Прямая левая сторона') }}</template>
+              <template #sub>stripe="left" :radius="[0, 12, 12, 0]"</template>
+            </TaoCard>
+            <TaoCard stripe="bottom" stripe-tone="info" :radius="[12, 12, 0, 0]">
+              <template #title>{{ tr('A sharp bottom', 'Прямой низ') }}</template>
+              <template #sub>stripe="bottom" :radius="[12, 12, 0, 0]"</template>
+            </TaoCard>
+            <TaoCard stripe="top" stripe-tone="warning" :radius="0">
+              <template #title>{{ tr('All sharp', 'Все прямые') }}</template>
+              <template #sub>stripe="top" :radius="0"</template>
+            </TaoCard>
+            <TaoCard :radius="[0, 24, 0, 24]" closable>
+              <template #title>{{ tr('Diagonals', 'Диагонали') }}</template>
+              <template #sub>:radius="[0, 24]", closable</template>
+              {{ tr('The cross is round to the corner it sits in.', 'Крестик скруглён по углу, в котором стоит.') }}
+            </TaoCard>
+            <TaoBlock :radius="'12px 0'" stripe="left" stripe-tone="danger">
+              <b>TaoBlock</b>
+              <div style="color: var(--tao-color-text-muted); font-size: 13px;">radius="12px 0", {{ tr('a string', 'строкой') }}</div>
+            </TaoBlock>
+            <TaoAnimatedBorder :radius="[0, 0, 16, 16]">
+              <div style="padding: 16px;">
+                <b>TaoAnimatedBorder</b>
+                <div style="color: var(--tao-color-text-muted); font-size: 13px;">:radius="[0, 0, 16, 16]"</div>
+              </div>
+            </TaoAnimatedBorder>
           </div>
 
           <h3>{{ tr('Product', 'Товар') }}</h3>

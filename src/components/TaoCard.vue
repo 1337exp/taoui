@@ -2,6 +2,7 @@
 import { computed, useSlots } from 'vue';
 import { useLocaleText } from '../locale';
 import { toCssBox, toCssLength, type TaoLength } from '../length';
+import { radiusVars, type TaoRadius } from '../radius';
 import { stripeClasses, type TaoStripe, type TaoStripeTone } from '../stripe';
 import { surfaceClass, type TaoSurface } from '../surface';
 import TaoIcon from './TaoIcon.vue';
@@ -12,8 +13,13 @@ defineOptions({ name: 'TaoCard' });
 interface Props {
     /** Number — px, string — any CSS length. / Число — px, строка — любая CSS-длина. */
     padding?: TaoLength | TaoLength[];
-    /** Number — px, string — any CSS length. / Число — px, строка — любая CSS-длина. */
-    radius?: TaoLength;
+    /**
+     * Number — px, string — any CSS length: all corners. An array (or a string) of 1 to 4 lengths gives the corners one by one, in
+     * the order of CSS `border-radius`: `[0, 0, 12, 12]` is a square top and a rounded bottom (a stripe on a sharp side).
+     * Число — px, строка — любая CSS-длина: все углы. Массив (или строка) из 1–4 длин задаёт углы по отдельности в порядке CSS
+     * `border-radius`: `[0, 0, 12, 12]` — прямой верх и скруглённый низ (полоса на прямой стороне).
+     */
+    radius?: TaoRadius;
     shadow?: boolean;
     shadowBottomOnly?: boolean;
     hover?: boolean;
@@ -93,7 +99,7 @@ const radiusStyle = computed(() => {
     const pad = props.padding;
     const first = Array.isArray(pad) ? pad[0] : pad;
     return {
-        '--tao-radius': toCssLength(props.radius),
+        ...radiusVars(props.radius),
         '--tao-pad': first === undefined ? undefined : toCssLength(first),
     };
 });
@@ -267,8 +273,8 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
     height: var(--tao-control-height-small);
     padding: 0;
     border: none;
-    /* concentric: the same corner the card has, minus the gap to it / концентрично углу карточки */
-    border-radius: var(--tao-radius-inner, var(--tao-radius-control));
+    /* concentric to the top right corner of the card (the corners can differ), minus the gap to it / концентрично правому верхнему углу карточки (углы могут различаться) */
+    border-radius: var(--tao-radius-inner-tr, var(--tao-radius-inner, var(--tao-radius-control)));
     background: transparent;
     color: var(--tao-color-text-muted);
     cursor: pointer;

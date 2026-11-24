@@ -6,7 +6,7 @@ export const propTables = {
       title: 'TaoBlock',
       rows: [
         r('padding', 'number | string | (…)[]', '16', 'Внутренний отступ. Число — px, строка — любая CSS-длина. Массив — как CSS padding (1–4 значения)'),
-        r('radius', 'number | string', '8', 'Скругление. Число — px, строка — CSS'),
+        r('radius', 'number | string | (…)[]', '8', 'Скругление. Число — px, строка — CSS: все углы. Массив или строка из 1–4 длин — углы по отдельности в порядке CSS border-radius: [0, 0, 12, 12] — прямой верх и скруглённый низ'),
         r('shadow', 'boolean', 'true', 'Тень панели'),
         r('hover', 'boolean', 'false', 'Усилить тень при наведении, курсор pointer'),
         r('surface', "'flat' | 'grain' | 'glass'", "'flat'", 'Из чего сделан блок: заливка / зерно / стекло. См. «Поверхности»'),
@@ -66,7 +66,7 @@ export const propTables = {
       title: 'TaoCard',
       rows: [
         r('padding', 'number | string | (…)[]', 'var(--tao-space-5)', 'Отступ тела карточки. Число — px, строка — CSS. У flush — 0. Публикуется как --tao-pad'),
-        r('radius', 'number | string', 'var(--tao-radius-panel)', 'Скругление. Число — px, строка — CSS. Публикуется как --tao-radius; вложенным — --tao-radius-inner'),
+        r('radius', 'number | string | (…)[]', 'var(--tao-radius-panel)', 'Скругление. Число — px, строка — CSS: все углы. Массив или строка из 1–4 длин — углы по отдельности в порядке CSS border-radius ([верх-лево, верх-право, низ-право, низ-лево], два значения — диагонали): [0, 0, 12, 12] — прямой верх и скруглённый низ, полоса stripe на прямой стороне остаётся прямой. Публикуется как --tao-radius (и --tao-radius-tl / -tr / -br / -bl при разных углах); вложенным — --tao-radius-inner (одна длина) и --tao-radius-inner-tl / -tr / -br / -bl для ребёнка в углу'),
         r('shadow', 'boolean', 'true', 'Обычная тень. У flush выключена'),
         r('shadowBottomOnly', 'boolean', 'false', 'Линия снизу карточки, не scrim на фото'),
         r('flush', 'boolean', 'false', 'Плитка: без padding и тени, cover/body на всю ячейку'),
@@ -961,7 +961,7 @@ export const propTables = {
         r('variant', "'rainbow' | 'tone'", "'rainbow'", 'Из чего рамка: радуга или цвета тона'),
         r('tone', 'TaoToneName', "'accent'", 'Тон для variant="tone"; без него акцент темы'),
         r('colors', 'string[]', '—', 'Свои цвета (любые CSS-цвета), главнее variant'),
-        r('radius', 'number | string', 'var(--tao-radius-panel)', 'Скругление содержимого; рамка снаружи — оно плюс толщина'),
+        r('radius', 'number | string | (…)[]', 'var(--tao-radius-panel)', 'Скругление содержимого; рамка снаружи — оно плюс толщина. Массив или строка из 1–4 длин — углы по отдельности, как у TaoCard'),
         r('borderWidth', 'number', '3', 'Толщина контура в px'),
         r('speed', 'number', '6', 'Длительность оборота в секундах'),
         r('light', 'boolean', 'false', 'Мягкое свечение вокруг рамки'),

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { toCssBox, toCssLength, type TaoLength } from '../length';
+import { radiusVars, type TaoRadius } from '../radius';
 import { stripeClasses, type TaoStripe, type TaoStripeTone } from '../stripe';
 import { surfaceClass, type TaoSurface } from '../surface';
 
@@ -9,8 +10,13 @@ defineOptions({ name: 'TaoBlock' });
 interface Props {
     /** Number — px, string — any CSS length. / Число — px, строка — любая CSS-длина. */
     padding?: TaoLength | TaoLength[];
-    /** Number — px, string — any CSS length. / Число — px, строка — любая CSS-длина. */
-    radius?: TaoLength;
+    /**
+     * Number — px, string — any CSS length: all corners. An array (or a string) of 1 to 4 lengths gives the corners one by one, in
+     * the order of CSS `border-radius`: `[0, 0, 12, 12]` is a square top and a rounded bottom.
+     * Число — px, строка — любая CSS-длина: все углы. Массив (или строка) из 1–4 длин задаёт углы по отдельности в порядке CSS
+     * `border-radius`: `[0, 0, 12, 12]` — прямой верх и скруглённый низ.
+     */
+    radius?: TaoRadius;
     shadow?: boolean;
     hover?: boolean;
     /** `flat` fill, `grain` film grain, `glass` blurred translucent. / Из чего сделана панель. */
@@ -39,7 +45,7 @@ const panelStyle = computed(() => {
     return {
         padding: pad === undefined ? undefined : toCssBox(pad),
         '--tao-pad': first === undefined ? undefined : toCssLength(first),
-        '--tao-radius': toCssLength(props.radius),
+        ...radiusVars(props.radius),
     };
 });
 </script>
