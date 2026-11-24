@@ -82,6 +82,7 @@ export const localeEn: TaoLocale = {
         decimalSeparator: '.',
     },
     inputNumber: { incrementLabel: 'Increase', decrementLabel: 'Decrease' },
+    dragNumber: { incrementLabel: 'Increase', decrementLabel: 'Decrease' },
     list: { emptyText: 'Nothing here' },
     modal: { closeLabel: 'Close' },
     docTabs: { label: 'Open documents', closeLabel: 'Close', dirtyLabel: 'unsaved changes' },

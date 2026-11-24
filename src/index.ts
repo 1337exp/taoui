@@ -5,6 +5,7 @@ import TaoInput from './components/TaoInput.vue';
 import TaoInputGroup from './components/TaoInputGroup.vue';
 import TaoInputNumber from './components/TaoInputNumber.vue';
 import TaoQuantity from './components/TaoQuantity.vue';
+import TaoDragNumber from './components/TaoDragNumber.vue';
 import TaoCard from './components/TaoCard.vue';
 import TaoModal from './components/TaoModal.vue';
 import TaoTabs from './components/TaoTabs.vue';
@@ -106,6 +107,7 @@ const components = [
     TaoInputGroup,
     TaoInputNumber,
     TaoQuantity,
+    TaoDragNumber,
     TaoCard,
     TaoModal,
     TaoTabs,
@@ -223,6 +225,7 @@ export {
     TaoInputGroup,
     TaoInputNumber,
     TaoQuantity,
+    TaoDragNumber,
     TaoCard,
     TaoModal,
     TaoTabs,
@@ -399,6 +402,17 @@ export type { TaoStripe, TaoStripeTone } from './stripe';
 export type { TaoGridSize, TaoGridSpan, TaoResponsive } from './grid';
 export type { TaoTimelineAlign, TaoTimelineItem, TaoTimelineState } from './timeline';
 export type { TaoQuantityChangeSource } from './quantity';
+export {
+    DRAG_NUMBER_FINE,
+    DRAG_NUMBER_PAGE,
+    DRAG_NUMBER_THRESHOLD,
+    dragNumberAdvance,
+    dragNumberDecimals,
+    dragNumberNormalize,
+    dragNumberResolve,
+    parseDragNumber,
+} from './dragNumber';
+export type { TaoDragNumberLimits } from './dragNumber';
 export type { TaoStageItem, TaoStageStatus } from './stage';
 export type { TaoSplitDirection, TaoSplitUnit } from './split';
 export type { TaoSliderMark, TaoSliderValue, TaoSliderZone, TaoSliderZoneTone } from './slider';

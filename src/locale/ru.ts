@@ -83,6 +83,7 @@ export const localeRu: TaoLocale = {
         decimalSeparator: ',',
     },
     inputNumber: { incrementLabel: 'Увеличить', decrementLabel: 'Уменьшить' },
+    dragNumber: { incrementLabel: 'Увеличить', decrementLabel: 'Уменьшить' },
     list: { emptyText: 'Ничего нет' },
     modal: { closeLabel: 'Закрыть' },
     docTabs: { label: 'Открытые документы', closeLabel: 'Закрыть', dirtyLabel: 'есть несохранённые изменения' },

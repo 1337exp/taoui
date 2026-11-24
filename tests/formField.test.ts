@@ -8,6 +8,7 @@ import TaoFormField from '../src/components/TaoFormField.vue';
 import TaoInput from '../src/components/TaoInput.vue';
 import TaoInputNumber from '../src/components/TaoInputNumber.vue';
 import TaoQuantity from '../src/components/TaoQuantity.vue';
+import TaoDragNumber from '../src/components/TaoDragNumber.vue';
 import TaoSelect from '../src/components/TaoSelect.vue';
 import TaoSwitch from '../src/components/TaoSwitch.vue';
 import TaoTextarea from '../src/components/TaoTextarea.vue';
@@ -25,6 +26,7 @@ const controls: [string, Component, string, Record<string, unknown>][] = [
     ['TaoTextarea', TaoTextarea, 'textarea', { modelValue: '' }],
     ['TaoInputNumber', TaoInputNumber, 'input', { modelValue: 1 }],
     ['TaoQuantity', TaoQuantity, 'input', { modelValue: 1 }],
+    ['TaoDragNumber', TaoDragNumber, 'input', { modelValue: 1 }],
     ['TaoCheckbox', TaoCheckbox, 'input', { modelValue: false }],
     ['TaoSwitch', TaoSwitch, 'input', { modelValue: false }],
     ['TaoSelect', TaoSelect, '[role="combobox"]', { options: [] }],

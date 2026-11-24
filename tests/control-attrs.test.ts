@@ -8,6 +8,7 @@ import TaoColorPicker from '../src/components/TaoColorPicker.vue';
 import TaoFileDrop from '../src/components/TaoFileDrop.vue';
 import TaoPinCode from '../src/components/TaoPinCode.vue';
 import TaoQuantity from '../src/components/TaoQuantity.vue';
+import TaoDragNumber from '../src/components/TaoDragNumber.vue';
 import TaoCombobox from '../src/components/TaoCombobox.vue';
 import TaoPresetInput from '../src/components/TaoPresetInput.vue';
 import TaoDate from '../src/components/TaoDate.vue';
@@ -36,6 +37,7 @@ const cases: [string, unknown, Record<string, unknown>, string][] = [
     ['TaoCheckbox', TaoCheckbox, {}, 'input'],
     ['TaoRadio', TaoRadio, { value: 'a' }, 'input'],
     ['TaoQuantity', TaoQuantity, { modelValue: 1 }, 'input'],
+    ['TaoDragNumber', TaoDragNumber, { modelValue: 1 }, 'input'],
     ['TaoFileDrop', TaoFileDrop, {}, 'input[type=file]'],
 ];
 
