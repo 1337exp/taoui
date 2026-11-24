@@ -1,3 +1,5 @@
+import { clamp } from './primitives/number';
+
 export type TaoPaginationItem =
     | { type: 'page'; page: number }
     | { type: 'ellipsis'; id: 'left' | 'right' };
@@ -15,7 +17,7 @@ export function buildPaginationItems(
         return Array.from({ length: pageCount }, (_, index) => ({ type: 'page' as const, page: index + 1 }));
     }
 
-    const current = Math.min(Math.max(page, 1), pageCount);
+    const current = clamp(page, 1, pageCount);
     const siblings = Math.max(0, siblingCount);
     const left = Math.max(2, current - siblings);
     const right = Math.min(pageCount - 1, current + siblings);

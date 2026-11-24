@@ -1,5 +1,6 @@
 // Чистая логика цвета для TaoColorPicker и TaoColorInput: разбор строк, перевод RGB ↔ HSV, запись в hex, sRGB ↔ линейный.
 // Без Vue и DOM, поэтому проверяется тестами. Компоненты говорят строкой hex; всё остальное: переводчики на границе.
+import { clamp } from './primitives/number';
 
 /** Способ ввода цвета в палитре: строка hex, числа RGB или числа HSL. */
 export type ColorMode = 'hex' | 'rgb' | 'hsl';
@@ -20,7 +21,6 @@ export interface Hsva {
     a: number;
 }
 
-const clamp = (v: number, lo: number, hi: number) => Math.min(Math.max(v, lo), hi);
 const byte = (v: number) => Math.round(clamp(v, 0, 255));
 const hex2 = (v: number) => byte(v).toString(16).padStart(2, '0');
 

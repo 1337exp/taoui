@@ -2,6 +2,7 @@
 import TaoIcon from './TaoIcon.vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue';
 import { glideDuration, glideTarget as snapTarget } from '../carousel';
+import { clamp } from '../primitives/number';
 import { useLocaleText } from '../locale';
 
 defineOptions({ name: 'TaoCarousel' });
@@ -268,7 +269,7 @@ function nearestIndex(scrollLeft?: number) {
     }
 
     const last = Math.max(total - step.value, 0);
-    return Math.min(Math.max(slot, 0), last);
+    return clamp(slot, 0, last);
 }
 
 function setIndex(next: number) {
@@ -345,7 +346,7 @@ function goTo(next: number, instant = false) {
             wrapping = true;
         }
     } else {
-        page = Math.min(Math.max(next, 0), last);
+        page = clamp(next, 0, last);
     }
 
     el.scrollTo({

@@ -2,6 +2,7 @@
 import TaoIcon from './TaoIcon.vue';
 import TaoSelect from './TaoSelect.vue';
 import { localeEn } from '../locale/en';
+import { clamp } from '../primitives/number';
 import { computed, ref, watch } from 'vue';
 import { buildPaginationItems } from '../pagination';
 import { sizeClass, type TaoSize } from '../size';
@@ -86,7 +87,7 @@ function onPageSize(value: unknown) {
 }
 
 const pageCount = computed(() => Math.max(1, Math.ceil(Math.max(props.total, 0) / Math.max(props.pageSize, 1))));
-const current = computed(() => Math.min(Math.max(props.page, 1), pageCount.value));
+const current = computed(() => clamp(props.page, 1, pageCount.value));
 const items = computed(() => buildPaginationItems(current.value, pageCount.value, props.siblingCount));
 
 const from = computed(() => (props.total === 0 ? 0 : (current.value - 1) * props.pageSize + 1));
@@ -126,7 +127,7 @@ function goTo(next: number) {
         return;
     }
 
-    const page = Math.min(Math.max(next, 1), pageCount.value);
+    const page = clamp(next, 1, pageCount.value);
     if (page === props.page) {
         return;
     }

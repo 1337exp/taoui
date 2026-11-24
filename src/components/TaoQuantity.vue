@@ -6,6 +6,7 @@ import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import type { TaoQuantityChangeSource } from '../quantity';
 import { useLocaleText } from '../locale';
+import { clamp } from '../primitives/number';
 
 defineOptions({ name: 'TaoQuantity', inheritAttrs: false });
 
@@ -67,11 +68,7 @@ function toInt(value: unknown) {
 }
 
 function clampQty(value: number) {
-    let next = Math.max(value, props.min);
-    if (props.forceMaxLimit && props.max !== undefined) {
-        next = Math.min(next, props.max);
-    }
-    return next;
+    return clamp(value, props.min, props.forceMaxLimit ? props.max : undefined);
 }
 
 function commit(value: number, source: TaoQuantityChangeSource) {

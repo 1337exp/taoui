@@ -1,12 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
     dragNumberAdvance,
-    dragNumberClamp,
-    dragNumberDecimals,
-    dragNumberNormalize,
     dragNumberResolve,
     dragNumberRepeatDelay,
-    dragNumberRound,
     dragNumberSpeed,
     formatDragNumber,
     parseDragNumber,
@@ -14,38 +10,6 @@ import {
 
 // 5.53.0: the logic of TaoDragNumber, apart from the component.
 // 5.53.0: логика TaoDragNumber отдельно от компонента.
-
-describe('dragNumberDecimals / dragNumberRound', () => {
-    it('counts the decimals of a step, also when it is written with an exponent', () => {
-        expect(dragNumberDecimals(5)).toBe(0);
-        expect(dragNumberDecimals(0.25)).toBe(2);
-        expect(dragNumberDecimals(0.001)).toBe(3);
-        expect(dragNumberDecimals(1e-7)).toBe(7);
-        expect(dragNumberDecimals(1.5e-7)).toBe(8);
-        expect(dragNumberDecimals(Number.NaN)).toBe(0);
-    });
-
-    it('rounds away the dust of the floating point', () => {
-        expect(dragNumberRound(0.1 + 0.2, 2)).toBe(0.3);
-        expect(dragNumberRound(2.6, 0)).toBe(3);
-        expect(dragNumberRound(1.005, 1)).toBe(1);
-    });
-});
-
-describe('dragNumberClamp / dragNumberNormalize', () => {
-    it('either bound may be missing', () => {
-        expect(dragNumberClamp(5, 0, 3)).toBe(3);
-        expect(dragNumberClamp(-5, 0, 3)).toBe(0);
-        expect(dragNumberClamp(-5)).toBe(-5);
-        expect(dragNumberClamp(50, undefined, 10)).toBe(10);
-    });
-
-    it('rounds, clamps, and rounds again: a bound off the grain stays whole', () => {
-        expect(dragNumberNormalize(0.349, { precision: 2, max: 0.35 })).toBe(0.35);
-        expect(dragNumberNormalize(9.99, { precision: 0, max: 9.4 })).toBe(9);
-        expect(dragNumberNormalize(0.1 + 0.2, { precision: 1 })).toBe(0.3);
-    });
-});
 
 describe('dragNumberAdvance', () => {
     it('moves by pixels × speed, a tenth of it with Shift', () => {

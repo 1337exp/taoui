@@ -6,12 +6,11 @@ import { listenFocusLoss } from '../focusLoss';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
+import { decimalsOf, normalizeNumber } from '../primitives/number';
 import {
     DRAG_NUMBER_PAGE,
     DRAG_NUMBER_THRESHOLD,
     dragNumberAdvance,
-    dragNumberDecimals,
-    dragNumberNormalize,
     dragNumberRepeatDelay,
     dragNumberResolve,
     dragNumberSpeed,
@@ -96,7 +95,7 @@ const focused = ref(false);
 const dragging = ref(false);
 const draft = ref('');
 
-const digits = computed(() => props.precision ?? dragNumberDecimals(props.step));
+const digits = computed(() => props.precision ?? decimalsOf(props.step));
 const limits = computed(() => ({ min: props.min, max: props.max, precision: digits.value }));
 const plain = (value: number) => formatDragNumber(value, digits.value);
 const shown = computed(() => (props.format ? props.format(props.modelValue) : plain(props.modelValue)));
@@ -108,7 +107,7 @@ const named = computed(() => props.label && controlAttrs()['aria-label'] === und
 
 /** Writes a value; says whether it changed. / Записывает значение; говорит, изменилось ли оно. */
 function apply(value: number) {
-    const next = dragNumberNormalize(value, limits.value);
+    const next = normalizeNumber(value, limits.value);
     const changed = next !== props.modelValue;
     if (changed) {
         emit('update:modelValue', next);

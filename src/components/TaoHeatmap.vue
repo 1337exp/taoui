@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { heatmapLevel, heatmapSteps } from '../chart';
+import { clamp } from '../primitives/number';
 import { useTaoLocale } from '../locale';
 import { toneClass, type TaoToneName } from '../tone';
 
@@ -186,7 +187,7 @@ async function show(r: number, c: number) {
     const width = bubble.offsetWidth;
     const height = bubble.offsetHeight;
     const centre = cellRect.left - boxRect.left + cellRect.width / 2;
-    const left = Math.round(Math.min(Math.max(0, centre - width / 2), Math.max(0, boxRect.width - width)));
+    const left = Math.round(clamp(centre - width / 2, 0, Math.max(0, boxRect.width - width)));
     // above the cell; under it when the map has no room above (a card around it would cut the tip)
     // над клеткой; под ней, если над картой нет места (карточка вокруг обрезала бы подсказку)
     const above = cellRect.top - boxRect.top - height - 6;

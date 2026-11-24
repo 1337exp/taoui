@@ -1,6 +1,7 @@
 // Чистая логика TaoSlider: значение ↔ позиция, шаг, метки, ручки диапазона. Без Vue и DOM, поэтому проверяется тестами.
 import { parseColor, toHex } from './color';
 import { contrastRatio } from './palette';
+import { clamp, decimalsOf, roundTo } from './primitives/number';
 import type { TaoSize } from './size';
 
 /** Метка на шкале: значение, подпись (нет подписи: только черта). */
@@ -106,21 +107,6 @@ export interface TaoSliderBaseProps {
     /** Accessible name of the field of `editable` (the locale text by default). / Имя поля у `editable` для скринридеров (по умолчанию текст локали). */
     editLabel?: string;
 }
-
-const clamp = (v: number, min: number, max: number) => Math.min(Math.max(v, min), max);
-
-/** Сколько знаков после запятой у шага: 0.05 → 2. Нужно, чтобы шаг не оставлял хвост float («0.30000000000000004»). */
-export function decimalsOf(step: number): number {
-    if (!Number.isFinite(step) || step <= 0) return 0;
-    const s = String(step);
-    if (s.includes('e-')) return Number(s.split('e-')[1]);
-    return s.includes('.') ? s.split('.')[1]!.length : 0;
-}
-
-const roundTo = (v: number, decimals: number) => {
-    const k = Math.pow(10, decimals);
-    return Math.round(v * k) / k + 0; // + 0 убирает «-0»
-};
 
 /** Доля 0…1, на которой лежит значение (min = max даёт 0). */
 export function ratioOf(value: number, min: number, max: number): number {

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
+import { clamp } from '../primitives/number';
 import { useField } from '../formField';
 import { useLocaleText } from '../locale';
 import { sizeClass } from '../size';
@@ -138,7 +139,7 @@ function setThumb(index: number, target: number, final = false) {
     if (isRange.value) {
         write(moveThumb(values.value as [number, number], index as 0 | 1, target, props.min, props.max, props.minGap), final);
     } else {
-        write([Math.min(Math.max(target, props.min), props.max)], final);
+        write([clamp(target, props.min, props.max)], final);
     }
 }
 

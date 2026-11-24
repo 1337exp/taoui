@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { glideDuration, glideTarget, FLICK_SPEED } from '../src/carousel';
 import { toCssBox, toCssLength } from '../src/length';
-import { decimalsOf, isMarkActive, moveThumb, nearestMark, nearestThumb, niceTicks, normalizeMarks, normalizeValue, ratioOf, stepMark, valueAt } from '../src/slider';
+import { isMarkActive, moveThumb, nearestMark, nearestThumb, niceTicks, normalizeMarks, normalizeValue, ratioOf, stepMark, valueAt } from '../src/slider';
+import { decimalsOf } from '../src/primitives/number';
 import { resolveSize, sizeClass } from '../src/size';
 import { surfaceClass } from '../src/surface';
 import { formatText, localeEn, localeRu, setTaoLocale, taoLocale } from '../src/locale';

@@ -5,6 +5,7 @@ import { computed, ref, watch } from 'vue';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
+import { decimalsOf, normalizeNumber } from '../primitives/number';
 
 defineOptions({ name: 'TaoInputNumber', inheritAttrs: false });
 
@@ -81,30 +82,10 @@ watch(
     },
 );
 
-function decimalsOf(value: number) {
-    const text = String(value);
-    const dot = text.indexOf('.');
-    return dot === -1 ? 0 : text.length - dot - 1;
-}
-
-function roundTo(value: number) {
-    const digits = props.precision ?? decimalsOf(props.step);
-    if (digits <= 0) {
-        return Math.round(value);
-    }
-    const factor = 10 ** digits;
-    return Math.round(value * factor) / factor;
-}
-
+// round to the precision (the decimals of the step by default), clamp to the bounds, round again
+// округлить до точности (по умолчанию знаков у шага), зажать границами, округлить ещё раз
 function clamp(value: number) {
-    let next = roundTo(value);
-    if (props.min !== undefined && next < props.min) {
-        next = props.min;
-    }
-    if (props.max !== undefined && next > props.max) {
-        next = props.max;
-    }
-    return roundTo(next);
+    return normalizeNumber(value, { min: props.min, max: props.max, precision: props.precision ?? decimalsOf(props.step) });
 }
 
 function toDraft(value: number | null | undefined) {

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
+import { clamp } from '../primitives/number';
 import type { TaoSplitDirection, TaoSplitUnit } from '../split';
 
 defineOptions({ name: 'TaoSplit' });
@@ -100,12 +101,12 @@ function clampStartPx(desiredPx: number, avail: number) {
     const maxStartPx = props.max != null ? toPx(props.max, avail) : Infinity;
 
     if (minStartPx + minEndPx > avail) {
-        return Math.min(Math.max(desiredPx, 0), avail);
+        return clamp(desiredPx, 0, avail);
     }
 
     const lo = minStartPx;
     const hi = Math.min(maxStartPx, avail - minEndPx);
-    return Math.min(Math.max(desiredPx, lo), Math.max(lo, hi));
+    return clamp(desiredPx, lo, Math.max(lo, hi));
 }
 
 function commit(next: number) {

@@ -403,17 +403,6 @@ export type { TaoStripe, TaoStripeTone } from './stripe';
 export type { TaoGridSize, TaoGridSpan, TaoResponsive } from './grid';
 export type { TaoTimelineAlign, TaoTimelineItem, TaoTimelineState } from './timeline';
 export type { TaoQuantityChangeSource } from './quantity';
-export {
-    DRAG_NUMBER_FINE,
-    DRAG_NUMBER_PAGE,
-    DRAG_NUMBER_THRESHOLD,
-    dragNumberAdvance,
-    dragNumberDecimals,
-    dragNumberNormalize,
-    dragNumberResolve,
-    parseDragNumber,
-} from './dragNumber';
-export type { TaoDragNumberLimits } from './dragNumber';
 export type { TaoStageItem, TaoStageStatus } from './stage';
 export type { TaoSplitDirection, TaoSplitUnit } from './split';
 export type { TaoSliderMark, TaoSliderValue, TaoSliderZone, TaoSliderZoneTone } from './slider';

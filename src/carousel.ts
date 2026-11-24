@@ -1,3 +1,5 @@
+import { clamp } from './primitives/number';
+
 /** How long momentum keeps going, ms (close to iOS). / Сколько длится инерция, мс (близко к iOS). */
 export const GLIDE_TIME = 325;
 /** Release speed above which a flick always moves at least one slide, px/ms. / Скорость, с которой щелчок всегда сдвигает хотя бы на слайд. */
@@ -21,7 +23,7 @@ export function glideTarget(from: number, velocity: number, pitch: number, max: 
         slide = Math.min(slide, Math.ceil(from / pitch) - 1);
     }
 
-    return Math.min(Math.max(slide * pitch, 0), Math.max(max, 0));
+    return clamp(slide * pitch, 0, Math.max(max, 0));
 }
 
 /**
@@ -33,6 +35,6 @@ export function glideTarget(from: number, velocity: number, pitch: number, max: 
 export function glideDuration(distance: number, velocity: number): number {
     const sameDirection = Math.abs(velocity) > 0.05 && Math.sign(velocity) === Math.sign(distance);
     return sameDirection
-        ? Math.min(Math.max((3 * Math.abs(distance)) / Math.abs(velocity), 220), 900)
+        ? clamp((3 * Math.abs(distance)) / Math.abs(velocity), 220, 900)
         : Math.min(200 + Math.abs(distance) * 1.2, 450);
 }

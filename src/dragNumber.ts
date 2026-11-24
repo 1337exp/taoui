@@ -1,5 +1,6 @@
 // Pure logic of TaoDragNumber: a value you step with ± , type, or drag sideways. No Vue, no DOM, so tests cover it.
 // Чистая логика TaoDragNumber: значение, которое меняют кнопками ±, вводом или протяжкой в сторону. Без Vue и DOM: проверяется тестами.
+import { clamp, normalizeNumber, roundTo, type NumberLimits } from './primitives/number';
 
 /** The pointer must travel this far (px) before a press becomes a drag; less is a click, which starts typing. / Столько px должен пройти указатель, чтобы нажатие стало протяжкой; меньше — клик, он начинает ввод. */
 export const DRAG_NUMBER_THRESHOLD = 3;
@@ -26,57 +27,6 @@ export function dragNumberRepeatDelay(count: number): number {
     return Math.max(40, 120 - (count - 1) * 8);
 }
 
-/** What a drag may use: the bounds and the grain of the value. / Что нужно протяжке: границы и зерно значения. */
-export interface TaoDragNumberLimits {
-    min?: number;
-    max?: number;
-    /** Decimal places the value is rounded to. / Знаков после запятой, до которых округляется значение. */
-    precision: number;
-}
-
-/** Decimal places of a step: 0.25 → 2, 5 → 0. / Знаков после запятой у шага: 0.25 → 2, 5 → 0. */
-export function dragNumberDecimals(step: number): number {
-    if (!Number.isFinite(step)) {
-        return 0;
-    }
-    // 1e-7 is written as an exponent: read the exponent too / 1e-7 пишется степенью: читаем и её
-    const text = String(Math.abs(step));
-    const exp = /e-(\d+)$/.exec(text);
-    if (exp) {
-        const mantissa = text.slice(0, text.indexOf('e'));
-        const dot = mantissa.indexOf('.');
-        return Number(exp[1]) + (dot === -1 ? 0 : mantissa.length - dot - 1);
-    }
-    const dot = text.indexOf('.');
-    return dot === -1 ? 0 : text.length - dot - 1;
-}
-
-/** Rounds to `digits` decimal places (0.1 + 0.2 → 0.3). / Округляет до `digits` знаков (0.1 + 0.2 → 0.3). */
-export function dragNumberRound(value: number, digits: number): number {
-    if (digits <= 0) {
-        return Math.round(value);
-    }
-    const factor = 10 ** Math.min(digits, 12);
-    return Math.round(value * factor) / factor;
-}
-
-/** Keeps the value inside min and max (either may be missing). / Держит значение между min и max (любого может не быть). */
-export function dragNumberClamp(value: number, min?: number, max?: number): number {
-    let next = value;
-    if (min !== undefined && next < min) {
-        next = min;
-    }
-    if (max !== undefined && next > max) {
-        next = max;
-    }
-    return next;
-}
-
-/** Round, clamp, round again (a bound may not sit on the grain). / Округлить, зажать, округлить (граница может не лежать на зерне). */
-export function dragNumberNormalize(value: number, limits: TaoDragNumberLimits): number {
-    return dragNumberRound(dragNumberClamp(dragNumberRound(value, limits.precision), limits.min, limits.max), limits.precision);
-}
-
 /**
  * One pointer move of a drag. `raw` is the running value before rounding, so a slow drag adds up and is not eaten by the grain; it is
  * clamped at once, so dragging past a bound does not have to be undone on the way back.
@@ -89,13 +39,13 @@ export function dragNumberAdvance(
     options: { speed: number; fine?: boolean; min?: number; max?: number },
 ): number {
     const factor = options.fine ? DRAG_NUMBER_FINE : 1;
-    return dragNumberClamp(raw + dx * options.speed * factor, options.min, options.max);
+    return clamp(raw + dx * options.speed * factor, options.min, options.max);
 }
 
 /** The value a drag shows: the running value snapped to the step grid (Ctrl), or just normalised. / Значение, которое показывает протяжка: бегущее, по сетке шага (Ctrl) или просто приведённое. */
-export function dragNumberResolve(raw: number, limits: TaoDragNumberLimits, step: number, snap = false): number {
+export function dragNumberResolve(raw: number, limits: NumberLimits, step: number, snap = false): number {
     const base = snap && step > 0 ? Math.round(raw / step) * step : raw;
-    return dragNumberNormalize(base, limits);
+    return normalizeNumber(base, limits);
 }
 
 /** The speed a drag has by default: a quarter of a step per pixel. / Скорость протяжки по умолчанию: четверть шага на пиксель. */
@@ -105,7 +55,7 @@ export function dragNumberSpeed(step: number, speed?: number): number {
 
 /** The text of a value: no trailing zeros (`5`, `0.5`), rounded to the precision. / Текст значения: без хвостовых нулей (`5`, `0.5`), округлено до точности. */
 export function formatDragNumber(value: number, precision: number): string {
-    return String(dragNumberRound(value, precision));
+    return String(roundTo(value, precision));
 }
 
 /**
