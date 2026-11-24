@@ -65,6 +65,10 @@ npm run smoke                      # the packed tarball in a fresh Vite app
   `cases` too. A component whose name lives elsewhere (a button label built from the value, a `role="group"` root)
   routes the given `aria-label` there by hand, as `TaoColorInput` does. No HTML comment before the root of a
   template: it makes the component a fragment and the attributes stop falling through.
+- **A gesture that lasts (a drag, a held button) ends on its own when `pointerup` never comes** (Alt-Tab, a screenshot, a system
+  dialog): `listenFocusLoss` (`src/focusLoss.ts`) plus `lostpointercapture`, listeners removed on unmount, and a test that
+  dispatches `blur` mid-gesture. A drag keeps its value and commits once; a press that never moved is not a click. It
+  came back in `TaoCarousel` and `TaoDragNumber`: check it for every new pointer component.
 - **Tokens:** a role in `themes/dark.css` must exist in `light.css`; contexts (`contexts/*.css`) are classes that set
   private `--_tao-*` variables. A custom property is computed where it is declared: a context that combines two axes
   (size × density) must recompute on every class of both axes.

@@ -86,6 +86,7 @@ three, `tests/control-attrs.test.ts` holds the attributes of a field.
 3. Icons are `<TaoIcon name="tao-…">` (add the path to `src/icons.ts`, keep the 24x24 grid, a 2px round stroke, `currentColor`); no inline `<svg>` and no text glyphs in components; a button with only an icon needs `aria-label`.
 4. A form control gets its id, `aria-describedby` and invalid state from `useField(props)` (`formField.ts`); do not inject the field by hand. A text that has a default in the locale is read through `useLocaleText` / `useTaoLocale`, never through the global `taoLocale()` inside a component (the server shares that one between requests).
 5. Spacing comes from `--tao-space-*`. A pixel value beside the scale (a hairline, an optical nudge) is allowed, but `tests/component-styles.test.ts` keeps a count per file that may only go down; lower it when you clean one up.
+6. A gesture that lasts (a drag, a held button, a press-and-move) must end by itself when its `pointerup` never comes: Alt-Tab, a screenshot or a system dialog swallow it. Subscribe with `listenFocusLoss` (`focusLoss.ts`: window blur, `visibilitychange` to hidden, `pagehide`) and `lostpointercapture`, drop the listeners on unmount, and decide what a lost gesture means (a drag keeps its value and commits once; a press that never moved is not a click). `TaoSliderBase`, `TaoCarousel`, `TaoDragNumber` are the examples; their tests dispatch `blur` in the middle of the gesture.
 
 ## Pull requests
 
