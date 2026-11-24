@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { listenFocusLoss } from '../focusLoss';
+import { computed, nextTick, ref, watch } from 'vue';
+import { usePointerDrag } from '../primitives/usePointerDrag';
 import { clamp } from '../primitives/number';
 import { useField } from '../formField';
 import { useLocaleText } from '../locale';
@@ -163,76 +163,50 @@ function valueUnder(event: PointerEvent | MouseEvent): number {
 // Указатель
 
 const railRef = ref<HTMLElement | null>(null);
-const isDragging = ref(false);
 const activeThumb = ref(0);
 /** Фокус пришёл от мыши: кольцо фокуса не показываем (оно для клавиатуры), хотя фокус на ручке стоит. */
 const pointerFocus = ref(false);
-let dragPointer = -1;
 let dragStart: number[] = [];
 /** Нажали ровно на точку, где сведены обе ручки диапазона: какую вытянуть, решит направление первого движения. */
 let tieAt: number | null = null;
 
-function releaseDragCapture() {
-    const el = railRef.value;
-    const id = dragPointer;
-    if (!el || id === -1) return;
-    if (typeof el.hasPointerCapture === 'function' && !el.hasPointerCapture(id)) return;
-    try {
-        el.releasePointerCapture(id);
-    } catch {
-        /* already released by the browser */
-    }
-}
+// Жест: нажатие, движения и любой конец (отпустили, отмена, потеря фокуса или захвата, размонтирование, открытое поле ввода) — общий.
+// The gesture: the press, the moves and every ending (release, cancel, lost focus or capture, unmount, an opened editor) are the shared one.
+const drag = usePointerDrag({
+    target: () => railRef.value,
+    onStart(event) {
+        if (props.disabled) return false;
 
-function endDrag() {
-    if (!isDragging.value) return;
-    isDragging.value = false;
-    releaseDragCapture();
-    dragPointer = -1;
-    tieAt = null;
-    if (values.value.some((v, i) => v !== dragStart[i])) {
-        emit('change', isRange.value ? [values.value[0]!, values.value[1]!] : values.value[0]!);
-    }
-}
-
-function onPointerDown(event: PointerEvent) {
-    if (props.disabled || event.button !== 0 || !railRef.value) return;
-
-    const target = valueUnder(event);
-    dragPointer = event.pointerId;
-    dragStart = [...values.value];
-    isDragging.value = true;
-    activeThumb.value = nearestThumb(values.value, target, activeThumb.value);
-    tieAt = isRange.value && values.value[0] === values.value[1] && target === values.value[0] ? target : null;
-    pointerFocus.value = true;
-    // preventDefault ниже гасит и фокус, поэтому берём его сами и первым делом: поле ввода, в котором печатали, теряет фокус
-    // и записывает свой текст до того, как слайдер поменяет значение, а не после (иначе устаревший текст затёр бы его)
-    railRef.value.querySelectorAll<HTMLElement>('.tao-slider__thumb')[activeThumb.value]?.focus({ preventScroll: true });
-    setThumb(activeThumb.value, target);
-    event.preventDefault();
-    try {
-        railRef.value.setPointerCapture(event.pointerId);
-    } catch {
-        /* untrusted events / capture already gone */
-    }
-}
-
-function onPointerMove(event: PointerEvent) {
-    if (!isDragging.value || event.pointerId !== dragPointer) return;
-    const target = valueUnder(event);
-    if (tieAt !== null) {
-        if (target === tieAt) return; // ещё на точке: ручки не трогаем
-        activeThumb.value = target > tieAt ? 1 : 0;
+        const target = valueUnder(event);
+        dragStart = [...values.value];
+        activeThumb.value = nearestThumb(values.value, target, activeThumb.value);
+        tieAt = isRange.value && values.value[0] === values.value[1] && target === values.value[0] ? target : null;
+        pointerFocus.value = true;
+        // preventDefault, which the gesture does after this, kills the focus too, so we take it ourselves and first: the field that was typed in
+        // loses focus and writes its text before the slider changes the value, not after (a stale text would overwrite it)
+        // preventDefault, который жест делает после этого, гасит и фокус, поэтому берём его сами и первым делом: поле ввода, в котором
+        // печатали, теряет фокус и записывает свой текст до того, как слайдер поменяет значение, а не после (иначе устаревший текст затёр бы его)
+        railRef.value?.querySelectorAll<HTMLElement>('.tao-slider__thumb')[activeThumb.value]?.focus({ preventScroll: true });
+        setThumb(activeThumb.value, target);
+    },
+    onMove(event) {
+        const target = valueUnder(event);
+        if (tieAt !== null) {
+            if (target === tieAt) return; // ещё на точке: ручки не трогаем
+            activeThumb.value = target > tieAt ? 1 : 0;
+            tieAt = null;
+        }
+        setThumb(activeThumb.value, target);
+    },
+    onEnd() {
         tieAt = null;
-    }
-    setThumb(activeThumb.value, target);
-}
-
-function onPointerEnd(event: PointerEvent) {
-    if (!isDragging.value) return;
-    if (dragPointer !== -1 && event.pointerId !== dragPointer) return;
-    endDrag();
-}
+        if (values.value.some((v, i) => v !== dragStart[i])) {
+            emit('change', isRange.value ? [values.value[0]!, values.value[1]!] : values.value[0]!);
+        }
+    },
+});
+const isDragging = drag.dragging;
+const endDrag = () => drag.end('abort');
 
 //--------------------------------------------------
 // Ввод значения (editable): поле поверх полосы, на месте цифры
@@ -348,16 +322,6 @@ function onMarkClick(mark: TaoSliderMark) {
     setThumb(activeThumb.value, mark.value, true);
 }
 
-let stopFocusLoss: (() => void) | undefined;
-
-onMounted(() => {
-    stopFocusLoss = listenFocusLoss(endDrag);
-});
-
-onBeforeUnmount(() => {
-    endDrag();
-    stopFocusLoss?.();
-});
 </script>
 
 <template>
@@ -391,11 +355,7 @@ onBeforeUnmount(() => {
             ref="railRef"
             class="tao-slider__rail"
             :class="{ 'tao-slider__rail--dragging': isDragging }"
-            @pointerdown="onPointerDown"
-            @pointermove="onPointerMove"
-            @pointerup="onPointerEnd"
-            @pointercancel="onPointerEnd"
-            @lostpointercapture="endDrag"
+            v-on="drag.events"
             @contextmenu="onEditGesture"
             @dblclick="onEditGesture"
         >

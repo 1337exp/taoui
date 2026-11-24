@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, watch } from 'vue';
 import { hslToRgb, hsvaToRgba, normalizeHex, parseColor, rgbaToHsva, rgbToHsl, toHex, type ColorMode, type Hsva } from '../color';
+import { usePointerDrag } from '../primitives/usePointerDrag';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import TaoInput from './TaoInput.vue';
@@ -172,7 +173,6 @@ function push(final = false) {
 // Квадрат насыщенности и яркости
 
 const areaRef = ref<HTMLElement | null>(null);
-let dragging = -1;
 
 function fromPointer(e: PointerEvent) {
     const el = areaRef.value;
@@ -183,28 +183,20 @@ function fromPointer(e: PointerEvent) {
     push();
 }
 
-function onAreaDown(e: PointerEvent) {
-    if (props.disabled || e.button !== 0) return;
-    dragging = e.pointerId;
-    fromPointer(e);
-    e.preventDefault();
-    areaRef.value?.focus({ preventScroll: true });
-    try {
-        areaRef.value?.setPointerCapture(e.pointerId);
-    } catch {
-        /* untrusted events / capture already gone */
-    }
-}
-
-function onAreaMove(e: PointerEvent) {
-    if (dragging === e.pointerId) fromPointer(e);
-}
-
-function onAreaUp(e: PointerEvent) {
-    if (dragging !== e.pointerId) return;
-    dragging = -1;
-    emit('change', hex.value);
-}
+// The drag over the square: the shared gesture. It also ends when the window loses the focus (Alt-Tab, a screenshot): the square used to stay pressed.
+// Протяжка по квадрату: общий жест. Он кончается и когда окно теряет фокус (Alt-Tab, скриншот): раньше квадрат оставался «нажатым».
+const areaDrag = usePointerDrag({
+    target: () => areaRef.value,
+    onStart(e) {
+        if (props.disabled) return false;
+        fromPointer(e);
+        areaRef.value?.focus({ preventScroll: true });
+    },
+    onMove: fromPointer,
+    onEnd() {
+        emit('change', hex.value);
+    },
+});
 
 function onAreaKey(e: KeyboardEvent) {
     if (props.disabled) return;
@@ -274,10 +266,7 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
             :aria-valuenow="Math.round(state.s * 100)"
             aria-valuemin="0"
             aria-valuemax="100"
-            @pointerdown="onAreaDown"
-            @pointermove="onAreaMove"
-            @pointerup="onAreaUp"
-            @pointercancel="onAreaUp"
+            v-on="areaDrag.events"
             @keydown="onAreaKey"
         >
             <span class="tao-color-picker__cursor" :style="{ left: `${state.s * 100}%`, top: `${(1 - state.v) * 100}%`, backgroundColor: solidCss }"></span>

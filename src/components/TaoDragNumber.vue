@@ -3,6 +3,7 @@ import TaoIcon from './TaoIcon.vue';
 import { useControlAttrs } from '../controlAttrs';
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
+import { usePointerDrag, type PointerDragEnd } from '../primitives/usePointerDrag';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
@@ -220,7 +221,6 @@ function onKeydown(event: KeyboardEvent) {
 // ---------- The drag: press, move sideways, release. Under the threshold it is a click and starts typing.
 // ---------- Протяжка: нажать, повести вбок, отпустить. Меньше порога — это клик, и он начинает ввод.
 interface Drag {
-    id: number;
     startX: number;
     lastX: number;
     startValue: number;
@@ -233,88 +233,86 @@ interface Drag {
 
 let drag: Drag | null = null;
 
-function onPointerdown(event: PointerEvent) {
-    if (props.disabled || event.button !== 0) {
-        return;
-    }
-    // inside the field that is being typed in the press places the caret / в набираемом поле нажатие ставит каретку
-    if (focused.value && event.target === inputEl.value) {
-        return;
-    }
-    // focus and the selection of text are ours, the browser must not take them / фокус и выделение текста наши, браузер их не берёт
-    event.preventDefault();
-    drag = {
-        id: event.pointerId,
-        startX: event.clientX,
-        lastX: event.clientX,
-        startValue: props.modelValue,
-        raw: props.modelValue,
-        last: props.modelValue,
-        moved: false,
-    };
-    try {
-        fieldEl.value?.setPointerCapture(event.pointerId);
-    } catch {
-        // a synthetic or already finished pointer: the drag still works inside the field
-        // искусственный или уже законченный указатель: протяжка работает и так, внутри поля
-    }
-}
-
-function onPointermove(event: PointerEvent) {
-    if (!drag || event.pointerId !== drag.id) {
-        return;
-    }
-    if (!drag.moved) {
-        const travelled = event.clientX - drag.startX;
-        if (Math.abs(travelled) < DRAG_NUMBER_THRESHOLD) {
+// The press, the moves and every way it ends (release, cancel, lost focus or capture, unmount, Escape) are the shared gesture; what each ending
+// means for a number is decided in `finishDrag`.
+// Нажатие, движения и любой конец (отпустили, отмена, потеря фокуса или захвата, размонтирование, Escape) — общий жест; что каждый конец
+// значит для числа, решает `finishDrag`.
+const gesture = usePointerDrag({
+    target: () => fieldEl.value,
+    onStart(event) {
+        if (props.disabled) {
+            return false;
+        }
+        // inside the field that is being typed in the press places the caret / в набираемом поле нажатие ставит каретку
+        if (focused.value && event.target === inputEl.value) {
+            return false;
+        }
+        drag = {
+            startX: event.clientX,
+            lastX: event.clientX,
+            startValue: props.modelValue,
+            raw: props.modelValue,
+            last: props.modelValue,
+            moved: false,
+        };
+    },
+    onMove(event) {
+        if (!drag) {
             return;
         }
-        // the value starts at the threshold, so a fast first move is not lost and there is no jump
-        // значение стартует от порога: быстрое первое движение не пропадает, и рывка нет
-        drag.moved = true;
-        drag.lastX = drag.startX + Math.sign(travelled) * DRAG_NUMBER_THRESHOLD;
-        dragging.value = true;
-        window.addEventListener('keydown', onDragKey, true);
-    }
-    const dx = event.clientX - drag.lastX;
-    drag.lastX = event.clientX;
-    drag.raw = dragNumberAdvance(drag.raw, dx, {
-        speed: dragNumberSpeed(props.step, props.dragSpeed),
-        fine: event.shiftKey,
-        min: props.min,
-        max: props.max,
-    });
-    const next = dragNumberResolve(drag.raw, limits.value, props.step, event.ctrlKey || event.metaKey);
-    if (next !== drag.last) {
-        drag.last = next;
-        emit('update:modelValue', next);
-    }
-}
+        if (!drag.moved) {
+            const travelled = event.clientX - drag.startX;
+            if (Math.abs(travelled) < DRAG_NUMBER_THRESHOLD) {
+                return;
+            }
+            // the value starts at the threshold, so a fast first move is not lost and there is no jump
+            // значение стартует от порога: быстрое первое движение не пропадает, и рывка нет
+            drag.moved = true;
+            drag.lastX = drag.startX + Math.sign(travelled) * DRAG_NUMBER_THRESHOLD;
+            dragging.value = true;
+            window.addEventListener('keydown', onDragKey, true);
+        }
+        const dx = event.clientX - drag.lastX;
+        drag.lastX = event.clientX;
+        drag.raw = dragNumberAdvance(drag.raw, dx, {
+            speed: dragNumberSpeed(props.step, props.dragSpeed),
+            fine: event.shiftKey,
+            min: props.min,
+            max: props.max,
+        });
+        const next = dragNumberResolve(drag.raw, limits.value, props.step, event.ctrlKey || event.metaKey);
+        if (next !== drag.last) {
+            drag.last = next;
+            emit('update:modelValue', next);
+        }
+    },
+    onEnd: (reason) => finishDrag(reason),
+});
 
-function stopDrag() {
+/**
+ * The drag is over. Released: a drag that moved keeps its value and commits it, a press that did not move is a click (type the number).
+ * Lost (the window lost the focus, the capture was taken away, the browser cancelled): a drag that moved is kept and committed, a press that did
+ * not move is not a click. Escape: the value goes back to where it began, nothing is committed. The field going away: nothing, nobody is left.
+ * Протяжка кончилась. Отпустили: сдвинувшаяся протяжка оставляет значение и фиксирует его, нажатие без движения — клик (набираем число).
+ * Потеряна (окно потеряло фокус, захват отобрали, браузер отменил): сдвинувшаяся оставляет и фиксирует, нажатие без движения — не клик.
+ * Escape: значение возвращается, где началось, ничего не фиксируется. Поле исчезает: ничего, слушать некому.
+ */
+function finishDrag(reason: PointerDragEnd) {
     const done = drag;
     drag = null;
     dragging.value = false;
     window.removeEventListener('keydown', onDragKey, true);
-    if (done && fieldEl.value?.hasPointerCapture?.(done.id)) {
-        fieldEl.value.releasePointerCapture(done.id);
+    if (!done || reason === 'unmount') {
+        return;
     }
-    return done;
-}
-
-/**
- * The drag is over: the pointer was released, or it never will be (the window lost the focus, the capture was taken away).
- * A drag that moved keeps its value and commits it; a press that did not move is a click, unless it was lost.
- * Протяжка кончилась: указатель отпустили или его уже не отпустят (окно потеряло фокус, захват отобрали). Сдвинувшаяся
- * протяжка оставляет значение и фиксирует его; нажатие без движения — клик, если его не потеряли.
- */
-function finishDrag(lost = false) {
-    const done = stopDrag();
-    if (!done) {
+    if (reason === 'abort') {
+        if (done.moved && done.last !== done.startValue) {
+            emit('update:modelValue', done.startValue);
+        }
         return;
     }
     if (!done.moved) {
-        if (lost) {
+        if (reason !== 'up') {
             return;
         }
         // a click: type the number / клик: набираем число
@@ -331,13 +329,6 @@ function finishDrag(lost = false) {
     if (done.last !== done.startValue) {
         emit('commit', done.last);
     }
-}
-
-function onPointerup(event: PointerEvent) {
-    if (!drag || event.pointerId !== drag.id) {
-        return;
-    }
-    finishDrag();
 }
 
 // ---------- A held − / +: the first step at once, then, after a pause, the steps keep coming until the button is let go.
@@ -452,10 +443,8 @@ function onHoldKey(event: KeyboardEvent) {
 let stopFocusLoss: (() => void) | undefined;
 
 onMounted(() => {
-    stopFocusLoss = listenFocusLoss(() => {
-        finishDrag(true);
-        stopHold();
-    });
+    // the drag has its own ending in the gesture; the held − / + is stopped here / у протяжки свой конец в жесте; зажатую − / + останавливаем здесь
+    stopFocusLoss = listenFocusLoss(() => stopHold());
 });
 
 // Escape while dragging: the value goes back to where it was, nothing is committed
@@ -466,15 +455,11 @@ function onDragKey(event: KeyboardEvent) {
     }
     event.preventDefault();
     event.stopPropagation();
-    const done = stopDrag();
-    if (done && done.last !== done.startValue) {
-        emit('update:modelValue', done.startValue);
-    }
+    gesture.end('abort');
 }
 
 onBeforeUnmount(() => {
     stopFocusLoss?.();
-    stopDrag();
     // a field that goes away mid-run commits nothing: nobody is left to hear it
     // поле, исчезающее посреди серии, ничего не фиксирует: слушать некому
     if (hold) {
@@ -525,11 +510,7 @@ const atMax = computed(() => props.max !== undefined && props.modelValue >= prop
         <div
             ref="fieldEl"
             class="tao-drag-number__field"
-            @pointerdown="onPointerdown"
-            @pointermove="onPointermove"
-            @pointerup="onPointerup"
-            @pointercancel="finishDrag(true)"
-            @lostpointercapture="finishDrag(true)"
+            v-on="gesture.events"
         >
             <span v-if="label" :id="labelId" class="tao-drag-number__label">{{ label }}</span>
             <input

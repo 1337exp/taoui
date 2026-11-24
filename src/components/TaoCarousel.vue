@@ -2,6 +2,7 @@
 import TaoIcon from './TaoIcon.vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue';
 import { glideDuration, glideTarget as snapTarget } from '../carousel';
+import { usePointerDrag } from '../primitives/usePointerDrag';
 import { clamp } from '../primitives/number';
 import { useLocaleText } from '../locale';
 
@@ -86,7 +87,39 @@ const index = ref(props.modelValue);
 const count = ref(0);
 /** How many times the slides are drawn: 1, or an odd number in a centered loop (the middle set is the real one). / Сколько раз нарисованы слайды. */
 const copies = ref(1);
-const dragging = ref(false);
+// The mouse drag: the press, the moves and every way it ends (release, cancel, lost focus or capture, unmount) are the shared gesture.
+// Перетаскивание мышью: нажатие, движения и любой конец (отпустили, отмена, потеря фокуса или захвата, размонтирование) — общий жест.
+const drag = usePointerDrag({
+    target: () => track.value,
+    // a press must not stop the page's own default: a link or an image inside the slide still works
+    // нажатие не должно гасить обычное поведение страницы: ссылка или картинка в слайде работают
+    preventDefault: false,
+    onStart(event) {
+        if (event.pointerType !== 'mouse' || !track.value) {
+            return false;
+        }
+        // grabbing a moving strip stops it where it is / схватить летящую полосу — остановить её на месте
+        cancelGlide();
+        dragStartX = event.clientX;
+        dragStartScroll = track.value.scrollLeft;
+        dragMoved = 0;
+        samples = [];
+        recordSample(event.clientX);
+    },
+    onMove(event) {
+        if (!track.value) {
+            return;
+        }
+        const dx = event.clientX - dragStartX;
+        dragMoved = Math.max(dragMoved, Math.abs(dx));
+        recordSample(event.clientX);
+        track.value.scrollLeft = dragStartScroll - dx;
+    },
+    // released: the click that follows the drag is still guarded; any other ending clears the guard
+    // отпустили: клик, идущий за протяжкой, ещё под охраной; любой другой конец снимает охрану
+    onEnd: (reason) => finishDrag(reason === 'up'),
+});
+const dragging = drag.dragging;
 /** Momentum after a mouse drag: scroll-snap stays off until the glide lands on a slide. / Инерция после перетаскивания мышью. */
 const gliding = ref(false);
 const hoverPaused = ref(false);
@@ -102,7 +135,6 @@ const fillEpoch = ref(0);
 let dragStartX = 0;
 let dragStartScroll = 0;
 let dragMoved = 0;
-let dragPointer = -1;
 let scrollFrame = 0;
 let glideFrame = 0;
 let settleTimer = 0;
@@ -532,32 +564,8 @@ function glideTo(target: number, velocity: number) {
     glideFrame = requestAnimationFrame(frame);
 }
 
-function releaseDragCapture() {
-    const el = track.value;
-    const id = dragPointer;
-    if (!el || id === -1) {
-        return;
-    }
-
-    if (typeof el.hasPointerCapture === 'function' && !el.hasPointerCapture(id)) {
-        return;
-    }
-
-    try {
-        el.releasePointerCapture(id);
-    } catch {
-        /* already released by the browser */
-    }
-}
-
-function endDrag(keepClickGuard = false) {
-    if (!dragging.value) {
-        return;
-    }
-
-    dragging.value = false;
-    releaseDragCapture();
-    dragPointer = -1;
+/** After the drag: the strip glides on from the speed it was let go at. / После протяжки: полоса катится дальше с той скоростью, с какой её отпустили. */
+function finishDrag(keepClickGuard: boolean) {
     if (!keepClickGuard) {
         dragMoved = 0;
     }
@@ -567,66 +575,16 @@ function endDrag(keepClickGuard = false) {
     samples = [];
     if (el) {
         glideTo(glideTarget(el.scrollLeft, velocity), velocity);
-        return;
     }
-}
-
-function onPointerDown(event: PointerEvent) {
-    if (event.pointerType !== 'mouse' || event.button !== 0 || !track.value) {
-        return;
-    }
-
-    // grabbing a moving strip stops it where it is / схватить летящую полосу — остановить её на месте
-    cancelGlide();
-    dragPointer = event.pointerId;
-    dragStartX = event.clientX;
-    dragStartScroll = track.value.scrollLeft;
-    dragMoved = 0;
-    samples = [];
-    recordSample(event.clientX);
-    dragging.value = true;
-    try {
-        track.value.setPointerCapture(event.pointerId);
-    } catch {
-        /* untrusted events / capture already gone */
-    }
-}
-
-function onPointerMove(event: PointerEvent) {
-    if (!dragging.value || event.pointerId !== dragPointer || !track.value) {
-        return;
-    }
-
-    const dx = event.clientX - dragStartX;
-    dragMoved = Math.max(dragMoved, Math.abs(dx));
-    recordSample(event.clientX);
-    track.value.scrollLeft = dragStartScroll - dx;
-}
-
-function onPointerEnd(event: PointerEvent) {
-    if (!dragging.value) {
-        return;
-    }
-    if (dragPointer !== -1 && event.pointerId !== dragPointer) {
-        return;
-    }
-
-    endDrag(true);
-}
-
-function onLostPointerCapture() {
-    endDrag();
 }
 
 function onWindowBlur() {
-    endDrag();
     hoverPaused.value = false;
 }
 
 function onVisibilityChange() {
     pageHidden.value = document.hidden;
     if (document.hidden) {
-        endDrag();
         hoverPaused.value = false;
     }
 }
@@ -718,7 +676,6 @@ watch(
 
 onBeforeUnmount(() => {
     resizeObserver?.disconnect();
-    endDrag();
     cancelGlide();
     window.clearTimeout(settleTimer);
     cancelAnimationFrame(scrollFrame);
@@ -769,11 +726,7 @@ onBeforeUnmount(() => {
                 @wheel.passive="onUserScrollInput"
                 @touchstart.passive="onUserScrollInput"
                 @keydown="onKeydown"
-                @pointerdown="onPointerDown"
-                @pointermove="onPointerMove"
-                @pointerup="onPointerEnd"
-                @pointercancel="onPointerEnd"
-                @lostpointercapture="onLostPointerCapture"
+                v-on="drag.events"
                 @click.capture="onClickCapture"
             >
                 <template v-for="copy in copies" :key="copy">

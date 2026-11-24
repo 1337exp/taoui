@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { listenFocusLoss } from '../focusLoss';
+import { usePointerDrag } from '../primitives/usePointerDrag';
 import { clamp } from '../primitives/number';
 import type { TaoSplitDirection, TaoSplitUnit } from '../split';
 
@@ -37,15 +37,12 @@ const rootRef = ref<HTMLElement | null>(null);
 const handleRef = ref<HTMLElement | null>(null);
 const startPx = ref(0);
 const available = ref(0);
-const isDragging = ref(false);
-
 const size = ref(props.modelValue);
 
 const isRow = computed(() => props.direction === 'row');
 const stepValue = computed(() => props.step ?? (props.unit === '%' ? 1 : 8));
 const ariaOrientation = computed(() => (isRow.value ? 'vertical' : 'horizontal'));
 
-let dragPointer = -1;
 let dragStartPx = 0;
 let dragStartValue = 0;
 let dragStartCoord = 0;
@@ -53,7 +50,6 @@ let savedBodyCursor = '';
 let savedHtmlCursor = '';
 let savedUserSelect = '';
 let resizeObserver: ResizeObserver | null = null;
-let stopFocusLoss: (() => void) | undefined;
 
 function axisSize(el: HTMLElement) {
     const rect = el.getBoundingClientRect();
@@ -151,36 +147,6 @@ function restoreDragCursor() {
     document.body.style.userSelect = savedUserSelect;
 }
 
-function releaseDragCapture() {
-    const el = handleRef.value;
-    const id = dragPointer;
-    if (!el || id === -1) {
-        return;
-    }
-    if (typeof el.hasPointerCapture === 'function' && !el.hasPointerCapture(id)) {
-        return;
-    }
-    try {
-        el.releasePointerCapture(id);
-    } catch {
-        /* already released by the browser */
-    }
-}
-
-function endDrag() {
-    if (!isDragging.value) {
-        return;
-    }
-    isDragging.value = false;
-    releaseDragCapture();
-    dragPointer = -1;
-    restoreDragCursor();
-    applyLayout(true);
-    if (!valuesEqual(size.value, dragStartValue)) {
-        emit('change', size.value);
-    }
-}
-
 function setStartFromDelta(delta: number) {
     const avail = measureAvailable();
     available.value = avail;
@@ -189,50 +155,36 @@ function setStartFromDelta(delta: number) {
     commit(fromPx(nextPx, avail));
 }
 
-function onPointerDown(event: PointerEvent) {
-    if (!props.resizable || event.button !== 0 || !handleRef.value) {
-        return;
-    }
-
-    dragPointer = event.pointerId;
-    isDragging.value = true;
-    dragStartPx = startPx.value;
-    dragStartValue = size.value;
-    dragStartCoord = isRow.value ? event.clientX : event.clientY;
-    applyDragCursor();
-    event.preventDefault();
-    try {
-        handleRef.value.setPointerCapture(event.pointerId);
-    } catch {
-        /* untrusted events / capture already gone */
-    }
-}
-
-function onPointerMove(event: PointerEvent) {
-    if (!isDragging.value || event.pointerId !== dragPointer) {
-        return;
-    }
-    const coord = isRow.value ? event.clientX : event.clientY;
-    let delta = coord - dragStartCoord;
-    if (isRow.value && isRtl()) {
-        delta = -delta;
-    }
-    setStartFromDelta(delta);
-}
-
-function onPointerEnd(event: PointerEvent) {
-    if (!isDragging.value) {
-        return;
-    }
-    if (dragPointer !== -1 && event.pointerId !== dragPointer) {
-        return;
-    }
-    endDrag();
-}
-
-function onLostPointerCapture() {
-    endDrag();
-}
+// The drag: the press, the moves and every way it ends (release, cancel, lost focus or capture, unmount) are the shared gesture.
+// Протяжка: нажатие, движения и любой её конец (отпустили, отмена, потеря фокуса или захвата, размонтирование) — общий жест.
+const drag = usePointerDrag({
+    target: () => handleRef.value,
+    onStart(event) {
+        if (!props.resizable) {
+            return false;
+        }
+        dragStartPx = startPx.value;
+        dragStartValue = size.value;
+        dragStartCoord = isRow.value ? event.clientX : event.clientY;
+        applyDragCursor();
+    },
+    onMove(event) {
+        const coord = isRow.value ? event.clientX : event.clientY;
+        let delta = coord - dragStartCoord;
+        if (isRow.value && isRtl()) {
+            delta = -delta;
+        }
+        setStartFromDelta(delta);
+    },
+    onEnd() {
+        restoreDragCursor();
+        applyLayout(true);
+        if (!valuesEqual(size.value, dragStartValue)) {
+            emit('change', size.value);
+        }
+    },
+});
+const isDragging = drag.dragging;
 
 function ariaMax() {
     const avail = available.value;
@@ -339,14 +291,11 @@ onMounted(() => {
     if (rootRef.value) {
         resizeObserver.observe(rootRef.value);
     }
-    stopFocusLoss = listenFocusLoss(endDrag);
 });
 
 onBeforeUnmount(() => {
-    endDrag();
     resizeObserver?.disconnect();
     resizeObserver = null;
-    stopFocusLoss?.();
 });
 </script>
 
@@ -377,11 +326,7 @@ onBeforeUnmount(() => {
             :aria-valuetext="ariaValueText"
             :aria-disabled="resizable ? undefined : true"
             :tabindex="resizable ? 0 : -1"
-            @pointerdown="onPointerDown"
-            @pointermove="onPointerMove"
-            @pointerup="onPointerEnd"
-            @pointercancel="onPointerEnd"
-            @lostpointercapture="onLostPointerCapture"
+            v-on="drag.events"
             @keydown="onKeydown"
             @dragstart.prevent
         />
