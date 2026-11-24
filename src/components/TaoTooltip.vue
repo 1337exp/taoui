@@ -108,7 +108,7 @@ onBeforeUnmount(() => {
                 <div
                     v-if="showTooltip"
                     ref="tooltipRef"
-                    class="tao-tooltip"
+                    class="tao-tip tao-tooltip"
                     :class="[`tao-tooltip--${side}`, { 'tao-tooltip--regular': !bold }]"
                     role="tooltip"
                     :style="panelStyle"
@@ -139,16 +139,8 @@ onBeforeUnmount(() => {
        блок симметричен, но строка текста стоит чуть выше середины своего ящика (место под ней для хвостов), поэтому сверху текст
        получает на 0.06em больше, а снизу меньше: заглавные тогда выглядят по центру */
     padding: calc(var(--tao-space-2) + 0.06em) var(--tao-space-3) calc(var(--tao-space-2) - 0.06em);
-    /* the tip is the opposite of the theme (dark on light, light on dark): it floats over the interface and must not melt into the panels it hangs over; it is not a control
-       подсказка обратна теме (тёмная на светлой, светлая на тёмной): она парит над интерфейсом и не должна сливаться с панелями под ней; она не контрол */
-    background: var(--tao-tooltip-bg, var(--tao-color-text-strong));
-    color: var(--tao-tooltip-text, var(--tao-color-bg));
-    font-weight: var(--tao-tooltip-weight, 600);
-    font-size: var(--tao-font-size-xs);
-    font-family: var(--tao-font-family);
-    line-height: 1.3;
-    border-radius: var(--tao-radius-control);
-    box-shadow: var(--tao-shadow-lg);
+    /* the colours, the weight, the radius and the shadow come from `.tao-tip` (contexts/tip.css): a hint is the opposite of the theme, said in one place
+       цвета, вес, радиус и тень — от `.tao-tip` (contexts/tip.css): подсказка обратна теме, это сказано в одном месте */
     pointer-events: none;
 }
 
@@ -169,7 +161,7 @@ onBeforeUnmount(() => {
     position: absolute;
     width: 8px;
     height: 8px;
-    background: var(--tao-tooltip-bg, var(--tao-color-text-strong));
+    background: var(--_tip-bg);
 }
 
 .tao-tooltip--top .tao-tooltip__arrow {

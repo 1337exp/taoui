@@ -1,0 +1,38 @@
+/**
+ * Tao UI — The hint surface / Поверхность подсказки
+ *
+ * A small hint that floats over the interface (TaoTooltip, the "Copied" tip of TaoCopy, the tip over a cell of TaoHeatmap) is the
+ * OPPOSITE of the theme: dark on a light page, light on a dark one. It hangs over panels of the theme's own colour and must not
+ * melt into them, and it is not a control. This is the one place that says so: every hint wears `.tao-tip` and draws only its
+ * layout; never its own background (`surface-raised` is the colour of the panels it hangs over: the mistake this file ends).
+ * Colour and weight are the hooks `--tao-tooltip-bg`, `--tao-tooltip-text` and `--tao-tooltip-weight`, for all hints at once.
+ *
+ * Маленькая подсказка, парящая над интерфейсом (TaoTooltip, «Скопировано» у TaoCopy, подсказка над клеткой TaoHeatmap),
+ * ОБРАТНА теме: тёмная на светлой странице, светлая на тёмной. Она висит над панелями цвета самой темы и не должна в них
+ * сливаться, и она не контрол. Здесь это сказано один раз: каждая подсказка носит `.tao-tip` и рисует только раскладку; своего
+ * фона не задаёт никогда (`surface-raised` — цвет панелей под ней: ошибка, которую этот файл закрывает). Цвет и вес — хуки
+ * `--tao-tooltip-bg`, `--tao-tooltip-text` и `--tao-tooltip-weight`, сразу для всех подсказок.
+ *
+ * The content of a hint inherits the colour (`currentColor`): the theme's text tokens are made for the normal background and are
+ * unreadable on this one. A quieter line is `color-mix(in srgb, currentColor 70%, transparent)`.
+ * Содержимое подсказки наследует цвет (`currentColor`): текстовые токены темы сделаны для обычного фона и на этом нечитаемы.
+ * Тише — `color-mix(in srgb, currentColor 70%, transparent)`.
+ */
+.tao-tip {
+    /* private, so it is worked out where the hint is (an island of the other theme gets its own); the arrow of a hint reads it */
+    /* приватная: считается там, где подсказка (остров другой темы получит свою); стрелка подсказки читает её */
+    --_tip-bg: var(--tao-tooltip-bg, var(--tao-color-text-strong));
+    background: var(--_tip-bg);
+    color: var(--tao-tooltip-text, var(--tao-color-bg));
+    font-weight: var(--tao-tooltip-weight, 600);
+    font-size: var(--tao-font-size-xs);
+    font-family: var(--tao-font-family);
+    line-height: 1.3;
+    border-radius: var(--tao-radius-control);
+    box-shadow: var(--tao-shadow-lg);
+}
+
+/* a hint with several lines or a bold value of its own (a map cell): the regular weight / подсказка из нескольких строк или со своим жирным значением (клетка карты): обычный вес */
+.tao-tip.tao-tip--regular {
+    font-weight: 400;
+}

@@ -117,7 +117,7 @@ Showcase section: `#copy`
 | `text` | `string` | — | The string for the clipboard. Required |
 | `successText` | `string` | 'Copied!' | The tooltip text after the click |
 | `copyLabel` | `string` | 'Copy' | aria-label of the button |
-| `tip` | `boolean` | true | Show a tooltip above the button after copying |
+| `tip` | `boolean` | true | Show a tooltip above the button after copying (the same hint look as TaoTooltip: the opposite of the theme) |
 
 ## TaoTour
 
@@ -757,7 +757,7 @@ Showcase section: `#charts`
 | `gap` | `number` | 3 | The gap between cells, px |
 | `format` | `(value) => string` | by the locale | How a number is written in the tip, the cells and the legend |
 
-**Slots, events, notes.** tip { row, col, value, text } — the tip over a cell. role="grid": one cell is in the tab order, the arrows, Home / End (Ctrl for the corners) and PageUp / PageDown move it; a screen reader reads the row, the column and the number. The map fits the width of its container.
+**Slots, events, notes.** tip { row, col, value, text } — the tip over a cell. It is a hint like a tooltip, the opposite of the theme: your content takes its colour (`currentColor`), a text token of the theme would be unreadable on it. role="grid": one cell is in the tab order, the arrows, Home / End (Ctrl for the corners) and PageUp / PageDown move it; a screen reader reads the row, the column and the number. The map fits the width of its container.
 
 ## TaoTable
 
@@ -1112,7 +1112,7 @@ Showcase section: `#tooltip`
 | `bold` | `boolean` | true | The text in semi-bold (600): a hint is small and short. `false` is the regular weight; the token `--tao-tooltip-weight` sets the weight |
 | `animated` | `boolean \| number` | off | The fade-in: a number is a share of the base duration (`0` off, `1` the base time, `2` twice as long, `0.5` half), `true` is `1`. Without the prop the token `--tao-tooltip-motion` decides |
 
-**Slots, events, notes.** default — the trigger (a button, an icon…). Colours: `--tao-tooltip-bg` and `--tao-tooltip-text`, by default the opposite of the theme.
+**Slots, events, notes.** default — the trigger (a button, an icon…). Colours: `--tao-tooltip-bg` and `--tao-tooltip-text`, by default the opposite of the theme, for all hints at once (TaoCopy, TaoHeatmap, taoChartTheme). A hint of your own wears the class `tao-tip` and sets no background: `surface-raised` is the colour of the panels it hangs over.
 
 ## TaoKbd
 

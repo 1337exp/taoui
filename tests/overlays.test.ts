@@ -291,7 +291,9 @@ describe('TaoTooltip: the shortcut and the colours', () => {
         const plain = mountOverlay(TaoTooltip, { props: { content: 'Hint', bold: false }, slots: { default: () => h('button', 'x') } });
         await plain.trigger('mouseenter');
         expect($('[role="tooltip"]')!.classList.contains('tao-tooltip--regular')).toBe(true);
-        const css = readFileSync('src/components/TaoTooltip.vue', 'utf8');
+        // the weight, like the colours, is said once, in the hint surface that the tooltip wears (contexts/tip.css)
+        expect($('[role="tooltip"]')!.classList.contains('tao-tip')).toBe(true);
+        const css = readFileSync('src/styles/contexts/tip.css', 'utf8');
         expect(css).toContain('font-weight: var(--tao-tooltip-weight, 600)');
     });
 
@@ -301,11 +303,12 @@ describe('TaoTooltip: the shortcut and the colours', () => {
     });
 
     it('takes its colours from its own tokens, by default the opposite of the theme', async () => {
+        // the colours are in the hint surface (contexts/tip.css, guarded by tests/tip.test.ts); the arrow reads the same private colour as the body
+        const tip = readFileSync('src/styles/contexts/tip.css', 'utf8');
+        expect(tip).toContain('--_tip-bg: var(--tao-tooltip-bg, var(--tao-color-text-strong))');
+        expect(tip).toContain('color: var(--tao-tooltip-text, var(--tao-color-bg))');
         const css = readFileSync('src/components/TaoTooltip.vue', 'utf8');
-        expect(css).toContain('background: var(--tao-tooltip-bg, var(--tao-color-text-strong))');
-        expect(css).toContain('color: var(--tao-tooltip-text, var(--tao-color-bg))');
-        // the arrow is the same colour as the body
-        expect(css.match(/var\(--tao-tooltip-bg, var\(--tao-color-text-strong\)\)/g)!.length).toBeGreaterThanOrEqual(2);
+        expect(css).toMatch(/\.tao-tooltip__arrow \{[^}]*background: var\(--_tip-bg\)/);
     });
 });
 

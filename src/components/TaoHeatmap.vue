@@ -254,7 +254,7 @@ const columns = computed(() => `auto repeat(${Math.max(1, props.cols.length)}, m
         <div
             v-if="tip"
             ref="tipRef"
-            class="tao-heatmap__tip"
+            class="tao-tip tao-tip--regular tao-heatmap__tip"
             :class="{ 'tao-heatmap__tip--shown': tipPlace.shown }"
             :style="{ left: `${tipPlace.left}px`, top: `${tipPlace.top}px` }"
             aria-hidden="true"
@@ -389,10 +389,8 @@ const columns = computed(() => `auto repeat(${Math.max(1, props.cols.length)}, m
     display: grid;
     gap: 2px;
     padding: var(--tao-space-2) var(--tao-space-3);
-    background: var(--tao-color-surface-raised);
-    color: var(--tao-color-text-strong);
-    border-radius: var(--tao-radius-control);
-    box-shadow: var(--tao-shadow-lg);
+    /* the colours, the radius and the shadow come from `.tao-tip` (contexts/tip.css): a hint is the opposite of the theme, so it does not melt into the map and the card under it
+       цвета, радиус и тень — от `.tao-tip` (contexts/tip.css): подсказка обратна теме, поэтому не сливается ни с картой, ни с карточкой под ней */
     white-space: nowrap;
     pointer-events: none;
     visibility: hidden;
@@ -402,8 +400,10 @@ const columns = computed(() => `auto repeat(${Math.max(1, props.cols.length)}, m
     visibility: visible;
 }
 
+/* a quieter line on the inverted hint: the colour of the hint thinned out, not a text token made for the normal background */
+/* строка тише на обратной подсказке: цвет самой подсказки, разбавленный, а не текстовый токен, сделанный для обычного фона */
 .tao-heatmap__tip-where {
-    color: var(--tao-color-text-muted);
+    color: color-mix(in srgb, currentColor 70%, transparent);
 }
 
 .tao-heatmap__tip-value {

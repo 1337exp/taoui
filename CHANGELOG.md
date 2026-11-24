@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.55.0
+
+One look changes by default: the tip of `TaoCopy`, the tip over a cell of `TaoHeatmap` and the tooltip colours of `taoChartTheme()` are the opposite of the theme now, like `TaoTooltip`. To keep the old look for all of them: `:root { --tao-tooltip-bg: var(--tao-color-surface-raised); --tao-tooltip-text: var(--tao-color-text-strong) }`.
+
+- **Every hint of the kit is the opposite of the theme, and that is said in one place.** `TaoTooltip` had been made the opposite of the theme (dark on a light page, light on a dark one, so it does not melt into the panels it hangs over), but the other hints of the kit were drawn on `surface-raised`, the colour of those very panels, and nobody had changed them: the «Copied» tip of `TaoCopy` and the tip over a cell of `TaoHeatmap`. Now the look is one class, `.tao-tip` (`src/styles/contexts/tip.css`): the background, the text colour, the weight, the radius and the shadow, with the hooks `--tao-tooltip-bg`, `--tao-tooltip-text` and `--tao-tooltip-weight` for all hints at once. `TaoTooltip`, `TaoCopy` and `TaoHeatmap` wear it and draw only their layout; an arrow reads the private `--_tip-bg`, so a body and its arrow cannot differ. The tip of `TaoCopy` is semi-bold now, like a tooltip; the tip of `TaoHeatmap` keeps the regular weight (it has two lines and a bold value), its quieter line is the colour of the hint thinned out (`color-mix(… currentColor 70% …)`), not a text token, which is unreadable on the inverted background. **If you fill the `tip` slot of `TaoHeatmap` with your own content, let it take the colour of the hint** (no `--tao-color-text*` tokens in it).
+- **`taoChartTheme().tooltip` / `.tooltipText` are the opposite of the theme too.** They were `surface-raised` and `text-strong`, so the tooltip of a chart library (Chart.js, ECharts) did not match the hints of the page. They read the same hooks now (`--tao-tooltip-bg`, `--tao-tooltip-text`).
+- **A hint of your own wears `tao-tip`.** The showcase page of `TaoTooltip` has a block «A hint of your own», the rule is in `CONTRIBUTING.md` (component rules, 7) and in the repository skill. The «Contrast & keyboard» bench rates the pair «text of a hint» (4.5:1). `tests/tip.test.ts` is the guard: it fails for a component that takes the layer of the hints (`--tao-z-tooltip`) or names its root `…__tip` without the class, that sets a colour, a shadow or a radius on that root, or that repeats the hook outside `tip.css`.
+
 ## 5.54.0
 
 Nothing changes for existing code: without `format` a `TaoCounter` is drawn as before.

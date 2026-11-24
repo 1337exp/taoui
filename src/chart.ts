@@ -258,8 +258,10 @@ export function taoChartTheme(el?: Element | null): TaoChartTheme {
         grid: color('--tao-color-border'),
         axis: color('--tao-color-border-strong'),
         background: color('--tao-color-surface-raised'),
-        tooltip: color('--tao-color-surface-raised'),
-        tooltipText: color('--tao-color-text-strong'),
+        // a tooltip is the opposite of the theme, like every hint of the kit (contexts/tip.css), and follows the same hooks
+        // подсказка обратна теме, как любая подсказка набора (contexts/tip.css), и подчиняется тем же хукам
+        tooltip: color('--tao-tooltip-bg, var(--tao-color-text-strong)'),
+        tooltipText: color('--tao-tooltip-text, var(--tao-color-bg)'),
         danger: color('--tao-color-danger'),
         success: color('--tao-color-success'),
         warning: color('--tao-color-warning'),

@@ -69,6 +69,11 @@ npm run smoke                      # the packed tarball in a fresh Vite app
   dialog): `listenFocusLoss` (`src/focusLoss.ts`) plus `lostpointercapture`, listeners removed on unmount, and a test that
   dispatches `blur` mid-gesture. A drag keeps its value and commits once; a press that never moved is not a click. It
   came back in `TaoCarousel` and `TaoDragNumber`: check it for every new pointer component.
+- **A hint that floats over the interface is the opposite of the theme and wears `.tao-tip`** (`src/styles/contexts/tip.css`):
+  a tooltip, the tip of `TaoCopy`, the tip over a cell of `TaoHeatmap`, `taoChartTheme().tooltip`. It paints no background of its
+  own (`surface-raised` is the colour of the panels it hangs over: the hint melts into them); its arrow reads `var(--_tip-bg)`; its
+  text is `currentColor`, a quieter line is `color-mix(in srgb, currentColor 70%, transparent)`. A new hint copied from the look of
+  `TaoCopy` or from a card gets it wrong; `tests/tip.test.ts` fails for one that takes `--tao-z-tooltip` without the class.
 - **Tokens:** a role in `themes/dark.css` must exist in `light.css`; contexts (`contexts/*.css`) are classes that set
   private `--_tao-*` variables. A custom property is computed where it is declared: a context that combines two axes
   (size × density) must recompute on every class of both axes.

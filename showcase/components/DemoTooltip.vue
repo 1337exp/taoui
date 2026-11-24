@@ -92,5 +92,37 @@ defineOptions({ name: 'DemoTooltip' })
   &lt;TaoButton&gt;{{ tr('Hover me', 'Наведи на меня') }}&lt;/TaoButton&gt;
 &lt;/TaoTooltip&gt;</code></pre>
           </div>
+
+          <h3>{{ tr('A hint of your own', 'Своя подсказка') }}</h3>
+          <Tr>
+            <template #en>
+              <p>
+                Every small hint that floats over the interface, the tip of <code>TaoCopy</code>, the tip over a cell of
+                <code>TaoHeatmap</code>, wears the class <code>tao-tip</code>: the same inverted look, the same hooks. If you draw a
+                hint yourself, give it the class and draw only its layout. <strong>Do not paint a background of your own</strong>:
+                <code>surface-raised</code> is the colour of the panels it hangs over, and the hint melts into them. The content takes
+                the colour of the hint; a quieter line is <code>color-mix(in srgb, currentColor 70%, transparent)</code>, not a text
+                token, which is made for the normal background.
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                Любая маленькая подсказка, парящая над интерфейсом, подсказка <code>TaoCopy</code>, подсказка над клеткой
+                <code>TaoHeatmap</code>, носит класс <code>tao-tip</code>: тот же обратный вид, те же хуки. Если рисуете подсказку
+                сами, дайте ей класс и рисуйте только раскладку. <strong>Своего фона не задавайте</strong>: <code>surface-raised</code>
+                это цвет панелей под ней, и подсказка в них сливается. Содержимое берёт цвет подсказки; строка потише —
+                <code>color-mix(in srgb, currentColor 70%, transparent)</code>, а не текстовый токен, он сделан для обычного фона.
+              </p>
+            </template>
+          </Tr>
+          <div class="code-block">
+            <pre><code>&lt;div class="tao-tip my-hint" role="status"&gt;
+  {{ tr('Saved', 'Сохранено') }}
+  &lt;small&gt;{{ tr('a moment ago', 'только что') }}&lt;/small&gt;
+&lt;/div&gt;
+
+.my-hint { position: fixed; padding: var(--tao-space-2) var(--tao-space-3); }
+.my-hint small { color: color-mix(in srgb, currentColor 70%, transparent); }</code></pre>
+          </div>
   </ShowcaseSection>
 </template>

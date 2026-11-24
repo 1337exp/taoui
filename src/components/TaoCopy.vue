@@ -92,7 +92,7 @@ const doneText = computed(() => props.successText ?? appLocale.value.copy.succes
             <div
                 v-if="copied && tip && doneText"
                 ref="tipRef"
-                class="tao-copy__tip"
+                class="tao-tip tao-copy__tip"
                 :class="{ 'tao-copy__tip--below': side === 'bottom' }"
                 role="status"
                 :style="tipStyleWithArrow"
@@ -109,14 +109,9 @@ const doneText = computed(() => props.successText ?? appLocale.value.copy.succes
     position: fixed;
     padding: var(--tao-space-2) var(--tao-space-3);
     overflow: visible;
-    background: var(--tao-color-surface-raised);
-    color: var(--tao-color-text-strong);
-    font-size: var(--tao-font-size-xs);
-    font-family: var(--tao-font-family);
-    line-height: 1.3;
+    /* the colours, the weight, the radius and the shadow come from `.tao-tip` (contexts/tip.css): a hint is the opposite of the theme
+       цвета, вес, радиус и тень — от `.tao-tip` (contexts/tip.css): подсказка обратна теме */
     white-space: nowrap;
-    border-radius: var(--tao-radius-control);
-    box-shadow: var(--tao-shadow-lg);
     pointer-events: none;
 }
 
@@ -130,7 +125,7 @@ const doneText = computed(() => props.successText ?? appLocale.value.copy.succes
     height: 8px;
     margin-top: -4px;
     margin-left: -4px;
-    background: var(--tao-color-surface-raised);
+    background: var(--_tip-bg);
     transform: rotate(45deg);
 }
 

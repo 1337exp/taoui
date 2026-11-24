@@ -35,6 +35,8 @@ export const PAIRS = [
   { en: 'accent fill on the page', ru: 'заливка акцента на странице', fg: R('accent'), bg: R('bg'), need: FILL_RATIO },
   { en: 'danger as text', ru: 'danger как текст', fg: R('danger-text'), bg: R('bg'), need: TEXT_RATIO },
   { en: 'label on success', ru: 'подпись на success', fg: R('on-success'), bg: R('success'), need: TEXT_RATIO },
+  // a hint is the opposite of the theme (contexts/tip.css): its text is the page colour on the strong text colour
+  { en: 'text of a hint (tooltip)', ru: 'текст подсказки (тултип)', fg: R('bg'), bg: R('text-strong'), need: TEXT_RATIO },
 ]
 
 /** The palette lab: the accent and the four statuses, each as a fill seen on the page and with its label. */

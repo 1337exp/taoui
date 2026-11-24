@@ -12,6 +12,7 @@ import surface from '../../src/styles/contexts/surface.css?raw'
 import frames from '../../src/styles/contexts/frames.css?raw'
 import atmosphere from '../../src/styles/contexts/atmosphere.css?raw'
 import stretch from '../../src/styles/contexts/stretch.css?raw'
+import tip from '../../src/styles/contexts/tip.css?raw'
 import typography from '../../src/styles/typography.css?raw'
 import base from '../../src/styles/base.css?raw'
 
@@ -51,9 +52,10 @@ export const LAYERS = [
       { name: 'contexts/frames.css', source: frames },
       { name: 'contexts/atmosphere.css', source: atmosphere },
       { name: 'contexts/stretch.css', source: stretch },
+      { name: 'contexts/tip.css', source: tip },
     ],
-    en: { role: 'what a control reads to learn its size, density, tone, material and how loud its frames are', hint: 'rarely', note: 'Classes that set private --_tao-* variables. A context that combines two axes recomputes on every class of both.' },
-    ru: { role: 'что читает контрол, чтобы узнать свой размер, плотность, тон, материал и насколько громки его рамки', hint: 'редко', note: 'Классы, которые задают приватные переменные --_tao-*. Контекст на двух осях пересчитывается на каждом классе обеих.' },
+    en: { role: 'what a control reads to learn its size, density, tone, material and how loud its frames are; the one look of every hint (.tao-tip, the opposite of the theme)', hint: 'rarely', note: 'Classes that set private --_tao-* variables. A context that combines two axes recomputes on every class of both.' },
+    ru: { role: 'что читает контрол, чтобы узнать свой размер, плотность, тон, материал и насколько громки его рамки; единый вид всех подсказок (.tao-tip, обратный теме)', hint: 'редко', note: 'Классы, которые задают приватные переменные --_tao-*. Контекст на двух осях пересчитывается на каждом классе обеих.' },
   },
   {
     id: 'base',

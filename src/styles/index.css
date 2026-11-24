@@ -16,5 +16,6 @@
 @import "./contexts/frames.css";
 @import "./contexts/atmosphere.css";
 @import "./contexts/stretch.css";
+@import "./contexts/tip.css";
 @import "./typography.css";
 @import "./base.css";
