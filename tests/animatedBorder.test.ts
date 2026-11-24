@@ -37,14 +37,15 @@ describe('TaoAnimatedBorder', () => {
         expect(s).toContain('--tao-radius-br: 12px');
         expect(style({ radius: 16 })).not.toContain('--tao-radius-tl');
         // the glow and the ring read the same outer radius: each corner plus the width
-        expect(borderSource).toMatch(/--_tao-outer-radius:\s*calc\(var\(--tao-radius-tl\) \+ var\(--tao-animated-border-width\) \* sign\(var\(--tao-radius-tl\)\)\)\s*calc\(var\(--tao-radius-tr\)/);
+        expect(borderSource).toMatch(/--_tao-outer-radius:\s*calc\(var\(--tao-radius-tl\) \+ min\(var\(--tao-animated-border-width\), var\(--tao-radius-tl\) \* 1000\)\)\s*calc\(var\(--tao-radius-tr\)/);
         expect(borderSource.match(/border-radius: var\(--_tao-outer-radius\)/g)).toHaveLength(2);
     });
 
-    it('a sharp corner stays sharp outside: the width is added only to a rounded one', () => {
+    it('a sharp corner stays sharp outside: the width is added only to a rounded one, with min() (sign() is newer than the supported browsers)', () => {
         for (const corner of ['tl', 'tr', 'br', 'bl']) {
-            expect(borderSource).toContain(`calc(var(--tao-radius-${corner}) + var(--tao-animated-border-width) * sign(var(--tao-radius-${corner})))`);
+            expect(borderSource).toContain(`calc(var(--tao-radius-${corner}) + min(var(--tao-animated-border-width), var(--tao-radius-${corner}) * 1000))`);
         }
+        expect(borderSource).not.toMatch(/\*\s*sign\(/);
     });
 
     it('square: the squared corners are 0px, the radius of the rest is left alone, the outline is built from the corners', () => {

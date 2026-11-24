@@ -18,7 +18,7 @@ that fits instead of composing the shell from scratch.
 
 ```js
 import { createApp } from 'vue'
-import TaoUI, { localeRu } from '@1337exp/taoui'   // ESM-only; Vue 3.4+
+import TaoUI, { localeRu } from '@1337exp/taoui'   // ESM-only; Vue 3.5+
 import '@1337exp/taoui/styles.css'                    // required: tokens, themes, contexts, typography
 import '@1337exp/taoui/palettes.css'                  // optional: the 7 ready palettes
 

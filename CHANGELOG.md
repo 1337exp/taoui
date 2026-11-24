@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.57.1
+
+Two fixes.
+
+- **The Vue peer range says 3.5, which is what the kit needs.** The code imports `useId` from `vue` (`TaoFormField`, `TaoMenu`, `TaoAlert`, `TaoCommandList`, `TaoDocTabs`, `TaoDrawer`, and others), and `useId` came with Vue 3.5, but `peerDependencies` still said `^3.4.0`: an app on 3.4 installed the kit without a warning and failed at runtime. The peer range, the dev range and the «Requires» line of both READMEs and of the skill are 3.5 now. Found by a Grok review of the repository, checked by hand against the installed `vue` 3.5.43.
+- **`TaoAnimatedBorder`: a sharp corner stays sharp outside without `sign()`.** 5.57.0 used `sign()` to keep the outside of a sharp corner sharp, but `sign()` is Chrome 119, and the floor of the kit is Chrome 111 (README, Browser support): there the ring lost its radius. It is `min(width, corner × 1000)` now: the whole width for any visible corner, 0 for a sharp one, with the same result and a function that is older than the floor.
+
 ## 5.57.0
 
 One small look change: the border of `TaoAnimatedBorder` outside a sharp corner is sharp now (it was a few pixels rounded). Nothing else changes for existing code.

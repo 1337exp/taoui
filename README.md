@@ -254,7 +254,7 @@ let you replace them with anything.
 npm install @1337exp/taoui
 ```
 
-Requires Vue 3.4+. The package is **ESM-only** (Vite, Nuxt 3, webpack 5 and Node 18+ with `import` all work; a plain `require('@1337exp/taoui')` does not: use `import()`).
+Requires Vue 3.5+ (the kit uses `useId`). The package is **ESM-only** (Vite, Nuxt 3, webpack 5 and Node 18+ with `import` all work; a plain `require('@1337exp/taoui')` does not: use `import()`).
 
 ### Browser support
 

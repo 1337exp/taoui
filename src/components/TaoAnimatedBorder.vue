@@ -91,13 +91,15 @@ const hasSquare = computed(() => squaredCorners(props.square).length > 0);
     --tao-radius-tr: var(--tao-radius);
     --tao-radius-br: var(--tao-radius);
     --tao-radius-bl: var(--tao-radius);
-    /* concentric: the corner plus the width, but a sharp corner stays sharp outside too (sign() is 0 for it, 1 for a rounded one) */
-    /* концентрично: угол плюс ширина, но прямой угол остаётся прямым и снаружи (sign() даёт 0 для него и 1 для скруглённого) */
+    /* concentric: the corner plus the width, but a sharp corner stays sharp outside too: min(width, corner × 1000) is the whole width
+       for any visible corner and 0 for a sharp one (min() is old enough for the supported browsers; sign() is not)
+       концентрично: угол плюс ширина, но прямой угол остаётся прямым и снаружи: min(ширина, угол × 1000) — вся ширина для любого
+       видимого угла и 0 для прямого (min() достаточно старая для поддерживаемых браузеров, sign() — нет) */
     --_tao-outer-radius:
-        calc(var(--tao-radius-tl) + var(--tao-animated-border-width) * sign(var(--tao-radius-tl)))
-        calc(var(--tao-radius-tr) + var(--tao-animated-border-width) * sign(var(--tao-radius-tr)))
-        calc(var(--tao-radius-br) + var(--tao-animated-border-width) * sign(var(--tao-radius-br)))
-        calc(var(--tao-radius-bl) + var(--tao-animated-border-width) * sign(var(--tao-radius-bl)));
+        calc(var(--tao-radius-tl) + min(var(--tao-animated-border-width), var(--tao-radius-tl) * 1000))
+        calc(var(--tao-radius-tr) + min(var(--tao-animated-border-width), var(--tao-radius-tr) * 1000))
+        calc(var(--tao-radius-br) + min(var(--tao-animated-border-width), var(--tao-radius-br) * 1000))
+        calc(var(--tao-radius-bl) + min(var(--tao-animated-border-width), var(--tao-radius-bl) * 1000));
 
     background: var(--tao-color-surface-raised);
     position: relative;

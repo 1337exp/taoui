@@ -1,6 +1,6 @@
 {
   "name": "@1337exp/taoui",
-  "version": "5.57.0",
+  "version": "5.57.1",
   "description": "Design-token driven Vue 3 / Nuxt component library: palettes with tested contrast, accessible menus and toolbars, navigation that adapts without JS, small charts, built-in locales.",
   "keywords": [
     "vue",
@@ -85,7 +85,7 @@
     "skill": "node scripts/generate-skill.mjs && node scripts/generate-patterns.mjs && node scripts/generate-starters.mjs"
   },
   "peerDependencies": {
-    "vue": "^3.4.0"
+    "vue": "^3.5.0"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
@@ -99,7 +99,7 @@
     "vite": "^5.0.0",
     "vite-plugin-dts": "^3.7.0",
     "vitest": "^2.1.9",
-    "vue": "^3.4.0",
+    "vue": "^3.5.0",
     "vue-tsc": "^2.0.0"
   }
 }

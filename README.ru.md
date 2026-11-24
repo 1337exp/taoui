@@ -254,7 +254,7 @@ registerTaoIcons({ rocket: { body: '<path d="M12 3l4 8-4 10-4-10z"/>' } }); // �
 npm install @1337exp/taoui
 ```
 
-Нужен Vue 3.4+. Пакет **только ESM** (Vite, Nuxt 3, webpack 5 и Node 18+ с `import` работают; голый `require('@1337exp/taoui')` — нет: используйте `import()`).
+Нужен Vue 3.5+ (набор использует `useId`). Пакет **только ESM** (Vite, Nuxt 3, webpack 5 и Node 18+ с `import` работают; голый `require('@1337exp/taoui')` — нет: используйте `import()`).
 
 ### Поддержка браузеров
 
