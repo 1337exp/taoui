@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { toCssBox, toCssLength, type TaoLength } from '../length';
-import { radiusVars, type TaoRadius } from '../radius';
+import { radiusVars, squaredCorners, type TaoRadius, type TaoSquare } from '../radius';
 import { stripeClasses, type TaoStripe, type TaoStripeTone } from '../stripe';
 import { surfaceClass, type TaoSurface } from '../surface';
 
@@ -17,6 +17,12 @@ interface Props {
      * `border-radius`: `[0, 0, 12, 12]` — прямой верх и скруглённый низ.
      */
     radius?: TaoRadius;
+    /**
+     * Sharp corners with the radius kept as it is (the token, `radius`, your own `--tao-radius`): a side (`top`, `bottom`, `left`,
+     * `right`), a corner (`top-left` …), several as an array or a string with spaces.
+     * Прямые углы при радиусе как есть: сторона, угол, несколько массивом или строкой через пробел.
+     */
+    square?: TaoSquare;
     shadow?: boolean;
     hover?: boolean;
     /** `flat` fill, `grain` film grain, `glass` blurred translucent. / Из чего сделана панель. */
@@ -30,6 +36,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     padding: undefined,
     radius: undefined,
+    square: undefined,
     shadow: true,
     hover: false,
     surface: 'flat',
@@ -45,15 +52,16 @@ const panelStyle = computed(() => {
     return {
         padding: pad === undefined ? undefined : toCssBox(pad),
         '--tao-pad': first === undefined ? undefined : toCssLength(first),
-        ...radiusVars(props.radius),
+        ...radiusVars(props.radius, props.square),
     };
 });
+const hasSquare = computed(() => squaredCorners(props.square).length > 0);
 </script>
 
 <template>
     <div
         class="tao-block tao-panel"
-        :class="[surfaceClass(surface), stripeClasses(stripe, stripeTone), { 'tao-block--shadow': shadow, 'tao-block--hover': hover }]"
+        :class="[surfaceClass(surface), stripeClasses(stripe, stripeTone), { 'tao-panel--corners': hasSquare, 'tao-block--shadow': shadow, 'tao-block--hover': hover }]"
         :style="panelStyle"
     >
         <slot />

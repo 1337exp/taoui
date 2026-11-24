@@ -2,7 +2,7 @@
 import { computed, useSlots } from 'vue';
 import { useLocaleText } from '../locale';
 import { toCssBox, toCssLength, type TaoLength } from '../length';
-import { radiusVars, type TaoRadius } from '../radius';
+import { radiusVars, squaredCorners, type TaoRadius, type TaoSquare } from '../radius';
 import { stripeClasses, type TaoStripe, type TaoStripeTone } from '../stripe';
 import { surfaceClass, type TaoSurface } from '../surface';
 import TaoIcon from './TaoIcon.vue';
@@ -20,6 +20,13 @@ interface Props {
      * `border-radius`: `[0, 0, 12, 12]` — прямой верх и скруглённый низ (полоса на прямой стороне).
      */
     radius?: TaoRadius;
+    /**
+     * Sharp corners with the radius kept as it is (the token, `radius`, your own `--tao-radius`): a side (`top`, `bottom`, `left`,
+     * `right`), a corner (`top-left`, `top-right`, `bottom-right`, `bottom-left`), several as an array or a string with spaces.
+     * Прямые углы при радиусе как есть (токен, `radius`, ваш `--tao-radius`): сторона (`top`, `bottom`, `left`, `right`), угол
+     * (`top-left`, `top-right`, `bottom-right`, `bottom-left`), несколько массивом или строкой через пробел.
+     */
+    square?: TaoSquare;
     shadow?: boolean;
     shadowBottomOnly?: boolean;
     hover?: boolean;
@@ -42,6 +49,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
     padding: undefined,
     radius: undefined,
+    square: undefined,
     shadow: true,
     shadowBottomOnly: false,
     hover: false,
@@ -99,10 +107,11 @@ const radiusStyle = computed(() => {
     const pad = props.padding;
     const first = Array.isArray(pad) ? pad[0] : pad;
     return {
-        ...radiusVars(props.radius),
+        ...radiusVars(props.radius, props.square),
         '--tao-pad': first === undefined ? undefined : toCssLength(first),
     };
 });
+const hasSquare = computed(() => squaredCorners(props.square).length > 0);
 const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly && !props.flush);
 </script>
 
@@ -110,6 +119,7 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
     <div
         class="tao-card tao-panel"
         :class="[surfaceClass(surface), stripeClasses(stripe, stripeTone), {
+            'tao-panel--corners': hasSquare,
             'tao-card--shadow': showPanelShadow,
             'tao-card--shadow-bottom': shadowBottomOnly,
             'tao-card--hover': hover,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { cornerRadii, radiusVars } from '../src/radius';
+import { cornerRadii, radiusVars, squaredCorners } from '../src/radius';
 
 // 5.56.0: `radius` of a panel can be given by corner, apart from the components.
 // 5.56.0: `radius` панели можно задать по углам, отдельно от компонентов.
@@ -77,5 +77,55 @@ describe('radiusVars', () => {
         expect(radiusVars('12px / 24px')).toEqual({ '--tao-radius': '12px / 24px' });
         expect(radiusVars('1px 2px 3px 4px 5px')).toEqual({ '--tao-radius': '1px 2px 3px 4px 5px' });
         expect(radiusVars([1, 2, 3, 4, 5])).toEqual({});
+    });
+});
+
+// 5.57.0: `square` makes corners sharp and keeps the radius as it is
+// 5.57.0: `square` делает углы прямыми и оставляет радиус как есть
+describe('squaredCorners', () => {
+    it('a side is its two corners, a corner is one', () => {
+        expect(squaredCorners('top')).toEqual(['tl', 'tr']);
+        expect(squaredCorners('bottom')).toEqual(['br', 'bl']);
+        expect(squaredCorners('left')).toEqual(['tl', 'bl']);
+        expect(squaredCorners('right')).toEqual(['tr', 'br']);
+        expect(squaredCorners('bottom-left')).toEqual(['bl']);
+    });
+
+    it('several: an array or a space-separated string, each corner once, in a fixed order', () => {
+        expect(squaredCorners(['bottom-right', 'top-left'])).toEqual(['tl', 'br']);
+        expect(squaredCorners('top-left bottom-right')).toEqual(['tl', 'br']);
+        expect(squaredCorners(['top', 'left'])).toEqual(['tl', 'tr', 'bl']);
+        expect(squaredCorners(['top', 'top-left'])).toEqual(['tl', 'tr']);
+    });
+
+    it('nothing, an empty list and a name it does not know make nothing sharp', () => {
+        expect(squaredCorners(undefined)).toEqual([]);
+        expect(squaredCorners(null)).toEqual([]);
+        expect(squaredCorners([])).toEqual([]);
+        expect(squaredCorners('')).toEqual([]);
+        expect(squaredCorners('middle')).toEqual([]);
+    });
+});
+
+describe('radiusVars with square', () => {
+    it('only the squared corners are written; the radius of the rest is left to the panel', () => {
+        expect(radiusVars(undefined, 'top')).toEqual({ '--tao-radius-tl': '0px', '--tao-radius-tr': '0px' });
+    });
+
+    it('with a radius of its own the single property stays, the squared corners come on top', () => {
+        expect(radiusVars(20, 'bottom-left')).toEqual({ '--tao-radius': '20px', '--tao-radius-bl': '0px' });
+    });
+
+    it('over an array the squares win', () => {
+        const vars = radiusVars([8, 16, 24, 32], 'right');
+        expect(vars['--tao-radius-tl']).toBe('8px');
+        expect(vars['--tao-radius-tr']).toBe('0px');
+        expect(vars['--tao-radius-br']).toBe('0px');
+        expect(vars['--tao-radius-bl']).toBe('32px');
+    });
+
+    it('no square, nothing changes', () => {
+        expect(radiusVars(20, undefined)).toEqual(radiusVars(20));
+        expect(radiusVars(20, [])).toEqual({ '--tao-radius': '20px' });
     });
 });

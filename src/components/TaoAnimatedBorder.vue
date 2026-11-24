@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
-import { radiusVars, type TaoRadius } from '../radius';
+import { radiusVars, squaredCorners, type TaoRadius, type TaoSquare } from '../radius';
 import { toneClass, type TaoToneName } from '../tone';
 
 defineOptions({ name: 'TaoAnimatedBorder' });
@@ -29,6 +29,12 @@ interface Props {
      * длин задаёт их по отдельности в порядке CSS `border-radius`.
      */
     radius?: TaoRadius;
+    /**
+     * Sharp corners with the radius kept as it is: a side (`top`, `bottom`, `left`, `right`), a corner (`top-left` …), several as an
+     * array or a string with spaces. The border outside a sharp corner is sharp too.
+     * Прямые углы при радиусе как есть: сторона, угол, несколько массивом или строкой через пробел. Рамка снаружи прямого угла тоже прямая.
+     */
+    square?: TaoSquare;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -40,6 +46,7 @@ const props = withDefaults(defineProps<Props>(), {
     glow: 16,
     light: false,
     radius: undefined,
+    square: undefined,
 });
 
 const gradient = computed(() => {
@@ -60,14 +67,15 @@ const style = computed(() => ({
     '--tao-animated-border-speed': `${props.speed}s`,
     '--tao-animated-border-glow': `${props.glow}px`,
     '--tao-animated-border-gradient': gradient.value,
-    ...radiusVars(props.radius),
+    ...radiusVars(props.radius, props.square),
 }));
+const hasSquare = computed(() => squaredCorners(props.square).length > 0);
 </script>
 
 <template>
     <div
         class="tao-animated-border"
-        :class="[toneClass(variant === 'tone' ? tone : undefined), { 'tao-animated-border--light': light }]"
+        :class="[toneClass(variant === 'tone' ? tone : undefined), { 'tao-animated-border--light': light, 'tao-animated-border--corners': hasSquare }]"
         :style="style"
     >
         <slot />
@@ -83,14 +91,24 @@ const style = computed(() => ({
     --tao-radius-tr: var(--tao-radius);
     --tao-radius-br: var(--tao-radius);
     --tao-radius-bl: var(--tao-radius);
+    /* concentric: the corner plus the width, but a sharp corner stays sharp outside too (sign() is 0 for it, 1 for a rounded one) */
+    /* концентрично: угол плюс ширина, но прямой угол остаётся прямым и снаружи (sign() даёт 0 для него и 1 для скруглённого) */
     --_tao-outer-radius:
-        calc(var(--tao-radius-tl) + var(--tao-animated-border-width)) calc(var(--tao-radius-tr) + var(--tao-animated-border-width))
-        calc(var(--tao-radius-br) + var(--tao-animated-border-width)) calc(var(--tao-radius-bl) + var(--tao-animated-border-width));
+        calc(var(--tao-radius-tl) + var(--tao-animated-border-width) * sign(var(--tao-radius-tl)))
+        calc(var(--tao-radius-tr) + var(--tao-animated-border-width) * sign(var(--tao-radius-tr)))
+        calc(var(--tao-radius-br) + var(--tao-animated-border-width) * sign(var(--tao-radius-br)))
+        calc(var(--tao-radius-bl) + var(--tao-animated-border-width) * sign(var(--tao-radius-bl)));
 
     background: var(--tao-color-surface-raised);
     position: relative;
     z-index: 0;
     border-radius: var(--tao-radius);
+}
+
+/* `square`: the outline is built from the four corners, the squared ones are 0px (see .tao-panel--corners) */
+/* `square`: контур собирается из четырёх углов, прямые — 0px (см. .tao-panel--corners) */
+.tao-animated-border--corners {
+    border-radius: var(--tao-radius-tl) var(--tao-radius-tr) var(--tao-radius-br) var(--tao-radius-bl);
 }
 
 /* Размытая копия рамки позади — даёт эффект свечения (glow).

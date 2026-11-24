@@ -75,7 +75,17 @@ export function cornerRadii(value: TaoRadius | null | undefined): TaoCorners | n
  * `--tao-radius-tl / -tr / -br / -bl`, из которых контракт панели делает внутренние радиусы. Только то, что передал
  * пользователь: нет радиуса — ничего.
  */
-export function radiusVars(value: TaoRadius | null | undefined): Record<string, string> {
+export function radiusVars(value: TaoRadius | null | undefined, square?: TaoSquare | null): Record<string, string> {
+    const vars = radiusOnly(value);
+    // a squared corner is 0px; the others keep what they have: the radius given, or the one the panel already has (the token, your CSS)
+    // квадратный угол — 0px; остальные сохраняют что есть: заданный радиус или тот, что у панели уже есть (токен, ваш CSS)
+    for (const corner of squaredCorners(square)) {
+        vars[`--tao-radius-${corner}`] = '0px';
+    }
+    return vars;
+}
+
+function radiusOnly(value: TaoRadius | null | undefined): Record<string, string> {
     const corners = cornerRadii(value);
     if (!corners) {
         const raw = typeof value === 'number' || typeof value === 'string' ? toCssLength(value) : undefined;
@@ -92,4 +102,35 @@ export function radiusVars(value: TaoRadius | null | undefined): Record<string, 
         '--tao-radius-br': br,
         '--tao-radius-bl': bl,
     };
+}
+
+/** A side or a corner to make square. / Сторона или угол, которые сделать прямыми. */
+export type TaoSquareSide = 'top' | 'bottom' | 'left' | 'right' | 'top-left' | 'top-right' | 'bottom-right' | 'bottom-left';
+
+/** One side or corner, a space-separated string of them, or an array: `'top'`, `'top-left bottom-right'`, `['left', 'bottom-right']`. / Одна сторона или угол, строка через пробел или массив. */
+export type TaoSquare = TaoSquareLike | readonly TaoSquareLike[];
+
+/** A known name keeps its hint in the editor; any other string is allowed for the space-separated form. / Известное имя сохраняет подсказку в редакторе; любая другая строка нужна для формы через пробел. */
+type TaoSquareLike = TaoSquareSide | (string & Record<never, never>);
+
+/** The corner a name stands for; a side is its two corners. / Какие углы называет имя; сторона — это два угла. */
+const SQUARE_CORNERS: Record<string, readonly ('tl' | 'tr' | 'br' | 'bl')[]> = {
+    top: ['tl', 'tr'],
+    bottom: ['bl', 'br'],
+    left: ['tl', 'bl'],
+    right: ['tr', 'br'],
+    'top-left': ['tl'],
+    'top-right': ['tr'],
+    'bottom-right': ['br'],
+    'bottom-left': ['bl'],
+};
+
+/** The corners (`tl`, `tr`, `br`, `bl`) a `square` makes sharp, each once, in a fixed order; a name it does not know is skipped. / Углы, которые `square` делает прямыми, каждый раз по разу, в постоянном порядке; незнакомое имя пропускается. */
+export function squaredCorners(square: TaoSquare | null | undefined): ('tl' | 'tr' | 'br' | 'bl')[] {
+    if (square === undefined || square === null) {
+        return [];
+    }
+    const names = (Array.isArray(square) ? square : [square]).flatMap((entry) => String(entry).trim().split(/\s+/));
+    const wanted = new Set(names.flatMap((name) => SQUARE_CORNERS[name] ?? []));
+    return (['tl', 'tr', 'br', 'bl'] as const).filter((corner) => wanted.has(corner));
 }

@@ -14,6 +14,7 @@ export const propTablesEn = {
       rows: [
         r('padding', 'number | string | (…)[]', '16', 'Inner padding. A number is px, a string is any CSS length. An array works like CSS padding (1–4 values)'),
         r('radius', 'number | string | (…)[]', '8', 'Corner radius. A number is px, a string is CSS: all corners. An array or a string of 1 to 4 lengths gives the corners one by one, in the order of CSS border-radius: [0, 0, 12, 12] is a square top and a rounded bottom'),
+        r('square', 'string | string[]', '—', 'Sharp corners with the radius kept as it is (the token of the theme, radius, the --tao-radius of your class): a side (top, bottom, left, right), a corner (top-left, top-right, bottom-right, bottom-left), several as an array or a string with spaces. Wins over radius, leaves the other corners alone'),
         r('shadow', 'boolean', 'true', 'Panel shadow'),
         r('hover', 'boolean', 'false', 'Stronger shadow on hover, pointer cursor'),
         r('surface', "'flat' | 'grain' | 'glass'", "'flat'", 'What the block is made of: fill / grain / glass. See “Surfaces”'),
@@ -74,6 +75,7 @@ export const propTablesEn = {
       rows: [
         r('padding', 'number | string | (…)[]', 'var(--tao-space-5)', 'Padding of the card body. A number is px, a string is CSS. With flush — 0. Published as --tao-pad'),
         r('radius', 'number | string | (…)[]', 'var(--tao-radius-panel)', 'Corner radius. A number is px, a string is CSS: all corners. An array or a string of 1 to 4 lengths gives the corners one by one, in the order of CSS border-radius ([top-left, top-right, bottom-right, bottom-left], two values are the diagonals): [0, 0, 12, 12] is a square top and a rounded bottom, and a stripe on a sharp side stays straight. Published as --tao-radius (and --tao-radius-tl / -tr / -br / -bl when the corners differ); children get --tao-radius-inner (one length) and --tao-radius-inner-tl / -tr / -br / -bl for a child in a corner'),
+        r('square', 'string | string[]', '—', 'Sharp corners with the radius kept as it is (the token of the theme, radius, the --tao-radius of your class): a side (top, bottom, left, right), a corner (top-left, top-right, bottom-right, bottom-left), several as an array or a string with spaces. Wins over radius, leaves the other corners alone. A stripe on a squared side stays straight'),
         r('shadow', 'boolean', 'true', 'The regular shadow. Off with flush'),
         r('shadowBottomOnly', 'boolean', 'false', 'A line at the bottom of the card, not a scrim over the photo'),
         r('flush', 'boolean', 'false', 'A tile: no padding and no shadow, cover/body fill the whole cell'),
@@ -969,6 +971,7 @@ export const propTablesEn = {
         r('tone', 'TaoToneName', "'accent'", 'The tone for variant="tone"; the theme accent without it'),
         r('colors', 'string[]', '—', 'Your own colours (any CSS colour), they win over variant'),
         r('radius', 'number | string | (…)[]', 'var(--tao-radius-panel)', 'Corner radius of the content; the border outside is that plus its width. An array or a string of 1 to 4 lengths gives the corners one by one, as on TaoCard'),
+        r('square', 'string | string[]', '—', 'Sharp corners with the radius kept as it is (the token of the theme, radius, the --tao-radius of your class): a side (top, bottom, left, right), a corner (top-left, top-right, bottom-right, bottom-left), several as an array or a string with spaces. Wins over radius, leaves the other corners alone. The border outside a sharp corner is sharp too'),
         r('borderWidth', 'number', '3', 'The outline thickness in px'),
         r('speed', 'number', '6', 'The duration of one turn in seconds'),
         r('light', 'boolean', 'false', 'A soft glow around the frame'),

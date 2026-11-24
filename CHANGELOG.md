@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.57.0
+
+One small look change: the border of `TaoAnimatedBorder` outside a sharp corner is sharp now (it was a few pixels rounded). Nothing else changes for existing code.
+
+- **`square`: sharp corners, the radius kept as it is.** `radius` as an array replaces every corner, so to keep the radius of the theme (or a `--tao-radius` of your own class) and make only some corners sharp you had to name the token in each corner, and a class could not be kept at all. `square` on `TaoCard`, `TaoBlock` and `TaoAnimatedBorder` only turns the named corners to `0px` and leaves the rest alone: `square="top"` is a sharp top, a side is `top | bottom | left | right`, a corner is `top-left | top-right | bottom-right | bottom-left`, several are an array or a string with spaces (`['top-left', 'bottom-right']`, `"top-left bottom-right"`). The rest of the corners keep what the panel has: the token `--tao-radius-panel`, a `radius`, or a `--tao-radius` set by your own class (`.my-card { --tao-radius: 28px }` and `square="bottom"` is 28px at the top, sharp at the bottom). With a `radius` array it is applied on top. A stripe stays straight on a squared side. The panel gets the class `tao-panel--corners` only then, which builds the outline from the four corners (contexts/surface.css), so a `--tao-radius: 0 0 12px 12px` written by hand on your own `.tao-panel` keeps working. The close button of a `TaoCard` and the inner radii follow the squared corners. Types: `TaoSquare`, `TaoSquareSide`; the pure part is `squaredCorners` and `radiusVars(radius, square)` in `radius.ts` (tested).
+- **`TaoAnimatedBorder`: a sharp corner is sharp outside too.** The border outside is the corner plus its width, and for a sharp corner that left a 3px curve on the outside of the ring. The width is added only to a rounded corner now (`sign()` of the corner), so `radius="0"` and `square` give a ring with a square outside corner.
+
 ## 5.56.0
 
 Nothing changes for existing code: a single `radius` (a number or a length) is drawn exactly as before.

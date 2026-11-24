@@ -116,6 +116,42 @@ describe('the corners of a panel', () => {
         expect(panel).toContain('border-radius: var(--tao-radius);');
     });
 
+    it('square: only the named corners are written and the radius is kept as it is', () => {
+        for (const component of [TaoCard, TaoBlock]) {
+            const w = mount(component, { props: { square: 'top' }, slots: { default: 'x' } });
+            expect(w.classes()).toContain('tao-panel--corners');
+            const s = w.attributes('style') ?? '';
+            expect(s).toContain('--tao-radius-tl: 0px');
+            expect(s).toContain('--tao-radius-tr: 0px');
+            // no radius of its own: the token, or your own --tao-radius, stays in force for the other corners
+            expect(s).not.toMatch(/--tao-radius:/);
+            expect(s).not.toContain('--tao-radius-bl');
+            expect(s).not.toContain('--tao-radius-br');
+
+            const own = mount(component, { props: { radius: 20, square: ['bottom-left', 'top-right'] }, slots: { default: 'x' } }).attributes('style') ?? '';
+            expect(own).toContain('--tao-radius: 20px');
+            expect(own).toContain('--tao-radius-tr: 0px');
+            expect(own).toContain('--tao-radius-bl: 0px');
+        }
+    });
+
+    it('without square there is no marker class, so a hand-made --tao-radius on a panel keeps working', () => {
+        for (const component of [TaoCard, TaoBlock]) {
+            expect(mount(component, { slots: { default: 'x' } }).classes()).not.toContain('tao-panel--corners');
+            expect(mount(component, { props: { square: '' }, slots: { default: 'x' } }).classes()).not.toContain('tao-panel--corners');
+        }
+    });
+
+    it('the marker class builds the outline from the four corners, after the plain panel rule', () => {
+        expect(surfaceCss).toMatch(/\.tao-panel--corners \{[^}]*border-radius: var\(--tao-radius-tl\) var\(--tao-radius-tr\) var\(--tao-radius-br\) var\(--tao-radius-bl\)/);
+        expect(surfaceCss.indexOf('.tao-panel--corners')).toBeGreaterThan(surfaceCss.indexOf('.tao-panel {'));
+    });
+
+    it('a stripe stays straight on a squared side: the layer inherits the outline', () => {
+        const w = mount(TaoCard, { props: { stripe: 'top', square: 'top' }, slots: { default: 'x' } });
+        expect(w.classes()).toEqual(expect.arrayContaining(['tao-stripe-top', 'tao-panel--corners']));
+    });
+
     it('the close button sits in the top right corner and is concentric to it', () => {
         expect(cardSource).toMatch(/\.tao-card__close \{[^}]*border-radius: var\(--tao-radius-inner-tr, var\(--tao-radius-inner, var\(--tao-radius-control\)\)\)/);
     });

@@ -37,7 +37,24 @@ describe('TaoAnimatedBorder', () => {
         expect(s).toContain('--tao-radius-br: 12px');
         expect(style({ radius: 16 })).not.toContain('--tao-radius-tl');
         // the glow and the ring read the same outer radius: each corner plus the width
-        expect(borderSource).toMatch(/--_tao-outer-radius:\s*calc\(var\(--tao-radius-tl\) \+ var\(--tao-animated-border-width\)\) calc\(var\(--tao-radius-tr\)/);
+        expect(borderSource).toMatch(/--_tao-outer-radius:\s*calc\(var\(--tao-radius-tl\) \+ var\(--tao-animated-border-width\) \* sign\(var\(--tao-radius-tl\)\)\)\s*calc\(var\(--tao-radius-tr\)/);
         expect(borderSource.match(/border-radius: var\(--_tao-outer-radius\)/g)).toHaveLength(2);
+    });
+
+    it('a sharp corner stays sharp outside: the width is added only to a rounded one', () => {
+        for (const corner of ['tl', 'tr', 'br', 'bl']) {
+            expect(borderSource).toContain(`calc(var(--tao-radius-${corner}) + var(--tao-animated-border-width) * sign(var(--tao-radius-${corner})))`);
+        }
+    });
+
+    it('square: the squared corners are 0px, the radius of the rest is left alone, the outline is built from the corners', () => {
+        const w = mount(TaoAnimatedBorder, { props: { radius: 16, square: 'top' }, slots: { default: 'x' } });
+        expect(w.classes()).toContain('tao-animated-border--corners');
+        expect(w.attributes('style')).toContain('--tao-radius: 16px');
+        expect(w.attributes('style')).toContain('--tao-radius-tl: 0px');
+        expect(w.attributes('style')).toContain('--tao-radius-tr: 0px');
+        expect(w.attributes('style')).not.toContain('--tao-radius-bl');
+        expect(borderSource).toMatch(/\.tao-animated-border--corners \{[^}]*border-radius: var\(--tao-radius-tl\) var\(--tao-radius-tr\) var\(--tao-radius-br\) var\(--tao-radius-bl\)/);
+        expect(mount(TaoAnimatedBorder, { slots: { default: 'x' } }).classes()).not.toContain('tao-animated-border--corners');
     });
 });

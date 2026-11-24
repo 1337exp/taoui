@@ -99,6 +99,16 @@
     isolation: isolate;
 }
 
+/* `square` makes some corners sharp and keeps the radius the panel already has (the token, `radius`, your own `--tao-radius`):
+   the squared corners are set to 0px, the rest still read `--tao-radius`, so the outline is built from the four corners.
+   The class is put on only then, so a hand-written `--tao-radius: 0 0 12px 12px` on your own `.tao-panel` keeps working.
+   `square` делает часть углов прямыми и оставляет радиус, который у панели уже есть (токен, `radius`, ваш `--tao-radius`):
+   прямым углам ставится 0px, остальные по-прежнему читают `--tao-radius`, поэтому контур собирается из четырёх углов.
+   Класс ставится только тогда, поэтому вручную заданный `--tao-radius: 0 0 12px 12px` на своём `.tao-panel` работает. */
+.tao-panel--corners {
+    border-radius: var(--tao-radius-tl) var(--tao-radius-tr) var(--tao-radius-br) var(--tao-radius-bl);
+}
+
 /* ---------- Stripe / Полоса ----------
    A coloured stripe on one side of a panel (Card / Block `stripe`). It is a layer over the whole panel with the
    panel's own radius, so the corners clip it, over a picture in the media slot too, with or without overflow.

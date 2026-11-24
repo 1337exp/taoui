@@ -108,6 +108,12 @@ const closed = ref(false)
                 length; a child in a corner reads <code>--tao-radius-inner-tl / -tr / -br / -bl</code>, as the close button of the
                 card does. <code>:radius="0"</code> makes every corner sharp.
               </p>
+              <p class="card-stripe-note">
+                To keep the radius as it is (the token of the theme, a <code>radius</code>, a <code>--tao-radius</code> of your own
+                class) and only make some corners sharp, use <code>square</code>: a side (<code>top</code>, <code>bottom</code>,
+                <code>left</code>, <code>right</code>), a corner (<code>top-left</code>, <code>top-right</code>,
+                <code>bottom-right</code>, <code>bottom-left</code>), several as an array or a string with spaces.
+              </p>
             </template>
             <template #ru>
               <p class="card-stripe-note">
@@ -117,6 +123,12 @@ const closed = ref(false)
                 Внутренний радиус для детей (<code>--tao-radius-inner</code>) остаётся одной длиной; ребёнок в углу читает
                 <code>--tao-radius-inner-tl / -tr / -br / -bl</code>, как кнопка закрытия карточки. <code>:radius="0"</code> —
                 все углы прямые.
+              </p>
+              <p class="card-stripe-note">
+                Чтобы оставить радиус как есть (токен темы, <code>radius</code>, <code>--tao-radius</code> вашего класса) и сделать
+                прямыми только часть углов, используйте <code>square</code>: сторона (<code>top</code>, <code>bottom</code>,
+                <code>left</code>, <code>right</code>), угол (<code>top-left</code>, <code>top-right</code>,
+                <code>bottom-right</code>, <code>bottom-left</code>), несколько массивом или строкой через пробел.
               </p>
             </template>
           </Tr>
@@ -146,6 +158,14 @@ const closed = ref(false)
               <b>TaoBlock</b>
               <div style="color: var(--tao-color-text-muted); font-size: 13px;">radius="12px 0", {{ tr('a string', 'строкой') }}</div>
             </TaoBlock>
+            <TaoCard stripe="top" square="top">
+              <template #title>{{ tr('square: keeps the radius', 'square: радиус как есть') }}</template>
+              <template #sub>stripe="top" square="top"</template>
+            </TaoCard>
+            <TaoCard class="demo-own-radius" square="bottom-right top-left">
+              <template #title>{{ tr('Your own CSS radius', 'Радиус из вашего CSS') }}</template>
+              <template #sub>.demo-own-radius { --tao-radius: 28px } + square="bottom-right top-left"</template>
+            </TaoCard>
             <TaoAnimatedBorder :radius="[0, 0, 16, 16]">
               <div style="padding: 16px;">
                 <b>TaoAnimatedBorder</b>
@@ -275,6 +295,10 @@ const closed = ref(false)
   bottom: 8px;
   left: 0;
   z-index: 1;
+}
+/* a radius of the page's own: `square` keeps it for the corners that stay round */
+.demo-own-radius {
+  --tao-radius: 28px;
 }
 .card-stripe-note {
   margin: -4px 0 12px;
