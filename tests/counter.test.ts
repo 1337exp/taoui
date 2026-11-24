@@ -64,6 +64,78 @@ describe('TaoCounter', () => {
     });
 });
 
+// 5.54.0: `format`, a mask as in TaoPinCode: `#` is a digit, any other character is drawn as it is
+// 5.54.0: `format`, маска как в TaoPinCode: `#` — цифра, любой другой символ рисуется как есть
+describe('TaoCounter format', () => {
+    /** what the slots hold: digits as they are, a gap as a space, a muted digit in brackets / что в слотах: цифры как есть, пропуск — пробел, приглушённая цифра в скобках */
+    const drawn = (w: ReturnType<typeof mount>) =>
+        w
+            .findAll('.tao-counter__slot')
+            .map((slot) => {
+                if (slot.classes('tao-counter__slot--space')) return ' ';
+                const text = slot.find('.tao-counter__text');
+                if (text.exists()) return text.text();
+                const digit = slot.find('.tao-counter__digit');
+                return digit.classes('tao-counter__digit--muted') ? `(${digit.text()})` : digit.text();
+            })
+            .join('');
+
+    it('a clock: the colons are fixed text, the digits are bright', () => {
+        const w = mount(TaoCounter, { props: { value: 330, format: '##:##:##', muteZeros: false } });
+        expect(drawn(w)).toBe('00:03:30');
+        expect(w.findAll('.tao-counter__slot--text')).toHaveLength(2);
+        expect(w.findAll('.tao-counter__digit--muted')).toHaveLength(0);
+    });
+
+    it('the padding zeros are dimmed, the last digit never is', () => {
+        expect(drawn(mount(TaoCounter, { props: { value: 5, format: '### ###' } }))).toBe('(0)(0)(0) (0)(0)5');
+        expect(drawn(mount(TaoCounter, { props: { value: 0, format: '####' } }))).toBe('(0)(0)(0)0');
+    });
+
+    it('the mask fixes the width: a number that does not fit shows as all nines, it does not grow', () => {
+        const w = mount(TaoCounter, { props: { value: 5_000_000, format: '### ###' } });
+        expect(drawn(w)).toBe('999 999');
+        expect(w.findAll('.tao-counter__digit')).toHaveLength(6);
+    });
+
+    it('a unit and a prefix are drawn as text', () => {
+        const w = mount(TaoCounter, { props: { value: 250, format: '$### ###₽', muteZeros: false } });
+        expect(drawn(w)).toBe('$000 250₽');
+    });
+
+    it('a digit written in the mask is text: it does not roll and takes no turn', async () => {
+        const w = mount(TaoCounter, { props: { value: 11, format: '+7 ##' } });
+        expect(drawn(w)).toBe('+7 11');
+        expect(w.findAll('.tao-counter__slot')[1]!.find('.tao-counter__digit').exists()).toBe(false);
+        await w.setProps({ value: 22 });
+        // '+', '7', the gap take no turn; the units roll first, the tens after them
+        expect(ranks(w)).toEqual(['--_rank: 0;', '--_rank: 0;', '--_rank: 0;', '--_rank: 1;', '--_rank: 0;']);
+    });
+
+    it('the digits roll in turn from the right across the separators', async () => {
+        const w = mount(TaoCounter, { props: { value: 0, format: '##:##', muteZeros: false } });
+        await w.setProps({ value: 1337 });
+        // 00:00 → 13:37: the colon is a slot with no turn
+        expect(ranks(w)).toEqual(['--_rank: 3;', '--_rank: 2;', '--_rank: 0;', '--_rank: 1;', '--_rank: 0;']);
+    });
+
+    it('the label says the number as drawn, without the padding zeros', () => {
+        expect(mount(TaoCounter, { props: { value: 123, format: '$### ###' } }).find('.tao-counter').attributes('aria-label')).toBe('$123');
+        expect(mount(TaoCounter, { props: { value: 330, format: '##:##:##', muteZeros: false } }).find('.tao-counter').attributes('aria-label')).toBe('00:03:30');
+        expect(mount(TaoCounter, { props: { value: -42, format: '####' } }).find('.tao-counter').attributes('aria-label')).toBe('−42');
+    });
+
+    it('without a mask the label is still the number', () => {
+        expect(mount(TaoCounter, { props: { value: 1337, maxDigits: 6 } }).find('.tao-counter').attributes('aria-label')).toBe('1337');
+    });
+
+    it('a fixed character has its own look: no frame, quieter than the digits', () => {
+        const rule = (counterSource as string).match(/\.tao-counter__slot--text \{([^}]*)\}/)?.[1] ?? '';
+        expect(rule).toMatch(/background:\s*transparent/);
+        expect(rule).toMatch(/color:\s*var\(--tao-color-text-muted\)/);
+    });
+});
+
 // 5.27.1: a digit is a layer before it moves, so its text is drawn the same at the start of the roll (no jump of a pixel)
 // 5.27.1: цифра — слой до движения, поэтому её текст рисуется одинаково на старте качения (без прыжка на пиксель)
 describe('TaoCounter digit layer', () => {

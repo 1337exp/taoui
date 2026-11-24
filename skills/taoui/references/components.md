@@ -912,7 +912,9 @@ Showcase section: `#counter`
 | Prop | Type | Default | Notes |
 |---|---|---|---|
 | `value` | `number` | 0 | A number on display. Not an input |
-| `maxDigits` | `number` | 9 | The minimum width in digits (leading zeros are hidden visually) |
+| `maxDigits` | `number` | 9 | The minimum width in digits when there is no format (the leading zeros are dimmed); a longer number grows the counter |
+| `format` | `string` | — | A mask, as in TaoPinCode: # is a digit, any other character is drawn as it is: "##:##:##" a clock, "#,###,###", "+7 ###", "### ###₽". The mask fixes the number of digits: a number that does not fit shows as all nines, the counter does not grow. A space is a narrow gap. Without format — groups of three with a gap |
+| `muteZeros` | `boolean` | true | Dim the zeros that only pad the number on the left (the last digit is never dimmed). Turn it off for a clock: 00:03:30 has no padding |
 
 ## TaoCarousel
 

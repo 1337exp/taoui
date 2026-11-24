@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.54.0
+
+Nothing changes for existing code: without `format` a `TaoCounter` is drawn as before.
+
+- **`TaoCounter` `format`: a mask for the number.** The counter showed one thing: the digits in groups of three with a gap, padded with zeros to `maxDigits` (`000 000`). Now `format` is a mask, in the syntax of `TaoPinCode`: `#` is a digit (a wheel), any other character is drawn as it is. `##:##:##` is a clock, `#,###,###` has commas, `+7 ###` a prefix, `### ###₽` a unit, `#-##-##` a number as in a pin code. A space is the narrow gap it always was, any other character is a fixed slot with no wheel and no frame, quieter than the digits; a digit written in the mask (the `7` of `+7`) is text too, it does not roll. The digits that change still roll in turn from the right, across the separators. The mask fixes the number of digits and the counter does not grow: a number that does not fit is shown as the largest one the mask holds (`999 999`), not as zeros, because a score that suddenly reads `000 000` looks like a bug; without `format` the counter grows with the number, as before. `muteZeros` (on by default) dims the zeros that only pad the number on the left, the last digit never; turn it off for a clock, where `00:03:30` has no padding. A mask with no `#` is no mask. The label for a screen reader is the number as drawn without the padding zeros and the separators between them (`$ 000 123` is `$123`, a clock is `00:03:30`); without `format` it is the number, as before. A negative number keeps its minus in front of the cells; a fraction that truncates to zero (`-0.5`) has no minus any more. The pure part is in `counterFormat.ts` (`counterLayout`, tested). Decimals stay out: the value is a whole number, the point of a mask like `###.##` is only drawn, pass `1250` for `12.50`.
+
 ## 5.53.0
 
 A new component, nothing changes for existing code.

@@ -125,7 +125,7 @@
 - **TaoStages** — stage list: `wait` / `work` / `ok` / `bad`. Not a linear stepper
 - **TaoTimeline** — a vertical feed of events: order steps, releases, a log. `active` fills the line up to the current event (`aria-current="step"`), without it the feed is a log of the past; `tone` and `icon` per marker, `#marker` / `#title` / `#content` slots; `align="alternate"` puts events on both sides and folds into one below 480px of its own width
 - **TaoSkeleton** — loading placeholder (text / title / circle / rect)
-- **TaoCounter** — flipping digits (not an input)
+- **TaoCounter** — flipping digits (not an input). `format` is a mask as in `TaoPinCode`: `#` is a digit, any other character is drawn as it is (`##:##:##` a clock, `#,###,###`, `+7 ###`, `### ###₽`); the mask fixes the number of digits, a number that does not fit shows as all nines; `muteZeros` dims the padding zeros
 - **TaoCarousel** — strip: full slide with `autoplay`, card with `peek`, row with `per-view`, or `centered` (the current slide in the middle and the biggest, the neighbours smaller, the outer ones faded; with `loop` a seamless cycle with no end). Arrows via `controls` or `#prev` / `#next`; marks under the strip via `indicator` (`dots`, `bars` or `progress`). With `autoplay` the current mark fills over the interval and the slide changes when it is full; hover, keyboard focus, touch, a hidden tab and the pause button stop it, `prefers-reduced-motion` turns it off
 - **TaoAvatar** — photo or initials, sizes `small` / `medium` / `large`. Status `dot` and `count`
 - **TaoTag** — badge with tones. `#prefix` (avatar), `closable` dismisses the chip, `flat` drops the border

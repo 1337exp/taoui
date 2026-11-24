@@ -1,19 +1,45 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue';
 import { createRollGate, rollRanks } from '../counterRoll';
+import { counterLayout } from '../counterFormat';
 
 defineOptions({ name: 'TaoCounter' });
 
 const props = withDefaults(
     defineProps<{
         value?: number;
+        /** The minimum width in digits when there is no `format`; a longer number grows the counter. / Наименьшая ширина в цифрах, когда нет `format`; число длиннее растит счётчик. */
         maxDigits?: number;
+        /**
+         * A mask, as in TaoPinCode: `#` is a digit, any other character is drawn as it is (`##:##:##` a clock, `#,###,###`,
+         * `+7 ###`, `### ###₽`). The mask fixes the number of digits: a number that does not fit is shown as the largest one it
+         * holds (all nines), the counter does not grow. Without it the counter is grouped by thousands.
+         * Маска, как в TaoPinCode: `#` — цифра, любой другой символ рисуется как есть (`##:##:##` часы, `#,###,###`, `+7 ###`,
+         * `### ###₽`). Маска задаёт число цифр: число, которое не влезло, показано наибольшим из возможных (одни девятки),
+         * счётчик не растёт. Без неё счётчик группирует по тысячам.
+         */
+        format?: string;
+        /**
+         * Dim the zeros that only pad the number on the left. Turn it off for a clock, where `00:03:30` has no padding.
+         * Приглушать нули, которые лишь добивают число слева. Для часов выключить: в `00:03:30` добивки нет.
+         */
+        muteZeros?: boolean;
     }>(),
     {
         value: 0,
         maxDigits: 9,
+        muteZeros: true,
     },
 );
+
+const layoutOptions = computed(() => ({ format: props.format, maxDigits: props.maxDigits, muteZeros: props.muteZeros }));
+
+// what a screen reader says: the real value at once (the wheels may still be rolling); with a mask the number as drawn
+// что читает скринридер: настоящее значение сразу (колёсики могут ещё катиться); с маской — число как нарисовано
+const label = computed(() => {
+    const layout = counterLayout(props.value, layoutOptions.value);
+    return layout.masked ? layout.text : String(props.value);
+});
 
 // what the wheels show lags behind `value` while digits are rolling: the parent already holds the sum of the increments,
 // so the wheels take the latest value once the last digit has landed, and roll to it in one go
@@ -31,62 +57,36 @@ const gate = createRollGate(catchUp);
 watch(() => props.value, catchUp);
 
 type Slot = {
+    /** a digit rolls, the sign comes and goes like one, a gap is empty, a text is a fixed character of the mask / цифра катится, знак приходит и уходит как она, gap пуст, text — постоянный символ маски */
+    kind: 'digit' | 'sign' | 'gap' | 'text';
     value: string;
-    isSpace: boolean;
     isLeadingZero: boolean;
     key: string;
     /** the turn of the digit to roll: 0 goes first, 1 follows it / очередь цифры: 0 катится первой, 1 следом */
     rank: number;
 };
 
-function formatDigits(num: number, minDigits: number) {
-    const abs = Math.abs(Math.trunc(num));
-    return abs.toString().padStart(Math.max(1, minDigits), '0').replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-}
-
-const isDigit = (slot: Slot) => /\d/.test(slot.value);
+const isDigit = (slot: Slot) => slot.kind === 'digit';
 
 // the previous slots come as the argument: the digits that changed roll in turn from the right, not all at once
 // прежние слоты приходят аргументом: изменившиеся цифры катятся по очереди справа, а не разом
 const slots = computed<Slot[]>((previous) => {
-    const formatted = formatDigits(shown.value, props.maxDigits);
-    const significant = Math.abs(Math.trunc(shown.value)).toString();
-    const leadingZeros = Math.max(0, props.maxDigits - significant.length);
+    const layout = counterLayout(shown.value, layoutOptions.value);
     const result: Slot[] = [];
-    let digitCount = 0;
 
-    if (shown.value < 0) {
-        result.push({
-            value: '−',
-            isSpace: false,
-            isLeadingZero: false,
-            key: 'sign',
-            rank: 0,
-        });
+    if (layout.negative) {
+        result.push({ kind: 'sign', value: '−', isLeadingZero: false, key: 'sign', rank: 0 });
     }
 
-    for (let index = 0; index < formatted.length; index += 1) {
-        const char = formatted[index] ?? '';
-        if (char === ' ') {
-            result.push({
-                value: ' ',
-                isSpace: true,
-                isLeadingZero: false,
-                key: `space-${index}`,
-                rank: 0,
-            });
-            continue;
-        }
-
+    layout.cells.forEach((cell, index) => {
         result.push({
-            value: char,
-            isSpace: false,
-            isLeadingZero: digitCount < leadingZeros,
-            key: `${index}-${char}`,
+            kind: cell.kind,
+            value: cell.value,
+            isLeadingZero: cell.leadingZero,
+            key: cell.kind === 'digit' ? `${index}-${cell.value}` : `${cell.kind}-${index}`,
             rank: 0,
         });
-        digitCount += 1;
-    }
+    });
 
     const digits = result.filter(isDigit);
     const ranks = rollRanks(previous?.filter(isDigit).map((slot) => slot.value), digits.map((slot) => slot.value));
@@ -99,16 +99,18 @@ const slots = computed<Slot[]>((previous) => {
 </script>
 
 <template>
-    <div class="tao-counter" role="img" :aria-label="String(value)">
+    <div class="tao-counter" role="img" :aria-label="label">
         <div class="tao-counter__row" aria-hidden="true">
             <div
                 v-for="(slot, index) in slots"
-                :key="`${index}-${slot.isSpace ? 'gap' : 'd'}`"
+                :key="`${index}-${slot.kind === 'digit' || slot.kind === 'sign' ? 'd' : slot.kind}`"
                 class="tao-counter__slot"
-                :class="{ 'tao-counter__slot--space': slot.isSpace }"
+                :class="{ 'tao-counter__slot--space': slot.kind === 'gap', 'tao-counter__slot--text': slot.kind === 'text' }"
                 :style="{ '--_rank': slot.rank }"
             >
+                <span v-if="slot.kind === 'text'" class="tao-counter__text">{{ slot.value }}</span>
                 <TransitionGroup
+                    v-else
                     name="tao-digit"
                     @before-enter="gate.start()"
                     @after-enter="gate.end()"
@@ -118,7 +120,7 @@ const slots = computed<Slot[]>((previous) => {
                     @leave-cancelled="gate.end()"
                 >
                     <span
-                        v-if="!slot.isSpace"
+                        v-if="slot.kind !== 'gap'"
                         :key="slot.key"
                         class="tao-counter__digit"
                         :class="{ 'tao-counter__digit--muted': slot.isLeadingZero }"
@@ -158,6 +160,19 @@ const slots = computed<Slot[]>((previous) => {
 .tao-counter__slot--space {
     width: 0.28em;
     background: transparent;
+}
+
+/* a fixed character of the mask (a colon, a comma, a unit): no wheel, no frame, quieter than the digits */
+/* постоянный символ маски (двоеточие, запятая, единица): без колёсика и рамки, тише цифр */
+.tao-counter__slot--text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-width: 0.3em;
+    overflow: visible;
+    background: transparent;
+    color: var(--tao-color-text-muted);
 }
 
 .tao-counter__digit {
