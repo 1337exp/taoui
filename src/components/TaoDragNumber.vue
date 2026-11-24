@@ -12,6 +12,7 @@ import {
     dragNumberAdvance,
     dragNumberDecimals,
     dragNumberNormalize,
+    dragNumberRepeatDelay,
     dragNumberResolve,
     dragNumberSpeed,
     formatDragNumber,
@@ -47,6 +48,11 @@ const props = withDefaults(
         /** The − and + buttons on the sides. / Кнопки − и + по бокам. */
         controls?: boolean;
         /**
+         * A held − / + repeats its step (after a short pause, then faster); the whole run is one `@commit`, `Esc` puts the value back.
+         * Зажатая − / + повторяет шаг (после короткой паузы, потом быстрее); вся серия — один `@commit`, `Esc` возвращает значение.
+         */
+        repeat?: boolean;
+        /**
          * `outline` — a frame (default), `filled` — a fill and no frame, for a column of fields in a panel.
          * `outline` — рамка (по умолчанию), `filled` — заливка без рамки: для столбца полей в панели.
          */
@@ -62,6 +68,7 @@ const props = withDefaults(
         disabled: false,
         error: false,
         controls: true,
+        repeat: true,
         variant: 'outline',
     },
 );
@@ -114,15 +121,21 @@ function typedValue() {
     return focused.value ? (parseDragNumber(draft.value, props.unit) ?? props.modelValue) : props.modelValue;
 }
 
+/** One step from what the field shows, no commit yet. / Один шаг от того, что показывает поле, пока без commit. */
+function nudge(direction: 1 | -1, steps = 1) {
+    const result = apply(typedValue() + direction * props.step * steps);
+    draft.value = plain(result.next);
+    if (focused.value) {
+        void nextTick(() => inputEl.value?.select());
+    }
+    return result;
+}
+
 function bump(direction: 1 | -1, steps = 1) {
     if (props.disabled) {
         return;
     }
-    const { next, changed } = apply(typedValue() + direction * props.step * steps);
-    draft.value = plain(next);
-    if (focused.value) {
-        void nextTick(() => inputEl.value?.select());
-    }
+    const { next, changed } = nudge(direction, steps);
     if (changed) {
         emit('commit', next);
     }
@@ -328,12 +341,122 @@ function onPointerup(event: PointerEvent) {
     finishDrag();
 }
 
+// ---------- A held − / +: the first step at once, then, after a pause, the steps keep coming until the button is let go.
+// ---------- Зажатая − / +: первый шаг сразу, потом, после паузы, шаги идут, пока кнопку не отпустят.
+interface Hold {
+    direction: 1 | -1;
+    id: number;
+    startValue: number;
+    /** The value last written. / Последнее записанное значение. */
+    last: number;
+    /** Repeats done so far; it sets the pace. / Сделано повторов; от него зависит темп. */
+    count: number;
+    timer?: ReturnType<typeof setTimeout>;
+}
+
+let hold: Hold | null = null;
+/** The click that follows a pointer press the hold already answered must not step again. / Клик после нажатия, на которое уже ответила серия, не должен делать ещё шаг. */
+let suppressClick = false;
+
+function scheduleRepeat() {
+    if (hold) {
+        hold.timer = setTimeout(repeatStep, dragNumberRepeatDelay(hold.count));
+    }
+}
+
+function repeatStep() {
+    if (!hold) {
+        return;
+    }
+    if (props.disabled) {
+        stopHold();
+        return;
+    }
+    const { next, changed } = nudge(hold.direction);
+    if (!changed) {
+        // a bound: nothing more to run into / граница: дальше идти некуда
+        stopHold();
+        return;
+    }
+    hold.last = next;
+    hold.count++;
+    scheduleRepeat();
+}
+
+function onButtonDown(direction: 1 | -1, event: PointerEvent) {
+    if (!props.repeat || props.disabled || event.button !== 0) {
+        return;
+    }
+    stopHold();
+    suppressClick = true;
+    const startValue = props.modelValue;
+    const { next } = nudge(direction);
+    hold = { direction, id: event.pointerId, startValue, last: next, count: 0 };
+    try {
+        (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    } catch {
+        // a synthetic or already finished pointer / искусственный или уже законченный указатель
+    }
+    window.addEventListener('keydown', onHoldKey, true);
+    scheduleRepeat();
+}
+
+function onButtonClick(direction: 1 | -1) {
+    // a click that comes from the keyboard or a screen reader has no press before it: it is one plain step
+    // клик с клавиатуры или от скринридера без нажатия перед ним: один обычный шаг
+    if (suppressClick) {
+        suppressClick = false;
+        return;
+    }
+    bump(direction);
+}
+
+/**
+ * The run is over. The value stays and is committed once, or, with `revert`, goes back to where the run began and nothing is committed.
+ * Серия кончилась. Значение остаётся и фиксируется один раз, а с `revert` возвращается, где серия началась, и ничего не фиксируется.
+ */
+function stopHold(revert = false) {
+    const done = hold;
+    hold = null;
+    if (!done) {
+        return;
+    }
+    clearTimeout(done.timer);
+    window.removeEventListener('keydown', onHoldKey, true);
+    // the click of this press comes right after the pointerup, before a timer fires
+    // клик этого нажатия идёт сразу за pointerup, раньше любого таймера
+    setTimeout(() => {
+        suppressClick = false;
+    });
+    if (revert) {
+        if (done.last !== done.startValue) {
+            emit('update:modelValue', done.startValue);
+        }
+        return;
+    }
+    if (done.last !== done.startValue) {
+        emit('commit', done.last);
+    }
+}
+
+function onHoldKey(event: KeyboardEvent) {
+    if (event.key !== 'Escape' || !hold) {
+        return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    stopHold(true);
+}
+
 // Alt-Tab, a screenshot or a system dialog swallow the pointerup: without this the field would stay «pressed»
 // Alt-Tab, скриншот или системный диалог глотают pointerup: без этого поле осталось бы «нажатым»
 let stopFocusLoss: (() => void) | undefined;
 
 onMounted(() => {
-    stopFocusLoss = listenFocusLoss(() => finishDrag(true));
+    stopFocusLoss = listenFocusLoss(() => {
+        finishDrag(true);
+        stopHold();
+    });
 });
 
 // Escape while dragging: the value goes back to where it was, nothing is committed
@@ -353,6 +476,13 @@ function onDragKey(event: KeyboardEvent) {
 onBeforeUnmount(() => {
     stopFocusLoss?.();
     stopDrag();
+    // a field that goes away mid-run commits nothing: nobody is left to hear it
+    // поле, исчезающее посреди серии, ничего не фиксирует: слушать некому
+    if (hold) {
+        clearTimeout(hold.timer);
+        hold = null;
+        window.removeEventListener('keydown', onHoldKey, true);
+    }
 });
 
 const atMin = computed(() => props.min !== undefined && props.modelValue <= props.min);
@@ -382,7 +512,12 @@ const atMax = computed(() => props.max !== undefined && props.modelValue >= prop
             :aria-label="l10n.decrementLabel"
             tabindex="-1"
             :disabled="disabled || atMin"
-            @click="bump(-1)"
+            @pointerdown="onButtonDown(-1, $event)"
+            @pointerup="stopHold()"
+            @pointercancel="stopHold()"
+            @lostpointercapture="stopHold()"
+            @contextmenu.prevent
+            @click="onButtonClick(-1)"
         >
             <span aria-hidden="true">
                 <slot name="decrement-icon"><TaoIcon name="tao-minus" /></slot>
@@ -432,7 +567,12 @@ const atMax = computed(() => props.max !== undefined && props.modelValue >= prop
             :aria-label="l10n.incrementLabel"
             tabindex="-1"
             :disabled="disabled || atMax"
-            @click="bump(1)"
+            @pointerdown="onButtonDown(1, $event)"
+            @pointerup="stopHold()"
+            @pointercancel="stopHold()"
+            @lostpointercapture="stopHold()"
+            @contextmenu.prevent
+            @click="onButtonClick(1)"
         >
             <span aria-hidden="true">
                 <slot name="increment-icon"><TaoIcon name="tao-plus" /></slot>
@@ -477,6 +617,10 @@ const atMax = computed(() => props.max !== undefined && props.modelValue >= prop
     font-size: max(8px, calc(var(--tao-control-height) * 0.34));
     line-height: 1;
     cursor: pointer;
+    /* a held button is a gesture: no text selection, no double-tap zoom, no long-press menu */
+    /* зажатая кнопка — жест: без выделения текста, без зума двойным тапом, без меню долгого нажатия */
+    user-select: none;
+    touch-action: manipulation;
 }
 
 /* the line between a button and the field is the border of the field / линию между кнопкой и полем даёт рамка поля */

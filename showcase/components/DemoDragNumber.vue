@@ -26,7 +26,7 @@ const committed = ref('')
           A number field for panels and editors, the kind a 3D tool has: a caption, the number and its unit in one cell.
           <strong>Drag it sideways</strong> like a slider (a quarter of a step per pixel; <kbd>Shift</kbd> is ten times slower,
           <kbd>Ctrl</kbd> snaps to the step, <kbd>Esc</kbd> puts it back), <strong>click it</strong> to type (<code>5</code>,
-          <code>0,5</code>, or with the unit, <code>5 m</code>), or use the <strong>− / +</strong> buttons and the arrow keys.
+          <code>0,5</code>, or with the unit, <code>5 m</code>), or use the <strong>− / +</strong> buttons (hold one to repeat) and the arrow keys.
           It is one control with two looks: with the caption inside and the buttons on the sides, or, with
           <code>:controls="false"</code> and <code>variant="filled"</code>, a bare column of values with the captions outside.
           The unit is not part of the value; the value stays a number. For whole items in a cart use <code>TaoQuantity</code>.
@@ -37,7 +37,7 @@ const committed = ref('')
           Числовое поле для панелей и редакторов, как в 3D-пакетах: подпись, число и единица измерения в одной ячейке.
           <strong>Тяните вбок</strong>, как слайдер (четверть шага на пиксель; <kbd>Shift</kbd> в десять раз медленнее,
           <kbd>Ctrl</kbd> по сетке шага, <kbd>Esc</kbd> возвращает), <strong>кликните</strong>, чтобы набрать (<code>5</code>,
-          <code>0,5</code> или с единицей, <code>5 м</code>), или жмите <strong>− / +</strong> и стрелки на клавиатуре.
+          <code>0,5</code> или с единицей, <code>5 м</code>), или жмите <strong>− / +</strong> (зажатая повторяет) и стрелки на клавиатуре.
           Это один контрол в двух видах: подпись внутри и кнопки по бокам, или, с <code>:controls="false"</code> и
           <code>variant="filled"</code>, голый столбец значений с подписями снаружи. Единица не входит в значение: значение остаётся числом.
           Для целых штук в корзине — <code>TaoQuantity</code>.

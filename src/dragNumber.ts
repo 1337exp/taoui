@@ -10,6 +10,22 @@ export const DRAG_NUMBER_FINE = 0.1;
 /** PageUp / PageDown move by this many steps. / PageUp / PageDown двигают на столько шагов. */
 export const DRAG_NUMBER_PAGE = 10;
 
+/** A held − / + waits this long (ms) before it starts to repeat, so a single click stays a single step. / Зажатая − / + ждёт столько (мс), прежде чем повторять, поэтому одиночный клик остаётся одним шагом. */
+export const DRAG_NUMBER_REPEAT_DELAY = 400;
+
+/**
+ * The wait (ms) before the n-th repeat of a held button (n counts from 0): the first is the long pause, then the steps come
+ * every 120 ms and speed up to every 40 ms.
+ * Ожидание (мс) перед n-м повтором зажатой кнопки (n с нуля): первое — длинная пауза, дальше шаги идут раз в 120 мс и
+ * ускоряются до раза в 40 мс.
+ */
+export function dragNumberRepeatDelay(count: number): number {
+    if (count <= 0) {
+        return DRAG_NUMBER_REPEAT_DELAY;
+    }
+    return Math.max(40, 120 - (count - 1) * 8);
+}
+
 /** What a drag may use: the bounds and the grain of the value. / Что нужно протяжке: границы и зерно значения. */
 export interface TaoDragNumberLimits {
     min?: number;

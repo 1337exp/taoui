@@ -5,6 +5,7 @@ import {
     dragNumberDecimals,
     dragNumberNormalize,
     dragNumberResolve,
+    dragNumberRepeatDelay,
     dragNumberRound,
     dragNumberSpeed,
     formatDragNumber,
@@ -90,6 +91,16 @@ describe('dragNumberResolve / dragNumberSpeed', () => {
         expect(dragNumberSpeed(1)).toBe(0.25);
         expect(dragNumberSpeed(0.5, 2)).toBe(2);
         expect(dragNumberSpeed(0.5, 0)).toBe(0.125);
+    });
+});
+
+describe('dragNumberRepeatDelay', () => {
+    it('a long pause first, then a steady pace that speeds up and stops at 40 ms', () => {
+        expect(dragNumberRepeatDelay(0)).toBe(400);
+        expect(dragNumberRepeatDelay(1)).toBe(120);
+        expect(dragNumberRepeatDelay(2)).toBe(112);
+        expect(dragNumberRepeatDelay(11)).toBe(40);
+        expect(dragNumberRepeatDelay(500)).toBe(40);
     });
 });
 

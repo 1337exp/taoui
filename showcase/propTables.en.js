@@ -237,6 +237,7 @@ export const propTablesEn = {
         r('precision', 'number', 'decimals of step', 'How many decimal places the value is rounded to'),
         r('dragSpeed', 'number', 'step / 4', 'Value change per pixel of a drag. Shift is ten times slower, Ctrl snaps to the step grid, Esc puts it back'),
         r('controls', 'boolean', 'true', 'The − and + buttons on the sides'),
+        r('repeat', 'boolean', 'true', 'A held − / + repeats its step: the first at once, after a 0.4 s pause the steps come every 120 ms and speed up to every 40 ms. The whole run is one @commit, Esc puts the value back, a bound stops it'),
         r('variant', "'outline' | 'filled'", "'outline'", 'A frame / a fill and no frame (a column of fields in a panel)'),
         r('format', '(value: number) => string', '—', 'Text of the number at rest (1 200, 5.00). The field edits the plain number'),
         r('@commit', 'number', '—', 'The action ended and changed the value: end of a drag, ±, an arrow, Enter or blur of a typed number (once per action; v-model updates on every move)'),

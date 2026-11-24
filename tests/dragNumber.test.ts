@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { nextTick } from 'vue';
 import TaoDragNumber from '../src/components/TaoDragNumber.vue';
 
@@ -109,6 +109,120 @@ describe('±, the keys', () => {
         await press(w, 10);
         await move(w, 80);
         expect(updates).toEqual([]);
+    });
+});
+
+describe('a held button', () => {
+    const down = (w: ReturnType<typeof make>['w'], which: 'inc' | 'dec') =>
+        w.find(`.tao-drag-number__btn--${which}`).trigger('pointerdown', { pointerId: 1, button: 0 });
+    const up = (w: ReturnType<typeof make>['w'], which: 'inc' | 'dec') =>
+        w.find(`.tao-drag-number__btn--${which}`).trigger('pointerup', { pointerId: 1, button: 0 });
+
+    afterEach(() => {
+        vi.useRealTimers();
+    });
+
+    it('steps at once, repeats after a pause, and the whole run is one commit', async () => {
+        vi.useFakeTimers();
+        const { w, updates, commits } = make({ modelValue: 0 });
+        await down(w, 'inc');
+        expect(updates).toEqual([1]);
+        await vi.advanceTimersByTimeAsync(399);
+        expect(updates).toEqual([1]);
+        await vi.advanceTimersByTimeAsync(1);
+        expect(updates).toEqual([1, 2]);
+        await vi.advanceTimersByTimeAsync(120);
+        expect(updates).toEqual([1, 2, 3]);
+        expect(commits).toEqual([]);
+        await up(w, 'inc');
+        expect(commits).toEqual([3]);
+        // no more steps once it is let go
+        await vi.advanceTimersByTimeAsync(2000);
+        expect(updates).toEqual([1, 2, 3]);
+    });
+
+    it('a short press is one step, and the click after it does not add another', async () => {
+        vi.useFakeTimers();
+        const { w, updates, commits } = make({ modelValue: 0 });
+        await down(w, 'inc');
+        await up(w, 'inc');
+        await w.find('.tao-drag-number__btn--inc').trigger('click');
+        await vi.advanceTimersByTimeAsync(1000);
+        expect(updates).toEqual([1]);
+        expect(commits).toEqual([1]);
+        // a click that is not preceded by a press (keyboard, screen reader) is a plain step
+        await w.find('.tao-drag-number__btn--inc').trigger('click');
+        expect(updates).toEqual([1, 2]);
+    });
+
+    it('runs into a bound and stops there, with one commit', async () => {
+        vi.useFakeTimers();
+        const { w, updates, commits } = make({ modelValue: 8, max: 10 });
+        await down(w, 'inc');
+        await vi.advanceTimersByTimeAsync(5000);
+        expect(updates).toEqual([9, 10]);
+        expect(commits).toEqual([10]);
+    });
+
+    it('the minus runs down the same way', async () => {
+        vi.useFakeTimers();
+        const { w, updates } = make({ modelValue: 5, step: 0.5 });
+        await down(w, 'dec');
+        await vi.advanceTimersByTimeAsync(400 + 120);
+        expect(updates).toEqual([4.5, 4, 3.5]);
+        await up(w, 'dec');
+    });
+
+    it('Escape puts the value back to where the run began and commits nothing', async () => {
+        vi.useFakeTimers();
+        const { w, updates, commits } = make({ modelValue: 5 });
+        await down(w, 'inc');
+        await vi.advanceTimersByTimeAsync(400 + 120);
+        expect(updates.at(-1)).toBe(8);
+        window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', cancelable: true }));
+        await nextTick();
+        expect(updates.at(-1)).toBe(5);
+        await vi.advanceTimersByTimeAsync(2000);
+        await up(w, 'inc');
+        expect(updates.at(-1)).toBe(5);
+        expect(commits).toEqual([]);
+    });
+
+    it('the window losing the focus lets the button go: the value stays, one commit', async () => {
+        vi.useFakeTimers();
+        const { w, updates, commits } = make({ modelValue: 0 });
+        await down(w, 'inc');
+        await vi.advanceTimersByTimeAsync(400 + 120);
+        window.dispatchEvent(new Event('blur'));
+        await vi.advanceTimersByTimeAsync(3000);
+        expect(updates).toEqual([1, 2, 3]);
+        expect(commits).toEqual([3]);
+    });
+
+    it('with repeat off a press does nothing and the click is one step', async () => {
+        vi.useFakeTimers();
+        const { w, updates, commits } = make({ modelValue: 0, repeat: false });
+        await down(w, 'inc');
+        await vi.advanceTimersByTimeAsync(2000);
+        expect(updates).toEqual([]);
+        await w.find('.tao-drag-number__btn--inc').trigger('click');
+        expect(updates).toEqual([1]);
+        expect(commits).toEqual([1]);
+    });
+
+    it('a disabled field does not start a run, and an unmounted one leaves no timer', async () => {
+        vi.useFakeTimers();
+        const off = make({ disabled: true });
+        await off.w.find('.tao-drag-number__btn--inc').trigger('pointerdown', { pointerId: 1, button: 0 });
+        await vi.advanceTimersByTimeAsync(2000);
+        expect(off.updates).toEqual([]);
+
+        const gone = make({ modelValue: 0 });
+        await down(gone.w, 'inc');
+        gone.w.unmount();
+        await vi.advanceTimersByTimeAsync(2000);
+        expect(gone.updates).toEqual([1]);
+        expect(gone.commits).toEqual([]);
     });
 });
 
