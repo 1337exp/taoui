@@ -128,6 +128,7 @@ export interface TaoLocale {
         decimalSeparator: string;
     };
     inputNumber: { incrementLabel: string; decrementLabel: string };
+    dragNumber: { incrementLabel: string; decrementLabel: string };
     list: { emptyText: string };
     modal: { closeLabel: string };
     docTabs: { label: string; closeLabel: string; dirtyLabel: string };

@@ -218,6 +218,29 @@ export const propTables = {
       slots: '#decrement-icon / #increment-icon — иконки кнопок.',
     },
   ],
+  'drag-number': [
+    {
+      title: 'TaoDragNumber',
+      rows: [
+        r('v-model', 'number', '0', 'Число. Пустым не бывает'),
+        r('label', 'string', '—', 'Подпись слева в поле. Она же называет контрол для скринридера (свой aria-label главнее). Без неё число стоит по центру'),
+        r('unit', 'string', '—', 'Единица после числа («м», «°», «%»). Не входит в значение; набранное «5 м» читается как 5, чужая единица — ошибка набора'),
+        r('min / max', 'number', '—', 'Границы. Протяжка упирается в них и не «копит» лишнего'),
+        r('step', 'number', '1', 'Шаг ± и стрелок (PageUp / PageDown — десять шагов, Home / End — границы). Задаёт и точность'),
+        r('precision', 'number', 'знаков у step', 'До скольких знаков после запятой округляется значение'),
+        r('dragSpeed', 'number', 'step / 4', 'Изменение значения на пиксель протяжки. Shift — в десять раз медленнее, Ctrl — по сетке шага, Esc — вернуть'),
+        r('controls', 'boolean', 'true', 'Кнопки − и + по бокам'),
+        r('variant', "'outline' | 'filled'", "'outline'", 'Рамка / заливка без рамки (столбец полей в панели)'),
+        r('format', '(value: number) => string', '—', 'Текст числа в покое (1 200, 5.00). Правится простое число'),
+        r('@commit', 'number', '—', 'Действие закончено и изменило значение: конец протяжки, ±, стрелка, Enter или blur набранного (один раз на действие; v-model обновляется на каждом движении). / The action ended and changed the value (once per action; v-model updates on every move)'),
+        r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер, шкала как у TaoButton. Без него — размер предков (tao-size-* или size у FormField / InputGroup), иначе medium'),
+        r('disabled', 'boolean', 'false', 'Неактивно'),
+        r('error', 'boolean', 'false', 'Красная рамка. Текст ошибки — error у TaoFormField'),
+        r('incrementLabel / decrementLabel', 'string', 'из локали', 'Подписи кнопок для скринридера'),
+      ],
+      slots: '#decrement-icon / #increment-icon — иконки кнопок.',
+    },
+  ],
   textarea: [
     {
       title: 'TaoTextarea',

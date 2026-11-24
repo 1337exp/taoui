@@ -225,6 +225,29 @@ export const propTablesEn = {
       slots: '#decrement-icon / #increment-icon — the button icons.',
     },
   ],
+  'drag-number': [
+    {
+      title: 'TaoDragNumber',
+      rows: [
+        r('v-model', 'number', '0', 'A number. Never empty'),
+        r('label', 'string', '—', 'The caption on the left of the field. It also names the control for a screen reader (an aria-label of your own wins). Without it the number sits in the middle'),
+        r('unit', 'string', '—', 'The unit after the number (m, °, %). Not part of the value; a typed “5 m” reads as 5, another unit is a typo'),
+        r('min / max', 'number', '—', 'The bounds. A drag stops at them and does not “save up” the overshoot'),
+        r('step', 'number', '1', 'The step of ± and the arrows (PageUp / PageDown ten steps, Home / End the bounds). Also sets the precision'),
+        r('precision', 'number', 'decimals of step', 'How many decimal places the value is rounded to'),
+        r('dragSpeed', 'number', 'step / 4', 'Value change per pixel of a drag. Shift is ten times slower, Ctrl snaps to the step grid, Esc puts it back'),
+        r('controls', 'boolean', 'true', 'The − and + buttons on the sides'),
+        r('variant', "'outline' | 'filled'", "'outline'", 'A frame / a fill and no frame (a column of fields in a panel)'),
+        r('format', '(value: number) => string', '—', 'Text of the number at rest (1 200, 5.00). The field edits the plain number'),
+        r('@commit', 'number', '—', 'The action ended and changed the value: end of a drag, ±, an arrow, Enter or blur of a typed number (once per action; v-model updates on every move)'),
+        r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium'),
+        r('disabled', 'boolean', 'false', 'Disabled'),
+        r('error', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
+        r('incrementLabel / decrementLabel', 'string', 'from the locale', 'Button labels for a screen reader'),
+      ],
+      slots: '#decrement-icon / #increment-icon — the button icons.',
+    },
+  ],
   textarea: [
     {
       title: 'TaoTextarea',

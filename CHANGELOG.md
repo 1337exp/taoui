@@ -1,5 +1,11 @@
 # Changelog
 
+## 5.53.0
+
+A new component, nothing changes for existing code.
+
+- **`TaoDragNumber`: a number you drag.** The number field of a panel or an editor, as in a 3D tool: the caption, the number and its unit in one cell. Press and move sideways and the value follows the pointer like a slider (a quarter of a step per pixel, `dragSpeed` to change it; `Shift` is ten times slower, `Ctrl` snaps to the step grid, `Esc` puts the value back); a click without a move starts typing (`5`, `0,5`, or with the unit, `5 m`; another unit or a word is dropped, the value stays). The `−` and `+` buttons, the arrow keys, `PageUp` / `PageDown` (ten steps) and `Home` / `End` (the bounds) step it. It is one control with two looks: the caption inside and the buttons on the sides (`label`, `unit`), or `variant="filled"` with `:controls="false"` for a bare column of values with the captions outside (a `<label for>` of your own, or `TaoFormField`). The unit is not part of the value, the `v-model` is a number; `precision` (the decimals of `step` by default) rounds it, `min` / `max` clamp it, and a drag past a bound does not save up the overshoot. `v-model` updates on every move, `@commit` once per action (end of a drag, ±, an arrow, Enter, blur of a typed number), so a form can push one undo step. It is a field like the others: `TaoFormField` (label, hint, error), `size`, `error`, the attributes go to the `role="spinbutton"` input, the `label` names it for a screen reader. A finger moving sideways drags (`touch-action: pan-y`), up and down still scrolls. The pure part is in `dragNumber.ts` (`dragNumberAdvance`, `dragNumberResolve`, `parseDragNumber`, …, tested). `TaoQuantity` stays what it was, whole items in a cart.
+
 ## 5.52.0
 
 One look changes by default: a `TaoLink` is underlined now. To keep the old look on a link: `<TaoLink underline="none">` (or `hover`). `TaoStretchedLink` keeps its look (no line); a crumb of `TaoBreadcrumb` gets the line under the pointer. The types of `TaoTable` got wider, nothing narrower: code that compiled still compiles (the default row type is `any` now, so a shared `TaoTableColumn[]` fits every table).

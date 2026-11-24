@@ -21,6 +21,7 @@ export const navGroups = [
       { id: 'input', label: 'TaoInput / Group', aliases: ['TaoInput', 'TaoInputGroup'] },
       { id: 'input-number', label: 'TaoInputNumber' },
       { id: 'quantity', label: 'TaoQuantity' },
+      { id: 'drag-number', label: 'TaoDragNumber', aliases: ['drag', 'scrub', 'scrubber field', 'number field', 'spinbutton', 'unit', 'blender', 'inspector', 'протяжка', 'число', 'единица измерения', 'инспектор', 'ползунок-поле'] },
       { id: 'textarea', label: 'TaoTextarea' },
       { id: 'checkbox', label: 'TaoCheckbox' },
       { id: 'checklist', label: 'TaoChecklist', aliases: ['todo', 'checklist', 'select all', 'чеклист', 'список дел'] },
