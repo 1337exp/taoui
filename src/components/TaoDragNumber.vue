@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
 import { useControlAttrs } from '../controlAttrs';
-import { computed, nextTick, onBeforeUnmount, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { listenFocusLoss } from '../focusLoss';
 import { useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
@@ -278,7 +279,7 @@ function onPointermove(event: PointerEvent) {
     }
 }
 
-function stopDrag(event?: PointerEvent) {
+function stopDrag() {
     const done = drag;
     drag = null;
     dragging.value = false;
@@ -286,19 +287,24 @@ function stopDrag(event?: PointerEvent) {
     if (done && fieldEl.value?.hasPointerCapture?.(done.id)) {
         fieldEl.value.releasePointerCapture(done.id);
     }
-    void event;
     return done;
 }
 
-function onPointerup(event: PointerEvent) {
-    if (!drag || event.pointerId !== drag.id) {
-        return;
-    }
-    const done = stopDrag(event);
+/**
+ * The drag is over: the pointer was released, or it never will be (the window lost the focus, the capture was taken away).
+ * A drag that moved keeps its value and commits it; a press that did not move is a click, unless it was lost.
+ * Протяжка кончилась: указатель отпустили или его уже не отпустят (окно потеряло фокус, захват отобрали). Сдвинувшаяся
+ * протяжка оставляет значение и фиксирует его; нажатие без движения — клик, если его не потеряли.
+ */
+function finishDrag(lost = false) {
+    const done = stopDrag();
     if (!done) {
         return;
     }
     if (!done.moved) {
+        if (lost) {
+            return;
+        }
         // a click: type the number / клик: набираем число
         if (focused.value) {
             inputEl.value?.select();
@@ -315,6 +321,21 @@ function onPointerup(event: PointerEvent) {
     }
 }
 
+function onPointerup(event: PointerEvent) {
+    if (!drag || event.pointerId !== drag.id) {
+        return;
+    }
+    finishDrag();
+}
+
+// Alt-Tab, a screenshot or a system dialog swallow the pointerup: without this the field would stay «pressed»
+// Alt-Tab, скриншот или системный диалог глотают pointerup: без этого поле осталось бы «нажатым»
+let stopFocusLoss: (() => void) | undefined;
+
+onMounted(() => {
+    stopFocusLoss = listenFocusLoss(() => finishDrag(true));
+});
+
 // Escape while dragging: the value goes back to where it was, nothing is committed
 // Escape во время протяжки: значение возвращается, где было, ничего не фиксируется
 function onDragKey(event: KeyboardEvent) {
@@ -330,7 +351,8 @@ function onDragKey(event: KeyboardEvent) {
 }
 
 onBeforeUnmount(() => {
-    window.removeEventListener('keydown', onDragKey, true);
+    stopFocusLoss?.();
+    stopDrag();
 });
 
 const atMin = computed(() => props.min !== undefined && props.modelValue <= props.min);
@@ -372,7 +394,8 @@ const atMax = computed(() => props.max !== undefined && props.modelValue >= prop
             @pointerdown="onPointerdown"
             @pointermove="onPointermove"
             @pointerup="onPointerup"
-            @pointercancel="onPointerup"
+            @pointercancel="finishDrag(true)"
+            @lostpointercapture="finishDrag(true)"
         >
             <span v-if="label" :id="labelId" class="tao-drag-number__label">{{ label }}</span>
             <input

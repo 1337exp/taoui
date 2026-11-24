@@ -227,6 +227,59 @@ describe('the drag', () => {
         expect(commits).toEqual([]);
     });
 
+    it('the window losing the focus mid-drag ends it: the value stays, one commit, no stuck press', async () => {
+        const { w, updates, commits } = make();
+        await press(w, 0);
+        await move(w, 10);
+        await move(w, 50);
+        const shown = updates.at(-1);
+        window.dispatchEvent(new Event('blur'));
+        await nextTick();
+        expect(w.classes()).not.toContain('tao-drag-number--dragging');
+        expect(commits).toEqual([shown]);
+        // the pointerup that never came, and a move after it, change nothing
+        await move(w, 200);
+        await release(w, 200);
+        expect(updates.at(-1)).toBe(shown);
+        expect(commits).toEqual([shown]);
+    });
+
+    it('so does the page being hidden, and the capture taken away', async () => {
+        const hidden = make();
+        await press(hidden.w, 0);
+        await move(hidden.w, 40);
+        window.dispatchEvent(new Event('pagehide'));
+        await nextTick();
+        expect(hidden.w.classes()).not.toContain('tao-drag-number--dragging');
+        expect(hidden.commits).toHaveLength(1);
+
+        const lost = make();
+        await press(lost.w, 0);
+        await move(lost.w, 40);
+        await lost.w.find('.tao-drag-number__field').trigger('lostpointercapture');
+        expect(lost.w.classes()).not.toContain('tao-drag-number--dragging');
+        expect(lost.commits).toHaveLength(1);
+    });
+
+    it('a press lost before it moved is not a click: nothing is focused', async () => {
+        const { w, commits } = make();
+        await press(w, 50);
+        window.dispatchEvent(new Event('blur'));
+        await release(w, 50);
+        expect(document.activeElement).not.toBe(w.find('input').element);
+        expect(commits).toEqual([]);
+    });
+
+    it('Escape after the drag is over is not swallowed, and an unmounted field leaves no listener', async () => {
+        const { w } = make();
+        await press(w, 0);
+        await move(w, 40);
+        w.unmount();
+        const event = new KeyboardEvent('keydown', { key: 'Escape', cancelable: true });
+        window.dispatchEvent(event);
+        expect(event.defaultPrevented).toBe(false);
+    });
+
     it('a press without a move is a click: the field gets the focus to type in', async () => {
         const { w, updates, commits } = make();
         await press(w, 50);
