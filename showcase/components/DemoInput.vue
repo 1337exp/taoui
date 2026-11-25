@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { TaoInput, TaoFormField, TaoInputGroup, TaoButton, TaoSelect, TaoInputNumber, TaoDate, TaoSegmented, TaoSegmentedOption, TaoCheckbox, TaoSwitch, TaoRadio, TaoTag, TaoTabs, TaoPagination, TaoSlider, TaoCombobox, toast } from '@1337exp/taoui'
+import { TaoInput, TaoFormField, TaoInputGroup, TaoButton, TaoTooltip, TaoSelect, TaoInputNumber, TaoDate, TaoSegmented, TaoSegmentedOption, TaoCheckbox, TaoSwitch, TaoRadio, TaoTag, TaoTabs, TaoPagination, TaoSlider, TaoCombobox, toast } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { tr } from '../i18n.js'
 import Tr from './Tr.vue'
@@ -71,6 +71,15 @@ const plainText = ref(tr('Oat milk', 'Овсяное молоко'))
 
             <TaoFormField :label="tr('Password', 'Пароль')">
               <TaoInput type="password" placeholder="••••••••" />
+            </TaoFormField>
+
+            <TaoFormField :label="tr('Promo code', 'Промокод')">
+              <template #label-end>
+                <TaoTooltip :content="tr('Latin letters and digits, without spaces', 'Латинские буквы и цифры, без пробелов')">
+                  <TaoButton variant="text" size="small" icon="tao-info" :aria-label="tr('What is a promo code?', 'Что такое промокод?')" />
+                </TaoTooltip>
+              </template>
+              <TaoInput :placeholder="tr('SUMMER26', 'ЛЕТО26')" />
             </TaoFormField>
 
             <TaoFormField :label="tr('With an error', 'С ошибкой')" :error="tr('Invalid value', 'Некорректное значение')">

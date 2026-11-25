@@ -373,7 +373,7 @@ export const propTablesEn = {
         r('error', 'string', '—', 'The error text; if present, the field is invalid'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'The size of the control inside'),
       ],
-      slots: 'default — the control itself (Input, Select, Switch…).',
+      slots: 'default — the control itself (Input, Select, Switch…). #label-end — after the label (a «?» with a hint, a link): a sibling of the label, not part of its name.',
     },
   ],
   segmented: [

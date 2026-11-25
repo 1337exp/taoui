@@ -366,7 +366,7 @@ export const propTables = {
         r('error', 'string', '—', 'Текст ошибки; если есть — поле invalid'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер контрола внутри'),
       ],
-      slots: 'default — сам контрол (Input, Select, Switch…).',
+      slots: 'default — сам контрол (Input, Select, Switch…). #label-end — после подписи (знак «?» с подсказкой, ссылка): соседний с подписью элемент, не часть её имени.',
     },
   ],
   segmented: [

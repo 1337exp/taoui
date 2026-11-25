@@ -393,7 +393,7 @@ Showcase section: `#select`
 | `error` | `string` | — | The error text; if present, the field is invalid |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | The size of the control inside |
 
-**Slots, events, notes.** default — the control itself (Input, Select, Switch…).
+**Slots, events, notes.** default — the control itself (Input, Select, Switch…). #label-end — after the label (a «?» with a hint, a link): a sibling of the label, not part of its name.
 
 ## TaoSegmented
 
