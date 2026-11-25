@@ -19,7 +19,6 @@ const { rootAttrs, controlAttrs } = useControlAttrs();
 const props = withDefaults(
     defineProps<{
         /** Color as a hex string. / Цвет строкой hex. */
-        modelValue: string;
         /** The opacity strip and `#rrggbbaa`. / Полоса прозрачности и `#rrggbbaa`. */
         alpha?: boolean;
         swatches?: readonly string[];
@@ -47,8 +46,9 @@ const props = withDefaults(
     { alpha: false, modes: () => ['hex', 'rgb', 'hsl'], eyedropper: true, disabled: false, invalid: false, placement: 'bottom-start', clearable: false },
 );
 
+const model = defineModel<string>({ required: true });
+
 const emit = defineEmits<{
-    'update:modelValue': [hex: string];
     'update:mode': [mode: ColorMode];
     commit: [hex: string];
 }>();
@@ -57,15 +57,15 @@ const emit = defineEmits<{
 // TaoFormField вокруг доходит и до кнопки: подпись, ошибка и описание
 const { controlId, isInvalid, describedBy } = useField(props);
 const l10n = useLocaleText(props, 'colorPicker');
-const shown = computed(() => normalizeHex(props.modelValue, props.alpha) ?? props.modelValue);
+const shown = computed(() => normalizeHex(model.value, props.alpha) ?? model.value);
 // «Background: #ff8800» when the app names the field, «Choose a colour: #ff8800» when it does not
 // «Фон: #ff8800», если приложение назвало поле, иначе «Выбрать цвет: #ff8800»
 // an empty value is a state, not a mistake: the field says it is not set, with a crossed-out swatch
 // пустое значение — состояние, а не ошибка: поле говорит, что цвет не задан, а образец зачёркнут
-const empty = computed(() => props.modelValue === '');
+const empty = computed(() => model.value === '');
 const text = computed(() => (empty.value ? l10n.value.placeholder : shown.value));
 function clear() {
-    emit('update:modelValue', '');
+    model.value = '';
     emit('commit', '');
 }
 
@@ -102,14 +102,14 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
         </template>
 
         <TaoColorPicker
-            :model-value="modelValue"
+            :model-value="model"
             :alpha="alpha"
             :swatches="swatches"
             :modes="modes"
             :mode="mode"
             :eyedropper="eyedropper"
             :size="size"
-            @update:model-value="emit('update:modelValue', $event)"
+            @update:model-value="model = $event"
             @update:mode="emit('update:mode', $event)"
             @commit="emit('commit', $event)"
         />

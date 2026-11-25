@@ -8,7 +8,6 @@ defineOptions({ name: 'TaoSplit' });
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: number;
         direction?: TaoSplitDirection;
         unit?: TaoSplitUnit;
         min?: number;
@@ -18,7 +17,6 @@ const props = withDefaults(
         step?: number;
     }>(),
     {
-        modelValue: 50,
         direction: 'row',
         unit: '%',
         min: 0,
@@ -27,8 +25,9 @@ const props = withDefaults(
     },
 );
 
+const model = defineModel<number>({ default: 50 });
+
 const emit = defineEmits<{
-    'update:modelValue': [value: number];
     /** The user finished changing: drag released or key. / Пользователь закончил менять: отпустил ручку или нажал клавишу. */
     commit: [value: number];
 }>();
@@ -37,7 +36,7 @@ const rootRef = ref<HTMLElement | null>(null);
 const handleRef = ref<HTMLElement | null>(null);
 const startPx = ref(0);
 const available = ref(0);
-const size = ref(props.modelValue);
+const size = ref(model.value);
 
 const isRow = computed(() => props.direction === 'row');
 const stepValue = computed(() => props.step ?? (props.unit === '%' ? 1 : 8));
@@ -111,7 +110,7 @@ function commit(next: number) {
         return;
     }
     size.value = next;
-    emit('update:modelValue', next);
+    model.value = next;
 }
 
 function applyLayout(emitIfChanged: boolean) {
@@ -259,7 +258,7 @@ function moveByKey(event: KeyboardEvent) {
 }
 
 watch(
-    () => props.modelValue,
+    () => model.value,
     value => {
         if (isDragging.value) {
             return;

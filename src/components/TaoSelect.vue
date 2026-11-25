@@ -19,7 +19,6 @@ const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: string | number | null;
         options?: TaoSelectOption[];
         placeholder?: string;
         disabled?: boolean;
@@ -37,18 +36,16 @@ const props = withDefaults(
         size?: TaoSize;
     }>(),
     {
-        modelValue: null,
         options: () => [],
         disabled: false,
         invalid: false,
         clearable: true,
     },
 );
+
+const model = defineModel<string | number | null>({ default: null });
 const l10n = useLocaleText(props, 'select');
 
-const emit = defineEmits<{
-    'update:modelValue': [value: string | number | null];
-}>();
 
 const { field, controlId, isInvalid, describedBy, localId } = useField(props);
 const listId = `${localId}-list`;
@@ -62,7 +59,7 @@ const listRef = ref<HTMLElement | null>(null);
 const panelSize = ref<TaoSize>('medium');
 const panelDensity = ref<TaoResolvedDensity>('default');
 
-const selected = computed(() => props.options.find((option) => option.value === props.modelValue) ?? null);
+const selected = computed(() => props.options.find((option) => option.value === model.value) ?? null);
 const enabled = computed(() => props.options.map((option) => !option.disabled));
 const enabledIndexes = computed(() => enabled.value.flatMap((on, index) => (on ? [index] : [])));
 
@@ -92,7 +89,7 @@ async function setOpen(next: boolean) {
         return;
     }
 
-    const selectedIndex = props.options.findIndex((option) => option.value === props.modelValue);
+    const selectedIndex = props.options.findIndex((option) => option.value === model.value);
     activeIndex.value =
         selectedIndex >= 0 && enabledIndexes.value.includes(selectedIndex)
             ? selectedIndex
@@ -116,13 +113,13 @@ function selectOption(option: TaoSelectOption) {
         return;
     }
 
-    emit('update:modelValue', option.value);
+    model.value = option.value;
     close();
     triggerRef.value?.focus();
 }
 
 function clear() {
-    emit('update:modelValue', null);
+    model.value = null;
     close();
     triggerRef.value?.focus();
 }
@@ -239,11 +236,11 @@ watch(open, (isOpen) => {
                         class="tao-select__option"
                         :class="{
                             'tao-select__option--active': index === activeIndex,
-                            'tao-select__option--selected': option.value === modelValue,
+                            'tao-select__option--selected': option.value === model,
                             'tao-select__option--disabled': option.disabled,
                         }"
                         role="option"
-                        :aria-selected="option.value === modelValue"
+                        :aria-selected="option.value === model"
                         :aria-disabled="option.disabled || undefined"
                         :data-tao-select-index="index"
                         @mousedown.prevent

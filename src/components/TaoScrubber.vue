@@ -15,7 +15,6 @@ defineOptions({ name: 'TaoScrubber' });
 const props = withDefaults(
     defineProps<{
         /** Current time. / Текущее время. */
-        modelValue: number;
         /** Whether it is playing (the play button state). / Идёт ли воспроизведение (вид кнопки). */
         playing?: boolean;
         /** Length; the slider goes from 0 to it. / Длина; слайдер идёт от 0 до неё. */
@@ -56,8 +55,9 @@ const props = withDefaults(
     },
 );
 
+const model = defineModel<number>({ required: true });
+
 const emit = defineEmits<{
-    'update:modelValue': [time: number];
     'update:playing': [playing: boolean];
     /** The «to start» button: the time is set to 0 as well. / Кнопка «в начало»: время тоже ставится в 0. */
     restart: [];
@@ -74,15 +74,15 @@ defineSlots<{
 
 const l10n = useLocaleText(props, 'scrubber');
 const text = (t: number) => (props.format ? props.format(t) : t.toFixed(2));
-const label = computed(() => `${text(props.modelValue)} / ${text(props.length)}`);
+const label = computed(() => `${text(model.value)} / ${text(props.length)}`);
 
 function onScrub(time: number) {
-    emit('update:modelValue', time);
+    model.value = time;
     if (props.pauseOnScrub && props.playing) emit('update:playing', false);
 }
 
 function onRestart() {
-    emit('update:modelValue', 0);
+    model.value = 0;
     emit('restart');
 }
 </script>
@@ -108,7 +108,7 @@ function onRestart() {
 
         <div class="tao-scrubber__track">
             <TaoSlider
-                :model-value="modelValue"
+                :model-value="model"
                 :min="0"
                 :max="length"
                 :step="step"
@@ -126,7 +126,7 @@ function onRestart() {
         </div>
 
         <div v-if="showTime" class="tao-scrubber__time">
-            <slot name="time" :time="modelValue" :length="length" :text="label">{{ label }}</slot>
+            <slot name="time" :time="model" :length="length" :text="label">{{ label }}</slot>
         </div>
     </div>
 </template>

@@ -18,7 +18,6 @@ defineOptions({ name: 'TaoColorPicker' });
 const props = withDefaults(
     defineProps<{
         /** Color as a hex string; also accepts anything `parseColor` reads. / Цвет строкой hex; понимает и всё, что читает `parseColor`. */
-        modelValue: string;
         /** The opacity strip and `#rrggbbaa`. / Полоса прозрачности и `#rrggbbaa`. */
         alpha?: boolean;
         /** Ready colors under the picker. / Готовые цвета под палитрой. */
@@ -44,8 +43,9 @@ const props = withDefaults(
     { alpha: false, modes: () => ['hex', 'rgb', 'hsl'], eyedropper: true, disabled: false },
 );
 
+const model = defineModel<string>({ required: true });
+
 const emit = defineEmits<{
-    'update:modelValue': [hex: string];
     'update:mode': [mode: ColorMode];
     /** The user finished a change: released the area or a strip, a key, the hex field, a swatch. / Пользователь закончил правку. */
     commit: [hex: string];
@@ -69,18 +69,18 @@ function load(value: string) {
     state.v = next.v;
     state.a = props.alpha ? next.a : 1;
 }
-load(props.modelValue);
+load(model.value);
 
 // Значение пришло снаружи (не наше эхо): подхватываем
 watch(
-    () => props.modelValue,
+    () => model.value,
     (value) => {
         if (normalizeHex(value, props.alpha) !== hex.value) load(value);
     },
 );
 watch(
     () => props.alpha,
-    () => load(props.modelValue),
+    () => load(model.value),
 );
 
 //--------------------------------------------------
@@ -165,7 +165,7 @@ watch(hex, (h) => {
 });
 
 function push(final = false) {
-    emit('update:modelValue', hex.value);
+    model.value = hex.value;
     if (final) emit('commit', hex.value);
 }
 

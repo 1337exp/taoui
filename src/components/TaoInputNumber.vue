@@ -15,7 +15,6 @@ const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: number | null;
         min?: number;
         max?: number;
         step?: number;
@@ -48,7 +47,6 @@ const props = withDefaults(
         decrementLabel?: string;
     }>(),
     {
-        modelValue: null,
         step: 1,
         disabled: false,
         invalid: false,
@@ -57,10 +55,11 @@ const props = withDefaults(
         variant: 'outline',
     },
 );
+
+const model = defineModel<number | null>({ default: null });
 const l10n = useLocaleText(props, 'inputNumber');
 
 const emit = defineEmits<{
-    'update:modelValue': [value: number | null];
     /**
      * The user finished an edit: blur, Enter, ± button, arrow key. Fires once per action (typing emits only update:modelValue),
      * so forms can save or push an undo step here. / Правка закончена: blur, Enter, кнопка ±, стрелка. Один раз на действие
@@ -74,7 +73,7 @@ const emit = defineEmits<{
 const { field, controlId, isInvalid, describedBy } = useField(props);
 
 const focused = ref(false);
-const draft = ref(toDraft(props.modelValue));
+const draft = ref(toDraft(model.value));
 
 /** Last value this field emitted itself: tells typing apart from a change made elsewhere. / Последнее значение, которое поле отдало само: так отличаем набор от правки снаружи. */
 let emitted: number | null | undefined;
@@ -84,7 +83,7 @@ let emitted: number | null | undefined;
 // Пока поле в фокусе, текст это черновик пользователя и переживает эхо собственного значения. Значение, пришедшее
 // снаружи (слайдер, другое поле), заменяет черновик: иначе blur записал бы устаревший текст поверх него.
 watch(
-    () => props.modelValue,
+    () => model.value,
     (value) => {
         if (!focused.value || value !== emitted) {
             draft.value = toDraft(value);
@@ -128,7 +127,7 @@ function isAllowed(text: string) {
 function commit(value: number | null) {
     const next = value === null ? null : clamp(value);
     emitted = next;
-    emit('update:modelValue', next);
+    model.value = next;
     draft.value = toDraft(next);
     emit('commit', next);
 }
@@ -137,7 +136,7 @@ function bump(direction: 1 | -1) {
     if (props.disabled || props.readOnly) {
         return;
     }
-    const base = props.modelValue ?? 0;
+    const base = model.value ?? 0;
     commit(base + direction * props.step);
 }
 
@@ -150,7 +149,7 @@ function onInput(event: Event) {
     const parsed = parseDraft(text);
     if (parsed !== 'incomplete') {
         emitted = parsed === null ? null : clamp(parsed);
-        emit('update:modelValue', emitted);
+        model.value = emitted;
     }
 }
 
@@ -187,8 +186,8 @@ function onKeydown(event: KeyboardEvent) {
     }
 }
 
-const atMin = computed(() => props.min !== undefined && (props.modelValue ?? 0) <= props.min);
-const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) >= props.max);
+const atMin = computed(() => props.min !== undefined && (model.value ?? 0) <= props.min);
+const atMax = computed(() => props.max !== undefined && (model.value ?? 0) >= props.max);
 </script>
 
 <template>
@@ -205,7 +204,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
             :disabled="disabled"
             :aria-invalid="isInvalid || undefined"
             :aria-describedby="describedBy"
-            :aria-valuenow="modelValue ?? undefined"
+            :aria-valuenow="model ?? undefined"
             :aria-valuemin="min"
             :aria-valuemax="max"
             autocomplete="off"

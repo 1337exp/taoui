@@ -11,7 +11,6 @@ const props = withDefaults(
     defineProps<{
         /** Tabs: `{ value, label, disabled? }`, same shape as Select options. / Вкладки, как опции Select. */
         items?: TaoTabItem[];
-        modelValue: string;
         /** Where the tabs sit along the row, as in TaoFlex; without it they start at the left. / Где вкладки стоят в ряду, как у TaoFlex; без него — слева. */
         justify?: TaoJustify;
         /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
@@ -23,8 +22,9 @@ const props = withDefaults(
     },
 );
 
+const model = defineModel<string>({ required: true });
+
 const emit = defineEmits<{
-    'update:modelValue': [value: string];
     /** The user picked another tab. / Пользователь выбрал другую вкладку. */
 }>();
 const uid = useId();
@@ -43,7 +43,7 @@ function panelId(key: string) {
 function selectTab(key: string, focus = false) {
     const tab = list.value.find((item) => item.value === key);
     if (tab && !tab.disabled) {
-        emit('update:modelValue', key);
+        model.value = key;
         if (focus) {
             void nextTick(() => document.getElementById(tabId(key))?.focus());
         }
@@ -53,7 +53,7 @@ function selectTab(key: string, focus = false) {
 // One tab stop, the arrows (all four), Home and End walk the tabs that are not disabled and select the one they land on.
 // Одна точка табуляции, стрелки (все четыре), Home и End ходят по вкладкам, которые не отключены, и выбирают ту, на которую пришли.
 const activeIndex = computed({
-    get: () => list.value.findIndex((tab) => tab.value === props.modelValue),
+    get: () => list.value.findIndex((tab) => tab.value === model.value),
     set: (index: number) => {
         const tab = list.value[index];
         if (tab) selectTab(tab.value, true);
@@ -73,9 +73,9 @@ const onKeydown = (event: KeyboardEvent) => void nav.onKeydown(event);
                 class="tao-tabs__tab"
                 role="tab"
                 :id="tabId(tab.value)"
-                :aria-selected="tab.value === modelValue"
+                :aria-selected="tab.value === model"
                 :aria-controls="panelId(tab.value)"
-                :tabindex="tab.value === modelValue ? 0 : -1"
+                :tabindex="tab.value === model ? 0 : -1"
                 :disabled="tab.disabled"
                 @click="selectTab(tab.value)"
             >
@@ -86,10 +86,10 @@ const onKeydown = (event: KeyboardEvent) => void nav.onKeydown(event);
         <div
             class="tao-tabs__content"
             role="tabpanel"
-            :id="panelId(modelValue)"
-            :aria-labelledby="tabId(modelValue)"
+            :id="panelId(model)"
+            :aria-labelledby="tabId(model)"
         >
-            <slot :active-tab="modelValue" />
+            <slot :active-tab="model" />
         </div>
     </div>
 </template>

@@ -118,7 +118,7 @@ describe('TaoDocTabs', () => {
         events.length = 0;
         tabEls()[1]!.click();
         await nextTick();
-        expect(names(events)).toEqual(['update']);
+        expect(names(events)).toEqual([]);
     });
 
     it('the arrows walk the tabs round, Home and End go to the ends, and the focus follows', async () => {

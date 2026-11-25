@@ -13,7 +13,6 @@ const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: boolean;
         label?: string;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
@@ -37,7 +36,6 @@ const props = withDefaults(
         loading?: boolean;
     }>(),
     {
-        modelValue: false,
         label: '',
         disabled: false,
         invalid: false,
@@ -45,9 +43,8 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
-    'update:modelValue': [value: boolean];
-}>();
+const model = defineModel<boolean>({ default: false });
+
 
 const { field, controlId, isInvalid, describedBy } = useField(props);
 
@@ -55,13 +52,13 @@ function toggle(event?: Event) {
     if (props.disabled || props.loading) {
         // the native checkbox already flipped: put it back / нативный чекбокс уже переключился: возвращаем
         if (event?.target instanceof HTMLInputElement) {
-            event.target.checked = props.modelValue;
+            event.target.checked = model.value;
         }
         return;
     }
 
-    const next = !props.modelValue;
-    emit('update:modelValue', next);
+    const next = !model.value;
+    model.value = next;
 }
 
 const slots = useSlots();
@@ -70,16 +67,16 @@ const has = (name: string) => slotHas(slots, name);
 </script>
 
 <template>
-    <label v-bind="rootAttrs()" class="tao-switch" :class="[sizeClass(size), { 'tao-switch--disabled': disabled, 'tao-switch--on': modelValue, 'tao-switch--invalid': isInvalid, 'tao-switch--loading': loading }]" :for="controlId">
+    <label v-bind="rootAttrs()" class="tao-switch" :class="[sizeClass(size), { 'tao-switch--disabled': disabled, 'tao-switch--on': model, 'tao-switch--invalid': isInvalid, 'tao-switch--loading': loading }]" :for="controlId">
         <input
             v-bind="{ ...controlAttrs(), ...nativeFieldAttrs(props) }"
             :id="controlId"
             class="tao-switch__input"
             type="checkbox"
             role="switch"
-            :checked="modelValue"
+            :checked="model"
             :disabled="disabled"
-            :aria-checked="modelValue"
+            :aria-checked="model"
             :aria-invalid="isInvalid || undefined"
             :aria-describedby="describedBy"
             :aria-busy="loading || undefined"

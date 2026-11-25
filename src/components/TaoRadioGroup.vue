@@ -8,7 +8,6 @@ defineOptions({ name: 'TaoRadioGroup' });
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: TaoRadioValue;
         name?: string;
         legend?: string;
         disabled?: boolean;
@@ -25,19 +24,17 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
-    'update:modelValue': [value: TaoRadioValue];
-}>();
+const model = defineModel<TaoRadioValue>();
+
 
 const { field, isInvalid, describedBy } = useField(props);
 const autoName = useId();
 const groupName = computed(() => props.name || autoName);
-const model = computed(() => props.modelValue);
 const groupDisabled = computed(() => props.disabled);
 const labelledBy = computed(() => (props.legend || !field ? undefined : `${field.id}-label`));
 
 function setValue(value: TaoRadioValue) {
-    emit('update:modelValue', value);
+    model.value = value;
 }
 
 provide(radioGroupKey, {

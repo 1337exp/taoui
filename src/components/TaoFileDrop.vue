@@ -20,7 +20,6 @@ interface Props {
      * количества файлов, оно всегда отражает то, что передал родитель.
      * Это и даёт возможность подтверждения: родитель решает, когда
      * именно менять modelValue (сразу или после ответа в модалке). */
-    modelValue?: File[];
     /** Zone height and file rows; without it — the size of ancestors. / Высота зоны и строк файлов; без него — размер предков. */
     size?: TaoSize;
     accept?: string;
@@ -35,7 +34,6 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    modelValue: () => [],
     accept: '*',
     multiple: false,
     showClear: false,
@@ -44,7 +42,6 @@ const props = withDefaults(defineProps<Props>(), {
 const l10n = useLocaleText(props, 'fileDrop');
 
 const emit = defineEmits<{
-    'update:modelValue': [files: File[]];
     /** The user added or removed files. / Пользователь добавил или убрал файлы. */
     /** Files that did not pass `accept` were left out: the list is what the user chose that fits. / Файлы, не прошедшие `accept`, отброшены. */
     reject: [files: File[]];
@@ -54,6 +51,8 @@ const emit = defineEmits<{
     'clear-request': [];
 }>();
 
+const model = defineModel<File[]>({ default: () => [] });
+
 const isDragging = ref(false);
 const fileInput = ref<HTMLInputElement | null>(null);
 
@@ -62,7 +61,7 @@ function sameFile(a: File, b: File) {
 }
 
 function commit(files: File[]) {
-    emit('update:modelValue', files);
+    model.value = files;
 }
 
 function handleDragOver(event: DragEvent) {
@@ -96,7 +95,7 @@ function requestClear() {
 }
 
 function removeAt(index: number) {
-    commit(props.modelValue.filter((_, item) => item !== index));
+    commit(model.value.filter((_, item) => item !== index));
 }
 
 function resetInput() {
@@ -121,7 +120,7 @@ function processFiles(fileList: FileList) {
     if (!props.multiple) {
         result = [incoming[0]!];
     } else {
-        result = [...props.modelValue];
+        result = [...model.value];
         for (const file of incoming) {
             if (!result.some((item) => sameFile(item, file))) {
                 result.push(file);
@@ -169,7 +168,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
     <div v-bind="rootAttrs()" class="tao-file-drop" :class="sizeClass(size)">
         <div class="tao-file-drop__row">
             <button
-                v-if="showClear && modelValue.length"
+                v-if="showClear && model.length"
                 type="button"
                 class="tao-file-drop__clear"
                 :aria-label="l10n.clearLabel"
@@ -202,8 +201,8 @@ onBeforeUnmount(() => stopFocusLoss?.());
             </label>
         </div>
 
-        <ul v-if="list && modelValue.length" class="tao-file-drop__list">
-            <li v-for="(file, index) in modelValue" :key="fileKey(file, index)" class="tao-file-drop__file">
+        <ul v-if="list && model.length" class="tao-file-drop__list">
+            <li v-for="(file, index) in model" :key="fileKey(file, index)" class="tao-file-drop__file">
                 <span class="tao-file-drop__name">{{ file.name }}</span>
                 <span class="tao-file-drop__meta">{{ sizeLabel(file.size) }}</span>
                 <button

@@ -30,7 +30,6 @@ const appLocale = useTaoLocale();
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: string | null;
         placeholder?: string;
         disabled?: boolean;
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
@@ -59,7 +58,6 @@ const props = withDefaults(
         calendarLabel?: string;
     }>(),
     {
-        modelValue: null,
         disabled: false,
         invalid: false,
         min: undefined,
@@ -69,12 +67,11 @@ const props = withDefaults(
         format: undefined,
     },
 );
+
+const model = defineModel<string | null>({ default: null });
 const l10n = useLocaleText(props, 'date');
 const dateLocale = computed(() => props.locale ?? appLocale.value.code);
 
-const emit = defineEmits<{
-    'update:modelValue': [value: string | null];
-}>();
 
 const { controlId, isInvalid, describedBy, localId } = useField(props);
 const gridId = `${localId}-grid`;
@@ -89,7 +86,7 @@ const panelRef = ref<HTMLElement | null>(null);
 const calendarRef = ref<InstanceType<typeof TaoCalendar> | null>(null);
 
 const valueIso = computed(() => {
-    const parsed = parseTaoDate(props.modelValue);
+    const parsed = parseTaoDate(model.value);
     return parsed ? formatTaoDateIso(parsed) : null;
 });
 const displayLabel = computed(() => (valueIso.value ? formatTaoDateLabel(valueIso.value, dateLocale.value) : ''));
@@ -125,7 +122,7 @@ watch([valueIso, dateLocale], () => {
 
 function emitValue(next: string | null) {
     if (next === valueIso.value) return;
-    emit('update:modelValue', next);
+    model.value = next;
 }
 
 function commitText() {
@@ -198,7 +195,7 @@ function onChange(value: unknown) {
         emitValue(next);
         text.value = shortText(next);
     } else {
-        emit('update:modelValue', next);
+        model.value = next;
     }
     close();
     focusBack();

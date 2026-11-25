@@ -321,7 +321,6 @@ Showcase section: `#checkbox`
 | Prop | Type | Default | Notes |
 |---|---|---|---|
 | `v-model` | `boolean` | — | Checked / not |
-| `checked` | `boolean` | — | The state without v-model |
 | `label` | `string` | '' | The caption on the right |
 | `indeterminate` | `boolean` | false | A dash instead of the tick. A click sets checked, the parent works out the mixed state |
 | `disabled` | `boolean` | false | Disabled |

@@ -5,10 +5,10 @@ import TaoSliderBase from './TaoSliderBase.vue';
 defineOptions({ name: 'TaoSlider' });
 
 // Слайдер с одной ручкой. Две ручки: TaoRangeSlider. Вся работа в TaoSliderBase.
-const props = defineProps<TaoSliderBaseProps & { modelValue: number }>();
+const props = defineProps<TaoSliderBaseProps>();
+const model = defineModel<number>({ required: true });
 
 const emit = defineEmits<{
-    'update:modelValue': [value: number];
     /** The user finished changing: drag released, key, wheel, a click on a mark. / Пользователь закончил менять: отпустил, клавиша, колёсико, клик по метке. */
     commit: [value: number];
 }>();
@@ -24,7 +24,7 @@ defineSlots<{
 </script>
 
 <template>
-    <TaoSliderBase v-bind="props" @update:model-value="emit('update:modelValue', $event as number)" @commit="emit('commit', $event as number)">
+    <TaoSliderBase v-model="model" v-bind="props" @commit="emit('commit', $event as number)">
         <template v-if="$slots.mark" #mark="slot"><slot name="mark" v-bind="slot" /></template>
         <template v-if="$slots.bubble" #bubble="slot"><slot name="bubble" v-bind="slot" /></template>
         <template v-if="$slots['pre-value']" #pre-value><slot name="pre-value" /></template>

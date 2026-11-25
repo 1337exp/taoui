@@ -22,7 +22,6 @@ const appLocale = useTaoLocale();
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: string | number | null;
         options?: TaoSelectOption[];
         placeholder?: string;
         disabled?: boolean;
@@ -53,7 +52,6 @@ const props = withDefaults(
         allowCreate?: boolean;
     }>(),
     {
-        modelValue: null,
         options: () => [],
         disabled: false,
         invalid: false,
@@ -62,10 +60,11 @@ const props = withDefaults(
         variant: 'outline',
     },
 );
+
+const model = defineModel<string | number | null>({ default: null });
 const l10n = useLocaleText(props, 'combobox');
 
 const emit = defineEmits<{
-    'update:modelValue': [value: string | number | null];
     /** Новое значение, которого не было в `options`. Список сам не трогаем — его дополняет родитель. */
     create: [value: string];
 }>();
@@ -90,14 +89,14 @@ const panelDensity = ref<TaoResolvedDensity>('default');
 const listRef = ref<HTMLElement | null>(null);
 
 const selected = computed((): TaoSelectOption | null => {
-    const found = props.options.find((option) => option.value === props.modelValue);
+    const found = props.options.find((option) => option.value === model.value);
     if (found) {
         return found;
     }
-    if (props.modelValue === null || props.modelValue === undefined || props.modelValue === '') {
+    if (model.value === null || model.value === undefined || model.value === '') {
         return null;
     }
-    return { value: props.modelValue, label: String(props.modelValue) };
+    return { value: model.value, label: String(model.value) };
 });
 
 const needle = computed(() => query.value.trim().toLowerCase());
@@ -152,7 +151,7 @@ function syncQueryFromModel() {
 
 function resetActive() {
     const selectedIndex = rows.value.findIndex(
-        (row) => row.kind === 'option' && row.option.value === props.modelValue,
+        (row) => row.kind === 'option' && row.option.value === model.value,
     );
     if (selectedIndex >= 0 && enabledIndexes.value.includes(selectedIndex)) {
         activeIndex.value = selectedIndex;
@@ -183,7 +182,7 @@ async function setOpen(next: boolean) {
 }
 
 function emitValue(value: string | number | null) {
-    emit('update:modelValue', value);
+    model.value = value;
 }
 
 function keepFocusQuiet() {
@@ -414,7 +413,7 @@ function onInputKeydown(event: KeyboardEvent) {
 }
 
 watch(
-    () => props.modelValue,
+    () => model.value,
     () => {
         if (!focused.value) {
             syncQueryFromModel();
@@ -511,12 +510,12 @@ onBeforeUnmount(() => {
                         :class="{
                             'tao-combobox__option--active': index === activeIndex,
                             'tao-combobox__option--selected':
-                                row.kind === 'option' && row.option.value === modelValue,
+                                row.kind === 'option' && row.option.value === model,
                             'tao-combobox__option--disabled': row.kind === 'option' && row.option.disabled,
                             'tao-combobox__option--create': row.kind === 'create',
                         }"
                         role="option"
-                        :aria-selected="row.kind === 'option' && row.option.value === modelValue"
+                        :aria-selected="row.kind === 'option' && row.option.value === model"
                         :aria-disabled="row.kind === 'option' && row.option.disabled ? true : undefined"
                         :data-tao-combobox-index="index"
                         @mousedown.prevent="markPicking"

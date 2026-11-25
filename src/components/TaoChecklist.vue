@@ -17,7 +17,6 @@ defineOptions({ name: 'TaoChecklist' });
 const props = withDefaults(
     defineProps<{
         items: TaoChecklistItem[];
-        modelValue?: (string | number)[];
         legend?: string;
         /** A «Select all» checkbox on top, mixed when some are checked. / «Выбрать всё» сверху. */
         selectAll?: boolean;
@@ -35,7 +34,6 @@ const props = withDefaults(
         counterText?: string;
     }>(),
     {
-        modelValue: () => [],
         legend: undefined,
         selectAll: false,
         counter: false,
@@ -47,11 +45,10 @@ const props = withDefaults(
         counterText: undefined,
     },
 );
+
+const model = defineModel<(string | number)[]>({ default: () => [] });
 const l10n = useLocaleText(props, 'checklist');
 
-const emit = defineEmits<{
-    'update:modelValue': [values: (string | number)[]];
-}>();
 
 defineSlots<{
     /** The text of one item. / Текст пункта. */
@@ -64,7 +61,7 @@ const { field, isInvalid, describedBy } = useField(props);
 provide(formFieldKey, null as unknown as TaoFormFieldContext);
 
 const labelledBy = computed(() => (props.legend || !field ? undefined : `${field.id}-label`));
-const checked = computed(() => new Set(props.modelValue));
+const checked = computed(() => new Set(model.value));
 const enabledItems = computed(() => props.items.filter((item) => !item.disabled));
 const checkedCount = computed(() => props.items.filter((item) => checked.value.has(item.value)).length);
 const enabledChecked = computed(() => enabledItems.value.filter((item) => checked.value.has(item.value)).length);
@@ -74,7 +71,7 @@ const someChecked = computed(() => enabledChecked.value > 0 && !allChecked.value
 function commit(next: Set<string | number>) {
     // keep the order of the items / сохраняем порядок пунктов
     const values = props.items.filter((item) => next.has(item.value)).map((item) => item.value);
-    emit('update:modelValue', values);
+    model.value = values;
 }
 
 function setItem(item: TaoChecklistItem, on: boolean) {

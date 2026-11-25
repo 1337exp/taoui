@@ -10,7 +10,6 @@ defineOptions({ name: 'TaoDocTabs' });
 
 const props = defineProps<{
     /** The value of the active tab (`v-model`); it may be none of them (no document open). / Значение активной вкладки. */
-    modelValue: string;
     items: readonly TaoDocTab[];
     /** The id of the element the active tab controls (the document view), for `aria-controls`. / id вида документа. */
     controls?: string;
@@ -24,10 +23,11 @@ const props = defineProps<{
     size?: TaoSize;
 }>();
 
+const model = defineModel<string>({ required: true });
+
 const l10n = useLocaleText(props, 'docTabs');
 
 const emit = defineEmits<{
-    'update:modelValue': [value: string];
     /** The user picked another tab. / Пользователь выбрал другую вкладку. */
     /** The user asked to close a tab (the cross, the middle button, Delete); the app closes it. / Просят закрыть вкладку. */
     close: [value: string];
@@ -53,7 +53,7 @@ const instance = getCurrentInstance();
 const reorderable = () => Boolean(instance?.vnode.props?.onReorder) && props.items.length > 1;
 
 function select(value: string, focus = false) {
-    emit('update:modelValue', value);
+    model.value = value;
     if (focus) void nextTick(() => document.getElementById(tabId(value))?.focus());
 }
 
@@ -64,7 +64,7 @@ function indexOf(value: string) {
 // The arrows (left / right), Home and End walk the tabs and select the one they land on.
 // Стрелки (влево / вправо), Home и End ходят по вкладкам и выбирают ту, на которую пришли.
 const activeIndex = computed({
-    get: () => indexOf(props.modelValue),
+    get: () => indexOf(model.value),
     set: (index: number) => {
         const tab = props.items[index];
         if (tab) select(tab.value, true);
@@ -177,7 +177,7 @@ function onWheel(event: WheelEvent) {
  */
 function reveal() {
     const el = listRef.value;
-    const tab = document.getElementById(tabId(props.modelValue));
+    const tab = document.getElementById(tabId(model.value));
     if (!el || !tab) return;
     const row = el.getBoundingClientRect();
     const box = tab.getBoundingClientRect();
@@ -187,7 +187,7 @@ function reveal() {
 
 // the active tab is always in view, also when it was opened off the edge / активная вкладка всегда на виду
 watch(
-    () => [props.modelValue, props.items.length],
+    () => [model.value, props.items.length],
     async () => {
         await nextTick();
         reveal();
@@ -195,7 +195,7 @@ watch(
 );
 
 const tabindex = (tab: TaoDocTab, index: number) =>
-    tab.value === props.modelValue || (!props.items.some((t) => t.value === props.modelValue) && index === 0) ? 0 : -1;
+    tab.value === model.value || (!props.items.some((t) => t.value === model.value) && index === 0) ? 0 : -1;
 </script>
 
 <template>
@@ -207,7 +207,7 @@ const tabindex = (tab: TaoDocTab, index: number) =>
                 :key="tab.value"
                 class="tao-doc-tabs__tab"
                 :class="{
-                    'is-active': tab.value === modelValue,
+                    'is-active': tab.value === model,
                     'is-preview': tab.preview,
                     'is-dirty': tab.dirty,
                     'is-dragging': dragFrom === index,
@@ -215,8 +215,8 @@ const tabindex = (tab: TaoDocTab, index: number) =>
                     'drop-after': dropSlot === items.length && index === items.length - 1,
                 }"
                 role="tab"
-                :aria-selected="tab.value === modelValue"
-                :aria-controls="tab.value === modelValue ? controls : undefined"
+                :aria-selected="tab.value === model"
+                :aria-controls="tab.value === model ? controls : undefined"
                 :tabindex="tabindex(tab, index)"
                 :title="tab.title"
                 :draggable="reorderable()"

@@ -38,7 +38,6 @@ const props = withDefaults(
          */
         maxHeight?: number | string;
         resize?: boolean;
-        modelValue?: string;
         /** Text alignment. / Выравнивание текста. */
         align?: 'start' | 'center' | 'end';
         /**
@@ -73,7 +72,6 @@ const props = withDefaults(
         rows: 3,
         maxHeight: 500,
         resize: true,
-        modelValue: '',
         autofocus: false,
         align: 'start',
         blurOnEnter: false,
@@ -82,8 +80,9 @@ const props = withDefaults(
     },
 );
 
+const model = defineModel<string>({ default: '' });
+
 const emit = defineEmits<{
-    'update:modelValue': [value: string];
     /** The edit is finished: the field lost the focus with a text that changed (the native `change`). / Правка закончена: поле потеряло фокус с изменённым текстом (нативный `change`). */
     commit: [value: string];
     focus: [event: FocusEvent];
@@ -100,7 +99,7 @@ const describedBy = computed(() => {
     return ids.length ? ids.join(' ') : undefined;
 });
 
-const currentLength = computed(() => String(props.modelValue ?? '').length);
+const currentLength = computed(() => String(model.value ?? '').length);
 const countLabel = computed(() => {
     if (props.maxlength != null && props.maxlength > 0) {
         return `${currentLength.value} / ${props.maxlength}`;
@@ -126,7 +125,7 @@ function onInput(e: Event) {
         target.setSelectionRange(nextCaret, nextCaret);
     }
 
-    emit('update:modelValue', value);
+    model.value = value;
     autoResize();
 }
 
@@ -174,7 +173,7 @@ function autoResize() {
 const maxHeightCss = computed(() => (typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight));
 
 watch(
-    () => props.modelValue,
+    () => model.value,
     () => {
         nextTick(autoResize);
     },
@@ -240,7 +239,7 @@ onBeforeUnmount(() => {
             :readonly="readOnly || undefined"
             :rows="rows"
             :style="{ maxHeight: maxHeightCss }"
-            :value="modelValue"
+            :value="model"
             :aria-invalid="isInvalid || undefined"
             :aria-describedby="describedBy"
             draggable="false"

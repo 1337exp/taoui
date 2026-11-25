@@ -10,7 +10,6 @@ defineOptions({ name: 'TaoSegmentedOption' });
 const props = withDefaults(
     defineProps<{
         value: TaoRadioValue;
-        modelValue?: TaoRadioValue;
         name?: string;
         label?: string;
         icon?: string;
@@ -25,9 +24,8 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
-    'update:modelValue': [value: TaoRadioValue];
-}>();
+const model = defineModel<TaoRadioValue>();
+
 
 const group = inject(segmentedKey, null);
 const slots = useSlots();
@@ -38,7 +36,7 @@ const localId = useId();
 const isDisabled = computed(() => props.disabled || Boolean(group?.disabled.value));
 const inputName = computed(() => group?.name.value ?? props.name);
 const isChecked = computed(() => {
-    const current = group ? group.model.value : props.modelValue;
+    const current = group ? group.model.value : model.value;
     return current === props.value;
 });
 
@@ -81,7 +79,7 @@ function onChange() {
         return;
     }
 
-    emit('update:modelValue', props.value);
+    model.value = props.value;
 }
 </script>
 

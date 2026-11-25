@@ -13,7 +13,6 @@ defineOptions({ name: 'TaoLanguageSwitch' });
 const props = withDefaults(
     defineProps<{
         /** The code of the language in use, `v-model`. / Код языка, который сейчас включён, `v-model`. */
-        modelValue?: string;
         /** The languages: codes (`'ru'`) or `{ code, label }`. The name of a code is the language in itself (`Русский`, `English`). / Языки: коды или `{ code, label }`. Название кода — сам язык на себе. */
         languages: readonly (string | TaoLanguageOption)[];
         /** Write the language to `<html lang>` (the browser, a screen reader and the hyphenation take it from there). Turn it off to do it yourself. / Писать язык в `<html lang>`. Выключите, чтобы делать это самим. */
@@ -27,7 +26,6 @@ const props = withDefaults(
         label?: string;
     }>(),
     {
-        modelValue: undefined,
         apply: true,
         iconOnly: false,
         size: undefined,
@@ -35,10 +33,6 @@ const props = withDefaults(
         label: undefined,
     },
 );
-
-const emit = defineEmits<{
-    'update:modelValue': [code: string];
-}>();
 
 const l10n = useLocaleText(props, 'languageSwitch');
 
@@ -52,8 +46,8 @@ const options = computed(() =>
 
 // without `v-model` the switch keeps the choice itself, and starts on the first language
 // без `v-model` переключатель сам держит выбор и начинает с первого языка
-const own = ref<string | undefined>(undefined);
-const current = computed(() => props.modelValue ?? own.value ?? options.value[0]?.code ?? '');
+const model = defineModel<string>();
+const current = computed(() => model.value ?? options.value[0]?.code ?? '');
 const currentName = computed(() => options.value.find((o) => o.code === current.value)?.label ?? taoLanguageName(current.value));
 
 const items = computed<TaoMenuItem[]>(() =>
@@ -70,9 +64,8 @@ function pick(code: string) {
     if (code === current.value) {
         return;
     }
-    own.value = code;
     write(code);
-    emit('update:modelValue', code);
+    model.value = code;
 }
 
 // the page learns the language on mount (not on the server, where there is no `<html>` to write to) and when it changes from outside

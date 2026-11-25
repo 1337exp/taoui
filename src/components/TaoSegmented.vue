@@ -9,7 +9,6 @@ defineOptions({ name: 'TaoSegmented' });
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: TaoRadioValue;
         name?: string;
         legend?: string;
         disabled?: boolean;
@@ -28,14 +27,12 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
-    'update:modelValue': [value: TaoRadioValue];
-}>();
+const model = defineModel<TaoRadioValue>();
+
 
 const { field, isInvalid, describedBy } = useField(props);
 const autoName = useId();
 const groupName = computed(() => props.name || autoName);
-const model = computed(() => props.modelValue);
 const groupDisabled = computed(() => props.disabled);
 const minWidthStyle = computed(() =>
     props.minWidth === undefined
@@ -49,7 +46,7 @@ let resizeObserver: ResizeObserver | null = null;
 let mutationObserver: MutationObserver | null = null;
 
 function setValue(value: TaoRadioValue) {
-    emit('update:modelValue', value);
+    model.value = value;
 }
 
 function updateThumb() {
@@ -124,7 +121,7 @@ onMounted(() => {
 });
 
 watch(
-    () => [props.modelValue, props.size, props.block, props.disabled] as const,
+    () => [model.value, props.size, props.block, props.disabled] as const,
     () => {
         void nextTick(updateThumb);
     },

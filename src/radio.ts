@@ -1,10 +1,10 @@
-import type { ComputedRef, InjectionKey } from 'vue';
+import type { ComputedRef, InjectionKey, Ref } from 'vue';
 
 export type TaoRadioValue = string | number | boolean;
 
 export interface TaoRadioGroupContext {
     name: ComputedRef<string>;
-    model: ComputedRef<TaoRadioValue | undefined>;
+    model: Readonly<Ref<TaoRadioValue | undefined>>;
     disabled: ComputedRef<boolean>;
     setValue: (value: TaoRadioValue) => void;
 }

@@ -22,7 +22,6 @@ const appLocale = useTaoLocale();
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: TaoDateRangeValue | null;
         placeholder?: string;
         disabled?: boolean;
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
@@ -37,19 +36,17 @@ const props = withDefaults(
         nextMonthLabel?: string;
     }>(),
     {
-        modelValue: null,
         disabled: false,
         invalid: false,
         min: undefined,
         max: undefined,
     },
 );
+
+const model = defineModel<TaoDateRangeValue | null>({ default: null });
 const l10n = useLocaleText(props, 'dateRange');
 const dateLocale = computed(() => props.locale ?? appLocale.value.code);
 
-const emit = defineEmits<{
-    'update:modelValue': [value: TaoDateRangeValue | null];
-}>();
 
 const { controlId, isInvalid, describedBy, localId } = useField(props);
 const gridId = `${localId}-grid`;
@@ -59,7 +56,7 @@ const triggerRef = ref<HTMLButtonElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
 const calendarRef = ref<InstanceType<typeof TaoCalendar> | null>(null);
 
-const committed = computed(() => parseTaoDateRange(props.modelValue));
+const committed = computed(() => parseTaoDateRange(model.value));
 const displayLabel = computed(() =>
     committed.value ? formatTaoDateRangeLabel(committed.value.start, committed.value.end, dateLocale.value) : '',
 );
@@ -98,7 +95,7 @@ function close() {
 
 function onChange(value: unknown) {
     const next = (value as TaoDateRangeValue | null) ?? null;
-    emit('update:modelValue', next);
+    model.value = next;
     close();
     triggerRef.value?.focus();
 }

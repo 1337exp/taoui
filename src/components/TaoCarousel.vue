@@ -13,7 +13,6 @@ defineOptions({ name: 'TaoCarousel' });
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: number;
         peek?: number;
         /** How many slides fit in the viewport. 5 = product strip. 1 = one card. With `centered`: how many whole slides around the middle one. */
         perView?: number;
@@ -56,7 +55,6 @@ const props = withDefaults(
         slideLabel?: string;
     }>(),
     {
-        modelValue: 0,
         peek: 0,
         perView: 1,
         centered: false,
@@ -67,11 +65,10 @@ const props = withDefaults(
         pausable: true,
     },
 );
+
+const model = defineModel<number>({ default: 0 });
 const l10n = useLocaleText(props, 'carousel');
 
-const emit = defineEmits<{
-    'update:modelValue': [value: number];
-}>();
 
 defineSlots<{
     default(): unknown;
@@ -84,7 +81,7 @@ defineSlots<{
 }>();
 
 const track = ref<HTMLElement | null>(null);
-const index = ref(props.modelValue);
+const index = ref(model.value);
 /** The real slides (the copies of a cycle are not counted). / Настоящие слайды (копии цикла не считаются). */
 const count = ref(0);
 /** How many times the slides are drawn: 1, or an odd number in a centered loop (the middle set is the real one). / Сколько раз нарисованы слайды. */
@@ -295,7 +292,7 @@ function setIndex(next: number) {
     }
 
     index.value = next;
-    emit('update:modelValue', next);
+    model.value = next;
 }
 
 function refreshCount() {
@@ -462,7 +459,7 @@ function onKeydown(event: KeyboardEvent) {
 }
 
 watch(
-    () => props.modelValue,
+    () => model.value,
     (value) => {
         if (value !== index.value) {
             goTo(value);
@@ -494,7 +491,7 @@ onMounted(() => {
     refreshCount();
     mounted.value = true;
     nextTick(() => {
-        goTo(props.modelValue);
+        goTo(model.value);
         updateFocus();
     });
     if (typeof ResizeObserver !== 'undefined' && track.value) {

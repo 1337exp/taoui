@@ -308,7 +308,6 @@ export const propTablesEn = {
       title: 'TaoCheckbox',
       rows: [
         r('v-model', 'boolean', '—', 'Checked / not'),
-        r('checked', 'boolean', '—', 'The state without v-model'),
         r('label', 'string', "''", 'The caption on the right'),
         r('indeterminate', 'boolean', 'false', 'A dash instead of the tick. A click sets checked, the parent works out the mixed state'),
         r('disabled', 'boolean', 'false', 'Disabled'),

@@ -12,9 +12,6 @@ const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const props = withDefaults(
     defineProps<{
-        /** Checked state without v-model. / Состояние без v-model. */
-        checked?: boolean;
-        modelValue?: boolean;
         label?: string;
         disabled?: boolean;
         /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
@@ -32,8 +29,6 @@ const props = withDefaults(
         indeterminate?: boolean;
     }>(),
     {
-        checked: undefined,
-        modelValue: undefined,
         label: '',
         disabled: false,
         invalid: false,
@@ -41,26 +36,9 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
-    'update:modelValue': [value: boolean];
-}>();
+const isChecked = defineModel<boolean>({ default: false });
 
 const { field, controlId, isInvalid, describedBy } = useField(props);
-
-const isChecked = computed({
-    get: () => {
-        if (props.modelValue !== undefined) {
-            return props.modelValue;
-        }
-        if (props.checked !== undefined) {
-            return props.checked;
-        }
-        return false;
-    },
-    set: (next) => {
-        emit('update:modelValue', next);
-    },
-});
 
 function onInputChange(event: Event) {
     if (props.disabled) {

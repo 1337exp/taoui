@@ -20,7 +20,6 @@ const { rootAttrs, controlAttrs } = useControlAttrs();
 const props = withDefaults(
     defineProps<{
         /** The value, `v-model`: an option's value, or a number typed by hand (`custom`). / Значение, `v-model`: значение пункта или число, набранное руками (`custom`). */
-        modelValue?: TaoPresetValue;
         /**
          * The presets. They are shown in this order in the pop-up, and the arrows walk them in it («up» is the next one).
          * The option with `default: true` is what an empty field means («Auto»): the pop-up shows it first, and the arrows
@@ -55,7 +54,6 @@ const props = withDefaults(
         prevLabel?: string;
     }>(),
     {
-        modelValue: null,
         options: () => [],
         loop: false,
         custom: true,
@@ -70,8 +68,9 @@ const props = withDefaults(
     },
 );
 
+const model = defineModel<TaoPresetValue>({ default: null });
+
 const emit = defineEmits<{
-    'update:modelValue': [value: TaoPresetValue];
     commit: [value: TaoPresetValue];
 }>();
 
@@ -98,21 +97,21 @@ function labelOf(value: TaoPresetValue): string {
 }
 
 /** What the field shows. It is its own while the text is edited, and goes back to the value when it is not. / Что показывает поле: своё, пока текст правят, и значение — когда нет. */
-const text = ref(labelOf(props.modelValue));
+const text = ref(labelOf(model.value));
 /** The person has typed since the last commit: Home and End are then the caret's. / Печатали после последнего применения: Home и End тогда у каретки. */
 const typed = ref(false);
 
 watch(
-    () => [props.modelValue, props.options],
+    () => [model.value, props.options],
     () => {
-        text.value = labelOf(props.modelValue);
+        text.value = labelOf(model.value);
         typed.value = false;
     },
     { deep: true },
 );
 
 const activeId = computed(() => {
-    const index = list.value.findIndex((option) => option.value === props.modelValue);
+    const index = list.value.findIndex((option) => option.value === model.value);
     return open.value && index >= 0 ? `${listId}-opt-${index}` : undefined;
 });
 
@@ -122,8 +121,8 @@ useDismiss(open, () => [fieldRef.value, stepsRef.value, panelRef.value], () => c
 useLayer(open, { onEscape: () => closeAndRevert() });
 
 function setValue(next: TaoPresetValue) {
-    if (next !== props.modelValue) {
-        emit('update:modelValue', next);
+    if (next !== model.value) {
+        model.value = next;
         emit('commit', next);
     }
     text.value = labelOf(next);
@@ -135,7 +134,7 @@ function commit() {
     if (parsed !== undefined) {
         setValue(parsed);
     } else {
-        text.value = labelOf(props.modelValue);
+        text.value = labelOf(model.value);
         typed.value = false;
     }
 }
@@ -147,7 +146,7 @@ function closeAndCommit() {
 
 function closeAndRevert() {
     open.value = false;
-    text.value = labelOf(props.modelValue);
+    text.value = labelOf(model.value);
     typed.value = false;
 }
 
@@ -171,7 +170,7 @@ function step(direction: 1 | -1) {
     if (props.disabled) {
         return;
     }
-    setValue(stepPreset(props.options, props.modelValue, direction, props.loop));
+    setValue(stepPreset(props.options, model.value, direction, props.loop));
     void openList();
     void nextTick(scrollSelectedIntoView);
 }
@@ -296,9 +295,9 @@ function onKeydown(event: KeyboardEvent) {
                     :id="`${listId}-opt-${index}`"
                     :key="String(option.value)"
                     class="tao-preset-input__option"
-                    :class="{ 'tao-preset-input__option--selected': option.value === modelValue, 'tao-preset-input__option--disabled': option.disabled }"
+                    :class="{ 'tao-preset-input__option--selected': option.value === model, 'tao-preset-input__option--disabled': option.disabled }"
                     role="option"
-                    :aria-selected="option.value === modelValue"
+                    :aria-selected="option.value === model"
                     :aria-disabled="option.disabled ? true : undefined"
                     @click="pick(option)"
                 >

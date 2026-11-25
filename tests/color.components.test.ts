@@ -100,7 +100,7 @@ describe('ColorPicker', () => {
 
 describe('ColorInput', () => {
     it('clearable: a Clear button under the palette and Delete on the field give an empty value; not clearable, or already empty: neither', async () => {
-        const w = mount(TaoColorInput, { props: { modelValue: '#ff8800', clearable: true }, attachTo: document.body });
+        const w = mount(TaoColorInput, { props: { modelValue: '#ff8800', clearable: true, 'onUpdate:modelValue': () => {} }, attachTo: document.body });
         await w.find('.tao-color-input').trigger('keydown', { key: 'Delete' });
         expect(w.emitted('update:modelValue')?.[0]).toEqual(['']);
         await w.find('.tao-color-input').trigger('click');

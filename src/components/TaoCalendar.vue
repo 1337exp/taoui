@@ -32,7 +32,6 @@ const props = withDefaults(
     defineProps<{
         /** `single`: `v-model` is `YYYY-MM-DD`; `range`: `{ start, end }`. / `single` — строка `YYYY-MM-DD`; `range` — `{ start, end }`. */
         mode?: 'single' | 'range';
-        modelValue?: string | TaoDateRangeValue | null;
         min?: string;
         max?: string;
         locale?: string;
@@ -43,16 +42,16 @@ const props = withDefaults(
     }>(),
     {
         mode: 'single',
-        modelValue: null,
         min: undefined,
         max: undefined,
     },
 );
+
+const model = defineModel<string | TaoDateRangeValue | null>({ default: null });
 const l10n = useLocaleText(props, 'date');
 const dateLocale = computed(() => props.locale ?? appLocale.value.code);
 
 const emit = defineEmits<{
-    'update:modelValue': [value: string | TaoDateRangeValue | null];
     /** The user finished a choice: a date, a complete range, or a clear. / Выбор завершён: дата, полный диапазон или сброс. */
     /** The visible month changed, so the calendar may have changed its height. / Сменился месяц, высота могла измениться. */
     view: [];
@@ -76,9 +75,9 @@ const hoverIso = ref<string | null>(null);
 // the chosen value as a range (a single date is a range of one day)
 const committed = computed((): TaoDateRangeValue | null => {
     if (isRange.value) {
-        return parseTaoDateRange(props.modelValue as TaoDateRangeValue | null);
+        return parseTaoDateRange(model.value as TaoDateRangeValue | null);
     }
-    const parsed = parseTaoDate(typeof props.modelValue === 'string' ? props.modelValue : null);
+    const parsed = parseTaoDate(typeof model.value === 'string' ? model.value : null);
     const iso = parsed ? formatTaoDateIso(parsed) : null;
     return iso ? { start: iso, end: iso } : null;
 });
@@ -115,7 +114,7 @@ syncViewFrom(clampTaoDateCursor(committed.value?.start ?? todayIso.value, props.
 function commit(value: string | TaoDateRangeValue | null) {
     draftStart.value = null;
     hoverIso.value = null;
-    emit('update:modelValue', value);
+    model.value = value;
 }
 
 function selectDay(iso: string) {

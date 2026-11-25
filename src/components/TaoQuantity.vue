@@ -15,7 +15,6 @@ const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: number;
         min?: number;
         max?: number;
         disabled?: boolean;
@@ -40,7 +39,6 @@ const props = withDefaults(
         incrementLabel?: string;
     }>(),
     {
-        modelValue: 1,
         min: 1,
         disabled: false,
         invalid: false,
@@ -48,10 +46,11 @@ const props = withDefaults(
         forceMaxLimit: true,
     },
 );
+
+const model = defineModel<number>({ default: 1 });
 const l10n = useLocaleText(props, 'quantity');
 
 const emit = defineEmits<{
-    'update:modelValue': [value: number];
     /** An edit is finished: a button, or leaving the field after typing. / Правка закончена: кнопка или уход из поля после набора. */
     commit: [value: number];
     /** The minus button was pressed at the minimum, with `allowRemove`: the app takes the item away. / Минус нажат на минимуме при `allowRemove`: приложение убирает позицию. */
@@ -63,7 +62,7 @@ const emit = defineEmits<{
 const { field, controlId, isInvalid, describedBy } = useField(props);
 
 const focused = ref(false);
-const draft = ref(String(props.modelValue));
+const draft = ref(String(model.value));
 
 const ceiling = computed(() => (props.max === undefined ? Number.POSITIVE_INFINITY : props.max));
 
@@ -81,19 +80,19 @@ function clampQty(value: number) {
 
 function apply(value: number) {
     const next = clampQty(value);
-    if (next !== props.modelValue) {
-        emit('update:modelValue', next);
+    if (next !== model.value) {
+        model.value = next;
     }
     draft.value = String(next);
     return next;
 }
 
 watch(
-    () => [props.modelValue, props.min, props.max, props.forceMaxLimit] as const,
+    () => [model.value, props.min, props.max, props.forceMaxLimit] as const,
     () => {
-        const next = clampQty(toInt(props.modelValue));
-        if (next !== props.modelValue) {
-            emit('update:modelValue', next);
+        const next = clampQty(toInt(model.value));
+        if (next !== model.value) {
+            model.value = next;
         }
         if (!focused.value) {
             draft.value = String(next);
@@ -106,8 +105,8 @@ function onDec() {
     if (props.disabled) {
         return;
     }
-    if (props.modelValue > props.min) {
-        const next = apply(props.modelValue > ceiling.value ? ceiling.value : clampQty(props.modelValue - 1));
+    if (model.value > props.min) {
+        const next = apply(model.value > ceiling.value ? ceiling.value : clampQty(model.value - 1));
         emit('commit', next);
     } else if (props.allowRemove) {
         emit('remove');
@@ -118,8 +117,8 @@ function onInc() {
     if (props.disabled) {
         return;
     }
-    if (props.modelValue < ceiling.value) {
-        const next = apply(clampQty(props.modelValue + 1));
+    if (model.value < ceiling.value) {
+        const next = apply(clampQty(model.value + 1));
         emit('commit', next);
     }
 }
@@ -137,11 +136,11 @@ function onInput(event: Event) {
 }
 
 /** The value the field had when it took the focus: a blur commits only a change. / Значение при входе в поле: уход фиксирует только изменение. */
-let atFocus = props.modelValue;
+let atFocus = model.value;
 
 function onFocus(event: FocusEvent) {
     focused.value = true;
-    atFocus = props.modelValue;
+    atFocus = model.value;
     emit('focus', event);
 }
 
@@ -167,8 +166,8 @@ function onKeydown(event: KeyboardEvent) {
     }
 }
 
-const atMin = computed(() => props.modelValue <= props.min);
-const atMax = computed(() => props.modelValue >= ceiling.value);
+const atMin = computed(() => model.value <= props.min);
+const atMax = computed(() => model.value >= ceiling.value);
 const minusDisabled = computed(() => props.disabled || (!props.allowRemove && atMin.value));
 const plusDisabled = computed(() => props.disabled || atMax.value);
 const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value.removeLabel : l10n.value.decrementLabel));
@@ -211,7 +210,7 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value
             :disabled="disabled"
             :aria-invalid="isInvalid || undefined"
             :aria-describedby="describedBy"
-            :aria-valuenow="modelValue"
+            :aria-valuenow="model"
             :aria-valuemin="min"
             :aria-valuemax="max"
             @input="onInput"

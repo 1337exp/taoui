@@ -27,7 +27,6 @@ const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: number;
         min?: number;
         max?: number;
         /** The step of ± and of the arrow keys; the default grain of the value. / Шаг ± и стрелок; зерно значения по умолчанию. */
@@ -71,7 +70,6 @@ const props = withDefaults(
         decrementLabel?: string;
     }>(),
     {
-        modelValue: 0,
         step: 1,
         disabled: false,
         invalid: false,
@@ -80,10 +78,11 @@ const props = withDefaults(
         variant: 'outline',
     },
 );
+
+const model = defineModel<number>({ default: 0 });
 const l10n = useLocaleText(props, 'dragNumber');
 
 const emit = defineEmits<{
-    'update:modelValue': [value: number];
     /**
      * An action ended and changed the value: the end of a drag, ±, an arrow key, Enter or blur of a typed number. Once per
      * action (a drag emits update:modelValue on every move), so a form can save or push an undo step here.
@@ -107,7 +106,7 @@ const draft = ref('');
 const digits = computed(() => props.precision ?? decimalsOf(props.step));
 const limits = computed(() => ({ min: props.min, max: props.max, precision: digits.value }));
 const plain = (value: number) => formatDragNumber(value, digits.value);
-const shown = computed(() => (props.format ? props.format(props.modelValue) : plain(props.modelValue)));
+const shown = computed(() => (props.format ? props.format(model.value) : plain(model.value)));
 // at rest the number is formatted; while it is typed the field holds the user's text; a drag shows the live number
 // в покое число отформатировано; пока его набирают, в поле текст пользователя; протяжка показывает живое число
 const text = computed(() => (focused.value && !dragging.value ? draft.value : shown.value));
@@ -117,16 +116,16 @@ const named = computed(() => props.label && controlAttrs()['aria-label'] === und
 /** Writes a value; says whether it changed. / Записывает значение; говорит, изменилось ли оно. */
 function apply(value: number) {
     const next = normalizeNumber(value, limits.value);
-    const changed = next !== props.modelValue;
+    const changed = next !== model.value;
     if (changed) {
-        emit('update:modelValue', next);
+        model.value = next;
     }
     return { next, changed };
 }
 
 /** What the user typed, if it is a number; otherwise the value the field has. / Что набрал пользователь, если это число; иначе значение поля. */
 function typedValue() {
-    return focused.value ? (parseDragNumber(draft.value, props.unit) ?? props.modelValue) : props.modelValue;
+    return focused.value ? (parseDragNumber(draft.value, props.unit) ?? model.value) : model.value;
 }
 
 /** One step from what the field shows, no commit yet. / Один шаг от того, что показывает поле, пока без commit. */
@@ -152,7 +151,7 @@ function bump(direction: 1 | -1, steps = 1) {
 function commitDraft() {
     const parsed = parseDragNumber(draft.value, props.unit);
     if (parsed === null) {
-        draft.value = plain(props.modelValue);
+        draft.value = plain(model.value);
         return;
     }
     const { next, changed } = apply(parsed);
@@ -168,7 +167,7 @@ function onInput(event: Event) {
 
 function onFocus(event: FocusEvent) {
     focused.value = true;
-    draft.value = plain(props.modelValue);
+    draft.value = plain(model.value);
     emit('focus', event);
     // the text switches from the formatted to the plain number: select it once that is drawn
     // текст меняется с отформатированного на простое число: выделяем, когда оно нарисовано
@@ -192,7 +191,7 @@ function onKeydown(event: KeyboardEvent) {
         case 'Escape':
             // give the typed text up and keep the value
             // отказаться от набранного, значение остаётся
-            draft.value = plain(props.modelValue);
+            draft.value = plain(model.value);
             inputEl.value?.blur();
             break;
         case 'ArrowUp':
@@ -258,9 +257,9 @@ const gesture = usePointerDrag({
         drag = {
             startX: event.clientX,
             lastX: event.clientX,
-            startValue: props.modelValue,
-            raw: props.modelValue,
-            last: props.modelValue,
+            startValue: model.value,
+            raw: model.value,
+            last: model.value,
             moved: false,
         };
     },
@@ -291,7 +290,7 @@ const gesture = usePointerDrag({
         const next = dragNumberResolve(drag.raw, limits.value, props.step, event.ctrlKey || event.metaKey);
         if (next !== drag.last) {
             drag.last = next;
-            emit('update:modelValue', next);
+            model.value = next;
         }
     },
     onEnd: (reason) => finishDrag(reason),
@@ -315,7 +314,7 @@ function finishDrag(reason: PointerDragEnd) {
     }
     if (reason === 'abort') {
         if (done.moved && done.last !== done.startValue) {
-            emit('update:modelValue', done.startValue);
+            model.value = done.startValue;
         }
         return;
     }
@@ -387,7 +386,7 @@ function onButtonDown(direction: 1 | -1, event: PointerEvent) {
     }
     stopHold();
     suppressClick = true;
-    const startValue = props.modelValue;
+    const startValue = model.value;
     const { next } = nudge(direction);
     hold = { direction, id: event.pointerId, startValue, last: next, count: 0 };
     try {
@@ -428,7 +427,7 @@ function stopHold(revert = false) {
     });
     if (revert) {
         if (done.last !== done.startValue) {
-            emit('update:modelValue', done.startValue);
+            model.value = done.startValue;
         }
         return;
     }
@@ -477,8 +476,8 @@ onBeforeUnmount(() => {
     }
 });
 
-const atMin = computed(() => props.min !== undefined && props.modelValue <= props.min);
-const atMax = computed(() => props.max !== undefined && props.modelValue >= props.max);
+const atMin = computed(() => props.min !== undefined && model.value <= props.min);
+const atMax = computed(() => props.max !== undefined && model.value >= props.max);
 </script>
 
 <template>
@@ -537,7 +536,7 @@ const atMax = computed(() => props.max !== undefined && props.modelValue >= prop
                 :aria-labelledby="named ? labelId : undefined"
                 :aria-invalid="isInvalid || undefined"
                 :aria-describedby="describedBy"
-                :aria-valuenow="modelValue"
+                :aria-valuenow="model"
                 :aria-valuemin="min"
                 :aria-valuemax="max"
                 :aria-valuetext="valueText"

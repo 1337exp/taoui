@@ -12,7 +12,6 @@ defineOptions({ name: 'TaoInput', inheritAttrs: false });
 const { rootAttrs, controlAttrs } = useControlAttrs();
 
 interface Props {
-    modelValue?: string | number;
     type?: 'text' | 'password' | 'email' | 'number' | 'tel';
     placeholder?: string;
     disabled?: boolean;
@@ -39,7 +38,6 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    modelValue: '',
     type: 'text',
     placeholder: '',
     disabled: false,
@@ -51,16 +49,17 @@ const { field, controlId, isInvalid, describedBy } = useField(props);
 const focused = ref(false);
 
 const emit = defineEmits<{
-    'update:modelValue': [value: string];
     /** The edit is finished: the field lost the focus, or Enter was pressed, with a text that changed (the native `change`). / Правка закончена: поле потеряло фокус или нажат Enter с изменённым текстом (нативный `change`). */
     commit: [value: string];
     blur: [event: FocusEvent];
     focus: [event: FocusEvent];
 }>();
 
+const model = defineModel<string | number>({ default: '' });
+
 function handleInput(event: Event) {
     const target = event.target as HTMLInputElement;
-    emit('update:modelValue', target.value);
+    model.value = target.value;
 }
 
 function handleChange(event: Event) {
@@ -104,7 +103,7 @@ const has = (name: string) => slotHas(slots, name);
                 class="tao-input"
                 :class="{ 'tao-input--error': isInvalid }"
                 :type="type"
-                :value="modelValue"
+                :value="model"
                 :placeholder="placeholder"
                 :disabled="disabled"
                 :aria-invalid="isInvalid || undefined"

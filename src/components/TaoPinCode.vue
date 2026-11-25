@@ -33,7 +33,6 @@ const props = withDefaults(
         bordered?: boolean;
         /** Cell size; without it — the size of ancestors. / Размер ячеек; без него — размер предков. */
         size?: TaoSize;
-        modelValue?: string;
         numbersOnly?: boolean;
         /** `focus` — клик сбрасывает ячейку и все справа (неверный код, набор заново).
          *  `input` — цифра остаётся, пока не введут новую. */
@@ -54,7 +53,6 @@ const props = withDefaults(
         disabled: false,
         invalid: false,
         bordered: true,
-        modelValue: '',
         numbersOnly: false,
         clearOn: 'focus',
         status: 'idle',
@@ -62,10 +60,11 @@ const props = withDefaults(
         errorText: undefined,
     },
 );
+
+const model = defineModel<string>({ default: '' });
 const l10n = useLocaleText(props, 'pinCode');
 
 const emit = defineEmits<{
-    'update:modelValue': [value: string];
     complete: [value: string];
     active: [el: HTMLInputElement | null, index: number];
     blur: [];
@@ -130,8 +129,8 @@ function serialize(): string {
 
 function emitChange() {
     const next = serialize();
-    if (next !== (props.modelValue ?? '')) {
-        emit('update:modelValue', next);
+    if (next !== (model.value ?? '')) {
+        model.value = next;
     }
 }
 
@@ -288,9 +287,9 @@ function onBlur() {
 }
 
 watch(
-    () => [props.modelValue, count.value, props.numbersOnly] as const,
+    () => [model.value, count.value, props.numbersOnly] as const,
     () => {
-        const next = cellsFromModel(props.modelValue ?? '');
+        const next = cellsFromModel(model.value ?? '');
         if (next.join('') !== numbers.value.join('') || next.length !== numbers.value.length) {
             numbers.value = next;
         }

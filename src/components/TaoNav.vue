@@ -22,7 +22,6 @@ const props = withDefaults(
     defineProps<{
         items: TaoNavItem[];
         /** The id of the current section (`aria-current="page"`). / id текущего раздела. */
-        modelValue?: string;
         layout?: TaoNavLayout;
         /** The bar holds this many; with more items the last place is «More» with a menu. / Столько помещается в bar. */
         maxBarItems?: number;
@@ -70,7 +69,6 @@ const props = withDefaults(
         badgeTone?: 'accent' | 'neutral';
     }>(),
     {
-        modelValue: undefined,
         layout: 'auto',
         maxBarItems: 5,
         ariaLabel: undefined,
@@ -82,10 +80,11 @@ const props = withDefaults(
         badgeTone: 'accent',
     },
 );
+
+const model = defineModel<string>();
 const l10n = useLocaleText(props, 'nav');
 
 const emit = defineEmits<{
-    'update:modelValue': [id: string];
     /**
      * A section was picked. `event.preventDefault()` keeps a link from navigating (route it yourself).
      * Выбран раздел. `event.preventDefault()` не даёт ссылке перейти (маршрутизируйте сами).
@@ -125,7 +124,7 @@ const overflowing = computed(() => props.items.length > props.maxBarItems);
 /** Items that stay on the bar when it overflows. / Пункты, что остаются на панели при переполнении. */
 const barCount = computed(() => (overflowing.value ? Math.max(1, props.maxBarItems - 1) : props.items.length));
 const overflowItems = computed(() => props.items.slice(barCount.value));
-const activeInOverflow = computed(() => overflowItems.value.some((item) => item.id === props.modelValue));
+const activeInOverflow = computed(() => overflowItems.value.some((item) => item.id === model.value));
 
 const moreMenu = computed<TaoMenuItem[]>(() =>
     overflowItems.value.map((item) => ({ id: item.id, label: item.label, icon: item.icon, disabled: item.disabled })),
@@ -143,7 +142,7 @@ function choose(item: TaoNavItem, event: Event) {
         return;
     }
     emit('select', item.id, event);
-    emit('update:modelValue', item.id);
+    model.value = item.id;
 }
 
 function onMoreSelect(id: string) {
@@ -194,19 +193,19 @@ function onMoreClose(reason: TaoMenuCloseReason) {
                             <component
                                 :is="item.href ? 'a' : 'button'"
                                 class="tao-nav__item"
-                                :class="{ 'tao-nav__item--active': item.id === modelValue }"
+                                :class="{ 'tao-nav__item--active': item.id === model }"
                                 :href="item.href && !item.disabled ? item.href : undefined"
                                 :type="item.href ? undefined : 'button'"
                                 :disabled="!item.href && item.disabled ? true : undefined"
                                 :aria-disabled="item.href && item.disabled ? 'true' : undefined"
-                                :aria-current="item.id === modelValue ? 'page' : undefined"
+                                :aria-current="item.id === model ? 'page' : undefined"
                                 @click="choose(item, $event)"
                             >
                                 <span v-if="item.icon" class="tao-nav__icon" aria-hidden="true">
                                     <TaoIcon :name="item.icon" :size="20" />
                                 </span>
                                 <span class="tao-nav__label">
-                                    <slot name="label" :item="item" :active="item.id === modelValue">{{ item.label }}</slot>
+                                    <slot name="label" :item="item" :active="item.id === model">{{ item.label }}</slot>
                                 </span>
                                 <span
                                     v-if="hasBadge(item)"

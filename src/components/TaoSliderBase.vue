@@ -29,7 +29,7 @@ import {
 // Наружу отдаются обёртки с точными типами (число / пара), сама основа не экспортируется.
 defineOptions({ name: 'TaoSliderBase' });
 
-const props = withDefaults(defineProps<TaoSliderBaseProps & { modelValue: TaoSliderValue }>(), {
+const props = withDefaults(defineProps<TaoSliderBaseProps>(), {
     min: 0,
     max: 100,
     step: 1,
@@ -48,7 +48,6 @@ const props = withDefaults(defineProps<TaoSliderBaseProps & { modelValue: TaoSli
 });
 
 const emit = defineEmits<{
-    'update:modelValue': [value: TaoSliderValue];
     commit: [value: TaoSliderValue];
 }>();
 
@@ -64,8 +63,10 @@ defineSlots<{
 const { field, controlId, isInvalid, describedBy } = useField(props);
 const l10n = useLocaleText(props, 'slider');
 
-const isRange = computed(() => Array.isArray(props.modelValue));
-const values = computed(() => normalizeValue(props.modelValue, props.min, props.max));
+const model = defineModel<TaoSliderValue>({ required: true });
+
+const isRange = computed(() => Array.isArray(model.value));
+const values = computed(() => normalizeValue(model.value, props.min, props.max));
 const text = (v: number) => (props.format ? props.format(v) : String(v));
 
 const markList = computed(() => normalizeMarks(props.marks, props.min, props.max, text));
@@ -132,7 +133,7 @@ function write(next: number[], final = false) {
     const before = values.value;
     const value: TaoSliderValue = isRange.value ? [next[0]!, next[1]!] : next[0]!;
     const changed = next.some((v, i) => v !== before[i]);
-    emit('update:modelValue', value);
+    model.value = value;
     if (final && changed) emit('commit', value);
 }
 
