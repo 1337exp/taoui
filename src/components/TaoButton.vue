@@ -2,7 +2,7 @@
 import { computed, useAttrs, useSlots } from 'vue';
 import { devWarning } from '../deprecate';
 import { sizeClass, type TaoSize } from '../size';
-import { slotHasContent } from '../slots';
+import { slotHas } from '../slots';
 import { toneClass, type TaoToneName } from '../tone';
 import TaoIcon from './TaoIcon.vue';
 import TaoKbd from './TaoKbd.vue';
@@ -74,7 +74,7 @@ const attrs = useAttrs();
 // no text, only an icon: a square of the control height, and it needs a name for screen readers
 // The slot may be there and draw nothing (`<template v-if>`, an `<i v-if>`): that is no text either, so it is asked at render
 // time what the slot draws, not whether it exists. / Слот может быть и ничего не рисовать: это тоже не текст.
-const hasContent = () => slotHasContent(slots.default?.());
+const hasContent = () => slotHas(slots);
 const isIconOnly = () => Boolean(props.icon || props.iconEnd) && !hasContent();
 if (Boolean(props.icon || props.iconEnd) && !slots.default && !attrs['aria-label'] && !attrs['aria-labelledby'] && !attrs.title) {
     devWarning('button:icon-only', 'TaoButton: a button with only an icon needs aria-label (or aria-labelledby / title).');
