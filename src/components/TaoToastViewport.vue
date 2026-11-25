@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onActivated, onBeforeUnmount, onDeactivated } from 'vue';
+import { computed, onActivated, onBeforeUnmount, onDeactivated, onMounted, ref } from 'vue';
 import TaoToastItem from './TaoToastItem.vue';
 import { claimToastViewport, isToastViewportOwner, releaseToastViewport, toastsByPosition, TOAST_POSITIONS } from '../toast/store';
 import type { TaoToastPosition } from '../toast/types';
@@ -12,7 +12,15 @@ const me = Symbol('tao-toast-viewport');
 // the owner is reactive: a viewport that waits starts to draw the moment the one before it goes (a route, a v-if, a KeepAlive)
 // владелец реактивен: ждущий viewport начинает рисовать, как только уходит тот, что был перед ним (маршрут, v-if, KeepAlive)
 claimToastViewport(me);
-const active = computed(() => isToastViewportOwner(me));
+// a host draws only after it is mounted: the server and the first render of the browser both draw nothing, so hydration agrees whatever the
+// number of hosts (a host on the server would put its empty shells into the page for the client to find missing)
+// хост рисует только после монтирования: сервер и первый рендер браузера не рисуют ничего, так что гидратация сходится при любом числе
+// хостов (хост на сервере положил бы в страницу пустые оболочки, которых клиент не найдёт)
+const shown = ref(false);
+onMounted(() => {
+    shown.value = true;
+});
+const active = computed(() => shown.value && isToastViewportOwner(me));
 
 // a cached (deactivated) viewport draws nothing, so it must not keep the place
 // кэшированный (деактивированный) viewport ничего не рисует, поэтому место он не держит

@@ -2,7 +2,6 @@
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import TaoButton from './TaoButton.vue';
 import TaoIcon from './TaoIcon.vue';
-import { listenFocusLoss } from '../focusLoss';
 import { useTaoLocale } from '../locale';
 import { removeToast, toastDefaults } from '../toast/store';
 import type { TaoToastRecord } from '../toast/types';
@@ -124,24 +123,50 @@ watch(
     },
 );
 
-let stopFocusLoss: (() => void) | undefined;
+// While the user cannot see the page (the tab is hidden, the window lost the focus) the time stands, as in Sonner: coming back to an empty corner
+// would take away the extension the hover gave. A hover that the window swallowed (no `mouseleave` comes) is asked again on return.
+// Пока пользователь не видит страницу (вкладка скрыта, окно потеряло фокус), время стоит, как у Sonner: вернуться к пустому углу значило бы
+// отнять продление, которое давало наведение. Наведение, проглоченное окном (`mouseleave` не придёт), на возврате спрашивается заново.
+const rootEl = ref<HTMLElement | null>(null);
+function goAway() {
+    hovered.value = false;
+    pause();
+}
+function comeBack() {
+    if (document.hidden || !document.hasFocus()) {
+        return;
+    }
+    hovered.value = Boolean(rootEl.value?.matches(':hover'));
+    if (!hovered.value && !focusedInside.value) {
+        resume();
+    }
+}
+function onVisibility() {
+    if (document.hidden) {
+        goAway();
+    } else {
+        comeBack();
+    }
+}
 onMounted(() => {
-    stopFocusLoss = listenFocusLoss(() => {
-        hovered.value = false;
-        if (!focusedInside.value) {
-            resume();
-        }
-    });
+    window.addEventListener('blur', goAway);
+    window.addEventListener('pagehide', goAway);
+    window.addEventListener('focus', comeBack);
+    document.addEventListener('visibilitychange', onVisibility);
 });
 
 onBeforeUnmount(() => {
-    stopFocusLoss?.();
+    window.removeEventListener('blur', goAway);
+    window.removeEventListener('pagehide', goAway);
+    window.removeEventListener('focus', comeBack);
+    document.removeEventListener('visibilitychange', onVisibility);
     clearTimer();
 });
 </script>
 
 <template>
     <div
+        ref="rootEl"
         class="tao-toast"
         :class="[toneClass(toast.type === 'neutral' ? undefined : toast.type), surfaceClass(toast.surface), { 'tao-toast--paused': paused }]"
         :role="toast.type === 'danger' || toast.type === 'warning' ? 'alert' : 'status'"

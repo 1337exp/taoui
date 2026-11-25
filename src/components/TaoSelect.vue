@@ -60,10 +60,12 @@ const { field, controlId, isInvalid, describedBy, localId } = useField(props);
 const listId = `${localId}-list`;
 // the list is named like the field: the aria-label the caller gave, otherwise the caption of the TaoFormField / TaoProp, otherwise the placeholder
 // список называется так же, как поле: данный aria-label, иначе подпись TaoFormField / TaoProp, иначе подсказка
-const listLabel = computed(() => {
+// read in the template, not cached: `useAttrs()` is not reactive, and a later `aria-label` must reach the open list too
+// читается в шаблоне, без кэша: `useAttrs()` не реактивен, и позднее `aria-label` должно дойти и до открытого списка
+function listLabel() {
     const own = controlAttrs()['aria-label'] as string | undefined;
     return own ?? (field?.labelId?.value ? undefined : l10n.value.placeholder);
-});
+}
 
 const open = ref(false);
 const activeIndex = ref(-1);
@@ -316,8 +318,8 @@ function onListKeydown(event: KeyboardEvent) {
                     ref="listRef"
                     class="tao-select__list"
                     role="listbox"
-                    :aria-label="listLabel"
-                    :aria-labelledby="listLabel ? undefined : field?.labelId.value"
+                    :aria-label="listLabel()"
+                    :aria-labelledby="listLabel() ? undefined : field?.labelId.value"
                 >
                     <li
                         v-for="(option, index) in items"

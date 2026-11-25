@@ -113,7 +113,9 @@ const shown = computed(() => (props.format ? props.format(model.value) : plain(m
 // в покое число отформатировано; пока его набирают, в поле текст пользователя; протяжка показывает живое число
 const text = computed(() => (focused.value && !dragging.value ? draft.value : shown.value));
 const valueText = computed(() => (props.unit ? `${shown.value} ${props.unit}` : shown.value));
-const named = computed(() => props.label && controlAttrs()['aria-label'] === undefined);
+// read in the template, not cached (`useAttrs()` is not reactive)
+// читается в шаблоне, без кэша (`useAttrs()` не реактивен)
+const named = () => props.label && controlAttrs()['aria-label'] === undefined;
 
 /** Writes a value; says whether it changed. / Записывает значение; говорит, изменилось ли оно. */
 function apply(value: number) {
@@ -545,7 +547,7 @@ const atMax = computed(() => props.max !== undefined && model.value >= props.max
                 :value="text"
                 :style="{ width: `${Math.max(text.length, 1) + 0.5}ch` }"
                 :disabled="disabled"
-                :aria-labelledby="named ? labelId : undefined"
+                :aria-labelledby="named() ? labelId : undefined"
                 :aria-invalid="isInvalid || undefined"
                 :aria-describedby="describedBy"
                 :aria-valuenow="model"

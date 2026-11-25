@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, nextTick, onActivated, onBeforeUnmount, onDeactivated, ref, watch } from 'vue';
+import { computed, nextTick, onActivated, onBeforeUnmount, onDeactivated, onMounted, ref, watch } from 'vue';
 import TaoButton from './TaoButton.vue';
 import TaoIcon from './TaoIcon.vue';
 import { claimConfirmHost, currentConfirm, isConfirmHostOwner, releaseConfirmHost, resolveConfirm } from '../confirm/store';
@@ -23,7 +23,15 @@ const me = Symbol('tao-confirm-host');
 // the owner is reactive: when the host that asks goes away (a route, a v-if, a KeepAlive) the next one asks the same question at once
 // владелец реактивен: когда хост, который спрашивает, уходит (маршрут, v-if, KeepAlive), следующий сразу задаёт тот же вопрос
 claimConfirmHost(me);
-const active = computed(() => isConfirmHostOwner(me));
+// a host draws only after it is mounted: the server and the first render of the browser both draw nothing, so hydration agrees whatever the
+// number of hosts (a host on the server would put its empty shells into the page for the client to find missing)
+// хост рисует только после монтирования: сервер и первый рендер браузера не рисуют ничего, так что гидратация сходится при любом числе
+// хостов (хост на сервере положил бы в страницу пустые оболочки, которых клиент не найдёт)
+const shown = ref(false);
+onMounted(() => {
+    shown.value = true;
+});
+const active = computed(() => shown.value && isConfirmHostOwner(me));
 onDeactivated(() => releaseConfirmHost(me));
 onActivated(() => claimConfirmHost(me));
 

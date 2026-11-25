@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defineComponent, h } from 'vue';
 import TaoHosts from '../src/components/TaoHosts.vue';
 import TaoProp from '../src/components/TaoProp.vue';
@@ -204,6 +204,32 @@ describe('review 3: TaoSelect', () => {
         await keyOn(trigger.element, 'ArrowUp', { altKey: true });
         expect(w.emitted('update:modelValue')).toEqual([['o10']]);
         expect(document.querySelector('[role="listbox"]')).toBeNull();
+        w.unmount();
+    });
+});
+
+describe('review 4: the practice of the field', () => {
+    it('the open list of a select follows an aria-label that changes later', async () => {
+        const w = mount(TaoSelect, { props: { items, modelValue: 'a' } as never, attrs: { 'aria-label': 'One' }, attachTo: document.body });
+        await w.find('[role="combobox"]').trigger('click');
+        expect(document.querySelector('[role="listbox"]')!.getAttribute('aria-label')).toBe('One');
+        await w.setProps({ 'aria-label': 'Two' } as never);
+        expect(document.querySelector('[role="listbox"]')!.getAttribute('aria-label')).toBe('Two');
+        w.unmount();
+    });
+
+    it('a toast waits while the user is away (window blur), and runs again when they are back', async () => {
+        const w = mount(TaoHosts, { attachTo: document.body });
+        toast({ message: 'Away', timeout: 150 });
+        await new Promise((r) => setTimeout(r));
+        window.dispatchEvent(new Event('blur'));
+        await new Promise((r) => setTimeout(r, 300));
+        expect(document.querySelectorAll('.tao-toast')).toHaveLength(1);
+        const hasFocus = vi.spyOn(document, 'hasFocus').mockReturnValue(true);
+        window.dispatchEvent(new Event('focus'));
+        await new Promise((r) => setTimeout(r, 300));
+        expect(document.querySelectorAll('.tao-toast')).toHaveLength(0);
+        hasFocus.mockRestore();
         w.unmount();
     });
 });
