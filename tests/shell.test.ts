@@ -1,7 +1,9 @@
 import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import { h, nextTick } from 'vue';
+import TaoLanguageSwitch from '../src/components/TaoLanguageSwitch.vue';
 import TaoShell from '../src/components/TaoShell.vue';
+import TaoThemeToggle from '../src/components/TaoThemeToggle.vue';
 import { createKitPrefs } from '../src/kitPrefs';
 
 // TaoShell: the navigation, the action, the project, the language and the theme, and the page, in one component.
@@ -69,10 +71,24 @@ describe('TaoShell', () => {
     it('the language and the theme: the prefs of the product drive them', async () => {
         const prefs = createKitPrefs({ key: 'shell-test', storage: null, root: document.createElement('div') });
         const w = shell({ prefs, languages: ['en', 'ru'] });
-        expect(w.find('.tao-language-switch, [class*="language"]').exists()).toBe(true);
+        const theme = w.findComponent(TaoThemeToggle);
+        const language = w.findComponent(TaoLanguageSwitch);
+        expect(theme.exists() && language.exists()).toBe(true);
+        // prefs → the controls
         prefs.mode.value = 'dark';
+        prefs.locale.value = 'ru';
         await nextTick();
-        expect(w.find('.tao-shell__tools').exists()).toBe(true);
+        expect(theme.props('modelValue')).toBe('dark');
+        expect(language.props('modelValue')).toBe('ru');
+        // the controls → prefs
+        theme.vm.$emit('update:modelValue', 'light');
+        language.vm.$emit('update:modelValue', 'en');
+        await nextTick();
+        expect(prefs.mode.value).toBe('light');
+        expect(prefs.locale.value).toBe('en');
+        // prefs apply the language themselves: the switch must not apply it a second time
+        expect(language.props('apply')).toBe(false);
+        expect(theme.props('apply')).toBe(false);
         prefs.dispose();
     });
 

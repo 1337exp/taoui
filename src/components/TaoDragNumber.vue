@@ -40,6 +40,8 @@ const props = withDefaults(
         /** The value change per pixel of a drag; without it a quarter of a step. / Изменение значения на пиксель протяжки; без него — четверть шага. */
         dragSpeed?: number;
         disabled?: boolean;
+        /** The value is shown and can be selected and submitted, but not changed: no drag, no ±, no keys, no typing. / Значение видно, его можно выделить и отправить, но не изменить: ни протяжки, ни ±, ни клавиш, ни набора. */
+        readOnly?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
         /** The id of the control, which the label of a `TaoFormField` points at. / id элемента: на него указывает подпись `TaoFormField`. */
         id?: string;
@@ -139,7 +141,7 @@ function nudge(direction: 1 | -1, steps = 1) {
 }
 
 function bump(direction: 1 | -1, steps = 1) {
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         return;
     }
     const { next, changed } = nudge(direction, steps);
@@ -149,6 +151,10 @@ function bump(direction: 1 | -1, steps = 1) {
 }
 
 function commitDraft() {
+    if (props.readOnly) {
+        draft.value = plain(model.value);
+        return;
+    }
     const parsed = parseDragNumber(draft.value, props.unit);
     if (parsed === null) {
         draft.value = plain(model.value);
@@ -162,6 +168,9 @@ function commitDraft() {
 }
 
 function onInput(event: Event) {
+    if (props.readOnly) {
+        return;
+    }
     draft.value = (event.target as HTMLInputElement).value;
 }
 
@@ -183,6 +192,9 @@ function onBlur(event: FocusEvent) {
 }
 
 function onKeydown(event: KeyboardEvent) {
+    if (props.readOnly) {
+        return;
+    }
     switch (event.key) {
         case 'Enter':
             commitDraft();
@@ -247,7 +259,7 @@ let drag: Drag | null = null;
 const gesture = usePointerDrag({
     target: () => fieldEl.value,
     onStart(event) {
-        if (props.disabled) {
+        if (props.disabled || props.readOnly) {
             return false;
         }
         // inside the field that is being typed in the press places the caret / в набираемом поле нажатие ставит каретку
@@ -365,7 +377,7 @@ function repeatStep() {
     if (!hold) {
         return;
     }
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         stopHold();
         return;
     }
@@ -381,7 +393,7 @@ function repeatStep() {
 }
 
 function onButtonDown(direction: 1 | -1, event: PointerEvent) {
-    if (!props.repeat || props.disabled || event.button !== 0) {
+    if (!props.repeat || props.disabled || props.readOnly || event.button !== 0) {
         return;
     }
     stopHold();
@@ -502,7 +514,7 @@ const atMax = computed(() => props.max !== undefined && model.value >= props.max
             class="tao-drag-number__btn tao-drag-number__btn--dec"
             :aria-label="l10n.decrementLabel"
             tabindex="-1"
-            :disabled="disabled || atMin"
+            :disabled="disabled || readOnly || atMin"
             @pointerdown="onButtonDown(-1, $event)"
             @pointerup="stopHold()"
             @pointercancel="stopHold()"
@@ -553,7 +565,7 @@ const atMax = computed(() => props.max !== undefined && model.value >= props.max
             class="tao-drag-number__btn tao-drag-number__btn--inc"
             :aria-label="l10n.incrementLabel"
             tabindex="-1"
-            :disabled="disabled || atMax"
+            :disabled="disabled || readOnly || atMax"
             @pointerdown="onButtonDown(1, $event)"
             @pointerup="stopHold()"
             @pointercancel="stopHold()"

@@ -33,6 +33,8 @@ const props = withDefaults(
         min?: number;
         max?: number;
         disabled?: boolean;
+        /** The value is shown and can be selected and submitted, but not changed: the list does not open, the arrows and typing do nothing. / Значение видно, его можно выделить и отправить, но не изменить: список не открывается, стрелки и набор ничего не делают. */
+        readOnly?: boolean;
         /** The id of the control, which the label of a `TaoFormField` points at. / id элемента: на него указывает подпись `TaoFormField`. */
         id?: string;
         /** The name in a form: the value goes into `FormData` and a native submit. / Имя в форме: значение попадает в `FormData` и нативную отправку. */
@@ -158,7 +160,7 @@ function closeAndRevert() {
 }
 
 async function openList() {
-    if (props.disabled || open.value) {
+    if (props.disabled || props.readOnly || open.value) {
         return;
     }
     open.value = true;
@@ -172,7 +174,7 @@ function scrollSelectedIntoView() {
 }
 
 function step(direction: 1 | -1) {
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         return;
     }
     setValue(stepPreset(props.options, model.value, direction, props.loop));
@@ -199,12 +201,15 @@ function pick(option: TaoPresetOption) {
 }
 
 function onInput(event: Event) {
+    if (props.readOnly) {
+        return;
+    }
     text.value = (event.target as HTMLInputElement).value;
     typed.value = true;
 }
 
 function onFocus() {
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         return;
     }
     void openList();
@@ -218,7 +223,7 @@ function onBlur() {
 }
 
 function onKeydown(event: KeyboardEvent) {
-    if (props.disabled || event.altKey || event.ctrlKey || event.metaKey) {
+    if (props.disabled || props.readOnly || event.altKey || event.ctrlKey || event.metaKey) {
         return;
     }
     if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
@@ -276,10 +281,10 @@ function onKeydown(event: KeyboardEvent) {
         </div>
         <!-- like the arrows of a native number field: not a tab stop (the keys of the field do the same), and a press does not take the focus from it / как стрелки родного числового поля: не табуляция (то же делают клавиши поля), и нажатие не забирает у него фокус -->
         <div ref="stepsRef" class="tao-preset-input__steps">
-            <button type="button" tabindex="-1" class="tao-preset-input__step" :aria-label="l10n.nextLabel" :disabled="disabled" @mousedown.prevent @click="step(1)">
+            <button type="button" tabindex="-1" class="tao-preset-input__step" :aria-label="l10n.nextLabel" :disabled="disabled || readOnly" @mousedown.prevent @click="step(1)">
                 <TaoIcon name="tao-chevron-up" />
             </button>
-            <button type="button" tabindex="-1" class="tao-preset-input__step" :aria-label="l10n.prevLabel" :disabled="disabled" @mousedown.prevent @click="step(-1)">
+            <button type="button" tabindex="-1" class="tao-preset-input__step" :aria-label="l10n.prevLabel" :disabled="disabled || readOnly" @mousedown.prevent @click="step(-1)">
                 <TaoIcon name="tao-chevron-down" />
             </button>
         </div>

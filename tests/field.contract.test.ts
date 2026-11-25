@@ -74,6 +74,9 @@ describe('readOnly', () => {
         ['TaoInput', TaoInput, {}, 'input'],
         ['TaoTextarea', TaoTextarea, {}, 'textarea'],
         ['TaoInputNumber', TaoInputNumber, { modelValue: 1 }, 'input'],
+        ['TaoQuantity', TaoQuantity, { modelValue: 1 }, 'input'],
+        ['TaoDragNumber', TaoDragNumber, { modelValue: 1 }, 'input'],
+        ['TaoPresetInput', TaoPresetInput, { options: [{ value: 1, label: 'One' }], modelValue: 1 }, 'input'],
     ] as [string, unknown, Record<string, unknown>, string][])('%s: the control is readonly, not disabled', (_, component, props, control) => {
         const w = mount(component as never, { props: { ...props, readOnly: true } as never });
         const el = w.find(control);
@@ -91,6 +94,53 @@ describe('readOnly', () => {
         expect(w.emitted('update:modelValue')).toBeUndefined();
         expect(w.emitted('commit')).toBeUndefined();
         for (const step of w.findAll('.tao-input-number__step')) expect(step.attributes('disabled')).toBeDefined();
+    });
+
+    it('TaoQuantity: the arrows, ± and blur change nothing', async () => {
+        const w = mount(TaoQuantity, { props: { modelValue: 5, readOnly: true } });
+        const input = w.find('input');
+        await input.trigger('keydown', { key: 'ArrowUp' });
+        await input.trigger('keydown', { key: 'ArrowDown' });
+        await input.trigger('focus');
+        await input.setValue('2');
+        await input.trigger('blur');
+        expect(w.emitted('update:modelValue')).toBeUndefined();
+        expect(w.emitted('commit')).toBeUndefined();
+        for (const button of w.findAll('button')) expect(button.attributes('disabled')).toBeDefined();
+    });
+
+    it('TaoDragNumber: keys, typing, ± and a drag change nothing; the focus stays', async () => {
+        const w = mount(TaoDragNumber, { props: { modelValue: 5, readOnly: true }, attachTo: document.body });
+        const input = w.find('input');
+        await input.trigger('focus');
+        await input.trigger('keydown', { key: 'ArrowUp' });
+        await input.trigger('keydown', { key: 'Enter' });
+        await input.setValue('9');
+        await input.trigger('blur');
+        const field = w.find('.tao-drag-number__field');
+        await field.trigger('pointerdown', { clientX: 10, button: 0, pointerId: 1 });
+        await field.trigger('pointermove', { clientX: 80, pointerId: 1 });
+        await field.trigger('pointerup', { clientX: 80, pointerId: 1 });
+        expect(w.emitted('update:modelValue')).toBeUndefined();
+        expect(w.emitted('commit')).toBeUndefined();
+        expect(input.attributes('disabled')).toBeUndefined();
+        for (const button of w.findAll('button')) expect(button.attributes('disabled')).toBeDefined();
+        w.unmount();
+    });
+
+    it('TaoPresetInput: the list does not open, the arrows and typing change nothing', async () => {
+        const options = [{ value: 1, label: 'One' }, { value: 2, label: 'Two' }];
+        const w = mount(TaoPresetInput, { props: { options, modelValue: 1, readOnly: true }, attachTo: document.body });
+        const input = w.find('input');
+        await input.trigger('focus');
+        await input.trigger('keydown', { key: 'ArrowUp' });
+        await input.setValue('Two');
+        await input.trigger('keydown', { key: 'Enter' });
+        expect(w.emitted('update:modelValue')).toBeUndefined();
+        expect(w.emitted('commit')).toBeUndefined();
+        expect(document.querySelector('[role="listbox"]')).toBeNull();
+        for (const button of w.findAll('button')) expect(button.attributes('disabled')).toBeDefined();
+        w.unmount();
     });
 
     it('TaoInputNumber: without readOnly the same blur does commit', async () => {

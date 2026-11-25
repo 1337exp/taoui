@@ -18,6 +18,8 @@ const props = withDefaults(
         min?: number;
         max?: number;
         disabled?: boolean;
+        /** The value is shown and can be selected and submitted, but not changed: ± and the arrow keys do nothing. / Значение видно, его можно выделить и отправить, но не изменить: ± и стрелки ничего не делают. */
+        readOnly?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
         /** The id of the control, which the label of a `TaoFormField` points at. / id элемента: на него указывает подпись `TaoFormField`. */
         id?: string;
@@ -102,7 +104,7 @@ watch(
 );
 
 function onDec() {
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         return;
     }
     if (model.value > props.min) {
@@ -114,7 +116,7 @@ function onDec() {
 }
 
 function onInc() {
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         return;
     }
     if (model.value < ceiling.value) {
@@ -124,6 +126,9 @@ function onInc() {
 }
 
 function onInput(event: Event) {
+    if (props.readOnly) {
+        return;
+    }
     const text = (event.target as HTMLInputElement).value;
     if (!/^\d*$/.test(text)) {
         return;
@@ -146,6 +151,10 @@ function onFocus(event: FocusEvent) {
 
 function onBlur(event: FocusEvent) {
     focused.value = false;
+    if (props.readOnly) {
+        emit('blur', event);
+        return;
+    }
     const next = apply(draft.value === '' ? props.min : toInt(draft.value));
     draft.value = String(next);
     if (next !== atFocus) {
@@ -168,8 +177,8 @@ function onKeydown(event: KeyboardEvent) {
 
 const atMin = computed(() => model.value <= props.min);
 const atMax = computed(() => model.value >= ceiling.value);
-const minusDisabled = computed(() => props.disabled || (!props.allowRemove && atMin.value));
-const plusDisabled = computed(() => props.disabled || atMax.value);
+const minusDisabled = computed(() => props.disabled || props.readOnly || (!props.allowRemove && atMin.value));
+const plusDisabled = computed(() => props.disabled || props.readOnly || atMax.value);
 const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value.removeLabel : l10n.value.decrementLabel));
 </script>
 
