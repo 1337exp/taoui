@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, useId, useSlots } from 'vue';
+import { computed, nextTick, ref, useId, useSlots, watch } from 'vue';
 import { formatText, useLocaleText } from '../locale';
 import { slotHas } from '../slots';
 import { nextRegion, toggleTool, type TaoWorkbenchSide, type TaoWorkbenchTool } from '../workbench';
@@ -107,21 +107,43 @@ function toolName(tool: TaoWorkbenchTool): string {
     return badge ? `${tool.label}, ${badge}` : tool.label;
 }
 
-// Closing a panel from its own button removes the button that has the focus: the focus goes to the tool that opened it, as a dialog does
-// Закрытие панели её кнопкой убирает кнопку, на которой фокус: фокус уходит к инструменту, открывшему панель, как у диалога
+// A panel that closes takes the focus with it when the focus is inside (its own close button, or whatever the user was in): the focus goes to
+// the tool that opened it, as a dialog does. A parent that sets the model to `null` is the same case as a click, so it is the models that are watched.
+// Панель, которая закрывается, уносит фокус, если он внутри (её кнопка закрытия или то, где был пользователь): фокус уходит к инструменту,
+// открывшему панель, как у диалога. Родитель, обнуляющий модель, — тот же случай, что клик, поэтому следим за моделями.
 function closePanel(side: TaoWorkbenchSide) {
-    const model = side === 'left' ? left : side === 'right' ? right : bottom;
-    const id = model.value;
-    model.value = null;
-    void nextTick(() => {
-        const tool = [...(rootRef.value?.querySelectorAll<HTMLElement>('[data-tao-tool]') ?? [])].find((el) => el.dataset.taoTool === `${side}:${id}`);
-        (tool ?? mainRef.value)?.focus();
-    });
+    (side === 'left' ? left : side === 'right' ? right : bottom).value = null;
 }
+watch(
+    [left, right, bottom],
+    (now, before) => {
+        (['left', 'right', 'bottom'] as const).forEach((side, i) => {
+            const id = before[i];
+            if (!id || now[i]) {
+                return;
+            }
+            const panel = rootRef.value?.querySelector(`[data-tao-panel="${side}"]`);
+            if (!panel?.contains(document.activeElement)) {
+                return;
+            }
+            void nextTick(() => {
+                const tool = [...(rootRef.value?.querySelectorAll<HTMLElement>('[data-tao-tool]') ?? [])].find((el) => el.dataset.taoTool === `${side}:${id}`);
+                (tool && !(tool as HTMLButtonElement).disabled ? tool : mainRef.value)?.focus();
+            });
+        });
+    },
+    { flush: 'pre' },
+);
 
 // each frame has its own landmark id: two workbenches on a page must not share one
 // у каждой рамки свой id области: две рамки на странице не должны делить один
 const mainId = `tao-workbench-main-${useId()}`;
+
+// The gutter of the inner split (`--tao-workbench-gap`, the space token 2 = 8px): the left split's end pane holds that split, and the workspace
+// keeps `centerMin` only if the gutter is counted too
+// Зазор внутреннего сплита (`--tao-workbench-gap`, токен отступа 2 = 8px): в конечной панели левого сплита лежит тот сплит, и рабочая область
+// держит `centerMin`, только если зазор тоже посчитан
+const GUTTER = 8;
 
 // F6 / Shift+F6 go round the regions, as in an IDE (a keyboard user does not tab through a whole rail to reach the workspace)
 // F6 / Shift+F6 идут по областям по кругу, как в IDE (пользователь клавиатуры не листает табом всю рейку, чтобы дойти до рабочей области)
@@ -130,7 +152,9 @@ function onKeydown(event: KeyboardEvent) {
     if (event.key !== 'F6' || event.altKey || event.ctrlKey || event.metaKey) {
         return;
     }
-    const regions = [...(rootRef.value?.querySelectorAll<HTMLElement>('[data-tao-region]') ?? [])];
+    // only the regions of THIS frame: a workbench inside a workbench has its own F6 ring
+    // только области ЭТОЙ рамки: у рамки внутри рамки своё кольцо F6
+    const regions = [...(rootRef.value?.querySelectorAll<HTMLElement>('[data-tao-region]') ?? [])].filter((region) => region.closest('.tao-workbench') === rootRef.value);
     const at = regions.findIndex((region) => region.contains(document.activeElement));
     const to = nextRegion(regions.length, at, event.shiftKey ? -1 : 1);
     if (to >= 0) {
@@ -192,12 +216,13 @@ const mainRef = ref<HTMLElement | null>(null);
                 v-model="leftSize"
                 unit="px"
                 :min="panelMin"
-                :min-end="centerMin + (openRight ? panelMin : 0)"
+                :min-end="centerMin + (openRight ? panelMin + GUTTER : 0)"
+                :label="openLeft?.label"
                 :collapsed="openLeft ? false : 'start'"
                 class="tao-workbench__split"
             >
                 <template #start>
-                    <section v-if="openLeft" class="tao-workbench__block tao-workbench__panel" data-tao-region tabindex="-1" :aria-label="openLeft.label">
+                    <section v-if="openLeft" class="tao-workbench__block tao-workbench__panel" data-tao-region tabindex="-1" :aria-label="openLeft.label" data-tao-panel="left">
                         <header class="tao-workbench__panel-head">
                             <TaoIcon v-if="openLeft.icon" :name="openLeft.icon" :size="16" />
                             <div class="tao-workbench__panel-title" role="heading" aria-level="2">{{ openLeft.label }}</div>
@@ -215,6 +240,7 @@ const mainRef = ref<HTMLElement | null>(null);
                         :min="panelMin"
                         :min-end="centerMin"
                         :collapsed="openRight ? false : 'end'"
+                        :label="openRight?.label"
                         class="tao-workbench__split"
                     >
                         <template #start>
@@ -226,6 +252,7 @@ const mainRef = ref<HTMLElement | null>(null);
                                 :min="panelMin"
                                 :min-end="centerMin"
                                 :collapsed="openBottom ? false : 'end'"
+                                :label="openBottom?.label"
                                 class="tao-workbench__split"
                             >
                                 <template #start>
@@ -234,7 +261,7 @@ const mainRef = ref<HTMLElement | null>(null);
                                     </main>
                                 </template>
                                 <template #end>
-                                    <section v-if="openBottom" class="tao-workbench__block tao-workbench__panel" data-tao-region tabindex="-1" :aria-label="openBottom.label">
+                                    <section v-if="openBottom" class="tao-workbench__block tao-workbench__panel" data-tao-region tabindex="-1" :aria-label="openBottom.label" data-tao-panel="bottom">
                                         <header class="tao-workbench__panel-head">
                                             <TaoIcon v-if="openBottom.icon" :name="openBottom.icon" :size="16" />
                                             <div class="tao-workbench__panel-title" role="heading" aria-level="2">{{ openBottom.label }}</div>
@@ -247,7 +274,7 @@ const mainRef = ref<HTMLElement | null>(null);
                             </TaoSplit>
                         </template>
                         <template #end>
-                            <section v-if="openRight" class="tao-workbench__block tao-workbench__panel" data-tao-region tabindex="-1" :aria-label="openRight.label">
+                            <section v-if="openRight" class="tao-workbench__block tao-workbench__panel" data-tao-region tabindex="-1" :aria-label="openRight.label" data-tao-panel="right">
                                 <header class="tao-workbench__panel-head">
                                     <TaoIcon v-if="openRight.icon" :name="openRight.icon" :size="16" />
                                     <div class="tao-workbench__panel-title" role="heading" aria-level="2">{{ openRight.label }}</div>
@@ -287,7 +314,7 @@ const mainRef = ref<HTMLElement | null>(null);
             <div class="tao-workbench__end"><slot name="right-end" /></div>
         </nav>
 
-        <footer class="tao-workbench__bar tao-workbench__bar--bottom" data-tao-region tabindex="-1" :aria-label="bottomLabel ?? l10n.bottomLabel">
+        <footer class="tao-workbench__bar tao-workbench__bar--bottom" data-tao-region tabindex="-1" role="region" :aria-label="bottomLabel ?? l10n.bottomLabel">
             <div class="tao-workbench__start">
                 <TaoTooltip v-for="tool in bottomTools" :key="tool.id" :content="tool.label" :shortcut="tool.shortcut" placement="top" variant="raised">
                     <button

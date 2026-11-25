@@ -26,7 +26,7 @@ import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoTree' });
 // 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
-warnRemoved('TaoTree', { nodes: 'use `items` of `{ id, label }`' });
+warnRemoved('TaoTree', { nodes: 'use `items` of `{ id, label }`', ariaLabel: 'use `label` (an `aria-label` attribute is ignored where the component names itself)' });
 
 // A tree of files or objects: expand and collapse, select, check with tri-state parents, load children lazily.
 // ARIA tree: one tab stop, ↑ / ↓ walk the visible rows, → opens or goes to the first child, ← closes or goes to the

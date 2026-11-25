@@ -4,8 +4,11 @@ import { useRoving } from '../primitives/useRoving';
 import { sizeClass, type TaoSize } from '../size';
 import { toCssLength, type TaoLength } from '../length';
 import { useTaoLocale } from '../locale';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoList' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoList', { ariaLabel: 'use `label` (an `aria-label` attribute is ignored where the component names itself)' });
 
 const appLocale = useTaoLocale();
 

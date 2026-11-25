@@ -2,8 +2,11 @@ import { mount } from '@vue/test-utils';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import TaoCheckbox from '../src/components/TaoCheckbox.vue';
 import TaoCombobox from '../src/components/TaoCombobox.vue';
+import TaoInput from '../src/components/TaoInput.vue';
+import TaoNav from '../src/components/TaoNav.vue';
 import TaoPagination from '../src/components/TaoPagination.vue';
 import TaoQuantity from '../src/components/TaoQuantity.vue';
+import TaoScrubber from '../src/components/TaoScrubber.vue';
 import TaoSelect from '../src/components/TaoSelect.vue';
 import TaoSpoiler from '../src/components/TaoSpoiler.vue';
 import TaoSwitch from '../src/components/TaoSwitch.vue';
@@ -23,7 +26,7 @@ afterEach(() => {
 function warnings(run: () => void): string[] {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     run();
-    return warn.mock.calls.map(([m]) => String(m)).filter((m) => m.includes('is gone in 6.0'));
+    return warn.mock.calls.map(([m]) => String(m)).filter((m) => m.includes('no longer works as in 5.x'));
 }
 
 describe('a name of 5.x that is gone warns in dev', () => {
@@ -68,7 +71,18 @@ describe('a name of 5.x that is gone warns in dev', () => {
             mount(TaoQuantity, { props: { onDec: () => {} } as never });
         });
         expect(out.some((m) => m.includes('TaoSpoiler') && m.includes('prop defaultOpen'))).toBe(true);
-        expect(out.some((m) => m.includes('TaoQuantity') && m.includes('@dec'))).toBe(true);
+        expect(out.some((m) => m.includes('TaoQuantity') && m.includes('@dec') && m.includes('@remove'))).toBe(true);
+    });
+
+    it('error, ariaLabel and @seek: the three that fail silently in most templates', () => {
+        const out = warnings(() => {
+            mount(TaoInput, { props: { error: true } as never });
+            mount(TaoNav, { props: { items: [], ariaLabel: 'Main' } as never });
+            mount(TaoScrubber, { props: { modelValue: 0, length: 10, onSeek: () => {} } as never });
+        });
+        expect(out.some((m) => m.includes('TaoInput') && m.includes('prop error') && m.includes('`invalid`'))).toBe(true);
+        expect(out.some((m) => m.includes('TaoNav') && m.includes('prop ariaLabel') && m.includes('`label`'))).toBe(true);
+        expect(out.some((m) => m.includes('TaoScrubber') && m.includes('@seek') && m.includes('@commit'))).toBe(true);
     });
 
     it('the right names say nothing', () => {

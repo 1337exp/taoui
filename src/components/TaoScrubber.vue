@@ -6,8 +6,11 @@ import { sizeClass, type TaoSize } from '../size';
 import type { TaoSliderMark } from '../slider';
 import TaoButton from './TaoButton.vue';
 import TaoSlider from './TaoSlider.vue';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoScrubber' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoScrubber', { onSeek: 'use `@commit`' });
 
 // Таймлайн: кнопки «играть» и «в начало», слайдер по времени с метками событий и подпись «время / длина».
 // Компонент только показывает и отдаёт действия пользователя: сам время не ведёт. Вести его можно чем угодно

@@ -7,8 +7,11 @@ import { surfaceClass, type TaoSurface } from '../surface';
 import TaoIcon from './TaoIcon.vue';
 import TaoMenu from './TaoMenu.vue';
 import { slotHas } from '../slots';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoNav' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoNav', { ariaLabel: 'use `label` (an `aria-label` attribute is ignored where the component names itself)' });
 
 // Navigation between the sections of an app. One list of items, three looks: a bottom bar (phone), a rail with icons
 // (tablet), a side panel with labels (desktop). `layout="auto"` picks the look by the width of TaoNav itself with

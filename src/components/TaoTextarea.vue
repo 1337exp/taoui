@@ -3,8 +3,11 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useControlAttrs } from '../controlAttrs';
 import { nativeFieldAttrs, useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoTextarea', inheritAttrs: false });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoTextarea', { error: 'use `invalid` for the red frame (`error` is only the text of `TaoFormField`)' });
 
 // the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
 // атрибуты — элементу управления, внешний вид — обёртке

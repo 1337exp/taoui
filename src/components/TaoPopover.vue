@@ -5,8 +5,11 @@ import { useDismiss } from '../dismiss';
 import { isVirtualAnchor, useFloating, type TaoAnchor, type TaoPlacement } from '../floating';
 import { useLayer } from '../layers';
 import { resolveSize, sizeClass, type TaoSize } from '../size';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoPopover' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoPopover', { onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted' });
 
 const props = withDefaults(
     defineProps<{

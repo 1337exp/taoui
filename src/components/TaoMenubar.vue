@@ -5,8 +5,11 @@ import { isMenuSelectable, menuReturnsFocus, type TaoMenuActionItem, type TaoClo
 import { sizeClass, type TaoSize } from '../size';
 import TaoMenu from './TaoMenu.vue';
 import { frameStyle } from '../frames';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoMenubar' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoMenubar', { ariaLabel: 'use `label` (an `aria-label` attribute is ignored where the component names itself)' });
 
 // The strip of menus on top of an editor: File | Edit | View. ARIA `menubar`: the bar is one tab stop, ← / → walk the
 // menus, ↓ / Enter / Space open one, and with a menu open ← / → move on to the neighbour menu. Each top entry is an item

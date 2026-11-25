@@ -125,3 +125,36 @@ describe('the separator range is a range', () => {
         expect(now).toBeLessThanOrEqual(max);
     });
 });
+
+describe('when the minimums do not fit, the other pane keeps its minimum (the workspace is never squeezed to nothing)', () => {
+    it('the pane the model measures gives way: 372px free, the start pane keeps 240', async () => {
+        const { startPx, resize } = make({ modelValue: 280 });
+        await resize(380);
+        expect(startPx()).toBe('240px');
+    });
+
+    it('the separator says what the pane is: min, max and now are the one value that is kept', async () => {
+        const { w, resize } = make({ modelValue: 280 });
+        await resize(380);
+        const sep = w.find('[role=separator]');
+        expect([sep.attributes('aria-valuemin'), sep.attributes('aria-valuemax'), sep.attributes('aria-valuenow')]).toEqual(['132', '132', '132']);
+    });
+});
+
+describe('a key or a press that does not move writes only what the user did', () => {
+    it('a key steps from the pane that is on screen, not from the stored size the box cannot show', async () => {
+        const { w, updates, resize } = make({ modelValue: 200, step: 8 });
+        await resize(420); // 412 free: the end pane shows 172, the stored size is 200
+        await w.find('[role=separator]').trigger('keydown', { key: 'ArrowRight' });
+        expect(updates.at(-1)).toBe(164); // 172 - 8, not the clamp of 192
+    });
+
+    it('a press and a release without a move leave the stored size alone', async () => {
+        const { w, updates, resize } = make({ modelValue: 200 });
+        await resize(420);
+        const handle = w.find('.tao-split__handle');
+        await handle.trigger('pointerdown', { pointerId: 1, clientX: 240, button: 0 });
+        await handle.trigger('pointerup', { pointerId: 1 });
+        expect(updates).toEqual([]);
+    });
+});

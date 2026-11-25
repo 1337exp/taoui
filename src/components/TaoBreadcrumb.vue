@@ -2,8 +2,11 @@
 import TaoLink from './TaoLink.vue';
 import type { TaoBreadcrumbItem } from '../breadcrumb';
 import { useLocaleText } from '../locale';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoBreadcrumb' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoBreadcrumb', { ariaLabel: 'use `label` (an `aria-label` attribute is ignored where the component names itself)' });
 
 const props = withDefaults(
     defineProps<{

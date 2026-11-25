@@ -28,7 +28,7 @@ setTaoLocale(localeRu)                                      // optional, English
 createApp(App).mount('#app')
 ```
 
-- **Import the components you use**: `import { TaoButton } from '@1337exp/taoui'`. The CSS of a component comes with the component (about 38 KB of CSS for one, against 232 KB for the whole kit); do not import a stylesheet per component.
+- **Import the components you use**: `import { TaoButton } from '@1337exp/taoui'`. The CSS of a component comes with the component (about 38 KB of CSS for one, against 244 KB for the whole kit); do not import a stylesheet per component.
 - Global registration is optional and costs the whole kit: `import TaoUI from '@1337exp/taoui/plugin'`, `app.use(TaoUI, { locale: localeRu })`. Prefer named imports. On the server (Nuxt, SSR) give the language to the app through the plugin: the process is shared by requests.
 - Nuxt 3: the CSS in `app.vue`; the plugin only if you want global tags. Components are SSR-safe; `toast()` / `confirm()` do nothing on the server, and the package must go through Vite on the server too (`vite: { ssr: { noExternal: ['@1337exp/taoui'] } }`: the CSS of a component is imported from its JS), and `toast.defaults` / `confirm.defaults` are process-wide (set them once at start-up, not per request).
 - Browser floor: Chrome / Edge 130, Safari 18, Firefox 132 (the last two years: `@layer`, `inert`, `round()`, nesting, `color-mix()`, `light-dark()`, `@property`, container queries).
@@ -61,7 +61,7 @@ createApp(App).mount('#app')
 ## Themes and palettes
 
 ```html
-<html data-tao-mode="light">                              <!-- the default theme, light -->
+<html data-tao-mode="light">                              <!-- light is the opt-in; with no attribute the theme is dark -->
 <html data-tao-theme="lagoon">                            <!-- a palette, dark -->
 <html data-tao-theme="lagoon" data-tao-mode="light">      <!-- its light twin -->
 ```

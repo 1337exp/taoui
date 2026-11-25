@@ -70,8 +70,45 @@ describe('the minimum of the workspace', () => {
     it('with the right panel open the left split keeps room for it as well: the workspace is not squeezed to nothing', async () => {
         const w = make({ left: 'files', right: 'files', panelMin: 160, centerMin: 240 });
         const left = w.findAllComponents(TaoSplit)[0]!;
-        expect(left.props('minEnd')).toBe(400);
+        expect(left.props('minEnd')).toBe(408); // 240 + 160 + the 8px gutter of the inner split
         await w.setProps({ right: null });
         expect(left.props('minEnd')).toBe(240);
+    });
+});
+
+describe('a panel that is closed by the parent', () => {
+    it('takes the focus to its tool too (no click on the close button)', async () => {
+        const w = make({ left: 'files' });
+        (w.find('[data-tao-panel="left"] .tao-workbench__close').element as HTMLElement).focus();
+        await w.setProps({ left: null });
+        await nextTick();
+        await nextTick();
+        expect(document.activeElement).toBe(w.find('[data-tao-tool="left:files"]').element);
+    });
+});
+
+describe('the regions of nested frames', () => {
+    it('F6 goes round the regions of this frame only', async () => {
+        const Inner = defineComponent({ render: () => h(TaoWorkbench, { leftTools: tools }) });
+        const w = mount(TaoWorkbench, { attachTo: document.body, props: { leftTools: tools }, slots: { default: () => h(Inner) } });
+        const outer = w.element as HTMLElement;
+        const own = [...outer.querySelectorAll<HTMLElement>('[data-tao-region]')].filter((r) => r.closest('.tao-workbench') === outer);
+        own[0]!.focus();
+        for (let i = 0; i < own.length; i += 1) {
+            await w.trigger('keydown', { key: 'F6' });
+        }
+        expect(document.activeElement).toBe(own[0]);
+        w.unmount();
+    });
+});
+
+describe('the status bar and the separators', () => {
+    it('the status bar is a named region (a bare footer outside a section is the page contentinfo)', () => {
+        expect(make().find('footer').attributes('role')).toBe('region');
+    });
+
+    it('the separator of an open panel is named after the panel', () => {
+        const w = make({ left: 'files' });
+        expect(w.findAllComponents(TaoSplit)[0]!.props('label')).toBe('Files');
     });
 });

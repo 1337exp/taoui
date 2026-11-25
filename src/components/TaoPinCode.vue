@@ -5,8 +5,11 @@ import { useLocaleText, formatText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import TaoFormValue from './TaoFormValue.vue';
 import { parsePinFormat, pinFromPaste, separatorAfter } from '../pinFormat';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoPinCode' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoPinCode', { onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted', error: 'use `invalid` for the red frame (`error` is only the text of `TaoFormField`)' });
 
 const props = withDefaults(
     defineProps<{

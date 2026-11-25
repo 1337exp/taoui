@@ -67,6 +67,19 @@ describe('TaoTooltip dismiss and frame (fourth review)', () => {
         w.unmount();
     });
 
+    it('Escape dismisses a hint that came up under the pointer too, and the key still reaches the page', async () => {
+        const w = mount(TaoTooltip, { props: { content: 'Hint' }, slots: { default: () => h('button', 'x') }, attachTo: document.body });
+        await w.find('.tao-tooltip-wrapper').trigger('mouseenter');
+        expect(document.querySelector('.tao-tooltip')).not.toBeNull();
+        const parent: string[] = [];
+        window.addEventListener('keydown', (e) => parent.push(e.key), { once: true });
+        document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        await w.vm.$nextTick();
+        expect(document.querySelector('.tao-tooltip')).toBeNull();
+        expect(parent).toEqual(['Escape']);
+        w.unmount();
+    });
+
     it('the arrow is border-box: the frame of a raised hint does not make it bigger than the 8px its offsets assume', () => {
         expect(source('src/components/TaoTooltip.vue')).toMatch(/\.tao-tooltip__arrow \{\s*position: absolute;[^}]*box-sizing: border-box;/);
     });

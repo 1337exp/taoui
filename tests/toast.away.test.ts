@@ -15,9 +15,17 @@ const host = () => {
     return w;
 };
 
-afterEach(() => {
+afterEach(async () => {
     // a host that stays mounted keeps the drawing for itself: the next test would see no toast
-    hosts.splice(0).forEach((w) => w.unmount());
+    hosts.splice(0).forEach((w) => {
+        try {
+            w.unmount();
+        } catch {
+            // already gone with its toasts
+        }
+    });
+    toast.dismiss();
+    await wait(60); // timers of the removed toasts run out before the next test
     vi.restoreAllMocks();
     document.body.innerHTML = '';
 });
@@ -26,14 +34,14 @@ const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const count = () => document.querySelectorAll('.tao-toast').length;
 
 describe('a toast that appears while the user is away', () => {
-    it('does not run out in an empty window, and runs when they come back', async () => {
-        const hasFocus = vi.spyOn(document, 'hasFocus').mockReturnValue(false);
+    it('does not run out in a hidden tab, and runs when they come back', async () => {
+        const hidden = vi.spyOn(document, 'hidden', 'get').mockReturnValue(true);
         host();
         toast({ message: 'Background', timeout: 120 });
         await wait(300);
         expect(count()).toBe(1);
-        hasFocus.mockReturnValue(true);
-        window.dispatchEvent(new Event('focus'));
+        hidden.mockReturnValue(false);
+        document.dispatchEvent(new Event('visibilitychange'));
         await wait(300);
         expect(count()).toBe(0);
     });
@@ -50,5 +58,15 @@ describe('the focus leaves a toast while the user is away', () => {
         item.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: null }));
         await wait(400);
         expect(count()).toBe(1);
+    });
+});
+
+describe('a window that has no focus but is seen', () => {
+    it('does not hold a toast for ever: a visible page counts the time down', async () => {
+        vi.spyOn(document, 'hasFocus').mockReturnValue(false);
+        host();
+        toast({ message: 'Seen', timeout: 120 });
+        await wait(400);
+        expect(count()).toBe(0);
     });
 });

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { arrowInset, useFloating, type TaoPlacement } from '../floating';
 import { listenFocusLoss } from '../focusLoss';
 import TaoKbd from './TaoKbd.vue';
@@ -88,12 +88,30 @@ function show() {
     showTooltip.value = true;
 }
 
+// Escape dismisses the hint wherever the focus is (WCAG 1.4.13): one that came up under the pointer has no focus on its trigger. The key is not
+// stopped, so a dialog around it still closes.
+// Escape убирает подсказку, где бы ни был фокус (WCAG 1.4.13): подсказка, возникшая под указателем, не имеет фокуса на своей цели. Клавиша не
+// гасится, поэтому диалог вокруг по-прежнему закрывается.
+function onEscape(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+        hide();
+    }
+}
+watch(showTooltip, (open) => {
+    if (open) {
+        document.addEventListener('keydown', onEscape);
+    } else {
+        document.removeEventListener('keydown', onEscape);
+    }
+});
+
 let stopFocusLoss: (() => void) | undefined;
 onMounted(() => {
     stopFocusLoss = listenFocusLoss(hide);
 });
 
 onBeforeUnmount(() => {
+    document.removeEventListener('keydown', onEscape);
     stopFocusLoss?.();
 });
 </script>
@@ -106,7 +124,6 @@ onBeforeUnmount(() => {
         @mouseleave="hide"
         @focusin="show"
         @focusout="hide"
-        @keydown.esc="hide"
     >
         <slot />
         <Teleport to="body">

@@ -13,7 +13,7 @@ import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoSelect', inheritAttrs: false });
 // 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
-warnRemoved('TaoSelect', { options: 'use `items` of `{ id, label }`', onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted' });
+warnRemoved('TaoSelect', { options: 'use `items` of `{ id, label }`', onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted', error: 'use `invalid` for the red frame (`error` is only the text of `TaoFormField`)' });
 
 // the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
 // атрибуты — элементу управления, внешний вид — обёртке

@@ -134,7 +134,11 @@ watch(
 // отнять продление, которое давало наведение. Наведение, проглоченное окном (`mouseleave` не придёт), на возврате спрашивается заново.
 const rootEl = ref<HTMLElement | null>(null);
 const away = ref(false);
-const isAway = () => document.hidden || !document.hasFocus();
+// away = the page cannot be seen (a hidden tab). A window that merely has no focus (an iframe, a WebView that never fires `focus`, a window
+// opened behind another) is still seen, and a toast that waits there for ever would pile up; a `blur` the user caused still pauses it.
+// отсутствие = страницу не видно (скрытая вкладка). Окно без фокуса (iframe, WebView без события `focus`, окно, открытое позади другого) всё
+// же видно, а тост, ждущий там вечно, копился бы; `blur`, вызванный пользователем, по-прежнему ставит на паузу.
+const isAway = () => document.hidden;
 function goAway() {
     away.value = true;
     hovered.value = false;

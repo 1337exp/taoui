@@ -2,10 +2,13 @@
 import TaoIcon from './TaoIcon.vue';
 import { computed, ref, onBeforeMount, onBeforeUnmount } from 'vue';
 import { useLocaleText } from '../locale';
+import { warnRemoved } from '../deprecate';
 
 // Attributes go to the button, the root is a positioning wrapper.
 // Атрибуты уходят на кнопку, корень — обёртка с позицией.
 defineOptions({ name: 'TaoScrollTop', inheritAttrs: false });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoScrollTop', { ariaLabel: 'use `label` (an `aria-label` attribute is ignored where the component names itself)' });
 
 interface Props {
     /**

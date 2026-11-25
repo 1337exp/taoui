@@ -5,8 +5,11 @@ import { formFieldKey, useField, type TaoFormFieldContext } from '../formField';
 import { formatText, useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import TaoCheckbox from './TaoCheckbox.vue';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoChecklist' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoChecklist', { onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted', error: 'use `invalid` for the red frame (`error` is only the text of `TaoFormField`)' });
 
 // A list of checkboxes with one model: the values that are checked. «Select all» with a mixed state, a «3 of 5»
 // counter, a strike-through for the done items. A fieldset, so a screen reader hears the group and its legend; the

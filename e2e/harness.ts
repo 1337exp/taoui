@@ -10,7 +10,9 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const PORT = 5189;
 
 async function waitFor(url: string) {
-    for (let i = 0; i < 120; i += 1) {
+    // shorter than the hook timeout (60 s), so the server is stopped by the catch below, not left to the timeout
+    // короче таймаута хука (60 с), чтобы сервер останавливал catch ниже, а не таймаут
+    for (let i = 0; i < 100; i += 1) {
         try {
             if ((await fetch(url)).ok) return;
         } catch {

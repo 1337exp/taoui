@@ -21,8 +21,11 @@ import { listenFocusLoss } from '../focusLoss';
 import { useLocaleText, useTaoLocale } from '../locale';
 import '../styles/date-popup.css';
 import TaoIcon from './TaoIcon.vue';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoCalendar' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoCalendar', { onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted' });
 
 const appLocale = useTaoLocale();
 

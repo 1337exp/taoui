@@ -188,7 +188,7 @@ landing section, a sidebar. Tune the look once with theme tokens (`--tao-surface
 / `-border` / `-blur`). A surface belongs to one element: nested panels do not inherit it. Glass needs something behind
 it — keep it for things that float over content; over a flat background it is just a grey fill, over animation it is
 re-blurred every frame. Toast and confirm are glass by default, tinted by their tone; `toast.defaults({ surface: 'flat' })`
-and `confirm.defaults({ surface: 'flat' })` turn it off, ``toast({ surface: 'flat' })` / `confirm({ surface: 'flat' })` do it for one. Without blur support or with
+and `confirm.defaults({ surface: 'flat' })` turn it off, `toast({ surface: 'flat' })` / `confirm({ surface: 'flat' })` do it for one. Without blur support or with
 `prefers-reduced-transparency` glass falls back to a solid panel.
 
 Font size scale (primitives): `xs` 12 … `xl` 18 for controls; `2xl` 24, `3xl` 32, `4xl` 36 for titles and prose.
@@ -197,7 +197,7 @@ There is no heading component — use `h1 { font-size: var(--tao-font-size-3xl) 
 API rules — every component follows them:
 
 - **Fields** take `v-model` and one contract (`FieldProps`): `id`, `name`, `invalid` (red frame), `disabled`, `size`, `required`, `autofocus`; the text fields, the number fields (`TaoQuantity`, `TaoDragNumber`, `TaoPresetInput`) and the ones that open something (`TaoSelect`, `TaoCombobox`, `TaoDate`, `TaoDateRange`, `TaoColorInput`) add `readOnly`. `TaoFileDrop` takes the contract too (`disabled` turns the zone off). A field that is not a native input (those, `TaoPinCode`, the sliders) submits its value through a hidden input, so `name` puts it into `FormData` and `required` holds the form back (the sliders take `id`, `required` and `autofocus` too; `TaoRadioGroup` and `TaoSegmented` take `required` (the native one on every radio) and `id`; `TaoChecklist` takes `name`, which sends every checked item under it, and `id`). Label, hint and error text come from `TaoFormField`.
-- **Events**: `update:X` for v-model while a value is being edited, plus **`commit`** when the user finished the edit (a field loses the focus, Slider and Split on release, ±, Enter). A control that picks one of a few (a checkbox, tabs, a select) has `update:X` only: the pick is the end of the edit. There is no `change` (on a text field it would be the native event, which still reaches the input). Other events are verbs in the present tense: `select` (the picked item, `item.id` is its id, as in a menu, a command list, a tree, a nav), `close` (always `close(reason)`: `escape`, `outside`, `button`, `select`, `tab`, `scroll`, `swipe`), `create`, `remove`. Every `defineEmits` is typed.
+- **Events**: `update:X` for v-model while a value is being edited, plus **`commit`** when the user finished the edit (a field loses the focus, Slider and Split on release, ±, Enter). A control that picks one of a few (a checkbox, tabs, a select) has `update:X` only: the pick is the end of the edit. There is no `change` of the kit's own (on a text field it is the native event, which still reaches the input; the same goes for `TaoCheckbox`, `TaoSwitch`, `TaoRadio`, `TaoRadioGroup`, `TaoSegmented` and `TaoFileDrop`, where a leftover `@change` runs with a DOM event instead of the value: use `v-model`). Other events are verbs in the present tense: `select` (the picked item, `item.id` is its id, as in a menu, a command list, a tree, a nav), `close` (always `close(reason)`: `escape`, `outside`, `button`, `select`, `tab`, `scroll`, `swipe`), `create`, `remove`. Every `defineEmits` is typed.
 - **Texts**: visible ones are `*Text` (`clearText`, `successText`), screen-reader ones are `*Label` (`closeLabel`).
 - **Lists**: a list is `items` and a row is `{ id, label }` (`TaoSelectItem`, `TaoTabItem`, a tree node, a menu item, a stage, a table column): `v-model` holds the `id`. One exception: `TaoPresetInput` has `options` with a `value`, a number the arrows step over.
 - **Booleans** are adjectives without `is` / `has` / `as`: `closable`, `clickable`, `masked`, `newTab`. Layout axis is `direction: 'row' | 'column'`, not `vertical`.
@@ -230,7 +230,7 @@ The package ships a skill, `skills/taoui/SKILL.md` with `references/components.m
 
 ## Icons
 
-The library ships **43 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,
+The library ships **44 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,
 skip-back, copy, calendar, info, alert, circles, folder, file, alignment, and the app actions settings, edit, trash, bell, tag,
 repeat, undo, redo, sun, moon, monitor). They draw on `currentColor`, so an icon takes the text colour and the
 font size, and live under the reserved prefix `tao-`: `<TaoIcon name="tao-check" />`, the list is `taoIconNames`.

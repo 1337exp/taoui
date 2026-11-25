@@ -13,6 +13,8 @@ const props = withDefaults(
         min?: number;
         max?: number;
         minEnd?: number;
+        /** The name of the separator for a screen reader (a window with three of them needs three names). / Имя разделителя для скринридера (у окна с тремя разделителями нужны три имени). */
+        label?: string;
         resizable?: boolean;
         step?: number;
         /**
@@ -124,13 +126,13 @@ function clampAnchoredPx(desiredPx: number, avail: number) {
     const minEndPx = toPx(props.minEnd, avail);
     const maxStartPx = props.max != null ? toPx(props.max, avail) : Infinity;
 
-    if (minStartPx + minEndPx > avail) {
-        return clamp(desiredPx, 0, avail);
-    }
-
-    const lo = minStartPx;
-    const hi = Math.min(maxStartPx, avail - minEndPx);
-    return clamp(desiredPx, lo, Math.max(lo, hi));
+    // When the box cannot hold both minimums, the OTHER pane keeps its minimum and the pane the model measures gives way (a workspace is
+    // never squeezed to nothing for a side panel); the model is not touched, so the chosen size is back when there is room
+    // Когда блок не вмещает оба минимума, ДРУГАЯ панель держит свой минимум, а уступает та, которую меряет модель (рабочую область не
+    // сжимают в ничто ради боковой панели); модель не трогается, и выбранный размер вернётся, когда место появится
+    const hi = Math.min(maxStartPx, Math.max(0, avail - minEndPx));
+    const lo = Math.min(minStartPx, hi);
+    return clamp(desiredPx, lo, hi);
 }
 
 function commit(next: number) {
@@ -202,7 +204,8 @@ const drag = usePointerDrag({
         if (!props.resizable) {
             return false;
         }
-        dragStartAnchoredPx = anchoredOf(startPx.value, available.value || measureAvailable());
+        const avail = measureAvailable();
+        dragStartAnchoredPx = anchoredOf(clampStartPx(startOf(toPx(size.value, avail), avail), avail), avail);
         dragStartValue = size.value;
         dragStartCoord = isRow.value ? event.clientX : event.clientY;
         applyDragCursor();
@@ -217,7 +220,9 @@ const drag = usePointerDrag({
     },
     onEnd(reason) {
         restoreDragCursor();
-        applyLayout(true);
+        // every move has written its own value; the end only lays the box out again (a press with no move must not write the fit)
+        // каждое движение записало своё значение; конец лишь раскладывает блок снова (нажатие без движения не должно писать подгонку)
+        applyLayout(false);
         if (reason !== 'unmount' && !valuesEqual(size.value, dragStartValue)) {
             emit('commit', size.value);
         }
@@ -246,7 +251,7 @@ const ariaValueMin = computed(() => (ariaValueMax.value === undefined ? props.mi
 const ariaValueNow = computed(() => {
     const max = ariaValueMax.value;
     const shown = available.value > 0 ? fromPx(anchoredOf(startPx.value, available.value), available.value) : size.value;
-    return max === undefined ? shown : Math.min(Math.max(shown, ariaValueMin.value), max);
+    return Math.min(Math.max(shown, ariaValueMin.value), max ?? Infinity);
 });
 const ariaValueText = computed(() => (props.unit === '%' ? `${ariaValueNow.value}%` : `${Math.round(ariaValueNow.value)}px`));
 
@@ -301,7 +306,10 @@ function moveByKey(event: KeyboardEvent) {
 
     // the handle moves toward the end: the start pane grows, so an anchored END pane shrinks
     // ручка идёт к концу: начальная панель растёт, значит закреплённая КОНЕЧНАЯ сжимается
-    const nextModel = size.value + (anchorEnd.value ? -dir : dir) * stepValue.value;
+    // from the pane that is on screen: the stored size may be one the box cannot show today
+    // от панели, которая на экране: сохранённый размер может быть таким, какого блок сегодня показать не может
+    const shownModel = fromPx(anchoredOf(clampStartPx(startOf(toPx(size.value, avail), avail), avail), avail), avail);
+    const nextModel = shownModel + (anchorEnd.value ? -dir : dir) * stepValue.value;
     const nextPx = clampStartPx(startOf(toPx(nextModel, avail), avail), avail);
     startPx.value = nextPx;
     commit(fromPx(anchoredOf(nextPx, avail), avail));
@@ -378,6 +386,7 @@ onBeforeUnmount(() => {
             ref="handleRef"
             class="tao-split__handle"
             role="separator"
+            :aria-label="label"
             :aria-orientation="ariaOrientation"
             :aria-valuemin="ariaValueMin"
             :aria-valuemax="ariaValueMax"

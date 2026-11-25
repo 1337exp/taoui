@@ -9,8 +9,11 @@ import type { TaoPlacement } from '../floating';
 import TaoColorPicker from './TaoColorPicker.vue';
 import TaoFormValue from './TaoFormValue.vue';
 import TaoPopover from './TaoPopover.vue';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoColorInput', inheritAttrs: false });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoColorInput', { error: 'use `invalid` for the red frame (`error` is only the text of `TaoFormField`)' });
 
 // the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
 // атрибуты — элементу управления, внешний вид — обёртке

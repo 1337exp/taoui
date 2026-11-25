@@ -101,7 +101,7 @@ export function warnRemoved(component: string, replacements: Record<string, stri
         const key = `${component}:removed:${name}`;
         if (!warned.has(key)) {
             warned.add(key);
-            console.warn(`[TaoUI] ${component}: ${label} is gone in 6.0 (it was in 5.x) — ${instead}.`);
+            console.warn(`[TaoUI] ${component}: ${label} no longer works as in 5.x (6.0) — ${instead}.`);
         }
     }
 }

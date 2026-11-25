@@ -5,8 +5,11 @@ import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import TaoIcon from './TaoIcon.vue';
 import { useRoving } from '../primitives/useRoving';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoDocTabs' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoDocTabs', { onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted' });
 
 const props = defineProps<{
     /** The value of the active tab (`v-model`); it may be none of them (no document open). / Значение активной вкладки. */

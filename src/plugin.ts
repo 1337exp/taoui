@@ -3,7 +3,7 @@
 // CSS, and an app that installs this plugin pays for the whole kit (that is the price of global registration, measured: ~409 KB JS and ~244 KB CSS).
 // `@1337exp/taoui/plugin`: регистрирует ВСЕ компоненты глобально (`app.use(TaoUI)`) и задаёт язык встроенных текстов.
 // Это отдельный вход намеренно: корневой вход — только именованные экспорты, поэтому приложение, которое импортирует `{ TaoButton }`, платит за
-// кнопку и её CSS, а приложение с этим плагином платит за весь набор (цена глобальной регистрации, измерена: ~364 КБ JS и ~238 КБ CSS).
+// кнопку и её CSS, а приложение с этим плагином платит за весь набор (цена глобальной регистрации, измерена: ~409 КБ JS и ~244 КБ CSS).
 import type { Component, Plugin } from 'vue';
 import * as kit from './index';
 import { createTaoLocale, localeKey, setTaoLocale, type TaoLocale, type TaoLocaleOverrides } from './locale';

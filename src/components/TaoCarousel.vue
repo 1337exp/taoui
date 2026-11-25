@@ -8,8 +8,11 @@ import { usePointerDrag } from '../primitives/usePointerDrag';
 import { clamp } from '../primitives/number';
 import { useLocaleText } from '../locale';
 import { useReducedMotion } from '../primitives/useReducedMotion';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoCarousel' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoCarousel', { onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted', ariaLabel: 'use `label` (an `aria-label` attribute is ignored where the component names itself)' });
 
 const props = withDefaults(
     defineProps<{

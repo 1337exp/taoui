@@ -7,8 +7,11 @@ import type { TaoPlacement } from '../floating';
 import { sizeClass, type TaoSize } from '../size';
 import TaoDropdownMenu from './TaoDropdownMenu.vue';
 import TaoIcon from './TaoIcon.vue';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoLanguageSwitch' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoLanguageSwitch', { onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted' });
 
 const props = withDefaults(
     defineProps<{

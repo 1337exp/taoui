@@ -11,7 +11,7 @@ import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoPagination' });
 // 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
-warnRemoved('TaoPagination', { onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted' });
+warnRemoved('TaoPagination', { onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted', ariaLabel: 'use `label` (an `aria-label` attribute is ignored where the component names itself)' });
 
 const appLocale = useTaoLocale();
 

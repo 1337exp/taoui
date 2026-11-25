@@ -8,8 +8,11 @@ import { nativeFieldAttrs, useField } from '../formField';
 import { useLocaleText } from '../locale';
 import { parsePreset, presetLine, presetList, stepPreset, type TaoPresetOption, type TaoPresetValue } from '../presetInput';
 import { sizeClass, type TaoSize } from '../size';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoPresetInput', inheritAttrs: false });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoPresetInput', { error: 'use `invalid` for the red frame (`error` is only the text of `TaoFormField`)' });
 
 // the attributes go to the input, the looks to the wrapper (see controlAttrs.ts)
 // атрибуты — полю ввода, внешний вид — обёртке

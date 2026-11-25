@@ -10,7 +10,7 @@ import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoQuantity', inheritAttrs: false });
 // 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
-warnRemoved('TaoQuantity', { onDec: 'use `@commit` or `@update:modelValue`', onInc: 'use `@commit` or `@update:modelValue`' });
+warnRemoved('TaoQuantity', { onDec: 'use `@remove` (the minus at the minimum) or `@commit`', onInc: 'use `@commit` or `@update:modelValue`', error: 'use `invalid` for the red frame (`error` is only the text of `TaoFormField`)' });
 
 // the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
 // атрибуты — элементу управления, внешний вид — обёртке
@@ -35,7 +35,7 @@ const props = withDefaults(
         invalid?: boolean;
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
-        /** Minus stays enabled at min and still emits `dec` — parent can remove the line. */
+        /** Minus stays enabled at min and emits `remove` — the parent can remove the line. */
         allowRemove?: boolean;
         /** Clamp to max on blur and when the incoming value is above stock. */
         forceMaxLimit?: boolean;

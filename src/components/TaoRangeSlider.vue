@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 import type { TaoSliderBaseProps, TaoSliderMark } from '../slider';
 import TaoSliderBase from './TaoSliderBase.vue';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoRangeSlider' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoRangeSlider', { error: 'use `invalid` for the red frame (`error` is only the text of `TaoFormField`)', ariaLabel: 'use `label` (an `aria-label` attribute is ignored where the component names itself)' });
 
 // Слайдер с двумя ручками: значение это пара [от, до]. Вся работа в TaoSliderBase.
 const props = defineProps<TaoSliderBaseProps>();

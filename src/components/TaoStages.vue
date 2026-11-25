@@ -3,8 +3,11 @@ import TaoIcon from './TaoIcon.vue';
 import { computed } from 'vue';
 import type { TaoStageItem, TaoStageStatus } from '../stage';
 import { useLocaleText, useTaoLocale } from '../locale';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoStages' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoStages', { ariaLabel: 'use `label` (an `aria-label` attribute is ignored where the component names itself)' });
 
 const appLocale = useTaoLocale();
 
