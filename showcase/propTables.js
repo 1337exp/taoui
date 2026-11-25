@@ -986,6 +986,20 @@ export const propTables = {
       slots: '#start и #end — две панели. Три колонки = два вложенных сплита.',
     },
   ],
+  workbench: [
+    {
+      title: 'TaoWorkbench',
+      rows: [
+        r('leftTools / rightTools / bottomTools', 'TaoWorkbenchTool[]', '[]', '{ id, label, icon?, shortcut?, badge?, badgeLabel?, disabled? }. Кнопки рейки: у каждой подсказка (с клавишей), нажатие открывает или закрывает панель. Нижние инструменты стоят в нижней полосе'),
+        r('v-model:left / right / bottom', 'string | null', 'null', 'id инструмента, чья панель открыта. Нажатие на открытый закрывает его, на другой открывает тот. null — панель закрыта (её нет, и разделитель ушёл)'),
+        r('v-model:leftSize / rightSize / bottomSize', 'number', '280 / 280 / 220', 'Ширина левой и правой панели и высота нижней, px. Сохраняйте их сами, если нужно (localStorage)'),
+        r('panelMin / centerMin', 'number', '160 / 240', 'Наименьший размер панели и до чего сжимается рабочая область, px'),
+        r('glow', 'boolean', 'true', 'Свечение в левом верхнем углу цвета палитры (токен --tao-workbench-glow, по умолчанию --tao-glow). false — ровный фон'),
+        r('topLabel / leftLabel / rightLabel / bottomLabel / mainLabel / skipLabel / closePanelLabel', 'string', 'из локали', 'Имена областей для скринридера, ссылка пропуска и подпись кнопки закрытия панели (с {name})'),
+      ],
+      slots: 'default — рабочая область. Полосы: #top-start / #top-end, #left-start / #left-end, #right-start / #right-end, #bottom-start / #bottom-end (start — первый конец, end — другой; рейка ставит свои инструменты перед start). #left-panel, #right-panel, #bottom-panel ({ tool }) — содержимое открытого инструмента; #panel-actions ({ tool, side }) — рядом с заголовком панели. Области: header, nav слева и справа, main, footer; F6 / Shift+F6 идут по ним по кругу, первая точка табуляции — ссылка к рабочей области.',
+    },
+  ],
   shell: [
     {
       title: 'TaoShell',

@@ -59,6 +59,7 @@ export const localeEn: TaoLocale = {
     menubar: { ariaLabel: 'Menu bar' },
     nav: { ariaLabel: 'Navigation', moreLabel: 'More' },
     shell: { projectsLabel: 'Projects', projectLabel: 'Project', newProjectLabel: 'New project', skipLabel: 'Skip to content' },
+    workbench: { topLabel: 'Toolbar', leftLabel: 'Left tools', rightLabel: 'Right tools', bottomLabel: 'Status bar', mainLabel: 'Workspace', skipLabel: 'Skip to the workspace', closePanelLabel: 'Close {name}' },
     tree: {
         ariaLabel: 'Tree',
         loadingLabel: 'Loading…',

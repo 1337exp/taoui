@@ -1068,6 +1068,21 @@ Showcase section: `#split`
 
 **Slots, events, notes.** #start and #end — the two panes. Three columns = two nested splits.
 
+## TaoWorkbench
+
+Showcase section: `#workbench`
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `leftTools / rightTools / bottomTools` | `TaoWorkbenchTool[]` | [] | { id, label, icon?, shortcut?, badge?, badgeLabel?, disabled? }. The buttons of a rail: each has a hint (with its key), a press opens or closes a panel. The bottom tools stand in the bottom bar |
+| `v-model:left / right / bottom` | `string \| null` | null | The id of the tool whose panel is open. A press on the open one closes it, on another opens that one. null: no panel (it is not drawn, and the divider is gone) |
+| `v-model:leftSize / rightSize / bottomSize` | `number` | 280 / 280 / 220 | The width of the left and the right panel and the height of the bottom one, px. Save them yourself if you want (localStorage) |
+| `panelMin / centerMin` | `number` | 160 / 240 | The least size of a panel and what the workspace is squeezed to, px |
+| `glow` | `boolean` | true | The glow in the top left corner, the colour of the palette (the token --tao-workbench-glow, --tao-glow by default). false: a plain background |
+| `topLabel / leftLabel / rightLabel / bottomLabel / mainLabel / skipLabel / closePanelLabel` | `string` | from the locale | The names of the regions for a screen reader, the skip link and the label of the close button of a panel (with {name}) |
+
+**Slots, events, notes.** default — the workspace. The bars: #top-start / #top-end, #left-start / #left-end, #right-start / #right-end, #bottom-start / #bottom-end (start is the first end, end the other; a rail puts its tools before start). #left-panel, #right-panel, #bottom-panel ({ tool }) — the content of the open tool; #panel-actions ({ tool, side }) — beside the title of a panel. Regions: header, nav on the left and the right, main, footer; F6 / Shift+F6 go round them, and the first tab stop is a link to the workspace.
+
 ## TaoShell
 
 Showcase section: `#shell`

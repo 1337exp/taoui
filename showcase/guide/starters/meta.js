@@ -53,6 +53,40 @@ export const starters = [
     ],
   },
   {
+    id: 'editor',
+    title: { en: 'The frame of an editor (an IDE layout)', ru: 'Рамка редактора (раскладка как в IDE)' },
+    when: {
+      en: 'An editor of something that has a workspace in the middle and tools around it: a level editor, a scene, a document, a node graph, a code editor. The model is WebStorm; Deck of Bones stage 2 is the first user.',
+      ru: 'Редактор чего-то, у чего в середине рабочая область, а вокруг инструменты: редактор уровней, сцены, документа, графа узлов, кода. Образец — WebStorm; первый пользователь — Deck of Bones, stage 2.',
+    },
+    file: {
+      en: 'Copy it as `App.vue` and give its parent the height of the window: `html, body, #app { height: 100%; margin: 0; }`. Put your editor where the workspace text is.',
+      ru: 'Скопируйте его как `App.vue` и дайте родителю высоту окна: `html, body, #app { height: 100%; margin: 0; }`. Свой редактор положите туда, где текст про рабочую область.',
+    },
+    decisions: [
+      {
+        en: 'One `TaoWorkbench` is the whole frame: a top bar, a left and a right rail, a status bar at the bottom, the workspace in the middle. Do not build it from splits by hand: the dividers, the gaps, the landmarks (`header`, two `nav`, `main`, `footer`, each named), the skip link and `F6` between the regions are in it already.',
+        ru: 'Один `TaoWorkbench` это вся рамка: верхняя полоса, левая и правая рейки, внизу строка состояния, в середине рабочая область. Руками из splits её не собирают: разделители, зазоры, области (`header`, два `nav`, `main`, `footer`, у каждой имя), ссылка пропуска и `F6` между областями в нём уже есть.',
+      },
+      {
+        en: 'Every bar has a start and an end: the slots `top-start` / `top-end`, `left-start` / `left-end`, `right-start` / `right-end`, `bottom-start` / `bottom-end`. The menu goes to `top-start`, the theme toggle to `top-end`, the caret and the encoding to `bottom-end`. A rail puts its tools before `start`.',
+        ru: 'У каждой полосы есть начало и конец: слоты `top-start` / `top-end`, `left-start` / `left-end`, `right-start` / `right-end`, `bottom-start` / `bottom-end`. Меню идёт в `top-start`, переключатель темы в `top-end`, курсор и кодировка в `bottom-end`. Рейка ставит свои инструменты перед `start`.',
+      },
+      {
+        en: 'The tools are data: `leftTools`, `rightTools`, `bottomTools` of `{ id, label, icon, shortcut?, badge?, badgeLabel? }`. The button gets its hint with the key, a pressed state and the badge for free, a press opens the panel (`v-model:left`, `v-model:right`, `v-model:bottom` hold the id of the open tool), and the next press closes it. A closed panel is not drawn and its divider is gone.',
+        ru: 'Инструменты это данные: `leftTools`, `rightTools`, `bottomTools` из `{ id, label, icon, shortcut?, badge?, badgeLabel? }`. Кнопка сразу получает подсказку с клавишей, состояние «нажата» и значок, нажатие открывает панель (`v-model:left`, `v-model:right`, `v-model:bottom` хранят id открытого инструмента), следующее закрывает. Закрытая панель не рисуется, и её разделитель уходит.',
+      },
+      {
+        en: 'The content of a panel is a slot per side (`left-panel`, `right-panel`, `bottom-panel`) that gets the open `tool`, so one slot serves every tool of the side. The sizes of the panels are `v-model:left-size` and friends, in pixels: the app keeps them, so a window comes back as it was left.',
+        ru: 'Содержимое панели это слот на сторону (`left-panel`, `right-panel`, `bottom-panel`), он получает открытый `tool`, так что один слот обслуживает все инструменты стороны. Размеры панелей это `v-model:left-size` и подобные, в пикселях: их хранит приложение, чтобы окно возвращалось таким, каким его оставили.',
+      },
+      {
+        en: 'The panels and the workspace are darker rounded blocks over a soft glow in the top left corner (the colour of the palette; `glow` turns it off). The blocks are divided by `TaoSplit`, the right and the bottom panel are anchored to their own edge (`anchor="end"`), so resizing the window changes the workspace and not the panels.',
+        ru: 'Панели и рабочая область это более тёмные скруглённые блоки над мягким свечением в левом верхнем углу (цвета палитры; `glow` выключает его). Блоки делит `TaoSplit`, правая и нижняя панели закреплены за своим краем (`anchor="end"`), поэтому изменение окна меняет рабочую область, а не панели.',
+      },
+    ],
+  },
+  {
     id: 'list-detail',
     title: { en: 'A list and the open item', ru: 'Список и открытая запись' },
     when: {

@@ -51,6 +51,7 @@ import TaoDonut from './components/TaoDonut.vue';
 import TaoHeatmap from './components/TaoHeatmap.vue';
 import TaoNav from './components/TaoNav.vue';
 import TaoShell from './components/TaoShell.vue';
+import TaoWorkbench from './components/TaoWorkbench.vue';
 import TaoTree from './components/TaoTree.vue';
 import TaoChecklist from './components/TaoChecklist.vue';
 import TaoTimeline from './components/TaoTimeline.vue';
@@ -148,6 +149,7 @@ export {
     TaoHeatmap,
     TaoNav,
     TaoShell,
+    TaoWorkbench,
     TaoTree,
     TaoChecklist,
     TaoTimeline,

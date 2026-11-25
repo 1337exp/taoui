@@ -160,6 +160,51 @@ describe('the kit in a real browser', () => {
         expect(liveName).not.toBe('none');
     });
 
+    it('TaoWorkbench: a tool shows its hint, opens a panel of the size in the model, and the divider resizes it', async () => {
+        const { page, close } = await open();
+        await section(page, 'workbench');
+        const box = page.locator('.demo-workbench-box');
+        await box.scrollIntoViewIfNeeded();
+        const tool = box.locator('.tao-workbench__rail--left .tao-workbench__tool').nth(1);
+        await tool.hover();
+        await page.locator('.tao-tooltip[role="tooltip"]').waitFor();
+        expect(await page.locator('.tao-tooltip').innerText()).toContain('Search');
+        await tool.click();
+        const panel = box.locator('.tao-workbench__panel').first();
+        expect(await tool.getAttribute('aria-pressed')).toBe('true');
+        const before = (await panel.boundingBox())!.width;
+        expect(before).toBeGreaterThan(200);
+        expect(before).toBeLessThan(280);
+        // the divider next to the left panel: drag it 60px to the right
+        const handle = box.locator('[role="separator"]').first();
+        const at = (await handle.boundingBox())!;
+        await page.mouse.move(at.x + at.width / 2, at.y + at.height / 2);
+        await page.mouse.down();
+        await page.mouse.move(at.x + at.width / 2 + 60, at.y + at.height / 2, { steps: 5 });
+        await page.mouse.up();
+        const after = (await panel.boundingBox())!.width;
+        expect(after).toBeGreaterThan(before + 40);
+        // a closed side leaves no divider on the screen
+        await box.locator('.tao-workbench__close').first().click();
+        expect(await box.locator('.tao-workbench__panel').count()).toBe(0);
+        await close();
+    });
+
+    it('TaoWorkbench: a panel anchored to the end keeps its size when the window is resized', async () => {
+        const { page, close } = await open();
+        await section(page, 'workbench');
+        const box = page.locator('.demo-workbench-box');
+        await box.scrollIntoViewIfNeeded();
+        await box.locator('.tao-workbench__rail--right .tao-workbench__tool').first().click();
+        const panel = box.locator('.tao-workbench__panel').last();
+        const before = (await panel.boundingBox())!.width;
+        await page.setViewportSize({ width: 1500, height: 800 });
+        await page.waitForTimeout(400);
+        const after = (await panel.boundingBox())!.width;
+        expect(Math.abs(after - before)).toBeLessThan(2);
+        await close();
+    });
+
     it('contrast: every rated pair of the page passes (no danger badge outside of the teaching table)', async () => {
         const { page, close } = await open();
         await section(page, 'a11y');

@@ -104,3 +104,41 @@ describe('the drag of the split handle', () => {
         expect(document.body.style.cursor).toBe('');
     });
 });
+
+describe('anchor="end": the model is the size of the END pane', () => {
+    it('lays the box out by the end pane: 492px available, an end pane of 100px leaves 392px for the start', async () => {
+        const { w } = make({ modelValue: 100, anchor: 'end' });
+        await nextTick();
+        expect((w.find('.tao-split').element as HTMLElement).style.getPropertyValue('--tao-split-start')).toBe('392px');
+        w.unmount();
+    });
+
+    it('dragging the handle toward the end makes the end pane smaller (the model follows it, not the start pane)', async () => {
+        const { updates, changes, down, move, up } = make({ modelValue: 100, anchor: 'end' });
+        await down(392);
+        await move(422);
+        expect(updates.at(-1)).toBe(70);
+        await up();
+        expect(changes).toEqual([70]);
+    });
+
+    it('min and max bound the END pane, minEnd the start pane', async () => {
+        const { updates, down, move } = make({ modelValue: 100, anchor: 'end', min: 80, max: 150, minEnd: 300 });
+        await down(392);
+        await move(600);
+        expect(updates.at(-1)).toBe(80);
+        await move(0);
+        // the start pane may shrink to 300px: the end pane is 192px at the most, and `max` stops it at 150
+        expect(updates.at(-1)).toBe(150);
+    });
+
+    it('ArrowRight moves the handle toward the end, so the end pane shrinks by a step; ArrowLeft grows it', async () => {
+        const { w, updates, handle } = make({ modelValue: 100, anchor: 'end', step: 10 });
+        await handle().trigger('keydown', { key: 'ArrowRight' });
+        expect(updates.at(-1)).toBe(90);
+        await handle().trigger('keydown', { key: 'ArrowLeft' });
+        await handle().trigger('keydown', { key: 'ArrowLeft' });
+        expect(updates.at(-1)).toBe(110);
+        w.unmount();
+    });
+});

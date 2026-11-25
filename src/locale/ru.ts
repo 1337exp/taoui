@@ -60,6 +60,7 @@ export const localeRu: TaoLocale = {
     menubar: { ariaLabel: 'Строка меню' },
     nav: { ariaLabel: 'Навигация', moreLabel: 'Ещё' },
     shell: { projectsLabel: 'Проекты', projectLabel: 'Проект', newProjectLabel: 'Новый проект', skipLabel: 'К содержимому' },
+    workbench: { topLabel: 'Панель инструментов', leftLabel: 'Инструменты слева', rightLabel: 'Инструменты справа', bottomLabel: 'Строка состояния', mainLabel: 'Рабочая область', skipLabel: 'К рабочей области', closePanelLabel: 'Закрыть {name}' },
     tree: {
         ariaLabel: 'Дерево',
         loadingLabel: 'Загрузка…',

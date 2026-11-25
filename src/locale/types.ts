@@ -92,6 +92,7 @@ export interface TaoLocale {
     menubar: { ariaLabel: string };
     nav: { ariaLabel: string; moreLabel: string };
     shell: { projectsLabel: string; projectLabel: string; newProjectLabel: string; skipLabel: string };
+    workbench: { topLabel: string; leftLabel: string; rightLabel: string; bottomLabel: string; mainLabel: string; skipLabel: string; closePanelLabel: string };
     tree: {
         ariaLabel: string;
         loadingLabel: string;

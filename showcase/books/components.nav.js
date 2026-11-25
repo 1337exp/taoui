@@ -64,6 +64,7 @@ export const navGroups = [
       { id: 'split', label: 'TaoSplit' },
       { id: 'fieldset', label: 'TaoFieldset' },
       { id: 'shell', label: 'TaoShell', aliases: ['app shell', 'layout', 'navigation', 'оболочка', 'каркас', 'приложение'] },
+      { id: 'workbench', label: 'TaoWorkbench', aliases: ['editor', 'ide', 'workspace', 'rail', 'status bar', 'редактор', 'рабочая область', 'рейка', 'строка состояния'] },
       { id: 'prop', label: 'TaoProp', aliases: ['property', 'inspector', 'row', 'свойство', 'инспектор', 'строка'] },
       { id: 'animated-border', label: 'TaoAnimatedBorder' },
     ],

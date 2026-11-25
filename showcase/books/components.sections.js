@@ -42,6 +42,7 @@ import DemoSplit from '../components/DemoSplit.vue'
 import DemoFieldset from '../components/DemoFieldset.vue'
 import DemoProp from '../components/DemoProp.vue'
 import DemoShell from '../components/DemoShell.vue'
+import DemoWorkbench from '../components/DemoWorkbench.vue'
 import DemoAnimatedBorder from '../components/DemoAnimatedBorder.vue'
 import DemoModal from '../components/DemoModal.vue'
 import DemoDrawer from '../components/DemoDrawer.vue'
@@ -111,6 +112,7 @@ export const demoById = {
   'fieldset': DemoFieldset,
   'prop': DemoProp,
   'shell': DemoShell,
+  'workbench': DemoWorkbench,
   'animated-border': DemoAnimatedBorder,
   'modal': DemoModal,
   'command-palette': DemoCommandPalette,

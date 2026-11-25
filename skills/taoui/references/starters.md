@@ -106,6 +106,108 @@ function create() {
 </style>
 ```
 
+## The frame of an editor (an IDE layout)
+
+**When.** An editor of something that has a workspace in the middle and tools around it: a level editor, a scene, a document, a node graph, a code editor. The model is WebStorm; Deck of Bones stage 2 is the first user.
+
+**Why it is built this way:**
+
+1. One `TaoWorkbench` is the whole frame: a top bar, a left and a right rail, a status bar at the bottom, the workspace in the middle. Do not build it from splits by hand: the dividers, the gaps, the landmarks (`header`, two `nav`, `main`, `footer`, each named), the skip link and `F6` between the regions are in it already.
+2. Every bar has a start and an end: the slots `top-start` / `top-end`, `left-start` / `left-end`, `right-start` / `right-end`, `bottom-start` / `bottom-end`. The menu goes to `top-start`, the theme toggle to `top-end`, the caret and the encoding to `bottom-end`. A rail puts its tools before `start`.
+3. The tools are data: `leftTools`, `rightTools`, `bottomTools` of `{ id, label, icon, shortcut?, badge?, badgeLabel? }`. The button gets its hint with the key, a pressed state and the badge for free, a press opens the panel (`v-model:left`, `v-model:right`, `v-model:bottom` hold the id of the open tool), and the next press closes it. A closed panel is not drawn and its divider is gone.
+4. The content of a panel is a slot per side (`left-panel`, `right-panel`, `bottom-panel`) that gets the open `tool`, so one slot serves every tool of the side. The sizes of the panels are `v-model:left-size` and friends, in pixels: the app keeps them, so a window comes back as it was left.
+5. The panels and the workspace are darker rounded blocks over a soft glow in the top left corner (the colour of the palette; `glow` turns it off). The blocks are divided by `TaoSplit`, the right and the bottom panel are anchored to their own edge (`anchor="end"`), so resizing the window changes the workspace and not the panels.
+
+**The file.** Copy it as `App.vue` and give its parent the height of the window: `html, body, #app { height: 100%; margin: 0; }`. Put your editor where the workspace text is.
+
+```vue
+<script setup>
+// The frame of an editor, as in an IDE: a top bar with the menu, a left and a right rail of tools, a status bar at the bottom, tool windows
+// that the rails open, and the workspace in the middle. Copy it as App.vue and give its parent the height of the window:
+//   html, body, #app { height: 100%; margin: 0; }
+// Рамка редактора, как в IDE: верхняя полоса с меню, левая и правая рейки инструментов, внизу строка состояния, окна инструментов, которые
+// открывают рейки, и рабочая область посередине. Скопируйте её как App.vue и дайте родителю высоту окна (html, body, #app { height: 100%; margin: 0; }).
+import { computed, ref } from 'vue'
+import { TaoKbd, TaoMenubar, TaoTag, TaoThemeToggle, TaoWorkbench, createKitPrefs } from '@1337exp/taoui'
+
+const prefs = createKitPrefs({ key: 'myeditor' })
+
+// which tool is open on each side (null: none), and the sizes of the panels, px: keep them in storage if you want them back next time
+const left = ref('files')
+const right = ref(null)
+const bottom = ref(null)
+const leftSize = ref(260)
+const rightSize = ref(260)
+const bottomSize = ref(200)
+
+const leftTools = [
+  { id: 'files', label: 'Files', icon: 'tao-folder', shortcut: 'Alt+1' },
+  { id: 'search', label: 'Search', icon: 'tao-search', shortcut: 'Alt+2' },
+]
+const rightTools = [{ id: 'inspector', label: 'Inspector', icon: 'tao-settings', shortcut: 'Alt+3' }]
+const bottomTools = [
+  { id: 'output', label: 'Output', icon: 'tao-monitor', shortcut: 'Alt+4' },
+  { id: 'problems', label: 'Problems', icon: 'tao-alert-triangle', badge: 2, badgeLabel: '2 problems' },
+]
+
+const menu = computed(() => [
+  { id: 'file', label: 'File', items: [{ id: 'new', label: 'New' }, { id: 'open', label: 'Open…' }] },
+  { id: 'edit', label: 'Edit', items: [{ id: 'undo', label: 'Undo' }, { id: 'redo', label: 'Redo' }] },
+  { id: 'view', label: 'View', items: [{ id: 'panels', label: 'Panels' }] },
+])
+const line = ref(12)
+</script>
+
+<template>
+  <TaoWorkbench
+    v-model:left="left"
+    v-model:right="right"
+    v-model:bottom="bottom"
+    v-model:left-size="leftSize"
+    v-model:right-size="rightSize"
+    v-model:bottom-size="bottomSize"
+    :left-tools="leftTools"
+    :right-tools="rightTools"
+    :bottom-tools="bottomTools"
+  >
+    <template #top-start>
+      <TaoMenubar :items="menu" bordered />
+    </template>
+    <template #top-end>
+      <TaoThemeToggle v-model="prefs.mode.value" system :apply="false" />
+    </template>
+
+    <template #bottom-start>
+      <span>main</span>
+    </template>
+    <template #bottom-end>
+      <TaoTag size="small">UTF-8</TaoTag>
+      <TaoKbd>Ln {{ line }}</TaoKbd>
+    </template>
+
+    <template #left-panel="{ tool }">
+      <p class="pane-text">{{ tool.label }}: your tree, your search.</p>
+    </template>
+    <template #right-panel="{ tool }">
+      <p class="pane-text">{{ tool.label }}: the properties of the selection.</p>
+    </template>
+    <template #bottom-panel="{ tool }">
+      <p class="pane-text">{{ tool.label }}</p>
+    </template>
+
+    <p class="pane-text">The workspace: your editor, a scene or a canvas.</p>
+  </TaoWorkbench>
+</template>
+
+<style scoped>
+.pane-text {
+  margin: 0;
+  padding: var(--tao-space-4);
+  color: var(--tao-color-text-muted);
+}
+</style>
+```
+
 ## A list and the open item
 
 **When.** A section of records people go through one by one: notes, mail, tasks, clients. The model is the notes of NextUp.

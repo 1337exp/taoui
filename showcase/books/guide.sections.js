@@ -14,12 +14,14 @@ import DemoA11y from '../guide/DemoA11y.vue'
 // по странице на каркас: один компонент страницы, ему говорят, какой каркас показать
 const starterPage = (id) => ({ name: `DemoStarter-${id}`, render: () => h(DemoStarters, { id }) })
 const DemoStarterAppShell = starterPage('app-shell')
+const DemoStarterEditor = starterPage('editor')
 const DemoStarterListDetail = starterPage('list-detail')
 
 export const demoById = {
   'size-choice': DemoSizes,
   'patterns': DemoPatterns,
   'starter-app-shell': DemoStarterAppShell,
+  'starter-editor': DemoStarterEditor,
   'starter-list-detail': DemoStarterListDetail,
   'layers': DemoLayers,
   'typography': DemoTypography,

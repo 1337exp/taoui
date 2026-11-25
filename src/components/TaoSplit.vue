@@ -22,6 +22,15 @@ const props = withDefaults(
          * зазора). Размер остаётся в `v-model`, поэтому панель откроется такой, какой была.
          */
         collapsed?: 'start' | 'end' | false;
+        /**
+         * Which pane `v-model` measures. `start` (default): the start pane, the end one takes the rest. `end`: the END pane, kept as it is when the
+         * box is resized (a tool panel on the right or at the bottom). `min`, `max` and `step` then bound the end pane, and `minEnd` is the least
+         * the start pane may shrink to.
+         * Какую панель меряет `v-model`. `start` (по умолчанию): начальную, конечная занимает остальное. `end`: КОНЕЧНУЮ, при изменении блока она
+         * остаётся как есть (панель инструментов справа или снизу). `min`, `max` и `step` тогда ограничивают конечную панель, а `minEnd` — до чего
+         * может сжаться начальная.
+         */
+        anchor?: 'start' | 'end';
     }>(),
     {
         direction: 'row',
@@ -30,6 +39,7 @@ const props = withDefaults(
         minEnd: 0,
         resizable: true,
         collapsed: false,
+        anchor: 'start',
     },
 );
 
@@ -94,7 +104,18 @@ function valuesEqual(a: number, b: number) {
     return Math.round(a) === Math.round(b);
 }
 
-function clampStartPx(desiredPx: number, avail: number) {
+const anchorEnd = computed(() => props.anchor === 'end');
+
+// The model is the size of the ANCHORED pane (the start one, or the end one with `anchor="end"`); the box is laid out by the start pane.
+// Модель — размер ЗАКРЕПЛЁННОЙ панели (начальной или конечной при `anchor="end"`); блок раскладывается по начальной панели.
+const anchoredOf = (startPxValue: number, avail: number) => (anchorEnd.value ? avail - startPxValue : startPxValue);
+const startOf = (anchoredPx: number, avail: number) => (anchorEnd.value ? avail - anchoredPx : anchoredPx);
+
+function clampStartPx(desiredStartPx: number, avail: number) {
+    return startOf(clampAnchoredPx(anchoredOf(desiredStartPx, avail), avail), avail);
+}
+
+function clampAnchoredPx(desiredPx: number, avail: number) {
     if (avail <= 0) {
         return 0;
     }
@@ -124,9 +145,9 @@ function commit(next: number) {
 function applyLayout(emitIfChanged: boolean) {
     const avail = measureAvailable();
     available.value = avail;
-    const clamped = clampStartPx(toPx(size.value, avail), avail);
+    const clamped = clampStartPx(startOf(toPx(size.value, avail), avail), avail);
     startPx.value = clamped;
-    const next = fromPx(clamped, avail);
+    const next = fromPx(anchoredOf(clamped, avail), avail);
     if (emitIfChanged) {
         commit(next);
     }
@@ -159,7 +180,7 @@ function setStartFromDelta(delta: number) {
     available.value = avail;
     const nextPx = clampStartPx(dragStartPx + delta, avail);
     startPx.value = nextPx;
-    commit(fromPx(nextPx, avail));
+    commit(fromPx(anchoredOf(nextPx, avail), avail));
 }
 
 // The drag: the press, the moves and every way it ends (release, cancel, lost focus or capture, unmount) are the shared gesture.
@@ -228,17 +249,17 @@ function moveByKey(event: KeyboardEvent) {
 
     if (event.key === 'Home') {
         event.preventDefault();
-        const nextPx = clampStartPx(toPx(props.min, avail), avail);
+        const nextPx = clampStartPx(startOf(toPx(props.min, avail), avail), avail);
         startPx.value = nextPx;
-        commit(fromPx(nextPx, avail));
+        commit(fromPx(anchoredOf(nextPx, avail), avail));
         return;
     }
 
     if (event.key === 'End') {
         event.preventDefault();
-        const nextPx = clampStartPx(toPx(ariaMax(), avail), avail);
+        const nextPx = clampStartPx(startOf(toPx(ariaMax(), avail), avail), avail);
         startPx.value = nextPx;
-        commit(fromPx(nextPx, avail));
+        commit(fromPx(anchoredOf(nextPx, avail), avail));
         return;
     }
 
@@ -259,10 +280,12 @@ function moveByKey(event: KeyboardEvent) {
         dir = -dir;
     }
 
-    const nextModel = size.value + dir * stepValue.value;
-    const nextPx = clampStartPx(toPx(nextModel, avail), avail);
+    // the handle moves toward the end: the start pane grows, so an anchored END pane shrinks
+    // ручка идёт к концу: начальная панель растёт, значит закреплённая КОНЕЧНАЯ сжимается
+    const nextModel = size.value + (anchorEnd.value ? -dir : dir) * stepValue.value;
+    const nextPx = clampStartPx(startOf(toPx(nextModel, avail), avail), avail);
     startPx.value = nextPx;
-    commit(fromPx(nextPx, avail));
+    commit(fromPx(anchoredOf(nextPx, avail), avail));
 }
 
 watch(
@@ -279,7 +302,7 @@ watch(
 );
 
 watch(
-    () => [props.unit, props.direction, props.min, props.max, props.minEnd, props.resizable] as const,
+    () => [props.unit, props.direction, props.min, props.max, props.minEnd, props.resizable, props.anchor] as const,
     () => {
         if (!isDragging.value) {
             applyLayout(true);
