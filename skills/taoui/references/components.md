@@ -1239,10 +1239,9 @@ Showcase section: `#spoiler`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `v-model` | `boolean` | uncontrolled | Open / closed. Without a model — defaultOpen |
+| `v-model` | `boolean` | uncontrolled | Open / closed. Without a model the panel keeps its own state (closed at first) |
 | `title` | `string` | '' | The button title |
 | `name` | `string \| number` | — | The panel key inside TaoSpoilerGroup |
-| `defaultOpen` | `boolean` | false | The initial state, if there is no v-model |
 | `bordered` | `boolean` | by context | The outer frame. Not set, it follows the frames context; false: the header fill holds the panel |
 | `@change` | `value` | — | The user opened or closed it |
 

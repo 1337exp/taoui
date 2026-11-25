@@ -10,7 +10,6 @@ defineOptions({ name: 'TaoPopover' });
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: boolean;
         /** Side and alignment against the trigger; flips when there is no room. / Сторона и выравнивание; при нехватке места переворачивается. */
         placement?: TaoPlacement;
         disabled?: boolean;
@@ -23,7 +22,6 @@ const props = withDefaults(
         anchor?: TaoAnchor | null;
     }>(),
     {
-        modelValue: undefined,
         anchor: null,
         placement: 'bottom-start',
         disabled: false,
@@ -31,15 +29,14 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    'update:modelValue': [value: boolean];
     change: [value: boolean];
 }>();
 
 const triggerRef = ref<HTMLElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
-const internal = ref(false);
-const isControlled = computed(() => props.modelValue !== undefined);
-const open = computed(() => (isControlled.value ? Boolean(props.modelValue) : internal.value));
+// open or closed: `v-model` when the parent keeps it, a state of its own when it does not
+// открыт или закрыт: `v-model`, если его держит родитель, и собственное состояние, если нет
+const open = defineModel<boolean>({ default: false });
 // The panel is teleported to body, where the size and the density of the trigger's surroundings are not inherited: they are read
 // when it opens and put on the panel, so the controls inside keep the scale of the place the popover hangs from.
 // Панель телепортирована в body, где размер и плотность окружения триггера не наследуются: читаются при открытии и
@@ -52,10 +49,7 @@ function setOpen(next: boolean) {
         return;
     }
 
-    if (!isControlled.value) {
-        internal.value = next;
-    }
-    emit('update:modelValue', next);
+    open.value = next;
     emit('change', next);
 }
 

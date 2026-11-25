@@ -1143,10 +1143,9 @@ export const propTablesEn = {
     {
       title: 'TaoSpoiler',
       rows: [
-        r('v-model', 'boolean', 'uncontrolled', 'Open / closed. Without a model — defaultOpen'),
+        r('v-model', 'boolean', 'uncontrolled', 'Open / closed. Without a model the panel keeps its own state (closed at first)'),
         r('title', 'string', "''", 'The button title'),
         r('name', 'string | number', '—', 'The panel key inside TaoSpoilerGroup'),
-        r('defaultOpen', 'boolean', 'false', 'The initial state, if there is no v-model'),
         r('bordered', 'boolean', 'by context', 'The outer frame. Not set, it follows the frames context; false: the header fill holds the panel'),
         r('@change', 'value', '—', 'The user opened or closed it'),
 

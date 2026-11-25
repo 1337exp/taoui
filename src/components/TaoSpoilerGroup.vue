@@ -1,27 +1,19 @@
 <script lang="ts" setup>
-import { computed, provide, ref } from 'vue';
+import { provide } from 'vue';
 import { spoilerGroupKey, type TaoSpoilerName } from '../spoiler';
 
 defineOptions({ name: 'TaoSpoilerGroup' });
 
-const props = defineProps<{
-    modelValue?: TaoSpoilerName | null;
-}>();
-
 const emit = defineEmits<{
-    'update:modelValue': [value: TaoSpoilerName | null];
     change: [value: TaoSpoilerName | null];
 }>();
 
-const isControlled = computed(() => props.modelValue !== undefined);
-const internal = ref<TaoSpoilerName | null>(null);
-const model = computed(() => (isControlled.value ? props.modelValue : internal.value));
+// the open panel: `v-model` when the parent keeps it, a state of its own when it does not
+// открытая панель: `v-model`, если её держит родитель, и собственное состояние, если нет
+const model = defineModel<TaoSpoilerName | null>({ default: null });
 
 function setOpen(name: TaoSpoilerName | null) {
-    if (!isControlled.value) {
-        internal.value = name;
-    }
-    emit('update:modelValue', name);
+    model.value = name;
     emit('change', name);
 }
 

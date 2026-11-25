@@ -1136,10 +1136,9 @@ export const propTables = {
     {
       title: 'TaoSpoiler',
       rows: [
-        r('v-model', 'boolean', 'uncontrolled', 'Открыт / закрыт. Без модели — defaultOpen'),
+        r('v-model', 'boolean', 'uncontrolled', 'Открыт / закрыт. Без модели панель держит своё состояние (сначала закрыта)'),
         r('title', 'string', "''", 'Заголовок кнопки'),
         r('name', 'string | number', '—', 'Ключ панели внутри TaoSpoilerGroup'),
-        r('defaultOpen', 'boolean', 'false', 'Стартовое, если нет v-model'),
         r('bordered', 'boolean', 'по контексту', 'Внешняя рамка. Не задан — идёт за контекстом рамок; false: панель держит заливка шапки'),
         r('@change', 'value', '—', 'Пользователь открыл или закрыл'),
 

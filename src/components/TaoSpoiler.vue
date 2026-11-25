@@ -10,8 +10,6 @@ defineOptions({ name: 'TaoSpoiler' });
 const props = withDefaults(
     defineProps<{
         title?: string;
-        defaultOpen?: boolean;
-        modelValue?: boolean;
         /** Ключ панели в `TaoSpoilerGroup`. Без группы не используется. */
         name?: string | number;
         /** The outer frame; not set, it follows the frames context (`.tao-frames-soft`); `false`: the header fill alone sets the panel off. / Внешняя рамка; не задан — идёт за контекстом рамок; `false`: панель выделяет одна заливка шапки. */
@@ -19,29 +17,27 @@ const props = withDefaults(
     }>(),
     {
         title: '',
-        defaultOpen: false,
-        modelValue: undefined,
         name: undefined,
         bordered: undefined,
     },
 );
 
 const emit = defineEmits<{
-    'update:modelValue': [value: boolean];
     /** Opened or closed by the user. / Пользователь открыл или закрыл. */
     change: [value: boolean];
 }>();
 
 const panelId = useId();
-const internal = ref(props.defaultOpen);
+// open or closed: `v-model` when the parent keeps it, a state of its own when it does not
+// открыт или закрыт: `v-model`, если его держит родитель, и собственное состояние, если нет
+const open = defineModel<boolean>({ default: false });
 const group = inject(spoilerGroupKey, null);
 const inGroup = computed(() => group !== null && props.name !== undefined && props.name !== '');
-const isControlled = computed(() => props.modelValue !== undefined);
 const isOpen = computed(() => {
     if (inGroup.value) {
         return group!.model.value === props.name;
     }
-    return isControlled.value ? Boolean(props.modelValue) : internal.value;
+    return open.value;
 });
 
 function toggle() {
@@ -51,10 +47,7 @@ function toggle() {
     }
 
     const next = !isOpen.value;
-    if (!isControlled.value) {
-        internal.value = next;
-    }
-    emit('update:modelValue', next);
+    open.value = next;
     emit('change', next);
 }
 
