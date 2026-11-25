@@ -87,6 +87,8 @@ export interface TaoSliderBaseProps {
     disabled?: boolean;
     /** Red track outline. The message goes to TaoFormField `error`. / Красная обводка трека. Текст ошибки — в `error` у TaoFormField. */
     invalid?: boolean;
+    /** The name in a form: the value goes into `FormData` (a range as `<name>-from` and `<name>-to`, through hidden inputs). / Имя в форме: значение уходит в `FormData` (диапазон как `<name>-from` и `<name>-to`, через скрытые input). */
+    name?: string;
     /** `bar` — thick track, a form control. `thin` — thin track (seek, volume). / `bar` — толстый трек, форм-контрол. `thin` — тонкий (seek, громкость). */
     variant?: 'bar' | 'thin';
     /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */

@@ -10,6 +10,7 @@ import type { TaoSelectItem } from '../select';
 import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
 import { resolveSize, sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
+import TaoFormValue from './TaoFormValue.vue';
 
 defineOptions({ name: 'TaoSelect', inheritAttrs: false });
 
@@ -23,6 +24,16 @@ const props = withDefaults(
         placeholder?: string;
         disabled?: boolean;
         invalid?: boolean;
+        /** The id of the trigger, which the label of a `TaoFormField` points at. / id кнопки, на который указывает подпись `TaoFormField`. */
+        id?: string;
+        /** The name in a form: the picked id goes into `FormData` (through a hidden input). / Имя в форме: выбранный id попадает в `FormData` (через скрытый input). */
+        name?: string;
+        /** A value is required: a form does not submit the field empty. / Значение обязательно: форма не отправит поле пустым. */
+        required?: boolean;
+        /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
+        autofocus?: boolean;
+        /** The value can be seen and sent, not changed: the list does not open. / Значение видно и уходит с формой, но не меняется: список не открывается. */
+        readOnly?: boolean;
         /** Label of the clear row in the list. Slot `#clear` replaces it (icon, markup). / Подпись пункта сброса; слот `#clear` заменяет её (иконка, разметка). */
         clearText?: string;
         /**
@@ -79,7 +90,7 @@ const nav = useRoving({
 });
 
 async function setOpen(next: boolean) {
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         return;
     }
 
@@ -136,7 +147,7 @@ function scrollActiveIntoView() {
 }
 
 function onTriggerKeydown(event: KeyboardEvent) {
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         return;
     }
 
@@ -197,6 +208,8 @@ watch(open, (isOpen) => {
             aria-haspopup="listbox"
             :aria-controls="listId"
             :aria-invalid="isInvalid || undefined"
+            :aria-required="required || undefined"
+            :aria-readonly="readOnly || undefined"
             :aria-describedby="describedBy"
             :disabled="disabled"
             @click="toggle"
@@ -211,6 +224,7 @@ watch(open, (isOpen) => {
                 <slot name="chevron" />
             </span>
         </button>
+        <TaoFormValue :name="name" :value="model" :required="required" :disabled="disabled" @focus="triggerRef?.focus()" />
 
         <Teleport to="body">
             <div

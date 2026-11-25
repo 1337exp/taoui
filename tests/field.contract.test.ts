@@ -44,11 +44,13 @@ describe('nativeFieldAttrs', () => {
 });
 
 describe('every control takes the contract', () => {
-    it.each(controls)('%s: name, required, id and invalid reach the control', (_, component, props, control) => {
+    it.each(controls)('%s: name, required, id and invalid reach the control', (label, component, props, control) => {
         const w = mount(component as never, { props: { ...props, name: 'field', required: true, id: 'mine', invalid: true } as never });
         const el = w.find(control);
-        expect(el.attributes('name')).toBe('field');
-        expect(el.attributes('required')).toBeDefined();
+        // a combobox sends the id of the pick, not the text in its input: through a hidden one
+        const holder = label === 'TaoCombobox' ? w.find('input.tao-sr-only') : el;
+        expect(holder.attributes('name')).toBe('field');
+        expect(holder.attributes('required')).toBeDefined();
         expect(el.attributes('id')).toBe('mine');
         expect(el.attributes('aria-invalid')).toBe('true');
     });

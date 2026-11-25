@@ -25,7 +25,7 @@ const componentFiles = readdirSync(join(root, 'src/components'))
 describe('public entry', () => {
     it('every component file is exported by name from the entry', () => {
         // sub-components that are used inside others and are not meant to be public
-        const internal = new Set(['TaoSliderBase', 'TaoToastItem']);
+        const internal = new Set(['TaoSliderBase', 'TaoToastItem', 'TaoFormValue']);
         const missing = componentFiles.filter((name: string) => !internal.has(name) && !(name in lib));
         expect(missing).toEqual([]);
     });

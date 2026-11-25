@@ -3,6 +3,7 @@ import { computed, nextTick, ref, watch } from 'vue';
 import { useField } from '../formField';
 import { useLocaleText, formatText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
+import TaoFormValue from './TaoFormValue.vue';
 import { parsePinFormat, pinFromPaste, separatorAfter } from '../pinFormat';
 
 defineOptions({ name: 'TaoPinCode' });
@@ -46,6 +47,14 @@ const props = withDefaults(
         status?: 'idle' | 'success' | 'error';
         successText?: string;
         errorText?: string;
+        /** The id of the first cell, which the label of a `TaoFormField` points at. / id первой ячейки, на который указывает подпись `TaoFormField`. */
+        id?: string;
+        /** The name in a form: the whole code goes into `FormData` (through a hidden input). / Имя в форме: весь код уходит в `FormData` (через скрытый input). */
+        name?: string;
+        /** The whole code is required: a form does not submit it until every cell is filled. / Нужен весь код: форма не отправит его, пока заполнены не все ячейки. */
+        required?: boolean;
+        /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
+        autofocus?: boolean;
     }>(),
     {
         masked: false,
@@ -346,6 +355,13 @@ watch(
         <span v-if="layout?.after" class="tao-pin-code__separator" aria-hidden="true">{{ layout.after }}</span>
         <!-- the result in words, not only in colour / результат словами, а не только цветом -->
         <span class="tao-sr-only" role="status">{{ status === 'success' ? l10n.successText : status === 'error' ? l10n.errorText : '' }}</span>
+        <TaoFormValue
+            :name="name"
+            :value="required && model.length < count ? '' : model"
+            :required="required"
+            :disabled="disabled"
+            @focus="inputRefs[0]?.focus()"
+        />
     </div>
 </template>
 

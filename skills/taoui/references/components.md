@@ -339,6 +339,8 @@ Showcase section: `#select`
 | `placeholder` | `string` | 'Choose' | When the model is null |
 | `disabled` | `boolean` | false | Disabled |
 | `invalid` | `boolean` | false | A red border |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps). name is the name in a form: the value goes into FormData through a hidden input; required — a form does not submit the field empty (the native check, its message points at the visible control); id is what the label of TaoFormField points at |
+| `readOnly` | `boolean` | false | The value can be seen and is sent with the form, but not changed: the pop-up does not open, no typing and no clearing (aria-readonly) |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, as TaoButton; also scales the opened list. Without it — the size of the ancestors |
 | `clearable` | `boolean` | true | Clear row and Delete / Backspace. Turn off when null is not valid. |
 | `clearText` | `string` | 'Clear' | Label of the clear row. |
@@ -432,6 +434,7 @@ Showcase section: `#combobox`
 | `clearText` | `string` | 'Clear' | Label of the clear row; slot #clear replaces it. |
 | `disabled / invalid` | `boolean` | false | Disabled / a red border |
 | `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps). id is what the label of TaoFormField points at (otherwise the FormField's or useId); name is the name in a form (FormData, a native submit); required is the native required; autofocus takes the focus when the field appears |
+| `readOnly` | `boolean` | false | The value can be seen and is sent with the form, but not changed: the pop-up does not open, no typing and no clearing (aria-readonly) |
 | `variant` | `'outline' \| 'filled' \| 'plain'` | 'outline' | As on TaoInput: a frame / a fill only / nothing (the field reads as text, an error is a red line under the text) |
 
 **Slots, events, notes.** create — an event when a new value is typed: the parent extends options itself.
@@ -532,6 +535,8 @@ Showcase section: `#date`
 | `parse / format` | `(text, { locale, reference }) => string \| null / (iso, locale) => string` | — | Your own reading of the typed text («tomorrow») and your own text in the field; reference is the current value or today |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
 | `disabled / invalid` | `boolean` | false | Disabled / a red border |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps). name is the name in a form: the value goes into FormData through a hidden input; required — a form does not submit the field empty (the native check, its message points at the visible control); id is what the label of TaoFormField points at |
+| `readOnly` | `boolean` | false | The value can be seen and is sent with the form, but not changed: the pop-up does not open, no typing and no clearing (aria-readonly) |
 | `todayText / clearText` | `string` | 'Today' / 'Clear' | The buttons at the bottom of the popup |
 | `calendarLabel` | `string` | 'Choose a date' | aria-label of the calendar button of an editable field |
 
@@ -549,6 +554,8 @@ Showcase section: `#date`
 | `locale` | `string` | the app locale | The calendar captions; without it the language of setTaoLocale |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
 | `disabled / invalid` | `boolean` | false | Disabled / a red border |
+| `name` | `string` | — | The name in a form: the range goes into FormData as <name>-start and <name>-end (ISO dates, through hidden inputs); required needs both |
+| `readOnly` | `boolean` | false | The value can be seen and is sent with the form, but not changed: the pop-up does not open, no typing and no clearing (aria-readonly) |
 
 **Slots, events, notes.** The first click is start, the second is end (they swap if end is earlier).
 
@@ -565,6 +572,7 @@ Showcase section: `#pincode`
 | `masked` | `boolean` | false | Dots instead of characters |
 | `disabled` | `boolean` | false | Disabled |
 | `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract. name — the whole code goes into FormData through a hidden input; required — a form does not submit the code until every cell is filled; id is on the first cell |
 | `bordered` | `boolean` | true | The frame of the cells. false is the light style, no frame at all: a fill; the focus, an error and a result are told by a tint of the fill and the colour of the digit |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Cells 40×46 / 50×56 / 58×64. Without it — the size of the ancestors |
 | `clearOn` | `'focus' \| 'input'` | 'focus' | focus — a click clears the cell and everything to the right; input — changes only on typing |
@@ -609,6 +617,7 @@ Showcase section: `#slider`
 | `showValue` | `boolean` | false | The value over the bar |
 | `disabled` | `boolean` | false | Disabled |
 | `invalid` | `boolean` | false | A red outline of the track. The error text is error on TaoFormField |
+| `name` | `string` | — | The name in a form: the number goes into FormData through a hidden input; a range sends <name>-from and <name>-to |
 | `wheel` | `number` | 0 | The change step for the mouse wheel (a single handle). 0 — disabled |
 | `editable` | `boolean` | false | The value can be typed: a right click or a double click on the bar, or Enter / F2 on a handle, opens a field over the bar (for a range, for the nearest or the focused handle). Enter or leaving the field sets the value, snapped to the step (or to a mark with discrete) and kept in range; Esc drops the edit |
 | `editLabel` | `string` | from the locale | The accessible name of the field of editable (slider.editLabel, "Value") |
@@ -623,7 +632,7 @@ Showcase section: `#slider`
 |---|---|---|---|
 | `v-model` | `[number, number]` | — | A [from, to] pair. Required |
 | `minGap` | `number` | 0 | The smallest distance between the handles; the handles do not jump over each other |
-| `…` | `` |  | The rest as in TaoSlider: min / max / step, marks, discrete, format, vertical, variant, size, showValue, disabled, invalid |
+| `…` | `` |  | The rest as in TaoSlider: min / max / step, marks, discrete, format, vertical, variant, size, showValue, disabled, invalid, name |
 
 ## TaoScrubber
 
@@ -677,6 +686,8 @@ Showcase section: `#color`
 | `placeholder` | `string` | 'Not set' | What the field says while the value is empty (""): an optional colour that is not set; the swatch is crossed out |
 | `placement` | `TaoPlacement` | 'bottom-start' | Side and alignment: top / bottom / left / right and -start / -end. Flips at the screen edge |
 | `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps). name is the name in a form: the value goes into FormData through a hidden input; required — a form does not submit the field empty (the native check, its message points at the visible control); id is what the label of TaoFormField points at |
+| `readOnly` | `boolean` | false | The value can be seen and is sent with the form, but not changed: the pop-up does not open, no typing and no clearing (aria-readonly) |
 | `disabled` | `boolean` | false | Disabled |
 
 ## colorModel(source, options)

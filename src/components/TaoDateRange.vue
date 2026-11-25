@@ -10,6 +10,7 @@ import { useLocaleText, useTaoLocale } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import '../styles/date-popup.css';
 import TaoCalendar from './TaoCalendar.vue';
+import TaoFormValue from './TaoFormValue.vue';
 import TaoIcon from './TaoIcon.vue';
 
 defineOptions({ name: 'TaoDateRange', inheritAttrs: false });
@@ -24,6 +25,16 @@ const props = withDefaults(
     defineProps<{
         placeholder?: string;
         disabled?: boolean;
+        /** The id of the trigger, which the label of a `TaoFormField` points at. / id кнопки, на который указывает подпись `TaoFormField`. */
+        id?: string;
+        /** The name in a form: the range goes into `FormData` as `<name>-start` and `<name>-end` (ISO dates, through hidden inputs). / Имя в форме: период уходит в `FormData` как `<name>-start` и `<name>-end` (даты ISO, через скрытые input). */
+        name?: string;
+        /** A range is required: a form does not submit the field empty. / Период обязателен: форма не отправит поле пустым. */
+        required?: boolean;
+        /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
+        autofocus?: boolean;
+        /** The range can be seen and sent, not changed: the calendar does not open. / Период виден и уходит с формой, но не меняется: календарь не открывается. */
+        readOnly?: boolean;
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
         invalid?: boolean;
@@ -71,7 +82,7 @@ useLayer(open, {
 });
 
 async function setOpen(next: boolean) {
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         return;
     }
 
@@ -101,7 +112,7 @@ function onChange(value: unknown) {
 }
 
 function onTriggerKeydown(event: KeyboardEvent) {
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         return;
     }
 
@@ -126,6 +137,8 @@ function onTriggerKeydown(event: KeyboardEvent) {
             aria-haspopup="dialog"
             :aria-controls="gridId"
             :aria-invalid="isInvalid || undefined"
+            :aria-required="required || undefined"
+            :aria-readonly="readOnly || undefined"
             :aria-describedby="describedBy"
             :disabled="disabled"
             @click="toggle"
@@ -138,6 +151,8 @@ function onTriggerKeydown(event: KeyboardEvent) {
                 </slot>
             </span>
         </button>
+        <TaoFormValue :name="name ? `${name}-start` : undefined" :value="committed?.start" :required="required" :disabled="disabled" @focus="triggerRef?.focus()" />
+        <TaoFormValue :name="name ? `${name}-end` : undefined" :value="committed?.end" :required="required" :disabled="disabled" @focus="triggerRef?.focus()" />
 
         <Teleport to="body">
             <div

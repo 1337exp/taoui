@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
 import { useField } from '../formField';
 import { normalizeHex, type ColorMode } from '../color';
@@ -7,6 +7,7 @@ import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import type { TaoPlacement } from '../floating';
 import TaoColorPicker from './TaoColorPicker.vue';
+import TaoFormValue from './TaoFormValue.vue';
 import TaoPopover from './TaoPopover.vue';
 
 defineOptions({ name: 'TaoColorInput', inheritAttrs: false });
@@ -29,6 +30,14 @@ const props = withDefaults(
         eyedropper?: boolean;
         /** The id of the button, which a `TaoFormField` label points at. / id кнопки, на который указывает подпись `TaoFormField`. */
         id?: string;
+        /** The name in a form: the colour as hex goes into `FormData` (through a hidden input). / Имя в форме: цвет в hex уходит в `FormData` (через скрытый input). */
+        name?: string;
+        /** A colour is required (use with `clearable`): a form does not submit the field empty. / Цвет обязателен (с `clearable`): форма не отправит поле пустым. */
+        required?: boolean;
+        /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
+        autofocus?: boolean;
+        /** The colour can be seen and sent, not changed: the palette does not open. / Цвет виден и уходит с формой, но не меняется: палитра не открывается. */
+        readOnly?: boolean;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
         invalid?: boolean;
@@ -56,6 +65,7 @@ const emit = defineEmits<{
 // a TaoFormField around it reaches the button too: its label, its error and its description
 // TaoFormField вокруг доходит и до кнопки: подпись, ошибка и описание
 const { field, controlId, isInvalid, describedBy } = useField(props);
+const buttonRef = ref<HTMLButtonElement | null>(null);
 const l10n = useLocaleText(props, 'colorPicker');
 const shown = computed(() => normalizeHex(model.value, props.alpha) ?? model.value);
 // «Background: #ff8800» when the app names the field, «Choose a colour: #ff8800» when it does not
@@ -70,7 +80,7 @@ function clear() {
 }
 
 function onKeydown(event: KeyboardEvent) {
-    if ((event.key === 'Backspace' || event.key === 'Delete') && props.clearable && !empty.value && !props.disabled) {
+    if ((event.key === 'Backspace' || event.key === 'Delete') && props.clearable && !empty.value && !props.disabled && !props.readOnly) {
         event.preventDefault();
         clear();
     }
@@ -84,16 +94,19 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
 </script>
 
 <template>
-    <TaoPopover v-bind="rootAttrs()" :placement="placement" :disabled="disabled" class="tao-color-input-root">
+    <TaoPopover v-bind="rootAttrs()" :placement="placement" :disabled="disabled || readOnly" class="tao-color-input-root">
         <template #trigger="{ open }">
             <button
                 v-bind="controlAttrs()"
                 type="button"
                 class="tao-color-input"
                 :id="controlId"
+                ref="buttonRef"
                 :class="[sizeClass(size), { 'tao-color-input--open': open, 'tao-color-input--invalid': isInvalid }]"
                 :disabled="disabled"
                 :aria-invalid="isInvalid || undefined"
+                :aria-required="required || undefined"
+                :aria-readonly="readOnly || undefined"
                 :aria-describedby="describedBy"
                 :aria-label="labelledBy && !$attrs['aria-label'] ? undefined : buttonLabel($attrs['aria-label'])"
                 :aria-labelledby="labelledBy && !$attrs['aria-label'] ? `${labelledBy} ${controlId}` : undefined"
@@ -104,6 +117,7 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
                 <span class="tao-color-input__swatch" :class="{ 'tao-color-input__swatch--empty': empty }"><span :style="{ backgroundColor: shown }"></span></span>
                 <span class="tao-color-input__text" :class="{ 'tao-color-input__text--empty': empty }">{{ text }}</span>
             </button>
+            <TaoFormValue :name="name" :value="model" :required="required" :disabled="disabled" @focus="buttonRef?.focus()" />
         </template>
 
         <TaoColorPicker

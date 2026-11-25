@@ -3,7 +3,8 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useControlAttrs } from '../controlAttrs';
 import { useDismiss } from '../dismiss';
 import { useFloating } from '../floating';
-import { nativeFieldAttrs, useField } from '../formField';
+import { useField } from '../formField';
+import TaoFormValue from './TaoFormValue.vue';
 import { useLayer } from '../layers';
 import { stepEnabled } from '../primitives/useRoving';
 import { listenFocusLoss } from '../focusLoss';
@@ -31,6 +32,8 @@ const props = withDefaults(
         name?: string;
         /** The field must be filled in (native `required`). / Поле обязательно (нативный `required`). */
         required?: boolean;
+        /** The value can be seen and sent, not changed: no typing, the list does not open. / Значение видно и уходит с формой, но не меняется: набора нет, список не открывается. */
+        readOnly?: boolean;
         /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
         autofocus?: boolean;
         invalid?: boolean;
@@ -165,7 +168,7 @@ watch(open, (isOpen) => {
 });
 
 async function setOpen(next: boolean) {
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         return;
     }
 
@@ -317,7 +320,7 @@ function onFieldMouseDown(event: MouseEvent) {
 }
 
 function onInput() {
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         return;
     }
 
@@ -371,7 +374,7 @@ function activateRow(row: ComboRow) {
 }
 
 function onInputKeydown(event: KeyboardEvent) {
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         return;
     }
 
@@ -465,7 +468,7 @@ onBeforeUnmount(() => {
     >
         <div ref="fieldRef" class="tao-combobox__field" @mousedown="onFieldMouseDown">
             <input
-                v-bind="{ ...controlAttrs(), ...nativeFieldAttrs(props) }"
+                v-bind="controlAttrs()"
                 :id="controlId"
                 ref="inputRef"
                 class="tao-combobox__input"
@@ -478,8 +481,10 @@ onBeforeUnmount(() => {
                 :aria-controls="listId"
                 :aria-activedescendant="open ? activeId : undefined"
                 :aria-invalid="isInvalid || undefined"
+                :aria-required="required || undefined"
                 :aria-describedby="describedBy"
                 :disabled="disabled"
+                :readonly="readOnly || undefined"
                 :placeholder="l10n.placeholder"
                 :value="query"
                 @input="query = ($event.target as HTMLInputElement).value; onInput()"
@@ -495,6 +500,7 @@ onBeforeUnmount(() => {
                 <slot name="chevron" />
             </span>
         </div>
+        <TaoFormValue :name="name" :value="model" :required="required" :disabled="disabled" @focus="inputRef?.focus()" />
 
         <Teleport to="body">
             <div v-if="open" ref="panelRef" class="tao-combobox__panel" :class="[sizeClass(panelSize), densityClass(panelDensity)]" :style="listStyle">

@@ -5,6 +5,7 @@ import { clamp } from '../primitives/number';
 import { useField } from '../formField';
 import { useLocaleText } from '../locale';
 import { sizeClass } from '../size';
+import TaoFormValue from './TaoFormValue.vue';
 import { useSliderEditor } from '../sliderEditor';
 import {
     isMarkActive,
@@ -389,6 +390,13 @@ function onMarkClick(mark: TaoSliderMark) {
                 </span>
             </button>
         </div>
+        <template v-if="name">
+            <TaoFormValue v-if="!isRange" :name="name" :value="values[0]" :disabled="disabled" />
+            <template v-else>
+                <TaoFormValue :name="`${name}-from`" :value="values[0]" :disabled="disabled" />
+                <TaoFormValue :name="`${name}-to`" :value="values[1]" :disabled="disabled" />
+            </template>
+        </template>
     </div>
 </template>
 

@@ -23,6 +23,8 @@ import TaoTextarea from '../src/components/TaoTextarea.vue';
 // 5.8.2: the attributes of a field reach its control (an aria-label named nothing on the wrapper), the looks its wrapper.
 // 5.8.2: атрибуты поля доходят до элемента управления (aria-label на обёртке ничего не называл), внешний вид — до обёртки.
 
+const hiddenValue = new Set(['TaoCombobox', 'TaoSelect', 'TaoDate', 'TaoDate editable', 'TaoDateRange']);
+
 const cases: [string, unknown, Record<string, unknown>, string][] = [
     ['TaoInput', TaoInput, {}, 'input'],
     ['TaoTextarea', TaoTextarea, {}, 'textarea'],
@@ -42,7 +44,7 @@ const cases: [string, unknown, Record<string, unknown>, string][] = [
 ];
 
 describe('a field passes its attributes to its control', () => {
-    it.each(cases)('%s: aria-label, name, data-* and listeners on the control; class and style on the wrapper', (_, component, props, control) => {
+    it.each(cases)('%s: aria-label, name, data-* and listeners on the control; class and style on the wrapper', (label, component, props, control) => {
         const onFocus = vi.fn();
         const w = mount(component as never, {
             props: props as never,
@@ -51,7 +53,13 @@ describe('a field passes its attributes to its control', () => {
         const el = w.find(control);
         expect(el.exists()).toBe(true);
         expect(el.attributes('aria-label')).toBe('Search');
-        expect(el.attributes('name')).toBe('q');
+        // a field that is not a native input sends its value through a hidden one, and the name goes there
+        if (hiddenValue.has(label)) {
+            // a range sends two: `<name>-start` and `<name>-end`
+            expect(w.find('input.tao-sr-only').attributes('name')).toBe(label === 'TaoDateRange' ? 'q-start' : 'q');
+        } else {
+            expect(el.attributes('name')).toBe('q');
+        }
         expect(el.attributes('data-testid')).toBe('f');
         expect(w.classes()).toContain('mine');
         expect(w.attributes('style')).toContain('margin-top: 3px');
