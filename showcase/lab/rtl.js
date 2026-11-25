@@ -14,8 +14,8 @@ import '../../src/styles/palettes/index.css'
 const App = {
   setup() {
     const s = reactive({ text: 'שלום', num: 3, sel: 'a', combo: '', date: '2026-11-05', tab: 'one', seg: 'a', page: 3, slider: 40, on: true, chk: true, radio: 'a', htmlRtl: false })
-    const options = [{ value: 'a', label: 'Alpha' }, { value: 'b', label: 'Beta' }]
-    const tabs = [{ value: 'one', label: 'One' }, { value: 'two', label: 'Two' }, { value: 'three', label: 'Three' }]
+    const options = [{ id: 'a', label: 'Alpha' }, { id: 'b', label: 'Beta' }]
+    const tabs = [{ id: 'one', label: 'One' }, { id: 'two', label: 'Two' }, { id: 'three', label: 'Three' }]
     const crumbs = [{ label: 'Home', to: '#' }, { label: 'Users', to: '#' }, { label: 'Profile' }]
     const stages = [{ key: 'a', label: 'Paid', status: 'ok' }, { key: 'b', label: 'Packing', status: 'work' }, { key: 'c', label: 'Shipped', status: 'wait' }]
     const menu = [{ id: 'one', label: 'One' }, { id: 'two', label: 'Two' }]
@@ -30,11 +30,11 @@ const App = {
       ]),
       h(TaoInput, { modelValue: s.text, 'onUpdate:modelValue': (v) => (s.text = v), placeholder: 'Input' }, { prefix: () => h('span', '$'), suffix: () => h('span', 'kg') }),
       h(TaoInputNumber, { modelValue: s.num, 'onUpdate:modelValue': (v) => (s.num = v) }),
-      h(TaoSelect, { modelValue: s.sel, 'onUpdate:modelValue': (v) => (s.sel = v), options }),
-      h(TaoCombobox, { modelValue: s.combo, 'onUpdate:modelValue': (v) => (s.combo = v), options }),
+      h(TaoSelect, { modelValue: s.sel, 'onUpdate:modelValue': (v) => (s.sel = v), items: options }),
+      h(TaoCombobox, { modelValue: s.combo, 'onUpdate:modelValue': (v) => (s.combo = v), items: options }),
       h(TaoDate, { modelValue: s.date, 'onUpdate:modelValue': (v) => (s.date = v) }),
       h(TaoTabs, { modelValue: s.tab, 'onUpdate:modelValue': (v) => (s.tab = v), items: tabs }),
-      h(TaoSegmented, { modelValue: s.seg, 'onUpdate:modelValue': (v) => (s.seg = v) }, () => [h(TaoSegmentedOption, { value: 'a', label: 'One' }), h(TaoSegmentedOption, { value: 'b', label: 'Two' }), h(TaoSegmentedOption, { value: 'c', label: 'Three' })]),
+      h(TaoSegmented, { modelValue: s.seg, 'onUpdate:modelValue': (v) => (s.seg = v) }, () => [h(TaoSegmentedOption, { id: 'a', label: 'One' }), h(TaoSegmentedOption, { id: 'b', label: 'Two' }), h(TaoSegmentedOption, { id: 'c', label: 'Three' })]),
       h('div', { style: 'display:flex;gap:16px;align-items:center;flex-wrap:wrap' }, [
         h(TaoCheckbox, { modelValue: s.chk, 'onUpdate:modelValue': (v) => (s.chk = v), label: 'Checkbox' }),
         h(TaoSwitch, { modelValue: s.on, 'onUpdate:modelValue': (v) => (s.on = v), label: 'Switch' }),

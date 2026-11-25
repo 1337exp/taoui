@@ -45,9 +45,9 @@ function pointerOutside() {
 }
 
 const options = [
-    { value: 'a', label: 'Alpha' },
-    { value: 'b', label: 'Bravo', disabled: true },
-    { value: 'c', label: 'Charlie' },
+    { id: 'a', label: 'Alpha' },
+    { id: 'b', label: 'Bravo', disabled: true },
+    { id: 'c', label: 'Charlie' },
 ];
 
 describe('TaoDropdownMenu', () => {
@@ -92,7 +92,7 @@ describe('TaoDropdownMenu', () => {
 
 describe('TaoSelect', () => {
     it('opens a listbox; disabled options are skipped by the arrows; Enter picks', async () => {
-        const w = mountOverlay(TaoSelect, { props: { options, modelValue: 'a' } });
+        const w = mountOverlay(TaoSelect, { props: { items: options, modelValue: 'a' } });
         await w.find('[role="combobox"]').trigger('click');
         expect($$('[role="option"]').map((el) => el.textContent?.trim())).toEqual(['Alpha', 'Bravo', 'Charlie']);
         await key($('[role="listbox"]'), 'ArrowDown');
@@ -103,7 +103,7 @@ describe('TaoSelect', () => {
     });
 
     it('Home / End jump to the first / last enabled option', async () => {
-        const w = mountOverlay(TaoSelect, { props: { options, modelValue: 'c' } });
+        const w = mountOverlay(TaoSelect, { props: { items: options, modelValue: 'c' } });
         await w.find('[role="combobox"]').trigger('click');
         await key($('[role="listbox"]'), 'Home');
         await key($('[role="listbox"]'), 'Enter');
@@ -114,7 +114,7 @@ describe('TaoSelect', () => {
     });
 
     it('Escape closes and focuses the trigger; an outside press closes', async () => {
-        const w = mountOverlay(TaoSelect, { props: { options } });
+        const w = mountOverlay(TaoSelect, { props: { items: options } });
         const trigger = w.find('[role="combobox"]').element as HTMLElement;
         await w.find('[role="combobox"]').trigger('click');
         await key($('[role="listbox"]'), 'Escape');
@@ -127,7 +127,7 @@ describe('TaoSelect', () => {
     });
 
     it('ArrowDown on the closed trigger opens it; Delete clears when clearable', async () => {
-        const w = mountOverlay(TaoSelect, { props: { options, modelValue: 'a' } });
+        const w = mountOverlay(TaoSelect, { props: { items: options, modelValue: 'a' } });
         await key(w.find('[role="combobox"]').element, 'ArrowDown');
         expect($('[role="listbox"]')).not.toBeNull();
         await key($('[role="listbox"]'), 'Escape');
@@ -136,7 +136,7 @@ describe('TaoSelect', () => {
     });
 
     it('a disabled select does not open', async () => {
-        const w = mountOverlay(TaoSelect, { props: { options, disabled: true } });
+        const w = mountOverlay(TaoSelect, { props: { items: options, disabled: true } });
         await w.find('[role="combobox"]').trigger('click');
         expect($('[role="listbox"]')).toBeNull();
     });
@@ -144,7 +144,7 @@ describe('TaoSelect', () => {
 
 describe('TaoCombobox', () => {
     it('typing filters the options, Enter picks the active one', async () => {
-        const w = mountOverlay(TaoCombobox, { props: { options } });
+        const w = mountOverlay(TaoCombobox, { props: { items: options } });
         const input = w.find('input');
         await input.trigger('focus');
         await input.setValue('char');
@@ -155,7 +155,7 @@ describe('TaoCombobox', () => {
     });
 
     it('a list opened over a picked value shows every option, not only the picked one', async () => {
-        const w = mountOverlay(TaoCombobox, { props: { options, modelValue: 'c' } });
+        const w = mountOverlay(TaoCombobox, { props: { items: options, modelValue: 'c' } });
         const input = w.find('input');
         await input.trigger('focus');
         await key(input.element, 'ArrowDown');
@@ -163,7 +163,7 @@ describe('TaoCombobox', () => {
     });
 
     it('Escape closes the list', async () => {
-        const w = mountOverlay(TaoCombobox, { props: { options } });
+        const w = mountOverlay(TaoCombobox, { props: { items: options } });
         const input = w.find('input');
         await input.trigger('focus');
         await input.setValue('a');
@@ -173,7 +173,7 @@ describe('TaoCombobox', () => {
     });
 
     it('allowCreate offers the typed text and emits create', async () => {
-        const w = mountOverlay(TaoCombobox, { props: { options, allowCreate: true } });
+        const w = mountOverlay(TaoCombobox, { props: { items: options, allowCreate: true } });
         const input = w.find('input');
         await input.trigger('focus');
         await input.setValue('Zulu');

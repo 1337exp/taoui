@@ -83,7 +83,7 @@ describe('density helpers', () => {
     });
 
     it('a teleported Select panel takes the density of where the Select stands', async () => {
-        const w = mount({ render: () => h('div', [h(TaoSelect, { options: [{ value: 'a', label: 'A' }], modelValue: null })]) }, { attachTo: document.body });
+        const w = mount({ render: () => h('div', [h(TaoSelect, { items: [{ id: 'a', label: 'A' }], modelValue: null })]) }, { attachTo: document.body });
         // happy-dom does not inherit custom properties: put the inherited value on the trigger itself
         const trigger = w.find('button');
         (trigger.element as HTMLElement).style.setProperty('--tao-density', 'comfortable');

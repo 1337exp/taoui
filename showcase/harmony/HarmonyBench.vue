@@ -55,12 +55,12 @@ const menu = [
   { id: 'two', label: 'Two' },
 ]
 const options = [
-  { value: 'a', label: 'Default' },
-  { value: 'b', label: 'Other' },
+  { id: 'a', label: 'Default' },
+  { id: 'b', label: 'Other' },
 ]
 const tabs = [
-  { value: 'one', label: 'Tab one' },
-  { value: 'two', label: 'Tab two' },
+  { id: 'one', label: 'Tab one' },
+  { id: 'two', label: 'Tab two' },
 ]
 
 const rows = ref([])
@@ -195,7 +195,7 @@ const failed = (row, id) => promises.value.find((p) => p.id === id)?.offenders.s
       <div class="harmony-cell" data-harmony="button-secondary"><TaoButton variant="secondary">Secondary</TaoButton></div>
       <div class="harmony-cell" data-harmony="button-ghost"><TaoButton variant="ghost" tone="neutral">Ghost</TaoButton></div>
       <div class="harmony-cell" data-harmony="input"><TaoInput v-model="text" aria-label="Input" /></div>
-      <div class="harmony-cell" data-harmony="select"><TaoSelect v-model="choice" :options="options" :clearable="false" aria-label="Select" /></div>
+      <div class="harmony-cell" data-harmony="select"><TaoSelect v-model="choice" :items="options" :clearable="false" aria-label="Select" /></div>
       <div class="harmony-cell" data-harmony="input-number"><TaoInputNumber v-model="number" aria-label="Number" /></div>
       <div class="harmony-cell" data-harmony="segmented">
         <TaoSegmented v-model="layout" aria-label="Segmented">

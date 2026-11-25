@@ -14,20 +14,20 @@ const checked = ref(['a'])
 const page = ref(3)
 const files = ref([])
 const options = [
-  { value: 'a', label: 'A' },
-  { value: 'b', label: 'B' },
+  { id: 'a', label: 'A' },
+  { id: 'b', label: 'B' },
 ]
 const items = [
-  { value: 'a', label: 'A' },
-  { value: 'b', label: 'B' },
-  { value: 'c', label: 'C' },
+  { id: 'a', label: 'A' },
+  { id: 'b', label: 'B' },
+  { id: 'c', label: 'C' },
 ]
 </script>
 
 <template>
   <div class="specimen">
-    <TaoSelect v-model="select" :options="options" />
-    <TaoCombobox v-model="combo" :options="options" />
+    <TaoSelect v-model="select" :items="options" />
+    <TaoCombobox v-model="combo" :items="options" />
     <TaoDate v-model="date" />
     <TaoDateRange v-model="range" />
     <TaoChecklist v-model="checked" :items="items" select-all counter />

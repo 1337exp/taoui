@@ -22,7 +22,7 @@ const controls: [string, unknown, Record<string, unknown>, string][] = [
     ['TaoInput', TaoInput, {}, 'input'],
     ['TaoTextarea', TaoTextarea, {}, 'textarea'],
     ['TaoInputNumber', TaoInputNumber, { modelValue: 1 }, 'input'],
-    ['TaoCombobox', TaoCombobox, { options: [] }, 'input'],
+    ['TaoCombobox', TaoCombobox, { items: [] }, 'input'],
     ['TaoPresetInput', TaoPresetInput, { options: [] }, 'input'],
     ['TaoQuantity', TaoQuantity, { modelValue: 1 }, 'input'],
     ['TaoDragNumber', TaoDragNumber, { modelValue: 1 }, 'input'],

@@ -68,7 +68,7 @@ const emit = defineEmits<{
     'update:pageSize': [value: number];
 }>();
 
-const sizeOptions = computed(() => (props.pageSizes ?? []).map((n) => ({ value: n, label: String(n) })));
+const sizeOptions = computed(() => (props.pageSizes ?? []).map((n) => ({ id: n, label: String(n) })));
 
 function onPageSize(value: unknown) {
     const size = Number(value);
@@ -148,7 +148,7 @@ function goTo(next: number) {
                 <TaoSelect
                     class="tao-pagination__sizes-select"
                     :model-value="pageSize"
-                    :options="sizeOptions"
+                    :items="sizeOptions"
                     :disabled="disabled"
                     @update:model-value="onPageSize"
                 />

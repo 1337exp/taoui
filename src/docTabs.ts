@@ -6,7 +6,7 @@
 /** One tab of a document. / Одна вкладка документа. */
 export interface TaoDocTab {
     /** What `v-model` holds: the id of the document. / Что хранит `v-model`: id документа. */
-    value: string;
+    id: string;
     label: string;
     /** The full name for a hint on hover (a path). / Полное имя для подсказки при наведении (путь). */
     title?: string;

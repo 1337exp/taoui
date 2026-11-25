@@ -164,7 +164,7 @@ Density is added on top of the size (the height and the padding, not the font), 
     <TaoSegmentedOption value="grid">Grid</TaoSegmentedOption>
     <TaoSegmentedOption value="list">List</TaoSegmentedOption>
   </TaoSegmented>
-  <TaoSelect v-model="palette" :options="palettes" :clearable="false" aria-label="Palette" />
+  <TaoSelect v-model="palette" :items="palettes" :clearable="false" aria-label="Palette" />
   <TaoButton variant="secondary">Apply</TaoButton>
 </TaoFlex>
 ```
@@ -177,7 +177,7 @@ Density is added on top of the size (the height and the padding, not the font), 
     <TaoSegmentedOption value="grid">Grid</TaoSegmentedOption>
     <TaoSegmentedOption value="list">List</TaoSegmentedOption>
   </TaoSegmented>
-  <TaoSelect v-model="palette" :options="palettes" :clearable="false" aria-label="Palette" />
+  <TaoSelect v-model="palette" :items="palettes" :clearable="false" aria-label="Palette" />
   <TaoButton variant="secondary">Apply</TaoButton>
 </TaoFlex>
 ```

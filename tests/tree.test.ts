@@ -180,7 +180,7 @@ afterEach(() => {
 });
 
 function tree(props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) {
-    const w = mount(TaoTree, { props: { nodes, ...props }, slots: slots as never, attachTo: document.body });
+    const w = mount(TaoTree, { props: { items: nodes, ...props }, slots: slots as never, attachTo: document.body });
     wrappers.push(w);
     return w;
 }
@@ -426,7 +426,7 @@ describe('TaoTree', () => {
 
     it('hint: a quiet note after the label, part of the row text; tone: a class on the row', () => {
         const w = tree({
-            nodes: [
+            items: [
                 { id: 'nm', label: 'node_modules', hint: 'library root', tone: 'muted' },
                 { id: 'x', label: 'x.ts', tone: 'danger' },
             ],
@@ -718,7 +718,7 @@ describe('TaoTree context menu', () => {
 
     it('a menu handler that prevents the default takes the request: no menu of ours', async () => {
         const w = mount(TaoTree, {
-            props: { nodes, menu: [{ id: 'open', label: 'Open' }], onMenu: (_node: TaoTreeNode, e: Event) => e.preventDefault() },
+            props: { items: nodes, menu: [{ id: 'open', label: 'Open' }], onMenu: (_node: TaoTreeNode, e: Event) => e.preventDefault() },
             attachTo: document.body,
         });
         wrappers.push(w);

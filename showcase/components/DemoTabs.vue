@@ -9,9 +9,9 @@ defineOptions({ name: 'DemoTabs' })
 
 const activeTab = ref('tab1')
 const tabs = computed(() => [
-  { value: 'tab1', label: tr('Tab 1', 'Вкладка 1') },
-  { value: 'tab2', label: tr('Tab 2', 'Вкладка 2') },
-  { value: 'tab3', label: tr('Tab 3', 'Вкладка 3'), disabled: true },
+  { id: 'tab1', label: tr('Tab 1', 'Вкладка 1') },
+  { id: 'tab2', label: tr('Tab 2', 'Вкладка 2') },
+  { id: 'tab3', label: tr('Tab 3', 'Вкладка 3'), disabled: true },
 ])
 const tabContents = computed(() => ({
   tab1: tr('The content of the first tab. Any content can go here.', 'Содержимое первой вкладки. Здесь может быть любой контент.'),
@@ -40,8 +40,8 @@ const tabContents = computed(() => ({
 
 &lt;script setup&gt;
 const tabs = [
-  { value: 'tab1', label: '{{ tr('Tab 1', 'Вкладка 1') }}' },
-  { value: 'tab2', label: '{{ tr('Tab 2', 'Вкладка 2') }}' }
+  { id: 'tab1', label: '{{ tr('Tab 1', 'Вкладка 1') }}' },
+  { id: 'tab2', label: '{{ tr('Tab 2', 'Вкладка 2') }}' }
 ]
 &lt;/script&gt;</code></pre>
           </div>

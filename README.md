@@ -487,7 +487,7 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 
 ```vue
 <TaoFormField label="City" hint="Optional">
-  <TaoSelect v-model="city" :options="cities" />
+  <TaoSelect v-model="city" :items="cities" />
 </TaoFormField>
 
 <TaoSwitch v-model="dark" label="Dark theme" />
@@ -513,9 +513,9 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 When `null` is not a valid value (a grid step, a sort order), pass `:clearable="false"`: the clear row and the Delete / Backspace shortcut disappear. The clear row label is `clear-text`; for an icon or any markup use the `#clear` slot. `size` is `small` / `medium` / `large` (inherited from ancestors when not set) and also scales the open list.
 
 ```vue
-<TaoSelect v-model="step" :options="steps" size="small" :clearable="false" />
+<TaoSelect v-model="step" :items="steps" size="small" :clearable="false" />
 
-<TaoSelect v-model="city" :options="cities">
+<TaoSelect v-model="city" :items="cities">
   <template #clear><TaoIcon name="close" /> Reset</template>
 </TaoSelect>
 ```

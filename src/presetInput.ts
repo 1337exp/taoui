@@ -1,12 +1,14 @@
-import type { TaoSelectOption } from './select';
-
 /**
  * An option of `TaoPresetInput`. The one with `default` is what the field means when it is empty («Auto», «None»):
  * it is shown first in the pop-up, and the arrows reach it after the last one.
  * Пункт `TaoPresetInput`. Пункт с `default` — то, что поле значит, когда оно пустое («Авто», «Нет»): он показан первым в
  * окне, а стрелки доходят до него после последнего.
  */
-export interface TaoPresetOption extends TaoSelectOption {
+export interface TaoPresetOption {
+    /** A number the arrows step over: a value, not an id. / Число, по которому ходят стрелки: значение, а не id. */
+    value: string | number;
+    label: string;
+    disabled?: boolean;
     default?: boolean;
 }
 

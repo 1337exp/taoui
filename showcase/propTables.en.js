@@ -288,7 +288,7 @@ export const propTablesEn = {
     {
       title: 'TaoChecklist',
       rows: [
-        r('items', 'TaoChecklistItem[]', '—', '{ value, label, description?, disabled? }'),
+        r('items', 'TaoChecklistItem[]', '—', '{ id, label, description?, disabled? }'),
         r('v-model', '(string | number)[]', '[]', 'The checked values, in the order of the items'),
         r('legend', 'string', '—', 'The group caption (legend). In a TaoFormField the field gives it'),
         r('selectAll', 'boolean', 'false', '«Select all» on top: mixed when some are checked; toggles every enabled item'),
@@ -322,7 +322,7 @@ export const propTablesEn = {
       title: 'TaoSelect',
       rows: [
         r('v-model', 'string | number | null', 'null', 'value of the selected option. Clearing → null'),
-        r('options', 'TaoSelectOption[]', '[]', '{ value, label, disabled? }'),
+        r('items', 'TaoSelectItem[]', '[]', '{ id, label, disabled? }'),
         r('placeholder', 'string', "'Choose'", 'When the model is null'),
         r('disabled', 'boolean', 'false', 'Disabled'),
         r('invalid', 'boolean', 'false', 'A red border'),
@@ -399,7 +399,7 @@ export const propTablesEn = {
       title: 'TaoCombobox',
       rows: [
         r('v-model', 'string | number | null', 'null', 'value of an option, or an arbitrary string with allow-create'),
-        r('options', 'TaoSelectOption[]', '[]', '{ value, label, disabled? }. The list is not mutated by the component'),
+        r('items', 'TaoSelectItem[]', '[]', '{ id, label, disabled? }. The list is not mutated by the component'),
         r('placeholder', 'string', "'Start typing'", 'The empty field'),
         r('allowCreate', 'boolean', 'false', 'A value that is not in the list can be kept'),
         r('emptyText', 'string', "'Nothing found'", 'An empty filter'),
@@ -418,7 +418,7 @@ export const propTablesEn = {
       title: 'TaoDocTabs',
       rows: [
         r('v-model', 'string', '—', 'The value of the active tab. It may be none of them (no document open): then the first one is the way in by Tab'),
-        r('items', '{ value, label, title?, dirty?, preview?, closable? }[]', '[]', 'The tabs. value is the id of the document; title the full name for a hint; dirty the unsaved dot; preview a preview (italics, pinned by a double click or Enter); closable: false has no cross and cannot be closed'),
+        r('items', '{ id, label, title?, dirty?, preview?, closable? }[]', '[]', 'The tabs. id is the id of the document; title the full name for a hint; dirty the unsaved dot; preview a preview (italics, pinned by a double click or Enter); closable: false has no cross and cannot be closed'),
         r('controls', 'string', '—', 'The id of the element the active tab controls (the document view): aria-controls'),
         r('label', 'string', "'Open documents'", 'The name of the row for a screen reader'),
         r('closeLabel', 'string', "'Close'", 'The label of the cross (the tab name follows it)'),
@@ -774,7 +774,7 @@ export const propTablesEn = {
     {
       title: 'TaoTree',
       rows: [
-        r('nodes', 'TaoTreeNode[]', '—', "{ id, label, icon?, children?, hasChildren?, disabled?, hint?, tone? }. hasChildren without children — the children come from load when it opens. hint — a quiet note after the label («library root»). tone — the colour of the label: 'muted' | 'accent' | 'info' | 'success' | 'warning' | 'danger'"),
+        r('items', 'TaoTreeNode[]', '—', "{ id, label, icon?, children?, hasChildren?, disabled?, hint?, tone? }. hasChildren without children — the children come from load when it opens. hint — a quiet note after the label («library root»). tone — the colour of the label: 'muted' | 'accent' | 'info' | 'success' | 'warning' | 'danger'"),
         r('v-model:expanded', 'string[]', 'own', 'Ids of the expanded nodes. Without a model the tree keeps them itself. A saved view can be put back: open lazy folders load by themselves, level by level; a failed load closes the folder (load-error)'),
         r('selection', "'none' | 'single' | 'multiple'", "'single'", 'Selection mode. none — a click on a folder toggles it'),
         r('v-model:selected', 'string | string[] | null', 'own', 'An id (single) or a list of ids (multiple)'),
@@ -1197,7 +1197,7 @@ export const propTablesEn = {
       title: 'TaoTabs',
       rows: [
         r('v-model', 'string', '—', 'value of the active tab. Required'),
-        r('items', 'TaoTabItem[]', '—', '{ value, label, disabled? } — like Select options'),
+        r('items', 'TaoTabItem[]', '—', '{ id, label, disabled? } — like Select items'),
 
         r('justify', 'TaoJustify', '—', 'Where the tabs sit in the row, as in TaoFlex: flex-start, center, flex-end, space-between, space-around, space-evenly. Without it, at the left'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'The tab height as TaoButton (26 / 36 / 44). Without it — the size of the ancestors'),

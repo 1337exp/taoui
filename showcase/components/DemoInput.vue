@@ -18,8 +18,8 @@ const formSaving = ref(false)
 
 const sizes = ['small', 'medium', 'large']
 const sizeCities = computed(() => [
-  { value: 'msk', label: tr('Moscow', 'Москва') },
-  { value: 'spb', label: tr('Saint Petersburg', 'Санкт-Петербург') },
+  { id: 'msk', label: tr('Moscow', 'Москва') },
+  { id: 'spb', label: tr('Saint Petersburg', 'Санкт-Петербург') },
 ])
 const sizeModel = ref({
   small: { text: '', city: 'msk', count: 2, date: null, view: 'list', check: true, on: true, pick: 'a', tab: 'one', page: 3, level: 40 },
@@ -28,8 +28,8 @@ const sizeModel = ref({
 })
 const groupHost = ref('taoui.dev')
 const sizeTabs = computed(() => [
-  { value: 'one', label: tr('Overview', 'Обзор') },
-  { value: 'two', label: tr('Details', 'Детали') },
+  { id: 'one', label: tr('Overview', 'Обзор') },
+  { id: 'two', label: tr('Details', 'Детали') },
 ])
 
 function onDemoSubmit() {
@@ -45,9 +45,9 @@ const plainDone = ref(false)
 const plainCount = ref(2)
 const plainShop = ref('grocery')
 const shops = computed(() => [
-  { value: 'grocery', label: tr('Grocery', 'Продукты') },
-  { value: 'market', label: tr('Market', 'Рынок') },
-  { value: 'pharmacy', label: tr('Pharmacy', 'Аптека') },
+  { id: 'grocery', label: tr('Grocery', 'Продукты') },
+  { id: 'market', label: tr('Market', 'Рынок') },
+  { id: 'pharmacy', label: tr('Pharmacy', 'Аптека') },
 ])
 const plainText = ref(tr('Oat milk', 'Овсяное молоко'))
 </script>
@@ -124,7 +124,7 @@ const plainText = ref(tr('Oat milk', 'Овсяное молоко'))
               <TaoCheckbox v-model="plainDone" :aria-label="tr('Done', 'Готово')" />
               <TaoInput v-model="plainText" variant="plain" :aria-label="tr('Task', 'Задача')" />
               <TaoInputNumber v-model="plainCount" variant="plain" :min="1" :controls="false" class="input-demo__count" :aria-label="tr('How many', 'Сколько')" />
-              <TaoCombobox v-model="plainShop" variant="plain" :options="shops" :clearable="false" class="input-demo__shop" :aria-label="tr('Where', 'Где')" />
+              <TaoCombobox v-model="plainShop" variant="plain" :items="shops" :clearable="false" class="input-demo__shop" :aria-label="tr('Where', 'Где')" />
             </div>
           </div>
 
@@ -141,7 +141,7 @@ const plainText = ref(tr('Oat milk', 'Овсяное молоко'))
               style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center"
             >
               <div style="width: 160px"><TaoInput v-model="sizeModel[s].text" :placeholder="s" /></div>
-              <div style="width: 150px"><TaoSelect v-model="sizeModel[s].city" :options="sizeCities" :clearable="false" /></div>
+              <div style="width: 150px"><TaoSelect v-model="sizeModel[s].city" :items="sizeCities" :clearable="false" /></div>
               <div style="width: 110px"><TaoInputNumber v-model="sizeModel[s].count" :min="0" /></div>
               <div style="width: 150px"><TaoDate v-model="sizeModel[s].date" /></div>
               <TaoSegmented v-model="sizeModel[s].view">

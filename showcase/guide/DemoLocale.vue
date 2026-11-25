@@ -105,7 +105,7 @@ setTaoLocale(lang === 'ru' ? localeRu : localeEn)
 // on the server (Nuxt): there is no navigator, give the wishes of the request
 detectTaoLanguage(['en', 'ru'], { requested: parseAcceptLanguage(headers['accept-language']) })`
 
-const codeProp = computed(() => `<TaoSelect :options="options" placeholder="${tr('Pick a city', 'Выберите город')}" />   // ${tr('a prop in hand always wins', 'проп, переданный руками, главнее локали')}`)
+const codeProp = computed(() => `<TaoSelect :items="options" placeholder="${tr('Pick a city', 'Выберите город')}" />   // ${tr('a prop in hand always wins', 'проп, переданный руками, главнее локали')}`)
 </script>
 
 <template>

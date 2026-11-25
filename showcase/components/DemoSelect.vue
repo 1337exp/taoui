@@ -11,10 +11,10 @@ defineOptions({ name: 'DemoSelect' })
 const city = ref('')
 const cityError = ref('')
 const cities = computed(() => [
-  { value: 'msk', label: tr('Moscow', 'Москва') },
-  { value: 'spb', label: tr('Saint Petersburg', 'Санкт-Петербург') },
-  { value: 'kzn', label: tr('Kazan', 'Казань'), disabled: true },
-  { value: 'nsk', label: tr('Novosibirsk', 'Новосибирск') },
+  { id: 'msk', label: tr('Moscow', 'Москва') },
+  { id: 'spb', label: tr('Saint Petersburg', 'Санкт-Петербург') },
+  { id: 'kzn', label: tr('Kazan', 'Казань'), disabled: true },
+  { id: 'nsk', label: tr('Novosibirsk', 'Новосибирск') },
 ])
 const step = ref(4)
 
@@ -28,7 +28,7 @@ function toggleSync(value) {
     syncing.value = false
   }, 1200)
 }
-const steps = [1, 2, 3, 4, 6, 8, 12, 16].map((n) => ({ value: n, label: `1/${n}` }))
+const steps = [1, 2, 3, 4, 6, 8, 12, 16].map((n) => ({ id: n, label: `1/${n}` }))
 const sizeSmall = ref('msk')
 const sizeMedium = ref('msk')
 const sizeLarge = ref('msk')
@@ -47,29 +47,29 @@ const plan = ref('pro')
     
           <div class="demo-stack">
             <TaoFormField :label="tr('City', 'Город')" :hint="tr('Kazan is not available yet', 'Казань пока недоступна')">
-              <TaoSelect v-model="city" :options="cities" :placeholder="tr('Choose a city', 'Выберите город')" />
+              <TaoSelect v-model="city" :items="cities" :placeholder="tr('Choose a city', 'Выберите город')" />
             </TaoFormField>
     
             <TaoFormField :label="tr('Sizes (small, medium, large)', 'Размеры (small, medium, large)')">
               <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
-                <TaoSelect v-model="sizeSmall" :options="cities" size="small" />
-                <TaoSelect v-model="sizeMedium" :options="cities" />
-                <TaoSelect v-model="sizeLarge" :options="cities" size="large" />
+                <TaoSelect v-model="sizeSmall" :items="cities" size="small" />
+                <TaoSelect v-model="sizeMedium" :items="cities" />
+                <TaoSelect v-model="sizeLarge" :items="cities" size="large" />
               </div>
             </TaoFormField>
 
             <TaoFormField :label="tr('Not clearable', 'Без сброса')" :hint="tr('clearable=false: no clear row, Delete does nothing', 'clearable=false: нет строки сброса, Delete не работает')">
-              <TaoSelect v-model="step" :options="steps" size="small" :clearable="false" />
+              <TaoSelect v-model="step" :items="steps" size="small" :clearable="false" />
             </TaoFormField>
 
             <TaoFormField :label="tr('Custom clear row', 'Своя строка сброса')" hint="#clear slot">
-              <TaoSelect v-model="customClear" :options="cities">
+              <TaoSelect v-model="customClear" :items="cities">
                 <template #clear>✕ {{ tr('Reset', 'Сбросить') }}</template>
               </TaoSelect>
             </TaoFormField>
 
             <TaoFormField :label="tr('With an error', 'С ошибкой')" :error="tr('Choose a city', 'Выберите город')">
-              <TaoSelect v-model="cityError" :options="cities" />
+              <TaoSelect v-model="cityError" :items="cities" />
             </TaoFormField>
     
             <TaoFormField
@@ -98,16 +98,16 @@ const plan = ref('pro')
     
           <div class="code-block">
             <pre><code>&lt;TaoFormField label="{{ tr('City', 'Город') }}" hint="{{ tr('Optional', 'Необязательно') }}"&gt;
-  &lt;TaoSelect v-model="city" :options="cities" /&gt;
+  &lt;TaoSelect v-model="city" :items="cities" /&gt;
 &lt;/TaoFormField&gt;
 
-&lt;TaoSelect v-model="city" :options="cities" placeholder="Select a city" clear-text="Clear"&gt;
+&lt;TaoSelect v-model="city" :items="cities" placeholder="Select a city" clear-text="Clear"&gt;
   &lt;template #chevron&gt;&lt;TaoIcon name="chevron-down" /&gt;&lt;/template&gt;
 &lt;/TaoSelect&gt;
 
-&lt;TaoSelect v-model="step" :options="steps" size="small" :clearable="false" /&gt;
+&lt;TaoSelect v-model="step" :items="steps" size="small" :clearable="false" /&gt;
 
-&lt;TaoSelect v-model="city" :options="cities"&gt;
+&lt;TaoSelect v-model="city" :items="cities"&gt;
   &lt;template #clear&gt;✕ {{ tr('Reset', 'Сбросить') }}&lt;/template&gt;
 &lt;/TaoSelect&gt;
 

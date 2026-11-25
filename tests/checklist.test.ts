@@ -6,10 +6,10 @@ import TaoFormField from '../src/components/TaoFormField.vue';
 import type { TaoChecklistItem } from '../src/checklist';
 
 const items: TaoChecklistItem[] = [
-    { value: 'milk', label: 'Milk' },
-    { value: 'bread', label: 'Bread', description: 'Rye, sliced' },
-    { value: 'eggs', label: 'Eggs' },
-    { value: 'salt', label: 'Salt', disabled: true },
+    { id: 'milk', label: 'Milk' },
+    { id: 'bread', label: 'Bread', description: 'Rye, sliced' },
+    { id: 'eggs', label: 'Eggs' },
+    { id: 'salt', label: 'Salt', disabled: true },
 ];
 
 const list = (props: Record<string, unknown> = {}) => mount(TaoChecklist, { props: { items, ...props } });

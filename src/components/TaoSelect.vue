@@ -6,7 +6,7 @@ import { useFloating } from '../floating';
 import { useLayer } from '../layers';
 import { useRoving } from '../primitives/useRoving';
 import { useField } from '../formField';
-import type { TaoSelectOption } from '../select';
+import type { TaoSelectItem } from '../select';
 import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
 import { resolveSize, sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
@@ -19,7 +19,7 @@ const { rootAttrs, controlAttrs } = useControlAttrs();
 
 const props = withDefaults(
     defineProps<{
-        options?: TaoSelectOption[];
+        items?: TaoSelectItem[];
         placeholder?: string;
         disabled?: boolean;
         invalid?: boolean;
@@ -36,7 +36,7 @@ const props = withDefaults(
         size?: TaoSize;
     }>(),
     {
-        options: () => [],
+        items: () => [],
         disabled: false,
         invalid: false,
         clearable: true,
@@ -59,8 +59,8 @@ const listRef = ref<HTMLElement | null>(null);
 const panelSize = ref<TaoSize>('medium');
 const panelDensity = ref<TaoResolvedDensity>('default');
 
-const selected = computed(() => props.options.find((option) => option.value === model.value) ?? null);
-const enabled = computed(() => props.options.map((option) => !option.disabled));
+const selected = computed(() => props.items.find((option) => option.id === model.value) ?? null);
+const enabled = computed(() => props.items.map((option) => !option.disabled));
 const enabledIndexes = computed(() => enabled.value.flatMap((on, index) => (on ? [index] : [])));
 
 const { style: listStyle, update: updatePosition } = useFloating(triggerRef, panelRef, open, { placement: 'bottom-start', matchWidth: true });
@@ -74,7 +74,7 @@ useLayer(open, {
 const nav = useRoving({
     enabled: () => enabled.value,
     active: activeIndex,
-    labels: () => props.options.map((option) => option.label),
+    labels: () => props.items.map((option) => option.label),
     onMove: () => scrollActiveIntoView(),
 });
 
@@ -89,7 +89,7 @@ async function setOpen(next: boolean) {
         return;
     }
 
-    const selectedIndex = props.options.findIndex((option) => option.value === model.value);
+    const selectedIndex = props.items.findIndex((option) => option.id === model.value);
     activeIndex.value =
         selectedIndex >= 0 && enabledIndexes.value.includes(selectedIndex)
             ? selectedIndex
@@ -108,12 +108,12 @@ function close() {
     open.value = false;
 }
 
-function selectOption(option: TaoSelectOption) {
+function selectOption(option: TaoSelectItem) {
     if (option.disabled) {
         return;
     }
 
-    model.value = option.value;
+    model.value = option.id;
     close();
     triggerRef.value?.focus();
 }
@@ -167,7 +167,7 @@ function onListKeydown(event: KeyboardEvent) {
 
     if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
-        const option = props.options[activeIndex.value];
+        const option = props.items[activeIndex.value];
 
         if (option) {
             selectOption(option);
@@ -230,17 +230,17 @@ watch(open, (isOpen) => {
                     @keydown="onListKeydown"
                 >
                     <li
-                        v-for="(option, index) in options"
+                        v-for="(option, index) in items"
                         :id="`${listId}-opt-${index}`"
-                        :key="String(option.value)"
+                        :key="String(option.id)"
                         class="tao-select__option"
                         :class="{
                             'tao-select__option--active': index === activeIndex,
-                            'tao-select__option--selected': option.value === model,
+                            'tao-select__option--selected': option.id === model,
                             'tao-select__option--disabled': option.disabled,
                         }"
                         role="option"
-                        :aria-selected="option.value === model"
+                        :aria-selected="option.id === model"
                         :aria-disabled="option.disabled || undefined"
                         :data-tao-select-index="index"
                         @mousedown.prevent

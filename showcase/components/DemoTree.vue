@@ -202,7 +202,7 @@ function setSelection(value) {
         v-model:expanded="expanded"
         v-model:selected="selected"
         v-model:checked="checked"
-        :nodes="nodes"
+        :items="nodes"
         :selection="selection"
         :checkable="checkable"
         :load="load"
@@ -234,7 +234,7 @@ function setSelection(value) {
   v-model:expanded="expanded"
   v-model:selected="selected"
   v-model:checked="checked"
-  :nodes="nodes"
+  :items="nodes"
   checkable
   :load="(node) =&gt; api.children(node.id)"
   :menu="(node, selected) =&gt; [{ id: 'rename', label: 'Rename', disabled: selected.length &gt; 1 }, { id: 'delete', label: 'Delete' }]"

@@ -9,18 +9,18 @@ import { propTables } from '../propTables.js'
 defineOptions({ name: 'DemoChecklist' })
 
 const todo = computed(() => [
-  { value: 'tokens', label: tr('Token layers', 'Слои токенов') },
-  { value: 'menus', label: tr('Menus on one engine', 'Меню на одном движке'), description: tr('Menubar, context menu, dropdown', 'Полоса, контекстное, выпадающее') },
-  { value: 'tree', label: tr('A tree in the garden', 'Деревце в саду') },
-  { value: 'publish', label: tr('Publish 5.0.0', 'Опубликовать 5.0.0') },
+  { id: 'tokens', label: tr('Token layers', 'Слои токенов') },
+  { id: 'menus', label: tr('Menus on one engine', 'Меню на одном движке'), description: tr('Menubar, context menu, dropdown', 'Полоса, контекстное, выпадающее') },
+  { id: 'tree', label: tr('A tree in the garden', 'Деревце в саду') },
+  { id: 'publish', label: tr('Publish 5.0.0', 'Опубликовать 5.0.0') },
 ])
 const done = ref(['tokens', 'menus', 'tree'])
 
 const groceries = computed(() => [
-  { value: 'milk', label: tr('Milk', 'Молоко') },
-  { value: 'bread', label: tr('Bread', 'Хлеб') },
-  { value: 'tea', label: tr('Green tea', 'Зелёный чай') },
-  { value: 'salt', label: tr('Salt (we have it)', 'Соль (есть дома)'), disabled: true },
+  { id: 'milk', label: tr('Milk', 'Молоко') },
+  { id: 'bread', label: tr('Bread', 'Хлеб') },
+  { id: 'tea', label: tr('Green tea', 'Зелёный чай') },
+  { id: 'salt', label: tr('Salt (we have it)', 'Соль (есть дома)'), disabled: true },
 ])
 const bought = ref(['tea'])
 const groceryError = computed(() => (bought.value.length ? '' : tr('Pick at least one', 'Выберите хотя бы одно')))
@@ -61,9 +61,9 @@ const groceryError = computed(() => (bought.value.length ? '' : tr('Pick at leas
 &lt;/TaoFormField&gt;
 
 const todo = [
-  { value: 'tokens', label: 'Token layers' },
-  { value: 'menus', label: 'Menus', description: 'Menubar, context menu, dropdown' },
-  { value: 'salt', label: 'Salt', disabled: true },
+  { id: 'tokens', label: 'Token layers' },
+  { id: 'menus', label: 'Menus', description: 'Menubar, context menu, dropdown' },
+  { id: 'salt', label: 'Salt', disabled: true },
 ]</code></pre>
     </div>
   </ShowcaseSection>

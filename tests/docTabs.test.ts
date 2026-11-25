@@ -51,10 +51,10 @@ describe('moveTarget', () => {
 });
 
 const tabs: TaoDocTab[] = [
-    { value: 'a', label: 'Взрыв', title: 'effects/boom.fx.json' },
-    { value: 'b', label: 'Огонь', dirty: true },
-    { value: 'c', label: 'Лист', preview: true },
-    { value: 'd', label: 'Закреплённая', closable: false },
+    { id: 'a', label: 'Взрыв', title: 'effects/boom.fx.json' },
+    { id: 'b', label: 'Огонь', dirty: true },
+    { id: 'c', label: 'Лист', preview: true },
+    { id: 'd', label: 'Закреплённая', closable: false },
 ];
 
 const wrappers: VueWrapper[] = [];

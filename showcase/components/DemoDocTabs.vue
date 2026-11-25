@@ -11,10 +11,10 @@ defineOptions({ name: 'DemoDocTabs' })
 // the open documents of an imaginary editor; the app owns the list and what each close does
 // открытые документы воображаемого редактора; список и то, что значит закрытие, решает приложение
 const docs = ref([
-  { value: 'boom', label: 'boom.fx', title: 'effects/boom.fx.json', dirty: true },
-  { value: 'fire', label: 'fire.mat', title: 'materials/fire.mat.json' },
-  { value: 'smoke', label: 'smoke.fx', title: 'effects/smoke.fx.json', preview: true },
-  { value: 'sheet', label: 'sheet.flipbook', closable: false },
+  { id: 'boom', label: 'boom.fx', title: 'effects/boom.fx.json', dirty: true },
+  { id: 'fire', label: 'fire.mat', title: 'materials/fire.mat.json' },
+  { id: 'smoke', label: 'smoke.fx', title: 'effects/smoke.fx.json', preview: true },
+  { id: 'sheet', label: 'sheet.flipbook', closable: false },
 ])
 const active = ref('boom')
 const log = ref('')
@@ -22,14 +22,14 @@ const log = ref('')
 const items = computed(() => docs.value)
 
 function close(value) {
-  const index = docs.value.findIndex((d) => d.value === value)
+  const index = docs.value.findIndex((d) => d.id === value)
   docs.value.splice(index, 1)
-  if (active.value === value) active.value = docs.value[Math.min(index, docs.value.length - 1)]?.value ?? ''
+  if (active.value === value) active.value = docs.value[Math.min(index, docs.value.length - 1)]?.id ?? ''
   log.value = tr('closed: ', 'закрыта: ') + value
 }
 
 function pin(value) {
-  const doc = docs.value.find((d) => d.value === value)
+  const doc = docs.value.find((d) => d.id === value)
   if (doc) doc.preview = false
   log.value = tr('pinned: ', 'закреплена: ') + value
 }
@@ -43,7 +43,7 @@ function reorder(from, to) {
 let n = 0
 function add() {
   n++
-  docs.value.push({ value: `new${n}`, label: `new-${n}.fx`, dirty: n % 2 === 0 })
+  docs.value.push({ id: `new${n}`, label: `new-${n}.fx`, dirty: n % 2 === 0 })
   active.value = `new${n}`
 }
 </script>
@@ -94,9 +94,9 @@ function add() {
     <div class="code-block">
       <pre><code>&lt;script setup&gt;
 const docs = ref([
-  { value: 'boom', label: 'boom.fx', dirty: true },
-  { value: 'smoke', label: 'smoke.fx', preview: true },   // italics, pinned by a double click
-  { value: 'sheet', label: 'sheet', closable: false },
+  { id: 'boom', label: 'boom.fx', dirty: true },
+  { id: 'smoke', label: 'smoke.fx', preview: true },   // italics, pinned by a double click
+  { id: 'sheet', label: 'sheet', closable: false },
 ])
 const active = ref('boom')
 &lt;/script&gt;
@@ -105,7 +105,7 @@ const active = ref('boom')
   v-model="active"
   :items="docs"
   @close="closeDocument"
-  @pin="(id) =&gt; (docs.find((d) =&gt; d.value === id).preview = false)"
+  @pin="(id) =&gt; (docs.find((d) =&gt; d.id === id).preview = false)"
   @reorder="(from, to) =&gt; docs.splice(to, 0, ...docs.splice(from, 1))"
 /&gt;</code></pre>
     </div>

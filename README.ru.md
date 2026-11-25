@@ -485,7 +485,7 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 
 ```vue
 <TaoFormField label="Город" hint="Необязательно">
-  <TaoSelect v-model="city" :options="cities" />
+  <TaoSelect v-model="city" :items="cities" />
 </TaoFormField>
 
 <TaoSwitch v-model="dark" label="Тёмная тема" />
@@ -511,9 +511,9 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 Если `null` не допустим (шаг сетки, порядок сортировки), передайте `:clearable="false"`: строка сброса и Delete / Backspace пропадут. Подпись строки сброса — `clear-text`, для иконки или своей разметки есть слот `#clear`. `size` — `small` / `medium` / `large` (без него — от предков), масштабирует и раскрытый список.
 
 ```vue
-<TaoSelect v-model="step" :options="steps" size="small" :clearable="false" />
+<TaoSelect v-model="step" :items="steps" size="small" :clearable="false" />
 
-<TaoSelect v-model="city" :options="cities">
+<TaoSelect v-model="city" :items="cities">
   <template #clear><TaoIcon name="close" /> Сбросить</template>
 </TaoSelect>
 ```

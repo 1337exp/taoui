@@ -110,7 +110,7 @@ describe('deprecation machinery', () => {
 describe('events', () => {
     it('Tabs: update:modelValue when a tab is picked', async () => {
         const w = mount(TaoTabs, {
-            props: { items: [{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }], modelValue: 'a' },
+            props: { items: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }], modelValue: 'a' },
         });
         const tabs = w.findAll('.tao-tabs__tab');
         await tabs[1]!.trigger('click');
@@ -395,7 +395,7 @@ describe('provideTaoLocale', () => {
                 return () => hh('div', slots.default?.());
             },
         });
-        const w = mount({ render: () => hh('div', [hh(TaoSelect, { options: [] }), hh(Ru, null, { default: () => hh(TaoSelect, { options: [] }) })]) });
+        const w = mount({ render: () => hh('div', [hh(TaoSelect, { items: [] }), hh(Ru, null, { default: () => hh(TaoSelect, { items: [] }) })]) });
         const texts = w.findAll('.tao-select__value').map((el) => el.text());
         expect(texts).toEqual(['Select', 'Выберите']);
         expect(taoLocale().code).toBe('en-US');

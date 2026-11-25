@@ -34,7 +34,7 @@ defineOptions({ name: 'TaoTree' });
 // или идёт к родителю, Home / End, поиск по буквам, `*` раскрывает соседей, Enter / Space выбирают.
 const props = withDefaults(
     defineProps<{
-        nodes: TaoTreeNode[];
+        items: TaoTreeNode[];
         selection?: TaoTreeSelection;
         /** Checkboxes; a parent is checked, unchecked or mixed by its leaves. / Чекбоксы; родитель по своим листьям. */
         checkable?: boolean;
@@ -61,10 +61,10 @@ const props = withDefaults(
         /**
          * The order of the rows: `none` the data's (a drag can put a row between others), `name` folders first and by
          * name, or your compare. With a sort a drag only changes the folder: onto a folder puts the rows in it, onto
-         * any other row into that row's folder. The tree sorts what it shows; `nodes` stays as it is.
+         * any other row into that row's folder. The tree sorts what it shows; `items` stays as it is.
          * Порядок строк: `none` — как в данных (перенос ставит строку между другими), `name` — папки первыми и по имени,
          * или своё сравнение. С сортировкой перенос меняет только папку: на папку — в неё, на другую строку — в её
-         * папку. Дерево сортирует то, что показывает; `nodes` не меняется.
+         * папку. Дерево сортирует то, что показывает; `items` не меняется.
          */
         sort?: TaoTreeSort;
         /** Which rows can be moved (with `@move`); all but disabled ones by default. / Какие строки можно переносить. */
@@ -191,7 +191,7 @@ const children = (node: TaoTreeNode) => {
     return own && order.value(own);
 };
 
-const rows = computed(() => visibleRows(order.value(props.nodes), expandedSet.value, children));
+const rows = computed(() => visibleRows(order.value(props.items), expandedSet.value, children));
 const rowIndex = computed(() => new Map(rows.value.map((row, index) => [row.node.id, index])));
 
 lazy.watchRows(rows);
@@ -411,7 +411,7 @@ const { menuOpen, menuAnchor, menuItems, menuNode, onRowContextMenu, onSelect: o
 
 // Every known node (closed branches and loaded children too): the parent, the children in order, the node by id.
 // Каждый известный узел (и в свёрнутых ветках, и подгруженные): родитель, дети по порядку, узел по id.
-const known = computed(() => indexNodes(order.value(props.nodes), children));
+const known = computed(() => indexNodes(order.value(props.items), children));
 
 const canMove = computed(() => Boolean(props.onMove));
 const liveText = ref('');

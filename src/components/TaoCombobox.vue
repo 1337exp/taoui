@@ -7,7 +7,7 @@ import { nativeFieldAttrs, useField } from '../formField';
 import { useLayer } from '../layers';
 import { stepEnabled } from '../primitives/useRoving';
 import { listenFocusLoss } from '../focusLoss';
-import type { TaoSelectOption } from '../select';
+import type { TaoSelectItem } from '../select';
 import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
 import { resolveSize, sizeClass, type TaoSize } from '../size';
 import { formatText, useLocaleText, useTaoLocale } from '../locale';
@@ -22,7 +22,7 @@ const appLocale = useTaoLocale();
 
 const props = withDefaults(
     defineProps<{
-        options?: TaoSelectOption[];
+        items?: TaoSelectItem[];
         placeholder?: string;
         disabled?: boolean;
         /** The id of the control, which the label of a `TaoFormField` points at. / id элемента: на него указывает подпись `TaoFormField`. */
@@ -52,7 +52,7 @@ const props = withDefaults(
         allowCreate?: boolean;
     }>(),
     {
-        options: () => [],
+        items: () => [],
         disabled: false,
         invalid: false,
         clearable: true,
@@ -69,7 +69,7 @@ const emit = defineEmits<{
     create: [value: string];
 }>();
 
-type ComboRow = { kind: 'option'; option: TaoSelectOption } | { kind: 'create'; text: string };
+type ComboRow = { kind: 'option'; option: TaoSelectItem } | { kind: 'create'; text: string };
 
 const { field, controlId, isInvalid, describedBy, localId } = useField(props);
 const listId = `${localId}-list`;
@@ -88,15 +88,15 @@ const panelSize = ref<TaoSize>('medium');
 const panelDensity = ref<TaoResolvedDensity>('default');
 const listRef = ref<HTMLElement | null>(null);
 
-const selected = computed((): TaoSelectOption | null => {
-    const found = props.options.find((option) => option.value === model.value);
+const selected = computed((): TaoSelectItem | null => {
+    const found = props.items.find((option) => option.id === model.value);
     if (found) {
         return found;
     }
     if (model.value === null || model.value === undefined || model.value === '') {
         return null;
     }
-    return { value: model.value, label: String(model.value) };
+    return { id: model.value, label: String(model.value) };
 });
 
 const needle = computed(() => query.value.trim().toLowerCase());
@@ -111,9 +111,9 @@ const typed = ref(false);
 
 const filtered = computed(() => {
     if (!needle.value || !typed.value) {
-        return props.options;
+        return props.items;
     }
-    return props.options.filter((option) => option.label.toLowerCase().includes(needle.value));
+    return props.items.filter((option) => option.label.toLowerCase().includes(needle.value));
 });
 
 const canCreate = computed(() => {
@@ -121,7 +121,7 @@ const canCreate = computed(() => {
     if (!props.allowCreate || !text) {
         return false;
     }
-    return !props.options.some((option) => option.label.toLowerCase() === text.toLowerCase());
+    return !props.items.some((option) => option.label.toLowerCase() === text.toLowerCase());
 });
 
 const rows = computed((): ComboRow[] => {
@@ -151,7 +151,7 @@ function syncQueryFromModel() {
 
 function resetActive() {
     const selectedIndex = rows.value.findIndex(
-        (row) => row.kind === 'option' && row.option.value === model.value,
+        (row) => row.kind === 'option' && row.option.id === model.value,
     );
     if (selectedIndex >= 0 && enabledIndexes.value.includes(selectedIndex)) {
         activeIndex.value = selectedIndex;
@@ -199,12 +199,12 @@ function commitCreated(value: string) {
     keepFocusQuiet();
 }
 
-function selectOption(option: TaoSelectOption) {
+function selectOption(option: TaoSelectItem) {
     if (option.disabled) {
         return;
     }
 
-    emitValue(option.value);
+    emitValue(option.id);
     query.value = option.label;
     open.value = false;
     keepFocusQuiet();
@@ -216,7 +216,7 @@ function createFromQuery(text: string) {
         return;
     }
 
-    const exact = props.options.find(
+    const exact = props.items.find(
         (option) => !option.disabled && option.label.toLowerCase() === value.toLowerCase(),
     );
     if (exact) {
@@ -255,11 +255,11 @@ function closeAndCommit() {
         return;
     }
 
-    const exact = props.options.find(
+    const exact = props.items.find(
         (option) => !option.disabled && option.label.toLowerCase() === text.toLowerCase(),
     );
     if (exact) {
-        emitValue(exact.value);
+        emitValue(exact.id);
         query.value = exact.label;
         return;
     }
@@ -505,17 +505,17 @@ onBeforeUnmount(() => {
                     <li
                         v-for="(row, index) in rows"
                         :id="`${listId}-row-${index}`"
-                        :key="row.kind === 'create' ? 'create' : String(row.option.value)"
+                        :key="row.kind === 'create' ? 'create' : String(row.option.id)"
                         class="tao-combobox__option"
                         :class="{
                             'tao-combobox__option--active': index === activeIndex,
                             'tao-combobox__option--selected':
-                                row.kind === 'option' && row.option.value === model,
+                                row.kind === 'option' && row.option.id === model,
                             'tao-combobox__option--disabled': row.kind === 'option' && row.option.disabled,
                             'tao-combobox__option--create': row.kind === 'create',
                         }"
                         role="option"
-                        :aria-selected="row.kind === 'option' && row.option.value === model"
+                        :aria-selected="row.kind === 'option' && row.option.id === model"
                         :aria-disabled="row.kind === 'option' && row.option.disabled ? true : undefined"
                         :data-tao-combobox-index="index"
                         @mousedown.prevent="markPicking"

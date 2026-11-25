@@ -144,7 +144,7 @@ const App = defineComponent({
         h(TaoButton, { disabled: state.busy, onClick: checkAll }, () => 'Check all'),
         ...cases.map((c) => h(TaoButton, { variant: 'secondary', size: 'small', disabled: state.busy, onClick: () => checkOne(c) }, () => c.name)),
         h('span', { id: 'lab-popover', style: 'display:inline-block;margin-inline-start:13px' }, h(TaoPopover, { placement: 'bottom-start' }, { trigger: () => h(TaoButton, { variant: 'secondary', size: 'small' }, () => 'popover target'), default: () => h('div', [h('p', { style: 'margin:0 0 8px' }, 'The text of a popover.'), h(TaoButton, { size: 'small' }, () => 'A button')]) })),
-        h('span', { id: 'lab-select', style: 'display:inline-block;margin-inline-start:7px;width:140px' }, h(TaoSelect, { modelValue: 'a', options: [{ value: 'a', label: 'Alpha' }, { value: 'b', label: 'Beta' }] })),
+        h('span', { id: 'lab-select', style: 'display:inline-block;margin-inline-start:7px;width:140px' }, h(TaoSelect, { modelValue: 'a', items: [{ id: 'a', label: 'Alpha' }, { value: 'b', label: 'Beta' }] })),
         h(TaoTooltip, { content: 'A tooltip', placement: 'top' }, () => h('span', { ref: tip, style: 'display:inline-block;padding:4px 8px;border:1px dashed var(--tao-color-border-strong)' }, 'tooltip target')),
       ]),
       h('table', { style: 'border-collapse:collapse;width:100%' }, [

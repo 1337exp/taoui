@@ -300,7 +300,7 @@ Showcase section: `#checklist`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `items` | `TaoChecklistItem[]` | — | { value, label, description?, disabled? } |
+| `items` | `TaoChecklistItem[]` | — | { id, label, description?, disabled? } |
 | `v-model` | `(string \| number)[]` | [] | The checked values, in the order of the items |
 | `legend` | `string` | — | The group caption (legend). In a TaoFormField the field gives it |
 | `selectAll` | `boolean` | false | «Select all» on top: mixed when some are checked; toggles every enabled item |
@@ -335,7 +335,7 @@ Showcase section: `#select`
 | Prop | Type | Default | Notes |
 |---|---|---|---|
 | `v-model` | `string \| number \| null` | null | value of the selected option. Clearing → null |
-| `options` | `TaoSelectOption[]` | [] | { value, label, disabled? } |
+| `items` | `TaoSelectItem[]` | [] | { id, label, disabled? } |
 | `placeholder` | `string` | 'Choose' | When the model is null |
 | `disabled` | `boolean` | false | Disabled |
 | `invalid` | `boolean` | false | A red border |
@@ -423,7 +423,7 @@ Showcase section: `#combobox`
 | Prop | Type | Default | Notes |
 |---|---|---|---|
 | `v-model` | `string \| number \| null` | null | value of an option, or an arbitrary string with allow-create |
-| `options` | `TaoSelectOption[]` | [] | { value, label, disabled? }. The list is not mutated by the component |
+| `items` | `TaoSelectItem[]` | [] | { id, label, disabled? }. The list is not mutated by the component |
 | `placeholder` | `string` | 'Start typing' | The empty field |
 | `allowCreate` | `boolean` | false | A value that is not in the list can be kept |
 | `emptyText` | `string` | 'Nothing found' | An empty filter |
@@ -443,7 +443,7 @@ Showcase section: `#doc-tabs`
 | Prop | Type | Default | Notes |
 |---|---|---|---|
 | `v-model` | `string` | — | The value of the active tab. It may be none of them (no document open): then the first one is the way in by Tab |
-| `items` | `{ value, label, title?, dirty?, preview?, closable? }[]` | [] | The tabs. value is the id of the document; title the full name for a hint; dirty the unsaved dot; preview a preview (italics, pinned by a double click or Enter); closable: false has no cross and cannot be closed |
+| `items` | `{ id, label, title?, dirty?, preview?, closable? }[]` | [] | The tabs. id is the id of the document; title the full name for a hint; dirty the unsaved dot; preview a preview (italics, pinned by a double click or Enter); closable: false has no cross and cannot be closed |
 | `controls` | `string` | — | The id of the element the active tab controls (the document view): aria-controls |
 | `label` | `string` | 'Open documents' | The name of the row for a screen reader |
 | `closeLabel` | `string` | 'Close' | The label of the cross (the tab name follows it) |
@@ -834,7 +834,7 @@ Showcase section: `#tree`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `nodes` | `TaoTreeNode[]` | — | { id, label, icon?, children?, hasChildren?, disabled?, hint?, tone? }. hasChildren without children — the children come from load when it opens. hint — a quiet note after the label («library root»). tone — the colour of the label: 'muted' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'danger' |
+| `items` | `TaoTreeNode[]` | — | { id, label, icon?, children?, hasChildren?, disabled?, hint?, tone? }. hasChildren without children — the children come from load when it opens. hint — a quiet note after the label («library root»). tone — the colour of the label: 'muted' \| 'accent' \| 'info' \| 'success' \| 'warning' \| 'danger' |
 | `v-model:expanded` | `string[]` | own | Ids of the expanded nodes. Without a model the tree keeps them itself. A saved view can be put back: open lazy folders load by themselves, level by level; a failed load closes the folder (load-error) |
 | `selection` | `'none' \| 'single' \| 'multiple'` | 'single' | Selection mode. none — a click on a folder toggles it |
 | `v-model:selected` | `string \| string[] \| null` | own | An id (single) or a list of ids (multiple) |
@@ -1297,7 +1297,7 @@ Showcase section: `#tabs`
 | Prop | Type | Default | Notes |
 |---|---|---|---|
 | `v-model` | `string` | — | value of the active tab. Required |
-| `items` | `TaoTabItem[]` | — | { value, label, disabled? } — like Select options |
+| `items` | `TaoTabItem[]` | — | { id, label, disabled? } — like Select items |
 | `justify` | `TaoJustify` | — | Where the tabs sit in the row, as in TaoFlex: flex-start, center, flex-end, space-between, space-around, space-evenly. Without it, at the left |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | The tab height as TaoButton (26 / 36 / 44). Without it — the size of the ancestors |
 

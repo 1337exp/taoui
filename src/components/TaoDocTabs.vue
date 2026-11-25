@@ -58,7 +58,7 @@ function select(value: string, focus = false) {
 }
 
 function indexOf(value: string) {
-    return props.items.findIndex((t) => t.value === value);
+    return props.items.findIndex((t) => t.id === value);
 }
 
 // The arrows (left / right), Home and End walk the tabs and select the one they land on.
@@ -67,14 +67,14 @@ const activeIndex = computed({
     get: () => indexOf(model.value),
     set: (index: number) => {
         const tab = props.items[index];
-        if (tab) select(tab.value, true);
+        if (tab) select(tab.id, true);
     },
 });
 const nav = useRoving({ enabled: () => props.items.map(() => true), active: activeIndex, orientation: 'horizontal' });
 
 function onKeydown(event: KeyboardEvent, tab: TaoDocTab) {
     const key = event.key;
-    const index = indexOf(tab.value);
+    const index = indexOf(tab.id);
     // Alt + arrows moves the tab itself: the keyboard way to what the pointer does by dragging. Without a `reorder` listener
     // the keys are left alone (Alt + ← is «back» in a browser).
     if (event.altKey && (key === 'ArrowLeft' || key === 'ArrowRight')) {
@@ -83,7 +83,7 @@ function onKeydown(event: KeyboardEvent, tab: TaoDocTab) {
         const to = moveTarget(index, key === 'ArrowLeft' ? index - 1 : index + 1, key === 'ArrowRight', props.items.length);
         if (to !== null) {
             emit('reorder', index, to);
-            void nextTick(() => document.getElementById(tabId(tab.value))?.focus());
+            void nextTick(() => document.getElementById(tabId(tab.id))?.focus());
         }
         return;
     }
@@ -93,26 +93,26 @@ function onKeydown(event: KeyboardEvent, tab: TaoDocTab) {
     }
     if (key === 'Delete' && closable(tab)) {
         event.preventDefault();
-        emit('close', tab.value);
+        emit('close', tab.id);
     } else if (key === 'Enter' && tab.preview) {
         event.preventDefault();
-        emit('pin', tab.value);
+        emit('pin', tab.id);
     } else if (key === 'ContextMenu' || (key === 'F10' && event.shiftKey)) {
         event.preventDefault();
-        emit('menu', tab.value, event);
+        emit('menu', tab.id, event);
     }
 }
 
 function onAuxClick(event: MouseEvent, tab: TaoDocTab) {
     if (event.button === 1 && closable(tab)) {
         event.preventDefault();
-        emit('close', tab.value);
+        emit('close', tab.id);
     }
 }
 
 function onContextMenu(event: MouseEvent, tab: TaoDocTab) {
     event.preventDefault();
-    emit('menu', tab.value, event);
+    emit('menu', tab.id, event);
 }
 
 // ---- dragging a tab / перетаскивание вкладки
@@ -120,10 +120,10 @@ const dragFrom = ref(-1);
 const dropMark = ref<{ index: number; after: boolean } | null>(null);
 
 function onDragStart(event: DragEvent, tab: TaoDocTab) {
-    dragFrom.value = indexOf(tab.value);
+    dragFrom.value = indexOf(tab.id);
     if (event.dataTransfer) {
         event.dataTransfer.effectAllowed = 'move';
-        event.dataTransfer.setData('text/plain', tab.value);
+        event.dataTransfer.setData('text/plain', tab.id);
     }
 }
 
@@ -145,7 +145,7 @@ function onDragOver(event: DragEvent, tab: TaoDocTab) {
     if (dragFrom.value < 0) return;
     event.preventDefault();
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-    dropMark.value = { index: indexOf(tab.value), after: event.clientX > rect.left + rect.width / 2 };
+    dropMark.value = { index: indexOf(tab.id), after: event.clientX > rect.left + rect.width / 2 };
 }
 
 function onDrop(event: DragEvent) {
@@ -195,7 +195,7 @@ watch(
 );
 
 const tabindex = (tab: TaoDocTab, index: number) =>
-    tab.value === model.value || (!props.items.some((t) => t.value === model.value) && index === 0) ? 0 : -1;
+    tab.id === model.value || (!props.items.some((t) => t.id === model.value) && index === 0) ? 0 : -1;
 </script>
 
 <template>
@@ -203,11 +203,11 @@ const tabindex = (tab: TaoDocTab, index: number) =>
         <div ref="listRef" class="tao-doc-tabs__list" role="tablist" :aria-label="label ?? l10n.label" @wheel="onWheel" @drop="onDrop">
             <div
                 v-for="(tab, index) in items"
-                :id="tabId(tab.value)"
-                :key="tab.value"
+                :id="tabId(tab.id)"
+                :key="tab.id"
                 class="tao-doc-tabs__tab"
                 :class="{
-                    'is-active': tab.value === model,
+                    'is-active': tab.id === model,
                     'is-preview': tab.preview,
                     'is-dirty': tab.dirty,
                     'is-dragging': dragFrom === index,
@@ -215,13 +215,13 @@ const tabindex = (tab: TaoDocTab, index: number) =>
                     'drop-after': dropSlot === items.length && index === items.length - 1,
                 }"
                 role="tab"
-                :aria-selected="tab.value === model"
-                :aria-controls="tab.value === model ? controls : undefined"
+                :aria-selected="tab.id === model"
+                :aria-controls="tab.id === model ? controls : undefined"
                 :tabindex="tabindex(tab, index)"
                 :title="tab.title"
                 :draggable="reorderable()"
-                @click="select(tab.value)"
-                @dblclick="tab.preview && emit('pin', tab.value)"
+                @click="select(tab.id)"
+                @dblclick="tab.preview && emit('pin', tab.id)"
                 @auxclick="onAuxClick($event, tab)"
                 @contextmenu="onContextMenu($event, tab)"
                 @keydown="onKeydown($event, tab)"
@@ -235,7 +235,7 @@ const tabindex = (tab: TaoDocTab, index: number) =>
                 <template v-if="tab.dirty"
                     ><span class="tao-doc-tabs__dot" aria-hidden="true"></span><span class="tao-sr-only">{{ dirtyLabel ?? l10n.dirtyLabel }}</span></template
                 >
-                <button v-if="closable(tab)" type="button" class="tao-doc-tabs__close" tabindex="-1" aria-hidden="true" :aria-label="`${closeLabel ?? l10n.closeLabel} ${tab.label}`" @click.stop="emit('close', tab.value)">
+                <button v-if="closable(tab)" type="button" class="tao-doc-tabs__close" tabindex="-1" aria-hidden="true" :aria-label="`${closeLabel ?? l10n.closeLabel} ${tab.label}`" @click.stop="emit('close', tab.id)">
                     <TaoIcon name="tao-close" aria-hidden="true" />
                 </button>
             </div>

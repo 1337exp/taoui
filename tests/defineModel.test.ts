@@ -53,13 +53,13 @@ describe('without v-model the component keeps its own state', () => {
     });
 
     it('TaoTabs: the picked tab becomes active', async () => {
-        const w = mount(TaoTabs, { props: { items: [{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }], modelValue: 'a' } });
+        const w = mount(TaoTabs, { props: { items: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }], modelValue: 'a' } });
         await w.findAll('.tao-tabs__tab')[1]!.trigger('click');
         expect(w.findAll('.tao-tabs__tab')[1]!.attributes('aria-selected')).toBe('true');
     });
 
     it('TaoChecklist: a ticked box stays ticked', async () => {
-        const w = mount(TaoChecklist, { props: { items: [{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }] } });
+        const w = mount(TaoChecklist, { props: { items: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }] } });
         await w.findAll('input')[0]!.setValue(true);
         expect((w.findAll('input')[0]!.element as HTMLInputElement).checked).toBe(true);
         expect(w.emitted('update:modelValue')?.at(-1)).toEqual([['a']]);

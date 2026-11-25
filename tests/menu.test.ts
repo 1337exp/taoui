@@ -196,7 +196,7 @@ describe('layers', () => {
                 h(
                     TaoModal as never,
                     { modelValue: modalOpen.value, 'onUpdate:modelValue': (v: boolean) => (modalOpen.value = v) },
-                    { default: () => h(TaoSelect as never, { options: [{ value: 'a', label: 'A' }] }) },
+                    { default: () => h(TaoSelect as never, { items: [{ id: 'a', label: 'A' }] }) },
                 ),
         });
         const w = mount(Host, { attachTo: document.body });

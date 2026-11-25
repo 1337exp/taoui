@@ -1,5 +1,5 @@
-export interface TaoSelectOption {
-    value: string | number;
+export interface TaoSelectItem {
+    id: string | number;
     label: string;
     disabled?: boolean;
 }

@@ -281,7 +281,7 @@ export const propTables = {
     {
       title: 'TaoChecklist',
       rows: [
-        r('items', 'TaoChecklistItem[]', '—', '{ value, label, description?, disabled? }'),
+        r('items', 'TaoChecklistItem[]', '—', '{ id, label, description?, disabled? }'),
         r('v-model', '(string | number)[]', '[]', 'Отмеченные значения, в порядке пунктов'),
         r('legend', 'string', '—', 'Подпись группы (legend). В TaoFormField её даёт поле'),
         r('selectAll', 'boolean', 'false', '«Выбрать всё» сверху: промежуточное состояние, когда отмечена часть; переключает все доступные пункты'),
@@ -315,7 +315,7 @@ export const propTables = {
       title: 'TaoSelect',
       rows: [
         r('v-model', 'string | number | null', 'null', 'value выбранной опции. Очистка → null'),
-        r('options', 'TaoSelectOption[]', '[]', '{ value, label, disabled? }'),
+        r('items', 'TaoSelectItem[]', '[]', '{ id, label, disabled? }'),
         r('placeholder', 'string', "'Выберите'", 'Когда модель null'),
         r('disabled', 'boolean', 'false', 'Неактивен'),
         r('invalid', 'boolean', 'false', 'Красная рамка'),
@@ -392,7 +392,7 @@ export const propTables = {
       title: 'TaoCombobox',
       rows: [
         r('v-model', 'string | number | null', 'null', 'value опции или произвольная строка при allow-create'),
-        r('options', 'TaoSelectOption[]', '[]', '{ value, label, disabled? }. Список не мутирует сам'),
+        r('items', 'TaoSelectItem[]', '[]', '{ id, label, disabled? }. Список не мутирует сам'),
         r('placeholder', 'string', "'Начните вводить'", 'Пустое поле'),
         r('allowCreate', 'boolean', 'false', 'Можно оставить то, чего нет в списке'),
         r('emptyText', 'string', "'Ничего не найдено'", 'Пустой фильтр'),
@@ -411,7 +411,7 @@ export const propTables = {
       title: 'TaoDocTabs',
       rows: [
         r('v-model', 'string', '—', 'Значение активной вкладки. Может не совпасть ни с одной (документ не открыт): тогда в Tab входит первая'),
-        r('items', '{ value, label, title?, dirty?, preview?, closable? }[]', '[]', 'Вкладки. value — id документа; title — полное имя для подсказки; dirty — точка «не сохранено»; preview — предпросмотр (курсив, закрепляется двойным кликом или Enter); closable: false — без крестика, не закрывается'),
+        r('items', '{ id, label, title?, dirty?, preview?, closable? }[]', '[]', 'Вкладки. id — id документа; title — полное имя для подсказки; dirty — точка «не сохранено»; preview — предпросмотр (курсив, закрепляется двойным кликом или Enter); closable: false — без крестика, не закрывается'),
         r('controls', 'string', '—', 'id элемента, которым управляет активная вкладка (вид документа): aria-controls'),
         r('label', 'string', "'Открытые документы'", 'Имя ряда для скринридера'),
         r('closeLabel', 'string', "'Закрыть'", 'Подпись крестика (за ней имя вкладки)'),
@@ -767,7 +767,7 @@ export const propTables = {
     {
       title: 'TaoTree',
       rows: [
-        r('nodes', 'TaoTreeNode[]', '—', "{ id, label, icon?, children?, hasChildren?, disabled?, hint?, tone? }. hasChildren без children — дети подгрузятся через load при раскрытии. hint — тихая подпись после имени («library root»). tone — цвет подписи: 'muted' | 'accent' | 'info' | 'success' | 'warning' | 'danger'"),
+        r('items', 'TaoTreeNode[]', '—', "{ id, label, icon?, children?, hasChildren?, disabled?, hint?, tone? }. hasChildren без children — дети подгрузятся через load при раскрытии. hint — тихая подпись после имени («library root»). tone — цвет подписи: 'muted' | 'accent' | 'info' | 'success' | 'warning' | 'danger'"),
         r('v-model:expanded', 'string[]', 'свой', 'id раскрытых узлов. Без модели дерево хранит их само. Можно восстановить сохранённый вид: раскрытые ленивые папки подгрузятся сами, уровень за уровнем; упавшая загрузка закроет папку (load-error)'),
         r('selection', "'none' | 'single' | 'multiple'", "'single'", 'Режим выбора. none — клик по папке раскрывает её'),
         r('v-model:selected', 'string | string[] | null', 'свой', 'id (single) или список id (multiple)'),
@@ -1190,7 +1190,7 @@ export const propTables = {
       title: 'TaoTabs',
       rows: [
         r('v-model', 'string', '—', 'value активной вкладки. Обязательный'),
-        r('items', 'TaoTabItem[]', '—', '{ value, label, disabled? } — как опции Select'),
+        r('items', 'TaoTabItem[]', '—', '{ id, label, disabled? } — как элементы Select'),
 
         r('justify', 'TaoJustify', '—', 'Где вкладки в ряду, как у TaoFlex: flex-start, center, flex-end, space-between, space-around, space-evenly. Без него слева'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Высота вкладки как у TaoButton (26 / 36 / 44). Без него — размер предков'),

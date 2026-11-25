@@ -63,23 +63,23 @@ provide(formFieldKey, null as unknown as TaoFormFieldContext);
 const labelledBy = computed(() => (props.legend || !field ? undefined : `${field.id}-label`));
 const checked = computed(() => new Set(model.value));
 const enabledItems = computed(() => props.items.filter((item) => !item.disabled));
-const checkedCount = computed(() => props.items.filter((item) => checked.value.has(item.value)).length);
-const enabledChecked = computed(() => enabledItems.value.filter((item) => checked.value.has(item.value)).length);
+const checkedCount = computed(() => props.items.filter((item) => checked.value.has(item.id)).length);
+const enabledChecked = computed(() => enabledItems.value.filter((item) => checked.value.has(item.id)).length);
 const allChecked = computed(() => enabledItems.value.length > 0 && enabledChecked.value === enabledItems.value.length);
 const someChecked = computed(() => enabledChecked.value > 0 && !allChecked.value);
 
 function commit(next: Set<string | number>) {
     // keep the order of the items / сохраняем порядок пунктов
-    const values = props.items.filter((item) => next.has(item.value)).map((item) => item.value);
+    const values = props.items.filter((item) => next.has(item.id)).map((item) => item.id);
     model.value = values;
 }
 
 function setItem(item: TaoChecklistItem, on: boolean) {
     const next = new Set(checked.value);
     if (on) {
-        next.add(item.value);
+        next.add(item.id);
     } else {
-        next.delete(item.value);
+        next.delete(item.id);
     }
     commit(next);
 }
@@ -90,9 +90,9 @@ function setAll() {
     const on = !allChecked.value;
     for (const item of enabledItems.value) {
         if (on) {
-            next.add(item.value);
+            next.add(item.id);
         } else {
-            next.delete(item.value);
+            next.delete(item.id);
         }
     }
     commit(next);
@@ -130,18 +130,18 @@ function setAll() {
         <ul class="tao-checklist__list" :class="{ 'tao-checklist__list--nested': selectAll }">
             <li
                 v-for="item in items"
-                :key="item.value"
+                :key="item.id"
                 class="tao-checklist__item"
-                :class="{ 'tao-checklist__item--checked': checked.has(item.value) }"
+                :class="{ 'tao-checklist__item--checked': checked.has(item.id) }"
             >
                 <TaoCheckbox
-                    :model-value="checked.has(item.value)"
+                    :model-value="checked.has(item.id)"
                     :disabled="disabled || item.disabled"
                     :invalid="isInvalid"
                     @update:model-value="setItem(item, $event)"
                 >
                     <span class="tao-checklist__text">
-                        <slot name="item" :item="item" :checked="checked.has(item.value)">
+                        <slot name="item" :item="item" :checked="checked.has(item.id)">
                             <span class="tao-checklist__label">{{ item.label }}</span>
                             <span v-if="item.description" class="tao-checklist__description">{{ item.description }}</span>
                         </slot>

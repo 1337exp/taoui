@@ -88,8 +88,8 @@ const sentinelRef = ref(null)
 const stuck = ref(false)
 
 const paletteOptions = computed(() => [
-  { value: 'default', label: tr('Default', 'По умолчанию') },
-  ...taoPalettes.map((p) => ({ value: p.name, label: p.label })),
+  { id: 'default', label: tr('Default', 'По умолчанию') },
+  ...taoPalettes.map((p) => ({ id: p.name, label: p.label })),
 ])
 const swatches = computed(() => taoPalettes.find((p) => p.name === palette.value)?.stops ?? [])
 
@@ -220,7 +220,7 @@ onBeforeUnmount(() => {
         <template v-if="!narrow">
           <span class="showcase-bar__palette">
             <span class="palette-select">
-              <TaoSelect :model-value="palette" :options="paletteOptions" :clearable="false" :aria-label="tr('Palette', 'Палитра')" @update:model-value="setPalette" />
+              <TaoSelect :model-value="palette" :items="paletteOptions" :clearable="false" :aria-label="tr('Palette', 'Палитра')" @update:model-value="setPalette" />
             </span>
             <span class="palette-swatches" aria-hidden="true">
               <i v-for="color in swatches" :key="color" :style="{ background: color }" />
@@ -240,7 +240,7 @@ onBeforeUnmount(() => {
                 <span class="showcase-view__label">{{ tr('Palette', 'Палитра') }}</span>
                 <span class="showcase-bar__palette">
                   <span class="palette-select">
-                    <TaoSelect :model-value="palette" :options="paletteOptions" :clearable="false" :aria-label="tr('Palette', 'Палитра')" @update:model-value="setPalette" />
+                    <TaoSelect :model-value="palette" :items="paletteOptions" :clearable="false" :aria-label="tr('Palette', 'Палитра')" @update:model-value="setPalette" />
                   </span>
                   <span class="palette-swatches" aria-hidden="true">
                     <i v-for="color in swatches" :key="color" :style="{ background: color }" />

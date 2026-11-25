@@ -5,8 +5,8 @@ import { TaoButton, TaoFlex, TaoSegmented, TaoSegmentedOption, TaoSelect } from 
 const mode = ref('grid')
 const palette = ref('sunset')
 const palettes = [
-  { value: 'sunset', label: 'Sunset' },
-  { value: 'lagoon', label: 'Lagoon' },
+  { id: 'sunset', label: 'Sunset' },
+  { id: 'lagoon', label: 'Lagoon' },
 ]
 </script>
 
@@ -16,7 +16,7 @@ const palettes = [
       <TaoSegmentedOption value="grid">Grid</TaoSegmentedOption>
       <TaoSegmentedOption value="list">List</TaoSegmentedOption>
     </TaoSegmented>
-    <TaoSelect v-model="palette" :options="palettes" :clearable="false" aria-label="Palette" />
+    <TaoSelect v-model="palette" :items="palettes" :clearable="false" aria-label="Palette" />
     <TaoButton variant="secondary">Apply</TaoButton>
   </TaoFlex>
 </template>

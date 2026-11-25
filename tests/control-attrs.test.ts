@@ -27,9 +27,9 @@ const cases: [string, unknown, Record<string, unknown>, string][] = [
     ['TaoInput', TaoInput, {}, 'input'],
     ['TaoTextarea', TaoTextarea, {}, 'textarea'],
     ['TaoInputNumber', TaoInputNumber, { modelValue: 1 }, 'input'],
-    ['TaoCombobox', TaoCombobox, { options: [] }, 'input'],
+    ['TaoCombobox', TaoCombobox, { items: [] }, 'input'],
     ['TaoPresetInput', TaoPresetInput, { options: [] }, 'input'],
-    ['TaoSelect', TaoSelect, { options: [] }, 'button.tao-select__trigger'],
+    ['TaoSelect', TaoSelect, { items: [] }, 'button.tao-select__trigger'],
     ['TaoDate', TaoDate, {}, 'button.tao-date__trigger'],
     ['TaoDate editable', TaoDate, { editable: true }, 'input.tao-date__input'],
     ['TaoDateRange', TaoDateRange, {}, 'button.tao-date-range__trigger'],
@@ -125,7 +125,7 @@ describe('TaoInput variant', () => {
 describe('the text fields share the variants', () => {
     it.each([
         ['TaoInputNumber', TaoInputNumber, { modelValue: 1 }, 'tao-input-number'],
-        ['TaoCombobox', TaoCombobox, { options: [] }, 'tao-combobox'],
+        ['TaoCombobox', TaoCombobox, { items: [] }, 'tao-combobox'],
     ] as [string, unknown, Record<string, unknown>, string][])('%s: outline by default, filled and plain mark the root', (_, component, props, base) => {
         const classes = (variant?: string) => mount(component as never, { props: { ...props, variant } as never }).classes();
         expect(classes().filter((c) => /--(filled|plain|outline)$/.test(c))).toEqual([]);

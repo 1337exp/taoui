@@ -14,38 +14,38 @@ const comboLarge = ref("msk")
 const comboTag = ref(null)
 const comboFree = ref(null)
 const comboCities = computed(() => [
-  { value: 'msk', label: tr('Moscow', 'Москва') },
-  { value: 'spb', label: tr('Saint Petersburg', 'Санкт-Петербург') },
-  { value: 'kzn', label: tr('Kazan', 'Казань'), disabled: true },
-  { value: 'nsk', label: tr('Novosibirsk', 'Новосибирск') },
-  { value: 'ekb', label: tr('Yekaterinburg', 'Екатеринбург') },
-  { value: 'nn', label: tr('Nizhny Novgorod', 'Нижний Новгород') },
-  { value: 'sam', label: tr('Samara', 'Самара') },
-  { value: 'oms', label: tr('Omsk', 'Омск') },
-  { value: 'chel', label: tr('Chelyabinsk', 'Челябинск') },
-  { value: 'rnd', label: tr('Rostov-on-Don', 'Ростов-на-Дону') },
-  { value: 'ufa', label: tr('Ufa', 'Уфа') },
-  { value: 'krsk', label: tr('Krasnoyarsk', 'Красноярск') },
-  { value: 'vrn', label: tr('Voronezh', 'Воронеж') },
-  { value: 'perm', label: tr('Perm', 'Пермь') },
-  { value: 'vlg', label: tr('Volgograd', 'Волгоград') },
+  { id: 'msk', label: tr('Moscow', 'Москва') },
+  { id: 'spb', label: tr('Saint Petersburg', 'Санкт-Петербург') },
+  { id: 'kzn', label: tr('Kazan', 'Казань'), disabled: true },
+  { id: 'nsk', label: tr('Novosibirsk', 'Новосибирск') },
+  { id: 'ekb', label: tr('Yekaterinburg', 'Екатеринбург') },
+  { id: 'nn', label: tr('Nizhny Novgorod', 'Нижний Новгород') },
+  { id: 'sam', label: tr('Samara', 'Самара') },
+  { id: 'oms', label: tr('Omsk', 'Омск') },
+  { id: 'chel', label: tr('Chelyabinsk', 'Челябинск') },
+  { id: 'rnd', label: tr('Rostov-on-Don', 'Ростов-на-Дону') },
+  { id: 'ufa', label: tr('Ufa', 'Уфа') },
+  { id: 'krsk', label: tr('Krasnoyarsk', 'Красноярск') },
+  { id: 'vrn', label: tr('Voronezh', 'Воронеж') },
+  { id: 'perm', label: tr('Perm', 'Пермь') },
+  { id: 'vlg', label: tr('Volgograd', 'Волгоград') },
 ])
 const comboFreeOptions = [
-  { value: 'vue', label: 'Vue' },
-  { value: 'nuxt', label: 'Nuxt' },
-  { value: 'ts', label: 'TypeScript' },
+  { id: 'vue', label: 'Vue' },
+  { id: 'nuxt', label: 'Nuxt' },
+  { id: 'ts', label: 'TypeScript' },
 ]
 const comboTags = ref([
-  { value: 'vue', label: 'Vue' },
-  { value: 'nuxt', label: 'Nuxt' },
-  { value: 'ts', label: 'TypeScript' },
+  { id: 'vue', label: 'Vue' },
+  { id: 'nuxt', label: 'Nuxt' },
+  { id: 'ts', label: 'TypeScript' },
 ])
 function onComboTagCreate(text) {
   const exists = comboTags.value.some(
-    (tag) => tag.value === text || tag.label.toLowerCase() === String(text).toLowerCase(),
+    (tag) => tag.id === text || tag.label.toLowerCase() === String(text).toLowerCase(),
   )
   if (!exists) {
-    comboTags.value.push({ value: text, label: text })
+    comboTags.value.push({ id: text, label: text })
   }
 }
 </script>
@@ -62,7 +62,7 @@ function onComboTagCreate(text) {
                 <code>empty-text</code> / <code>clear-text</code>). <code>allow-create</code>
                 keeps your own text in
                 <code>v-model</code>; the Combobox does not touch the list itself. For the new value to appear in
-                <code>options</code>, listen to <code>@create</code>. Esc and a click outside close it.
+                <code>items</code>, listen to <code>@create</code>. Esc and a click outside close it.
               </p>
             </template>
             <template #ru>
@@ -73,7 +73,7 @@ function onComboTagCreate(text) {
                 <code>empty-text</code> / <code>clear-text</code>). <code>allow-create</code>
                 оставляет свой текст в
                 <code>v-model</code>; список Combobox сам не трогает. Чтобы новое появилось в
-                <code>options</code>, слушайте <code>@create</code>. Esc и клик снаружи закрывают.
+                <code>items</code>, слушайте <code>@create</code>. Esc и клик снаружи закрывают.
               </p>
             </template>
           </Tr>
@@ -83,7 +83,7 @@ function onComboTagCreate(text) {
               :label="tr('City', 'Город')"
               :hint="comboCity ? tr(`In the model: ${comboCity}`, `В модели: ${comboCity}`) : tr('Only from the list. Start with “mo” or “sai”', 'Только из списка. Начните с «мо» или «сан»')"
             >
-              <TaoCombobox v-model="comboCity" :options="comboCities" :placeholder="tr('Start typing a city', 'Начните вводить город')" />
+              <TaoCombobox v-model="comboCity" :items="comboCities" :placeholder="tr('Start typing a city', 'Начните вводить город')" />
             </TaoFormField>
     
             <TaoFormField
@@ -92,7 +92,7 @@ function onComboTagCreate(text) {
             >
               <TaoCombobox
                 v-model="comboFree"
-                :options="comboFreeOptions"
+                :items="comboFreeOptions"
                 allow-create
                 :placeholder="tr('Vue, Nuxt or your own', 'Vue, Nuxt или свой')"
               />
@@ -104,7 +104,7 @@ function onComboTagCreate(text) {
             >
               <TaoCombobox
                 v-model="comboTag"
-                :options="comboTags"
+                :items="comboTags"
                 allow-create
                 :placeholder="tr('Vue, Nuxt or your own', 'Vue, Nuxt или свой')"
                 @create="onComboTagCreate"
@@ -112,22 +112,22 @@ function onComboTagCreate(text) {
             </TaoFormField>
     
             <TaoFormField label="Disabled">
-              <TaoCombobox model-value="msk" :options="comboCities" disabled />
+              <TaoCombobox model-value="msk" :items="comboCities" disabled />
               <div style="display: flex; flex-direction: column; gap: 12px">
-                <TaoCombobox v-model="comboSmall" :options="comboCities" size="small" :clearable="false" placeholder="small, clearable=false" />
-                <TaoCombobox v-model="comboLarge" :options="comboCities" size="large" placeholder="large" />
+                <TaoCombobox v-model="comboSmall" :items="comboCities" size="small" :clearable="false" placeholder="small, clearable=false" />
+                <TaoCombobox v-model="comboLarge" :items="comboCities" size="large" placeholder="large" />
               </div>
             </TaoFormField>
           </div>
     
           <div class="code-block">
-            <pre><code>&lt;TaoCombobox v-model="city" :options="cities" /&gt;
-&lt;TaoCombobox v-model="query" :options="tags" allow-create /&gt;
-&lt;TaoCombobox v-model="tag" :options="tags" allow-create @create="onCreate" /&gt;
+            <pre><code>&lt;TaoCombobox v-model="city" :items="cities" /&gt;
+&lt;TaoCombobox v-model="query" :items="tags" allow-create /&gt;
+&lt;TaoCombobox v-model="tag" :items="tags" allow-create @create="onCreate" /&gt;
 
 &lt;TaoCombobox
   v-model="city"
-  :options="cities"
+  :items="cities"
   placeholder="Start typing"
   empty-text="Nothing found"
   clear-text="Clear"

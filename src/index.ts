@@ -246,7 +246,7 @@ export type { TaoSurface } from './surface';
 export type { TaoLength } from './length';
 export type { TaoRadius, TaoSquare, TaoSquareSide } from './radius';
 export type { TaoJustify } from './layout';
-export type { TaoSelectOption } from './select';
+export type { TaoSelectItem } from './select';
 export type { TaoPlacement, TaoAnchor, TaoVirtualAnchor } from './floating';
 export type { TaoTabItem } from './tabs';
 export type { TaoDateCell, TaoDateField, TaoDateInputOptions, TaoDateParts, TaoDateRangeValue } from './date';

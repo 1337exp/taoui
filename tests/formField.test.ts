@@ -29,8 +29,8 @@ const controls: [string, Component, string, Record<string, unknown>][] = [
     ['TaoDragNumber', TaoDragNumber, 'input', { modelValue: 1 }],
     ['TaoCheckbox', TaoCheckbox, 'input', { modelValue: false }],
     ['TaoSwitch', TaoSwitch, 'input', { modelValue: false }],
-    ['TaoSelect', TaoSelect, '[role="combobox"]', { options: [] }],
-    ['TaoCombobox', TaoCombobox, 'input', { options: [] }],
+    ['TaoSelect', TaoSelect, '[role="combobox"]', { items: [] }],
+    ['TaoCombobox', TaoCombobox, 'input', { items: [] }],
     ['TaoDate', TaoDate, '[role="combobox"]', {}],
 ];
 

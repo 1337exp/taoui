@@ -41,7 +41,7 @@ function panelId(key: string) {
 }
 
 function selectTab(key: string, focus = false) {
-    const tab = list.value.find((item) => item.value === key);
+    const tab = list.value.find((item) => item.id === key);
     if (tab && !tab.disabled) {
         model.value = key;
         if (focus) {
@@ -53,10 +53,10 @@ function selectTab(key: string, focus = false) {
 // One tab stop, the arrows (all four), Home and End walk the tabs that are not disabled and select the one they land on.
 // Одна точка табуляции, стрелки (все четыре), Home и End ходят по вкладкам, которые не отключены, и выбирают ту, на которую пришли.
 const activeIndex = computed({
-    get: () => list.value.findIndex((tab) => tab.value === model.value),
+    get: () => list.value.findIndex((tab) => tab.id === model.value),
     set: (index: number) => {
         const tab = list.value[index];
-        if (tab) selectTab(tab.value, true);
+        if (tab) selectTab(tab.id, true);
     },
 });
 const nav = useRoving({ enabled: () => list.value.map((tab) => !tab.disabled), active: activeIndex, orientation: 'both' });
@@ -68,18 +68,18 @@ const onKeydown = (event: KeyboardEvent) => void nav.onKeydown(event);
         <div class="tao-tabs__list" :style="{ justifyContent: justify }" role="tablist" @keydown="onKeydown">
             <button
                 v-for="tab in list"
-                :key="tab.value"
+                :key="tab.id"
                 type="button"
                 class="tao-tabs__tab"
                 role="tab"
-                :id="tabId(tab.value)"
-                :aria-selected="tab.value === model"
-                :aria-controls="panelId(tab.value)"
-                :tabindex="tab.value === model ? 0 : -1"
+                :id="tabId(tab.id)"
+                :aria-selected="tab.id === model"
+                :aria-controls="panelId(tab.id)"
+                :tabindex="tab.id === model ? 0 : -1"
                 :disabled="tab.disabled"
-                @click="selectTab(tab.value)"
+                @click="selectTab(tab.id)"
             >
-                <slot v-if="$slots.label" name="label" :text="tab.label" :value="tab.value" />
+                <slot v-if="$slots.label" name="label" :text="tab.label" :id="tab.id" />
                 <template v-else>{{ tab.label }}</template>
             </button>
         </div>
