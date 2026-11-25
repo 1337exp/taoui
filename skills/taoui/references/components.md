@@ -1482,6 +1482,7 @@ Showcase section: `#tag`
 |---|---|---|---|
 | `tone` | `'neutral' \| 'success' \| 'danger' \| 'warning' \| 'info' \| ''` | '' | The status colour, as TaoButton |
 | `flat` | `boolean` | false | No border, the fill stays |
+| `square` | `boolean` | auto | A square of the tag height with no side padding: for an icon alone. On by itself when there is a #prefix and no text; set it for an icon in the default slot. Needs aria-label |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Height 18 / 20 / 24. Without it — the size of the ancestors |
 | `closable` | `boolean` | false | The cross. Fires close, does not touch the array itself |
 | `clickable` | `boolean` | false | A pointer cursor (a clickable chip), as TaoListItem / TaoTable |

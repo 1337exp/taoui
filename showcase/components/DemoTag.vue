@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-import { TaoTag, TaoAvatar } from '@1337exp/taoui'
+import { TaoTag, TaoAvatar, TaoIcon } from '@1337exp/taoui'
 import ShowcaseSection from './ShowcaseSection.vue'
 import { tr } from '../i18n.js'
 import Tr from './Tr.vue'
@@ -96,6 +96,29 @@ function removeTagFilter(index) {
             </TaoTag>
           </div>
     
+          <h3>{{ tr('An icon alone', 'Только иконка') }}</h3>
+          <Tr>
+            <template #en>
+              <p>
+                No text, only <code>#prefix</code>: the tag becomes a square of its height by itself. An icon in the default slot asks for
+                <code>square</code>. It has no text, so give it an <code>aria-label</code>.
+              </p>
+            </template>
+            <template #ru>
+              <p>
+                Нет текста, только <code>#prefix</code>: тег сам становится квадратом своей высоты. Иконка в основном слоте просит
+                <code>square</code>. Текста нет, поэтому нужен <code>aria-label</code>.
+              </p>
+            </template>
+          </Tr>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <TaoTag tone="success" :aria-label="tr('Verified', 'Проверено')"><template #prefix><TaoIcon name="tao-check" /></template></TaoTag>
+            <TaoTag tone="danger" :aria-label="tr('Blocked', 'Заблокировано')"><template #prefix><TaoIcon name="tao-alert-triangle" /></template></TaoTag>
+            <TaoTag tone="neutral" flat square :aria-label="tr('Settings', 'Настройки')"><TaoIcon name="tao-settings" /></TaoTag>
+            <TaoTag tone="info" :aria-label="tr('Info', 'Сведения')"><template #prefix><TaoIcon name="tao-info" /></template></TaoTag>
+            <TaoTag tone="success"><template #prefix><TaoIcon name="tao-check" /></template>{{ tr('With text', 'С текстом') }}</TaoTag>
+          </div>
+
           <div class="code-block">
             <pre><code>&lt;TaoTag tone="success"&gt;{{ tr('Active', 'Активен') }}&lt;/TaoTag&gt;
 &lt;TaoTag tone="success" flat&gt;{{ tr('Active', 'Активен') }}&lt;/TaoTag&gt;
@@ -110,7 +133,12 @@ function removeTagFilter(index) {
     &lt;TaoAvatar name="{{ tr('Anna Kozlova', 'Анна Козлова') }}" size="small" /&gt;
   &lt;/template&gt;
   {{ tr('Anna Kozlova', 'Анна Козлова') }}
-&lt;/TaoTag&gt;</code></pre>
+&lt;/TaoTag&gt;
+
+&lt;TaoTag tone="success" aria-label="Verified"&gt;
+  &lt;template #prefix&gt;&lt;TaoIcon name="tao-check" /&gt;&lt;/template&gt;
+&lt;/TaoTag&gt;
+&lt;TaoTag square aria-label="Settings"&gt;&lt;TaoIcon name="tao-settings" /&gt;&lt;/TaoTag&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

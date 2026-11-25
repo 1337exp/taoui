@@ -1370,6 +1370,7 @@ export const propTables = {
       rows: [
         r('tone', "'neutral' | 'success' | 'danger' | 'warning' | 'info' | ''", "''", 'Цвет статуса, как у TaoButton'),
         r('flat', 'boolean', 'false', 'Без рамки, заливка остаётся'),
+        r('square', 'boolean', 'авто', 'Квадрат высотой с тег, без боковых отступов: для одной иконки. Сам включается, когда есть #prefix и нет текста; для иконки в основном слоте задайте его. Нужен aria-label'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Высота 18 / 20 / 24. Без него — размер предков'),
         r('closable', 'boolean', 'false', 'Крестик. Шлёт close, сам массив не трогает'),
         r('clickable', 'boolean', 'false', 'Курсор pointer (кликабельный чип), как у TaoListItem / TaoTable'),

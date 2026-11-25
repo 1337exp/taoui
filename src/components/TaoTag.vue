@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import type { TaoCloseReason } from '../menu';
 import TaoIcon from './TaoIcon.vue';
-import { computed, useSlots } from 'vue';
+import { computed, useAttrs, useSlots } from 'vue';
+import { devWarning } from '../deprecate';
 import { sizeClass, type TaoSize } from '../size';
 import { toneClass, type TaoTone } from '../tone';
 import { useLocaleText } from '../locale';
@@ -21,6 +22,13 @@ interface Props {
     closeLabel?: string;
     /** Без рамки, заливка остаётся. Высота как у обычного тега. */
     flat?: boolean;
+    /**
+     * A square of the tag height with no side padding, for an icon alone. It is on by itself when the tag has a `#prefix` and no text;
+     * set it for an icon put in the default slot. A square tag has no text, so it needs `aria-label`.
+     * Квадрат высотой с тег без боковых отступов, для одной иконки. Включается сам, когда есть `#prefix` и нет текста; задайте его для
+     * иконки в основном слоте. У квадратного тега нет текста, поэтому нужен `aria-label`.
+     */
+    square?: boolean;
     /** Size; without it — the size of ancestors. / Размер; без него — размер предков. */
     size?: TaoSize;
 }
@@ -30,6 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
     clickable: false,
     closable: false,
     flat: false,
+    square: undefined,
 });
 const l10n = useLocaleText(props, 'tag');
 
@@ -40,6 +49,13 @@ const emit = defineEmits<{
 const slots = useSlots();
 // a slot counts when it draws something, not when it merely exists (see src/slots.ts)
 const has = (name: string) => slotHas(slots, name);
+const attrs = useAttrs();
+// An icon alone is a square. Asked at render time: a slot that exists may draw nothing. A tag with a cross is not one (the cross needs room).
+// Одна иконка — квадрат. Спрашивается при рендере: слот может быть и ничего не рисовать. Тег с крестиком — не квадрат (крестику нужно место).
+const isSquare = () => !props.closable && (props.square ?? (has('prefix') && !has('default')));
+if (props.square && !attrs['aria-label'] && !attrs['aria-labelledby'] && !attrs.title) {
+    devWarning('tag:square', 'TaoTag: a square tag has only an icon and needs aria-label (or aria-labelledby / title).');
+}
 const style = computed(() => ({
     color: props.color || '',
     background: props.background || '',
@@ -62,6 +78,7 @@ function onClose() {
                 'tao-tag--closable': closable,
                 'tao-tag--prefix': Boolean(slots.prefix),
                 'tao-tag--flat': flat,
+                'tao-tag--square': isSquare(),
             },
         ]"
         :style="style"
@@ -69,7 +86,7 @@ function onClose() {
         <span v-if="has('prefix')" class="tao-tag__prefix">
             <slot name="prefix" />
         </span>
-        <span class="tao-tag__text"><slot /></span>
+        <span v-if="has('default') || !isSquare()" class="tao-tag__text"><slot /></span>
         <button
             v-if="closable"
             type="button"
@@ -124,6 +141,14 @@ function onClose() {
 .tao-tag--prefix {
     padding-block: 2px;
     padding-inline-start: 3px;
+}
+
+/* a square: the tag height both ways, no padding, no gap (the empty text is not drawn) / квадрат: высота тега в обе стороны, без отступов и зазора */
+.tao-tag--square,
+.tao-tag--square.tao-tag--prefix {
+    width: var(--tao-tag-height);
+    padding: 0;
+    gap: 0;
 }
 
 .tao-tag--closable {
