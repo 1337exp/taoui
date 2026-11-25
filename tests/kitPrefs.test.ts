@@ -172,3 +172,54 @@ describe('what it saves', () => {
         second.dispose();
     });
 });
+
+describe('deferred: for an app that is rendered on the server and hydrates', () => {
+    it('the first state is the options only; what was saved is read by restore(), and nothing is saved before it', async () => {
+        const storage = memory({ 'app.mode': 'light', 'app.palette': 'lagoon', 'app.locale': 'ru' });
+        const before = { ...storage.data };
+        const prefs = createKitPrefs({ key: 'app', storage, root: root(), deferred: true, mode: 'dark', locale: 'en', locales: { en: localeEn, ru: localeRu } });
+        expect([prefs.mode.value, prefs.palette.value, prefs.locale.value]).toEqual(['dark', '', 'en']);
+        await nextTick();
+        // the defaults did not overwrite what the person had saved
+        expect(storage.data).toEqual(before);
+        prefs.restore();
+        expect([prefs.mode.value, prefs.palette.value, prefs.locale.value]).toEqual(['light', 'lagoon', 'ru']);
+        prefs.mode.value = 'system';
+        await nextTick();
+        expect(storage.data['app.mode']).toBe('system');
+        prefs.dispose();
+    });
+
+    it('the language of the first state is the option or the first locale, not the browser (which the server does not know)', () => {
+        const prefs = createKitPrefs({ storage: null, root: root(), deferred: true, locales: { ru: localeRu, en: localeEn } });
+        expect(prefs.locale.value).toBe('ru');
+        prefs.dispose();
+    });
+
+    it('the system mode is followed only after restore()', () => {
+        const prefs = createKitPrefs({ storage: null, root: root(), deferred: true });
+        expect(listener).toBeNull();
+        prefs.restore();
+        expect(listener).not.toBeNull();
+        prefs.restore();
+        prefs.dispose();
+    });
+
+    it('in a component restore() is called by onMounted', async () => {
+        const { mount } = await import('@vue/test-utils');
+        const { defineComponent, h } = await import('vue');
+        const storage = memory({ 'app.locale': 'ru' });
+        let prefs!: ReturnType<typeof createKitPrefs>;
+        const C = defineComponent({
+            setup() {
+                prefs = createKitPrefs({ key: 'app', storage, root: root(), deferred: true, locale: 'en' });
+                return () => h('div');
+            },
+        });
+        const w = mount(C);
+        await nextTick();
+        expect(prefs.locale.value).toBe('ru');
+        w.unmount();
+        prefs.dispose();
+    });
+});

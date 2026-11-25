@@ -684,6 +684,8 @@ const prefs = createKitPrefs({ key: 'myapp' }) // saved as myapp.mode, myapp.pal
 
 Options: `mode` (the default, `system`), `palette`, `locale` (else the browser's among `locales`), `locales` (code → locale, `en` and `ru` by default: give your own for more), `storage` (`localStorage`; `null` saves nothing), `root` (`<html>`). A storage that refuses (a private window) is a page that saves nothing, not a crash. `prefs.dispose()` stops it.
 
+**Server rendering (Nuxt, Vite SSR).** Pass `deferred: true` when the app is rendered on the server and hydrates: the first state is then the options only (the same on the server and in the browser, so the markup matches), what was saved and the mode of the system are read once the page is mounted (`prefs.restore()`, called from `onMounted` for you when `createKitPrefs` runs in a component), and nothing is saved before that, so the defaults never overwrite what the person picked. On the server the language goes to the tree of the request by `provide` (never into the global locale, which every request shares). Without `deferred` it reads everything at once, which is right for a page that is not rendered on the server: the right theme is on `<html>` before the first paint.
+
 ## Design tokens and theming
 
 Library styles are layers. Components **never** touch raw colors or sizes: they read semantic roles, and

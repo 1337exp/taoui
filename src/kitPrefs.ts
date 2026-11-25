@@ -1,5 +1,5 @@
-import { computed, effectScope, ref, watch, type ComputedRef, type Ref } from 'vue';
-import { detectTaoLanguage, localeEn, localeRu, setTaoLocale, type TaoLocaleOverrides } from './locale';
+import { computed, effectScope, getCurrentInstance, onMounted, provide, ref, watch, type ComputedRef, type Ref } from 'vue';
+import { createTaoLocale, detectTaoLanguage, localeEn, localeKey, localeRu, setTaoLocale, type TaoLocaleOverrides } from './locale';
 import { applyTaoMode, resolveTaoMode, systemTaoMode, type TaoMode, type TaoModeChoice } from './themeMode';
 
 /**
@@ -27,6 +27,17 @@ export interface TaoKitPrefsOptions {
     storage?: Pick<Storage, 'getItem' | 'setItem'> | null;
     /** The element the attributes go on: `<html>` by default. / Элемент, на который идут атрибуты: по умолчанию `<html>`. */
     root?: HTMLElement | null;
+    /**
+     * For an app that is rendered on the server and hydrates. The first state comes from the options only (the same on the server and in
+     * the browser, so the markup matches); what was saved and the mode of the system are read by `restore()`, which is called from
+     * `onMounted` by itself when `createKitPrefs` runs in a component, and nothing is saved before it. Off by default: a page that is
+     * not rendered on the server reads them at once and does not flash the wrong theme.
+     * Для приложения, которое рендерится на сервере и гидратируется. Первое состояние берётся только из опций (на сервере и в браузере
+     * одно и то же, разметка совпадает); сохранённое и режим системы читает `restore()`, он зовётся из `onMounted` сам, когда
+     * `createKitPrefs` вызван в компоненте, и до него ничего не сохраняется. По умолчанию выключено: страница без серверного рендера
+     * читает их сразу и не мигает чужой темой.
+     */
+    deferred?: boolean;
 }
 
 export interface TaoKitPrefs {
@@ -38,6 +49,13 @@ export interface TaoKitPrefs {
     palette: Ref<string>;
     /** The code of the language of the kit's texts. / Код языка текстов набора. */
     locale: Ref<string>;
+    /**
+     * With `deferred`: reads what was saved and the mode of the system, and starts to follow it and to save. Called once (the next calls
+     * do nothing); in a component it is called from `onMounted` for you. Without `deferred` there is nothing left to do.
+     * С `deferred`: читает сохранённое и режим системы, начинает следить за ней и сохранять. Зовётся один раз (следующие вызовы ничего
+     * не делают); в компоненте его зовёт `onMounted`. Без `deferred` делать уже нечего.
+     */
+    restore(): void;
     /** Stops watching the system and saving. / Перестаёт следить за системой и сохранять. */
     dispose(): void;
 }
@@ -77,13 +95,22 @@ export function createKitPrefs(options: TaoKitPrefsOptions = {}): TaoKitPrefs {
     const locales: Record<string, TaoLocaleOverrides> = options.locales ?? { en: localeEn, ru: localeRu };
     const codes = Object.keys(locales);
 
-    const savedMode = read(storage, options.key, 'mode');
-    const savedLocale = read(storage, options.key, 'locale');
-    const mode = ref<TaoModeChoice>(isChoice(savedMode) ? savedMode : (options.mode ?? 'system'));
-    const palette = ref<string>(read(storage, options.key, 'palette') ?? options.palette ?? '');
-    const locale = ref<string>(
-        savedLocale && savedLocale in locales ? savedLocale : options.locale && options.locale in locales ? options.locale : detectTaoLanguage(codes),
-    );
+    const deferred = Boolean(options.deferred);
+    const pickMode = (saved: string | null) => (isChoice(saved) ? saved : (options.mode ?? 'system'));
+    const pickLocale = (saved: string | null, detect: boolean) =>
+        saved && saved in locales
+            ? saved
+            : options.locale && options.locale in locales
+              ? options.locale
+              : detect
+                ? detectTaoLanguage(codes)
+                : (codes[0] ?? 'en');
+
+    // deferred: the first state is the options and nothing else, so the server and the first render of the browser agree
+    // deferred: первое состояние это опции и ничего больше, так что сервер и первый рендер браузера совпадают
+    const mode = ref<TaoModeChoice>(pickMode(deferred ? null : read(storage, options.key, 'mode')));
+    const palette = ref<string>((deferred ? null : read(storage, options.key, 'palette')) ?? options.palette ?? '');
+    const locale = ref<string>(pickLocale(deferred ? null : read(storage, options.key, 'locale'), !deferred));
 
     // the system's mode is a live value while `system` is picked
     const system = ref<TaoMode>(systemTaoMode());
@@ -92,9 +119,26 @@ export function createKitPrefs(options: TaoKitPrefsOptions = {}): TaoKitPrefs {
     const scope = effectScope(true);
     let media: MediaQueryList | null = null;
     const onSystem = () => (system.value = systemTaoMode());
-    if (typeof matchMedia !== 'undefined') {
-        media = matchMedia('(prefers-color-scheme: light)');
-        media.addEventListener?.('change', onSystem);
+    const follow = () => {
+        if (typeof matchMedia !== 'undefined' && !media) {
+            media = matchMedia('(prefers-color-scheme: light)');
+            media.addEventListener?.('change', onSystem);
+        }
+    };
+    // nothing is saved before what was saved has been read
+    // ничего не сохраняется, пока не прочитано сохранённое
+    let ready = !deferred;
+    if (!deferred) {
+        follow();
+    }
+
+    // on the server there is one module for every request: the language goes to the tree of this app by `provide`, not to the global locale
+    // на сервере один модуль на все запросы: язык уходит в дерево этого приложения через `provide`, а не в глобальную локаль
+    const onServer = typeof window === 'undefined';
+    const instance = getCurrentInstance();
+    const provided = onServer && instance ? computed(() => createTaoLocale(locales[locale.value] ?? localeEn).value) : null;
+    if (provided) {
+        provide(localeKey, provided);
     }
 
     scope.run(() => {
@@ -119,21 +163,39 @@ export function createKitPrefs(options: TaoKitPrefsOptions = {}): TaoKitPrefs {
         watch(
             locale,
             (code) => {
-                setTaoLocale(locales[code] ?? localeEn);
+                if (!provided) setTaoLocale(locales[code] ?? localeEn);
                 if (root) root.setAttribute('lang', code);
             },
             { immediate: true },
         );
-        watch(mode, (value) => write(storage, options.key, 'mode', value));
-        watch(palette, (value) => write(storage, options.key, 'palette', value));
-        watch(locale, (value) => write(storage, options.key, 'locale', value));
+        watch(mode, (value) => ready && write(storage, options.key, 'mode', value));
+        watch(palette, (value) => ready && write(storage, options.key, 'palette', value));
+        watch(locale, (value) => ready && write(storage, options.key, 'locale', value));
     });
+
+    function restore() {
+        if (ready) {
+            return;
+        }
+        // the saved values are assigned first, so what was saved is not overwritten by the defaults; saving starts after that
+        // сначала присваиваются сохранённые значения, чтобы сохранённое не затёрлось значениями по умолчанию; сохранение после этого
+        mode.value = pickMode(read(storage, options.key, 'mode'));
+        palette.value = read(storage, options.key, 'palette') ?? options.palette ?? '';
+        locale.value = pickLocale(read(storage, options.key, 'locale'), true);
+        system.value = systemTaoMode();
+        follow();
+        ready = true;
+    }
+    if (deferred && instance) {
+        onMounted(restore);
+    }
 
     return {
         mode,
         resolvedMode,
         palette,
         locale,
+        restore,
         dispose() {
             media?.removeEventListener?.('change', onSystem);
             scope.stop();
