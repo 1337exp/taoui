@@ -66,17 +66,21 @@ function expectToastViewport() {
 /** Shows a toast now and gives back a handle. Nothing happens on the server (no `window`): the handle is inert. */
 function show(options: TaoToastOptions): TaoToastHandle {
     const recordId = nextToastId();
-    const handle: TaoToastHandle = { id: options.id ?? recordId, dismiss: () => dismissToasts(handle.id) };
     const title = options.title ?? '';
     const message = options.message === undefined ? '' : String(options.message);
+    const type = options.type ?? (options.loading ? 'neutral' : 'info');
+    const displayMode: TaoToastDisplayMode | undefined = options.replace ? 'replace' : options.once ? 'once' : undefined;
+    const dedupeId = options.id ?? (displayMode ? `${type}:${title}:${message}` : undefined);
+    // the handle names the toast by what the store finds it by: a `once` toast without an `id` is found by its key, so `dismiss()` works
+    // (also on the handle of a repeat that was not shown: it closes the one that is on the screen)
+    // handle называет тост тем, по чему его находит хранилище: `once`-тост без `id` находится по своему ключу, и `dismiss()` работает
+    // (и на handle повтора, который не показали: он закрывает тот, что на экране)
+    const handle: TaoToastHandle = { id: dedupeId ?? recordId, dismiss: () => dismissToasts(handle.id) };
     if (!isClient() || (!title && !message)) {
         return handle;
     }
 
-    const type = options.type ?? (options.loading ? 'neutral' : 'info');
     const actions = options.actions ?? [];
-    const displayMode: TaoToastDisplayMode | undefined = options.replace ? 'replace' : options.once ? 'once' : undefined;
-    const dedupeId = options.id ?? (displayMode ? `${type}:${title}:${message}` : undefined);
 
     expectToastViewport();
 

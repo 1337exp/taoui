@@ -539,7 +539,7 @@ const atMax = computed(() => props.max !== undefined && model.value >= props.max
                 class="tao-drag-number__input"
                 type="text"
                 inputmode="decimal"
-                autocomplete="off"
+                :autocomplete="(controlAttrs().autocomplete as string | undefined) ?? 'off'"
                 spellcheck="false"
                 role="spinbutton"
                 :value="text"

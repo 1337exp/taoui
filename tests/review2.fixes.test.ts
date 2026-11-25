@@ -97,3 +97,53 @@ describe('the kit has no !important', () => {
         expect(bad).toEqual([]);
     });
 });
+
+describe('autocomplete reaches the input', () => {
+    it.each([
+        ['TaoQuantity', () => import('../src/components/TaoQuantity.vue'), { modelValue: 1 }],
+        ['TaoInputNumber', () => import('../src/components/TaoInputNumber.vue'), { modelValue: 1 }],
+        ['TaoCombobox', () => import('../src/components/TaoCombobox.vue'), { items: [] }],
+    ])('%s: the autocomplete you give wins over the default off', async (_n, load, props) => {
+        const Component = (await load()).default;
+        expect(mount(Component as never, { props: props as never }).find('input').attributes('autocomplete')).toBe('off');
+        expect(mount(Component as never, { props: props as never, attrs: { autocomplete: 'postal-code' } }).find('input').attributes('autocomplete')).toBe('postal-code');
+    });
+});
+
+describe('a toast that is shown once', () => {
+    it('can be closed by the handle, also by the handle of the repeat that was not shown', async () => {
+        const w = mount(TaoHosts, { attachTo: document.body });
+        const first = toast({ message: 'Saved', once: true, timeout: 0 });
+        const again = toast({ message: 'Saved', once: true, timeout: 0 });
+        await new Promise((r) => setTimeout(r));
+        expect(document.querySelectorAll('.tao-toast')).toHaveLength(1);
+        again.dismiss();
+        await new Promise((r) => setTimeout(r, 50));
+        expect(document.querySelectorAll('.tao-toast')).toHaveLength(0);
+        expect(first.id).toBe(again.id);
+        w.unmount();
+    });
+});
+
+describe('usePopup: a panel that is open on the first render', () => {
+    it('takes the size of its anchor once the anchor is mounted', async () => {
+        const { usePopup } = await import('../src/primitives/usePopup');
+        const { ref: vueRef } = await import('vue');
+        let size = '';
+        const C = defineComponent({
+            setup() {
+                const anchor = vueRef<HTMLElement | null>(null);
+                const popup = usePopup({ open: vueRef(true), anchor, panel: vueRef(null), onDismiss: () => {}, onEscape: () => {}, scale: () => undefined });
+                size = '';
+                return () => {
+                    size = popup.panelSize.value;
+                    return h('div', [h('button', { ref: anchor, style: '--tao-size: large' })]);
+                };
+            },
+        });
+        const w = mount(C, { attachTo: document.body });
+        await new Promise((r) => setTimeout(r));
+        expect(size).toBe('large');
+        w.unmount();
+    });
+});

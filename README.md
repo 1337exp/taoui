@@ -710,6 +710,8 @@ One thing to know: it works against you for a global rule on an element (`h2 { f
 @layer reset { h2 { margin: 0 } }
 ```
 
+With **Tailwind v4** declare the whole order once, before both imports, or its preflight (the `base` layer) would be appended after the kit and beat its component rules: `@layer theme, base, tao, components, utilities;`. The kit stays under your utilities and over Tailwind's reset.
+
 The palette files (`@1337exp/taoui/palettes/*.css`) are not in a layer on purpose: a palette must beat the theme. The raw token files imported one by one are not in layers either.
 
 ### Radius: one knob, whole pixels

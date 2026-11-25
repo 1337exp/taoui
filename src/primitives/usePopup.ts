@@ -1,4 +1,4 @@
-import { ref, watch, type Ref } from 'vue';
+import { onMounted, ref, watch, type Ref } from 'vue';
 import { resolveDensity, type TaoResolvedDensity } from '../density';
 import { useDismiss } from '../dismiss';
 import { useFloating, type TaoPlacement } from '../floating';
@@ -41,10 +41,20 @@ export function usePopup(o: PopupOptions) {
     const panelSize = ref<TaoSize>('medium');
     const panelDensity = ref<TaoResolvedDensity>('default');
     if (o.scale) {
+        const take = () => {
+            panelSize.value = resolveSize(o.anchor.value, o.scale!());
+            panelDensity.value = resolveDensity(o.anchor.value);
+        };
         watch(o.open, (isOpen) => {
             if (isOpen) {
-                panelSize.value = resolveSize(o.anchor.value, o.scale!());
-                panelDensity.value = resolveDensity(o.anchor.value);
+                take();
+            }
+        });
+        // a panel that is open on the first render: the anchor exists only once it is mounted
+        // панель, открытая с первого рендера: у якоря есть элемент только после монтирования
+        onMounted(() => {
+            if (o.open.value) {
+                take();
             }
         });
     }

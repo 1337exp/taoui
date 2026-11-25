@@ -217,7 +217,7 @@ const atMax = computed(() => props.max !== undefined && (model.value ?? 0) >= pr
             :aria-valuenow="model ?? undefined"
             :aria-valuemin="min"
             :aria-valuemax="max"
-            autocomplete="off"
+            :autocomplete="(controlAttrs().autocomplete as string | undefined) ?? 'off'"
             @input="onInput"
             @focus="onFocus"
             @blur="onBlur"

@@ -213,7 +213,7 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value
             type="text"
             inputmode="numeric"
             pattern="[0-9]*"
-            autocomplete="off"
+            :autocomplete="(controlAttrs().autocomplete as string | undefined) ?? 'off'"
             role="spinbutton"
             :value="draft"
             :disabled="disabled"

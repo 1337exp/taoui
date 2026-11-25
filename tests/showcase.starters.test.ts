@@ -50,22 +50,18 @@ describe('Guide starters', () => {
         }
     });
 
-    it('the app shell fills the window, keeps one accent action and quiet counters', () => {
+    it('the app shell is a TaoShell: one accent action, the project, the prefs of the product, no hand-built shell', () => {
         const source = read('app-shell.vue');
-        expect(source).toMatch(/<TaoNav\b[^>]*\sfill\b/);
-        expect(source).toMatch(/<TaoNav\b[^>]*badge-tone="neutral"/);
-        // the main action of the navigation is one button (the empty state has an action of its own, in the page)
-        const action = /<TaoNav\b[\s\S]*?<template #action>([\s\S]*?)<\/template>/.exec(source)?.[1] ?? '';
-        expect(action.match(/<TaoButton\b/g)).toHaveLength(1);
-        expect(action).not.toMatch(/variant="/);
-        // the project chip under it is a block dropdown that folds by the public variable, not by reaching into the menu
-        expect(action).toMatch(/<TaoDropdownMenu\b[^>]*\sblock\b/);
-        expect(source).toMatch(/\.shell-chip__text \{[^}]*max-width: calc\(\(1 - var\(--tao-nav-compact\)\)/);
-        expect(source).not.toContain('tao-dropdown-menu__');
-        expect(source).toContain('class="tao-nav__action-label"');
-        // the phone header follows the bar of TaoNav: the same container and breakpoint, no JavaScript
-        expect(source).toContain('@container tao-nav (width < 600px)');
+        expect(source).toMatch(/<TaoShell\b/);
+        // the main action, the project and the language and theme are props of the shell, not markup the app copies
+        expect(source).toMatch(/:action="\{[^}]*label:/);
+        expect(source).toMatch(/v-model:project=/);
+        expect(source).toMatch(/:prefs="prefs"/);
+        expect(source).toContain('createKitPrefs(');
+        // the empty state has an action of its own, in the page; the shell has one accent action
+        expect(source).not.toMatch(/<TaoNav\b|<TaoDropdownMenu\b|<TaoLanguageSwitch\b|<TaoThemeToggle\b/);
         expect(source).not.toMatch(/matchMedia|innerWidth/);
+        expect(source).not.toContain('tao-dropdown-menu__');
     });
 
     it('the list and the item: measured on an outer box, laid out on the inner one, quiet actions, a way back', () => {

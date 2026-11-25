@@ -1,10 +1,12 @@
 /**
  * Tao UI — styles entry point
  *
- * Layers, in order: primitives -> semantic tokens -> themes (dark is the default, light is opt-in with
- * data-tao-mode="light") -> contexts (size and density, tone, surface, frames) -> typography (opt-in classes) -> base reset.
- * Порядок слоёв: примитивы -> семантические токены -> темы (dark по умолчанию, light включается атрибутом) ->
- * контексты (размер и плотность, тон, поверхность) -> типографика (классы по выбору) -> базовый сброс.
+ * Layers, from the weakest to the strongest: tao.tokens (primitives, semantic tokens) -> tao.themes (dark is the default, light is
+ * opt-in with data-tao-mode="light") -> tao.base (the reset) -> tao.typography (opt-in classes) -> tao.contexts (size and density,
+ * tone, surface, frames) -> tao.components (the CSS of the components, wrapped by the build). The `@layer` line below is the authority.
+ * Слои от самого слабого к самому сильному: tao.tokens (примитивы, семантические токены) -> tao.themes (dark по умолчанию, light
+ * включается атрибутом) -> tao.base (базовый сброс) -> tao.typography (классы по выбору) -> tao.contexts (размер и плотность, тон,
+ * поверхность, рамки) -> tao.components (CSS компонентов, его оборачивает сборка). Главной остаётся строка `@layer` ниже.
  */
 /* the order of the layers, the last wins; an app's own CSS is outside of them and beats them all
    порядок слоёв, последний сильнее; собственный CSS приложения вне слоёв и бьёт их все */

@@ -262,7 +262,7 @@ function onKeydown(event: KeyboardEvent) {
                 class="tao-preset-input__input"
                 type="text"
                 role="combobox"
-                autocomplete="off"
+                :autocomplete="(controlAttrs().autocomplete as string | undefined) ?? 'off'"
                 aria-autocomplete="none"
                 aria-haspopup="listbox"
                 :aria-expanded="open"

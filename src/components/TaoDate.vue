@@ -234,7 +234,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
                 class="tao-date__input"
                 type="text"
                 inputmode="decimal"
-                autocomplete="off"
+                :autocomplete="(controlAttrs().autocomplete as string | undefined) ?? 'off'"
                 :value="text"
                 :placeholder="l10n.placeholder"
                 :disabled="disabled"
