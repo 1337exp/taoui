@@ -901,6 +901,7 @@ Showcase section: `#list`
 |---|---|---|---|
 | `title` | `string` | '' | The title. The default slot replaces it |
 | `description` | `string` | '' | A caption under the title |
+| `tone` | `'success' \| 'danger' \| 'warning' \| 'info' \| 'neutral'` | — | A status colour of the row: the title keeps it when the row is selected (the selection tint stays, the text does not turn accent) |
 | `selected` | `boolean` | false | The selected row |
 | `disabled` | `boolean` | false | Disabled |
 | `active` | `boolean` | false | Highlight without selected |
@@ -1057,6 +1058,7 @@ Showcase section: `#split`
 |---|---|---|---|
 | `v-model` | `number` | 50 | The size of the start pane in unit |
 | `direction` | `'row' \| 'column'` | 'row' | As in Flex |
+| `collapsed` | `'start' \| 'end' \| false` | false | Closes one pane: it is not drawn, the other fills the box, the divider goes with it (no separator, no line, no gutter). The size stays in v-model, so the pane opens as it was |
 | `unit` | `'%' \| 'px'` | '%' | Percent or pixels |
 | `min / max` | `number` | 0 / — | The bounds of the start pane |
 | `minEnd` | `number` | 0 | The minimum of the second pane |
@@ -1291,7 +1293,7 @@ Showcase section: `#menubar`
 | `closeOnScroll` | `boolean` | false | Close an open menu when the page scrolls. Off: it follows its entry |
 | `bordered` | `boolean` | by context | The outer frame. Not set, it follows the frames context; false: no frame, the raised fill stays |
 
-**Slots, events, notes.** The select event — the picked item (item.id is its id) item (in a menu or a plain top entry). #item — your own item face in the menus. Keys: Tab enters the bar, ← → walk it, Home / End, ↓ / Enter / Space open, with a menu open ← → move to the neighbour menu, Esc closes and gives the focus back. No folding of entries into “…” on a narrow bar yet.
+**Slots, events, notes.** The select event — the picked item (item.id is its id) item (in a menu or a plain top entry). #item — your own item face in the menus. #end — after the menus, at the far end of the bar (a theme toggle, a search): outside of the menubar role. Keys: Tab enters the bar, ← → walk it, Home / End, ↓ / Enter / Space open, with a menu open ← → move to the neighbour menu, Esc closes and gives the focus back. No folding of entries into “…” on a narrow bar yet.
 
 ## TaoContextMenu
 
@@ -1335,7 +1337,7 @@ Showcase section: `#tao-nav`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `items` | `TaoNavItem[]` | — | { id, label, icon?, href?, badge?, disabled? }. With href the item is an <a> link, without it a button. badge: a number or a string is a count, true a dot |
+| `items` | `TaoNavItem[]` | — | { id, label, icon?, href?, badge?, disabled? }. With href the item is an <a> link, without it a button. badge: a number or a string is a count, badgeLabel is what a screen reader says about it («3 unread», «not saved»; a dot is heard as nothing without it), true a dot |
 | `v-model` | `string` | — | The id of the current section: aria-current="page" and the active look |
 | `v-model:look` | `'bar' \| 'rail' \| 'drawer'` | — | Read-only: the look the navigation is in now (by its own width: under 600px bar, under 840px rail, else drawer). For code that must know the look (navCompact(look)); CSS still draws it |
 | `v-model:layout` | `'auto' \| 'bar' \| 'rail' \| 'drawer'` | 'auto' | bar — a bottom bar, rail — a rail with icons, drawer — a side panel with labels. auto — by the width of TaoNav itself: bar below 600px, rail below 840px, drawer from 840px (container queries, no JS) |

@@ -42,6 +42,8 @@ const emit = defineEmits<{
 }>();
 
 defineSlots<{
+    /** After the menus, at the far end of the bar: a theme toggle, a search, a user (not menu entries, so they stand outside of the `menubar`). / После меню, у дальнего края полосы: переключатель темы, поиск, пользователь (это не пункты меню, поэтому они вне `menubar`). */
+    end?(): unknown;
     /** Replaces the text of one item inside the menus. / Заменяет содержимое пункта в меню. */
     item?(props: { item: TaoMenuItem; id: string; label: string; icon?: string }): unknown;
 }>();
@@ -155,7 +157,8 @@ function onEdge(direction: 'prev' | 'next') {
 </script>
 
 <template>
-    <div class="tao-menubar" :class="sizeClass(size)" :style="frameStyle(bordered)" role="menubar" :aria-label="label || l10n.ariaLabel">
+    <div class="tao-menubar" :class="sizeClass(size)" :style="frameStyle(bordered)">
+        <div class="tao-menubar__items" role="menubar" :aria-label="label || l10n.ariaLabel">
         <template v-for="(entry, index) in entries" :key="entry.id">
             <button
                 :ref="(el) => (buttons[index] = el as HTMLElement | null)"
@@ -191,6 +194,8 @@ function onEdge(direction: 'prev' | 'next') {
                 </template>
             </TaoMenu>
         </template>
+        </div>
+        <div v-if="$slots.end" class="tao-menubar__end"><slot name="end" /></div>
     </div>
 </template>
 
@@ -206,6 +211,20 @@ function onEdge(direction: 'prev' | 'next') {
     border-radius: var(--tao-radius-panel);
     color: var(--tao-color-text);
     font-size: var(--tao-control-font-size);
+}
+
+.tao-menubar__items {
+    display: flex;
+    align-items: center;
+    gap: var(--tao-space-1);
+    min-width: 0;
+}
+
+.tao-menubar__end {
+    display: flex;
+    align-items: center;
+    gap: var(--tao-space-1);
+    margin-inline-start: auto;
 }
 
 .tao-menubar__item {

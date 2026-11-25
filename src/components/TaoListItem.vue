@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed, useSlots } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
+import { toneClass, type TaoToneName } from '../tone';
 import { slotHas } from '../slots';
 
 defineOptions({ name: 'TaoListItem' });
@@ -17,6 +18,13 @@ const props = withDefaults(
         clickable?: boolean;
         /** Overrides the list size. / Перебивает размер списка. */
         size?: TaoSize;
+        /**
+         * A status colour of the row (`success`, `danger`, `warning`, `info`): the title keeps it when the row is selected (the selection
+         * tint stays, the text does not turn accent).
+         * Цвет статуса строки (`success`, `danger`, `warning`, `info`): заголовок сохраняет его, когда строка выбрана (подложка выбора
+         * остаётся, текст не становится акцентным).
+         */
+        tone?: TaoToneName;
         /** `#action` всегда на виду, не только по ховеру. */
         actionAlways?: boolean;
     }>(),
@@ -57,7 +65,9 @@ function onHitClick(event: MouseEvent) {
         class="tao-list-item"
         :class="[
             sizeClass(size),
+            tone ? toneClass(tone) : undefined,
             {
+                'tao-list-item--toned': Boolean(tone),
                 'tao-list-item--selected': selected,
                 'tao-list-item--disabled': disabled,
                 'tao-list-item--active': active,
@@ -207,6 +217,12 @@ button.tao-list-item__hit:focus-visible {
 
 .tao-list-item--selected .tao-list-item__title {
     color: var(--tao-color-accent-text);
+}
+
+/* a status colour survives the selection / цвет статуса переживает выбор */
+.tao-list-item--toned .tao-list-item__title,
+.tao-list-item--toned.tao-list-item--selected .tao-list-item__title {
+    color: var(--tao-tone-text);
 }
 
 .tao-list-item--clickable .tao-list-item__title {

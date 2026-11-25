@@ -254,9 +254,10 @@ function onMoreClose(reason: TaoCloseReason) {
                                     v-if="hasBadge(item)"
                                     class="tao-nav__badge"
                                     :class="{ 'tao-nav__badge--dot': item.badge === true }"
-                                    :aria-hidden="item.badge === true ? 'true' : undefined"
+                                    :aria-hidden="item.badge === true && !item.badgeLabel ? 'true' : undefined"
                                 >
-                                    {{ badgeText(item) }}
+                                    <span :aria-hidden="item.badgeLabel ? 'true' : undefined">{{ badgeText(item) }}</span>
+                                    <span v-if="item.badgeLabel" class="tao-sr-only">{{ item.badgeLabel }}</span>
                                 </span>
                             </component>
                         </li>

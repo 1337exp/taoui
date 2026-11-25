@@ -15,6 +15,13 @@ const props = withDefaults(
         minEnd?: number;
         resizable?: boolean;
         step?: number;
+        /**
+         * Closes one pane: it is not drawn, the other fills the box, and the divider goes with it (no separator, no line, no gutter). The size is
+         * kept in `v-model`, so the pane opens as it was.
+         * Закрывает одну панель: она не рисуется, вторая занимает весь блок, а разделитель уходит вместе с ней (ни separator, ни линии, ни
+         * зазора). Размер остаётся в `v-model`, поэтому панель откроется такой, какой была.
+         */
+        collapsed?: 'start' | 'end' | false;
     }>(),
     {
         direction: 'row',
@@ -22,6 +29,7 @@ const props = withDefaults(
         min: 0,
         minEnd: 0,
         resizable: true,
+        collapsed: false,
     },
 );
 
@@ -306,6 +314,7 @@ onBeforeUnmount(() => {
             `tao-split--${direction}`,
             {
                 'tao-split--fixed': !resizable,
+                [`tao-split--collapsed-${collapsed}`]: Boolean(collapsed),
                 'tao-split--dragging': isDragging,
             },
         ]"
@@ -374,6 +383,19 @@ onBeforeUnmount(() => {
 }
 
 .tao-split__pane--end {
+    flex: 1 1 0%;
+}
+
+/* a closed pane: not drawn, the divider with it, the other one fills the box / закрытая панель: не рисуется, разделитель с ней, вторая занимает блок */
+.tao-split--collapsed-start > .tao-split__pane--start,
+.tao-split--collapsed-end > .tao-split__pane--end,
+.tao-split--collapsed-start > .tao-split__handle,
+.tao-split--collapsed-end > .tao-split__handle {
+    display: none;
+}
+
+.tao-split--collapsed-start > .tao-split__pane--end,
+.tao-split--collapsed-end > .tao-split__pane--start {
     flex: 1 1 0%;
 }
 

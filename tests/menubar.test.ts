@@ -206,7 +206,7 @@ describe('TaoMenubar', () => {
         const w = mount(TaoMenubar, { props: { items: menu, size: 'small', label: 'Main' }, attachTo: document.body });
         wrappers.push(w);
         expect(w.classes()).toContain('tao-size-small');
-        expect(w.attributes('aria-label')).toBe('Main');
+        expect(w.find('[role="menubar"]').attributes('aria-label')).toBe('Main');
     });
 });
 

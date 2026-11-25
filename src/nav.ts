@@ -11,6 +11,13 @@ export interface TaoNavItem {
     href?: string;
     /** A count (`3`, `'99+'`) or `true` for a dot. / Счётчик или `true` для точки. */
     badge?: number | string | boolean;
+    /**
+     * What a screen reader says about the badge («3 unread», «not saved»). The dot and the number are drawn, not read: without it a dot is
+     * heard as nothing. With it the badge is read as this text instead of the bare number.
+     * Что о счётчике говорит скринридер («3 непрочитанных», «не сохранено»). Точку и число рисуют, а не читают: без подписи точка не слышна.
+     * С ней счётчик читается этим текстом вместо голого числа.
+     */
+    badgeLabel?: string;
     disabled?: boolean;
 }
 
