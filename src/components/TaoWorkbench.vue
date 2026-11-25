@@ -136,7 +136,7 @@ const mainRef = ref<HTMLElement | null>(null);
 
         <nav class="tao-workbench__rail tao-workbench__rail--left" data-tao-region tabindex="-1" :aria-label="leftLabel ?? l10n.leftLabel">
             <div class="tao-workbench__start">
-                <TaoTooltip v-for="tool in leftTools" :key="tool.id" :content="tool.label" :shortcut="tool.shortcut" placement="right">
+                <TaoTooltip v-for="tool in leftTools" :key="tool.id" :content="tool.label" :shortcut="tool.shortcut" placement="right" variant="raised">
                     <button
                         type="button"
                         class="tao-workbench__tool"
@@ -235,7 +235,7 @@ const mainRef = ref<HTMLElement | null>(null);
 
         <nav class="tao-workbench__rail tao-workbench__rail--right" data-tao-region tabindex="-1" :aria-label="rightLabel ?? l10n.rightLabel">
             <div class="tao-workbench__start">
-                <TaoTooltip v-for="tool in rightTools" :key="tool.id" :content="tool.label" :shortcut="tool.shortcut" placement="left">
+                <TaoTooltip v-for="tool in rightTools" :key="tool.id" :content="tool.label" :shortcut="tool.shortcut" placement="left" variant="raised">
                     <button
                         type="button"
                         class="tao-workbench__tool"
@@ -259,7 +259,7 @@ const mainRef = ref<HTMLElement | null>(null);
 
         <footer class="tao-workbench__bar tao-workbench__bar--bottom" data-tao-region tabindex="-1" :aria-label="bottomLabel ?? l10n.bottomLabel">
             <div class="tao-workbench__start">
-                <TaoTooltip v-for="tool in bottomTools" :key="tool.id" :content="tool.label" :shortcut="tool.shortcut" placement="top">
+                <TaoTooltip v-for="tool in bottomTools" :key="tool.id" :content="tool.label" :shortcut="tool.shortcut" placement="top" variant="raised">
                     <button
                         type="button"
                         class="tao-workbench__tool tao-workbench__tool--bar"
@@ -303,7 +303,9 @@ const mainRef = ref<HTMLElement | null>(null);
     min-width: 0;
     min-height: 0;
     isolation: isolate;
-    background-color: var(--tao-color-bg);
+    /* the chrome: the page colour in the dark theme, a little grey in the light one, so the white blocks stand out on it */
+    /* оправа: цвет страницы в тёмной теме, чуть серая в светлой, чтобы на ней выделялись белые блоки */
+    background-color: light-dark(color-mix(in srgb, var(--tao-color-bg) 93%, var(--tao-color-text-strong)), var(--tao-color-bg));
     color: var(--tao-color-text);
 }
 
@@ -462,7 +464,8 @@ const mainRef = ref<HTMLElement | null>(null);
     overflow: hidden;
     border: 1px solid color-mix(in srgb, var(--tao-color-border) var(--tao-frame-alpha, 100%), transparent);
     border-radius: var(--tao-radius-panel);
-    background: color-mix(in srgb, var(--tao-color-bg) 55%, black);
+    /* darker than the chrome in the dark theme; white on the grey chrome in the light one (as in an IDE) / темнее оправы в тёмной теме; белые на серой оправе в светлой (как в IDE) */
+    background: light-dark(var(--tao-color-bg), color-mix(in srgb, var(--tao-color-bg) 55%, black));
 }
 
 .tao-workbench__block:focus {
@@ -485,7 +488,6 @@ const mainRef = ref<HTMLElement | null>(null);
     gap: var(--tao-space-2);
     min-height: var(--tao-control-height);
     padding: 0 var(--tao-space-2) 0 var(--tao-space-3);
-    border-bottom: 1px solid color-mix(in srgb, var(--tao-color-border) var(--tao-frame-alpha, 100%), transparent);
     color: var(--tao-color-text-muted);
 }
 

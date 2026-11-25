@@ -1,0 +1,79 @@
+import { mount } from '@vue/test-utils';
+import { readFileSync } from 'node:fs';
+import { afterEach, describe, expect, it } from 'vitest';
+import { h } from 'vue';
+import TaoMenubar from '../src/components/TaoMenubar.vue';
+import TaoTooltip from '../src/components/TaoTooltip.vue';
+import TaoWorkbench from '../src/components/TaoWorkbench.vue';
+
+// What the first look at the frame of an editor asked for: a flat menu bar, a raised hint, no line under the panel title, blocks that are
+// right in the light theme too.
+// Что попросил первый взгляд на рамку редактора: плоская полоса меню, поднятая подсказка, без линии под заголовком панели, блоки, верные
+// и в светлой теме.
+
+afterEach(() => {
+    document.body.innerHTML = '';
+});
+
+const source = (file: string) => readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
+const menu = [{ id: 'f', label: 'File', items: [{ id: 'n', label: 'New' }] }];
+
+describe('TaoMenubar flat', () => {
+    it('sits on the surface: no fill, no frame, no padding, and no frame style of the context', () => {
+        const w = mount(TaoMenubar, { props: { items: menu, flat: true, bordered: true } });
+        expect(w.classes()).toContain('tao-menubar--flat');
+        expect(w.attributes('style') ?? '').not.toContain('--tao-frame');
+        expect(source('src/components/TaoMenubar.vue')).toMatch(/\.tao-menubar--flat \{\s*padding: 0;\s*background: transparent;\s*border: 0;/);
+    });
+
+    it('not flat: a raised panel as before', () => {
+        expect(mount(TaoMenubar, { props: { items: menu } }).classes()).not.toContain('tao-menubar--flat');
+    });
+});
+
+describe('TaoTooltip variant', () => {
+    const tip = async (variant?: 'inverse' | 'raised') => {
+        const w = mount(TaoTooltip, { props: { content: 'Hint', variant }, slots: { default: () => h('button', 'x') }, attachTo: document.body });
+        await w.find('.tao-tooltip-wrapper').trigger('mouseenter');
+        return w;
+    };
+
+    it('inverse by default, raised on request', async () => {
+        const a = await tip();
+        expect(document.querySelector('.tao-tooltip')!.classList.contains('tao-tooltip--raised')).toBe(false);
+        a.unmount();
+        const b = await tip('raised');
+        expect(document.querySelector('.tao-tooltip')!.classList.contains('tao-tooltip--raised')).toBe(true);
+        b.unmount();
+    });
+
+    it('raised takes the colours of the theme through the hooks of the hint, with a frame that follows the arrow', () => {
+        const css = source('src/components/TaoTooltip.vue');
+        expect(css).toMatch(/\.tao-tooltip--raised \{[^}]*--tao-tooltip-bg: var\(--tao-color-surface-raised\)/);
+        expect(css).toMatch(/\.tao-tooltip--raised \{[^}]*border: 1px solid var\(--tao-color-border-strong\)/);
+        for (const side of ['top', 'bottom', 'left', 'right']) {
+            expect(css).toContain(`.tao-tooltip--raised.tao-tooltip--${side} .tao-tooltip__arrow`);
+        }
+    });
+});
+
+describe('TaoWorkbench look', () => {
+    it('the hints of the tools are raised', () => {
+        const w = mount(TaoWorkbench, { props: { leftTools: [{ id: 'a', label: 'A' }] } });
+        expect(w.findAllComponents(TaoTooltip).length).toBeGreaterThan(0);
+        expect(w.findAllComponents(TaoTooltip).every((t) => t.props('variant') === 'raised')).toBe(true);
+        w.unmount();
+    });
+
+    it('the panel title has no line under it', () => {
+        const css = source('src/components/TaoWorkbench.vue');
+        const head = /\.tao-workbench__panel-head \{[^}]*\}/.exec(css)![0];
+        expect(head).not.toMatch(/border/);
+    });
+
+    it('the chrome and the blocks are chosen by the theme: white blocks on a grey chrome in light, darker blocks in dark', () => {
+        const css = source('src/components/TaoWorkbench.vue');
+        expect(css).toMatch(/background-color: light-dark\(color-mix\(in srgb, var\(--tao-color-bg\) 93%, var\(--tao-color-text-strong\)\), var\(--tao-color-bg\)\)/);
+        expect(css).toMatch(/background: light-dark\(var\(--tao-color-bg\), color-mix\(in srgb, var\(--tao-color-bg\) 55%, black\)\)/);
+    });
+});

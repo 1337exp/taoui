@@ -171,7 +171,7 @@ const line = ref(12)
     :bottom-tools="bottomTools"
   >
     <template #top-start>
-      <TaoMenubar :items="menu" bordered />
+      <TaoMenubar :items="menu" flat />
     </template>
     <template #top-end>
       <TaoThemeToggle v-model="prefs.mode.value" system :apply="false" />

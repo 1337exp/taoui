@@ -26,6 +26,13 @@ const props = withDefaults(
         closeOnScroll?: boolean;
         /** The outer frame; not set, it follows the frames context (`.tao-frames-soft`). / Внешняя рамка; не задан — идёт за контекстом рамок. */
         bordered?: boolean;
+        /**
+         * No fill, no frame, no padding of its own: the bar sits on the surface it is put on (the top bar of an editor, a header) and only the
+         * entries are drawn. Not set, the bar is a raised panel.
+         * Без заливки, без рамки, без своих отступов: полоса лежит на поверхности, на которую её поставили (верхняя полоса редактора, шапка), и
+         * рисуются только пункты. Без него полоса — поднятая панель.
+         */
+        flat?: boolean;
     }>(),
     {
         size: undefined,
@@ -157,7 +164,7 @@ function onEdge(direction: 'prev' | 'next') {
 </script>
 
 <template>
-    <div class="tao-menubar" :class="sizeClass(size)" :style="frameStyle(bordered)">
+    <div class="tao-menubar" :class="[sizeClass(size), { 'tao-menubar--flat': flat }]" :style="flat ? undefined : frameStyle(bordered)">
         <div class="tao-menubar__items" role="menubar" :aria-label="label || l10n.ariaLabel">
         <template v-for="(entry, index) in entries" :key="entry.id">
             <button
@@ -211,6 +218,14 @@ function onEdge(direction: 'prev' | 'next') {
     border-radius: var(--tao-radius-panel);
     color: var(--tao-color-text);
     font-size: var(--tao-control-font-size);
+}
+
+/* flat: it sits on what it is put on / плоская: лежит на том, на что поставлена */
+.tao-menubar--flat {
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
 }
 
 .tao-menubar__items {

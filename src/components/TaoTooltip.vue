@@ -31,11 +31,19 @@ const props = withDefaults(
          * инверсном фоне она тонкая. `false` — обычный вес; токен `--tao-tooltip-weight` задаёт вес.
          */
         bold?: boolean;
+        /**
+         * `inverse` (default): the opposite of the theme, dark on a light page and light on a dark one (Material 3, shadcn/ui, Atlassian).
+         * `raised`: a panel of the theme itself with a thin frame, as the hovers of VS Code, JetBrains and Windows: for an IDE-like surface.
+         * `inverse` (по умолчанию): обратна теме, тёмная на светлой странице и светлая на тёмной (Material 3, shadcn/ui, Atlassian).
+         * `raised`: панель самой темы с тонкой рамкой, как подсказки VS Code, JetBrains и Windows: для поверхности вроде IDE.
+         */
+        variant?: 'inverse' | 'raised';
     }>(),
     {
         placement: 'top',
         animated: undefined,
         bold: true,
+        variant: 'inverse',
     },
 );
 
@@ -106,7 +114,7 @@ onBeforeUnmount(() => {
                     v-if="showTooltip"
                     ref="tooltipRef"
                     class="tao-tip tao-tooltip"
-                    :class="[`tao-tooltip--${side}`, { 'tao-tooltip--regular': !bold }]"
+                    :class="[`tao-tooltip--${side}`, { 'tao-tooltip--regular': !bold, 'tao-tooltip--raised': variant === 'raised' }]"
                     role="tooltip"
                     :style="panelStyle"
                 >
@@ -152,6 +160,34 @@ onBeforeUnmount(() => {
     min-width: round(up, 1.5em, 2px);
     margin-block: -0.1em;
     background: color-mix(in srgb, currentColor 22%, transparent);
+}
+
+/* raised: the colours are the hooks of the hint (see contexts/tip.css), set here for this one; the frame follows the arrow too */
+/* raised: цвета — хуки подсказки (см. contexts/tip.css), заданные здесь для неё одной; рамка идёт и по стрелке */
+.tao-tooltip--raised {
+    --tao-tooltip-bg: var(--tao-color-surface-raised);
+    --tao-tooltip-text: var(--tao-color-text);
+    border: 1px solid var(--tao-color-border-strong);
+}
+
+.tao-tooltip--raised.tao-tooltip--top .tao-tooltip__arrow {
+    border-right: 1px solid var(--tao-color-border-strong);
+    border-bottom: 1px solid var(--tao-color-border-strong);
+}
+
+.tao-tooltip--raised.tao-tooltip--bottom .tao-tooltip__arrow {
+    border-left: 1px solid var(--tao-color-border-strong);
+    border-top: 1px solid var(--tao-color-border-strong);
+}
+
+.tao-tooltip--raised.tao-tooltip--left .tao-tooltip__arrow {
+    border-top: 1px solid var(--tao-color-border-strong);
+    border-right: 1px solid var(--tao-color-border-strong);
+}
+
+.tao-tooltip--raised.tao-tooltip--right .tao-tooltip__arrow {
+    border-bottom: 1px solid var(--tao-color-border-strong);
+    border-left: 1px solid var(--tao-color-border-strong);
 }
 
 .tao-tooltip__arrow {
