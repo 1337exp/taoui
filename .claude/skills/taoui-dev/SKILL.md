@@ -34,7 +34,8 @@ TaoUI is a Vue 3 kit on design tokens, 5.x on npm (minors add, patches fix). The
 
 ```bash
 npm run type-check                 # vue-tsc
-npx vitest run                     # all tests
+npx vitest run                     # all tests (happy-dom: no layout)
+npm run test:e2e                   # a real Chrome / Edge against the showcase (e2e/); run it for anything about layout, focus, motion
 npm run build                      # dist/ (the CSS layer files are checked by tests too)
 npm run lint:package               # publint + attw (the CJS warning is expected: ESM-only)
 npm --prefix showcase run build    # the showcase compiles

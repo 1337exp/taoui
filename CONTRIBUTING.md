@@ -14,7 +14,8 @@ cd showcase && npm install   # the live showcase
 | Command | What it does |
 | --- | --- |
 | `npm run type-check` | `vue-tsc --noEmit` |
-| `npm test` | Vitest |
+| `npm test` | Vitest (happy-dom: no layout) |
+| `npm run test:e2e` | the real-browser checks (`e2e/`): Chrome or Edge driven by playwright-core against the showcase; real layout, focus, computed style, reduced motion. `SHOWCASE_URL=http://localhost:5179` uses a server that runs already |
 | `npm run build` | library build into `dist/` |
 | `npm run showcase` | showcase dev server (reads `src/` directly) |
 | `npm run media` | regenerate screenshots and clips, see [docs/media](docs/media/README.md) |

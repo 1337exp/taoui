@@ -79,6 +79,7 @@
     "type-check": "vue-tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:e2e": "vitest run --config vitest.e2e.config.ts",
     "showcase": "npm --prefix showcase run dev",
     "showcase:build": "npm --prefix showcase run build",
     "media": "node scripts/media.mjs",
