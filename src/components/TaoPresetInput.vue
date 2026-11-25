@@ -2,14 +2,12 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import TaoIcon from './TaoIcon.vue';
 import { useControlAttrs } from '../controlAttrs';
-import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
-import { useDismiss } from '../dismiss';
-import { useFloating } from '../floating';
+import { densityClass } from '../density';
+import { usePopup } from '../primitives/usePopup';
 import { nativeFieldAttrs, useField } from '../formField';
-import { useLayer } from '../layers';
 import { useLocaleText } from '../locale';
 import { parsePreset, presetLine, presetList, stepPreset, type TaoPresetOption, type TaoPresetValue } from '../presetInput';
-import { resolveSize, sizeClass, type TaoSize } from '../size';
+import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoPresetInput', inheritAttrs: false });
 
@@ -83,9 +81,6 @@ const fieldRef = ref<HTMLElement | null>(null);
 const stepsRef = ref<HTMLElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
-/** The pop-up is teleported to body, so it gets the size resolved at the field. / Окно в body — размер берём у поля. */
-const panelSize = ref<TaoSize>('medium');
-const panelDensity = ref<TaoResolvedDensity>('default');
 
 const list = computed(() => presetList(props.options));
 
@@ -115,10 +110,22 @@ const activeId = computed(() => {
     return open.value && index >= 0 ? `${listId}-opt-${index}` : undefined;
 });
 
-const { style: panelStyle, update: updatePosition } = useFloating(fieldRef, panelRef, open, { placement: 'bottom' });
-// a press outside applies the text, as leaving the field does
-useDismiss(open, () => [fieldRef.value, stepsRef.value, panelRef.value], () => closeAndCommit());
-useLayer(open, { onEscape: () => closeAndRevert() });
+const {
+    style: panelStyle,
+    update: updatePosition,
+    panelSize,
+    panelDensity,
+} = usePopup({
+    open,
+    anchor: fieldRef,
+    panel: panelRef,
+    placement: 'bottom',
+    inside: () => [stepsRef.value],
+    scale: () => props.size,
+    // a press outside applies the text, as leaving the field does
+    onDismiss: () => closeAndCommit(),
+    onEscape: () => closeAndRevert(),
+});
 
 function setValue(next: TaoPresetValue) {
     if (next !== model.value) {
@@ -154,8 +161,6 @@ async function openList() {
     if (props.disabled || open.value) {
         return;
     }
-    panelSize.value = resolveSize(fieldRef.value, props.size);
-    panelDensity.value = resolveDensity(fieldRef.value);
     open.value = true;
     await nextTick();
     updatePosition();

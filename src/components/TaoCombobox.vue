@@ -1,16 +1,14 @@
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
-import { useDismiss } from '../dismiss';
-import { useFloating } from '../floating';
+import { usePopup } from '../primitives/usePopup';
 import { useField } from '../formField';
 import TaoFormValue from './TaoFormValue.vue';
-import { useLayer } from '../layers';
 import { stepEnabled } from '../primitives/useRoving';
 import { listenFocusLoss } from '../focusLoss';
 import type { TaoSelectItem } from '../select';
-import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
-import { resolveSize, sizeClass, type TaoSize } from '../size';
+import { densityClass } from '../density';
+import { sizeClass, type TaoSize } from '../size';
 import { formatText, useLocaleText, useTaoLocale } from '../locale';
 
 defineOptions({ name: 'TaoCombobox', inheritAttrs: false });
@@ -86,9 +84,6 @@ const activeIndex = ref(-1);
 const fieldRef = ref<HTMLElement | null>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
-/** The panel is teleported to body, so it gets the size resolved at the field. / Панель в body — размер берём у поля. */
-const panelSize = ref<TaoSize>('medium');
-const panelDensity = ref<TaoResolvedDensity>('default');
 const listRef = ref<HTMLElement | null>(null);
 
 const selected = computed((): TaoSelectItem | null => {
@@ -143,10 +138,21 @@ const enabledIndexes = computed(() =>
 
 const activeId = computed(() => (activeIndex.value >= 0 ? `${listId}-row-${activeIndex.value}` : undefined));
 
-const { style: listStyle, update: updatePosition } = useFloating(fieldRef, panelRef, open, { placement: 'bottom-start', matchWidth: true });
-// a press outside commits (or reverts) the text, as leaving the field does
-useDismiss(open, () => [fieldRef.value, panelRef.value], () => (props.allowCreate ? closeAndCommit() : closeAndRevert()));
-useLayer(open, { onEscape: () => closeAndRevert() });
+const {
+    style: listStyle,
+    update: updatePosition,
+    panelSize,
+    panelDensity,
+} = usePopup({
+    open,
+    anchor: fieldRef,
+    panel: panelRef,
+    matchWidth: true,
+    scale: () => props.size,
+    // a press outside commits (or reverts) the text, as leaving the field does
+    onDismiss: () => (props.allowCreate ? closeAndCommit() : closeAndRevert()),
+    onEscape: () => closeAndRevert(),
+});
 
 function syncQueryFromModel() {
     query.value = selected.value?.label ?? '';
@@ -431,13 +437,6 @@ watch(rows, () => {
     }
     if (!enabledIndexes.value.includes(activeIndex.value)) {
         activeIndex.value = enabledIndexes.value[0] ?? -1;
-    }
-});
-
-watch(open, (isOpen) => {
-    if (isOpen) {
-        panelSize.value = resolveSize(fieldRef.value, props.size);
-        panelDensity.value = resolveDensity(fieldRef.value);
     }
 });
 

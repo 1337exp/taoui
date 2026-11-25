@@ -10,10 +10,8 @@ import {
     parseTaoDateInput,
     todayTaoDate,
 } from '../date';
-import { useDismiss } from '../dismiss';
-import { useFloating } from '../floating';
+import { usePopup } from '../primitives/usePopup';
 import { useField } from '../formField';
-import { useLayer } from '../layers';
 import { useLocaleText, useTaoLocale } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import '../styles/date-popup.css';
@@ -102,9 +100,11 @@ const valueIso = computed(() => {
 });
 const displayLabel = computed(() => (valueIso.value ? formatTaoDateLabel(valueIso.value, dateLocale.value) : ''));
 
-const { style: panelStyle, update: updatePosition } = useFloating(anchorRef, panelRef, open, { placement: 'bottom-start' });
-useDismiss(open, () => [anchorRef.value, panelRef.value], close);
-useLayer(open, {
+const { style: panelStyle, update: updatePosition } = usePopup({
+    open,
+    anchor: anchorRef,
+    panel: panelRef,
+    onDismiss: close,
     onEscape: () => {
         close();
         focusBack();

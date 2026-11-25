@@ -2,10 +2,8 @@
 import { computed, nextTick, ref } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
 import { formatTaoDateRangeLabel, parseTaoDateRange, type TaoDateRangeValue } from '../date';
-import { useDismiss } from '../dismiss';
-import { useFloating } from '../floating';
+import { usePopup } from '../primitives/usePopup';
 import { useField } from '../formField';
-import { useLayer } from '../layers';
 import { useLocaleText, useTaoLocale } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import '../styles/date-popup.css';
@@ -72,9 +70,11 @@ const displayLabel = computed(() =>
     committed.value ? formatTaoDateRangeLabel(committed.value.start, committed.value.end, dateLocale.value) : '',
 );
 
-const { style: panelStyle, update: updatePosition } = useFloating(triggerRef, panelRef, open, { placement: 'bottom-start' });
-useDismiss(open, () => [triggerRef.value, panelRef.value], close);
-useLayer(open, {
+const { style: panelStyle, update: updatePosition } = usePopup({
+    open,
+    anchor: triggerRef,
+    panel: panelRef,
+    onDismiss: close,
     onEscape: () => {
         close();
         triggerRef.value?.focus();

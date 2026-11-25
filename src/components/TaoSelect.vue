@@ -1,14 +1,12 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, watch } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
-import { useDismiss } from '../dismiss';
-import { useFloating } from '../floating';
-import { useLayer } from '../layers';
+import { usePopup } from '../primitives/usePopup';
 import { useRoving } from '../primitives/useRoving';
 import { useField } from '../formField';
 import type { TaoSelectItem } from '../select';
-import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
-import { resolveSize, sizeClass, type TaoSize } from '../size';
+import { densityClass } from '../density';
+import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
 import TaoFormValue from './TaoFormValue.vue';
 
@@ -66,17 +64,23 @@ const activeIndex = ref(-1);
 const triggerRef = ref<HTMLButtonElement | null>(null);
 const panelRef = ref<HTMLElement | null>(null);
 const listRef = ref<HTMLElement | null>(null);
-/** The panel is teleported to body, so it gets the size resolved at the trigger. / Панель в body — размер берём у триггера. */
-const panelSize = ref<TaoSize>('medium');
-const panelDensity = ref<TaoResolvedDensity>('default');
 
 const selected = computed(() => props.items.find((option) => option.id === model.value) ?? null);
 const enabled = computed(() => props.items.map((option) => !option.disabled));
 const enabledIndexes = computed(() => enabled.value.flatMap((on, index) => (on ? [index] : [])));
 
-const { style: listStyle, update: updatePosition } = useFloating(triggerRef, panelRef, open, { placement: 'bottom-start', matchWidth: true });
-useDismiss(open, () => [triggerRef.value, panelRef.value], close);
-useLayer(open, {
+const {
+    style: listStyle,
+    update: updatePosition,
+    panelSize,
+    panelDensity,
+} = usePopup({
+    open,
+    anchor: triggerRef,
+    panel: panelRef,
+    matchWidth: true,
+    scale: () => props.size,
+    onDismiss: close,
     onEscape: () => {
         close();
         triggerRef.value?.focus();
@@ -185,13 +189,6 @@ function onListKeydown(event: KeyboardEvent) {
         }
     }
 }
-
-watch(open, (isOpen) => {
-    if (isOpen) {
-        panelSize.value = resolveSize(triggerRef.value, props.size);
-        panelDensity.value = resolveDensity(triggerRef.value);
-    }
-});
 </script>
 
 <template>
