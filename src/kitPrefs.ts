@@ -113,7 +113,9 @@ export function createKitPrefs(options: TaoKitPrefsOptions = {}): TaoKitPrefs {
     const locale = ref<string>(pickLocale(deferred ? null : read(storage, options.key, 'locale'), !deferred));
 
     // the system's mode is a live value while `system` is picked
-    const system = ref<TaoMode>(systemTaoMode());
+    // deferred: the server does not know the scheme of the system, so the first state is the server's (dark) and `restore()` reads the real one
+    // deferred: сервер не знает схему системы, поэтому первое состояние серверное (тёмное), а настоящую читает `restore()`
+    const system = ref<TaoMode>(deferred ? 'dark' : systemTaoMode());
     const resolvedMode = computed<TaoMode>(() => (mode.value === 'system' ? system.value : resolveTaoMode(mode.value)));
 
     const scope = effectScope(true);
@@ -173,8 +175,9 @@ export function createKitPrefs(options: TaoKitPrefsOptions = {}): TaoKitPrefs {
         watch(locale, (value) => ready && write(storage, options.key, 'locale', value));
     });
 
+    let disposed = false;
     function restore() {
-        if (ready) {
+        if (ready || disposed) {
             return;
         }
         // the saved values are assigned first, so what was saved is not overwritten by the defaults; saving starts after that
@@ -197,6 +200,7 @@ export function createKitPrefs(options: TaoKitPrefsOptions = {}): TaoKitPrefs {
         locale,
         restore,
         dispose() {
+            disposed = true;
             media?.removeEventListener?.('change', onSystem);
             scope.stop();
         },

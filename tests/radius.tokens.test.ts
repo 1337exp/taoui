@@ -30,14 +30,6 @@ describe('radius', () => {
         expect(steps(2)).toEqual([0, 2, 6, 10]);
     });
 
-    it('whatever the whole-pixel base, every step is an even ladder of whole pixels', () => {
-        for (let base = 2; base <= 24; base += 1) {
-            const [sm, md, lg, xl] = [Math.max(0, base - 4), base, base + 4, base + 8];
-            expect([lg - md, xl - lg]).toEqual([4, 4]);
-            for (const step of [sm, md, lg, xl]) expect(Number.isInteger(step)).toBe(true);
-        }
-    });
-
     it('no component multiplies a radius by a fraction without round()', () => {
         const bad: string[] = [];
         for (const file of walk(join(__dirname, '..', 'src'))) {

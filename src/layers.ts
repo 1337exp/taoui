@@ -8,6 +8,8 @@ import { lockBodyScroll, unlockBodyScroll } from './bodyScroll';
  */
 interface Layer {
     onEscape?: () => void;
+    /** The root of a modal layer, when it has one (see `modalRoot`). / Корень модального слоя, если он есть. */
+    modalRoot?: () => HTMLElement | null | undefined;
 }
 
 const stack: Layer[] = [];
@@ -54,11 +56,15 @@ function pop(layer: Layer) {
 const inerted = new Map<Element, number>();
 const KEEP_LIVE = '[data-tao-toast-viewport]';
 
-function makeInert(root: Element): Element[] {
+// `above` are the roots of the modal layers that are over this one (two dialogs opened in the same turn are both in the document when the
+// first of them is processed): they are not made inert by the one below, or neither dialog could be clicked
+// `above` — корни модальных слоёв, что лежат над этим (два диалога, открытые в одном такте, оба в документе, когда обрабатывается первый):
+// нижний слой их не делает inert, иначе ни один из диалогов нельзя было бы нажать
+function makeInert(root: Element, above: Element[]): Element[] {
     const done: Element[] = [];
     for (let node: Element | null = root; node && node !== document.body; node = node.parentElement) {
         for (const sibling of Array.from(node.parentElement?.children ?? [])) {
-            if (sibling === node || sibling.matches(KEEP_LIVE) || sibling.matches('script, style, link, template')) {
+            if (sibling === node || sibling.matches(KEEP_LIVE) || sibling.matches('script, style, link, template') || above.some((top) => sibling.contains(top))) {
                 continue;
             }
             const count = inerted.get(sibling) ?? 0;
@@ -108,7 +114,7 @@ export function openLayerCount() {
 
 export function useLayer(open: MaybeRefOrGetter<boolean>, options: UseLayerOptions = {}) {
     // `onEscape` is read when the key is pressed, so it may be declared after this call
-    const layer: Layer = { onEscape: () => options.onEscape?.() };
+    const layer: Layer = { onEscape: () => options.onEscape?.(), modalRoot: options.modalRoot };
     let active = false;
     let previousFocus: HTMLElement | null = null;
     let made: Element[] = [];
@@ -130,7 +136,11 @@ export function useLayer(open: MaybeRefOrGetter<boolean>, options: UseLayerOptio
             void nextTick(() => {
                 const root = options.modalRoot?.();
                 if (active && root && !made.length) {
-                    made = makeInert(root);
+                    const above = stack
+                        .slice(stack.indexOf(layer) + 1)
+                        .map((over) => over.modalRoot?.())
+                        .filter((el): el is HTMLElement => Boolean(el));
+                    made = makeInert(root, above);
                 }
             });
         }

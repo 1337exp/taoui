@@ -13,6 +13,9 @@ import { useWholePixelPanel } from '../wholePixel';
 defineOptions({ name: 'TaoConfirmHost' });
 
 const panelRef = ref<HTMLElement | null>(null);
+// the root holds the scrim too: the scrim is part of the dialog (its click answers `false`), so it must not be made inert
+// корень содержит и подложку: подложка часть диалога (её клик отвечает `false`), поэтому она не должна становиться inert
+const rootEl = ref<HTMLElement | null>(null);
 
 // one host asks; a second one in the tree draws nothing and takes no layer (the dialog would be on the screen twice)
 // спрашивает один хост; второй в дереве ничего не рисует и слой не занимает (диалог был бы на экране дважды)
@@ -35,7 +38,7 @@ const okLabel = computed(() => currentConfirm.value?.okLabel ?? locale.value.con
 const cancelLabel = computed(() => currentConfirm.value?.cancelLabel ?? locale.value.confirm.cancel);
 
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
-useLayer(() => active.value && Boolean(currentConfirm.value), { lockScroll: true, restoreFocus: true, modalRoot: () => panelRef.value, onEscape: () => answer(false) });
+useLayer(() => active.value && Boolean(currentConfirm.value), { lockScroll: true, restoreFocus: true, modalRoot: () => rootEl.value, onEscape: () => answer(false) });
 
 // the panel is centred: when the room left over is odd it starts on a half pixel, and its buttons jump when they are repainted
 // панель отцентрована: когда оставшееся место нечётное, она начинается с половины пикселя, и её кнопки прыгают при перерисовке
@@ -80,6 +83,7 @@ function onKeydown(event: KeyboardEvent) {
         <Transition name="tao-confirm">
             <div
                 v-if="currentConfirm"
+                ref="rootEl"
                 class="tao-confirm"
                 :class="{ 'tao-confirm--glass': currentConfirm.surface === 'glass' }"
                 data-tao-confirm-host

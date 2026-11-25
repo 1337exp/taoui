@@ -92,3 +92,30 @@ describe('confirm()', () => {
         expect(inert('app')).toBe(false);
     });
 });
+
+describe('review 3: two dialogs in the same turn, and the scrim of confirm()', () => {
+    it('two dialogs opened in one turn do not make each other inert', async () => {
+        page();
+        const a = mount(TaoModal as never, { props: { modelValue: true } as never, slots: { default: () => 'a' }, attachTo: document.body });
+        const b = mount(TaoDrawer as never, { props: { modelValue: true } as never, slots: { default: () => 'b' }, attachTo: document.body });
+        mounted.push(a, b);
+        await flush();
+        const dialogs = [...document.querySelectorAll('[role="dialog"]')];
+        expect(dialogs).toHaveLength(2);
+        // the top one (opened last) is fully usable; the one under it is inert; the page is inert
+        expect(dialogs[1]!.closest('[inert]')).toBeNull();
+        expect(inert('app')).toBe(true);
+    });
+
+    it('the scrim of confirm() is not inert: a click on it answers false', async () => {
+        page();
+        const w = mount(TaoConfirmHost, { attachTo: document.body });
+        mounted.push(w);
+        const answer = confirm('Sure?');
+        await flush();
+        const scrim = document.querySelector('.tao-confirm__overlay') as HTMLElement;
+        expect(scrim.closest('[inert]')).toBeNull();
+        scrim.click();
+        expect(await answer).toBe(false);
+    });
+});

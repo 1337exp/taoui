@@ -122,6 +122,37 @@ async function setOpen(next: boolean) {
     scrollActiveIntoView();
 }
 
+// a field that becomes read-only or disabled while its list is open lets the list go: it could still be clicked and would commit
+// поле, которое стало только для чтения или недоступным при открытом списке, отпускает список: по нему ещё можно нажать, и он зафиксирует
+watch(
+    () => props.disabled || props.readOnly,
+    (off) => {
+        if (off) {
+            close();
+        }
+    },
+);
+
+// the items shrink while the list is open: the active option must still be one of them (`aria-activedescendant` names it)
+// пункты сократились при открытом списке: активный должен остаться одним из них (его называет `aria-activedescendant`)
+watch(
+    () => props.items.length,
+    (count) => {
+        if (activeIndex.value >= count) {
+            activeIndex.value = enabledIndexes.value.at(-1) ?? -1;
+        }
+    },
+);
+
+// the focus stays on the trigger while a press inside the list is held (the scrollbar, the padding): that press is not a leave
+// фокус остаётся на кнопке, пока держат нажатие внутри списка (полоса прокрутки, поля): это нажатие не уход
+function onTriggerBlur(event: FocusEvent) {
+    if (panelRef.value?.contains(event.relatedTarget as Node | null)) {
+        return;
+    }
+    close();
+}
+
 function toggle() {
     void setOpen(!open.value);
 }
@@ -131,7 +162,7 @@ function close() {
 }
 
 function selectOption(option: TaoSelectItem) {
-    if (option.disabled) {
+    if (option.disabled || props.disabled || props.readOnly) {
         return;
     }
 
@@ -141,6 +172,9 @@ function selectOption(option: TaoSelectItem) {
 }
 
 function clear() {
+    if (props.disabled || props.readOnly) {
+        return;
+    }
     model.value = null;
     close();
     triggerRef.value?.focus();
@@ -182,6 +216,27 @@ function onTriggerKeydown(event: KeyboardEvent) {
 }
 
 function onListKeydown(event: KeyboardEvent) {
+    // the select-only combobox of the APG: Alt+ArrowUp picks the active option and closes, PageUp / PageDown jump ten options
+    // select-only combobox из APG: Alt+ArrowUp выбирает активный пункт и закрывает, PageUp / PageDown прыгают на десять пунктов
+    if (event.key === 'ArrowUp' && event.altKey) {
+        event.preventDefault();
+        const option = props.items[activeIndex.value];
+        if (option) {
+            selectOption(option);
+        } else {
+            close();
+        }
+        return;
+    }
+    if (event.key === 'PageDown' || event.key === 'PageUp') {
+        event.preventDefault();
+        const list = enabledIndexes.value;
+        const at = list.indexOf(activeIndex.value);
+        const to = event.key === 'PageDown' ? Math.min(list.length - 1, (at < 0 ? 0 : at) + 10) : Math.max(0, (at < 0 ? 0 : at) - 10);
+        activeIndex.value = list[to] ?? -1;
+        scrollActiveIntoView();
+        return;
+    }
     if (nav.onKeydown(event)) {
         return;
     }
@@ -234,7 +289,7 @@ function onListKeydown(event: KeyboardEvent) {
             :disabled="disabled"
             @click="toggle"
             @keydown="onTriggerKeydown"
-            @blur="close"
+            @blur="onTriggerBlur"
         >
             <span class="tao-select__value">{{ selected?.label ?? l10n.placeholder }}</span>
             <span
@@ -254,6 +309,7 @@ function onListKeydown(event: KeyboardEvent) {
                 class="tao-select__panel"
                 :class="[sizeClass(panelSize), densityClass(panelDensity)]"
                 :style="listStyle"
+                @mousedown.prevent
             >
                 <ul
                     :id="listId"
@@ -320,9 +376,6 @@ function onListKeydown(event: KeyboardEvent) {
     list-style: none;
 }
 
-.tao-select__list:focus {
-    outline: none;
-}
 
 .tao-select__clear {
     display: block;
@@ -396,10 +449,8 @@ function onListKeydown(event: KeyboardEvent) {
     color: var(--tao-color-input-placeholder);
 }
 
-/* open: the field stays lit while its list is open. The press focuses it (lit), opening moves the focus into the list:
-   without this the frame lit up and went out at once, a flash
-   открыт: поле горит, пока открыт его список. Нажатие даёт фокус (горит), открытие уводит фокус в список: без этого
-   рамка вспыхивала и сразу гасла */
+/* open: the field stays lit while its list is open (the focus stays on the trigger, and the frame follows the open state too)
+   открыт: поле горит, пока открыт его список (фокус остаётся на кнопке, и рамка следует и за состоянием «открыт») */
 .tao-select__trigger:focus,
 .tao-select--open .tao-select__trigger {
     outline: none;

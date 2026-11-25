@@ -28,9 +28,12 @@ describe('a form reset', () => {
         await new Promise((r) => setTimeout(r));
         expect(new FormData(form).get('letter')).toBe('b');
         // the platform resets the input to its default (empty) value and tells nobody
-        (form.querySelector('input[name="letter"]') as HTMLInputElement).value = '';
-        form.dispatchEvent(new Event('reset'));
-        await new Promise((r) => setTimeout(r, 5));
+        // a real reset: the event first, then the platform puts the defaults back (happy-dom does not do the second half, so it is done here)
+        const hidden = form.querySelector('input[name="letter"]') as HTMLInputElement;
+        form.addEventListener('reset', () => (hidden.value = ''));
+        form.reset();
+        expect(hidden.value).toBe('');
+        await new Promise((r) => setTimeout(r, 30));
         expect(new FormData(form).get('letter')).toBe('b');
         w.unmount();
     });
@@ -144,6 +147,63 @@ describe('usePopup: a panel that is open on the first render', () => {
         const w = mount(C, { attachTo: document.body });
         await new Promise((r) => setTimeout(r));
         expect(size).toBe('large');
+        w.unmount();
+    });
+});
+
+describe('review 3: TaoSelect', () => {
+    const many = Array.from({ length: 25 }, (_, i) => ({ id: `o${i}`, label: `Option ${i}` }));
+    const keyOn = (el: Element, key: string, init: KeyboardEventInit = {}) => {
+        el.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }));
+        return new Promise((r) => setTimeout(r));
+    };
+    const openIt = async (props: Record<string, unknown>) => {
+        const w = mount(TaoSelect, { props: props as never, attachTo: document.body });
+        const trigger = w.find('[role="combobox"]');
+        await trigger.trigger('click');
+        return { w, trigger };
+    };
+
+    it('a press inside the list is not a leave: the panel keeps the focus on the trigger, and a blur into it does not close', async () => {
+        const { w, trigger } = await openIt({ items, modelValue: 'a' });
+        const panel = document.querySelector('.tao-select__panel')!;
+        const down = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+        panel.dispatchEvent(down);
+        expect(down.defaultPrevented).toBe(true);
+        await trigger.trigger('blur', { relatedTarget: panel });
+        expect(document.querySelector('[role="listbox"]')).not.toBeNull();
+        await trigger.trigger('blur');
+        expect(document.querySelector('[role="listbox"]')).toBeNull();
+        w.unmount();
+    });
+
+    it('a select that becomes read-only while open closes, and its options no longer commit', async () => {
+        const { w } = await openIt({ items, modelValue: 'a' });
+        await w.setProps({ readOnly: true });
+        expect(document.querySelector('[role="listbox"]')).toBeNull();
+        expect(w.emitted('update:modelValue')).toBeUndefined();
+        w.unmount();
+    });
+
+    it('the active option stays one of the items when they shrink while the list is open', async () => {
+        const { w, trigger } = await openIt({ items: many, modelValue: 'o20' });
+        expect(trigger.attributes('aria-activedescendant')).toMatch(/opt-20$/);
+        await w.setProps({ items: many.slice(0, 5) });
+        const id = trigger.attributes('aria-activedescendant');
+        expect(id === undefined || document.getElementById(id) !== null).toBe(true);
+        w.unmount();
+    });
+
+    it('PageDown / PageUp jump ten options, Alt+ArrowUp picks the active one and closes', async () => {
+        const { w, trigger } = await openIt({ items: many, modelValue: 'o0' });
+        await keyOn(trigger.element, 'PageDown');
+        expect(trigger.attributes('aria-activedescendant')).toMatch(/opt-10$/);
+        await keyOn(trigger.element, 'PageUp');
+        expect(trigger.attributes('aria-activedescendant')).toMatch(/opt-0$/);
+        await keyOn(trigger.element, 'PageDown');
+        await keyOn(trigger.element, 'ArrowUp', { altKey: true });
+        expect(w.emitted('update:modelValue')).toEqual([['o10']]);
+        expect(document.querySelector('[role="listbox"]')).toBeNull();
         w.unmount();
     });
 });

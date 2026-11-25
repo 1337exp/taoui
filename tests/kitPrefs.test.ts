@@ -196,6 +196,24 @@ describe('deferred: for an app that is rendered on the server and hydrates', () 
         prefs.dispose();
     });
 
+    it('the system scheme is not read before restore(): the page starts as the server renders it, then follows the real one', () => {
+        light = true;
+        const r = root();
+        const prefs = createKitPrefs({ storage: null, root: r, deferred: true });
+        expect(prefs.resolvedMode.value).toBe('dark');
+        expect(r.getAttribute('data-tao-mode')).not.toBe('light');
+        prefs.restore();
+        expect(prefs.resolvedMode.value).toBe('light');
+        prefs.dispose();
+    });
+
+    it('restore() after dispose() arms nothing', () => {
+        const prefs = createKitPrefs({ storage: null, root: root(), deferred: true });
+        prefs.dispose();
+        prefs.restore();
+        expect(listener).toBeNull();
+    });
+
     it('the system mode is followed only after restore()', () => {
         const prefs = createKitPrefs({ storage: null, root: root(), deferred: true });
         expect(listener).toBeNull();
