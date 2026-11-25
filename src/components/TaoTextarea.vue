@@ -50,7 +50,7 @@ const props = withDefaults(
          * Enter снимает фокус вместо переноса (Shift+Enter переносит); `keydown` уходит раньше.
          */
         blurOnEnter?: boolean;
-        error?: boolean;
+        invalid?: boolean;
         id?: string;
         /** Показать «введено / максимум» под полем. Имеет смысл вместе с `maxlength`. */
         count?: boolean;
@@ -72,14 +72,14 @@ const props = withDefaults(
         autofocus: false,
         align: 'start',
         blurOnEnter: false,
-        error: false,
+        invalid: false,
         count: false,
     },
 );
 
 const emit = defineEmits(['update:modelValue', 'change', 'focus', 'blur', 'keydown']);
 
-const { field, controlId, invalid } = useField(props);
+const { field, controlId, isInvalid } = useField(props);
 const counterId = computed(() => `${controlId.value}-count`);
 const alignClass = computed(() => (props.align === 'start' ? undefined : `tao-textarea--align-${props.align}`));
 const variantClasses = computed(() => `tao-textarea--${props.variant}`);
@@ -216,7 +216,7 @@ onBeforeUnmount(() => {
                 alignClass,
                 {
                     'tao-textarea--no-resize': !resize,
-                    'tao-textarea--invalid': invalid,
+                    'tao-textarea--invalid': isInvalid,
                 },
             ]"
             :placeholder="placeholder"
@@ -229,7 +229,7 @@ onBeforeUnmount(() => {
             :rows="rows"
             :style="{ maxHeight: maxHeightCss }"
             :value="modelValue"
-            :aria-invalid="invalid || undefined"
+            :aria-invalid="isInvalid || undefined"
             :aria-describedby="describedBy"
             draggable="false"
             @input="onInput"

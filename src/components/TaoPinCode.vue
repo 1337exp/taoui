@@ -23,7 +23,7 @@ const props = withDefaults(
         placeholder?: string;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
-        error?: boolean;
+        invalid?: boolean;
         /**
          * The frame of the cells. `false` is the light style: a soft fill and no frame at all; the focus, an error and a result
          * are told by a tint of the fill and, for the last two, by the colour of the digit.
@@ -52,7 +52,7 @@ const props = withDefaults(
         masked: false,
         placeholder: '',
         disabled: false,
-        error: false,
+        invalid: false,
         bordered: true,
         modelValue: '',
         numbersOnly: false,
@@ -72,8 +72,8 @@ const emit = defineEmits<{
     blur: [];
 }>();
 
-const { field, controlId, invalid: fieldInvalid, describedBy } = useField(props);
-const invalid = computed(() => fieldInvalid.value || props.status === 'error');
+const { field, controlId, isInvalid: fieldInvalid, describedBy } = useField(props);
+const isInvalid = computed(() => fieldInvalid.value || props.status === 'error');
 
 // The animation runs on every change of the status (and on play()): the class goes off for a frame and on again.
 // Анимация на каждую смену статуса (и на play()): класс снимается на кадр и ставится снова.
@@ -315,7 +315,7 @@ watch(
             },
         ]"
         role="group"
-        :aria-invalid="invalid || undefined"
+        :aria-invalid="isInvalid || undefined"
         :aria-describedby="describedBy"
     >
         <template v-for="(num, index) of numbers" :key="index">
@@ -326,14 +326,14 @@ watch(
                 class="tao-pin-code__value"
                 :class="{
                     'tao-pin-code__value--active': activeNumber === index,
-                    'tao-pin-code__value--invalid': invalid,
+                    'tao-pin-code__value--invalid': isInvalid,
                 }"
                 :style="{ '--_i': index }"
                 :value="num"
                 :placeholder="placeholder"
                 :type="isMasked ? 'password' : 'text'"
                 :disabled="disabled"
-                :aria-invalid="invalid || undefined"
+                :aria-invalid="isInvalid || undefined"
                 :inputmode="numbersOnly ? 'numeric' : 'text'"
                 :pattern="numbersOnly ? '[0-9]' : undefined"
                 autocomplete="one-time-code"

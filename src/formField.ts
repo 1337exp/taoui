@@ -10,14 +10,14 @@ export const formFieldKey: InjectionKey<TaoFormFieldContext> = Symbol('taoFormFi
 
 /**
  * What every form control needs from a surrounding TaoFormField: the id its label points at, the invalid state
- * (own `error` or the field's) and `aria-describedby`. Call it with the component props.
+ * (own `invalid` or the field's) and `aria-describedby`. Call it with the component props.
  * Что нужно каждому контролу формы от окружающего TaoFormField: id для подписи, состояние ошибки и `aria-describedby`.
  */
-export function useField(props: { error?: boolean; id?: string }) {
+export function useField(props: { invalid?: boolean; id?: string }) {
     const field = inject(formFieldKey, null);
     const localId = useId();
     const controlId = computed(() => props.id || field?.id || localId);
-    const invalid = computed(() => Boolean(props.error) || Boolean(field?.invalid.value));
+    const isInvalid = computed(() => Boolean(props.invalid) || Boolean(field?.invalid.value));
     const describedBy = computed(() => field?.describedBy.value);
-    return { field, controlId, invalid, describedBy, localId };
+    return { field, controlId, isInvalid, describedBy, localId };
 }

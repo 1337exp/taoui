@@ -46,9 +46,9 @@ describe('surfaces', () => {
     });
 });
 
-describe('fields: error', () => {
-    it('error marks the field invalid', () => {
-        const w = mount(TaoInputNumber, { props: { error: true, modelValue: 1 } });
+describe('fields: invalid', () => {
+    it('invalid marks the field', () => {
+        const w = mount(TaoInputNumber, { props: { invalid: true, modelValue: 1 } });
         expect(cls(w.element)).toContain('tao-input-number--invalid');
         expect(w.find('input').attributes('aria-invalid')).toBe('true');
     });

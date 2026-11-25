@@ -185,7 +185,7 @@ Showcase section: `#input`
 | `placeholder` | `string` | '' | The hint inside |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
 | `disabled` | `boolean` | false | Disabled |
-| `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
 | `variant` | `'outline' \| 'filled' \| 'plain'` | 'outline' | A frame / a fill only / nothing: plain reads as text (an item of a list being edited): no inset, the caret shows the focus, an error is a red line under the text. The height does not change |
 | `id` | `string` | auto | The input id; otherwise taken from FormField or useId |
 
@@ -215,7 +215,7 @@ Showcase section: `#input-number`
 | `controls` | `boolean` | true | ± buttons on the right |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
 | `disabled` | `boolean` | false | Disabled |
-| `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
 | `variant` | `'outline' \| 'filled' \| 'plain'` | 'outline' | As on TaoInput: a frame / a fill only / nothing (the field reads as text, an error is a red line under the text) |
 | `placeholder` | `string` | '' | The hint when null |
 
@@ -232,7 +232,7 @@ Showcase section: `#quantity`
 | `forceMaxLimit` | `boolean` | true | Clamp the input to max on blur and when more than the stock arrives |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
 | `disabled` | `boolean` | false | Disabled |
-| `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
 
 **Slots, events, notes.** #decrement-icon / #increment-icon — the button icons.
 
@@ -256,7 +256,7 @@ Showcase section: `#drag-number`
 | `@commit` | `number` | — | The action ended and changed the value: end of a drag, ±, an arrow, Enter or blur of a typed number (once per action; v-model updates on every move) |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
 | `disabled` | `boolean` | false | Disabled |
-| `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
 | `incrementLabel / decrementLabel` | `string` | from the locale | Button labels for a screen reader |
 
 **Slots, events, notes.** #decrement-icon / #increment-icon — the button icons.
@@ -282,7 +282,7 @@ Showcase section: `#textarea`
 | `blurOnEnter` | `boolean` | false | Enter drops the focus instead of inserting a line break (Shift+Enter inserts it); keydown goes out first |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
 | `disabled` | `boolean` | false | Disabled |
-| `error` | `boolean` | false | A red border |
+| `invalid` | `boolean` | false | A red border |
 
 ## TaoChecklist
 
@@ -297,7 +297,7 @@ Showcase section: `#checklist`
 | `counter` | `boolean` | false | «3 of 5» next to the caption, announced politely |
 | `strike` | `boolean` | false | Strike the checked items through (a to-do list). A look only: the checkbox tells the state |
 | `disabled` | `boolean` | false | The whole group is disabled |
-| `error` | `boolean` | false | Red frames; the message goes to error of TaoFormField |
+| `invalid` | `boolean` | false | Red frames; the message goes to error of TaoFormField |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size of the checkboxes |
 | `selectAllLabel` | `string` | 'Select all' | The «Select all» label |
 | `counterText` | `string` | '{checked} of {total}' | The counter text |
@@ -316,7 +316,7 @@ Showcase section: `#checkbox`
 | `indeterminate` | `boolean` | false | A dash instead of the tick. A click sets checked, the parent works out the mixed state |
 | `disabled` | `boolean` | false | Disabled |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | A 14 / 18 / 22 square and the caption font size. Without it — the size of the ancestors |
-| `error` | `boolean` | false | A red accent. The error text goes through TaoFormField |
+| `invalid` | `boolean` | false | A red accent. The error text goes through TaoFormField |
 
 ## TaoSelect
 
@@ -328,7 +328,7 @@ Showcase section: `#select`
 | `options` | `TaoSelectOption[]` | [] | { value, label, disabled? } |
 | `placeholder` | `string` | 'Choose' | When the model is null |
 | `disabled` | `boolean` | false | Disabled |
-| `error` | `boolean` | false | A red border |
+| `invalid` | `boolean` | false | A red border |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, as TaoButton; also scales the opened list. Without it — the size of the ancestors |
 | `clearable` | `boolean` | true | Clear row and Delete / Backspace. Turn off when null is not valid. |
 | `clearText` | `string` | 'Clear' | Label of the clear row. |
@@ -345,7 +345,7 @@ Showcase section: `#select`
 | `label` | `string` | '' | The caption on the right |
 | `disabled` | `boolean` | false | Disabled |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | The track is 28 / 36 / 44 px wide, and the caption font size. Without it — the size of the ancestors |
-| `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
 | `loading` | `boolean` | false | The change is being applied: a spinner on the thumb, a click does nothing, not greyed out; aria-busy |
 
 ## TaoRadio / TaoRadioGroup
@@ -359,7 +359,7 @@ Showcase section: `#select`
 | `legend` | `string` | — | Group: the group caption |
 | `direction` | `'row' \| 'column'` | 'row' | Group: in a row or in a column |
 | `disabled` | `boolean` | false | A single point or the whole group |
-| `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | A 14 / 18 / 22 circle and the caption font size. On a group — for all the radios inside |
 | `label / name` | `string` | '' | Radio: the caption and name, if there is no group |
 
@@ -388,7 +388,7 @@ Showcase section: `#segmented`
 | `minWidth` | `number \| string` | — | Minimum width of every option (number = px); the --tao-segmented-option-min-width variable |
 | `legend` | `string` | — | The accessible name of the group |
 | `disabled` | `boolean` | false | The whole group |
-| `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
 | `name` | `string` | auto | name for the radio inputs inside |
 
 **Slots, events, notes.** default — a set of TaoSegmentedOption.
@@ -419,7 +419,7 @@ Showcase section: `#combobox`
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, as TaoButton and TaoSelect; also scales the opened list. Without it — the size of the ancestors |
 | `clearable` | `boolean` | true | Clear row in the list. Turn off when null is not valid. |
 | `clearText` | `string` | 'Clear' | Label of the clear row; slot #clear replaces it. |
-| `disabled / error` | `boolean` | false | Disabled / a red border |
+| `disabled / invalid` | `boolean` | false | Disabled / a red border |
 | `variant` | `'outline' \| 'filled' \| 'plain'` | 'outline' | As on TaoInput: a frame / a fill only / nothing (the field reads as text, an error is a red line under the text) |
 
 **Slots, events, notes.** create — an event when a new value is typed: the parent extends options itself.
@@ -488,7 +488,7 @@ Showcase section: `#preset-input`
 | `size` | `'small' \| 'medium' \| 'large'` | from ancestors | Size, the same scale as TaoButton |
 | `variant` | `'filled' \| 'outline'` | 'filled' | filled: a fill, the frame shows while the field is edited; outline: a frame |
 | `disabled` | `boolean` | false | Disabled |
-| `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
 | `nextLabel` | `string` | 'Next value' | aria-label of the up arrow |
 | `prevLabel` | `string` | 'Previous value' | aria-label of the down arrow |
 
@@ -517,7 +517,7 @@ Showcase section: `#date`
 | `editable` | `boolean` | false | A text field you type the date into, the calendar on the button next to it or ↓. In the locale's order of day and month: 5 is the 5th of this month, 5.3 the 5th of March (3/5 in en-US), 05.03.26, 0503, ISO. Enter or leaving the field applies it; a text that is not a date or is outside min / max puts the value back; Esc drops the typing; an empty field is null |
 | `parse / format` | `(text, { locale, reference }) => string \| null / (iso, locale) => string` | — | Your own reading of the typed text («tomorrow») and your own text in the field; reference is the current value or today |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
-| `disabled / error` | `boolean` | false | Disabled / a red border |
+| `disabled / invalid` | `boolean` | false | Disabled / a red border |
 | `todayText / clearText` | `string` | 'Today' / 'Clear' | The buttons at the bottom of the popup |
 | `calendarLabel` | `string` | 'Choose a date' | aria-label of the calendar button of an editable field |
 
@@ -534,7 +534,7 @@ Showcase section: `#date`
 | `placeholder` | `string` | 'Period' | While null |
 | `locale` | `string` | the app locale | The calendar captions; without it the language of setTaoLocale |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
-| `disabled / error` | `boolean` | false | Disabled / a red border |
+| `disabled / invalid` | `boolean` | false | Disabled / a red border |
 
 **Slots, events, notes.** The first click is start, the second is end (they swap if end is earlier).
 
@@ -550,7 +550,7 @@ Showcase section: `#pincode`
 | `numbersOnly` | `boolean` | false | Digits only |
 | `masked` | `boolean` | false | Dots instead of characters |
 | `disabled` | `boolean` | false | Disabled |
-| `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
 | `bordered` | `boolean` | true | The frame of the cells. false is the light style, no frame at all: a fill; the focus, an error and a result are told by a tint of the fill and the colour of the digit |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Cells 40×46 / 50×56 / 58×64. Without it — the size of the ancestors |
 | `clearOn` | `'focus' \| 'input'` | 'focus' | focus — a click clears the cell and everything to the right; input — changes only on typing |
@@ -594,7 +594,7 @@ Showcase section: `#slider`
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | The scale of the track and the thumb (the thumb is 16 / 20 / 24). Without it — the size of the ancestors |
 | `showValue` | `boolean` | false | The value over the bar |
 | `disabled` | `boolean` | false | Disabled |
-| `error` | `boolean` | false | A red outline of the track. The error text is error on TaoFormField |
+| `invalid` | `boolean` | false | A red outline of the track. The error text is error on TaoFormField |
 | `wheel` | `number` | 0 | The change step for the mouse wheel (a single handle). 0 — disabled |
 | `editable` | `boolean` | false | The value can be typed: a right click or a double click on the bar, or Enter / F2 on a handle, opens a field over the bar (for a range, for the nearest or the focused handle). Enter or leaving the field sets the value, snapped to the step (or to a mark with discrete) and kept in range; Esc drops the edit |
 | `editLabel` | `string` | from the locale | The accessible name of the field of editable (slider.editLabel, "Value") |
@@ -609,7 +609,7 @@ Showcase section: `#slider`
 |---|---|---|---|
 | `v-model` | `[number, number]` | — | A [from, to] pair. Required |
 | `minGap` | `number` | 0 | The smallest distance between the handles; the handles do not jump over each other |
-| `…` | `` |  | The rest as in TaoSlider: min / max / step, marks, discrete, format, vertical, variant, size, showValue, disabled, error |
+| `…` | `` |  | The rest as in TaoSlider: min / max / step, marks, discrete, format, vertical, variant, size, showValue, disabled, invalid |
 
 ## TaoScrubber
 
@@ -662,7 +662,7 @@ Showcase section: `#color`
 | `clearable` | `boolean` | false | The colour can be taken away again: a Clear button under the palette and Delete / Backspace on the field; gives "" (the field then says Not set) |
 | `placeholder` | `string` | 'Not set' | What the field says while the value is empty (""): an optional colour that is not set; the swatch is crossed out |
 | `placement` | `TaoPlacement` | 'bottom-start' | Side and alignment: top / bottom / left / right and -start / -end. Flips at the screen edge |
-| `error` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
 | `disabled` | `boolean` | false | Disabled |
 
 ## colorModel(source, options)

@@ -22,7 +22,7 @@ const props = withDefaults(
         precision?: number;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
-        error?: boolean;
+        invalid?: boolean;
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
         placeholder?: string;
@@ -41,7 +41,7 @@ const props = withDefaults(
         modelValue: null,
         step: 1,
         disabled: false,
-        error: false,
+        invalid: false,
         placeholder: '',
         controls: true,
         variant: 'outline',
@@ -61,7 +61,7 @@ const emit = defineEmits<{
     focus: [event: FocusEvent];
 }>();
 
-const { field, controlId, invalid, describedBy } = useField(props);
+const { field, controlId, isInvalid, describedBy } = useField(props);
 
 const focused = ref(false);
 const draft = ref(toDraft(props.modelValue));
@@ -178,7 +178,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
 </script>
 
 <template>
-    <div v-bind="rootAttrs()" class="tao-input-number" :class="[sizeClass(size), { [`tao-input-number--${variant}`]: variant !== 'outline', 'tao-input-number--invalid': invalid, 'tao-input-number--controls': controls }]">
+    <div v-bind="rootAttrs()" class="tao-input-number" :class="[sizeClass(size), { [`tao-input-number--${variant}`]: variant !== 'outline', 'tao-input-number--invalid': isInvalid, 'tao-input-number--controls': controls }]">
         <input
             v-bind="controlAttrs()"
             :id="controlId"
@@ -189,7 +189,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
             :value="draft"
             :placeholder="placeholder"
             :disabled="disabled"
-            :aria-invalid="invalid || undefined"
+            :aria-invalid="isInvalid || undefined"
             :aria-describedby="describedBy"
             :aria-valuenow="modelValue ?? undefined"
             :aria-valuemin="min"

@@ -36,7 +36,7 @@ const props = withDefaults(
         min?: number;
         max?: number;
         disabled?: boolean;
-        error?: boolean;
+        invalid?: boolean;
         /** Control size, same scale as TaoButton; without it the size of the ancestors. / Размер контрола, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
         /** `filled` — a fill, the frame shows while the field is edited; `outline` — a frame. / `filled` — заливка, рамка видна, пока поле правят; `outline` — рамка. */
@@ -54,7 +54,7 @@ const props = withDefaults(
         min: 1,
         max: 999,
         disabled: false,
-        error: false,
+        invalid: false,
         size: undefined,
         variant: 'filled',
         nextLabel: undefined,
@@ -68,7 +68,7 @@ const emit = defineEmits<{
 }>();
 
 const l10n = useLocaleText(props, 'presetInput');
-const { controlId, invalid, describedBy, localId } = useField(props);
+const { controlId, isInvalid, describedBy, localId } = useField(props);
 const listId = `${localId}-list`;
 
 const open = ref(false);
@@ -231,7 +231,7 @@ function onKeydown(event: KeyboardEvent) {
             {
                 [`tao-preset-input--${variant}`]: variant !== 'filled',
                 'tao-preset-input--open': open,
-                'tao-preset-input--invalid': invalid,
+                'tao-preset-input--invalid': isInvalid,
                 'tao-preset-input--disabled': disabled,
             },
         ]"
@@ -251,7 +251,7 @@ function onKeydown(event: KeyboardEvent) {
                 :aria-expanded="open"
                 :aria-controls="open ? listId : undefined"
                 :aria-activedescendant="activeId"
-                :aria-invalid="invalid || undefined"
+                :aria-invalid="isInvalid || undefined"
                 :aria-describedby="describedBy"
                 :disabled="disabled"
                 :value="text"

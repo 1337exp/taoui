@@ -61,8 +61,8 @@ describe.each(controls)('%s inside TaoFormField', (_name, control, selector, pro
 });
 
 describe('a control alone', () => {
-    it('gets its own id, no description, and error means invalid', () => {
-        const w = mount(TaoInput, { props: { modelValue: '', error: true } });
+    it('gets its own id, no description, and invalid marks it', () => {
+        const w = mount(TaoInput, { props: { modelValue: '', invalid: true } });
         expect(w.find('input').attributes('id')).toBeTruthy();
         expect(w.find('input').attributes('aria-describedby')).toBeUndefined();
         expect(w.find('input').attributes('aria-invalid')).toBe('true');

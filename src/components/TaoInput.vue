@@ -19,7 +19,7 @@ interface Props {
     /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
     size?: TaoSize;
     /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
-    error?: boolean;
+    invalid?: boolean;
     /**
      * `outline` — a frame, `filled` — a fill only, `plain` — no frame, no fill: a field that reads as text (an item of a
      * list being edited), its error a red line under the text.
@@ -35,11 +35,11 @@ const props = withDefaults(defineProps<Props>(), {
     type: 'text',
     placeholder: '',
     disabled: false,
-    error: false,
+    invalid: false,
     variant: 'outline',
 });
 
-const { field, controlId, invalid, describedBy } = useField(props);
+const { field, controlId, isInvalid, describedBy } = useField(props);
 const focused = ref(false);
 
 const emit = defineEmits(['update:modelValue', 'blur', 'focus']);
@@ -71,7 +71,7 @@ const has = (name: string) => slotHas(slots, name);
             :class="{
                 [`tao-input-shell--${variant}`]: variant !== 'outline',
                 'tao-input-shell--focused': focused,
-                'tao-input-shell--invalid': invalid,
+                'tao-input-shell--invalid': isInvalid,
                 'tao-input-shell--disabled': disabled,
                 'tao-input-shell--prefix': has('prefix'),
                 'tao-input-shell--suffix': has('suffix'),
@@ -84,12 +84,12 @@ const has = (name: string) => slotHas(slots, name);
                 v-bind="controlAttrs()"
                 :id="controlId"
                 class="tao-input"
-                :class="{ 'tao-input--error': invalid }"
+                :class="{ 'tao-input--error': isInvalid }"
                 :type="type"
                 :value="modelValue"
                 :placeholder="placeholder"
                 :disabled="disabled"
-                :aria-invalid="invalid || undefined"
+                :aria-invalid="isInvalid || undefined"
                 :aria-describedby="describedBy"
                 @input="handleInput"
                 @blur="handleBlur"

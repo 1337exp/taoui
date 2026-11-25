@@ -311,7 +311,7 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
                 <span>HEX</span>
                 <TaoInput
                     v-model="hexText"
-                    :error="hexInvalid"
+                    :invalid="hexInvalid"
                     :disabled="disabled"
                     :aria-label="l10n.hexLabel"
                     @blur="commitHex"

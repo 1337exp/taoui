@@ -27,7 +27,7 @@ const props = withDefaults(
         strike?: boolean;
         disabled?: boolean;
         /** Red frames; the message goes to TaoFormField `error`. / Красные рамки; текст ошибки — в `error` у TaoFormField. */
-        error?: boolean;
+        invalid?: boolean;
         /** Without it the size of ancestors. / Без него — размер предков. */
         size?: TaoSize;
         selectAllLabel?: string;
@@ -41,7 +41,7 @@ const props = withDefaults(
         counter: false,
         strike: false,
         disabled: false,
-        error: false,
+        invalid: false,
         size: undefined,
         selectAllLabel: undefined,
         counterText: undefined,
@@ -59,7 +59,7 @@ defineSlots<{
     item?(props: { item: TaoChecklistItem; checked: boolean }): unknown;
 }>();
 
-const { field, invalid, describedBy } = useField(props);
+const { field, isInvalid, describedBy } = useField(props);
 // the group takes the id of a TaoFormField; the checkboxes inside must not all take it too
 // группа берёт id поля TaoFormField; чекбоксы внутри не должны брать его все сразу
 provide(formFieldKey, null as unknown as TaoFormFieldContext);
@@ -111,7 +111,7 @@ function setAll() {
         :class="[sizeClass(size), { 'tao-checklist--strike': strike }]"
         :disabled="disabled"
         :aria-describedby="describedBy"
-        :aria-invalid="invalid || undefined"
+        :aria-invalid="isInvalid || undefined"
         :aria-labelledby="labelledBy"
     >
         <legend v-if="legend || counter" class="tao-checklist__legend">
@@ -128,7 +128,7 @@ function setAll() {
             :indeterminate="someChecked"
             :label="l10n.selectAllLabel"
             :disabled="disabled || !enabledItems.length"
-            :error="invalid"
+            :invalid="isInvalid"
             @update:model-value="setAll"
         />
 
@@ -142,7 +142,7 @@ function setAll() {
                 <TaoCheckbox
                     :model-value="checked.has(item.value)"
                     :disabled="disabled || item.disabled"
-                    :error="invalid"
+                    :invalid="isInvalid"
                     @update:model-value="setItem(item, $event)"
                 >
                     <span class="tao-checklist__text">

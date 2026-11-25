@@ -21,7 +21,7 @@ const props = withDefaults(
         max?: number;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
-        error?: boolean;
+        invalid?: boolean;
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
         /** Minus stays enabled at min and still emits `dec` — parent can remove the line. */
@@ -36,7 +36,7 @@ const props = withDefaults(
         modelValue: 1,
         min: 1,
         disabled: false,
-        error: false,
+        invalid: false,
         allowRemove: true,
         forceMaxLimit: true,
     },
@@ -52,7 +52,7 @@ const emit = defineEmits<{
     focus: [event: FocusEvent];
 }>();
 
-const { field, controlId, invalid, describedBy } = useField(props);
+const { field, controlId, isInvalid, describedBy } = useField(props);
 
 const focused = ref(false);
 const draft = ref(String(props.modelValue));
@@ -170,7 +170,7 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value
         :class="[
             sizeClass(size),
             {
-                'tao-quantity--invalid': invalid,
+                'tao-quantity--invalid': isInvalid,
                 'tao-quantity--focused': focused,
                 'tao-quantity--disabled': disabled,
             },
@@ -198,7 +198,7 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value
             role="spinbutton"
             :value="draft"
             :disabled="disabled"
-            :aria-invalid="invalid || undefined"
+            :aria-invalid="isInvalid || undefined"
             :aria-describedby="describedBy"
             :aria-valuenow="modelValue"
             :aria-valuemin="min"

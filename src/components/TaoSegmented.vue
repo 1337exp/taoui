@@ -14,7 +14,7 @@ const props = withDefaults(
         legend?: string;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
-        error?: boolean;
+        invalid?: boolean;
         /** Without it the group takes the size of its ancestors. / Без него — размер предков. */
         size?: TaoSize;
         block?: boolean;
@@ -23,7 +23,7 @@ const props = withDefaults(
     }>(),
     {
         disabled: false,
-        error: false,
+        invalid: false,
         block: false,
     },
 );
@@ -33,7 +33,7 @@ const emit = defineEmits<{
     change: [value: TaoRadioValue];
 }>();
 
-const { field, invalid, describedBy } = useField(props);
+const { field, isInvalid, describedBy } = useField(props);
 const autoName = useId();
 const groupName = computed(() => props.name || autoName);
 const model = computed(() => props.modelValue);
@@ -148,13 +148,13 @@ onBeforeUnmount(() => {
             {
                 'tao-segmented--block': block,
                 'tao-segmented--disabled': disabled,
-                'tao-segmented--invalid': invalid,
+                'tao-segmented--invalid': isInvalid,
             },
         ]"
         :disabled="disabled"
         :style="minWidthStyle"
         :aria-describedby="describedBy"
-        :aria-invalid="invalid || undefined"
+        :aria-invalid="isInvalid || undefined"
         :aria-labelledby="legend ? undefined : (field ? `${field.id}-label` : undefined)"
         :id="field?.id"
     >

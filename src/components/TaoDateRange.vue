@@ -27,7 +27,7 @@ const props = withDefaults(
         disabled?: boolean;
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
-        error?: boolean;
+        invalid?: boolean;
         min?: string;
         max?: string;
         locale?: string;
@@ -39,7 +39,7 @@ const props = withDefaults(
     {
         modelValue: null,
         disabled: false,
-        error: false,
+        invalid: false,
         min: undefined,
         max: undefined,
     },
@@ -52,7 +52,7 @@ const emit = defineEmits<{
     change: [value: TaoDateRangeValue | null];
 }>();
 
-const { controlId, invalid, describedBy, localId } = useField(props);
+const { controlId, isInvalid, describedBy, localId } = useField(props);
 const gridId = `${localId}-grid`;
 
 const open = ref(false);
@@ -118,7 +118,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-    <div v-bind="rootAttrs()" class="tao-date-range" :class="[sizeClass(size), { 'tao-date-range--open': open, 'tao-date-range--invalid': invalid }]">
+    <div v-bind="rootAttrs()" class="tao-date-range" :class="[sizeClass(size), { 'tao-date-range--open': open, 'tao-date-range--invalid': isInvalid }]">
         <button
             v-bind="controlAttrs()"
             :id="controlId"
@@ -130,7 +130,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
             :aria-expanded="open"
             aria-haspopup="dialog"
             :aria-controls="gridId"
-            :aria-invalid="invalid || undefined"
+            :aria-invalid="isInvalid || undefined"
             :aria-describedby="describedBy"
             :disabled="disabled"
             @click="toggle"

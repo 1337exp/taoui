@@ -19,7 +19,7 @@ const props = withDefaults(
         disabled?: boolean;
         /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
-        error?: boolean;
+        invalid?: boolean;
         /** Частично выбран: черта вместо квадрата. Клик ставит checked — indeterminate снимает родитель. */
         indeterminate?: boolean;
     }>(),
@@ -28,7 +28,7 @@ const props = withDefaults(
         modelValue: undefined,
         label: '',
         disabled: false,
-        error: false,
+        invalid: false,
         indeterminate: false,
     },
 );
@@ -38,7 +38,7 @@ const emit = defineEmits<{
     change: [value: boolean];
 }>();
 
-const { field, controlId, invalid, describedBy } = useField(props);
+const { field, controlId, isInvalid, describedBy } = useField(props);
 
 const isChecked = computed({
     get: () => {
@@ -93,7 +93,7 @@ watch(
             :checked="isChecked"
             :disabled="disabled"
             :aria-checked="indeterminate ? 'mixed' : undefined"
-            :aria-invalid="invalid || undefined"
+            :aria-invalid="isInvalid || undefined"
             :aria-describedby="describedBy"
             @change="onInputChange"
         />

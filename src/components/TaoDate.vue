@@ -35,7 +35,7 @@ const props = withDefaults(
         disabled?: boolean;
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
-        error?: boolean;
+        invalid?: boolean;
         min?: string;
         max?: string;
         locale?: string;
@@ -61,7 +61,7 @@ const props = withDefaults(
     {
         modelValue: null,
         disabled: false,
-        error: false,
+        invalid: false,
         min: undefined,
         max: undefined,
         editable: false,
@@ -77,7 +77,7 @@ const emit = defineEmits<{
     change: [value: string | null];
 }>();
 
-const { controlId, invalid, describedBy, localId } = useField(props);
+const { controlId, isInvalid, describedBy, localId } = useField(props);
 const gridId = `${localId}-grid`;
 
 const open = ref(false);
@@ -220,7 +220,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-    <div v-bind="rootAttrs()" class="tao-date" :class="[sizeClass(size), { 'tao-date--open': open, 'tao-date--invalid': invalid, 'tao-date--editable': editable }]">
+    <div v-bind="rootAttrs()" class="tao-date" :class="[sizeClass(size), { 'tao-date--open': open, 'tao-date--invalid': isInvalid, 'tao-date--editable': editable }]">
         <div v-if="editable" ref="fieldRef" class="tao-date__field" :class="{ 'tao-date__field--disabled': disabled }">
             <input
                 v-bind="controlAttrs()"
@@ -233,7 +233,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
                 :value="text"
                 :placeholder="l10n.placeholder"
                 :disabled="disabled"
-                :aria-invalid="invalid || undefined"
+                :aria-invalid="isInvalid || undefined"
                 :aria-describedby="describedBy"
                 @input="onInput"
                 @keydown="onInputKeydown"
@@ -266,7 +266,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
             :aria-expanded="open"
             aria-haspopup="dialog"
             :aria-controls="gridId"
-            :aria-invalid="invalid || undefined"
+            :aria-invalid="isInvalid || undefined"
             :aria-describedby="describedBy"
             :disabled="disabled"
             @click="toggle"

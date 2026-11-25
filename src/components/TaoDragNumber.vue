@@ -42,7 +42,7 @@ const props = withDefaults(
         dragSpeed?: number;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
-        error?: boolean;
+        invalid?: boolean;
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
         /** The − and + buttons on the sides. / Кнопки − и + по бокам. */
@@ -66,7 +66,7 @@ const props = withDefaults(
         modelValue: 0,
         step: 1,
         disabled: false,
-        error: false,
+        invalid: false,
         controls: true,
         repeat: true,
         variant: 'outline',
@@ -87,7 +87,7 @@ const emit = defineEmits<{
     focus: [event: FocusEvent];
 }>();
 
-const { controlId, invalid, describedBy, localId } = useField(props);
+const { controlId, isInvalid, describedBy, localId } = useField(props);
 const labelId = `${localId}-label`;
 
 const inputEl = ref<HTMLInputElement | null>(null);
@@ -481,7 +481,7 @@ const atMax = computed(() => props.max !== undefined && props.modelValue >= prop
             sizeClass(size),
             {
                 'tao-drag-number--filled': variant === 'filled',
-                'tao-drag-number--invalid': invalid,
+                'tao-drag-number--invalid': isInvalid,
                 'tao-drag-number--focused': focused,
                 'tao-drag-number--dragging': dragging,
                 'tao-drag-number--disabled': disabled,
@@ -527,7 +527,7 @@ const atMax = computed(() => props.max !== undefined && props.modelValue >= prop
                 :style="{ width: `${Math.max(text.length, 1) + 0.5}ch` }"
                 :disabled="disabled"
                 :aria-labelledby="named ? labelId : undefined"
-                :aria-invalid="invalid || undefined"
+                :aria-invalid="isInvalid || undefined"
                 :aria-describedby="describedBy"
                 :aria-valuenow="modelValue"
                 :aria-valuemin="min"

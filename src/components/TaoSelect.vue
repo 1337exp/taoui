@@ -23,7 +23,7 @@ const props = withDefaults(
         options?: TaoSelectOption[];
         placeholder?: string;
         disabled?: boolean;
-        error?: boolean;
+        invalid?: boolean;
         /** Label of the clear row in the list. Slot `#clear` replaces it (icon, markup). / Подпись пункта сброса; слот `#clear` заменяет её (иконка, разметка). */
         clearText?: string;
         /**
@@ -40,7 +40,7 @@ const props = withDefaults(
         modelValue: null,
         options: () => [],
         disabled: false,
-        error: false,
+        invalid: false,
         clearable: true,
     },
 );
@@ -51,7 +51,7 @@ const emit = defineEmits<{
     change: [value: string | number | null];
 }>();
 
-const { field, controlId, invalid, describedBy, localId } = useField(props);
+const { field, controlId, isInvalid, describedBy, localId } = useField(props);
 const listId = `${localId}-list`;
 
 const open = ref(false);
@@ -190,7 +190,7 @@ watch(open, (isOpen) => {
 </script>
 
 <template>
-    <div v-bind="rootAttrs()" class="tao-select" :class="[sizeClass(size), { 'tao-select--open': open, 'tao-select--invalid': invalid }]">
+    <div v-bind="rootAttrs()" class="tao-select" :class="[sizeClass(size), { 'tao-select--open': open, 'tao-select--invalid': isInvalid }]">
         <button
             v-bind="controlAttrs()"
             :id="controlId"
@@ -202,7 +202,7 @@ watch(open, (isOpen) => {
             :aria-expanded="open"
             aria-haspopup="listbox"
             :aria-controls="listId"
-            :aria-invalid="invalid || undefined"
+            :aria-invalid="isInvalid || undefined"
             :aria-describedby="describedBy"
             :disabled="disabled"
             @click="toggle"

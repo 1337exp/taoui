@@ -13,14 +13,14 @@ const props = withDefaults(
         legend?: string;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
-        error?: boolean;
+        invalid?: boolean;
         direction?: 'row' | 'column';
         /** Size of every radio inside. / Размер всех радио внутри. */
         size?: TaoSize;
     }>(),
     {
         disabled: false,
-        error: false,
+        invalid: false,
         direction: 'row',
     },
 );
@@ -30,7 +30,7 @@ const emit = defineEmits<{
     change: [value: TaoRadioValue];
 }>();
 
-const { field, invalid, describedBy } = useField(props);
+const { field, isInvalid, describedBy } = useField(props);
 const autoName = useId();
 const groupName = computed(() => props.name || autoName);
 const model = computed(() => props.modelValue);
@@ -54,10 +54,10 @@ provide(radioGroupKey, {
     <fieldset
         :id="field?.id"
         class="tao-radio-group"
-        :class="[`tao-radio-group--${direction}`, sizeClass(size), { 'tao-radio-group--invalid': invalid }]"
+        :class="[`tao-radio-group--${direction}`, sizeClass(size), { 'tao-radio-group--invalid': isInvalid }]"
         :disabled="disabled"
         :aria-describedby="describedBy"
-        :aria-invalid="invalid || undefined"
+        :aria-invalid="isInvalid || undefined"
         :aria-labelledby="labelledBy"
     >
         <legend v-if="legend" class="tao-radio-group__legend">{{ legend }}</legend>

@@ -41,7 +41,7 @@ const props = withDefaults(defineProps<TaoSliderBaseProps & { modelValue: TaoSli
     flat: false,
     vertical: false,
     disabled: false,
-    error: false,
+    invalid: false,
     variant: 'bar',
     wheel: 0,
     editable: false,
@@ -61,7 +61,7 @@ defineSlots<{
     'post-value'?(): unknown;
 }>();
 
-const { field, controlId, invalid, describedBy } = useField(props);
+const { field, controlId, isInvalid, describedBy } = useField(props);
 const l10n = useLocaleText(props, 'slider');
 
 const isRange = computed(() => Array.isArray(props.modelValue));
@@ -291,7 +291,7 @@ function onMarkClick(mark: TaoSliderMark) {
                 'tao-slider--marks-bare': markList.length > 0 && !hasCaptions,
                 'tao-slider--show-value': showValue,
                 'tao-slider--disabled': disabled,
-                'tao-slider--invalid': invalid,
+                'tao-slider--invalid': isInvalid,
             },
         ]"
         role="group"
@@ -328,7 +328,7 @@ function onMarkClick(mark: TaoSliderMark) {
                 :aria-label="ariaLabel"
                 :aria-orientation="vertical ? 'vertical' : 'horizontal'"
                 :aria-disabled="disabled || undefined"
-                :aria-invalid="invalid || undefined"
+                :aria-invalid="isInvalid || undefined"
                 :aria-describedby="describedBy"
                 :aria-keyshortcuts="editable ? 'Enter F2' : undefined"
                 @keydown="onKeydown($event, i)"

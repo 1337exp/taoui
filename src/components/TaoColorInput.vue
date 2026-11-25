@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
+import { useField } from '../formField';
 import { normalizeHex, type ColorMode } from '../color';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
@@ -27,9 +28,11 @@ const props = withDefaults(
         /** The current mode (`v-model:mode` remembers the choice). / Текущий способ ввода (`v-model:mode` запоминает выбор). */
         mode?: ColorMode;
         eyedropper?: boolean;
+        /** The id of the button, which a `TaoFormField` label points at. / id кнопки, на который указывает подпись `TaoFormField`. */
+        id?: string;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
-        error?: boolean;
+        invalid?: boolean;
         placement?: TaoPlacement;
         /** Without it the size of ancestors. / Без него — размер предков. */
         size?: TaoSize;
@@ -41,7 +44,7 @@ const props = withDefaults(
         /** Text of the clear button. / Текст кнопки очистки. */
         clearText?: string;
     }>(),
-    { alpha: false, modes: () => ['hex', 'rgb', 'hsl'], eyedropper: true, disabled: false, error: false, placement: 'bottom-start', clearable: false },
+    { alpha: false, modes: () => ['hex', 'rgb', 'hsl'], eyedropper: true, disabled: false, invalid: false, placement: 'bottom-start', clearable: false },
 );
 
 const emit = defineEmits<{
@@ -50,6 +53,9 @@ const emit = defineEmits<{
     change: [hex: string];
 }>();
 
+// a TaoFormField around it reaches the button too: its label, its error and its description
+// TaoFormField вокруг доходит и до кнопки: подпись, ошибка и описание
+const { controlId, isInvalid, describedBy } = useField(props);
 const l10n = useLocaleText(props, 'colorPicker');
 const shown = computed(() => normalizeHex(props.modelValue, props.alpha) ?? props.modelValue);
 // «Background: #ff8800» when the app names the field, «Choose a colour: #ff8800» when it does not
@@ -80,8 +86,11 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
                 v-bind="controlAttrs()"
                 type="button"
                 class="tao-color-input"
-                :class="[sizeClass(size), { 'tao-color-input--open': open, 'tao-color-input--invalid': error }]"
+                :id="controlId"
+                :class="[sizeClass(size), { 'tao-color-input--open': open, 'tao-color-input--invalid': isInvalid }]"
                 :disabled="disabled"
+                :aria-invalid="isInvalid || undefined"
+                :aria-describedby="describedBy"
                 :aria-label="buttonLabel($attrs['aria-label'])"
                 aria-haspopup="dialog"
                 :aria-expanded="open"

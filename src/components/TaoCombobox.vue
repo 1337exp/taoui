@@ -26,7 +26,7 @@ const props = withDefaults(
         options?: TaoSelectOption[];
         placeholder?: string;
         disabled?: boolean;
-        error?: boolean;
+        invalid?: boolean;
         emptyText?: string;
         /** Label of the clear row in the list. Slot `#clear` replaces it (icon, markup). / Подпись пункта сброса; слот `#clear` заменяет её (иконка, разметка). */
         clearText?: string;
@@ -48,7 +48,7 @@ const props = withDefaults(
         modelValue: null,
         options: () => [],
         disabled: false,
-        error: false,
+        invalid: false,
         clearable: true,
         allowCreate: false,
         variant: 'outline',
@@ -65,7 +65,7 @@ const emit = defineEmits<{
 
 type ComboRow = { kind: 'option'; option: TaoSelectOption } | { kind: 'create'; text: string };
 
-const { field, controlId, invalid, describedBy, localId } = useField(props);
+const { field, controlId, isInvalid, describedBy, localId } = useField(props);
 const listId = `${localId}-list`;
 
 const open = ref(false);
@@ -453,7 +453,7 @@ onBeforeUnmount(() => {
             {
                 [`tao-combobox--${variant}`]: variant !== 'outline',
                 'tao-combobox--open': open,
-                'tao-combobox--invalid': invalid,
+                'tao-combobox--invalid': isInvalid,
                 'tao-combobox--disabled': disabled,
             },
         ]"
@@ -472,7 +472,7 @@ onBeforeUnmount(() => {
                 :aria-expanded="open"
                 :aria-controls="listId"
                 :aria-activedescendant="open ? activeId : undefined"
-                :aria-invalid="invalid || undefined"
+                :aria-invalid="isInvalid || undefined"
                 :aria-describedby="describedBy"
                 :disabled="disabled"
                 :placeholder="l10n.placeholder"

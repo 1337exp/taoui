@@ -17,7 +17,7 @@ const props = withDefaults(
         label?: string;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
-        error?: boolean;
+        invalid?: boolean;
         /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
         /**
@@ -32,7 +32,7 @@ const props = withDefaults(
         modelValue: false,
         label: '',
         disabled: false,
-        error: false,
+        invalid: false,
         loading: false,
     },
 );
@@ -42,7 +42,7 @@ const emit = defineEmits<{
     change: [value: boolean];
 }>();
 
-const { field, controlId, invalid, describedBy } = useField(props);
+const { field, controlId, isInvalid, describedBy } = useField(props);
 
 function toggle(event?: Event) {
     if (props.disabled || props.loading) {
@@ -64,7 +64,7 @@ const has = (name: string) => slotHas(slots, name);
 </script>
 
 <template>
-    <label v-bind="rootAttrs()" class="tao-switch" :class="[sizeClass(size), { 'tao-switch--disabled': disabled, 'tao-switch--on': modelValue, 'tao-switch--invalid': invalid, 'tao-switch--loading': loading }]" :for="controlId">
+    <label v-bind="rootAttrs()" class="tao-switch" :class="[sizeClass(size), { 'tao-switch--disabled': disabled, 'tao-switch--on': modelValue, 'tao-switch--invalid': isInvalid, 'tao-switch--loading': loading }]" :for="controlId">
         <input
             v-bind="controlAttrs()"
             :id="controlId"
@@ -74,7 +74,7 @@ const has = (name: string) => slotHas(slots, name);
             :checked="modelValue"
             :disabled="disabled"
             :aria-checked="modelValue"
-            :aria-invalid="invalid || undefined"
+            :aria-invalid="isInvalid || undefined"
             :aria-describedby="describedBy"
             :aria-busy="loading || undefined"
             @change="toggle"

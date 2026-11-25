@@ -19,14 +19,14 @@ const props = withDefaults(
         label?: string;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
-        error?: boolean;
+        invalid?: boolean;
         /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
     }>(),
     {
         label: '',
         disabled: false,
-        error: false,
+        invalid: false,
     },
 );
 
@@ -36,7 +36,7 @@ const emit = defineEmits<{
 }>();
 
 const group = inject(radioGroupKey, null);
-const { field, invalid } = useField(props);
+const { field, isInvalid } = useField(props);
 const localId = useId();
 const controlId = computed(() => (group ? localId : (field?.id ?? localId)));
 const describedBy = computed(() => (group ? undefined : field?.describedBy.value));
@@ -64,7 +64,7 @@ function onChange() {
 </script>
 
 <template>
-    <label v-bind="rootAttrs()" class="tao-radio" :class="[sizeClass(size), { 'tao-radio--disabled': isDisabled, 'tao-radio--invalid': invalid && !group }]" :for="controlId">
+    <label v-bind="rootAttrs()" class="tao-radio" :class="[sizeClass(size), { 'tao-radio--disabled': isDisabled, 'tao-radio--invalid': isInvalid && !group }]" :for="controlId">
         <input
             v-bind="controlAttrs()"
             :id="controlId"
@@ -74,7 +74,7 @@ function onChange() {
             :value="String(value)"
             :checked="isChecked"
             :disabled="isDisabled"
-            :aria-invalid="(!group && invalid) || undefined"
+            :aria-invalid="(!group && isInvalid) || undefined"
             :aria-describedby="describedBy"
             @change="onChange"
         />
