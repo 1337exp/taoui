@@ -39,6 +39,7 @@ const props: Record<string, Record<string, unknown>> = {
     TaoMarquee: { text: 'A long line that runs round and round' },
     TaoTimeline: { items: [{ id: 'a', title: 'Paid', time: '12:00', datetime: '2026-05-12T12:00', tone: 'success' }, { id: 'b', title: 'Sent', icon: 'tao-check' }], active: 'b', align: 'alternate' },
     TaoTree: { items: [{ id: 'a', label: 'A', children: [{ id: 'b', label: 'B' }] }, { id: 'c', label: 'C', hasChildren: true }], expanded: ['a'], checkable: true, checked: ['b'] },
+    TaoShell: { items: [{ id: 'a', label: 'A', icon: 'tao-circle' }], modelValue: 'a', projects: [{ id: 'p', title: 'P' }], action: { label: 'New' }, languages: ['en', 'ru'] },
     TaoNav: { items: [{ id: 'a', label: 'A', icon: 'tao-circle' }, { id: 'b', label: 'B', href: '/b', badge: 2 }], modelValue: 'a' },
     TaoContextMenu: { items: [] },
     TaoBreadcrumb: { items: [{ label: 'Home', to: '/' }] },

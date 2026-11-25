@@ -21,3 +21,19 @@ export interface TaoNavItem {
  * `auto` — по ширине самого TaoNav: bar до 600px, rail до 840px, drawer от 840px.
  */
 export type TaoNavLayout = 'auto' | 'bar' | 'rail' | 'drawer';
+
+/**
+ * The look TaoNav really has: never `auto`. `compact` is the one with no room for text next to the icon (the bar and the rail).
+ * Вид, который у TaoNav на деле: никогда не `auto`. `compact` — тот, где рядом с иконкой нет места тексту (bar и rail).
+ */
+export type TaoNavLook = Exclude<TaoNavLayout, 'auto'>;
+
+/** The look `auto` picks at a width: bar below 600px, rail below 840px, drawer from 840px. / Вид `auto` при ширине. */
+export function navLook(width: number): TaoNavLook {
+    return width < 600 ? 'bar' : width < 840 ? 'rail' : 'drawer';
+}
+
+/** The bar and the rail are compact: an icon, no text beside it. / bar и rail компактны: иконка, текста рядом нет. */
+export function navCompact(look: TaoNavLook | undefined): boolean {
+    return look === 'bar' || look === 'rail';
+}

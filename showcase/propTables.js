@@ -971,6 +971,25 @@ export const propTables = {
       slots: '#start и #end — две панели. Три колонки = два вложенных сплита.',
     },
   ],
+  shell: [
+    {
+      title: 'TaoShell',
+      rows: [
+        r('v-model', 'string', '—', 'id текущего раздела'),
+        r('items', 'TaoNavItem[]', '—', 'Разделы. Обязательный'),
+        r('projects', '{ id, title }[]', '—', 'Проекты приложения: фишка под действием с меню. Без них фишки нет'),
+        r('v-model:project', 'string', 'первый проект', 'id текущего проекта'),
+        r('action', '{ label, icon?, shortcut? }', '—', 'Главное действие экрана; событие action'),
+        r('languages', 'string[] | { code, label? }[]', '—', 'Языки переключателя. Без них переключателя нет'),
+        r('prefs', 'TaoKitPrefs', '—', 'Настройки продукта (createKitPrefs): тема и язык связываются с ними'),
+        r('v-model:layout', "'auto' | 'bar' | 'rail' | 'drawer'", "'auto'", 'Вид навигации, как у TaoNav'),
+        r('v-model:look', "'bar' | 'rail' | 'drawer'", '—', 'Вид навигации сейчас, для чтения'),
+        r('label', 'string', 'Навигация', 'Имя навигации для скринридера'),
+        r('badgeTone', "'accent' | 'neutral'", "'neutral'", 'Цвет счётчиков'),
+      ],
+      slots: 'default — страница. tools — свои инструменты вместо языка и темы (в подвале панели и в шапке телефона). События: action, new-project.',
+    },
+  ],
   prop: [
     {
       title: 'TaoProp',

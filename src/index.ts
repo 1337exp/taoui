@@ -50,6 +50,7 @@ import TaoMeter from './components/TaoMeter.vue';
 import TaoDonut from './components/TaoDonut.vue';
 import TaoHeatmap from './components/TaoHeatmap.vue';
 import TaoNav from './components/TaoNav.vue';
+import TaoShell from './components/TaoShell.vue';
 import TaoTree from './components/TaoTree.vue';
 import TaoChecklist from './components/TaoChecklist.vue';
 import TaoTimeline from './components/TaoTimeline.vue';
@@ -145,6 +146,7 @@ export {
     TaoDonut,
     TaoHeatmap,
     TaoNav,
+    TaoShell,
     TaoTree,
     TaoChecklist,
     TaoTimeline,
@@ -270,7 +272,8 @@ export type {
     TaoMenuSeparatorItem,
 } from './menu';
 export { menuReturnsFocus } from './menu';
-export type { TaoNavItem, TaoNavLayout } from './nav';
+export type { TaoNavItem, TaoNavLayout, TaoNavLook } from './nav';
+export { navCompact, navLook } from './nav';
 export type { TaoToolbarOrientation } from './toolbar';
 export { taoChartTheme, watchTaoChartTheme, TAO_CHART_COLORS } from './chart';
 export type { TaoChartTheme, TaoDonutSegment, TaoMeterTone } from './chart';

@@ -978,6 +978,25 @@ export const propTablesEn = {
       slots: '#start and #end — the two panes. Three columns = two nested splits.',
     },
   ],
+  shell: [
+    {
+      title: 'TaoShell',
+      rows: [
+        r('v-model', 'string', '—', 'The id of the current section'),
+        r('items', 'TaoNavItem[]', '—', 'The sections. Required'),
+        r('projects', '{ id, title }[]', '—', 'The projects of the app: a chip under the action with a menu. Without them no chip'),
+        r('v-model:project', 'string', 'the first project', 'The id of the current project'),
+        r('action', '{ label, icon?, shortcut? }', '—', 'The main action of the screen; the action event'),
+        r('languages', 'string[] | { code, label? }[]', '—', 'The languages of the switch. Without them no switch'),
+        r('prefs', 'TaoKitPrefs', '—', 'The preferences of the product (createKitPrefs): the theme and the language bind to them'),
+        r('v-model:layout', "'auto' | 'bar' | 'rail' | 'drawer'", "'auto'", 'The look of the navigation, as on TaoNav'),
+        r('v-model:look', "'bar' | 'rail' | 'drawer'", '—', 'The look the navigation has now, to read'),
+        r('label', 'string', 'Navigation', 'The accessible name of the navigation'),
+        r('badgeTone', "'accent' | 'neutral'", "'neutral'", 'The colour of the counters'),
+      ],
+      slots: 'default — the page. tools — your own tools instead of the language and the theme (in the footer of the panel and in the header on a phone). Events: action, new-project.',
+    },
+  ],
   prop: [
     {
       title: 'TaoProp',

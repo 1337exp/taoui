@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, useSlots } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, useSlots, watch } from 'vue';
 import { useLocaleText } from '../locale';
 import { menuReturnsFocus, type TaoCloseReason, type TaoMenuItem } from '../menu';
-import type { TaoNavItem, TaoNavLayout } from '../nav';
+import { navLook, type TaoNavItem, type TaoNavLayout, type TaoNavLook } from '../nav';
 import { surfaceClass, type TaoSurface } from '../surface';
 import TaoIcon from './TaoIcon.vue';
 import TaoMenu from './TaoMenu.vue';
@@ -21,8 +21,6 @@ defineOptions({ name: 'TaoNav' });
 const props = withDefaults(
     defineProps<{
         items: TaoNavItem[];
-        /** The id of the current section (`aria-current="page"`). / id текущего раздела. */
-        layout?: TaoNavLayout;
         /** The bar holds this many; with more items the last place is «More» with a menu. / Столько помещается в bar. */
         maxBarItems?: number;
         /** Accessible name of the navigation. / Имя навигации для скринридера. */
@@ -69,7 +67,6 @@ const props = withDefaults(
         badgeTone?: 'accent' | 'neutral';
     }>(),
     {
-        layout: 'auto',
         maxBarItems: 5,
         label: undefined,
         moreLabel: undefined,
@@ -81,7 +78,22 @@ const props = withDefaults(
     },
 );
 
+/** The id of the current section (`aria-current="page"`). / id текущего раздела. */
 const model = defineModel<string>();
+/**
+ * The look: `auto` (by the width of TaoNav), or `bar` / `rail` / `drawer`. A model: the app may keep the choice of the user
+ * (a collapsed side panel is `rail`).
+ * Вид: `auto` (по ширине TaoNav) или `bar` / `rail` / `drawer`. Модель: приложение может хранить выбор пользователя
+ * (свёрнутая боковая панель — `rail`).
+ */
+const layout = defineModel<TaoNavLayout>('layout', { default: 'auto' });
+/**
+ * The look TaoNav has right now (never `auto`), for the code that needs to know: a model to read, `v-model:look`. CSS decides
+ * the look; this is measured from the same width and the same thresholds, so a page that hides a chip on the bar can ask.
+ * Вид, который у TaoNav сейчас (никогда не `auto`), для кода, которому нужно знать: модель для чтения, `v-model:look`. Вид
+ * решает CSS; это измерено по той же ширине и тем же порогам, поэтому страница, прячущая фишку на bar, может спросить.
+ */
+const look = defineModel<TaoNavLook>('look');
 const l10n = useLocaleText(props, 'nav');
 
 const emit = defineEmits<{
@@ -114,6 +126,33 @@ defineSlots<{
      */
     footer?(): unknown;
 }>();
+
+const root = ref<HTMLElement | null>(null);
+const width = ref<number | null>(null);
+let observer: ResizeObserver | undefined;
+
+watch(
+    [layout, width],
+    () => {
+        look.value = layout.value === 'auto' ? (width.value === null ? undefined : navLook(width.value)) : layout.value;
+    },
+    { immediate: true },
+);
+
+onMounted(() => {
+    const el = root.value;
+    if (!el) {
+        return;
+    }
+    width.value = el.clientWidth || el.getBoundingClientRect().width;
+    if (typeof ResizeObserver !== 'undefined') {
+        observer = new ResizeObserver((entries) => {
+            width.value = entries[entries.length - 1]?.contentRect.width ?? width.value;
+        });
+        observer.observe(el);
+    }
+});
+onBeforeUnmount(() => observer?.disconnect());
 
 const slots = useSlots();
 // a slot counts when it draws something, not when it merely exists (see src/slots.ts)
@@ -168,7 +207,7 @@ function onMoreClose(reason: TaoCloseReason) {
 </script>
 
 <template>
-    <div class="tao-nav" :class="[`tao-nav--${layout}`, `tao-nav--indicator-${indicator}`, { 'tao-nav--standalone': standalone, 'tao-nav--floating': floating, 'tao-nav--fill': fill && !standalone, 'tao-nav--badges-neutral': badgeTone === 'neutral' }]">
+    <div ref="root" class="tao-nav" :class="[`tao-nav--${layout}`, `tao-nav--indicator-${indicator}`, { 'tao-nav--standalone': standalone, 'tao-nav--floating': floating, 'tao-nav--fill': fill && !standalone, 'tao-nav--badges-neutral': badgeTone === 'neutral' }]">
         <div class="tao-nav__shell">
             <nav class="tao-nav__panel" :class="surfaceClass(surface)" :aria-label="label || l10n.ariaLabel">
                 <div class="tao-nav__column">

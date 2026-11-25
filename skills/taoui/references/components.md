@@ -1053,6 +1053,26 @@ Showcase section: `#split`
 
 **Slots, events, notes.** #start and #end — the two panes. Three columns = two nested splits.
 
+## TaoShell
+
+Showcase section: `#shell`
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `v-model` | `string` | — | The id of the current section |
+| `items` | `TaoNavItem[]` | — | The sections. Required |
+| `projects` | `{ id, title }[]` | — | The projects of the app: a chip under the action with a menu. Without them no chip |
+| `v-model:project` | `string` | the first project | The id of the current project |
+| `action` | `{ label, icon?, shortcut? }` | — | The main action of the screen; the action event |
+| `languages` | `string[] \| { code, label? }[]` | — | The languages of the switch. Without them no switch |
+| `prefs` | `TaoKitPrefs` | — | The preferences of the product (createKitPrefs): the theme and the language bind to them |
+| `v-model:layout` | `'auto' \| 'bar' \| 'rail' \| 'drawer'` | 'auto' | The look of the navigation, as on TaoNav |
+| `v-model:look` | `'bar' \| 'rail' \| 'drawer'` | — | The look the navigation has now, to read |
+| `label` | `string` | Navigation | The accessible name of the navigation |
+| `badgeTone` | `'accent' \| 'neutral'` | 'neutral' | The colour of the counters |
+
+**Slots, events, notes.** default — the page. tools — your own tools instead of the language and the theme (in the footer of the panel and in the header on a phone). Events: action, new-project.
+
 ## TaoProp
 
 Showcase section: `#prop`
