@@ -8,6 +8,7 @@ import TaoDrawer from '../src/components/TaoDrawer.vue';
 import TaoDropdownMenu from '../src/components/TaoDropdownMenu.vue';
 import TaoModal from '../src/components/TaoModal.vue';
 import TaoPopover from '../src/components/TaoPopover.vue';
+import TaoFormField from '../src/components/TaoFormField.vue';
 import TaoSelect from '../src/components/TaoSelect.vue';
 import TaoTooltip from '../src/components/TaoTooltip.vue';
 import { readFileSync } from 'node:fs';
@@ -95,8 +96,8 @@ describe('TaoSelect', () => {
         const w = mountOverlay(TaoSelect, { props: { items: options, modelValue: 'a' } });
         await w.find('[role="combobox"]').trigger('click');
         expect($$('[role="option"]').map((el) => el.textContent?.trim())).toEqual(['Alpha', 'Bravo', 'Charlie']);
-        await key($('[role="listbox"]'), 'ArrowDown');
-        await key($('[role="listbox"]'), 'Enter');
+        await key(w.find('[role="combobox"]').element, 'ArrowDown');
+        await key(w.find('[role="combobox"]').element, 'Enter');
         expect(w.emitted('update:modelValue')).toEqual([['c']]);
         expect(w.emitted('update:modelValue')).toEqual([['c']]);
         expect($('[role="listbox"]')).toBeNull();
@@ -105,11 +106,11 @@ describe('TaoSelect', () => {
     it('Home / End jump to the first / last enabled option', async () => {
         const w = mountOverlay(TaoSelect, { props: { items: options, modelValue: 'c' } });
         await w.find('[role="combobox"]').trigger('click');
-        await key($('[role="listbox"]'), 'Home');
-        await key($('[role="listbox"]'), 'Enter');
+        await key(w.find('[role="combobox"]').element, 'Home');
+        await key(w.find('[role="combobox"]').element, 'Enter');
         await w.find('[role="combobox"]').trigger('click');
-        await key($('[role="listbox"]'), 'End');
-        await key($('[role="listbox"]'), 'Enter');
+        await key(w.find('[role="combobox"]').element, 'End');
+        await key(w.find('[role="combobox"]').element, 'Enter');
         expect(w.emitted('update:modelValue')).toEqual([['a'], ['c']]);
     });
 
@@ -117,7 +118,7 @@ describe('TaoSelect', () => {
         const w = mountOverlay(TaoSelect, { props: { items: options } });
         const trigger = w.find('[role="combobox"]').element as HTMLElement;
         await w.find('[role="combobox"]').trigger('click');
-        await key($('[role="listbox"]'), 'Escape');
+        await key(w.find('[role="combobox"]').element, 'Escape');
         expect($('[role="listbox"]')).toBeNull();
         expect(document.activeElement).toBe(trigger);
 
@@ -130,9 +131,49 @@ describe('TaoSelect', () => {
         const w = mountOverlay(TaoSelect, { props: { items: options, modelValue: 'a' } });
         await key(w.find('[role="combobox"]').element, 'ArrowDown');
         expect($('[role="listbox"]')).not.toBeNull();
-        await key($('[role="listbox"]'), 'Escape');
+        await key(w.find('[role="combobox"]').element, 'Escape');
         await key(w.find('[role="combobox"]').element, 'Delete');
         expect(w.emitted('update:modelValue')).toEqual([[null]]);
+    });
+
+    it('keeps the focus on the trigger and points at the active option (the select-only combobox of the APG)', async () => {
+        const w = mountOverlay(TaoSelect, { props: { items: options, modelValue: 'a', 'aria-label': 'Letter' } });
+        const trigger = w.find('[role="combobox"]');
+        (trigger.element as HTMLElement).focus();
+        expect(trigger.attributes('aria-controls')).toBeUndefined();
+        await trigger.trigger('click');
+        expect(document.activeElement).toBe(trigger.element);
+        const list = $('[role="listbox"]')!;
+        expect(trigger.attributes('aria-controls')).toBe(list.id);
+        expect(trigger.attributes('aria-autocomplete')).toBe('none');
+        expect(list.hasAttribute('aria-activedescendant')).toBe(false);
+        expect(trigger.attributes('aria-activedescendant')).toBe(`${list.id}-opt-0`);
+        expect(list.getAttribute('aria-label')).toBe('Letter');
+        await key(trigger.element, 'ArrowDown');
+        expect(trigger.attributes('aria-activedescendant')).toBe(`${list.id}-opt-2`);
+        expect(document.getElementById(trigger.attributes('aria-activedescendant')!)?.getAttribute('role')).toBe('option');
+        await key(trigger.element, 'Escape');
+        expect(trigger.attributes('aria-activedescendant')).toBeUndefined();
+    });
+
+    it('Tab closes the list and picks nothing', async () => {
+        const w = mountOverlay(TaoSelect, { props: { items: options, modelValue: 'a' } });
+        const trigger = w.find('[role="combobox"]');
+        await trigger.trigger('click');
+        await key(trigger.element, 'ArrowDown');
+        await key(trigger.element, 'Tab');
+        expect($('[role="listbox"]')).toBeNull();
+        expect(w.emitted('update:modelValue')).toBeUndefined();
+    });
+
+    it('a listbox with no label of its own is named by the caption of its TaoFormField', async () => {
+        const w = mountOverlay(
+            { components: { TaoFormField, TaoSelect }, template: '<TaoFormField label="Letter"><TaoSelect :items="items" /></TaoFormField>', data: () => ({ items: options }) },
+        );
+        await w.find('[role="combobox"]').trigger('click');
+        const list = $('[role="listbox"]')!;
+        const caption = document.getElementById(list.getAttribute('aria-labelledby')!);
+        expect(caption?.textContent).toContain('Letter');
     });
 
     it('a disabled select does not open', async () => {

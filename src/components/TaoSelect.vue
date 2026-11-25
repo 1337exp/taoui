@@ -58,6 +58,12 @@ const l10n = useLocaleText(props, 'select');
 
 const { field, controlId, isInvalid, describedBy, localId } = useField(props);
 const listId = `${localId}-list`;
+// the list is named like the field: the aria-label the caller gave, otherwise the caption of the TaoFormField / TaoProp, otherwise the placeholder
+// список называется так же, как поле: данный aria-label, иначе подпись TaoFormField / TaoProp, иначе подсказка
+const listLabel = computed(() => {
+    const own = controlAttrs()['aria-label'] as string | undefined;
+    return own ?? (field?.labelId?.value ? undefined : l10n.value.placeholder);
+});
 
 const open = ref(false);
 const activeIndex = ref(-1);
@@ -111,7 +117,8 @@ async function setOpen(next: boolean) {
             : (enabledIndexes.value[0] ?? -1);
     await nextTick();
     updatePosition();
-    listRef.value?.focus({ preventScroll: true });
+    // the focus stays on the trigger (the select-only combobox of the APG): the options are reached by `aria-activedescendant`
+    // фокус остаётся на кнопке (select-only combobox из APG): до пунктов добираются через `aria-activedescendant`
     scrollActiveIntoView();
 }
 
@@ -155,6 +162,13 @@ function onTriggerKeydown(event: KeyboardEvent) {
         return;
     }
 
+    // open: the keys of the list, from the trigger that keeps the focus
+    // открыт: клавиши списка, с кнопки, которая держит фокус
+    if (open.value) {
+        onListKeydown(event);
+        return;
+    }
+
     if ((event.key === 'Backspace' || event.key === 'Delete') && selected.value && props.clearable) {
         event.preventDefault();
         clear();
@@ -177,6 +191,13 @@ function onListKeydown(event: KeyboardEvent) {
             event.preventDefault();
             clear();
         }
+        return;
+    }
+
+    if (event.key === 'Tab') {
+        // leaves the field: the list closes, nothing is picked, the focus goes on
+        // уходит из поля: список закрывается, ничего не выбрано, фокус идёт дальше
+        close();
         return;
     }
 
@@ -203,7 +224,9 @@ function onListKeydown(event: KeyboardEvent) {
             role="combobox"
             :aria-expanded="open"
             aria-haspopup="listbox"
-            :aria-controls="listId"
+            aria-autocomplete="none"
+            :aria-controls="open ? listId : undefined"
+            :aria-activedescendant="open && activeIndex >= 0 ? `${listId}-opt-${activeIndex}` : undefined"
             :aria-invalid="isInvalid || undefined"
             :aria-required="required || undefined"
             :aria-readonly="readOnly || undefined"
@@ -211,6 +234,7 @@ function onListKeydown(event: KeyboardEvent) {
             :disabled="disabled"
             @click="toggle"
             @keydown="onTriggerKeydown"
+            @blur="close"
         >
             <span class="tao-select__value">{{ selected?.label ?? l10n.placeholder }}</span>
             <span
@@ -236,9 +260,8 @@ function onListKeydown(event: KeyboardEvent) {
                     ref="listRef"
                     class="tao-select__list"
                     role="listbox"
-                    tabindex="-1"
-                    :aria-activedescendant="activeIndex >= 0 ? `${listId}-opt-${activeIndex}` : undefined"
-                    @keydown="onListKeydown"
+                    :aria-label="listLabel"
+                    :aria-labelledby="listLabel ? undefined : field?.labelId.value"
                 >
                     <li
                         v-for="(option, index) in items"
