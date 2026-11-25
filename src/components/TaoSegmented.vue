@@ -4,8 +4,11 @@ import { useField } from '../formField';
 import { type TaoRadioValue } from '../radio';
 import { segmentedKey } from '../segmented';
 import { sizeClass, type TaoSize } from '../size';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoSegmented' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoSegmented', { onChange: 'use `v-model`: this control no longer has its own `change`, a listener gets the native DOM event, not the value' });
 
 const props = withDefaults(
     defineProps<{

@@ -7,8 +7,11 @@ import { buildPaginationItems } from '../pagination';
 import { sizeClass, type TaoSize } from '../size';
 import { formatText, useLocaleText, useTaoLocale } from '../locale';
 import type { TaoText } from '../locale/types';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoPagination' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoPagination', { onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted' });
 
 const appLocale = useTaoLocale();
 

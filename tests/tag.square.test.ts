@@ -1,5 +1,5 @@
 import { mount } from '@vue/test-utils';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { h } from 'vue';
 import TaoTag from '../src/components/TaoTag.vue';
 // @ts-expect-error Vite `?raw` import: the component as text
@@ -11,6 +11,18 @@ import tagSfc from '../src/components/TaoTag.vue?raw';
 const icon = () => h('i', { class: 'ico' });
 
 describe('TaoTag square', () => {
+    it('an icon-only tag with no name warns once in dev (the automatic square too)', () => {
+        const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        mount(TaoTag, { slots: { prefix: icon } });
+        expect(warn.mock.calls.some(([m]) => String(m).includes('needs aria-label'))).toBe(true);
+        warn.mockRestore();
+    });
+
+    it('a tag with a cross and an icon only draws no empty text box (no extra gap)', () => {
+        const w = mount(TaoTag, { props: { closable: true }, slots: { prefix: icon }, attrs: { 'aria-label': 'x' } });
+        expect(w.find('.tao-tag__text').exists()).toBe(false);
+    });
+
     it('a #prefix and no text: a square by itself, and no empty text span', () => {
         const w = mount(TaoTag, { slots: { prefix: icon }, attrs: { 'aria-label': 'Verified' } });
         expect(w.classes()).toContain('tao-tag--square');

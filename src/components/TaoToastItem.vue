@@ -72,7 +72,7 @@ function onEnter() {
 }
 function onLeave() {
     hovered.value = false;
-    if (!focusedInside.value) {
+    if (!focusedInside.value && !away.value) {
         resume();
     }
 }
@@ -85,7 +85,7 @@ function onFocusOut(event: FocusEvent) {
         return;
     }
     focusedInside.value = false;
-    if (!hovered.value) {
+    if (!hovered.value && !away.value) {
         resume();
     }
 }
@@ -120,6 +120,11 @@ watch(
         remaining = next.timeout;
         paused.value = false;
         startTimer();
+        // the new content is as much under the pointer, the focus or the absence as the old one was
+        // новое содержимое так же под указателем, фокусом или отсутствием, как было старое
+        if (hovered.value || focusedInside.value || away.value) {
+            pause();
+        }
     },
 );
 
@@ -128,14 +133,18 @@ watch(
 // Пока пользователь не видит страницу (вкладка скрыта, окно потеряло фокус), время стоит, как у Sonner: вернуться к пустому углу значило бы
 // отнять продление, которое давало наведение. Наведение, проглоченное окном (`mouseleave` не придёт), на возврате спрашивается заново.
 const rootEl = ref<HTMLElement | null>(null);
+const away = ref(false);
+const isAway = () => document.hidden || !document.hasFocus();
 function goAway() {
+    away.value = true;
     hovered.value = false;
     pause();
 }
 function comeBack() {
-    if (document.hidden || !document.hasFocus()) {
+    if (isAway()) {
         return;
     }
+    away.value = false;
     hovered.value = Boolean(rootEl.value?.matches(':hover'));
     if (!hovered.value && !focusedInside.value) {
         resume();
@@ -149,8 +158,14 @@ function onVisibility() {
     }
 }
 onMounted(() => {
+    // a toast that appears in a window nobody looks at (a background tab) does not count its time down: the user comes back to it whole
+    // тост, возникший в окне, на которое никто не смотрит (фоновая вкладка), не отсчитывает время: пользователь вернётся к целому
+    if (isAway()) {
+        goAway();
+    }
     window.addEventListener('blur', goAway);
     window.addEventListener('pagehide', goAway);
+    window.addEventListener('pageshow', comeBack);
     window.addEventListener('focus', comeBack);
     document.addEventListener('visibilitychange', onVisibility);
 });
@@ -158,6 +173,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
     window.removeEventListener('blur', goAway);
     window.removeEventListener('pagehide', goAway);
+    window.removeEventListener('pageshow', comeBack);
     window.removeEventListener('focus', comeBack);
     document.removeEventListener('visibilitychange', onVisibility);
     clearTimer();

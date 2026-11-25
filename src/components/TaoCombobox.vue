@@ -10,8 +10,11 @@ import type { TaoSelectItem } from '../select';
 import { densityClass } from '../density';
 import { sizeClass, type TaoSize } from '../size';
 import { formatText, useLocaleText, useTaoLocale } from '../locale';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoCombobox', inheritAttrs: false });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoCombobox', { options: 'use `items` of `{ id, label }`', onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted' });
 
 // the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
 // атрибуты — элементу управления, внешний вид — обёртке

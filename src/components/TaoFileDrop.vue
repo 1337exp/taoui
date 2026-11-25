@@ -7,8 +7,11 @@ import { partitionByAccept } from '../fileAccept';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText, useTaoLocale } from '../locale';
 import { nativeFieldAttrs, useField } from '../formField';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoFileDrop', inheritAttrs: false });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoFileDrop', { onChange: 'use `v-model`: this control no longer has its own `change`, a listener gets the native DOM event, not the value' });
 
 // the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
 // атрибуты — элементу управления, внешний вид — обёртке

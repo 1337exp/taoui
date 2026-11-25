@@ -27,15 +27,29 @@ export async function startShowcase() {
     if (!existsSync(vite)) throw new Error('Run `npm install` in showcase/ first');
     const child = spawn(process.execPath, [vite, '--port', String(PORT), '--strictPort'], { cwd: join(ROOT, 'showcase'), stdio: 'ignore' });
     const url = `http://localhost:${PORT}`;
-    await waitFor(url);
+    try {
+        await waitFor(url);
+    } catch (error) {
+        // a server that did not come up in time must not keep the port for the next run
+        // сервер, не поднявшийся вовремя, не должен держать порт для следующего запуска
+        child.kill();
+        throw error;
+    }
     return { url, stop: () => void child.kill() };
 }
 
-/** Chrome or Edge that is installed (nothing is downloaded); null when there is none. / Установленный Chrome или Edge; null, если их нет. */
+/**
+ * Chrome or Edge that is installed (nothing is downloaded), else a Chromium that Playwright already has (`PLAYWRIGHT_BROWSERS_PATH`, a CI
+ * image) or the one in `CHROME_PATH`; null when there is none.
+ * Установленный Chrome или Edge (ничего не скачивается), иначе Chromium, который у Playwright уже есть (`PLAYWRIGHT_BROWSERS_PATH`, образ CI)
+ * или тот, что в `CHROME_PATH`; null, если ничего нет.
+ */
 export async function launch(): Promise<Browser | null> {
-    for (const channel of ['chrome', 'msedge']) {
+    const options: Parameters<typeof chromium.launch>[0][] = [{ channel: 'chrome' }, { channel: 'msedge' }, {}];
+    if (process.env.CHROME_PATH) options.unshift({ executablePath: process.env.CHROME_PATH });
+    for (const option of options) {
         try {
-            return await chromium.launch({ channel });
+            return await chromium.launch(option);
         } catch {
             // the next one
         }

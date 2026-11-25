@@ -157,7 +157,7 @@
 
 ## Conventions
 
-Visual tones: `success` | `danger` | `warning` | `info` | `neutral` (type `TaoTone`), always the `tone` prop: Button, Alert, Tag (`toast.danger()` for toasts). The accent is a tone too and the default one. A tone is a context class like a size: `.tao-tone-danger` on any element sets `--tao-tone`, `--tao-tone-on`, `--tao-tone-text`, … (see `styles/tone.css`). Unlike a size it does **not** inherit, so a button inside a red alert stays an accent button.
+Visual tones: `success` | `danger` | `warning` | `info` | `neutral` (type `TaoTone`), always the `tone` prop: Button, Alert, Tag (`toast.danger()` for toasts). The accent is a tone too and the default one. A tone is a context class like a size: `.tao-tone-danger` on any element sets `--tao-tone`, `--tao-tone-on`, `--tao-tone-text`, … (see `styles/contexts/tone.css`). Unlike a size it does **not** inherit, so a button inside a red alert stays an accent button.
 Stages describe a process, not a tone: `wait` / `work` / `ok` / `bad` (`danger` is accepted as `bad`).
 
 Control sizes: `small` | `medium` | `large` (type `TaoSize`). One scale for Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup and FormField — controls of one size line up in a row. Checkbox, Radio / RadioGroup and Switch scale the indicator (14 / 18 / 22px) and the label; Tag scales its height (18 / 20 / 24px); Tabs, Pagination buttons and List rows take the Button height; Table scales cell padding (`size="small"` for the dense one); FileDrop scales the zone and file rows; Slider scales the track and thumb.
@@ -280,7 +280,7 @@ npm install ../path-to-tao-ui
 
 Import the core stylesheet once (tokens, themes, contexts, typography), then import the components you use. **The CSS of a component
 comes with the component**: an app that imports `{ TaoButton }` ships the button and its CSS, not the whole kit (about 38 KB of CSS, 7 KB
-gzipped, for one component, against 232 KB for everything).
+gzipped, for one component, against 244 KB for everything).
 
 ```javascript
 // main.js
@@ -300,7 +300,7 @@ import { TaoButton, TaoInput } from '@1337exp/taoui'   // each brings its own CS
 ### Global registration (optional)
 
 If you want every `Tao*` tag available without importing it, install the plugin from its own entry. This is the price of global
-registration: **the whole kit and all its CSS** go into the bundle (about 380 KB of JS and 232 KB of CSS before gzip), so prefer the
+registration: **the whole kit and all its CSS** go into the bundle (about 409 KB of JS and 244 KB of CSS before gzip), so prefer the
 named imports above.
 
 ```javascript
@@ -629,7 +629,7 @@ The `cell-<id>` slot replaces a cell. `loading` shows an overlay; an empty list 
   <TaoInputNumber v-model="qty" :min="1" :max="99" />
 </TaoFormField>
 
-<TaoQuantity v-model="qty" :max="12" @dec="onDec" />
+<TaoQuantity v-model="qty" :max="12" @remove="onRemove" />
 
 <TaoFormField label="Delivery day" hint="The model is always YYYY-MM-DD">
   <TaoDate v-model="day" min="2026-09-01" max="2026-09-30" />
@@ -713,7 +713,7 @@ One thing to know: it works against you for a global rule on an element (`h2 { f
 
 With **Tailwind v4** declare the whole order once, before both imports, or its preflight (the `base` layer) would be appended after the kit and beat its component rules: `@layer theme, base, tao, components, utilities;`. The kit stays under your utilities and over Tailwind's reset.
 
-The palette files (`@1337exp/taoui/palettes/*.css`) are not in a layer on purpose: a palette must beat the theme. The raw token files imported one by one are not in layers either.
+The palette files (`@1337exp/taoui/styles/palettes/*.css`) are not in a layer on purpose: a palette must beat the theme. The raw token files imported one by one are not in layers either.
 
 ### Radius: one knob, whole pixels
 

@@ -52,10 +52,18 @@ const has = (name: string) => slotHas(slots, name);
 const attrs = useAttrs();
 // An icon alone is a square. Asked at render time: a slot that exists may draw nothing. A tag with a cross is not one (the cross needs room).
 // Одна иконка — квадрат. Спрашивается при рендере: слот может быть и ничего не рисовать. Тег с крестиком — не квадрат (крестику нужно место).
-const isSquare = () => !props.closable && (props.square ?? (has('prefix') && !has('default')));
-if (props.square && !attrs['aria-label'] && !attrs['aria-labelledby'] && !attrs.title) {
-    devWarning('tag:square', 'TaoTag: a square tag has only an icon and needs aria-label (or aria-labelledby / title).');
+function isSquare(): boolean {
+    const square = !props.closable && (props.square ?? (has('prefix') && !has('default')));
+    // asked at render, so the automatic square is checked too, not only the `square` prop
+    // спрашивается при рендере, поэтому проверяется и автоматический квадрат, не только проп `square`
+    if (square && !attrs['aria-label'] && !attrs['aria-labelledby'] && !attrs.title) {
+        devWarning('tag:square', 'TaoTag: a tag with only an icon has no text and needs aria-label (or aria-labelledby / title).');
+    }
+    return square;
 }
+// no text and an icon in front: there is nothing to put in the text box, and an empty one would only add a gap (a tag with a cross too)
+// текста нет, спереди иконка: класть в текстовый блок нечего, а пустой добавил бы только зазор (и у тега с крестиком тоже)
+const hasText = () => has('default') || !has('prefix');
 const style = computed(() => ({
     color: props.color || '',
     background: props.background || '',
@@ -86,7 +94,7 @@ function onClose() {
         <span v-if="has('prefix')" class="tao-tag__prefix">
             <slot name="prefix" />
         </span>
-        <span v-if="has('default') || !isSquare()" class="tao-tag__text"><slot /></span>
+        <span v-if="hasText()" class="tao-tag__text"><slot /></span>
         <button
             v-if="closable"
             type="button"

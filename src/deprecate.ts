@@ -72,3 +72,36 @@ export function warnDeprecated(component: string, replacements: Record<string, s
         deprecationWarning(component, label, instead, removeIn);
     }
 }
+
+/**
+ * Warns, in a dev build, about a prop or a listener of 5.x that the parent still passes and 6.0 no longer has. In an untyped template an
+ * unknown prop is just an attribute and a listener nobody emits is just never called, so the control looks right and does nothing: the
+ * warning says what to write instead. Keys are camelCase prop names or `onEvent` listener names. Call from `setup`.
+ * Предупреждает в dev-сборке о пропе или обработчике из 5.x, которые родитель всё ещё передаёт, а в 6.0 их больше нет. В шаблоне без
+ * типов неизвестный проп — просто атрибут, а обработчик, который никто не вызывает, — просто не вызывается: элемент выглядит верно и ничего
+ * не делает. Предупреждение говорит, что писать вместо. Ключи — имена пропсов в camelCase или `onEvent`. Вызывать из `setup`.
+ */
+export function warnRemoved(component: string, replacements: Record<string, string>) {
+    if (!isDev()) {
+        return;
+    }
+
+    const passed = getCurrentInstance()?.vnode.props;
+    if (!passed) {
+        return;
+    }
+
+    const names = new Set(Object.keys(passed).map((name) => camelize(name)));
+    for (const [name, instead] of Object.entries(replacements)) {
+        if (!names.has(name)) {
+            continue;
+        }
+        const isListener = /^on[A-Z]/.test(name);
+        const label = isListener ? `the listener @${name[2]!.toLowerCase()}${name.slice(3)}` : `the prop ${name}`;
+        const key = `${component}:removed:${name}`;
+        if (!warned.has(key)) {
+            warned.add(key);
+            console.warn(`[TaoUI] ${component}: ${label} is gone in 6.0 (it was in 5.x) — ${instead}.`);
+        }
+    }
+}

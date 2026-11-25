@@ -22,8 +22,11 @@ import { useTreeMenu } from '../treeMenu';
 import { useTreeMove } from '../treeMove';
 import TaoIcon from './TaoIcon.vue';
 import TaoMenu from './TaoMenu.vue';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoTree' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoTree', { nodes: 'use `items` of `{ id, label }`' });
 
 // A tree of files or objects: expand and collapse, select, check with tri-state parents, load children lazily.
 // ARIA tree: one tab stop, ↑ / ↓ walk the visible rows, → opens or goes to the first child, ← closes or goes to the

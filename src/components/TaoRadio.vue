@@ -4,8 +4,11 @@ import { useControlAttrs } from '../controlAttrs';
 import { nativeFieldAttrs, useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { radioGroupKey, type TaoRadioValue } from '../radio';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoRadio', inheritAttrs: false });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoRadio', { onChange: 'use `v-model`: this control no longer has its own `change`, a listener gets the native DOM event, not the value' });
 
 // the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
 // атрибуты — элементу управления, внешний вид — обёртке

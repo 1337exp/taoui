@@ -157,7 +157,7 @@
 
 ## Соглашения
 
-Тоны визуала: `success` | `danger` | `warning` | `info` | `neutral` (тип `TaoTone`), всегда через проп `tone`: Button, Alert, Tag (`toast.danger()` для тостов). Акцент — тоже тон и тон по умолчанию. Тон — контекстный класс, как размер: `.tao-tone-danger` на любом элементе выставляет `--tao-tone`, `--tao-tone-on`, `--tao-tone-text`, … (см. `styles/tone.css`). В отличие от размера, он **не** наследуется: кнопка внутри красного alert остаётся акцентной.
+Тоны визуала: `success` | `danger` | `warning` | `info` | `neutral` (тип `TaoTone`), всегда через проп `tone`: Button, Alert, Tag (`toast.danger()` для тостов). Акцент — тоже тон и тон по умолчанию. Тон — контекстный класс, как размер: `.tao-tone-danger` на любом элементе выставляет `--tao-tone`, `--tao-tone-on`, `--tao-tone-text`, … (см. `styles/contexts/tone.css`). В отличие от размера, он **не** наследуется: кнопка внутри красного alert остаётся акцентной.
 Stages — это процесс, не тон: `wait` / `work` / `ok` / `bad` (`danger` принимается как `bad`).
 
 Размеры контролов: `small` | `medium` | `large` (тип `TaoSize`). Одна шкала для Button, Input, InputNumber, Quantity, Textarea, Select, Combobox, Date, DateRange, Segmented, InputGroup и FormField — контролы одного размера встают в ряд ровно. Checkbox, Radio / RadioGroup и Switch масштабируют индикатор (14 / 18 / 22px) и подпись; Tag — высоту (18 / 20 / 24px); Tabs, кнопки Pagination и строки List берут высоту Button; Table масштабирует отступы ячеек (`size="small"` для плотной); FileDrop — зону и строки файлов; Slider — трек и бегунок.
@@ -279,7 +279,7 @@ npm install ../path-to-tao-ui
 
 Один раз подключите ядро стилей (токены, темы, контексты, типографика), а компоненты импортируйте те, что нужны. **CSS компонента приходит
 вместе с компонентом**: приложение, импортирующее `{ TaoButton }`, везёт кнопку и её CSS, а не весь набор (около 38 КБ CSS, 7 КБ в gzip, на
-один компонент против 232 КБ на всё).
+один компонент против 244 КБ на всё).
 
 ```javascript
 // main.js
@@ -299,7 +299,7 @@ import { TaoButton, TaoInput } from '@1337exp/taoui'   // у каждого св
 ### Глобальная регистрация (по желанию)
 
 Если нужны все теги `Tao*` без импорта, подключите плагин из его отдельного входа. Это цена глобальной регистрации: **в сборку
-идёт весь набор и весь его CSS** (около 380 КБ JS и 232 КБ CSS до gzip), поэтому лучше именованные импорты выше.
+идёт весь набор и весь его CSS** (около 409 КБ JS и 244 КБ CSS до gzip), поэтому лучше именованные импорты выше.
 
 ```javascript
 import TaoUI from '@1337exp/taoui/plugin'
@@ -627,7 +627,7 @@ const columns = [
   <TaoInputNumber v-model="qty" :min="1" :max="99" />
 </TaoFormField>
 
-<TaoQuantity v-model="qty" :max="12" @dec="onDec" />
+<TaoQuantity v-model="qty" :max="12" @remove="onRemove" />
 
 <TaoFormField label="День доставки" hint="В модели всегда YYYY-MM-DD">
   <TaoDate v-model="day" min="2026-09-01" max="2026-09-30" />
@@ -712,7 +712,7 @@ CSS набора живёт в слоях `tao.tokens`, `tao.themes`, `tao.base`
 
 С **Tailwind v4** объявите весь порядок один раз, до обоих импортов, иначе его preflight (слой `base`) окажется после набора и перебьёт правила компонентов: `@layer theme, base, tao, components, utilities;`. Набор останется под вашими утилитами и над сбросом Tailwind.
 
-Файлы палитр (`@1337exp/taoui/palettes/*.css`) намеренно вне слоя: палитра должна бить тему. Сырые файлы токенов, подключённые по одному, тоже без слоёв.
+Файлы палитр (`@1337exp/taoui/styles/palettes/*.css`) намеренно вне слоя: палитра должна бить тему. Сырые файлы токенов, подключённые по одному, тоже без слоёв.
 
 ### Радиус: одна ручка, целые пиксели
 

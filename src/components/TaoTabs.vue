@@ -4,8 +4,11 @@ import type { TaoJustify } from '../layout';
 import { sizeClass, type TaoSize } from '../size';
 import type { TaoTabItem } from '../tabs';
 import { useRoving } from '../primitives/useRoving';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoTabs' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoTabs', { onChange: 'use `v-model` (`update:modelValue`): `change` is not emitted' });
 
 const props = withDefaults(
     defineProps<{

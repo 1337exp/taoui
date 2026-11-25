@@ -66,9 +66,9 @@ describe('the helpers', () => {
 });
 
 describe('TaoWorkbench', () => {
-    it('is made of landmarks: a toolbar, two rails, the workspace, a status bar, each named', () => {
+    it('is made of landmarks: a top region, two rails, the workspace, a status bar, each named', () => {
         const w = make();
-        expect(w.find('header[role="toolbar"]').attributes('aria-label')).toBe('Toolbar');
+        expect(w.find('header[role="region"]').attributes('aria-label')).toBe('Toolbar');
         expect(w.findAll('nav').map((n) => n.attributes('aria-label'))).toEqual(['Left tools', 'Right tools']);
         expect(w.find('main').attributes('aria-label')).toBe('Workspace');
         expect(w.find('footer').attributes('aria-label')).toBe('Status bar');
@@ -133,12 +133,13 @@ describe('TaoWorkbench', () => {
         w.unmount();
     });
 
-    it('a badge with a label is read as the label; a dot without one is not read', () => {
+    it('a badge is part of the name of its button, and the drawn badge is not read twice', () => {
         const w = make();
         const notes = w.find('.tao-workbench__rail--right .tao-workbench__badge');
-        expect(notes.find('.tao-sr-only').text()).toBe('unsaved');
+        expect(notes.element.closest('button')!.getAttribute('aria-label')).toContain('unsaved');
+        expect(notes.find('.tao-sr-only').exists()).toBe(false);
         const problems = w.find('.tao-workbench__bar--bottom .tao-workbench__badge');
-        expect(problems.find('.tao-sr-only').text()).toBe('2 problems');
+        expect(problems.element.closest('button')!.getAttribute('aria-label')).toContain('2 problems');
         expect(problems.find('span[aria-hidden="true"]').text()).toBe('2');
         w.unmount();
     });

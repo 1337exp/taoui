@@ -106,6 +106,7 @@ onBeforeUnmount(() => {
         @mouseleave="hide"
         @focusin="show"
         @focusout="hide"
+        @keydown.esc="hide"
     >
         <slot />
         <Teleport to="body">
@@ -192,6 +193,8 @@ onBeforeUnmount(() => {
 
 .tao-tooltip__arrow {
     position: absolute;
+    /* the frame of a raised hint is inside the 8px, so the offsets below (half the box) stay true / рамка поднятой подсказки внутри 8px, поэтому смещения ниже (полблока) верны */
+    box-sizing: border-box;
     width: 8px;
     height: 8px;
     background: var(--_tip-bg);

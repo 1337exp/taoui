@@ -57,6 +57,21 @@ describe('TaoTooltip variant', () => {
     });
 });
 
+describe('TaoTooltip dismiss and frame (fourth review)', () => {
+    it('Escape on the trigger hides the hint without moving the focus (WCAG 1.4.13: dismissable)', async () => {
+        const w = mount(TaoTooltip, { props: { content: 'Hint' }, slots: { default: () => h('button', 'x') }, attachTo: document.body });
+        await w.find('.tao-tooltip-wrapper').trigger('focusin');
+        expect(document.querySelector('.tao-tooltip')).not.toBeNull();
+        await w.find('button').trigger('keydown', { key: 'Escape' });
+        expect(document.querySelector('.tao-tooltip')).toBeNull();
+        w.unmount();
+    });
+
+    it('the arrow is border-box: the frame of a raised hint does not make it bigger than the 8px its offsets assume', () => {
+        expect(source('src/components/TaoTooltip.vue')).toMatch(/\.tao-tooltip__arrow \{\s*position: absolute;[^}]*box-sizing: border-box;/);
+    });
+});
+
 describe('TaoWorkbench look', () => {
     it('the hints of the tools are raised', () => {
         const w = mount(TaoWorkbench, { props: { leftTools: [{ id: 'a', label: 'A' }] } });

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, useSlots } from 'vue';
+import { computed, nextTick, ref, useId, useSlots } from 'vue';
 import { formatText, useLocaleText } from '../locale';
 import { slotHas } from '../slots';
 import { nextRegion, toggleTool, type TaoWorkbenchSide, type TaoWorkbenchTool } from '../workbench';
@@ -98,6 +98,31 @@ function press(side: TaoWorkbenchSide, tool: TaoWorkbenchTool) {
 
 const closeText = (tool: TaoWorkbenchTool) => formatText(l10n.value.closePanelLabel, { name: tool.label });
 
+// The name of a tool button: its label, then the badge, so a screen reader hears the count (an `aria-label` replaces what is inside the
+// button, a hidden text in it would be lost). The key goes to `aria-keyshortcuts`.
+// Имя кнопки инструмента: подпись, затем бейдж, чтобы скринридер прочёл счётчик (`aria-label` заменяет содержимое кнопки, скрытый текст в ней
+// пропал бы). Клавиша — в `aria-keyshortcuts`.
+function toolName(tool: TaoWorkbenchTool): string {
+    const badge = tool.badgeLabel ?? (typeof tool.badge === 'number' || typeof tool.badge === 'string' ? String(tool.badge) : '');
+    return badge ? `${tool.label}, ${badge}` : tool.label;
+}
+
+// Closing a panel from its own button removes the button that has the focus: the focus goes to the tool that opened it, as a dialog does
+// Закрытие панели её кнопкой убирает кнопку, на которой фокус: фокус уходит к инструменту, открывшему панель, как у диалога
+function closePanel(side: TaoWorkbenchSide) {
+    const model = side === 'left' ? left : side === 'right' ? right : bottom;
+    const id = model.value;
+    model.value = null;
+    void nextTick(() => {
+        const tool = [...(rootRef.value?.querySelectorAll<HTMLElement>('[data-tao-tool]') ?? [])].find((el) => el.dataset.taoTool === `${side}:${id}`);
+        (tool ?? mainRef.value)?.focus();
+    });
+}
+
+// each frame has its own landmark id: two workbenches on a page must not share one
+// у каждой рамки свой id области: две рамки на странице не должны делить один
+const mainId = `tao-workbench-main-${useId()}`;
+
 // F6 / Shift+F6 go round the regions, as in an IDE (a keyboard user does not tab through a whole rail to reach the workspace)
 // F6 / Shift+F6 идут по областям по кругу, как в IDE (пользователь клавиатуры не листает табом всю рейку, чтобы дойти до рабочей области)
 const rootRef = ref<HTMLElement | null>(null);
@@ -110,6 +135,9 @@ function onKeydown(event: KeyboardEvent) {
     const to = nextRegion(regions.length, at, event.shiftKey ? -1 : 1);
     if (to >= 0) {
         event.preventDefault();
+        // a workbench inside a workbench: the inner one has moved the focus, the outer one must not move it again
+        // рамка в рамке: внутренняя уже сдвинула фокус, внешняя не должна двигать его снова
+        event.stopPropagation();
         regions[to]!.focus();
     }
 }
@@ -127,9 +155,9 @@ const mainRef = ref<HTMLElement | null>(null);
         :class="{ 'tao-workbench--glow': glow }"
         @keydown="onKeydown"
     >
-        <a class="tao-workbench__skip" href="#tao-workbench-main" @click.prevent="skip">{{ l10n.skipLabel }}</a>
+        <a class="tao-workbench__skip" :href="`#${mainId}`" @click.prevent="skip">{{ l10n.skipLabel }}</a>
 
-        <header class="tao-workbench__bar tao-workbench__bar--top" data-tao-region tabindex="-1" role="toolbar" :aria-label="topLabel ?? l10n.topLabel">
+        <header class="tao-workbench__bar tao-workbench__bar--top" data-tao-region tabindex="-1" role="region" :aria-label="topLabel ?? l10n.topLabel">
             <div class="tao-workbench__start"><slot name="top-start" /></div>
             <div class="tao-workbench__end"><slot name="top-end" /></div>
         </header>
@@ -142,14 +170,15 @@ const mainRef = ref<HTMLElement | null>(null);
                         class="tao-workbench__tool"
                         :class="{ 'tao-workbench__tool--on': left === tool.id }"
                         :aria-pressed="left === tool.id"
-                        :aria-label="tool.label"
+                        :aria-label="toolName(tool)"
+                        :aria-keyshortcuts="tool.shortcut"
                         :disabled="tool.disabled"
+                        :data-tao-tool="`left:${tool.id}`"
                         @click="press('left', tool)"
                     >
                         <TaoIcon v-if="tool.icon" :name="tool.icon" :size="20" />
                         <span v-if="tool.badge !== undefined && tool.badge !== false" class="tao-workbench__badge" :class="{ 'tao-workbench__badge--dot': tool.badge === true }">
-                            <span :aria-hidden="tool.badgeLabel ? 'true' : undefined">{{ tool.badge === true ? '' : tool.badge }}</span>
-                            <span v-if="tool.badgeLabel" class="tao-sr-only">{{ tool.badgeLabel }}</span>
+                            <span aria-hidden="true">{{ tool.badge === true ? '' : tool.badge }}</span>
                         </span>
                     </button>
                 </TaoTooltip>
@@ -163,7 +192,7 @@ const mainRef = ref<HTMLElement | null>(null);
                 v-model="leftSize"
                 unit="px"
                 :min="panelMin"
-                :min-end="centerMin"
+                :min-end="centerMin + (openRight ? panelMin : 0)"
                 :collapsed="openLeft ? false : 'start'"
                 class="tao-workbench__split"
             >
@@ -173,7 +202,7 @@ const mainRef = ref<HTMLElement | null>(null);
                             <TaoIcon v-if="openLeft.icon" :name="openLeft.icon" :size="16" />
                             <div class="tao-workbench__panel-title" role="heading" aria-level="2">{{ openLeft.label }}</div>
                             <span class="tao-workbench__panel-actions"><slot name="panel-actions" :tool="openLeft" side="left" /></span>
-                            <button type="button" class="tao-workbench__close" :aria-label="closeText(openLeft)" @click="left = null"><TaoIcon name="tao-close" :size="14" /></button>
+                            <button type="button" class="tao-workbench__close" :aria-label="closeText(openLeft)" @click="closePanel('left')"><TaoIcon name="tao-close" :size="14" /></button>
                         </header>
                         <div class="tao-workbench__panel-body"><slot name="left-panel" :tool="openLeft" /></div>
                     </section>
@@ -200,7 +229,7 @@ const mainRef = ref<HTMLElement | null>(null);
                                 class="tao-workbench__split"
                             >
                                 <template #start>
-                                    <main id="tao-workbench-main" ref="mainRef" class="tao-workbench__block tao-workbench__main" data-tao-region tabindex="-1" :aria-label="mainLabel ?? l10n.mainLabel">
+                                    <main :id="mainId" ref="mainRef" class="tao-workbench__block tao-workbench__main" data-tao-region tabindex="-1" :aria-label="mainLabel ?? l10n.mainLabel">
                                         <slot />
                                     </main>
                                 </template>
@@ -210,7 +239,7 @@ const mainRef = ref<HTMLElement | null>(null);
                                             <TaoIcon v-if="openBottom.icon" :name="openBottom.icon" :size="16" />
                                             <div class="tao-workbench__panel-title" role="heading" aria-level="2">{{ openBottom.label }}</div>
                                             <span class="tao-workbench__panel-actions"><slot name="panel-actions" :tool="openBottom" side="bottom" /></span>
-                                            <button type="button" class="tao-workbench__close" :aria-label="closeText(openBottom)" @click="bottom = null"><TaoIcon name="tao-close" :size="14" /></button>
+                                            <button type="button" class="tao-workbench__close" :aria-label="closeText(openBottom)" @click="closePanel('bottom')"><TaoIcon name="tao-close" :size="14" /></button>
                                         </header>
                                         <div class="tao-workbench__panel-body"><slot name="bottom-panel" :tool="openBottom" /></div>
                                     </section>
@@ -223,7 +252,7 @@ const mainRef = ref<HTMLElement | null>(null);
                                     <TaoIcon v-if="openRight.icon" :name="openRight.icon" :size="16" />
                                     <div class="tao-workbench__panel-title" role="heading" aria-level="2">{{ openRight.label }}</div>
                                     <span class="tao-workbench__panel-actions"><slot name="panel-actions" :tool="openRight" side="right" /></span>
-                                    <button type="button" class="tao-workbench__close" :aria-label="closeText(openRight)" @click="right = null"><TaoIcon name="tao-close" :size="14" /></button>
+                                    <button type="button" class="tao-workbench__close" :aria-label="closeText(openRight)" @click="closePanel('right')"><TaoIcon name="tao-close" :size="14" /></button>
                                 </header>
                                 <div class="tao-workbench__panel-body"><slot name="right-panel" :tool="openRight" /></div>
                             </section>
@@ -241,14 +270,15 @@ const mainRef = ref<HTMLElement | null>(null);
                         class="tao-workbench__tool"
                         :class="{ 'tao-workbench__tool--on': right === tool.id }"
                         :aria-pressed="right === tool.id"
-                        :aria-label="tool.label"
+                        :aria-label="toolName(tool)"
+                        :aria-keyshortcuts="tool.shortcut"
                         :disabled="tool.disabled"
+                        :data-tao-tool="`right:${tool.id}`"
                         @click="press('right', tool)"
                     >
                         <TaoIcon v-if="tool.icon" :name="tool.icon" :size="20" />
                         <span v-if="tool.badge !== undefined && tool.badge !== false" class="tao-workbench__badge" :class="{ 'tao-workbench__badge--dot': tool.badge === true }">
-                            <span :aria-hidden="tool.badgeLabel ? 'true' : undefined">{{ tool.badge === true ? '' : tool.badge }}</span>
-                            <span v-if="tool.badgeLabel" class="tao-sr-only">{{ tool.badgeLabel }}</span>
+                            <span aria-hidden="true">{{ tool.badge === true ? '' : tool.badge }}</span>
                         </span>
                     </button>
                 </TaoTooltip>
@@ -265,14 +295,15 @@ const mainRef = ref<HTMLElement | null>(null);
                         class="tao-workbench__tool tao-workbench__tool--bar"
                         :class="{ 'tao-workbench__tool--on': bottom === tool.id }"
                         :aria-pressed="bottom === tool.id"
-                        :aria-label="tool.label"
+                        :aria-label="toolName(tool)"
+                        :aria-keyshortcuts="tool.shortcut"
                         :disabled="tool.disabled"
+                        :data-tao-tool="`bottom:${tool.id}`"
                         @click="press('bottom', tool)"
                     >
                         <TaoIcon v-if="tool.icon" :name="tool.icon" :size="16" />
                         <span v-if="tool.badge !== undefined && tool.badge !== false" class="tao-workbench__badge tao-workbench__badge--inline" :class="{ 'tao-workbench__badge--dot': tool.badge === true }">
-                            <span :aria-hidden="tool.badgeLabel ? 'true' : undefined">{{ tool.badge === true ? '' : tool.badge }}</span>
-                            <span v-if="tool.badgeLabel" class="tao-sr-only">{{ tool.badgeLabel }}</span>
+                            <span aria-hidden="true">{{ tool.badge === true ? '' : tool.badge }}</span>
                         </span>
                     </button>
                 </TaoTooltip>

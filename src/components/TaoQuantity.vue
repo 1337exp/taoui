@@ -6,8 +6,11 @@ import { nativeFieldAttrs, useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
 import { clamp } from '../primitives/number';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoQuantity', inheritAttrs: false });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoQuantity', { onDec: 'use `@commit` or `@update:modelValue`', onInc: 'use `@commit` or `@update:modelValue`' });
 
 // the attributes go to the control, the looks to the wrapper (see controlAttrs.ts)
 // атрибуты — элементу управления, внешний вид — обёртке

@@ -4,8 +4,11 @@ import { computed, inject, ref, useId, useSlots } from 'vue';
 import { spoilerGroupKey } from '../spoiler';
 import { frameStyle } from '../frames';
 import { slotHas } from '../slots';
+import { warnRemoved } from '../deprecate';
 
 defineOptions({ name: 'TaoSpoiler' });
+// 5.x names the parent may still pass: said once in dev, since an untyped template shows no error / имена из 5.x, которые родитель мог оставить: один раз в dev, шаблон без типов ошибки не покажет
+warnRemoved('TaoSpoiler', { defaultOpen: 'use `v-model` (it starts closed)' });
 
 const props = withDefaults(
     defineProps<{

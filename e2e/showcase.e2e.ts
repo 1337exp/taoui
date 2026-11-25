@@ -190,18 +190,32 @@ describe('the kit in a real browser', () => {
         await close();
     });
 
-    it('TaoWorkbench: a panel anchored to the end keeps its size when the window is resized', async () => {
+    it('TaoWorkbench: a panel anchored to the end keeps its size when its box is resized, and the workspace takes the change', async () => {
         const { page, close } = await open();
         await section(page, 'workbench');
         const box = page.locator('.demo-workbench-box');
         await box.scrollIntoViewIfNeeded();
         await box.locator('.tao-workbench__rail--right .tao-workbench__tool').first().click();
         const panel = box.locator('.tao-workbench__panel').last();
-        const before = (await panel.boundingBox())!.width;
-        await page.setViewportSize({ width: 1500, height: 800 });
+        const main = box.locator('.tao-workbench__main');
+        const panelBefore = (await panel.boundingBox())!.width;
+        const mainBefore = (await main.boundingBox())!.width;
+        // the box itself, not the window: the showcase column has a maximum width, so a bigger window changes nothing
+        // сам блок, не окно: у колонки витрины есть максимальная ширина, и окно побольше ничего не меняет
+        // as much as the workspace can give and still keep its minimum (240px): below that the frame has nothing to keep
+        // сколько рабочая область может отдать, не выйдя за свой минимум (240px): ниже рамке уже нечего держать
+        const shrink = Math.min(150, Math.floor(mainBefore) - 250);
+        expect(shrink).toBeGreaterThan(10);
+        const boxWidth = (await box.boundingBox())!.width;
+        await box.evaluate((el, width) => {
+            el.style.boxSizing = 'border-box';
+            el.style.width = `${width}px`;
+        }, boxWidth - shrink);
         await page.waitForTimeout(400);
-        const after = (await panel.boundingBox())!.width;
-        expect(Math.abs(after - before)).toBeLessThan(2);
+        const panelAfter = (await panel.boundingBox())!.width;
+        const mainAfter = (await main.boundingBox())!.width;
+        expect(Math.abs(panelAfter - panelBefore)).toBeLessThan(2);
+        expect(Math.abs(mainBefore - mainAfter - shrink), `main ${mainBefore} -> ${mainAfter}, panel ${panelBefore} -> ${panelAfter}`).toBeLessThan(4);
         await close();
     });
 

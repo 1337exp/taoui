@@ -60,7 +60,7 @@ const isRow = computed(() => props.direction === 'row');
 const stepValue = computed(() => props.step ?? (props.unit === '%' ? 1 : 8));
 const ariaOrientation = computed(() => (isRow.value ? 'vertical' : 'horizontal'));
 
-let dragStartPx = 0;
+let dragStartAnchoredPx = 0;
 let dragStartValue = 0;
 let dragStartCoord = 0;
 let savedBodyCursor = '';
@@ -142,7 +142,16 @@ function commit(next: number) {
     model.value = next;
 }
 
+// The model is what the USER chose: the layout fits it to the box there is today and never writes the fit back (a window that is small for a
+// moment, a hidden tab, a box of no size), so the chosen size is there again when the room is. Only a drag or a key writes the model.
+// Модель — то, что выбрал ПОЛЬЗОВАТЕЛЬ: раскладка подгоняет её под блок, который есть сейчас, и не пишет подгонку обратно (окно, тесное на
+// миг, скрытая вкладка, блок без размера), так что выбранный размер возвращается, когда место есть. В модель пишет только протяжка или клавиша.
 function applyLayout(emitIfChanged: boolean) {
+    // a closed pane has no handle and no room to measure: nothing to lay out, and the next open measures again
+    // закрытая панель без ручки и без места для замера: раскладывать нечего, следующее открытие замерит снова
+    if (props.collapsed) {
+        return;
+    }
     const avail = measureAvailable();
     available.value = avail;
     const clamped = clampStartPx(startOf(toPx(size.value, avail), avail), avail);
@@ -178,7 +187,9 @@ function restoreDragCursor() {
 function setStartFromDelta(delta: number) {
     const avail = measureAvailable();
     available.value = avail;
-    const nextPx = clampStartPx(dragStartPx + delta, avail);
+    // the pane the model measures moves by the pointer; a box that changed since the press changes nothing in what the pointer did
+    // панель, которую меряет модель, идёт за указателем; блок, изменившийся после нажатия, не меняет того, что сделал указатель
+    const nextPx = clampStartPx(startOf(dragStartAnchoredPx + (anchorEnd.value ? -delta : delta), avail), avail);
     startPx.value = nextPx;
     commit(fromPx(anchoredOf(nextPx, avail), avail));
 }
@@ -191,7 +202,7 @@ const drag = usePointerDrag({
         if (!props.resizable) {
             return false;
         }
-        dragStartPx = startPx.value;
+        dragStartAnchoredPx = anchoredOf(startPx.value, available.value || measureAvailable());
         dragStartValue = size.value;
         dragStartCoord = isRow.value ? event.clientX : event.clientY;
         applyDragCursor();
@@ -226,10 +237,18 @@ function ariaMax() {
     return Math.min(props.max, maxByEnd);
 }
 
-const ariaValueMin = computed(() => props.min);
-const ariaValueMax = computed(() => ariaMax());
-const ariaValueNow = computed(() => size.value);
-const ariaValueText = computed(() => (props.unit === '%' ? `${size.value}%` : `${Math.round(size.value)}px`));
+// the range that is really kept: a box that cannot hold both minimums squeezes them, and the value is where the pane is (not where it was asked)
+// the max is not known before the first measure of a px split: no attribute then, not a 0
+// диапазон, который держится на деле: блок, не вмещающий оба минимума, сжимает их, а значение — там, где панель есть (не где её просили);
+// максимум px-сплита неизвестен до первого замера: тогда атрибута нет, а не 0
+const ariaValueMax = computed(() => (available.value <= 0 && props.unit === 'px' && props.max == null ? undefined : ariaMax()));
+const ariaValueMin = computed(() => (ariaValueMax.value === undefined ? props.min : Math.min(props.min, ariaValueMax.value)));
+const ariaValueNow = computed(() => {
+    const max = ariaValueMax.value;
+    const shown = available.value > 0 ? fromPx(anchoredOf(startPx.value, available.value), available.value) : size.value;
+    return max === undefined ? shown : Math.min(Math.max(shown, ariaValueMin.value), max);
+});
+const ariaValueText = computed(() => (props.unit === '%' ? `${ariaValueNow.value}%` : `${Math.round(ariaValueNow.value)}px`));
 
 function onKeydown(event: KeyboardEvent) {
     const before = size.value;
@@ -305,9 +324,18 @@ watch(
     () => [props.unit, props.direction, props.min, props.max, props.minEnd, props.resizable, props.anchor] as const,
     () => {
         if (!isDragging.value) {
-            applyLayout(true);
+            applyLayout(false);
         }
     },
+);
+
+// A pane that opens brings its handle back: the gutter it takes is there only after the DOM is, so measure then (the box did not change,
+// the observer is silent).
+// Открывающаяся панель возвращает ручку: место под неё появляется вместе с DOM, замерить надо после него (блок не менялся, наблюдатель молчит).
+watch(
+    () => props.collapsed,
+    () => applyLayout(false),
+    { flush: 'post' },
 );
 
 onMounted(() => {
@@ -316,7 +344,7 @@ onMounted(() => {
         if (isDragging.value) {
             return;
         }
-        applyLayout(true);
+        applyLayout(false);
     });
     if (rootRef.value) {
         resizeObserver.observe(rootRef.value);
