@@ -167,4 +167,13 @@ const has = (name: string) => slotHas(slots, name);
     padding: var(--tao-space-4);
     background: var(--tao-color-surface);
 }
+
+/* reduced motion: the panel opens and closes at once / уменьшенное движение: панель открывается и закрывается сразу */
+@media (prefers-reduced-motion: reduce) {
+    .tao-spoiler__icon,
+    .tao-spoiler-slide-enter-active,
+    .tao-spoiler-slide-leave-active {
+        transition: none;
+    }
+}
 </style>

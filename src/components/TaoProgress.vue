@@ -157,4 +157,11 @@ const valueNow = computed(() => Math.min(100, Math.max(0, Number.isFinite(props.
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
 }
+
+/* reduced motion: no shimmer on the bar / уменьшенное движение: без блика на полосе */
+@media (prefers-reduced-motion: reduce) {
+    .tao-progress__fill--animated {
+        animation: none;
+    }
+}
 </style>

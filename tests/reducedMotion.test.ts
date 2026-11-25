@@ -60,3 +60,14 @@ describe('reduced motion of the overlays', () => {
         expect(block).toMatch(/transition: none;/);
     });
 });
+
+describe('reduced motion of the quiet components (third review)', () => {
+    it.each([
+        ['src/components/TaoSkeleton.vue', /\.tao-skeleton \{\s*animation: none;/],
+        ['src/components/TaoProgress.vue', /\.tao-progress__fill--animated \{\s*animation: none;/],
+        ['src/components/TaoSpoiler.vue', /\.tao-spoiler-slide-leave-active \{\s*transition: none;/],
+        ['src/components/TaoScrollTop.vue', /\.tao-scroll-top-fade-leave-active \{\s*transition: none;/],
+    ])('%s: the motion is off', (file, rule) => {
+        expect(reducedBlock(file)).toMatch(rule);
+    });
+});

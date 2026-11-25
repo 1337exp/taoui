@@ -442,7 +442,7 @@ export const propTables = {
     {
       title: 'TaoCommandPalette',
       rows: [
-        r('v-model', 'boolean', 'false', 'Открыта или закрыта. Палитра сама никаких клавиш не слушает: открывайте своей'),
+        r('v-model', 'boolean', '—', 'Открыта или закрыта. Обязательный (как у TaoModal). Палитра сама никаких клавиш не слушает: открывайте своей'),
         r('items', '{ id, label, group?, shortcut?, icon?, description?, keywords?, disabled? }[]', '[]', 'Команды. Палитра их только ищет и показывает; запуск — @select. group даёт подписи при пустом запросе; shortcut — текст сочетания; keywords — слова, по которым находят, хотя их не видно; disabled — видна, выбрать нельзя'),
         r('placeholder', 'string', "'Введите команду…'", 'Подсказка в пустом поле'),
         r('emptyText', 'string', "'Команд не найдено'", 'Текст, когда ничего не подошло'),
@@ -663,6 +663,9 @@ export const propTables = {
         r('accept', 'string', "'*'", 'Как у <input type="file">'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Высота зоны и строк файлов. Без него — размер предков'),
         r('list', 'boolean', 'true', 'Имена под зоной. Снять файл — сразу в v-model'),
+        r('disabled', 'boolean', 'false', 'Зона выключена: ни бросить, ни выбрать'),
+        r('invalid', 'boolean', 'false', 'Красная рамка. Текст ошибки — error у TaoFormField'),
+        r('id / name / required / autofocus', 'string / string / boolean / boolean', '— / — / false / false', 'Контракт поля (FieldProps) для нативного поля выбора файла: id (на него указывает подпись TaoFormField), name, required, autofocus'),
         r('showClear', 'boolean', 'false', 'Кнопка «очистить всё». Сама не чистит — шлёт clear-request'),
       ],
       slots: 'default — текст зоны. Событие update:modelValue — добавили или убрали файлы. reject — файлы, не прошедшие accept (массив File[]): их нет в v-model, скажите пользователю, почему. clear-request: родитель решает, обнулить сразу или после confirm().',
@@ -1219,7 +1222,8 @@ export const propTables = {
       rows: [
         r('items', 'TaoNavItem[]', '—', '{ id, label, icon?, href?, badge?, disabled? }. С href пункт — ссылка <a>, без него кнопка. badge: число или строка — счётчик, true — точка'),
         r('v-model', 'string', '—', 'id текущего раздела: aria-current="page" и активный вид'),
-        r('layout', "'auto' | 'bar' | 'rail' | 'drawer'", "'auto'", 'bar — нижняя панель, rail — рейка с иконками, drawer — боковая панель с подписями. auto — по ширине самого TaoNav: bar до 600px, rail до 840px, drawer от 840px (container queries, без JS)'),
+        r('v-model:look', "'bar' | 'rail' | 'drawer'", '—', 'Только чтение: вид, в котором навигация сейчас (по её ширине: меньше 600px bar, меньше 840px rail, иначе drawer). Для кода, которому нужно знать вид (navCompact(look)); рисует по-прежнему CSS'),
+        r('v-model:layout', "'auto' | 'bar' | 'rail' | 'drawer'", "'auto'", 'bar — нижняя панель, rail — рейка с иконками, drawer — боковая панель с подписями. auto — по ширине самого TaoNav: bar до 600px, rail до 840px, drawer от 840px (container queries, без JS)'),
         r('maxBarItems', 'number', '5', 'Сколько помещается в bar. Если пунктов больше, остаются maxBarItems − 1, остальные уходят в «Ещё» с меню'),
         r('label', 'string', "'Навигация'", 'Имя навигации для скринридера'),
         r('moreLabel', 'string', "'Ещё'", 'Подпись пункта «Ещё»'),

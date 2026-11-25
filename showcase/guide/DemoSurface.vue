@@ -104,14 +104,14 @@ function showConfirm(surface) {
         <p class="carousel-note">
           They pop up over the page, so they are glass by default. The tone tint is kept.
           To turn it off: <code>toast.defaults({ surface: 'flat' })</code>, <code>confirm.defaults({ surface: 'flat' })</code>
-          or for a single one — <code>.surface('flat')</code>.
+          or for a single one — <code>toast({ surface: 'flat' })</code>.
         </p>
       </template>
       <template #ru>
         <p class="carousel-note">
           Всплывают поверх страницы, поэтому стеклянные по умолчанию. Оттенок тона сохраняется.
           Выключить: <code>toast.defaults({ surface: 'flat' })</code>, <code>confirm.defaults({ surface: 'flat' })</code>
-          или для одного — <code>.surface('flat')</code>.
+          или для одного — <code>toast({ surface: 'flat' })</code>.
         </p>
       </template>
     </Tr>

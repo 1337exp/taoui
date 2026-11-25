@@ -31,7 +31,7 @@ createApp(App).mount('#app')
 - **Import the components you use**: `import { TaoButton } from '@1337exp/taoui'`. The CSS of a component comes with the component (about 38 KB of CSS for one, against 232 KB for the whole kit); do not import a stylesheet per component.
 - Global registration is optional and costs the whole kit: `import TaoUI from '@1337exp/taoui/plugin'`, `app.use(TaoUI, { locale: localeRu })`. Prefer named imports. On the server (Nuxt, SSR) give the language to the app through the plugin: the process is shared by requests.
 - Nuxt 3: the CSS in `app.vue`; the plugin only if you want global tags. Components are SSR-safe; `toast()` / `confirm()` do nothing on the server, and `toast.defaults` / `confirm.defaults` are process-wide (set them once at start-up, not per request).
-- Browser floor: Chrome / Edge 130, Safari 18, Firefox 132 (the last two years: Popover API, `<dialog>`, `@layer`, nesting, `color-mix()`, `light-dark()`, `@property`, container queries).
+- Browser floor: Chrome / Edge 130, Safari 18, Firefox 132 (the last two years: `@layer`, `inert`, `round()`, nesting, `color-mix()`, `light-dark()`, `@property`, container queries).
 
 ## Rules that keep an app consistent
 
@@ -176,4 +176,4 @@ Which language to start with: `detectTaoLanguage(['en', 'ru'], { fallback?, requ
 - Importing from deep paths (`@1337exp/taoui/dist/...`); only the package root, `styles.css`, `palettes.css` and
   `styles/*` are public.
 
-Migrating from TaoUI 4: `MIGRATION-5.md` in the package lists every rename; `CHANGELOG.md` explains each change.
+Migrating from TaoUI 5: the top section of `CHANGELOG.md` ("How to update from 5.x") lists the steps and every rename; `MIGRATION-5.md` is the older 4 → 5 table.

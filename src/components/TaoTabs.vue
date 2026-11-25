@@ -9,7 +9,7 @@ defineOptions({ name: 'TaoTabs' });
 
 const props = withDefaults(
     defineProps<{
-        /** Tabs: `{ value, label, disabled? }`, same shape as Select options. / Вкладки, как опции Select. */
+        /** Tabs: `{ id, label, disabled? }`, same shape as Select items. / Вкладки, как пункты Select. */
         items?: TaoTabItem[];
         /** Where the tabs sit along the row, as in TaoFlex; without it they start at the left. / Где вкладки стоят в ряду, как у TaoFlex; без него — слева. */
         justify?: TaoJustify;

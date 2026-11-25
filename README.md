@@ -187,7 +187,7 @@ landing section, a sidebar. Tune the look once with theme tokens (`--tao-surface
 / `-border` / `-blur`). A surface belongs to one element: nested panels do not inherit it. Glass needs something behind
 it — keep it for things that float over content; over a flat background it is just a grey fill, over animation it is
 re-blurred every frame. Toast and confirm are glass by default, tinted by their tone; `toast.defaults({ surface: 'flat' })`
-and `confirm.defaults({ surface: 'flat' })` turn it off, `.surface('flat')` does it for one. Without blur support or with
+and `confirm.defaults({ surface: 'flat' })` turn it off, ``toast({ surface: 'flat' })` / `confirm({ surface: 'flat' })` do it for one. Without blur support or with
 `prefers-reduced-transparency` glass falls back to a solid panel.
 
 Font size scale (primitives): `xs` 12 … `xl` 18 for controls; `2xl` 24, `3xl` 32, `4xl` 36 for titles and prose.
@@ -195,7 +195,7 @@ There is no heading component — use `h1 { font-size: var(--tao-font-size-3xl) 
 
 API rules — every component follows them:
 
-- **Fields** take `v-model` and one contract (`FieldProps`): `id`, `name`, `invalid` (red frame), `disabled`, `size`, `required`, `autofocus`; the text fields, the number fields (`TaoQuantity`, `TaoDragNumber`, `TaoPresetInput`) and the ones that open something (`TaoSelect`, `TaoCombobox`, `TaoDate`, `TaoDateRange`, `TaoColorInput`) add `readOnly`. A field that is not a native input (those, `TaoPinCode`, the sliders) submits its value through a hidden input, so `name` puts it into `FormData` and `required` holds the form back. Label, hint and error text come from `TaoFormField`.
+- **Fields** take `v-model` and one contract (`FieldProps`): `id`, `name`, `invalid` (red frame), `disabled`, `size`, `required`, `autofocus`; the text fields, the number fields (`TaoQuantity`, `TaoDragNumber`, `TaoPresetInput`) and the ones that open something (`TaoSelect`, `TaoCombobox`, `TaoDate`, `TaoDateRange`, `TaoColorInput`) add `readOnly`. `TaoFileDrop` takes the contract too (`disabled` turns the zone off). A field that is not a native input (those, `TaoPinCode`, the sliders) submits its value through a hidden input, so `name` puts it into `FormData` and `required` holds the form back (the sliders have `name`, `invalid`, `disabled` and `size`, but no `required`, `id` or `autofocus` yet; the groups `TaoChecklist`, `TaoRadioGroup` and `TaoSegmented` take `invalid`, `disabled` and `size`, not `name` / `required` / `id`). Label, hint and error text come from `TaoFormField`.
 - **Events**: `update:X` for v-model while a value is being edited, plus **`commit`** when the user finished the edit (a field loses the focus, Slider and Split on release, ±, Enter). A control that picks one of a few (a checkbox, tabs, a select) has `update:X` only: the pick is the end of the edit. There is no `change` (on a text field it would be the native event, which still reaches the input). Other events are verbs in the present tense: `select` (the picked item, `item.id` is its id, as in a menu, a command list, a tree, a nav), `close` (always `close(reason)`: `escape`, `outside`, `button`, `select`, `tab`, `scroll`, `swipe`), `create`, `remove`. Every `defineEmits` is typed.
 - **Texts**: visible ones are `*Text` (`clearText`, `successText`), screen-reader ones are `*Label` (`closeLabel`).
 - **Lists**: a list is `items` and a row is `{ id, label }` (`TaoSelectItem`, `TaoTabItem`, a tree node, a menu item, a stage, a table column): `v-model` holds the `id`. One exception: `TaoPresetInput` has `options` with a `value`, a number the arrows step over.
@@ -261,7 +261,7 @@ Requires Vue 3.5+ (the kit uses `useId`). The package is **ESM-only** (Vite, Nux
 ### Browser support
 
 The kit is built for the browsers of the last two years: **Chrome / Edge 130, Safari 18, Firefox 132** (November 2024 and later).
-That floor is what lets 6.0 lean on the platform instead of on its own code: the Popover API and `<dialog>` for overlays, `@layer`, native CSS
+That floor is what lets 6.0 lean on the platform instead of on its own code: `@layer`, `inert`, `round()`, native CSS
 nesting, `color-mix()`, relative colours (`oklch(from …)`), `light-dark()`, container queries and registered custom properties (`@property`).
 Anchor positioning and `field-sizing` are not in the floor yet (Safari and Firefox) and the kit does not use them.
 On an older browser a registered property is what keeps a tone (`.tao-tone-*`) and a surface from leaking into the children, so without it a
@@ -368,9 +368,9 @@ Which language to start with: `detectTaoLanguage(['en', 'ru'])` answers with the
 
 A text that depends on a number may be plural forms (`{ one, few, many, other }`, chosen by the plural rules of the locale `code`); a plain string still works and is the same for every number.
 
-### Upgrading to 5.0
+### Upgrading to 6.0
 
-5.0 deletes every name that 2.0 deprecated (plus the `error` tone alias), see [MIGRATION-5.md](MIGRATION-5.md) for the table old → new.
+6.0 has no backward compatibility and no shims: the steps and every rename are in the top section of [CHANGELOG.md](CHANGELOG.md) ("How to update from 5.x"). [MIGRATION-5.md](MIGRATION-5.md) is the older table for 4 → 5.
 
 ### Upgrading from 3.x
 

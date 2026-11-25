@@ -478,7 +478,7 @@ Showcase section: `#command-palette`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `v-model` | `boolean` | false | Open or closed. The palette listens to no key itself: open it from yours |
+| `v-model` | `boolean` | — | Open or closed. Required (as on TaoModal). The palette listens to no key itself: open it from yours |
 | `items` | `{ id, label, group?, shortcut?, icon?, description?, keywords?, disabled? }[]` | [] | The commands. The palette only searches and shows them; running one is @select. group gives captions while the query is empty; shortcut is the text of the shortcut; keywords are words that find it though they are not shown; disabled is shown but cannot be picked |
 | `placeholder` | `string` | 'Type a command…' | The hint in the empty field |
 | `emptyText` | `string` | 'No commands found' | The text when nothing fits |
@@ -717,6 +717,9 @@ Showcase section: `#filedrop`
 | `accept` | `string` | '*' | As in <input type="file"> |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | The height of the zone and of the file rows. Without it — the size of the ancestors |
 | `list` | `boolean` | true | Names under the zone. Removing a file goes straight to v-model |
+| `disabled` | `boolean` | false | The zone is off: nothing can be dropped or picked |
+| `invalid` | `boolean` | false | Red frame. The message goes to TaoFormField error |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps) for the native file input: id (the label of a TaoFormField points at it), name, required, autofocus |
 | `showClear` | `boolean` | false | The “clear all” button. It does not clear by itself — it fires clear-request |
 
 **Slots, events, notes.** default — the zone text. The update:modelValue event — files were added or removed. reject — the files that did not pass accept (File[]): they are not in v-model, tell the user why. clear-request: the parent decides whether to reset at once or after confirm().
@@ -1327,7 +1330,8 @@ Showcase section: `#tao-nav`
 |---|---|---|---|
 | `items` | `TaoNavItem[]` | — | { id, label, icon?, href?, badge?, disabled? }. With href the item is an <a> link, without it a button. badge: a number or a string is a count, true a dot |
 | `v-model` | `string` | — | The id of the current section: aria-current="page" and the active look |
-| `layout` | `'auto' \| 'bar' \| 'rail' \| 'drawer'` | 'auto' | bar — a bottom bar, rail — a rail with icons, drawer — a side panel with labels. auto — by the width of TaoNav itself: bar below 600px, rail below 840px, drawer from 840px (container queries, no JS) |
+| `v-model:look` | `'bar' \| 'rail' \| 'drawer'` | — | Read-only: the look the navigation is in now (by its own width: under 600px bar, under 840px rail, else drawer). For code that must know the look (navCompact(look)); CSS still draws it |
+| `v-model:layout` | `'auto' \| 'bar' \| 'rail' \| 'drawer'` | 'auto' | bar — a bottom bar, rail — a rail with icons, drawer — a side panel with labels. auto — by the width of TaoNav itself: bar below 600px, rail below 840px, drawer from 840px (container queries, no JS) |
 | `maxBarItems` | `number` | 5 | How many fit the bar. With more items maxBarItems − 1 stay, the rest go into «More» with a menu |
 | `label` | `string` | 'Navigation' | Accessible name of the navigation |
 | `moreLabel` | `string` | 'More' | The label of «More» |

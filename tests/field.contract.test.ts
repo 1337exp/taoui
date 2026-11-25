@@ -5,6 +5,7 @@ import TaoCheckbox from '../src/components/TaoCheckbox.vue';
 import TaoColorInput from '../src/components/TaoColorInput.vue';
 import TaoCombobox from '../src/components/TaoCombobox.vue';
 import TaoDragNumber from '../src/components/TaoDragNumber.vue';
+import TaoFileDrop from '../src/components/TaoFileDrop.vue';
 import TaoFormField from '../src/components/TaoFormField.vue';
 import TaoInput from '../src/components/TaoInput.vue';
 import TaoInputNumber from '../src/components/TaoInputNumber.vue';
@@ -29,6 +30,7 @@ const controls: [string, unknown, Record<string, unknown>, string][] = [
     ['TaoSwitch', TaoSwitch, {}, 'input'],
     ['TaoCheckbox', TaoCheckbox, {}, 'input'],
     ['TaoRadio', TaoRadio, { value: 'a' }, 'input'],
+    ['TaoFileDrop', TaoFileDrop, {}, 'input'],
 ];
 
 afterEach(() => {
@@ -189,5 +191,16 @@ describe('a TaoFormField reaches the controls', () => {
     it('TaoColorInput: its own invalid is the red frame', () => {
         const w = mount(TaoColorInput, { props: { modelValue: '#ff8800', invalid: true } });
         expect(w.find('button.tao-color-input').classes()).toContain('tao-color-input--invalid');
+    });
+});
+
+describe('TaoFileDrop: disabled', () => {
+    it('turns the zone off: the input is disabled and a drop adds nothing', async () => {
+        const w = mount(TaoFileDrop, { props: { disabled: true } });
+        expect(w.find('input').attributes('disabled')).toBeDefined();
+        expect(w.classes()).toContain('tao-file-drop--disabled');
+        const file = new File(['x'], 'a.txt');
+        await w.find('.tao-file-drop__zone').trigger('drop', { dataTransfer: { files: [file] } });
+        expect(w.emitted('update:modelValue')).toBeUndefined();
     });
 });

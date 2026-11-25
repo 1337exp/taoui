@@ -19,7 +19,7 @@ const skip = new Set([
 // props that are required to mount at all / обязательные пропсы
 const props: Record<string, Record<string, unknown>> = {
     TaoScrubber: { modelValue: 0, length: 10 },
-    TaoTabs: { modelValue: 'a', items: [{ value: 'a', label: 'A' }] },
+    TaoTabs: { modelValue: 'a', items: [{ id: 'a', label: 'A' }] },
     TaoModal: { modelValue: true },
     TaoDrawer: { modelValue: true },
     TaoCommandList: { items: [{ id: 'a', label: 'A', icon: 'tao-info' }] },

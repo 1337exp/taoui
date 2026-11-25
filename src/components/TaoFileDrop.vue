@@ -6,6 +6,7 @@ import { listenFocusLoss } from '../focusLoss';
 import { partitionByAccept } from '../fileAccept';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText, useTaoLocale } from '../locale';
+import { nativeFieldAttrs, useField } from '../formField';
 
 defineOptions({ name: 'TaoFileDrop', inheritAttrs: false });
 
@@ -22,6 +23,18 @@ interface Props {
      * именно менять modelValue (сразу или после ответа в модалке). */
     /** Zone height and file rows; without it — the size of ancestors. / Высота зоны и строк файлов; без него — размер предков. */
     size?: TaoSize;
+    /** Nothing can be dropped or picked; the clear and the remove buttons stay with the parent's say. / Ничего нельзя ни бросить, ни выбрать. */
+    disabled?: boolean;
+    /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
+    invalid?: boolean;
+    /** The id of the file input, which the label of a `TaoFormField` points at. / id поля выбора файла: на него указывает подпись `TaoFormField`. */
+    id?: string;
+    /** The name of the native file input. / Имя нативного поля выбора файла. */
+    name?: string;
+    /** A file is required: the native check of a form. / Файл обязателен: нативная проверка формы. */
+    required?: boolean;
+    /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
+    autofocus?: boolean;
     accept?: string;
     multiple?: boolean;
     showClear?: boolean;
@@ -40,6 +53,7 @@ const props = withDefaults(defineProps<Props>(), {
     list: true,
 });
 const l10n = useLocaleText(props, 'fileDrop');
+const { controlId, isInvalid, describedBy } = useField(props);
 
 const emit = defineEmits<{
     /** The user added or removed files. / Пользователь добавил или убрал файлы. */
@@ -66,6 +80,9 @@ function commit(files: File[]) {
 
 function handleDragOver(event: DragEvent) {
     event.preventDefault();
+    if (props.disabled) {
+        return;
+    }
     isDragging.value = true;
 }
 
@@ -76,6 +93,9 @@ function handleDragLeave() {
 function handleDrop(event: DragEvent) {
     event.preventDefault();
     isDragging.value = false;
+    if (props.disabled) {
+        return;
+    }
 
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
@@ -165,7 +185,7 @@ onBeforeUnmount(() => stopFocusLoss?.());
 </script>
 
 <template>
-    <div v-bind="rootAttrs()" class="tao-file-drop" :class="sizeClass(size)">
+    <div v-bind="rootAttrs()" class="tao-file-drop" :class="[sizeClass(size), { 'tao-file-drop--disabled': disabled, 'tao-file-drop--invalid': isInvalid }]">
         <div class="tao-file-drop__row">
             <button
                 v-if="showClear && model.length"
@@ -189,7 +209,11 @@ onBeforeUnmount(() => stopFocusLoss?.());
                 <slot>{{ appLocale.fileDrop.zoneText }}</slot>
 
                 <input
-                    v-bind="controlAttrs()"
+                    v-bind="{ ...controlAttrs(), ...nativeFieldAttrs(props) }"
+                    :id="controlId"
+                    :disabled="disabled"
+                    :aria-invalid="isInvalid || undefined"
+                    :aria-describedby="describedBy"
                     ref="fileInput"
                     class="tao-sr-only"
                     type="file"
@@ -275,6 +299,17 @@ onBeforeUnmount(() => stopFocusLoss?.());
 .tao-file-drop__zone:focus-within {
     background-color: var(--tao-color-accent-subtle);
     border-color: var(--tao-color-accent);
+}
+
+.tao-file-drop--invalid .tao-file-drop__zone {
+    border-color: var(--tao-color-danger);
+}
+
+.tao-file-drop--disabled .tao-file-drop__zone {
+    cursor: not-allowed;
+    opacity: 0.5;
+    background: none;
+    border-color: var(--tao-color-border-strong);
 }
 
 .tao-file-drop__zone--dragging {

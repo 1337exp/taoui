@@ -322,4 +322,13 @@ onBeforeUnmount(() => {
     opacity: 0;
     transform: translateY(40px);
 }
+
+/* reduced motion: the button appears and goes at once / уменьшенное движение: кнопка появляется и уходит сразу */
+@media (prefers-reduced-motion: reduce) {
+    .tao-scroll-top__icon,
+    .tao-scroll-top-fade-enter-active,
+    .tao-scroll-top-fade-leave-active {
+        transition: none;
+    }
+}
 </style>

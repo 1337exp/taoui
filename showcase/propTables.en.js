@@ -449,7 +449,7 @@ export const propTablesEn = {
     {
       title: 'TaoCommandPalette',
       rows: [
-        r('v-model', 'boolean', 'false', 'Open or closed. The palette listens to no key itself: open it from yours'),
+        r('v-model', 'boolean', '—', 'Open or closed. Required (as on TaoModal). The palette listens to no key itself: open it from yours'),
         r('items', '{ id, label, group?, shortcut?, icon?, description?, keywords?, disabled? }[]', '[]', 'The commands. The palette only searches and shows them; running one is @select. group gives captions while the query is empty; shortcut is the text of the shortcut; keywords are words that find it though they are not shown; disabled is shown but cannot be picked'),
         r('placeholder', 'string', "'Type a command…'", 'The hint in the empty field'),
         r('emptyText', 'string', "'No commands found'", 'The text when nothing fits'),
@@ -670,6 +670,9 @@ export const propTablesEn = {
         r('accept', 'string', "'*'", 'As in <input type="file">'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'The height of the zone and of the file rows. Without it — the size of the ancestors'),
         r('list', 'boolean', 'true', 'Names under the zone. Removing a file goes straight to v-model'),
+        r('disabled', 'boolean', 'false', 'The zone is off: nothing can be dropped or picked'),
+        r('invalid', 'boolean', 'false', 'Red frame. The message goes to TaoFormField error'),
+        r('id / name / required / autofocus', 'string / string / boolean / boolean', '— / — / false / false', 'The field contract (FieldProps) for the native file input: id (the label of a TaoFormField points at it), name, required, autofocus'),
         r('showClear', 'boolean', 'false', 'The “clear all” button. It does not clear by itself — it fires clear-request'),
       ],
       slots: 'default — the zone text. The update:modelValue event — files were added or removed. reject — the files that did not pass accept (File[]): they are not in v-model, tell the user why. clear-request: the parent decides whether to reset at once or after confirm().',
@@ -1226,7 +1229,8 @@ export const propTablesEn = {
       rows: [
         r('items', 'TaoNavItem[]', '—', '{ id, label, icon?, href?, badge?, disabled? }. With href the item is an <a> link, without it a button. badge: a number or a string is a count, true a dot'),
         r('v-model', 'string', '—', 'The id of the current section: aria-current="page" and the active look'),
-        r('layout', "'auto' | 'bar' | 'rail' | 'drawer'", "'auto'", 'bar — a bottom bar, rail — a rail with icons, drawer — a side panel with labels. auto — by the width of TaoNav itself: bar below 600px, rail below 840px, drawer from 840px (container queries, no JS)'),
+        r('v-model:look', "'bar' | 'rail' | 'drawer'", '—', 'Read-only: the look the navigation is in now (by its own width: under 600px bar, under 840px rail, else drawer). For code that must know the look (navCompact(look)); CSS still draws it'),
+        r('v-model:layout', "'auto' | 'bar' | 'rail' | 'drawer'", "'auto'", 'bar — a bottom bar, rail — a rail with icons, drawer — a side panel with labels. auto — by the width of TaoNav itself: bar below 600px, rail below 840px, drawer from 840px (container queries, no JS)'),
         r('maxBarItems', 'number', '5', 'How many fit the bar. With more items maxBarItems − 1 stay, the rest go into «More» with a menu'),
         r('label', 'string', "'Navigation'", 'Accessible name of the navigation'),
         r('moreLabel', 'string', "'More'", 'The label of «More»'),

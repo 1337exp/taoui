@@ -84,4 +84,11 @@ const count = computed(() => Math.max(1, props.lines));
         opacity: 1;
     }
 }
+
+/* reduced motion: a still placeholder, no pulse / уменьшенное движение: неподвижная заглушка, без пульсации */
+@media (prefers-reduced-motion: reduce) {
+    .tao-skeleton {
+        animation: none;
+    }
+}
 </style>

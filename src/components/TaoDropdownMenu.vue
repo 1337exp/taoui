@@ -63,7 +63,7 @@ const props = withDefaults(
 const l10n = useLocaleText(props, 'dropdownMenu');
 
 const emit = defineEmits<{
-    /** The id of the picked item. / id выбранного пункта. */
+    /** The picked item (`item.id` names it). / Выбранный пункт (`item.id` называет его). */
     select: [item: TaoMenuPick];
 }>();
 
