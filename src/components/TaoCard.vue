@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TaoCloseReason } from '../menu';
 import { computed, useSlots } from 'vue';
 import { useLocaleText } from '../locale';
 import { toCssBox, toCssLength, type TaoLength } from '../length';
@@ -65,7 +66,7 @@ const l10n = useLocaleText(props, 'card');
 
 const emit = defineEmits<{
     /** The close button was pressed. / Нажата кнопка закрытия. */
-    close: [];
+    close: [reason: TaoCloseReason];
 }>();
 
 defineSlots<{
@@ -156,7 +157,7 @@ const showPanelShadow = computed(() => props.shadow && !props.shadowBottomOnly &
 
         <div v-if="hasCorner" class="tao-card__corner">
             <slot name="corner" />
-            <button v-if="closable" type="button" class="tao-card__close" :aria-label="l10n.closeLabel" @click="emit('close')">
+            <button v-if="closable" type="button" class="tao-card__close" :aria-label="l10n.closeLabel" @click="emit('close', 'button')">
                 <TaoIcon name="tao-close" :size="14" />
             </button>
         </div>

@@ -81,7 +81,7 @@ watch(current, write);
         :items="items"
         :menu-label="l10n.label"
         :placement="placement"
-        @select="pick"
+        @select="(item) => pick(item.id)"
     >
         <template #button>
             <span class="tao-language-switch__face" :class="{ 'tao-language-switch__face--icon': iconOnly }">

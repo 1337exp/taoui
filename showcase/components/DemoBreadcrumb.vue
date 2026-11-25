@@ -50,7 +50,7 @@ function preventShowcaseNav(event) {
   { label: '{{ tr('Profile', 'Профиль') }}' },
 ]" /&gt;
 
-&lt;TaoBreadcrumb aria-label="Breadcrumb" :items="items" /&gt;</code></pre>
+&lt;TaoBreadcrumb label="Breadcrumb" :items="items" /&gt;</code></pre>
           </div>
   </ShowcaseSection>
 </template>

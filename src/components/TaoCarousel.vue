@@ -47,7 +47,7 @@ const props = withDefaults(
         pausable?: boolean;
         pauseLabel?: string;
         playLabel?: string;
-        ariaLabel?: string;
+        label?: string;
         prevLabel?: string;
         nextLabel?: string;
         dotsLabel?: string;
@@ -558,7 +558,7 @@ onBeforeUnmount(() => {
                 class="tao-carousel__track"
                 :class="{ 'tao-carousel__track--dragging': dragging, 'tao-carousel__track--gliding': gliding }"
                 role="region"
-                :aria-label="l10n.ariaLabel"
+                :aria-label="label || l10n.ariaLabel"
                 tabindex="0"
                 @scroll="onScroll"
                 @scrollend="settle"

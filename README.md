@@ -194,9 +194,9 @@ There is no heading component — use `h1 { font-size: var(--tao-font-size-3xl) 
 API rules — every component follows them:
 
 - **Fields** take `v-model` and one contract (`FieldProps`): `id`, `name`, `invalid` (red frame), `disabled`, `size`, `required`, `autofocus`; the text fields add `readOnly`. Label, hint and error text come from `TaoFormField`.
-- **Events**: `update:X` for v-model while a value is being edited, plus **`commit`** when the user finished the edit (a field loses the focus, Slider and Split on release, ±, Enter). A control that picks one of a few (a checkbox, tabs, a select) has `update:X` only: the pick is the end of the edit. There is no `change` (on a text field it would be the native event, which still reaches the input). Other events are verbs in the present tense: `select`, `close`, `create`, `remove`. Every `defineEmits` is typed.
+- **Events**: `update:X` for v-model while a value is being edited, plus **`commit`** when the user finished the edit (a field loses the focus, Slider and Split on release, ±, Enter). A control that picks one of a few (a checkbox, tabs, a select) has `update:X` only: the pick is the end of the edit. There is no `change` (on a text field it would be the native event, which still reaches the input). Other events are verbs in the present tense: `select` (the picked item, `item.id` is its id, as in a menu, a command list, a tree, a nav), `close` (always `close(reason)`: `escape`, `outside`, `button`, `select`, `tab`, `scroll`, `swipe`), `create`, `remove`. Every `defineEmits` is typed.
 - **Texts**: visible ones are `*Text` (`clearText`, `successText`), screen-reader ones are `*Label` (`closeLabel`).
-- **Lists**: data arrays are `items`; selectable items carry `value` + `label` (`TaoSelectOption`, `TaoTabItem`). Identifiers of plain data (table columns, stages) stay `key`.
+- **Lists**: a list is `items` and a row is `{ id, label }` (`TaoSelectItem`, `TaoTabItem`, a tree node, a menu item, a stage, a table column): `v-model` holds the `id`. One exception: `TaoPresetInput` has `options` with a `value`, a number the arrows step over.
 - **Booleans** are adjectives without `is` / `has` / `as`: `closable`, `clickable`, `masked`, `newTab`. Layout axis is `direction: 'row' | 'column'`, not `vertical`.
 - **Lengths** (`padding`, `radius`, `gap`, `maxHeight`): a number is pixels, a string goes to CSS as is (type `TaoLength`).
 
@@ -558,13 +558,13 @@ The table renders what you pass in: it does not slice or sort the data. That wor
 
 ```javascript
 const columns = [
-  { key: 'name', label: 'Name', sortable: true },
-  { key: 'city', label: 'City' },
-  { key: 'status', label: 'Status' },
+  { id: 'name', label: 'Name', sortable: true },
+  { id: 'city', label: 'City' },
+  { id: 'status', label: 'Status' },
 ]
 ```
 
-The `cell-<key>` slot replaces a cell. `loading` shows an overlay; an empty list shows text or the `#empty` slot. Clicking a `sortable` header cycles `asc → desc → off`.
+The `cell-<id>` slot replaces a cell. `loading` shows an overlay; an empty list shows text or the `#empty` slot. Clicking a `sortable` header cycles `asc → desc → off`.
 
 ## Empty states and loading
 
@@ -581,9 +581,9 @@ The `cell-<key>` slot replaces a cell. `loading` shows an overlay; an empty list
 <TaoSkeleton variant="circle" />
 
 <TaoStages :items="[
-  { key: 'pay', label: 'Payment', status: 'ok' },
-  { key: 'pack', label: 'Packing', status: 'work' },
-  { key: 'ship', label: 'Shipping', status: 'wait' },
+  { id: 'pay', label: 'Payment', status: 'ok' },
+  { id: 'pack', label: 'Packing', status: 'work' },
+  { id: 'ship', label: 'Shipping', status: 'wait' },
 ]" />
 
 <TaoList>

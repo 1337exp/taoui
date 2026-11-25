@@ -203,7 +203,7 @@ const closed = ref(false)
             <div class="product-card product-card--gallery">
               <TaoCard :padding="12" :radius="12">
                 <template #media>
-                  <TaoCarousel v-model="cardGallery" :controls="false" indicator="dots" :aria-label="tr('Product photos', 'Фото товара')">
+                  <TaoCarousel v-model="cardGallery" :controls="false" indicator="dots" :label="tr('Product photos', 'Фото товара')">
                     <img
                       v-for="(src, index) in cardPhotos"
                       :key="index"

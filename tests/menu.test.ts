@@ -89,7 +89,7 @@ describe('TaoMenu', () => {
         expect(active()).toContain('New');
         await key(menu, 'End');
         await key(menu, 'Enter');
-        expect(w.emitted('select')).toEqual([['save']]);
+        expect(w.emitted('select')!.map((e) => (e[0] as { id: string }).id)).toEqual(['save']);
     });
 
     it('type-ahead jumps to the item that starts with the typed letter', async () => {
@@ -98,7 +98,7 @@ describe('TaoMenu', () => {
         const menu = menus()[0]!;
         await key(menu, 's');
         await key(menu, 'Enter');
-        expect(w.emitted('select')).toEqual([['save']]);
+        expect(w.emitted('select')!.map((e) => (e[0] as { id: string }).id)).toEqual(['save']);
     });
 
     it('a disabled item cannot be picked by click', async () => {
@@ -119,7 +119,7 @@ describe('TaoMenu', () => {
         expect(root.querySelector('[aria-haspopup="menu"]')!.getAttribute('aria-expanded')).toBe('true');
         await key(menus()[1]!, 'ArrowDown');
         await key(menus()[1]!, 'Enter');
-        expect(w.emitted('select')).toEqual([['b']]);
+        expect(w.emitted('select')!.map((e) => (e[0] as { id: string }).id)).toEqual(['b']);
         expect(menus()).toHaveLength(0);
     });
 
@@ -178,7 +178,7 @@ describe('TaoMenu', () => {
         expect($$('[role="menuitemradio"]').map((el) => el.getAttribute('aria-checked'))).toEqual(['true', 'false']);
         expect(names()).toEqual(['Grid', 'Snap', 'Move', 'Rotate']); // the label is not an item
         $$('[role="menuitemradio"]')[1]!.click();
-        expect(w.emitted('select')).toEqual([['m2']]);
+        expect(w.emitted('select')!.map((e) => (e[0] as { id: string }).id)).toEqual(['m2']);
     });
 
     it('ArrowDown on the closed button opens the menu', async () => {

@@ -37,7 +37,6 @@ interface Props {
     boundary?: number;
     /** Focus outline. / Обводка фокуса. */
     outline?: boolean;
-    ariaLabel?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -75,7 +74,7 @@ const mainStyle = computed(() => ({
 
 const captionSide = computed(() => props.labelSide ?? (props.side === 'right' ? 'left' : 'right'));
 const caption = computed(() => props.label ?? (isText.value ? l10n.value.ariaLabel : undefined));
-const accessibleName = computed(() => props.ariaLabel || props.label || l10n.value.ariaLabel);
+const accessibleName = computed(() => props.label || l10n.value.ariaLabel);
 
 const isActive = ref(false);
 

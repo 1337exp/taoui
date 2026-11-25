@@ -57,7 +57,7 @@ function reset() {
       <div class="scrollbars__controls">
         <div class="scrollbars__field">
           <span>{{ tr('Thickness', 'Толщина') }}: {{ size }}px <small>--tao-scrollbar-size</small></span>
-          <TaoSlider v-model="size" :min="2" :max="32" :disabled="native" :aria-label="tr('Thickness', 'Толщина')" />
+          <TaoSlider v-model="size" :min="2" :max="32" :disabled="native" :label="tr('Thickness', 'Толщина')" />
         </div>
         <div class="scrollbars__field">
           <span>{{ tr('Thumb', 'Бегунок') }} <small>--tao-scrollbar-thumb</small></span>

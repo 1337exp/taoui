@@ -438,8 +438,8 @@ describe('TaoTree', () => {
         expect(items(w)[1]!.classes()).toContain('tao-tree__row--danger');
     });
 
-    it('size and ariaLabel', () => {
-        const w = tree({ size: 'small', ariaLabel: 'Files' });
+    it('size and label', () => {
+        const w = tree({ size: 'small', label: 'Files' });
         expect(w.classes()).toContain('tao-size-small');
         expect(w.attributes('aria-label')).toBe('Files');
     });

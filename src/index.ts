@@ -259,8 +259,9 @@ export type { TaoBreadcrumbItem } from './breadcrumb';
 export type {
     TaoMenuActionItem,
     TaoMenuCheckboxItem,
-    TaoMenuCloseReason,
+    TaoCloseReason,
     TaoMenuItem,
+    TaoMenuPick,
     TaoMenuLabelItem,
     TaoMenuRadioItem,
     TaoMenuSeparatorItem,

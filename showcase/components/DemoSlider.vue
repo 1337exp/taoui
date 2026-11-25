@@ -112,12 +112,12 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
               </p>
             </template>
           </Tr>
-          <TaoSlider v-model="sliderLoad" :zones="loadZones" :aria-label="tr('Load', 'Нагрузка')" class="demo-wide" />
+          <TaoSlider v-model="sliderLoad" :zones="loadZones" :label="tr('Load', 'Нагрузка')" class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">{{ tr('Load', 'Нагрузка') }}: {{ sliderLoad }}</p>
-          <TaoRangeSlider v-model="sliderBand" :zones="[{ to: 30, tone: 'neutral' }, { to: 70, tone: 'success' }, { to: 100, color: '#c026d3' }]" variant="thin" :aria-label="tr('Band', 'Полоса')" class="demo-wide" />
+          <TaoRangeSlider v-model="sliderBand" :zones="[{ to: 30, tone: 'neutral' }, { to: 70, tone: 'success' }, { to: 100, color: '#c026d3' }]" variant="thin" :label="tr('Band', 'Полоса')" class="demo-wide" />
           <div style="display: flex; align-items: center; gap: 24px; margin-top: 12px;">
-            <TaoSlider v-model="sliderLoad" :zones="loadZones" vertical :aria-label="tr('Load', 'Нагрузка')" />
-            <TaoSlider v-model="sliderLoad" :zones="loadZones" flat :aria-label="tr('Load', 'Нагрузка')" class="demo-wide" />
+            <TaoSlider v-model="sliderLoad" :zones="loadZones" vertical :label="tr('Load', 'Нагрузка')" />
+            <TaoSlider v-model="sliderLoad" :zones="loadZones" flat :label="tr('Load', 'Нагрузка')" class="demo-wide" />
           </div>
           <h3>{{ tr('A bubble with the value', 'Плашка со значением') }}</h3>
           <Tr>
@@ -137,10 +137,10 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
             </template>
           </Tr>
           <div style="padding-top: 44px;">
-            <TaoSlider v-model="sliderLoad" :zones="loadZones" bubble :format="(v) => `${v}%`" :aria-label="tr('Load', 'Нагрузка')" class="demo-wide" />
+            <TaoSlider v-model="sliderLoad" :zones="loadZones" bubble :format="(v) => `${v}%`" :label="tr('Load', 'Нагрузка')" class="demo-wide" />
           </div>
           <div style="padding-top: 44px;">
-            <TaoSlider v-model="sliderLoad" :zones="loadZones" bubble="always" variant="thin" :aria-label="tr('Load', 'Нагрузка')" class="demo-wide">
+            <TaoSlider v-model="sliderLoad" :zones="loadZones" bubble="always" variant="thin" :label="tr('Load', 'Нагрузка')" class="demo-wide">
               <template #bubble="{ value, zone }">
                 <TaoIcon v-if="zone && value > 70" name="tao-info" /> {{ value }}%
               </template>
@@ -155,7 +155,7 @@ const colorMarks = ['K', 'J', 'I', 'H', 'G', 'F', 'E', 'D'].map((label, value) =
           <p>
             {{ tr('A zone with reveal has no colour until the value gets there: the field looks plain and is painted as you fill it.', 'У зоны с reveal нет цвета, пока значение до неё не дошло: поле выглядит обычным и красится по мере заполнения.') }}
           </p>
-          <TaoSlider v-model="sliderStrength" :zones="strengthZones" :aria-label="tr('Strength', 'Надёжность')" class="demo-wide" />
+          <TaoSlider v-model="sliderStrength" :zones="strengthZones" :label="tr('Strength', 'Надёжность')" class="demo-wide" />
           <p style="margin-top: 4px; font-size: 13px;">{{ tr('Strength', 'Надёжность') }}: {{ sliderStrength }}</p>
 
           <div class="code-block"><pre><code>&lt;TaoSlider v-model="load" :zones="[

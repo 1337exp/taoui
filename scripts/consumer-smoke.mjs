@@ -52,7 +52,7 @@ function checkTypes() {
         join(project, 'tsconfig.json'),
         JSON.stringify({ compilerOptions: { target: 'ES2020', module: 'ESNext', moduleResolution: 'bundler', strict: true, skipLibCheck: true, noEmit: true, lib: ['ES2020', 'DOM'] }, include: ['src/*.vue'] }),
     );
-    const head = `<script setup lang="ts">\nimport { TaoTable, type TaoTableColumn } from '@1337exp/taoui';\ninterface Flag { flag: string; n: number }\nconst rows: readonly Flag[] = [{ flag: '--a', n: 1 }];\nconst columns: TaoTableColumn[] = [{ key: 'flag', label: 'Flag' }];\n`;
+    const head = `<script setup lang="ts">\nimport { TaoTable, type TaoTableColumn } from '@1337exp/taoui';\ninterface Flag { flag: string; n: number }\nconst rows: readonly Flag[] = [{ flag: '--a', n: 1 }];\nconst columns: TaoTableColumn[] = [{ id: 'flag', label: 'Flag' }];\n`;
     writeFileSync(join(project, 'src/Good.vue'), `${head}const open = (row: Flag) => row.n;\n</script>\n<template><TaoTable :columns="columns" :rows="rows" row-key="flag" @row-click="open"><template #cell-flag="{ row }">{{ row.flag.toUpperCase() }}</template></TaoTable></template>\n`);
     run(`npm install vue typescript vue-tsc ${join(dir, tgz)}`, project);
     run('npx vue-tsc --noEmit', project);

@@ -9,16 +9,16 @@ import { propTables } from '../propTables.js'
 defineOptions({ name: 'DemoStages' })
 
 const orderStages = computed(() => [
-  { key: 'pay', label: tr('Payment', 'Оплата'), status: 'ok' },
-  { key: 'pack', label: tr('Packing', 'Сборка'), status: 'work' },
-  { key: 'ship', label: tr('Delivery', 'Доставка'), status: 'wait' },
-  { key: 'done', label: tr('Received', 'Получено'), status: 'wait' },
+  { id: 'pay', label: tr('Payment', 'Оплата'), status: 'ok' },
+  { id: 'pack', label: tr('Packing', 'Сборка'), status: 'work' },
+  { id: 'ship', label: tr('Delivery', 'Доставка'), status: 'wait' },
+  { id: 'done', label: tr('Received', 'Получено'), status: 'wait' },
 ])
 const importStages = computed(() => [
-  { key: 'file', label: tr('File', 'Файл'), status: 'ok' },
-  { key: 'parse', label: tr('Parsing', 'Разбор'), status: 'ok' },
-  { key: 'match', label: tr('Matching', 'Сопоставление'), status: 'bad' },
-  { key: 'save', label: tr('Saving', 'Запись'), status: 'wait' },
+  { id: 'file', label: tr('File', 'Файл'), status: 'ok' },
+  { id: 'parse', label: tr('Parsing', 'Разбор'), status: 'ok' },
+  { id: 'match', label: tr('Matching', 'Сопоставление'), status: 'bad' },
+  { id: 'save', label: tr('Saving', 'Запись'), status: 'wait' },
 ])
 </script>
 
@@ -56,9 +56,9 @@ const importStages = computed(() => [
     
           <div class="code-block">
             <pre><code>&lt;TaoStages :items="[
-  { key: 'pay', label: '{{ tr('Payment', 'Оплата') }}', status: 'ok' },
-  { key: 'pack', label: '{{ tr('Packing', 'Сборка') }}', status: 'work' },
-  { key: 'ship', label: '{{ tr('Delivery', 'Доставка') }}', status: 'wait' },
+  { id: 'pay', label: '{{ tr('Payment', 'Оплата') }}', status: 'ok' },
+  { id: 'pack', label: '{{ tr('Packing', 'Сборка') }}', status: 'work' },
+  { id: 'ship', label: '{{ tr('Delivery', 'Доставка') }}', status: 'wait' },
 ]" /&gt;
 
 &lt;TaoStages

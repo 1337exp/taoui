@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TaoCloseReason } from '../menu';
 import TaoIcon from './TaoIcon.vue';
 import { computed, onBeforeUnmount, ref, useId, useSlots, watch } from 'vue';
 import { toneClass, type TaoTone } from '../tone';
@@ -42,7 +43,7 @@ const props = withDefaults(
 const l10n = useLocaleText(props, 'alert');
 
 const emit = defineEmits<{
-    close: [];
+    close: [reason: TaoCloseReason];
     'update:collapsed': [value: boolean];
 }>();
 
@@ -158,7 +159,7 @@ const has = (name: string) => slotHas(slots, name);
             type="button"
             class="tao-alert__close"
             :aria-label="l10n.closeLabel"
-            @click="emit('close')"
+            @click="emit('close', 'button')"
         >
             <span aria-hidden="true">
                 <slot name="close-icon"><TaoIcon name="tao-close" /></slot>

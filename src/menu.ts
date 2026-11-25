@@ -64,6 +64,12 @@ export type TaoMenuItem =
     | TaoMenuLabelItem
     | TaoMenuSeparatorItem;
 
+/**
+ * What a `select` event of a menu hands out: an entry the user can pick (an action, a checkbox, a radio): it always has an `id`.
+ * Что отдаёт событие `select` меню: пункт, который можно выбрать (действие, чекбокс, радио): у него всегда есть `id`.
+ */
+export type TaoMenuPick = TaoMenuActionItem | TaoMenuCheckboxItem | TaoMenuRadioItem;
+
 /** Can the user reach this entry with the keyboard and pick it? / Можно ли дойти до пункта с клавиатуры и выбрать. */
 export function isMenuSelectable(item: TaoMenuItem): boolean {
     return item.type !== 'separator' && item.type !== 'label' && !item.disabled;
@@ -74,16 +80,18 @@ export function menuItemLabel(item: TaoMenuItem): string {
 }
 
 /**
- * Why a menu closed: `outside` is a press elsewhere, `scroll` the page scrolled (`closeOnScroll`).
- * Почему меню закрылось: `outside` — нажатие в другом месте, `scroll` — прокрутка страницы (`closeOnScroll`).
+ * Why something closed, the one list for every `close` event of the kit (a menu, a modal, a drawer, a palette, a card, a tag): `escape`, `outside`
+ * a press elsewhere, `select` a pick, `button` a close button, `tab` the focus left, `scroll` the page scrolled (`closeOnScroll`), `swipe` a sheet pulled down.
+ * Почему что-то закрылось, один список для каждого события `close` набора: `escape`, `outside` — нажатие в другом месте, `select` — выбор,
+ * `button` — кнопка закрытия, `tab` — фокус ушёл, `scroll` — прокрутка страницы (`closeOnScroll`), `swipe` — лист стянули вниз.
  */
-export type TaoMenuCloseReason = 'escape' | 'select' | 'outside' | 'tab' | 'scroll';
+export type TaoCloseReason = 'escape' | 'select' | 'outside' | 'button' | 'tab' | 'scroll' | 'swipe';
 
 /**
  * Should the owner give the focus back to its trigger? Not when the user went elsewhere (a press, a scroll).
  * Возвращать ли фокус на кнопку? Нет, если пользователь ушёл в другое место (нажатие, прокрутка).
  */
-export function menuReturnsFocus(reason: TaoMenuCloseReason): boolean {
+export function menuReturnsFocus(reason: TaoCloseReason): boolean {
     return reason !== 'outside' && reason !== 'scroll';
 }
 
@@ -92,7 +100,7 @@ export interface TaoMenuTree {
     /** Id of the root: every panel of the tree carries it, so a press in a submenu is not "outside". */
     rootId: string;
     select: (item: TaoMenuItem) => void;
-    closeAll: (reason: TaoMenuCloseReason) => void;
+    closeAll: (reason: TaoCloseReason) => void;
 }
 
 export const menuTreeKey: InjectionKey<TaoMenuTree> = Symbol('taoMenuTree');

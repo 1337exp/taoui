@@ -195,9 +195,9 @@ Container живёт на другой оси — ширина: `width="wide" | 
 Правила API — им следуют все компоненты:
 
 - **Поля** принимают `v-model` и один контракт (`FieldProps`): `id`, `name`, `invalid` (красная рамка), `disabled`, `size`, `required`, `autofocus`; текстовые поля добавляют `readOnly`. Подпись, подсказка и текст ошибки — через `TaoFormField`.
-- **События**: `update:X` для v-model, пока значение правят, плюс **`commit`**, когда пользователь закончил правку (поле потеряло фокус, Slider и Split по отпусканию, ±, Enter). У контрола, который выбирает одно из немногих (чекбокс, вкладки, select), только `update:X`: выбор и есть конец правки. События `change` нет (на текстовом поле это был бы нативный, он по-прежнему доходит до input). Остальные события — глаголы в настоящем времени: `select`, `close`, `create`, `remove`. Каждый `defineEmits` типизирован.
+- **События**: `update:X` для v-model, пока значение правят, плюс **`commit`**, когда пользователь закончил правку (поле потеряло фокус, Slider и Split по отпусканию, ±, Enter). У контрола, который выбирает одно из немногих (чекбокс, вкладки, select), только `update:X`: выбор и есть конец правки. События `change` нет (на текстовом поле это был бы нативный, он по-прежнему доходит до input). Остальные события — глаголы в настоящем времени: `select` (выбранный пункт целиком, `item.id` — его id, как у меню, списка команд, дерева, навигации), `close` (всегда `close(reason)`: `escape`, `outside`, `button`, `select`, `tab`, `scroll`, `swipe`), `create`, `remove`. Каждый `defineEmits` типизирован.
 - **Тексты**: видимые — `*Text` (`clearText`, `successText`), для скринридера — `*Label` (`closeLabel`).
-- **Списки**: массивы данных — `items`; выбираемые элементы несут `value` + `label` (`TaoSelectOption`, `TaoTabItem`). Идентификаторы обычных данных (колонки таблицы, стадии) остаются `key`.
+- **Списки**: список — `items`, строка — `{ id, label }` (`TaoSelectItem`, `TaoTabItem`, узел дерева, пункт меню, стадия, колонка таблицы): `v-model` хранит `id`. Одно исключение: у `TaoPresetInput` `options` со `value`, числом, по которому ходят стрелки.
 - **Булевы** — прилагательные без `is` / `has` / `as`: `closable`, `clickable`, `masked`, `newTab`. Ось раскладки — `direction: 'row' | 'column'`, не `vertical`.
 - **Длины** (`padding`, `radius`, `gap`, `maxHeight`): число — пиксели, строка уходит в CSS как есть (тип `TaoLength`).
 
@@ -556,13 +556,13 @@ confirm.defaults({ ok: 'Yes', cancel: 'No' })
 
 ```javascript
 const columns = [
-  { key: 'name', label: 'Имя', sortable: true },
-  { key: 'city', label: 'Город' },
-  { key: 'status', label: 'Статус' },
+  { id: 'name', label: 'Имя', sortable: true },
+  { id: 'city', label: 'Город' },
+  { id: 'status', label: 'Статус' },
 ]
 ```
 
-Слот `cell-<ключ>` перекрывает ячейку. `loading` показывает оверлей, пустой список — текст или слот `#empty`. Клик по шапке с `sortable` крутит `asc → desc → сброс`.
+Слот `cell-<id>` перекрывает ячейку. `loading` показывает оверлей, пустой список — текст или слот `#empty`. Клик по шапке с `sortable` крутит `asc → desc → сброс`.
 
 ## Пустые состояния и загрузка
 
@@ -579,9 +579,9 @@ const columns = [
 <TaoSkeleton variant="circle" />
 
 <TaoStages :items="[
-  { key: 'pay', label: 'Оплата', status: 'ok' },
-  { key: 'pack', label: 'Сборка', status: 'work' },
-  { key: 'ship', label: 'Доставка', status: 'wait' },
+  { id: 'pay', label: 'Оплата', status: 'ok' },
+  { id: 'pack', label: 'Сборка', status: 'work' },
+  { id: 'ship', label: 'Доставка', status: 'wait' },
 ]" />
 
 <TaoList>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, useSlots } from 'vue';
 import { useLocaleText } from '../locale';
-import { menuReturnsFocus, type TaoMenuCloseReason, type TaoMenuItem } from '../menu';
+import { menuReturnsFocus, type TaoCloseReason, type TaoMenuItem } from '../menu';
 import type { TaoNavItem, TaoNavLayout } from '../nav';
 import { surfaceClass, type TaoSurface } from '../surface';
 import TaoIcon from './TaoIcon.vue';
@@ -26,7 +26,7 @@ const props = withDefaults(
         /** The bar holds this many; with more items the last place is «More» with a menu. / Столько помещается в bar. */
         maxBarItems?: number;
         /** Accessible name of the navigation. / Имя навигации для скринридера. */
-        ariaLabel?: string;
+        label?: string;
         /** The «More» entry of the bar. / Пункт «Ещё» нижней панели. */
         moreLabel?: string;
         /**
@@ -71,7 +71,7 @@ const props = withDefaults(
     {
         layout: 'auto',
         maxBarItems: 5,
-        ariaLabel: undefined,
+        label: undefined,
         moreLabel: undefined,
         floating: false,
         fill: false,
@@ -89,7 +89,7 @@ const emit = defineEmits<{
      * A section was picked. `event.preventDefault()` keeps a link from navigating (route it yourself).
      * Выбран раздел. `event.preventDefault()` не даёт ссылке перейти (маршрутизируйте сами).
      */
-    select: [id: string, event: Event];
+    select: [item: TaoNavItem, event: Event];
 }>();
 
 defineSlots<{
@@ -141,7 +141,7 @@ function choose(item: TaoNavItem, event: Event) {
         event.preventDefault();
         return;
     }
-    emit('select', item.id, event);
+    emit('select', item, event);
     model.value = item.id;
 }
 
@@ -159,7 +159,7 @@ function onMoreSelect(id: string) {
     }
 }
 
-function onMoreClose(reason: TaoMenuCloseReason) {
+function onMoreClose(reason: TaoCloseReason) {
     moreOpen.value = false;
     if (menuReturnsFocus(reason)) {
         void nextTick(() => moreButton.value?.focus());
@@ -170,7 +170,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
 <template>
     <div class="tao-nav" :class="[`tao-nav--${layout}`, `tao-nav--indicator-${indicator}`, { 'tao-nav--standalone': standalone, 'tao-nav--floating': floating, 'tao-nav--fill': fill && !standalone, 'tao-nav--badges-neutral': badgeTone === 'neutral' }]">
         <div class="tao-nav__shell">
-            <nav class="tao-nav__panel" :class="surfaceClass(surface)" :aria-label="l10n.ariaLabel">
+            <nav class="tao-nav__panel" :class="surfaceClass(surface)" :aria-label="label || l10n.ariaLabel">
                 <div class="tao-nav__column">
                     <!--
                         No slot props: in `auto` only CSS knows the look, so one slot is rendered and the --_* variables size
@@ -250,7 +250,7 @@ function onMoreClose(reason: TaoMenuCloseReason) {
             :anchor="moreButton"
             placement="top-end"
             :label="l10n.moreLabel"
-            @select="onMoreSelect"
+            @select="(item) => onMoreSelect(item.id)"
             @close="onMoreClose"
         />
     </div>

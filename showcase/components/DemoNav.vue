@@ -133,9 +133,9 @@ const sections = [
 ]
 
 // a link navigates by itself; with a router stop it and route
-function go(id, event) {
+function go(item, event) {
   event.preventDefault()
-  router.push(sections.find((s) =&gt; s.id === id).href)
+  router.push(item.href)
 }</code></pre>
     </div>
   </ShowcaseSection>

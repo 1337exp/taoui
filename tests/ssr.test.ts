@@ -29,7 +29,7 @@ const props: Record<string, Record<string, unknown>> = {
     TaoSlider: { modelValue: 1 },
     TaoRangeSlider: { modelValue: [1, 2] },
     TaoImage: { src: 'a.png' },
-    TaoTable: { columns: [{ key: 'a', label: 'A' }], rows: [{ a: 1 }] },
+    TaoTable: { columns: [{ id: 'a', label: 'A' }], rows: [{ a: 1 }] },
     TaoRadio: { value: 1 },
     TaoSegmentedOption: { value: 1 },
     TaoSpoilerGroup: {},

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TaoCloseReason } from '../menu';
 import { ref } from 'vue';
 import type { TaoCommandItem } from '../commandPalette';
 import { useDismiss } from '../dismiss';
@@ -55,23 +56,23 @@ const l10n = useLocaleText(props, 'commandPalette');
 const emit = defineEmits<{
     /** The user picked a command (Enter or a click). The palette closes itself after it. / Выбрана команда. */
     select: [item: TaoCommandItem];
-    close: [];
+    close: [reason: TaoCloseReason];
 }>();
 
-function close() {
+function close(reason: TaoCloseReason) {
     open.value = false;
-    emit('close');
+    emit('close', reason);
 }
 
 function onSelect(item: TaoCommandItem) {
     emit('select', item);
-    close();
+    close('select');
 }
 
 let pointerDownOnOverlay = false;
 const onOverlayPointerDown = (event: PointerEvent) => (pointerDownOnOverlay = event.target === event.currentTarget);
 function onOverlayPointerUp(event: PointerEvent) {
-    if (pointerDownOnOverlay && event.target === event.currentTarget) close();
+    if (pointerDownOnOverlay && event.target === event.currentTarget) close('outside');
     pointerDownOnOverlay = false;
 }
 
@@ -85,14 +86,14 @@ useLayer(() => open.value, {
         return props.modal;
     },
     restoreFocus: true,
-    onEscape: close,
+    onEscape: () => close('escape'),
 });
 // without the dimming there is no backdrop to press, so a press anywhere outside the panel closes it
 // без затемнения нет подложки, которую можно нажать, поэтому закрывает нажатие в любом месте вне панели
 useDismiss(
     () => open.value && !props.modal,
     () => [panelRef.value],
-    close,
+    () => close('outside'),
 );
 </script>
 

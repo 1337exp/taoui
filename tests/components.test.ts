@@ -76,7 +76,7 @@ describe('names removed in 5.0 stay removed', () => {
     });
 
     it('removed events are not emitted any more', async () => {
-        const table = mount(TaoTable, { props: { columns: [{ key: 'name', label: 'Name', sortable: true }], rows: [] } });
+        const table = mount(TaoTable, { props: { columns: [{ id: 'name', label: 'Name', sortable: true }], rows: [] } });
         await table.find('.tao-table__sort-btn').trigger('click');
         expect(table.emitted('sort')).toBeUndefined();
         expect(table.emitted('change')).toBeUndefined();
@@ -127,10 +127,10 @@ describe('events', () => {
 
     it('Table: update:sort on header click', async () => {
         const w = mount(TaoTable, {
-            props: { columns: [{ key: 'name', label: 'Name', sortable: true }], rows: [] },
+            props: { columns: [{ id: 'name', label: 'Name', sortable: true }], rows: [] },
         });
         await w.find('.tao-table__sort-btn').trigger('click');
-        expect(w.emitted('update:sort')?.[0]).toEqual([{ key: 'name', dir: 'asc' }]);
+        expect(w.emitted('update:sort')?.[0]).toEqual([{ id: 'name', dir: 'asc' }]);
         expect(w.emitted('change')).toBeUndefined();
     });
 
@@ -140,7 +140,7 @@ describe('events', () => {
         await nextTick();
         // the list is teleported to body / список телепортирован в body
         document.querySelector<HTMLElement>('.tao-menu__item')!.click();
-        expect(w.emitted('select')).toEqual([['edit']]);
+        expect(w.emitted('select')!.map((e) => (e[0] as { id: string }).id)).toEqual(['edit']);
         w.unmount();
     });
 

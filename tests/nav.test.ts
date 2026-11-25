@@ -49,12 +49,12 @@ describe('TaoNav', () => {
         const w = nav();
         await entries(w)[1]!.trigger('click');
         expect(w.emitted('update:modelValue')).toEqual([['search']]);
-        expect(w.emitted('select')![0]![0]).toBe('search');
+        expect(w.emitted('select')![0]![0]).toMatchObject({ id: 'search' });
         expect(w.emitted('select')![0]![1]).toBeInstanceOf(Event);
     });
 
     it('a router can stop a link in @select and route itself', async () => {
-        const onSelect = vi.fn((_id: string, event: Event) => event.preventDefault());
+        const onSelect = vi.fn((_item: unknown, event: Event) => event.preventDefault());
         const w = nav({ onSelect });
         const click = new MouseEvent('click', { bubbles: true, cancelable: true });
         entries(w)[2]!.element.dispatchEvent(click);
@@ -139,7 +139,7 @@ describe('TaoNav', () => {
             await nextTick();
             expect(assign).toHaveBeenCalledWith('/e');
 
-            const routed = nav({ items: linked, onSelect: (_id: string, event: Event) => event.preventDefault() });
+            const routed = nav({ items: linked, onSelect: (_item: unknown, event: Event) => event.preventDefault() });
             await routed.find('.tao-nav__entry--more button').trigger('click');
             menus()[0]!.querySelector<HTMLElement>('[role="menuitem"]')!.click();
             await nextTick();
@@ -160,9 +160,9 @@ describe('TaoNav', () => {
         expect(document.activeElement).toBe(more.element);
     });
 
-    it('ariaLabel, moreLabel and the label slot', () => {
+    it('label, moreLabel and the label slot', () => {
         const w = nav(
-            { items: many, ariaLabel: 'Sections', moreLabel: 'Other' },
+            { items: many, label: 'Sections', moreLabel: 'Other' },
             { label: ({ item, active }: { item: TaoNavItem; active: boolean }) => `${item.label}${active ? '*' : ''}` } as never,
         );
         expect(w.find('nav').attributes('aria-label')).toBe('Sections');

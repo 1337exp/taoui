@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TaoCloseReason } from '../menu';
 import TaoIcon from './TaoIcon.vue';
 import { nextTick, ref, useId, useSlots, watch } from 'vue';
 import { getFocusable, trapTab } from '../focusTrap';
@@ -44,18 +45,18 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const l10n = useLocaleText(props, 'modal');
 
-const emit = defineEmits<{ close: [] }>();
+const emit = defineEmits<{ close: [reason: TaoCloseReason] }>();
 
 const panelRef = ref<HTMLElement | null>(null);
 const titleId = useId();
 let pointerDownOnOverlay = false;
 
-function close() {
+function close(reason: TaoCloseReason) {
     if (!props.closable) {
         return;
     }
     open.value = false;
-    emit('close');
+    emit('close', reason);
 }
 
 async function focusPanel() {
@@ -81,7 +82,7 @@ function onOverlayPointerDown(event: PointerEvent) {
 
 function onOverlayPointerUp(event: PointerEvent) {
     if (pointerDownOnOverlay && event.target === event.currentTarget) {
-        close();
+        close('outside');
     }
     pointerDownOnOverlay = false;
 }
@@ -90,7 +91,7 @@ function onOverlayPointerUp(event: PointerEvent) {
 useWholePixelPanel(panelRef, () => open.value);
 
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
-useLayer(() => open.value, { lockScroll: true, restoreFocus: true, onEscape: close });
+useLayer(() => open.value, { lockScroll: true, restoreFocus: true, onEscape: () => close('escape') });
 
 watch(
     () => open.value,
@@ -141,7 +142,7 @@ const has = (name: string) => slotHas(slots, name);
                             type="button"
                             class="tao-modal__close"
                             :aria-label="l10n.closeLabel"
-                            @click="close"
+                            @click="close('button')"
                         >
                             <span aria-hidden="true">
                                 <slot name="close-icon"><TaoIcon name="tao-close" /></slot>

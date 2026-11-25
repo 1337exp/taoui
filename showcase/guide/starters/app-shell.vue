@@ -33,7 +33,7 @@ const projectItems = computed(() => [
   { id: 'new-project', label: 'New project', icon: 'tao-plus' },
 ])
 
-function onProject(id) {
+function onProject({ id }) {
   if (id !== 'new-project') projectId.value = id
 }
 
@@ -43,7 +43,7 @@ function create() {
 </script>
 
 <template>
-  <TaoNav v-model="section" fill badge-tone="neutral" :items="items" aria-label="Sections">
+  <TaoNav v-model="section" fill badge-tone="neutral" :items="items" label="Sections">
     <!-- the main action, then the project under it: on the rail both are round icons -->
     <template #action>
       <TaoButton icon="tao-plus" shortcut="N" @click="create"><span class="tao-nav__action-label">New</span></TaoButton>

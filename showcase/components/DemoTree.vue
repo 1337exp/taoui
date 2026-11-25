@@ -209,7 +209,7 @@ function setSelection(value) {
         :menu="menu"
         :can-drop="canDrop"
         :sort="byName ? 'name' : 'none'"
-        :aria-label="tr('Project files', 'Файлы проекта')"
+        :label="tr('Project files', 'Файлы проекта')"
         @move="onMove"
         @menu-select="onMenuSelect"
         @open="(node) => (log = `${tr('open', 'открыть')} → ${node.label}`)"

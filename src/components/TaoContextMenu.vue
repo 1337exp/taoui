@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { nextTick, ref } from 'vue';
 import { useLocaleText } from '../locale';
-import type { TaoMenuItem } from '../menu';
+import type { TaoMenuItem, TaoMenuPick } from '../menu';
 import TaoMenu from './TaoMenu.vue';
 
 defineOptions({ name: 'TaoContextMenu' });
@@ -35,7 +35,7 @@ const l10n = useLocaleText(props, 'contextMenu');
 
 const emit = defineEmits<{
     /** The id of the picked item. / id выбранного пункта. */
-    select: [id: string];
+    select: [item: TaoMenuPick];
     /** Where it opened (viewport coordinates), for your own bookkeeping. / Где открылось (координаты окна). */
     open: [point: { x: number; y: number }];
 }>();

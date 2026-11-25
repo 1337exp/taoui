@@ -1,7 +1,7 @@
 export type TaoTableAlign = 'left' | 'center' | 'right';
 
 export interface TaoTableSort {
-    key: string;
+    id: string;
     dir: 'asc' | 'desc';
 }
 
@@ -12,7 +12,7 @@ export interface TaoTableSort {
  * приводится). Без `T` (`TaoTableColumn[]`) колонка идёт с любыми строками.
  */
 export interface TaoTableColumn<T extends object = any> {
-    key: string;
+    id: string;
     label: string;
     align?: TaoTableAlign;
     width?: string | number;
@@ -21,19 +21,19 @@ export interface TaoTableColumn<T extends object = any> {
     nowrap?: boolean;
     /** The column is never narrower than this (a number is px, a string any CSS length). / Колонка не уже этого (число — px, строка — любая CSS-длина). */
     minWidth?: string | number;
-    /** What the cell shows instead of `row[key]`. / Что показать в ячейке вместо `row[key]`. */
+    /** What the cell shows instead of `row[id]`. / Что показать в ячейке вместо `row[id]`. */
     value?(row: T): unknown;
 }
 
 /** A row key: the name of a field (`'id'`) or a function; a number or a string. / Ключ строки: имя поля или функция. */
 export type TaoTableRowKey<T extends object = any> = string | ((row: T, index: number) => string | number);
 
-/** The value of a cell: `column.value(row)`, else the field `row[column.key]`. / Значение ячейки: `column.value(row)`, иначе поле `row[column.key]`. */
+/** The value of a cell: `column.value(row)`, else the field `row[column.id]`. / Значение ячейки: `column.value(row)`, иначе поле `row[column.key]`. */
 export function tableCellValue<T extends object>(row: T, column: TaoTableColumn<T>): unknown {
     if (column.value) {
         return column.value(row);
     }
-    return (row as Record<string, unknown>)[column.key];
+    return (row as Record<string, unknown>)[column.id];
 }
 
 /** The key of a row for `v-for`: the field `rowKey` names (a missing one: the index) or what the function returns. / Ключ строки для `v-for`. */

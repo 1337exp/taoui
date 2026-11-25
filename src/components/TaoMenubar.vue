@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref } from 'vue';
 import { useLocaleText } from '../locale';
-import { isMenuSelectable, menuReturnsFocus, type TaoMenuActionItem, type TaoMenuCloseReason, type TaoMenuItem } from '../menu';
+import { isMenuSelectable, menuReturnsFocus, type TaoMenuActionItem, type TaoCloseReason, type TaoMenuItem, type TaoMenuPick } from '../menu';
 import { sizeClass, type TaoSize } from '../size';
 import TaoMenu from './TaoMenu.vue';
 import { frameStyle } from '../frames';
@@ -21,7 +21,7 @@ const props = withDefaults(
         /** Without it the size of ancestors. / Без него — размер предков. */
         size?: TaoSize;
         /** Accessible name of the bar. / Имя полосы для скринридера. */
-        ariaLabel?: string;
+        label?: string;
         /** Close an open menu when the page scrolls (otherwise it follows its entry). / Закрывать меню при прокрутке (иначе оно едет за пунктом). */
         closeOnScroll?: boolean;
         /** The outer frame; not set, it follows the frames context (`.tao-frames-soft`). / Внешняя рамка; не задан — идёт за контекстом рамок. */
@@ -29,7 +29,7 @@ const props = withDefaults(
     }>(),
     {
         size: undefined,
-        ariaLabel: undefined,
+        label: undefined,
         closeOnScroll: false,
         bordered: undefined,
     },
@@ -38,7 +38,7 @@ const l10n = useLocaleText(props, 'menubar');
 
 const emit = defineEmits<{
     /** The id of the picked item, in a menu or a plain top entry. / id выбранного пункта. */
-    select: [id: string];
+    select: [item: TaoMenuPick];
 }>();
 
 defineSlots<{
@@ -101,7 +101,7 @@ function activate(index: number) {
         return;
     }
     close();
-    emit('select', entry.id);
+    emit('select', entry);
 }
 
 function onKeydown(event: KeyboardEvent, index: number) {
@@ -138,7 +138,7 @@ function onEnter(index: number) {
     }
 }
 
-function onMenuClose(reason: TaoMenuCloseReason) {
+function onMenuClose(reason: TaoCloseReason) {
     const index = openIndex.value;
     close();
     // a press elsewhere leaves the focus where the user put it
@@ -155,7 +155,7 @@ function onEdge(direction: 'prev' | 'next') {
 </script>
 
 <template>
-    <div class="tao-menubar" :class="sizeClass(size)" :style="frameStyle(bordered)" role="menubar" :aria-label="l10n.ariaLabel">
+    <div class="tao-menubar" :class="sizeClass(size)" :style="frameStyle(bordered)" role="menubar" :aria-label="label || l10n.ariaLabel">
         <template v-for="(entry, index) in entries" :key="entry.id">
             <button
                 :ref="(el) => (buttons[index] = el as HTMLElement | null)"

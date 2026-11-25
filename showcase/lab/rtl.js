@@ -17,9 +17,9 @@ const App = {
     const options = [{ id: 'a', label: 'Alpha' }, { id: 'b', label: 'Beta' }]
     const tabs = [{ id: 'one', label: 'One' }, { id: 'two', label: 'Two' }, { id: 'three', label: 'Three' }]
     const crumbs = [{ label: 'Home', to: '#' }, { label: 'Users', to: '#' }, { label: 'Profile' }]
-    const stages = [{ key: 'a', label: 'Paid', status: 'ok' }, { key: 'b', label: 'Packing', status: 'work' }, { key: 'c', label: 'Shipped', status: 'wait' }]
+    const stages = [{ id: 'a', label: 'Paid', status: 'ok' }, { id: 'b', label: 'Packing', status: 'work' }, { id: 'c', label: 'Shipped', status: 'wait' }]
     const menu = [{ id: 'one', label: 'One' }, { id: 'two', label: 'Two' }]
-    const cols = [{ key: 'a', label: 'Name' }, { key: 'b', label: 'Qty', align: 'right' }]
+    const cols = [{ id: 'a', label: 'Name' }, { id: 'b', label: 'Qty', align: 'right' }]
     const rows = [{ id: 1, a: 'Apples', b: 12 }, { id: 2, a: 'Pears', b: 7 }]
 
     const specimen = () => h('div', { style: 'display:flex;flex-direction:column;gap:12px' }, [

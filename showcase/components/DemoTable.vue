@@ -26,10 +26,10 @@ const tableAll = computed(() => {
   }))
 })
 const tableColumns = computed(() => [
-  { key: 'name', label: tr('Name', 'Имя'), sortable: true },
-  { key: 'city', label: tr('City', 'Город'), sortable: true },
-  { key: 'orders', label: tr('Orders', 'Заказы'), align: 'right', sortable: true, width: 110 },
-  { key: 'status', label: tr('Status', 'Статус'), width: 140 },
+  { id: 'name', label: tr('Name', 'Имя'), sortable: true },
+  { id: 'city', label: tr('City', 'Город'), sortable: true },
+  { id: 'orders', label: tr('Orders', 'Заказы'), align: 'right', sortable: true, width: 110 },
+  { id: 'status', label: tr('Status', 'Статус'), width: 140 },
 ])
 // a table with prose in its cells: what a narrow place does to it
 const flagRows = computed(() => [
@@ -38,15 +38,15 @@ const flagRows = computed(() => [
   { flag: '--steps', value: tr('a number', 'число'), def: '20', note: tr('More steps are slower and not always better; each model has its own default.', 'Больше шагов — дольше, но не всегда лучше; у каждой модели своё значение.') },
 ])
 const flagColumns = computed(() => [
-  { key: 'flag', label: tr('Flag', 'Флаг'), nowrap: true },
-  { key: 'value', label: tr('Value', 'Значение') },
-  { key: 'def', label: tr('Default', 'По умолчанию'), nowrap: true },
-  { key: 'note', label: tr('What it does', 'Что делает') },
+  { id: 'flag', label: tr('Flag', 'Флаг'), nowrap: true },
+  { id: 'value', label: tr('Value', 'Значение') },
+  { id: 'def', label: tr('Default', 'По умолчанию'), nowrap: true },
+  { id: 'note', label: tr('What it does', 'Что делает') },
 ])
 const narrowMode = ref('stack')
 const tablePage = ref(1)
 const tablePageSize = 8
-const tableSort = ref({ key: 'name', dir: 'asc' })
+const tableSort = ref({ id: 'name', dir: 'asc' })
 const tableLoading = ref(false)
 const tableEmpty = ref(false)
 const tableHead = ref(true)
@@ -69,8 +69,8 @@ const tableSorted = computed(() => {
   const sort = tableSort.value
   if (!sort) return rows
   return rows.sort((a, b) => {
-    const left = a[sort.key]
-    const right = b[sort.key]
+    const left = a[sort.id]
+    const right = b[sort.id]
     const cmp =
       typeof left === 'number' && typeof right === 'number'
         ? left - right
@@ -177,7 +177,7 @@ function flashTableLoading() {
           <div class="code-block">
             <pre><code>&lt;TaoTable :columns="columns" :rows="flags" stack /&gt;          &lt;!-- {{ tr('cards under 600px', 'карточки уже 600px') }} --&gt;
 &lt;TaoTable :columns="columns" :rows="flags" :min-width="640" /&gt;  &lt;!-- {{ tr('scrolls sideways', 'прокрутка вбок') }} --&gt;
-const columns = [{ key: 'flag', label: 'Flag', nowrap: true }, …]</code></pre>
+const columns = [{ id: 'flag', label: 'Flag', nowrap: true }, …]</code></pre>
           </div>
 
           <div class="code-block">

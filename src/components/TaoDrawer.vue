@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TaoCloseReason } from '../menu';
 import TaoIcon from './TaoIcon.vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, useId, useSlots, watch } from 'vue';
 import { getFocusable, trapTab } from '../focusTrap';
@@ -72,19 +73,19 @@ const props = withDefaults(
 );
 const l10n = useLocaleText(props, 'drawer');
 
-const emit = defineEmits<{ close: [] }>();
+const emit = defineEmits<{ close: [reason: TaoCloseReason] }>();
 
 const panelRef = ref<HTMLElement | null>(null);
 const rootRef = ref<HTMLElement | null>(null);
 const titleId = useId();
 const showCloseButton = computed(() => props.closable && props.showClose);
 
-function close() {
+function close(reason: TaoCloseReason) {
     if (!props.closable) {
         return;
     }
     open.value = false;
-    emit('close');
+    emit('close', reason);
 }
 
 // The pull-down of a sheet: from the grip and the header (not from a button or a field in it), so the content still scrolls.
@@ -208,7 +209,7 @@ async function endDrag(released: boolean, pointerId: number) {
     const height = panelRef.value?.offsetHeight ?? 0;
     if (released && shouldDismissSheet(current.offset, height, releaseVelocity(current.samples), props.swipeThreshold)) {
         setSheet(height, true);
-        close();
+        close('swipe');
         await nextTick();
         // the parent kept it open (it refused to close): the sheet comes back / родитель оставил открытым: лист возвращается
         if (open.value) {
@@ -247,7 +248,7 @@ onBeforeUnmount(() => {
 });
 
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
-useLayer(() => open.value, { lockScroll: true, restoreFocus: true, onEscape: close });
+useLayer(() => open.value, { lockScroll: true, restoreFocus: true, onEscape: () => close('escape') });
 
 watch(
     () => open.value,
@@ -268,7 +269,7 @@ const has = (name: string) => slotHas(slots, name);
     <Teleport to="body">
         <Transition :name="`tao-drawer-${side}`">
             <div v-if="open" ref="rootRef" class="tao-drawer" :class="`tao-drawer--${side}`" @keydown="onKeydown">
-                <div class="tao-drawer__overlay" @click="close"></div>
+                <div class="tao-drawer__overlay" @click="close('outside')"></div>
                 <aside
                     v-bind="$attrs"
                     ref="panelRef"
@@ -297,7 +298,7 @@ const has = (name: string) => slotHas(slots, name);
                                 type="button"
                                 class="tao-drawer__close"
                                 :aria-label="l10n.closeLabel"
-                                @click="close"
+                                @click="close('button')"
                             >
                                 <span aria-hidden="true">
                                     <slot name="close-icon"><TaoIcon name="tao-close" /></slot>

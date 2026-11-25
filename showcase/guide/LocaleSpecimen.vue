@@ -32,7 +32,7 @@ const items = [
     <TaoDateRange v-model="range" />
     <TaoChecklist v-model="checked" :items="items" select-all counter />
     <TaoPagination v-model:page="page" :total="500" :page-size="10" :page-sizes="[10, 20, 50]" size="small" />
-    <TaoTable :columns="[{ key: 'a', label: 'A' }]" :rows="[]" />
+    <TaoTable :columns="[{ id: 'a', label: 'A' }]" :rows="[]" />
     <TaoEmpty />
     <TaoFileDrop v-model="files" />
   </div>

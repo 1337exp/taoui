@@ -141,7 +141,7 @@ describe('TaoMenubar', () => {
         await tops(w)[0]!.trigger('click');
         menus()[0]!.querySelector<HTMLElement>('[role="menuitem"]')!.click();
         await nextTick();
-        expect(w.emitted('select')).toEqual([['new']]);
+        expect(w.emitted('select')!.map((e) => (e[0] as { id: string }).id)).toEqual(['new']);
         expect(menus()).toHaveLength(0);
         expect(document.activeElement).toBe(tops(w)[0]!.element);
     });
@@ -149,7 +149,7 @@ describe('TaoMenubar', () => {
     it('an entry without a menu is a plain action', async () => {
         const w = await bar();
         await tops(w)[3]!.trigger('click');
-        expect(w.emitted('select')).toEqual([['help']]);
+        expect(w.emitted('select')!.map((e) => (e[0] as { id: string }).id)).toEqual(['help']);
         expect(menus()).toHaveLength(0);
     });
 
@@ -202,8 +202,8 @@ describe('TaoMenubar', () => {
         expect(menus()[0]!.classList.contains('tao-density-comfortable')).toBe(true);
     });
 
-    it('size and ariaLabel', async () => {
-        const w = mount(TaoMenubar, { props: { items: menu, size: 'small', ariaLabel: 'Main' }, attachTo: document.body });
+    it('size and label', async () => {
+        const w = mount(TaoMenubar, { props: { items: menu, size: 'small', label: 'Main' }, attachTo: document.body });
         wrappers.push(w);
         expect(w.classes()).toContain('tao-size-small');
         expect(w.attributes('aria-label')).toBe('Main');
@@ -265,7 +265,7 @@ describe('TaoContextMenu', () => {
         await rightClick(inside);
         menus()[0]!.querySelectorAll<HTMLElement>('[role="menuitem"]')[1]!.click();
         await nextTick();
-        expect(w.emitted('select')).toEqual([['paste']]);
+        expect(w.emitted('select')!.map((e) => (e[0] as { id: string }).id)).toEqual(['paste']);
         expect(menus()).toHaveLength(0);
         expect(document.activeElement).toBe(inside);
 

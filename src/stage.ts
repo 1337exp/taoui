@@ -1,7 +1,7 @@
 export type TaoStageStatus = 'wait' | 'work' | 'ok' | 'bad';
 
 export interface TaoStageItem {
-    key: string;
+    id: string;
     label?: string;
     status?: TaoStageStatus;
 }

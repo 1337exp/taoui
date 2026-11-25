@@ -69,7 +69,7 @@ describe('bordered on the panels', () => {
     const cases: Array<[string, () => ReturnType<typeof mount>]> = [
         ['TaoAlert', (b?: boolean) => mount(TaoAlert, { props: { bordered: b }, slots: { default: 'text' } })],
         ['TaoSpoiler', (b?: boolean) => mount(TaoSpoiler, { props: { title: 'T', bordered: b } })],
-        ['TaoTable', (b?: boolean) => mount(TaoTable, { props: { columns: [{ key: 'a', label: 'A' }], rows: [{ id: 1, a: 'x' }], bordered: b } })],
+        ['TaoTable', (b?: boolean) => mount(TaoTable, { props: { columns: [{ id: 'a', label: 'A' }], rows: [{ id: 1, a: 'x' }], bordered: b } })],
         ['TaoToolbar', (b?: boolean) => mount(TaoToolbar, { props: { bordered: b }, slots: { default: '<button>x</button>' } })],
         ['TaoMenubar', (b?: boolean) => mount(TaoMenubar, { props: { items: [{ id: 'a', label: 'A' }], bordered: b } })],
     ] as never;

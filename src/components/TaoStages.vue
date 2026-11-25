@@ -13,7 +13,7 @@ const props = withDefaults(
         items?: TaoStageItem[];
         /** `column` (default) — steps top to bottom, `row` — left to right. / `column` — сверху вниз, `row` — слева направо. */
         direction?: 'row' | 'column';
-        ariaLabel?: string;
+        label?: string;
         statusLabels?: Partial<Record<TaoStageStatus, string>>;
     }>(),
     {
@@ -35,7 +35,7 @@ function statusOf(item: TaoStageItem): TaoStageStatus {
 
 function itemLabel(item: TaoStageItem): string {
     const status = statusOf(item);
-    return `${item.label ?? item.key}, ${props.statusLabels[status] ?? appLocale.value.stages.statusLabels[status]}`;
+    return `${item.label ?? item.id}, ${props.statusLabels[status] ?? appLocale.value.stages.statusLabels[status]}`;
 }
 
 const isRow = computed(() => props.direction === 'row');
@@ -45,11 +45,11 @@ const isRow = computed(() => props.direction === 'row');
     <ul
         class="tao-stages"
         :class="{ 'tao-stages--horizontal': isRow }"
-        :aria-label="l10n.ariaLabel"
+        :aria-label="label || l10n.ariaLabel"
     >
         <li
             v-for="(item, index) in items"
-            :key="item.key"
+            :key="item.id"
             class="tao-stages__item"
             :class="`tao-stages__item--${statusOf(item)}`"
             :aria-label="itemLabel(item)"
@@ -63,7 +63,7 @@ const isRow = computed(() => props.direction === 'row');
                 </slot>
             </span>
             <span class="tao-stages__label">
-                <slot :item="item" :index="index" :status="statusOf(item)">{{ item.label ?? item.key }}</slot>
+                <slot :item="item" :index="index" :status="statusOf(item)">{{ item.label ?? item.id }}</slot>
             </span>
         </li>
     </ul>

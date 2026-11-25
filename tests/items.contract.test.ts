@@ -79,3 +79,24 @@ describe('the guard: no old list name or key', () => {
         expect(withOld).toEqual([]);
     });
 });
+
+describe('the accessible name of a component is its `label`', () => {
+    const dir = join(__dirname, '../src/components');
+    const sources = readdirSync(dir).filter((n) => n.endsWith('.vue')).map((name) => ({ name, source: readFileSync(join(dir, name), 'utf8').replace(/\r\n/g, '\n') }));
+
+    it('no component has an `ariaLabel` prop, except the icon-only option of a segmented control (its `label` is the visible text)', () => {
+        const withOld = sources.filter(({ source }) => /^\s+ariaLabel\??: /m.test(source)).map((s) => s.name);
+        expect(withOld).toEqual(['TaoSegmentedOption.vue']);
+    });
+
+    it('TaoTree, TaoList, TaoCarousel and TaoSlider name themselves by `label`', async () => {
+        const tree = mount(TaoTree, { props: { items: [{ id: 'r', label: 'Root' }], label: 'Files' } });
+        expect(tree.find('[role="tree"]').attributes('aria-label')).toBe('Files');
+        const { default: TaoCarousel } = await import('../src/components/TaoCarousel.vue');
+        const carousel = mount(TaoCarousel, { props: { label: 'Banners' } });
+        expect(carousel.find('[role="region"]').attributes('aria-label')).toBe('Banners');
+        const { default: TaoSlider } = await import('../src/components/TaoSlider.vue');
+        const slider = mount(TaoSlider, { props: { modelValue: 1, label: 'Volume' } });
+        expect(slider.find('[role="slider"]').attributes('aria-label')).toBe('Volume');
+    });
+});

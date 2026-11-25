@@ -38,7 +38,7 @@ const ratings = computed(() => themeRatings(values.value))
         </div>
         <div class="own-theme__field">
           <span>{{ tr('Corners', 'Углы') }}: {{ radius }}px</span>
-          <TaoSlider v-model="radius" :min="0" :max="28" :aria-label="tr('Corners', 'Углы')" />
+          <TaoSlider v-model="radius" :min="0" :max="28" :label="tr('Corners', 'Углы')" />
         </div>
 
         <ul class="own-theme__ratings">

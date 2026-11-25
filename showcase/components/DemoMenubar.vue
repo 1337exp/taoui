@@ -82,7 +82,7 @@ const contextItems = computed(() => [
   { id: 'delete', label: tr('Delete', 'Удалить'), shortcut: 'Del' },
 ])
 
-function onSelect(id) {
+function onSelect({ id }) {
   if (id === 'grid') grid.value = !grid.value
   else if (id === 'snap') snap.value = !snap.value
   else if (id === 'move' || id === 'rotate') tool.value = id

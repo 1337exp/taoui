@@ -57,7 +57,7 @@ function remove() {
         <TaoInput v-model="query" placeholder="Search" aria-label="Search notes">
           <template #prefix><TaoIcon name="tao-search" /></template>
         </TaoInput>
-        <TaoList :bordered="false" roving aria-label="Notes" :empty="shown.length === 0">
+        <TaoList :bordered="false" roving label="Notes" :empty="shown.length === 0">
           <TaoListItem
             v-for="note in shown"
             :key="note.id"

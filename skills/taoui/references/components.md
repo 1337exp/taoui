@@ -781,9 +781,9 @@ Showcase section: `#table`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `columns` | `TaoTableColumn<T>[]` | — | Required. { key, label, sortable?, align?, width?, minWidth?, nowrap?, value?(row) }. A list shared by tables of any rows: TaoTableColumn[] without T |
+| `columns` | `TaoTableColumn<T>[]` | — | Required. { id, label, sortable?, align?, width?, minWidth?, nowrap?, value?(row) }. A list shared by tables of any rows: TaoTableColumn[] without T |
 | `rows` | `T[]` | [] | The data. The table is generic: T comes from here (an interface, a class, a readonly array), and the row in the slots and in row-click is a T |
-| `v-model:sort` | `{ key, dir } \| null` | null | Sorting. dir: asc \| desc |
+| `v-model:sort` | `{ id, dir } \| null` | null | Sorting. dir: asc \| desc |
 | `loading` | `boolean` | false | The loading overlay |
 | `emptyText` | `string` | 'No data' | If rows is empty and not loading |
 | `striped` | `boolean \| 'odd' \| 'even'` | false | Zebra. true/odd — from the first row, even — from the second |
@@ -799,7 +799,7 @@ Showcase section: `#table`
 | `clickable` | `boolean` | false | The rows can be clicked: a pointer cursor and the row-click event. From the keyboard the table is one Tab stop: the arrows and Home / End walk the rows, Enter and Space do what a click does (a key inside a button or a field of the row stays with it). The focus of a row is a tint of the accent and a 2px bar at its start (not a ring: the rounded frame of the table would cut its corners) |
 | `stack` | `boolean` | false | Under 600px (the width of the table itself, not of the window) a row turns into a card: each cell under its column label. A container query, no JavaScript. The header stays for a screen reader |
 
-**Slots, events, notes.** Cell: #cell-{key}="{ row, value }" (row is a T, value is unknown). Events: update:sort — the sorting changed, row-click, if clickable.
+**Slots, events, notes.** Cell: #cell-{id}="{ row, value }" (row is a T, value is unknown). Events: update:sort — the sorting changed, row-click, if clickable.
 
 ## TaoPagination
 
@@ -842,7 +842,7 @@ Showcase section: `#tree`
 | `v-model:checked` | `string[]` | own | Ids of the checked nodes without children (leaves and folders not loaded yet). A checked lazy folder hands its check to its children once loaded |
 | `load` | `(node) => Promise<TaoTreeNode[]>` | — | Loads the children of a node with hasChildren; a spinner and aria-busy meanwhile |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Row height, as for the controls; the density works too |
-| `ariaLabel` | `string` | 'Tree' | Accessible name of the tree |
+| `label` | `string` | 'Tree' | Accessible name of the tree |
 | `loadingLabel` | `string` | 'Loading…' | The hint of the spinner |
 | `menu` | `TaoMenuItem[] \| (node, selected) => TaoMenuItem[]` | — | The context menu of a row: right click, the Menu key, Shift+F10. A right click outside the selection selects the row first (no select event), inside it keeps the selection. An empty list leaves the browser's menu |
 | `menuLabel` | `string` | 'Context menu' | Accessible name of the menu |
@@ -864,7 +864,7 @@ Showcase section: `#list`
 | `divided` | `boolean` | true | Lines between rows |
 | `maxHeight` | `number \| string` | — | Scroll. A number is pixels |
 | `empty` | `boolean` | false | Show #empty instead of rows |
-| `ariaLabel` | `string` | '' | The list name |
+| `label` | `string` | '' | The list name |
 | `roving` | `boolean` | false | One Tab stop for the whole list: the arrows move between the rows, Home / End to the ends, disabled rows are skipped; Tab comes back to the row it left (the selected one the first time). The stop of a row is its button (clickable) or the row itself |
 
 **Slots, events, notes.** default — TaoListItem. #empty — if empty.
@@ -905,9 +905,9 @@ Showcase section: `#stages`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `items` | `TaoStageItem[]` | [] | { key, label?, status?: wait \| work \| ok \| bad } |
+| `items` | `TaoStageItem[]` | [] | { id, label?, status?: wait \| work \| ok \| bad } |
 | `direction` | `'row' \| 'column'` | 'column' | column — top to bottom, row — in a row. As in TaoFlex |
-| `ariaLabel` | `string` | 'Stages' | The list name |
+| `label` | `string` | 'Stages' | The list name |
 
 **Slots, events, notes.** default / #icon="{ item, index, status }" — replace the step text or icon.
 
@@ -1079,7 +1079,7 @@ Showcase section: `#modal`
 |---|---|---|---|
 | `v-model` | `boolean` | — | Open. Required |
 | `title` | `string` | '' | The title in the header |
-| `closable` | `boolean` | true | The cross, Esc, a click on the backdrop |
+| `closable` | `boolean` | true | The cross, Esc, a click on the backdrop. The close(reason) event: button \| escape \| outside (a drawer also swipe) |
 | `closeLabel` | `string` | 'Close' | aria-label of the cross |
 | `fullscreen` | `boolean \| 'narrow'` | false | true — the whole screen: square corners, the header and the footer stay while the content scrolls, the safe areas kept. narrow — only on a screen narrower than 600px: a dialog on a computer, a page on a phone |
 | `surface` | `'flat' \| 'grain' \| 'glass'` | 'flat' | What the panel is made of, as on TaoCard. class, style and the other attributes go to the panel; the content scrolls, the header and #footer stay. --tao-modal-bg is the panel colour for a bar of your own that sticks inside |
@@ -1169,7 +1169,7 @@ Showcase section: `#dropdown`
 | `tabbable` | `boolean` | true | The button is a Tab stop. Off: it leaves the Tab order (the row has its own menu key) and still opens by a click |
 | `block` | `boolean` | false | The button fills the width and the height of its place and draws nothing of its own (no padding, no background, the corners of its parent): for a trigger that is a whole chip of yours in #button, the project under the main action of TaoNav, an account in a header. The hover and the focus ring go round the chip, the ring inside, so a clipping box does not cut it |
 
-**Slots, events, notes.** #icon — the trigger icon, #button — the whole button content, #item="{ item, id, label, icon }" — your own item face. The select event — the item id. shortcut is a ready string to show: the menu neither parses nor listens to it.
+**Slots, events, notes.** #icon — the trigger icon, #button — the whole button content, #item="{ item, id, label, icon }" — your own item face. The select event — the whole item (item.id is its id). shortcut is a ready string to show: the menu neither parses nor listens to it.
 
 ## TaoMenu
 
@@ -1184,7 +1184,7 @@ Showcase section: `#dropdown`
 | `closeOnScroll` | `boolean` | false | Close when the page or a scroll container that holds the anchor scrolls (for a point, the element under it); a scroll elsewhere (a carousel) does not close it. Off: a panel on an element follows it, a panel at a point stays at its screen point |
 | `label` | `string` | — | Accessible name of the menu |
 
-**Slots, events, notes.** Event select — the item id, close(reason) — the menu asks to be closed (escape / select / outside / tab). The panel for your own shells: a button, a context menu, a menu bar.
+**Slots, events, notes.** Event select — the whole item (item.id is its id), close(reason) — the menu asks to be closed (escape / select / outside / tab). The panel for your own shells: a button, a context menu, a menu bar.
 
 ## TaoToolbar
 
@@ -1228,11 +1228,11 @@ Showcase section: `#menubar`
 |---|---|---|---|
 | `items` | `TaoMenuItem[]` | — | The top entries: { id, label, items } is a menu, { id, label } a plain action. Inside a menu, everything TaoMenu can do (submenus, checkboxes, radios, shortcuts). Separators and labels at the top level are ignored |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | The height of the bar, as for the controls |
-| `ariaLabel` | `string` | 'Menu bar' | Accessible name of the bar |
+| `label` | `string` | 'Menu bar' | Accessible name of the bar |
 | `closeOnScroll` | `boolean` | false | Close an open menu when the page scrolls. Off: it follows its entry |
 | `bordered` | `boolean` | by context | The outer frame. Not set, it follows the frames context; false: no frame, the raised fill stays |
 
-**Slots, events, notes.** The select event — the id of the picked item (in a menu or a plain top entry). #item — your own item face in the menus. Keys: Tab enters the bar, ← → walk it, Home / End, ↓ / Enter / Space open, with a menu open ← → move to the neighbour menu, Esc closes and gives the focus back. No folding of entries into “…” on a narrow bar yet.
+**Slots, events, notes.** The select event — the picked item (item.id is its id) item (in a menu or a plain top entry). #item — your own item face in the menus. Keys: Tab enters the bar, ← → walk it, Home / End, ↓ / Enter / Space open, with a menu open ← → move to the neighbour menu, Esc closes and gives the focus back. No folding of entries into “…” on a narrow bar yet.
 
 ## TaoContextMenu
 
@@ -1245,7 +1245,7 @@ Showcase section: `#menubar`
 | `menuLabel` | `string` | 'Context menu' | Accessible name of the menu |
 | `closeOnScroll` | `boolean` | true | Close when the page or a scroll container with the point of the menu scrolls (the point moves away from under the menu); a scroll elsewhere does not close it. false keeps it at the screen point. Scrolling inside the menu never closes it |
 
-**Slots, events, notes.** default — the area where the right click (or the Menu key / Shift+F10) opens the menu; the wrapper does not take part in the layout (display: contents). #item — your own item face. Events select — the item id, open({ x, y }) — where it opened. On iOS a long press sends no contextmenu: give it a button there.
+**Slots, events, notes.** default — the area where the right click (or the Menu key / Shift+F10) opens the menu; the wrapper does not take part in the layout (display: contents). #item — your own item face. Events select — the whole item (item.id is its id), open({ x, y }) — where it opened. On iOS a long press sends no contextmenu: give it a button there.
 
 ## TaoSpoiler
 
@@ -1280,7 +1280,7 @@ Showcase section: `#tao-nav`
 | `v-model` | `string` | — | The id of the current section: aria-current="page" and the active look |
 | `layout` | `'auto' \| 'bar' \| 'rail' \| 'drawer'` | 'auto' | bar — a bottom bar, rail — a rail with icons, drawer — a side panel with labels. auto — by the width of TaoNav itself: bar below 600px, rail below 840px, drawer from 840px (container queries, no JS) |
 | `maxBarItems` | `number` | 5 | How many fit the bar. With more items maxBarItems − 1 stay, the rest go into «More» with a menu |
-| `ariaLabel` | `string` | 'Navigation' | Accessible name of the navigation |
+| `label` | `string` | 'Navigation' | Accessible name of the navigation |
 | `moreLabel` | `string` | 'More' | The label of «More» |
 | `indicator` | `'pill' \| 'line'` | 'pill' | How the current section is marked: a tint behind the item, or the accent colour and a short line (under the item in the bar, along its start edge on the side; auto moves it) |
 | `floating` | `boolean` | false | In the bar look, a detached pill above the page: inset from the edges and above the safe area, round, with a shadow; the active item is a pill too. The rail and the side panel do not change. The main action of the screen goes beside it as your own round button, not into the bar |
@@ -1288,7 +1288,7 @@ Showcase section: `#tao-nav`
 | `badgeTone` | `'accent' \| 'neutral'` | 'accent' | The counters: accent on every item, or neutral — grey, the accent on the current item only. A dot (badge: true) stays the accent |
 | `surface` | `'flat' \| 'glass' \| 'grain'` | 'flat' | What the panel is made of, as on TaoCard: glass lets the page show blurred through the bar as it scrolls under it (solid where blur is not supported or less transparency is asked) |
 
-**Slots, events, notes.** default — the page: TaoNav lays it out next to the navigation (the bar sticks to the bottom, on the side the list sticks to the top; env(safe-area-inset-bottom) is kept). Without the slot it is a standalone panel with a border. #label — your own item label ({ item, active }). Structure: .tao-nav is the whole layout (the navigation and the page), .tao-nav__panel the navigation, .tao-nav__content the page; a style for the menu goes on the panel (or use surface), not on the root. #footer — a small line under the items in the rail and the side panel (the version, «About», a link); the bar does not show it. #action — the main action of the screen: a TaoButton with icon and its text in <span class="tao-nav__action-label">; the bar puts it round above itself at the end side (above the pill with floating), the rail round at the top, the side panel extended with the text at the top; in the round looks the text is hidden but stays the name of the button (a shortcut on it too). Several children of #action stand one under the other (the action, then a project chip). --tao-nav-compact is 1 on the bar and the rail and 0 on the side panel, for your own pieces in the slots. The side panel gives the button its own corners; --tao-nav-action-radius: var(--tao-radius-full) makes it a pill. --tao-nav-rail-width (80px) and --tao-nav-drawer-width (240px) set the widths. Events: update:modelValue, select(id, event) — event.preventDefault() keeps a link from navigating, to route it yourself.
+**Slots, events, notes.** default — the page: TaoNav lays it out next to the navigation (the bar sticks to the bottom, on the side the list sticks to the top; env(safe-area-inset-bottom) is kept). Without the slot it is a standalone panel with a border. #label — your own item label ({ item, active }). Structure: .tao-nav is the whole layout (the navigation and the page), .tao-nav__panel the navigation, .tao-nav__content the page; a style for the menu goes on the panel (or use surface), not on the root. #footer — a small line under the items in the rail and the side panel (the version, «About», a link); the bar does not show it. #action — the main action of the screen: a TaoButton with icon and its text in <span class="tao-nav__action-label">; the bar puts it round above itself at the end side (above the pill with floating), the rail round at the top, the side panel extended with the text at the top; in the round looks the text is hidden but stays the name of the button (a shortcut on it too). Several children of #action stand one under the other (the action, then a project chip). --tao-nav-compact is 1 on the bar and the rail and 0 on the side panel, for your own pieces in the slots. The side panel gives the button its own corners; --tao-nav-action-radius: var(--tao-radius-full) makes it a pill. --tao-nav-rail-width (80px) and --tao-nav-drawer-width (240px) set the widths. Events: update:modelValue, select(item, event) — event.preventDefault() keeps a link from navigating, to route it yourself.
 
 ## TaoTabs
 
@@ -1301,7 +1301,7 @@ Showcase section: `#tabs`
 | `justify` | `TaoJustify` | — | Where the tabs sit in the row, as in TaoFlex: flex-start, center, flex-end, space-between, space-around, space-evenly. Without it, at the left |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | The tab height as TaoButton (26 / 36 / 44). Without it — the size of the ancestors |
 
-**Slots, events, notes.** default="{ key }" — the content of the active panel.
+**Slots, events, notes.** default="{ activeTab }" — the content of the active panel.
 
 ## TaoBreadcrumb
 
@@ -1310,7 +1310,7 @@ Showcase section: `#breadcrumb`
 | Prop | Type | Default | Notes |
 |---|---|---|---|
 | `items` | `{ label, to? }[]` | — | The crumbs. The last one is the current page, without a link. Required |
-| `ariaLabel` | `string` | 'Breadcrumb' | The navigation name |
+| `label` | `string` | 'Breadcrumb' | The navigation name |
 
 ## TaoLink
 
@@ -1355,7 +1355,6 @@ Showcase section: `#scrolltop`
 | `size` | `number` | 40 | The button size in px |
 | `bottom` | `number \| string` | 24 | The offset from the bottom edge |
 | `zIndex` | `number` | 1000 | The layer |
-| `ariaLabel` | `string` | 'Back to top' | The accessible name |
 | `outline` | `boolean` | true | The focus outline |
 
 ## toast()

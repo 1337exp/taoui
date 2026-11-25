@@ -114,11 +114,11 @@ onBeforeUnmount(() => stop?.())
           :label="tr('Disk', 'Диск')"
           :value-text="tr(`${Math.round(disk * 2.56)} of 256 GB`, `${Math.round(disk * 2.56)} из 256 ГБ`)"
         />
-        <TaoSlider v-model="disk" size="small" :aria-label="tr('Disk used', 'Занято на диске')" />
+        <TaoSlider v-model="disk" size="small" :label="tr('Disk used', 'Занято на диске')" />
       </div>
       <div>
         <TaoMeter :value="battery" :low="20" :high="50" :optimum="100" :label="tr('Battery', 'Батарея')" :value-text="`${battery}%`" />
-        <TaoSlider v-model="battery" size="small" :aria-label="tr('Battery charge', 'Заряд батареи')" />
+        <TaoSlider v-model="battery" size="small" :label="tr('Battery charge', 'Заряд батареи')" />
       </div>
       <TaoMeter :value="62" :label="tr('Profile complete', 'Профиль заполнен')" value-text="62%" />
     </div>

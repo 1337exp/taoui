@@ -69,7 +69,7 @@ describe('TaoDropdownMenu', () => {
         await w.find('button').trigger('click');
         await key($('[role="menu"]'), 'ArrowDown');
         await key($('[role="menu"]'), 'Enter');
-        expect(w.emitted('select')).toEqual([['two']]);
+        expect(w.emitted('select')!.map((e) => (e[0] as { id: string }).id)).toEqual(['two']);
         expect($('[role="menu"]')).toBeNull();
     });
 

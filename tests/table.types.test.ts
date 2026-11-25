@@ -23,8 +23,8 @@ const flags: readonly Flag[] = [
 describe('TaoTable types', () => {
     it('takes rows of an interface and a readonly array, and shows them', () => {
         const columns = [
-            { key: 'flag', label: 'Flag' },
-            { key: 'note', label: 'Note' },
+            { id: 'flag', label: 'Flag' },
+            { id: 'note', label: 'Note' },
         ] as const;
         const w = mount(TaoTable, { props: { columns, rows: flags, rowKey: 'flag' } });
         expect(w.findAll('tbody tr')).toHaveLength(2);
@@ -32,7 +32,7 @@ describe('TaoTable types', () => {
     });
 
     it('a column of the same row type reads the row; the row of the handler is typed', async () => {
-        const columns: TaoTableColumn<Flag>[] = [{ key: 'n2', label: 'Twice', value: (row) => row.n * 2 }];
+        const columns: TaoTableColumn<Flag>[] = [{ id: 'n2', label: 'Twice', value: (row) => row.n * 2 }];
         let got: Flag | undefined;
         const w = mount(TaoTable, {
             props: { columns, rows: flags, clickable: true, onRowClick: (row: Flag) => (got = row) },
@@ -44,7 +44,7 @@ describe('TaoTable types', () => {
     });
 
     it('a shared `TaoTableColumn[]` (no row type) goes to any table', () => {
-        const shared: TaoTableColumn[] = [{ key: 'flag', label: 'Flag' }];
+        const shared: TaoTableColumn[] = [{ id: 'flag', label: 'Flag' }];
         const w = mount(TaoTable, { props: { columns: shared, rows: flags } });
         expect(w.findAll('tbody tr')).toHaveLength(2);
     });
@@ -58,9 +58,9 @@ describe('tableCellValue and tableRowId', () => {
     const row: Flag = { flag: '--out', note: 'x', n: 3 };
 
     it('the cell is the field of the key, or what `value` returns', () => {
-        expect(tableCellValue(row, { key: 'flag', label: 'F' })).toBe('--out');
-        expect(tableCellValue(row, { key: 'twice', label: 'T', value: (r: Flag) => r.n * 2 })).toBe(6);
-        expect(tableCellValue(row, { key: 'nope', label: 'N' })).toBeUndefined();
+        expect(tableCellValue(row, { id: 'flag', label: 'F' })).toBe('--out');
+        expect(tableCellValue(row, { id: 'twice', label: 'T', value: (r: Flag) => r.n * 2 })).toBe(6);
+        expect(tableCellValue(row, { id: 'nope', label: 'N' })).toBeUndefined();
     });
 
     it('the row id is the field the key names (as a string), the index when there is none, or the function result', () => {

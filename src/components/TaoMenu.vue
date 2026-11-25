@@ -11,8 +11,9 @@ import {
     menuItemLabel,
     menuReturnsFocus,
     menuTreeKey,
-    type TaoMenuCloseReason,
+    type TaoCloseReason,
     type TaoMenuItem,
+    type TaoMenuPick,
     type TaoMenuTree,
 } from '../menu';
 import TaoIcon from './TaoIcon.vue';
@@ -64,9 +65,9 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     /** The id of the picked item (a root menu only; a submenu reports to its parent). / id выбранного пункта. */
-    select: [id: string];
+    select: [item: TaoMenuPick];
     /** The menu wants to be closed; the owner turns `open` off. / Меню просит закрыть себя. */
-    close: [reason: TaoMenuCloseReason];
+    close: [reason: TaoCloseReason];
     /** The pointer entered a submenu panel (its parent stops a pending close). / Указатель вошёл в панель подменю. */
     enter: [];
     /** ← / → on the top level with nothing to open or close: the owner (a menu bar) moves to the neighbour menu. / ← / → на верхнем уровне: владелец (полоса меню) переходит к соседнему меню. */
@@ -81,7 +82,7 @@ defineSlots<{
 // With a virtual anchor there is no trigger to give the focus back to: the menu remembers what had it before it opened.
 // У виртуального якоря нет кнопки, куда вернуть фокус: меню запоминает, у кого он был до открытия.
 let returnTo: HTMLElement | null = null;
-let lastReason: TaoMenuCloseReason | undefined;
+let lastReason: TaoCloseReason | undefined;
 
 const parent = inject(menuTreeKey, null);
 const isSub = parent !== null;
@@ -90,7 +91,7 @@ const tree: TaoMenuTree = parent ?? {
     rootId: ownRootId,
     select: (item) => {
         if ('id' in item) {
-            emit('select', item.id);
+            emit('select', item);
         }
     },
     closeAll: (reason) => {

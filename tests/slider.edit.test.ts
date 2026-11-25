@@ -224,7 +224,7 @@ describe('TaoSlider editable: the field and the rest of the slider', () => {
         expect(w.emitted('update:modelValue')).toBeUndefined();
     });
 
-    it('the field is named: by ariaLabel, else by editLabel, else by the locale', async () => {
+    it('the field is named: by label, else by editLabel, else by the locale', async () => {
         const plain = slider();
         rightClick(plain);
         await nextTick();
@@ -235,7 +235,7 @@ describe('TaoSlider editable: the field and the rest of the slider', () => {
         await nextTick();
         expect(editor(own).attributes('aria-label')).toBe('Tolerance, %');
 
-        const named = slider({ ariaLabel: 'Opacity' });
+        const named = slider({ label: 'Opacity' });
         rightClick(named);
         await nextTick();
         expect(editor(named).attributes('aria-label')).toBe('Opacity');

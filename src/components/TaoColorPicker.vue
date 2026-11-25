@@ -281,7 +281,7 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
                 :max="360"
                 :step="1"
                 :disabled="disabled"
-                :aria-label="l10n.hueLabel"
+                :label="l10n.hueLabel"
                 @commit="emit('commit', hex)"
             />
             <TaoSlider
@@ -293,7 +293,7 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
                 :max="1"
                 :step="0.01"
                 :disabled="disabled"
-                :aria-label="l10n.alphaLabel"
+                :label="l10n.alphaLabel"
                 :style="{ '--tao-color-picker-solid': solidCss }"
                 @commit="emit('commit', hex)"
             />

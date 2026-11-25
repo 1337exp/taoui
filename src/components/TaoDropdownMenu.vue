@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import type { TaoPlacement } from '../floating';
 import { useLocaleText } from '../locale';
-import { menuReturnsFocus, type TaoMenuCloseReason, type TaoMenuItem } from '../menu';
+import { menuReturnsFocus, type TaoCloseReason, type TaoMenuItem, type TaoMenuPick } from '../menu';
 import { sizeClass, type TaoSize } from '../size';
 import TaoIcon from './TaoIcon.vue';
 import TaoMenu from './TaoMenu.vue';
@@ -64,7 +64,7 @@ const l10n = useLocaleText(props, 'dropdownMenu');
 
 const emit = defineEmits<{
     /** The id of the picked item. / id выбранного пункта. */
-    select: [id: string];
+    select: [item: TaoMenuPick];
 }>();
 
 defineSlots<{
@@ -83,7 +83,7 @@ function toggleMenu() {
     isOpen.value = !isOpen.value;
 }
 
-function onClose(reason: TaoMenuCloseReason) {
+function onClose(reason: TaoCloseReason) {
     isOpen.value = false;
     // a press elsewhere leaves the focus where the user put it / нажатие в другом месте оставляет фокус там, куда его поставили
     if (menuReturnsFocus(reason)) {

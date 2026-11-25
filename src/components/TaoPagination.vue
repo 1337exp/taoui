@@ -31,7 +31,7 @@ const props = withDefaults(
          * не пролистать), `false` никогда.
          */
         pageInput?: boolean | number;
-        ariaLabel?: string;
+        label?: string;
         prevLabel?: string;
         nextLabel?: string;
         /** `{page}` — номер страницы. */
@@ -134,7 +134,7 @@ function goTo(next: number) {
 </script>
 
 <template>
-    <nav class="tao-pagination" :class="sizeClass(size)" :aria-label="l10n.ariaLabel">
+    <nav class="tao-pagination" :class="sizeClass(size)" :aria-label="label || l10n.ariaLabel">
         <div v-if="showTotal || sizeOptions.length" class="tao-pagination__info">
             <p v-if="showTotal" class="tao-pagination__total">
                 <slot name="total" :from="from" :to="to" :total="total">

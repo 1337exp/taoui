@@ -9,7 +9,7 @@ import raw from '../src/components/TaoTable.vue?raw';
 // Enter and Space do what a click does.
 // 5.52.0: строки `clickable` TaoTable доступны с клавиатуры: одна остановка Tab, стрелки ходят по строкам, Enter и Space делают то же, что клик.
 
-const columns = [{ key: 'name', label: 'Name' }];
+const columns = [{ id: 'name', label: 'Name' }];
 const rows = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }, { id: 3, name: 'c' }];
 
 let wrapper: ReturnType<typeof mountTable> | undefined;

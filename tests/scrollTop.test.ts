@@ -69,10 +69,9 @@ describe('TaoScrollTop', () => {
         );
     });
 
-    it('always has an accessible name: ariaLabel, then label, then the locale text', async () => {
+    it('always has an accessible name: the label (which is also its caption), then the locale text', async () => {
         expect((await shown()).find('button').attributes('aria-label')).toBe('Back to top');
         expect((await shown({ label: 'Up' })).find('button').attributes('aria-label')).toBe('Up');
-        expect((await shown({ label: 'Up', ariaLabel: 'Scroll up' })).find('button').attributes('aria-label')).toBe('Scroll up');
     });
 
     it('fall-through attributes land on the button', async () => {

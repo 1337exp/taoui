@@ -21,7 +21,7 @@ const props = withDefaults(
         maxHeight?: TaoLength;
         /** Показать `#empty` вместо строк. */
         empty?: boolean;
-        ariaLabel?: string;
+        label?: string;
         /**
          * One Tab stop for the whole list: the arrows move between the rows, Home / End to the first and the last;
          * disabled rows are skipped. Tab comes back to the row it left (the selected one the first time). A row's
@@ -36,7 +36,7 @@ const props = withDefaults(
         bordered: true,
         divided: true,
         empty: false,
-        ariaLabel: '',
+        label: '',
         roving: false,
     },
 );
@@ -169,7 +169,7 @@ watch(
             },
         ]"
         :style="listStyle"
-        :aria-label="ariaLabel || undefined"
+        :aria-label="label || undefined"
         @keydown="onKeydown"
         @focusin="onFocusIn"
     >

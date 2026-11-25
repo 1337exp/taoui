@@ -162,7 +162,7 @@ describe('TaoMenu at a point', () => {
         expect(w.emitted('select')).toBeUndefined();
         await press('ArrowUp');
         await press('Enter');
-        expect(w.emitted('select')).toEqual([['a']]);
+        expect(w.emitted('select')!.map((e) => (e[0] as { id: string }).id)).toEqual(['a']);
     });
 
 });

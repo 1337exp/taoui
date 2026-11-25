@@ -8,8 +8,8 @@ import raw from '../src/components/TaoTable.vue?raw';
 // 5.52.0: TaoTable в узком месте: `stack` (карточки контейнерным запросом), `minWidth` (прокрутка вбок), `nowrap` и `minWidth` колонки.
 
 const columns = [
-    { key: 'flag', label: 'Flag', nowrap: true },
-    { key: 'note', label: 'Note', minWidth: 200, align: 'right' as const },
+    { id: 'flag', label: 'Flag', nowrap: true },
+    { id: 'note', label: 'Note', minWidth: 200, align: 'right' as const },
 ];
 const rows = [{ flag: '--out', note: 'a folder' }];
 

@@ -108,7 +108,7 @@ const cellValue = (row: T, column: TaoTableColumn<T>) => tableCellValue(row, col
 const rowId = (row: T, index: number) => tableRowId(props.rowKey, row, index);
 
 function sortDir(column: TaoTableColumn<T>) {
-    if (!props.sort || props.sort.key !== column.key) {
+    if (!props.sort || props.sort.id !== column.id) {
         return null;
     }
     return props.sort.dir;
@@ -121,7 +121,7 @@ function toggleSort(column: TaoTableColumn<T>) {
 
     const current = sortDir(column);
     const next: TaoTableSort | null =
-        current == null ? { key: column.key, dir: 'asc' } : current === 'asc' ? { key: column.key, dir: 'desc' } : null;
+        current == null ? { id: column.id, dir: 'asc' } : current === 'asc' ? { id: column.id, dir: 'desc' } : null;
 
     emit('update:sort', next);
 }
@@ -193,7 +193,7 @@ function onRowKeydown(event: KeyboardEvent, row: T, index: number) {
                 <tr :role="stack ? 'row' : undefined">
                     <th
                         v-for="column in columns"
-                        :key="column.key"
+                        :key="column.id"
                         :class="{ 'tao-table__nowrap': column.nowrap }"
                         :style="cellStyle(column, true)"
                         scope="col"
@@ -245,14 +245,14 @@ function onRowKeydown(event: KeyboardEvent, row: T, index: number) {
                 >
                     <td
                         v-for="column in columns"
-                        :key="column.key"
+                        :key="column.id"
                         :class="{ 'tao-table__nowrap': column.nowrap }"
                         :style="cellStyle(column)"
                         :data-label="stack ? column.label : undefined"
                         :role="stack ? 'cell' : undefined"
                     >
                         <slot
-                            :name="`cell-${column.key}`"
+                            :name="`cell-${column.id}`"
                             :row="row"
                             :column="column"
                             :value="cellValue(row, column)"

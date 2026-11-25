@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TaoCloseReason } from '../menu';
 import TaoIcon from './TaoIcon.vue';
 import { computed, useSlots } from 'vue';
 import { sizeClass, type TaoSize } from '../size';
@@ -33,7 +34,7 @@ const props = withDefaults(defineProps<Props>(), {
 const l10n = useLocaleText(props, 'tag');
 
 const emit = defineEmits<{
-    close: [event: MouseEvent];
+    close: [reason: TaoCloseReason];
 }>();
 
 const slots = useSlots();
@@ -45,8 +46,8 @@ const style = computed(() => ({
     'border-color': props.flat ? 'transparent' : props.borderColor || '',
 }));
 
-function onClose(event: MouseEvent) {
-    emit('close', event);
+function onClose() {
+    emit('close', 'button');
 }
 </script>
 

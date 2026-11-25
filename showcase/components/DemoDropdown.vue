@@ -41,7 +41,7 @@ const editorItems = computed(() => [
 ])
 const lastPicked = ref('')
 
-function onEditorSelect(id) {
+function onEditorSelect({ id }) {
   lastPicked.value = id
   if (id === 'grid') grid.value = !grid.value
   else if (id === 'snap') snap.value = !snap.value
@@ -55,9 +55,9 @@ function onEditorSelect(id) {
           <p>{{ tr('A dropdown menu that positions itself automatically near the screen edge', 'Выпадающее меню с авто-позиционированием у края экрана') }}</p>
     
           <div style="display: flex; align-items: center; gap: 12px;">
-            <TaoDropdownMenu :items="dropdownItems" @select="(id) => console.log('selected:', id)" />
-            <TaoDropdownMenu :items="dropdownItems" size="small" @select="(id) => console.log('selected:', id)" />
-            <TaoDropdownMenu :items="dropdownItems" dots="horizontal" @select="(id) => console.log('selected:', id)" />
+            <TaoDropdownMenu :items="dropdownItems" @select="(item) => console.log('selected:', item.id)" />
+            <TaoDropdownMenu :items="dropdownItems" size="small" @select="(item) => console.log('selected:', item.id)" />
+            <TaoDropdownMenu :items="dropdownItems" dots="horizontal" @select="(item) => console.log('selected:', item.id)" />
             <span style="color: var(--tao-color-text-muted); font-size: 13px;">{{ tr('size="small": a compact square for a list row; dots="horizontal": the dots lie down (a table row, the corner of a card); :tabbable="false" when the row has its own menu key', 'size="small": компактный квадрат для строки списка; dots="horizontal": точки лежат (строка таблицы, угол карточки); :tabbable="false", когда у строки своя клавиша меню') }}</span>
           </div>
 

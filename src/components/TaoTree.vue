@@ -75,7 +75,7 @@ const props = withDefaults(
          */
         canDrop?: (move: TaoTreeMove) => boolean;
         /** Accessible name of the tree. / Имя дерева для скринридера. */
-        ariaLabel?: string;
+        label?: string;
         loadingLabel?: string;
         /** Accessible name of the context menu. / Имя контекстного меню для скринридера. */
         menuLabel?: string;
@@ -90,7 +90,7 @@ const props = withDefaults(
         sort: 'none',
         movable: true,
         canDrop: undefined,
-        ariaLabel: undefined,
+        label: undefined,
         loadingLabel: undefined,
         menuLabel: undefined,
     },
@@ -481,7 +481,7 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
             },
         ]"
         role="tree"
-        :aria-label="l10n.ariaLabel"
+        :aria-label="label || l10n.ariaLabel"
         :aria-multiselectable="selection === 'multiple' || undefined"
     >
         <li
@@ -562,7 +562,7 @@ const slotProps = (row: TaoTreeRow): NodeSlot => ({
             :anchor="menuAnchor"
             :label="text('menuLabel')"
             close-on-scroll
-            @select="onMenuSelect"
+            @select="(item) => onMenuSelect(item.id)"
             @close="onMenuClose"
         />
         <Teleport v-if="canMove" to="body">
