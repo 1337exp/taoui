@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useSlots } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
-import { useField } from '../formField';
+import { nativeFieldAttrs, useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { slotHas } from '../slots';
 
@@ -17,6 +17,14 @@ const props = withDefaults(
         label?: string;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
+        /** The id of the control, which the label of a `TaoFormField` points at. / id элемента: на него указывает подпись `TaoFormField`. */
+        id?: string;
+        /** The name in a form: the value goes into `FormData` and a native submit. / Имя в форме: значение попадает в `FormData` и нативную отправку. */
+        name?: string;
+        /** The field must be filled in (native `required`). / Поле обязательно (нативный `required`). */
+        required?: boolean;
+        /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
+        autofocus?: boolean;
         invalid?: boolean;
         /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
@@ -66,7 +74,7 @@ const has = (name: string) => slotHas(slots, name);
 <template>
     <label v-bind="rootAttrs()" class="tao-switch" :class="[sizeClass(size), { 'tao-switch--disabled': disabled, 'tao-switch--on': modelValue, 'tao-switch--invalid': isInvalid, 'tao-switch--loading': loading }]" :for="controlId">
         <input
-            v-bind="controlAttrs()"
+            v-bind="{ ...controlAttrs(), ...nativeFieldAttrs(props) }"
             :id="controlId"
             class="tao-switch__input"
             type="checkbox"

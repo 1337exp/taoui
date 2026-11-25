@@ -186,6 +186,8 @@ Showcase section: `#input`
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
 | `disabled` | `boolean` | false | Disabled |
 | `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps). id is what the label of TaoFormField points at (otherwise the FormField's or useId); name is the name in a form (FormData, a native submit); required is the native required; autofocus takes the focus when the field appears |
+| `readOnly` | `boolean` | false | The value can be looked at, selected and is sent with the form, but not changed: typing, the arrows, the steppers, Enter and blur leave it alone; unlike disabled, the focus stays |
 | `variant` | `'outline' \| 'filled' \| 'plain'` | 'outline' | A frame / a fill only / nothing: plain reads as text (an item of a list being edited): no inset, the caret shows the focus, an error is a red line under the text. The height does not change |
 | `id` | `string` | auto | The input id; otherwise taken from FormField or useId |
 
@@ -216,6 +218,8 @@ Showcase section: `#input-number`
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
 | `disabled` | `boolean` | false | Disabled |
 | `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps). id is what the label of TaoFormField points at (otherwise the FormField's or useId); name is the name in a form (FormData, a native submit); required is the native required; autofocus takes the focus when the field appears |
+| `readOnly` | `boolean` | false | The value can be looked at, selected and is sent with the form, but not changed: typing, the arrows, the steppers, Enter and blur leave it alone; unlike disabled, the focus stays |
 | `variant` | `'outline' \| 'filled' \| 'plain'` | 'outline' | As on TaoInput: a frame / a fill only / nothing (the field reads as text, an error is a red line under the text) |
 | `placeholder` | `string` | '' | The hint when null |
 
@@ -233,6 +237,7 @@ Showcase section: `#quantity`
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
 | `disabled` | `boolean` | false | Disabled |
 | `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps). id is what the label of TaoFormField points at (otherwise the FormField's or useId); name is the name in a form (FormData, a native submit); required is the native required; autofocus takes the focus when the field appears |
 
 **Slots, events, notes.** #decrement-icon / #increment-icon — the button icons.
 
@@ -257,6 +262,7 @@ Showcase section: `#drag-number`
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
 | `disabled` | `boolean` | false | Disabled |
 | `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps). id is what the label of TaoFormField points at (otherwise the FormField's or useId); name is the name in a form (FormData, a native submit); required is the native required; autofocus takes the focus when the field appears |
 | `incrementLabel / decrementLabel` | `string` | from the locale | Button labels for a screen reader |
 
 **Slots, events, notes.** #decrement-icon / #increment-icon — the button icons.
@@ -275,14 +281,14 @@ Showcase section: `#textarea`
 | `count` | `boolean` | false | Show “typed / maximum” (together with maxlength) |
 | `resize` | `boolean` | true | Can be dragged by the corner |
 | `variant` | `'bar' \| 'outline' \| 'filled' \| 'plain'` | 'bar' | A stripe on the left / a frame like TaoInput / a fill only / nothing |
-| `readonly` | `boolean` | false | Can be read and selected, but not edited |
 | `noSpace` | `boolean` | false | A space cannot be typed — neither from the keyboard nor by pasting |
 | `align` | `'start' \| 'center' \| 'end'` | 'start' | Text alignment |
-| `autofocus` | `boolean` | false | Focus on mount |
 | `blurOnEnter` | `boolean` | false | Enter drops the focus instead of inserting a line break (Shift+Enter inserts it); keydown goes out first |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium |
 | `disabled` | `boolean` | false | Disabled |
 | `invalid` | `boolean` | false | A red border |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps). id is what the label of TaoFormField points at (otherwise the FormField's or useId); name is the name in a form (FormData, a native submit); required is the native required; autofocus takes the focus when the field appears |
+| `readOnly` | `boolean` | false | The value can be looked at, selected and is sent with the form, but not changed: typing, the arrows, the steppers, Enter and blur leave it alone; unlike disabled, the focus stays |
 
 ## TaoChecklist
 
@@ -317,6 +323,7 @@ Showcase section: `#checkbox`
 | `disabled` | `boolean` | false | Disabled |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | A 14 / 18 / 22 square and the caption font size. Without it — the size of the ancestors |
 | `invalid` | `boolean` | false | A red accent. The error text goes through TaoFormField |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps). id is what the label of TaoFormField points at (otherwise the FormField's or useId); name is the name in a form (FormData, a native submit); required is the native required; autofocus takes the focus when the field appears |
 
 ## TaoSelect
 
@@ -346,6 +353,7 @@ Showcase section: `#select`
 | `disabled` | `boolean` | false | Disabled |
 | `size` | `'small' \| 'medium' \| 'large'` | inherited | The track is 28 / 36 / 44 px wide, and the caption font size. Without it — the size of the ancestors |
 | `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps). id is what the label of TaoFormField points at (otherwise the FormField's or useId); name is the name in a form (FormData, a native submit); required is the native required; autofocus takes the focus when the field appears |
 | `loading` | `boolean` | false | The change is being applied: a spinner on the thumb, a click does nothing, not greyed out; aria-busy |
 
 ## TaoRadio / TaoRadioGroup
@@ -420,6 +428,7 @@ Showcase section: `#combobox`
 | `clearable` | `boolean` | true | Clear row in the list. Turn off when null is not valid. |
 | `clearText` | `string` | 'Clear' | Label of the clear row; slot #clear replaces it. |
 | `disabled / invalid` | `boolean` | false | Disabled / a red border |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps). id is what the label of TaoFormField points at (otherwise the FormField's or useId); name is the name in a form (FormData, a native submit); required is the native required; autofocus takes the focus when the field appears |
 | `variant` | `'outline' \| 'filled' \| 'plain'` | 'outline' | As on TaoInput: a frame / a fill only / nothing (the field reads as text, an error is a red line under the text) |
 
 **Slots, events, notes.** create — an event when a new value is typed: the parent extends options itself.
@@ -489,6 +498,7 @@ Showcase section: `#preset-input`
 | `variant` | `'filled' \| 'outline'` | 'filled' | filled: a fill, the frame shows while the field is edited; outline: a frame |
 | `disabled` | `boolean` | false | Disabled |
 | `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
+| `id / name / required / autofocus` | `string / string / boolean / boolean` | — / — / false / false | The field contract (FieldProps). id is what the label of TaoFormField points at (otherwise the FormField's or useId); name is the name in a form (FormData, a native submit); required is the native required; autofocus takes the focus when the field appears |
 | `nextLabel` | `string` | 'Next value' | aria-label of the up arrow |
 | `prevLabel` | `string` | 'Previous value' | aria-label of the down arrow |
 

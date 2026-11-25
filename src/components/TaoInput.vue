@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, useSlots } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
-import { useField } from '../formField';
+import { nativeFieldAttrs, useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { slotHas } from '../slots';
 
@@ -19,6 +19,14 @@ interface Props {
     /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
     size?: TaoSize;
     /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
+    /** The name in a form: the value goes into `FormData` and a native submit. / Имя в форме: значение попадает в `FormData` и нативную отправку. */
+    name?: string;
+    /** The field must be filled in (native `required`). / Поле обязательно (нативный `required`). */
+    required?: boolean;
+    /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
+    autofocus?: boolean;
+    /** The value can be looked at, selected and sent, not changed. / Значение можно смотреть, выделять и отправлять, но не менять. */
+    readOnly?: boolean;
     invalid?: boolean;
     /**
      * `outline` — a frame, `filled` — a fill only, `plain` — no frame, no fill: a field that reads as text (an item of a
@@ -81,7 +89,7 @@ const has = (name: string) => slotHas(slots, name);
                 <slot name="prefix" />
             </span>
             <input
-                v-bind="controlAttrs()"
+                v-bind="{ ...controlAttrs(), ...nativeFieldAttrs(props) }"
                 :id="controlId"
                 class="tao-input"
                 :class="{ 'tao-input--error': isInvalid }"

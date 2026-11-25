@@ -2,7 +2,7 @@
 import TaoIcon from './TaoIcon.vue';
 import { useControlAttrs } from '../controlAttrs';
 import { computed, ref, watch } from 'vue';
-import { useField } from '../formField';
+import { nativeFieldAttrs, useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
 import { decimalsOf, normalizeNumber } from '../primitives/number';
@@ -22,6 +22,16 @@ const props = withDefaults(
         precision?: number;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
+        /** The id of the control, which the label of a `TaoFormField` points at. / id элемента: на него указывает подпись `TaoFormField`. */
+        id?: string;
+        /** The name in a form: the value goes into `FormData` and a native submit. / Имя в форме: значение попадает в `FormData` и нативную отправку. */
+        name?: string;
+        /** The field must be filled in (native `required`). / Поле обязательно (нативный `required`). */
+        required?: boolean;
+        /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
+        autofocus?: boolean;
+        /** The value can be looked at, selected and sent, not changed. / Значение можно смотреть, выделять и отправлять, но не менять. */
+        readOnly?: boolean;
         invalid?: boolean;
         /** Control size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
@@ -124,7 +134,7 @@ function commit(value: number | null) {
 }
 
 function bump(direction: 1 | -1) {
-    if (props.disabled) {
+    if (props.disabled || props.readOnly) {
         return;
     }
     const base = props.modelValue ?? 0;
@@ -151,15 +161,19 @@ function onFocus(event: FocusEvent) {
 
 function onBlur(event: FocusEvent) {
     focused.value = false;
-    const parsed = parseDraft(draft.value);
-    commit(parsed === 'incomplete' ? null : parsed);
+    if (!props.readOnly) {
+        const parsed = parseDraft(draft.value);
+        commit(parsed === 'incomplete' ? null : parsed);
+    }
     emit('blur', event);
 }
 
 function onKeydown(event: KeyboardEvent) {
     if (event.key === 'Enter') {
-        const parsed = parseDraft(draft.value);
-        commit(parsed === 'incomplete' ? null : parsed);
+        if (!props.readOnly) {
+            const parsed = parseDraft(draft.value);
+            commit(parsed === 'incomplete' ? null : parsed);
+        }
         return;
     }
     if (event.key === 'ArrowUp') {
@@ -180,7 +194,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
 <template>
     <div v-bind="rootAttrs()" class="tao-input-number" :class="[sizeClass(size), { [`tao-input-number--${variant}`]: variant !== 'outline', 'tao-input-number--invalid': isInvalid, 'tao-input-number--controls': controls }]">
         <input
-            v-bind="controlAttrs()"
+            v-bind="{ ...controlAttrs(), ...nativeFieldAttrs(props) }"
             :id="controlId"
             class="tao-input-number__input"
             type="text"
@@ -206,7 +220,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
                 class="tao-input-number__step"
                 :aria-label="l10n.incrementLabel"
                 tabindex="-1"
-                :disabled="disabled || atMax"
+                :disabled="disabled || readOnly || atMax"
                 @click="bump(1)"
             >
                 <span aria-hidden="true">
@@ -218,7 +232,7 @@ const atMax = computed(() => props.max !== undefined && (props.modelValue ?? 0) 
                 class="tao-input-number__step"
                 :aria-label="l10n.decrementLabel"
                 tabindex="-1"
-                :disabled="disabled || atMin"
+                :disabled="disabled || readOnly || atMin"
                 @click="bump(-1)"
             >
                 <span aria-hidden="true">

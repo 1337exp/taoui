@@ -3,7 +3,7 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useControlAttrs } from '../controlAttrs';
 import { useDismiss } from '../dismiss';
 import { useFloating } from '../floating';
-import { useField } from '../formField';
+import { nativeFieldAttrs, useField } from '../formField';
 import { useLayer } from '../layers';
 import { stepEnabled } from '../primitives/useRoving';
 import { listenFocusLoss } from '../focusLoss';
@@ -26,6 +26,14 @@ const props = withDefaults(
         options?: TaoSelectOption[];
         placeholder?: string;
         disabled?: boolean;
+        /** The id of the control, which the label of a `TaoFormField` points at. / id элемента: на него указывает подпись `TaoFormField`. */
+        id?: string;
+        /** The name in a form: the value goes into `FormData` and a native submit. / Имя в форме: значение попадает в `FormData` и нативную отправку. */
+        name?: string;
+        /** The field must be filled in (native `required`). / Поле обязательно (нативный `required`). */
+        required?: boolean;
+        /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
+        autofocus?: boolean;
         invalid?: boolean;
         emptyText?: string;
         /** Label of the clear row in the list. Slot `#clear` replaces it (icon, markup). / Подпись пункта сброса; слот `#clear` заменяет её (иконка, разметка). */
@@ -460,7 +468,7 @@ onBeforeUnmount(() => {
     >
         <div ref="fieldRef" class="tao-combobox__field" @mousedown="onFieldMouseDown">
             <input
-                v-bind="controlAttrs()"
+                v-bind="{ ...controlAttrs(), ...nativeFieldAttrs(props) }"
                 :id="controlId"
                 ref="inputRef"
                 class="tao-combobox__input"

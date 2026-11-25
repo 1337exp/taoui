@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
-import { useField } from '../formField';
+import { nativeFieldAttrs, useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 
 defineOptions({ name: 'TaoTextarea', inheritAttrs: false });
@@ -27,8 +27,6 @@ const props = withDefaults(
          * `bar` — полоса слева, `outline` — рамка как у TaoInput, `filled` — только заливка, `plain` — без рамки и заливки.
          */
         variant?: TaoTextareaVariant;
-        /** Text can be read and selected, not edited. / Текст читается и выделяется, но не правится. */
-        readonly?: boolean;
         /** Spaces are not entered: neither typed nor pasted. / Пробелы не вводятся — ни с клавиатуры, ни вставкой. */
         noSpace?: boolean;
         rows?: number;
@@ -41,8 +39,6 @@ const props = withDefaults(
         maxHeight?: number | string;
         resize?: boolean;
         modelValue?: string;
-        /** Focus on mount. / Фокус при монтировании. */
-        autofocus?: boolean;
         /** Text alignment. / Выравнивание текста. */
         align?: 'start' | 'center' | 'end';
         /**
@@ -50,8 +46,17 @@ const props = withDefaults(
          * Enter снимает фокус вместо переноса (Shift+Enter переносит); `keydown` уходит раньше.
          */
         blurOnEnter?: boolean;
-        invalid?: boolean;
+        /** The id of the control, which the label of a `TaoFormField` points at. / id элемента: на него указывает подпись `TaoFormField`. */
         id?: string;
+        /** The name in a form: the value goes into `FormData` and a native submit. / Имя в форме: значение попадает в `FormData` и нативную отправку. */
+        name?: string;
+        /** The field must be filled in (native `required`). / Поле обязательно (нативный `required`). */
+        required?: boolean;
+        /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
+        autofocus?: boolean;
+        /** The value can be looked at, selected and sent, not changed. / Значение можно смотреть, выделять и отправлять, но не менять. */
+        readOnly?: boolean;
+        invalid?: boolean;
         /** Показать «введено / максимум» под полем. Имеет смысл вместе с `maxlength`. */
         count?: boolean;
     }>(),
@@ -63,7 +68,7 @@ const props = withDefaults(
         minlength: 0,
         maxlength: undefined,
         disabled: false,
-        readonly: false,
+        readOnly: false,
         noSpace: false,
         rows: 3,
         maxHeight: 500,
@@ -207,7 +212,7 @@ onBeforeUnmount(() => {
 <template>
     <div v-bind="rootAttrs()" class="tao-textarea-wrap" :class="sizeClass(size)">
         <textarea
-            v-bind="controlAttrs()"
+            v-bind="{ ...controlAttrs(), ...nativeFieldAttrs(props) }"
             :id="controlId"
             ref="textareaRef"
             class="tao-textarea"
@@ -225,7 +230,7 @@ onBeforeUnmount(() => {
             :minlength="minlength"
             :maxlength="maxlength"
             :disabled="disabled"
-            :readonly="readonly"
+            :readonly="readOnly || undefined"
             :rows="rows"
             :style="{ maxHeight: maxHeightCss }"
             :value="modelValue"

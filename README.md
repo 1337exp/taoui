@@ -193,7 +193,7 @@ There is no heading component — use `h1 { font-size: var(--tao-font-size-3xl) 
 
 API rules — every component follows them:
 
-- **Fields** take `v-model`, `disabled`, `invalid` (red frame) and `size`. Label, hint and error text come from `TaoFormField`.
+- **Fields** take `v-model` and one contract (`FieldProps`): `id`, `name`, `invalid` (red frame), `disabled`, `size`, `required`, `autofocus`; the text fields add `readOnly`. Label, hint and error text come from `TaoFormField`.
 - **Events**: `update:X` for v-model plus `change` when the user finished a change (Slider, Split — on release). Other events are verbs in the present tense: `select`, `close`, `create`.
 - **Texts**: visible ones are `*Text` (`clearText`, `successText`), screen-reader ones are `*Label` (`closeLabel`).
 - **Lists**: data arrays are `items`; selectable items carry `value` + `label` (`TaoSelectOption`, `TaoTabItem`). Identifiers of plain data (table columns, stages) stay `key`.

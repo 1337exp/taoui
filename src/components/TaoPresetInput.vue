@@ -5,7 +5,7 @@ import { useControlAttrs } from '../controlAttrs';
 import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
 import { useDismiss } from '../dismiss';
 import { useFloating } from '../floating';
-import { useField } from '../formField';
+import { nativeFieldAttrs, useField } from '../formField';
 import { useLayer } from '../layers';
 import { useLocaleText } from '../locale';
 import { parsePreset, presetLine, presetList, stepPreset, type TaoPresetOption, type TaoPresetValue } from '../presetInput';
@@ -36,6 +36,14 @@ const props = withDefaults(
         min?: number;
         max?: number;
         disabled?: boolean;
+        /** The id of the control, which the label of a `TaoFormField` points at. / id элемента: на него указывает подпись `TaoFormField`. */
+        id?: string;
+        /** The name in a form: the value goes into `FormData` and a native submit. / Имя в форме: значение попадает в `FormData` и нативную отправку. */
+        name?: string;
+        /** The field must be filled in (native `required`). / Поле обязательно (нативный `required`). */
+        required?: boolean;
+        /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
+        autofocus?: boolean;
         invalid?: boolean;
         /** Control size, same scale as TaoButton; without it the size of the ancestors. / Размер контрола, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
@@ -239,7 +247,7 @@ function onKeydown(event: KeyboardEvent) {
         <div ref="fieldRef" class="tao-preset-input__field">
             <input
                 inputmode="numeric"
-                v-bind="controlAttrs()"
+                v-bind="{ ...controlAttrs(), ...nativeFieldAttrs(props) }"
                 :id="controlId"
                 ref="inputRef"
                 class="tao-preset-input__input"

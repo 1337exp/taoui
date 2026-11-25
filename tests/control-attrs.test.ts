@@ -109,7 +109,8 @@ describe('every field splits its attributes', () => {
         expect(source).toMatch(/inheritAttrs:\s*false/);
         expect(source).toContain('useControlAttrs()');
         expect(source).toContain('v-bind="rootAttrs()"');
-        expect(source).toContain('v-bind="controlAttrs()"');
+        // alone, or merged with the native attributes of the contract (`nativeFieldAttrs`)
+        expect(source).toMatch(/v-bind="(controlAttrs\(\)|\{ \.\.\.controlAttrs\(\), \.\.\.nativeFieldAttrs\(props\) \})"/);
     });
 });
 

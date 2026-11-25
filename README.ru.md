@@ -194,7 +194,7 @@ Container живёт на другой оси — ширина: `width="wide" | 
 
 Правила API — им следуют все компоненты:
 
-- **Поля** принимают `v-model`, `disabled`, `invalid` (красная рамка) и `size`. Подпись, подсказка и текст ошибки — через `TaoFormField`.
+- **Поля** принимают `v-model` и один контракт (`FieldProps`): `id`, `name`, `invalid` (красная рамка), `disabled`, `size`, `required`, `autofocus`; текстовые поля добавляют `readOnly`. Подпись, подсказка и текст ошибки — через `TaoFormField`.
 - **События**: `update:X` для v-model плюс `change`, когда пользователь закончил изменение (Slider, Split — по отпусканию). Остальные события — глаголы в настоящем времени: `select`, `close`, `create`.
 - **Тексты**: видимые — `*Text` (`clearText`, `successText`), для скринридера — `*Label` (`closeLabel`).
 - **Списки**: массивы данных — `items`; выбираемые элементы несут `value` + `label` (`TaoSelectOption`, `TaoTabItem`). Идентификаторы обычных данных (колонки таблицы, стадии) остаются `key`.

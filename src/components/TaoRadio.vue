@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { computed, inject, useId } from 'vue';
+import { computed, inject } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
-import { useField } from '../formField';
+import { nativeFieldAttrs, useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { radioGroupKey, type TaoRadioValue } from '../radio';
 
@@ -19,6 +19,12 @@ const props = withDefaults(
         label?: string;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
+        /** The id of the control, which the label of a `TaoFormField` points at. / id элемента: на него указывает подпись `TaoFormField`. */
+        id?: string;
+        /** The field must be filled in (native `required`). / Поле обязательно (нативный `required`). */
+        required?: boolean;
+        /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
+        autofocus?: boolean;
         invalid?: boolean;
         /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */
         size?: TaoSize;
@@ -36,9 +42,9 @@ const emit = defineEmits<{
 }>();
 
 const group = inject(radioGroupKey, null);
-const { field, isInvalid } = useField(props);
-const localId = useId();
-const controlId = computed(() => (group ? localId : (field?.id ?? localId)));
+const { field, isInvalid, controlId: fieldId, localId } = useField(props);
+// a radio in a group has an id of its own (the field's id belongs to the group), unless it is given one
+const controlId = computed(() => (group ? props.id || localId : fieldId.value));
 const describedBy = computed(() => (group ? undefined : field?.describedBy.value));
 
 const isDisabled = computed(() => props.disabled || Boolean(group?.disabled.value));
@@ -66,7 +72,7 @@ function onChange() {
 <template>
     <label v-bind="rootAttrs()" class="tao-radio" :class="[sizeClass(size), { 'tao-radio--disabled': isDisabled, 'tao-radio--invalid': isInvalid && !group }]" :for="controlId">
         <input
-            v-bind="controlAttrs()"
+            v-bind="{ ...controlAttrs(), ...nativeFieldAttrs(props) }"
             :id="controlId"
             class="tao-radio__input"
             type="radio"
