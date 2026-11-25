@@ -74,6 +74,7 @@ npm run smoke                      # the packed tarball in a fresh Vite app
   own (`surface-raised` is the colour of the panels it hangs over: the hint melts into them); its arrow reads `var(--_tip-bg)`; its
   text is `currentColor`, a quieter line is `color-mix(in srgb, currentColor 70%, transparent)`. A new hint copied from the look of
   `TaoCopy` or from a card gets it wrong; `tests/tip.test.ts` fails for one that takes `--tao-z-tooltip` without the class.
+- **The kit's CSS is in layers** (`tao.tokens … tao.components`): a core file goes in by `@import … layer(…)` in `styles/index.css`, a component's `<style>` by the PostCSS step (`scripts/postcssTaoLayers.mjs`, in `vite.config.ts` and `showcase/vite.config.js`); a new `.vue` needs nothing, a new core file needs its `layer()`. An app's CSS is outside and wins. **A radius is never a bare product with a fraction**: `round(calc(var(--tao-radius-x) * k), 1px)` (a fractional pixel paints a soft, flickering edge; `tests/radius.tokens.test.ts`).
 - **Tokens:** a role in `themes/dark.css` must exist in `light.css`; contexts (`contexts/*.css`) are classes that set
   private `--_tao-*` variables. A custom property is computed where it is declared: a context that combines two axes
   (size × density) must recompute on every class of both axes.

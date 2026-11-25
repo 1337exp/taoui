@@ -696,6 +696,24 @@ tokens/primitives.css → tokens/semantic.css → themes/*.css → contexts/*.cs
   leave them alone      type, motion          per theme        surface classes
 ```
 
+### Cascade layers: your CSS wins
+
+The kit's CSS lives in the layers `tao.tokens`, `tao.themes`, `tao.base`, `tao.typography`, `tao.contexts`, `tao.components` (the last is the strongest), and the order is written at the top of every file, so it is the same whichever file the browser meets first. **The CSS of your app is in no layer, and a rule outside of the layers beats every rule inside them whatever its specificity**: `.my-nav .tao-nav__item { ... }` is enough, with no `!important`, no `:deep`, no doubled class. A custom property you set on `:root` beats the kit's the same way.
+
+One thing to know: it works against you for a global rule on an element (`h2 { font-size: 24px }`, `a { color: red }`, `* { margin: 0 }`), which now beats the kit's own class rules too. Put such rules into a layer of yours that sits under the kit, before the kit's CSS is imported:
+
+```css
+@layer reset, tao;               /* first: your reset is weaker than the kit */
+@import '@1337exp/taoui/styles.css';
+@layer reset { h2 { margin: 0 } }
+```
+
+The palette files (`@1337exp/taoui/palettes/*.css`) are not in a layer on purpose: a palette must beat the theme. The raw token files imported one by one are not in layers either.
+
+### Radius: one knob, whole pixels
+
+`--tao-radius-base` (10px) is the roundness of a product: 6px is sharper, 14px softer. The steps `--tao-radius-sm / -md / -lg / -xl` (6 / 10 / 14 / 18 at 10px) are counted from it and snapped to a whole pixel with `round()`: a corner on a fractional pixel is painted with a soft, flickering edge. Set the base on `:root` (a custom property is computed where it is declared, so a base on a subtree does not reach the steps). Any radius you derive yourself from a token: `round(calc(var(--tao-radius-control) * 0.6), 1px)`.
+
 ### Layers
 
 | File (in `src/styles/`) | Role | Touch it? |
@@ -755,7 +773,7 @@ document.documentElement.setAttribute('data-tao-theme', 'light')
 - `--tao-color-text*` — text (default / strong / subtle / muted / disabled)
 - `--tao-color-danger*`, `--tao-color-success*`, `--tao-color-warning*`, `--tao-color-info*` — status colors
 - `--tao-color-input-*` — fields, because input bg/text often differs from surface/text
-- `--tao-radius-control`, `--tao-radius-panel` — radii (small controls vs large panels; 10px and 18px, from the scale `--tao-radius-sm` / `-md` / `-lg` / `-xl` = 6 / 10 / 14 / 18px)
+- `--tao-radius-control`, `--tao-radius-panel` — radii (small controls vs large panels; 10px and 18px, counted from `--tao-radius-base`, from the scale `--tao-radius-sm` / `-md` / `-lg` / `-xl` = 6 / 10 / 14 / 18px)
 - `--tao-shadow-panel`, `--tao-shadow-overlay` — shadows
 - `--tao-font-size-*` — type scale in `primitives.css`: `xs`–`xl` controls, `2xl`–`4xl` titles / prose
 - `--tao-control-height-*` (26 / 36 / 44px), `--tao-control-padding-x-*`, `--tao-control-padding-y-*`, `--tao-control-font-size-*`, `--tao-control-font-size-secondary-*`, `--tao-button-padding-x-*`, `--tao-indicator-size-*`, `--tao-tag-height-*` / `-padding-x-*` / `-font-size-*` — the size scale in `primitives.css`. Components read the current values from `contexts/size.css`: `--tao-control-height`, `--tao-control-padding-x` / `-y`, `--tao-control-font-size`, `--tao-control-font-size-secondary`, `--tao-button-padding-x`, `--tao-indicator-size`, `--tao-tag-height` / `-padding-x` / `-font-size`. Use them in your own controls to match the size around them.

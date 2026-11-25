@@ -1,8 +1,11 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
+import { taoLayers } from '../scripts/postcssTaoLayers.mjs'
 
 export default defineConfig({
+  // the kit's component CSS goes into the tao.components layer, as in the published package
+  css: { postcss: { plugins: [taoLayers(path.resolve(__dirname, '../src'))] } },
   plugins: [vue()],
   // Relative asset paths: the built showcase can be dropped into any folder
   // (e.g. https://666.io/sandbox/taoui/) without rebuilding.

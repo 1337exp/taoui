@@ -51,7 +51,7 @@ function scale(base: number, ratio: number): number[] {
 
 describe('typography', () => {
     it('is part of the stylesheet', () => {
-        expect(indexCss).toContain('@import "./typography.css";');
+        expect(indexCss).toContain('@import "./typography.css" layer(tao.typography);');
     });
 
     it('base 16 and ratio 1.25 by default give 49 / 39 / 31 / 25 / 20 / 16', () => {

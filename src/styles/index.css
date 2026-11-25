@@ -6,16 +6,19 @@
  * Порядок слоёв: примитивы -> семантические токены -> темы (dark по умолчанию, light включается атрибутом) ->
  * контексты (размер и плотность, тон, поверхность) -> типографика (классы по выбору) -> базовый сброс.
  */
-@import "./tokens/primitives.css";
-@import "./tokens/semantic.css";
-@import "./themes/dark.css";
-@import "./themes/light.css";
-@import "./contexts/size.css";
-@import "./contexts/tone.css";
-@import "./contexts/surface.css";
-@import "./contexts/frames.css";
-@import "./contexts/atmosphere.css";
-@import "./contexts/stretch.css";
-@import "./contexts/tip.css";
-@import "./typography.css";
-@import "./base.css";
+/* the order of the layers, the last wins; an app's own CSS is outside of them and beats them all
+   порядок слоёв, последний сильнее; собственный CSS приложения вне слоёв и бьёт их все */
+@layer tao.tokens, tao.themes, tao.base, tao.typography, tao.contexts, tao.components;
+@import "./tokens/primitives.css" layer(tao.tokens);
+@import "./tokens/semantic.css" layer(tao.tokens);
+@import "./themes/dark.css" layer(tao.themes);
+@import "./themes/light.css" layer(tao.themes);
+@import "./contexts/size.css" layer(tao.contexts);
+@import "./contexts/tone.css" layer(tao.contexts);
+@import "./contexts/surface.css" layer(tao.contexts);
+@import "./contexts/frames.css" layer(tao.contexts);
+@import "./contexts/atmosphere.css" layer(tao.contexts);
+@import "./contexts/stretch.css" layer(tao.contexts);
+@import "./contexts/tip.css" layer(tao.contexts);
+@import "./typography.css" layer(tao.typography);
+@import "./base.css" layer(tao.base);

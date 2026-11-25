@@ -3,6 +3,8 @@ import vue from '@vitejs/plugin-vue';
 import dts from 'vite-plugin-dts';
 import { resolve } from 'path';
 import { injectCssImports } from './scripts/viteInjectCssImports';
+// @ts-expect-error a plain .mjs build script with no declarations
+import { taoLayers } from './scripts/postcssTaoLayers.mjs';
 
 // The package is unbundled ESM: one JS module per source module, and one CSS file per component, imported by the component. `index.js` is
 // only named re-exports, `plugin.js` is the optional global registration, `styles.js` exists to produce the core stylesheet
@@ -11,6 +13,7 @@ import { injectCssImports } from './scripts/viteInjectCssImports';
 // только именованные реэкспорты, `plugin.js` — необязательная глобальная регистрация, `styles.js` нужен, чтобы получить ядро стилей
 // (`dist/styles/index.css`, его приложение подключает один раз). Приложение, импортирующее `{ TaoButton }`, получает кнопку и её CSS и ничего больше.
 export default defineConfig({
+    css: { postcss: { plugins: [taoLayers(resolve(__dirname, 'src'))] } },
     plugins: [
         vue(),
         injectCssImports(),

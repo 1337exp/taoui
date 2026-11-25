@@ -37,7 +37,7 @@ withDefaults(
     height: round(up, 1.7em, 2px);
     min-width: round(up, 1.7em, 2px);
     padding: 0 0.45em;
-    border-radius: max(4px, calc(var(--tao-radius-control) * 0.6));
+    border-radius: max(4px, round(calc(var(--tao-radius-control) * 0.6), 1px));
     background: color-mix(in srgb, currentColor 16%, transparent);
     font: inherit;
     font-size: var(--tao-font-size-xs);

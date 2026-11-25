@@ -159,7 +159,7 @@ onBeforeUnmount(() => {
        curve; `--tao-toast-edge: 0` brings the flush look back
        насколько шкала времени отступает от скруглённых углов: она лежит на прямой части и не режется кривой;
        `--tao-toast-edge: 0` возвращает прежний вид */
-    --_edge: var(--tao-toast-edge, min(calc(var(--tao-radius-panel) * 0.6), var(--tao-space-6)));
+    --_edge: var(--tao-toast-edge, min(round(calc(var(--tao-radius-panel) * 0.6), 1px), var(--tao-space-6)));
 
     position: relative;
     display: flex;

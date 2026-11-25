@@ -131,11 +131,22 @@
     /* ---------- Radius scale ----------
        Soft corners since 5.51.0 (they were 4 / 8 / 12): every app of ours set these same values over the kit.
        Мягкие углы с 5.51.0 (были 4 / 8 / 12): все наши приложения ставили поверх набора ровно эти значения. */
-    --tao-radius-sm: 6px;
-    --tao-radius-md: 10px;
-    --tao-radius-lg: 14px;
-    --tao-radius-xl: 18px;
     --tao-radius-full: 999px;
+
+    /* ---------- Radius: one knob, a whole pixel each ----------
+       `--tao-radius-base` is the roundness of a product: 10px is the kit, 6px sharper, 14px softer. The steps are counted
+       from it and snapped to a whole pixel with `round()`: a corner of 6.3px is painted on a fractional position, and the
+       browser draws it with a soft, flickering edge (the same lesson as the whole-pixel lines of the toast). Set the base on
+       `:root`: a custom property is computed where it is declared, so a base given on a subtree does not reach these steps.
+       Одна ручка, каждый шаг в целых пикселях. `--tao-radius-base` — скруглённость продукта: 10px это набор, 6px острее,
+       14px мягче. Шаги считаются от неё и притягиваются к целому пикселю через `round()`: угол в 6.3px рисуется на дробной
+       позиции, и браузер даёт мягкий мерцающий край (тот же урок, что целые строки у тоста). Базу задавать на `:root`:
+       пользовательское свойство вычисляется там, где объявлено, поэтому база на поддереве до шагов не дойдёт. */
+    --tao-radius-base: 10px;
+    --tao-radius-sm: round(calc(var(--tao-radius-base) * 0.6), 1px);
+    --tao-radius-md: round(var(--tao-radius-base), 1px);
+    --tao-radius-lg: round(calc(var(--tao-radius-base) * 1.4), 1px);
+    --tao-radius-xl: round(calc(var(--tao-radius-base) * 1.8), 1px);
 
     /* ---------- Font size scale ---------- */
     --tao-font-size-xs: 12px;
