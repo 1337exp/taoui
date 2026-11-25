@@ -1,4 +1,5 @@
 import { ref } from 'vue';
+import { createHostSlot } from '../primitives/hostSlot';
 import type { TaoConfirmDefaults, TaoConfirmRecord } from './types';
 
 // no texts of their own: the buttons say what the locale in effect where the host stands says (`confirm.defaults({ ok })` sets one)
@@ -42,25 +43,11 @@ export function resolveConfirm(value: boolean) {
 }
 
 // The one host that asks: the first to claim it (a second one draws nothing). / Единственный хост, который спрашивает: первый занявший (второй ничего не рисует).
-let owner: symbol | null = null;
+// When the owner goes away the next host in line asks what is open (`currentConfirm` stays in the store). / Когда владелец уходит, следующий в очереди хост спрашивает открытое (`currentConfirm` остаётся в хранилище).
+const slot = createHostSlot();
 
-export function claimConfirmHost(who: symbol): boolean {
-    if (typeof window === 'undefined') {
-        return true;
-    }
-    if (owner === null || owner === who) {
-        owner = who;
-        return true;
-    }
-    return false;
-}
-
-export function releaseConfirmHost(who: symbol) {
-    if (owner === who) {
-        owner = null;
-    }
-}
-
-export function hasConfirmHost() {
-    return owner !== null;
-}
+export const claimConfirmHost = slot.claim;
+export const releaseConfirmHost = slot.release;
+/** Reactive: does this host ask now? / Реактивно: спрашивает ли этот хост сейчас? */
+export const isConfirmHostOwner = slot.isOwner;
+export const hasConfirmHost = slot.has;

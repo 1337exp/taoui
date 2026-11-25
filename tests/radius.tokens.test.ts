@@ -20,16 +20,21 @@ describe('radius', () => {
         }
     });
 
-    it('with the base of the kit the steps are the scale 6 / 10 / 14 / 18', () => {
-        const base = 10;
-        expect([0.6, 1, 1.4, 1.8].map((k) => Math.round(base * k))).toEqual([6, 10, 14, 18]);
+    it('the steps are a 4px ladder around the base (-4, 0, +4, +8), never below 0', () => {
+        expect(primitives).toMatch(/--tao-radius-sm:\s*round\(max\(0px, calc\(var\(--tao-radius-base\) - 4px\)\), 1px\)/);
+        expect(primitives).toMatch(/--tao-radius-lg:\s*round\(calc\(var\(--tao-radius-base\) \+ 4px\), 1px\)/);
+        expect(primitives).toMatch(/--tao-radius-xl:\s*round\(calc\(var\(--tao-radius-base\) \+ 8px\), 1px\)/);
+        const steps = (base: number) => [Math.max(0, base - 4), base, base + 4, base + 8];
+        expect(steps(10)).toEqual([6, 10, 14, 18]);
+        expect(steps(16)).toEqual([12, 16, 20, 24]);
+        expect(steps(2)).toEqual([0, 2, 6, 10]);
     });
 
-    it('whatever the base, a step is a whole number (round to 1px)', () => {
-        for (let base = 4; base <= 24; base += 1) {
-            for (const k of [0.6, 1, 1.4, 1.8]) {
-                expect(Number.isInteger(Math.round(base * k))).toBe(true);
-            }
+    it('whatever the whole-pixel base, every step is an even ladder of whole pixels', () => {
+        for (let base = 2; base <= 24; base += 1) {
+            const [sm, md, lg, xl] = [Math.max(0, base - 4), base, base + 4, base + 8];
+            expect([lg - md, xl - lg]).toEqual([4, 4]);
+            for (const step of [sm, md, lg, xl]) expect(Number.isInteger(step)).toBe(true);
         }
     });
 

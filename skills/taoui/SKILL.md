@@ -1,18 +1,20 @@
 ---
 name: taoui
-description: Build Vue 3 interfaces with @1337exp/taoui 5 (TaoUI) — setup, themes and palettes, size / density / tone / surface contexts, the typography layer, components and their props, and the mistakes people make with them. Use when code imports @1337exp/taoui, uses Tao* components or --tao-* tokens, or the user asks for TaoUI.
+description: Build Vue 3 interfaces with @1337exp/taoui 6 (TaoUI) — setup, themes and palettes, size / density / tone / surface contexts, the typography layer, components and their props, and the mistakes people make with them. Use when code imports @1337exp/taoui, uses Tao* components or --tao-* tokens, or the user asks for TaoUI.
 ---
 
-# TaoUI 5
+# TaoUI 6
 
 A Vue 3 component kit on design tokens. Components read **roles** (CSS custom properties `--tao-*`), never colours, so a
 theme, a palette or a context class changes every component under it. The props of every component, with types and
 defaults, are in [references/components.md](references/components.md); read the section you need before writing a
 component you have not used yet. **How to put them together** (the accent budget, choosing a size: small / medium / large and
 density, a toolbar, the footer of a form, a destructive action: what to use when, with a do and a don't) is in [references/patterns.md](references/patterns.md); read
-it before you compose a screen. **A new app starts from a starter** (a whole screen in one file, with the decisions it makes
-and why: the app shell with a side menu, `TaoNav fill`) in [references/starters.md](references/starters.md); copy the one
-that fits instead of composing the shell from scratch.
+it before you compose a screen. **A new app starts from `TaoShell`** (the shell: navigation, action, project, language, theme, the page as `<main>` with a skip link,
+`<TaoHosts />` inside) and from a page starter in [references/starters.md](references/starters.md) (a whole screen in one file, with the
+decisions it makes and why); copy the one that fits instead of composing a screen from scratch.
+**Your own CSS goes outside of any layer and wins over the kit** (the kit lives in `@layer tao.*`); a global rule on an element
+(`h2 {}`, `* { margin: 0 }`) wins too, so put such resets in `@layer reset, tao;` declared before the kit.
 
 ## Setup
 
@@ -28,7 +30,7 @@ createApp(App).mount('#app')
 
 - **Import the components you use**: `import { TaoButton } from '@1337exp/taoui'`. The CSS of a component comes with the component (about 38 KB of CSS for one, against 232 KB for the whole kit); do not import a stylesheet per component.
 - Global registration is optional and costs the whole kit: `import TaoUI from '@1337exp/taoui/plugin'`, `app.use(TaoUI, { locale: localeRu })`. Prefer named imports. On the server (Nuxt, SSR) give the language to the app through the plugin: the process is shared by requests.
-- Nuxt 3: the CSS in `app.vue`; the plugin only if you want global tags. Everything is SSR-safe.
+- Nuxt 3: the CSS in `app.vue`; the plugin only if you want global tags. Components are SSR-safe; `toast()` / `confirm()` do nothing on the server, and `toast.defaults` / `confirm.defaults` are process-wide (set them once at start-up, not per request).
 - Browser floor: Chrome / Edge 130, Safari 18, Firefox 132 (the last two years: Popover API, `<dialog>`, `@layer`, nesting, `color-mix()`, `light-dark()`, `@property`, container queries).
 
 ## Rules that keep an app consistent
@@ -85,7 +87,7 @@ choose a text colour, WCAG 2 to promise a number.
   it). `fill` makes it the shell of an app: it takes its parent's height (`html, body, #app { height: 100% }`), the
   page scrolls inside `.tao-nav__content` and the footer stands at the bottom of the side panel; more than one child of
   `#action` stack one under the other; `--tao-nav-compact` (1 on the bar and the rail, 0 on the side panel) is there for
-  your own pieces in the slots. `select(id, event)` + `event.preventDefault()` to route with a router. Widths `--tao-nav-rail-width` /
+  your own pieces in the slots. `select(item, event)` (the item, `item.id` is the section) + `event.preventDefault()` to route with a router. Widths `--tao-nav-rail-width` /
   `--tao-nav-drawer-width`; the action button may take `shortcut="N"` (shown in the side panel, hidden when round). `surface="glass"` for a
   translucent bar over the page (as on TaoCard; it turns solid where blur is off). `#footer`: a small line under the
   items (version, About) in the rail and the side panel. `badgeTone="neutral"`: grey counters, the accent on the
@@ -115,17 +117,15 @@ choose a text colour, WCAG 2 to promise a number.
   bottom sheet) — v-model; Escape closes the top layer only. `TaoPopover`, `TaoTooltip` (`placement`; the tip is the opposite of the theme, and so is every hint of the kit; a hint you draw yourself wears the class `tao-tip` and sets no background of its own, the colour of the panels is the one it hangs over; `shortcut` adds the key as a key cap; `bold` is on, semi-bold text; `animated` is the fade, off by default: a share of the base duration, `0` off, `1` base, `2` twice, or the token `--tao-tooltip-motion`). `TaoKbd` is the one look for a key (`variant` `cap` / `plain`): do not draw your own `<kbd>`.
 - Menus share one engine: `TaoDropdownMenu`, `TaoMenubar`, `TaoContextMenu`, `TaoMenu` (the panel for your own shell). `TaoMenu` and `TaoPopover` take `anchor` as an element or a point `{ x, y }` of the screen (a menu at a drop point or at the pointer; recipe for a context menu: on `contextmenu` prevent the default and open at `clientX` / `clientY`, or just use `TaoContextMenu`). `TaoDropdownMenu block`: the button fills its place and draws nothing, for a whole chip of yours in `#button` (never style `.tao-dropdown-menu__button` from outside).
   Items are a data tree `TaoMenuItem[]`: `{ id, label, icon?, shortcut?, disabled?, items? }`,
-  `{ type: 'checkbox' | 'radio', checked }`, `{ type: 'label' | 'separator' }`. `@select="id => …"`. `closeOnScroll`.
+  `{ type: 'checkbox' | 'radio', checked }`, `{ type: 'label' | 'separator' }`. `@select="item => …"` (the whole item, `item.id` names it). `closeOnScroll`.
   With TaoUX, `createCommands().toMenu(layout)` builds this tree and binds the same shortcuts.
 - `TaoToolbar` (one tab stop, arrows walk it) with `TaoToolbarGroup` and `TaoToolbarSeparator`; toggles are
   `TaoButton v-model:pressed`, a one-of-many choice inside it is `TaoSegmented`. A bar that must stay one row (an editor, a phone)
   is `<TaoToolbar overflow>`: the groups that do not fit go under a «⋮» button, a `TaoToolbarGroup pinned` never does.
 - `toast({ type: 'success', message: 'Saved' })` or `toast.success('Saved')`, `toast.danger('…', { title: 'Network', timeout: 5000 })`,
-  `{ actions: [{ label: 'Undo', onClick }] }`; it gives back `{ id, dismiss() }`. `await confirm({ title: 'Delete?', message: '…', tone: 'danger' })` resolves to a boolean. Both draw in **`<TaoHosts />`**: put it once into the root of the app (`TaoShell` has it inside); it stands in the
+  `{ actions: [{ label: 'Undo', onClick }] }`; it gives back `{ id, dismiss() }`. `await confirm({ title: 'Delete?', message: '…', tone: 'danger' })` resolves to a boolean. Both draw in **`<TaoHosts />`** (= `TaoToastViewport` + `TaoConfirmHost`, which can stand alone): put it once into the root of the app (`TaoShell` has it inside); it stands in the
   app's own tree, so it reads the locale you `provideTaoLocale` (the button texts follow it), and a second one draws nothing.
   Without a host nothing is shown and a dev warning says so.
-  Their hosts `TaoToastViewport` / `TaoConfirmHost` mount themselves on the first call; place them yourself only to control
-  where they render.
 - `TaoAlert` (`tone`, `title`, `closable`, `collapsible` + `v-model:collapsed`), `TaoEmpty`, `TaoLoader`, `TaoSkeleton`,
   `TaoProgress`.
 

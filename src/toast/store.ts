@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue';
+import { createHostSlot } from '../primitives/hostSlot';
 import type { TaoToastDefaults, TaoToastPosition, TaoToastRecord } from './types';
 
 export const TOAST_POSITIONS: TaoToastPosition[] = [
@@ -92,26 +93,12 @@ export function dismissToasts(id?: string) {
 // nothing, or every toast would be on the screen twice.
 // Единственный viewport, который рисует тосты: тот, кто первым его занял. Второй (тег, написанный руками рядом с `<TaoHosts />`)
 // ничего не рисует, иначе каждый тост был бы на экране дважды.
-let owner: symbol | null = null;
+// When the owner goes away the next host in line draws what waits in the store (see primitives/hostSlot.ts).
+// Когда владелец уходит, следующий в очереди хост рисует то, что ждёт в хранилище (см. primitives/hostSlot.ts).
+const slot = createHostSlot();
 
-/** Takes the place of the viewport; `false` when another one has it. On the server nothing is held (one module serves every request). / Занять место viewport; `false`, если оно занято. */
-export function claimToastViewport(who: symbol): boolean {
-    if (typeof window === 'undefined') {
-        return true;
-    }
-    if (owner === null || owner === who) {
-        owner = who;
-        return true;
-    }
-    return false;
-}
-
-export function releaseToastViewport(who: symbol) {
-    if (owner === who) {
-        owner = null;
-    }
-}
-
-export function hasToastViewport() {
-    return owner !== null;
-}
+export const claimToastViewport = slot.claim;
+export const releaseToastViewport = slot.release;
+/** Reactive: does this viewport draw now? / Реактивно: рисует ли этот viewport сейчас? */
+export const isToastViewportOwner = slot.isOwner;
+export const hasToastViewport = slot.has;

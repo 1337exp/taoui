@@ -61,6 +61,36 @@ function resume() {
     startTimer();
 }
 
+// WCAG 2.2.1 (timing adjustable): the time stops while the pointer is over the toast and while the focus is inside it (the close button,
+// an action), so a keyboard user is not outrun either; it runs again when both have left
+// WCAG 2.2.1 (настраиваемое время): время стоит, пока над тостом указатель и пока в нём фокус (кнопка закрытия, действие), чтобы
+// пользователь клавиатуры тоже не опоздал; оно идёт снова, когда ушли и указатель, и фокус
+const hovered = ref(false);
+const focusedInside = ref(false);
+function onEnter() {
+    hovered.value = true;
+    pause();
+}
+function onLeave() {
+    hovered.value = false;
+    if (!focusedInside.value) {
+        resume();
+    }
+}
+function onFocusIn() {
+    focusedInside.value = true;
+    pause();
+}
+function onFocusOut(event: FocusEvent) {
+    if ((event.currentTarget as HTMLElement).contains(event.relatedTarget as Node | null)) {
+        return;
+    }
+    focusedInside.value = false;
+    if (!hovered.value) {
+        resume();
+    }
+}
+
 // a snackbar: no title and an action — the text and the action share one line, the action at the end, as a text
 // button (Material, iOS); a long text wraps and the action goes under it, still at the end
 // snackbar: без заголовка и с действием — текст и действие в одной строке, действие в конце, текстовой кнопкой; длинный
@@ -96,7 +126,12 @@ watch(
 
 let stopFocusLoss: (() => void) | undefined;
 onMounted(() => {
-    stopFocusLoss = listenFocusLoss(resume);
+    stopFocusLoss = listenFocusLoss(() => {
+        hovered.value = false;
+        if (!focusedInside.value) {
+            resume();
+        }
+    });
 });
 
 onBeforeUnmount(() => {
@@ -110,10 +145,11 @@ onBeforeUnmount(() => {
         class="tao-toast"
         :class="[toneClass(toast.type === 'neutral' ? undefined : toast.type), surfaceClass(toast.surface), { 'tao-toast--paused': paused }]"
         :role="toast.type === 'danger' || toast.type === 'warning' ? 'alert' : 'status'"
-        aria-live="polite"
         :aria-busy="toast.loading || undefined"
-        @mouseenter="pause"
-        @mouseleave="resume"
+        @mouseenter="onEnter"
+        @mouseleave="onLeave"
+        @focusin="onFocusIn"
+        @focusout="onFocusOut"
     >
         <span v-if="hasIcon" class="tao-toast__icon" aria-hidden="true">
             <span v-if="toast.loading" class="tao-toast__spinner"></span>
@@ -317,6 +353,11 @@ onBeforeUnmount(() => {
     position: absolute;
     top: var(--tao-space-1);
     right: var(--tao-space-2);
+    /* a 24px target at least (WCAG 2.2, 2.5.8): the cross itself stays 20px / цель не меньше 24px (WCAG 2.2, 2.5.8): сам крестик остаётся 20px */
+    display: inline-grid;
+    place-items: center;
+    min-width: 24px;
+    min-height: 24px;
     padding: 0;
     border: none;
     background: none;

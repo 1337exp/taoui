@@ -49,9 +49,19 @@ function onLabelClick() {
     if (target instanceof HTMLInputElement || target instanceof HTMLButtonElement || target instanceof HTMLSelectElement || target instanceof HTMLTextAreaElement) {
         return;
     }
+    // a control that is not labelable but takes the focus itself (the thumb of a slider: a div with a tabindex)
+    // контрол, который нельзя пометить подписью, но сам берёт фокус (бегунок слайдера: div с tabindex)
+    if (target instanceof HTMLElement && target.tabIndex >= 0) {
+        target.focus();
+        return;
+    }
+    // otherwise the first real control of the row; the hidden value input of a form control (`.tao-sr-only`) is not one
+    // иначе первый настоящий контрол строки; скрытый input значения (`.tao-sr-only`) им не является
     document
         .getElementById(labelId)
-        ?.parentElement?.querySelector<HTMLElement>('input:not([disabled]), button:not([disabled]), textarea:not([disabled]), select:not([disabled])')
+        ?.parentElement?.querySelector<HTMLElement>(
+            'input:not([disabled]):not(.tao-sr-only), button:not([disabled]), textarea:not([disabled]), select:not([disabled])',
+        )
         ?.focus();
 }
 </script>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { onBeforeUnmount } from 'vue';
+import { computed, onActivated, onBeforeUnmount, onDeactivated } from 'vue';
 import TaoToastItem from './TaoToastItem.vue';
-import { claimToastViewport, releaseToastViewport, toastsByPosition, TOAST_POSITIONS } from '../toast/store';
+import { claimToastViewport, isToastViewportOwner, releaseToastViewport, toastsByPosition, TOAST_POSITIONS } from '../toast/store';
 import type { TaoToastPosition } from '../toast/types';
 
 defineOptions({ name: 'TaoToastViewport' });
@@ -9,8 +9,15 @@ defineOptions({ name: 'TaoToastViewport' });
 // one viewport draws the toasts; a second one in the tree draws nothing (otherwise each toast is on the screen twice)
 // тосты рисует один viewport; второй в дереве ничего не рисует (иначе каждый тост на экране дважды)
 const me = Symbol('tao-toast-viewport');
-const active = claimToastViewport(me);
+// the owner is reactive: a viewport that waits starts to draw the moment the one before it goes (a route, a v-if, a KeepAlive)
+// владелец реактивен: ждущий viewport начинает рисовать, как только уходит тот, что был перед ним (маршрут, v-if, KeepAlive)
+claimToastViewport(me);
+const active = computed(() => isToastViewportOwner(me));
 
+// a cached (deactivated) viewport draws nothing, so it must not keep the place
+// кэшированный (деактивированный) viewport ничего не рисует, поэтому место он не держит
+onDeactivated(() => releaseToastViewport(me));
+onActivated(() => claimToastViewport(me));
 onBeforeUnmount(() => {
     releaseToastViewport(me);
 });

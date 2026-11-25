@@ -92,6 +92,30 @@ describe('TaoShell', () => {
         prefs.dispose();
     });
 
+    it('the page is a <main> and the first thing in the tab order is a link that moves the focus to it, without touching the address', async () => {
+        const w = shell({}, { default: () => h('p', 'x') });
+        const main = w.find('main.tao-shell__main');
+        expect(main.exists()).toBe(true);
+        const links = [...(w.element as HTMLElement).querySelectorAll<HTMLElement>('a, button, input, [tabindex]:not([tabindex="-1"])')];
+        const skip = w.find('.tao-shell__skip');
+        expect(links[0]).toBe(skip.element);
+        const before = window.location.href;
+        await skip.trigger('click');
+        expect(document.activeElement).toBe(main.element);
+        expect(window.location.href).toBe(before);
+    });
+
+    it('without prefs the language switches still follow the choice (the header and the footer show the same one)', async () => {
+        const w = shell({ languages: ['en', 'ru'] });
+        const switches = w.findAllComponents(TaoLanguageSwitch);
+        expect(switches.length).toBeGreaterThan(0);
+        switches[0]!.vm.$emit('update:modelValue', 'ru');
+        await nextTick();
+        for (const s of w.findAllComponents(TaoLanguageSwitch)) {
+            expect(s.props('modelValue')).toBe('ru');
+        }
+    });
+
     it('a tools slot replaces the language and the theme', () => {
         const w = shell({ languages: ['en'] }, { tools: () => h('i', { class: 'mine' }) });
         expect(w.findAll('.tao-shell__tools .mine')).toHaveLength(2);

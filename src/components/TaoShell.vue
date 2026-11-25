@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, ref, useId } from 'vue';
 import { useLocaleText } from '../locale';
 import type { TaoKitPrefs } from '../kitPrefs';
 import type { TaoMenuItem, TaoMenuPick } from '../menu';
@@ -66,6 +66,14 @@ defineSlots<{
 }>();
 
 const l10n = useLocaleText(props, 'shell');
+// the page is the <main> landmark and the first tab stop is a link to it (WCAG 2.4.1: bypass blocks)
+// страница это ориентир <main>, а первая точка табуляции ссылка на него (WCAG 2.4.1: обход блоков)
+const mainId = `${useId()}-main`;
+// the focus goes to the page without touching the address: an app that routes by the hash must not lose its route
+// фокус уходит на страницу, адрес не меняется: приложение с маршрутами по хэшу не должно терять маршрут
+function skip() {
+    document.getElementById(mainId)?.focus();
+}
 
 const NEW = '__tao-shell-new-project';
 const current = computed(() => props.projects?.find((entry) => entry.id === project.value) ?? props.projects?.[0]);
@@ -93,11 +101,19 @@ const mode = computed({
         }
     },
 });
+// without `prefs` the choice is kept here, so the header switch and the footer switch show the same language
+// без `prefs` выбор хранится здесь, чтобы переключатель в шапке и в подвале показывали один язык
+const ownLocale = ref<string>();
 const locale = computed({
-    get: () => props.prefs?.locale.value ?? undefined,
+    get: () => (props.prefs ? props.prefs.locale.value : ownLocale.value),
     set: (value) => {
-        if (props.prefs && value) {
+        if (!value) {
+            return;
+        }
+        if (props.prefs) {
             props.prefs.locale.value = value;
+        } else {
+            ownLocale.value = value;
         }
     },
 });
@@ -105,6 +121,9 @@ const locale = computed({
 
 <template>
     <TaoNav v-model="section" v-model:layout="layout" v-model:look="look" fill :badge-tone="badgeTone" :items="items" :label="label">
+        <template #skip>
+            <a class="tao-shell__skip" :href="`#${mainId}`" @click.prevent="skip">{{ l10n.skipLabel }}</a>
+        </template>
         <!-- the main action, then the project under it: on the rail both are round icons -->
         <template v-if="action || current" #action>
             <TaoButton v-if="action" :icon="action.icon ?? 'tao-plus'" :shortcut="action.shortcut" @click="emit('action')">
@@ -153,7 +172,7 @@ const locale = computed({
                     </slot>
                 </div>
             </header>
-            <div class="tao-shell__main"><slot /></div>
+            <main :id="mainId" class="tao-shell__main" tabindex="-1"><slot /></main>
             <!-- where toast() and confirm() draw: the shell is the root of the app, so they stand here (they teleport to the body) / где рисуют toast() и confirm(): оболочка корень приложения, значит они стоят здесь (телепорт в body) -->
             <TaoHosts />
         </div>
@@ -195,6 +214,30 @@ const locale = computed({
     flex: 1;
     min-height: 0;
     overflow: auto;
+}
+
+.tao-shell__main:focus {
+    outline: none;
+}
+
+/* out of the way until it takes the focus, then the first thing on the screen / не мешает, пока не получит фокус, потом первое на экране */
+.tao-shell__skip {
+    position: fixed;
+    top: var(--tao-space-2);
+    left: var(--tao-space-2);
+    z-index: var(--tao-z-toast);
+    padding: var(--tao-space-2) var(--tao-space-3);
+    border-radius: var(--tao-radius-control);
+    background: var(--tao-color-surface-raised);
+    color: var(--tao-color-text);
+    box-shadow: var(--tao-shadow-overlay);
+    transform: translateY(-200%);
+}
+
+.tao-shell__skip:focus {
+    transform: none;
+    outline: 2px solid var(--tao-color-accent);
+    outline-offset: 2px;
 }
 
 /* the chip: the whole of it is the button of a block TaoDropdownMenu; on the rail (--tao-nav-compact: 1) the text and the

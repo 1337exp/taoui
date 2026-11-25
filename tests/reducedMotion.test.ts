@@ -41,6 +41,14 @@ describe('reduced motion of the overlays', () => {
         expect(block).toMatch(/transition: none;/);
     });
 
+    it('TaoConfirmHost: no bounce on the panel, no fade of the scrim', () => {
+        const block = reducedBlock('src/components/TaoConfirmHost.vue');
+        expect(block).toContain('.tao-confirm-enter-active .tao-confirm__panel');
+        expect(block).toContain('.tao-confirm-leave-active .tao-confirm__panel');
+        expect(block).toMatch(/animation: none;/);
+        expect(block).toMatch(/transition: none;/);
+    });
+
     it('TaoToastViewport: no bounce on the way in, no fade-out and no fold of the row on the way out', () => {
         const block = reducedBlock('src/components/TaoToastViewport.vue');
         for (const place of ['top', 'bottom', 'center']) {

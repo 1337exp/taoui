@@ -141,6 +141,34 @@ describe('one host draws, a second one draws nothing', () => {
         expect(document.querySelectorAll('.tao-toast')).toHaveLength(1);
     });
 
+    it('a host that lost the place draws the moment the owner goes away (toasts and the open question)', async () => {
+        const first = put(TaoHosts);
+        put(TaoHosts);
+        toast({ message: 'Waiting', timeout: 0 });
+        const answer = confirm('Still open?');
+        await new Promise((r) => setTimeout(r));
+        expect(document.querySelectorAll('.tao-toast')).toHaveLength(1);
+        expect(document.querySelectorAll('[data-tao-confirm-host]')).toHaveLength(1);
+        first.unmount();
+        mounted.shift();
+        await new Promise((r) => setTimeout(r));
+        // the survivor draws the same toast and asks the same question: nothing is lost, the promise is still pending
+        expect(document.querySelectorAll('.tao-toast')).toHaveLength(1);
+        expect(document.querySelectorAll('[data-tao-confirm-host]')).toHaveLength(1);
+        expect(currentConfirm.value?.title).toBe('Still open?');
+        confirm.dismiss();
+        expect(await answer).toBe(false);
+    });
+
+    it('a question that waited for the host takes the focus when the host appears', async () => {
+        const answer = confirm('Later?');
+        put(TaoHosts);
+        await new Promise((r) => setTimeout(r));
+        expect(document.activeElement?.hasAttribute('data-tao-confirm-ok')).toBe(true);
+        confirm.dismiss();
+        await answer;
+    });
+
     it('the place is free again when the host goes away, and the next one draws', async () => {
         const first = put(TaoHosts);
         first.unmount();

@@ -107,6 +107,8 @@ const emit = defineEmits<{
 defineSlots<{
     /** The page: TaoNav lays it out next to the navigation. / Страница: TaoNav раскладывает её рядом с навигацией. */
     default?(): unknown;
+    /** A skip link, first in the tab order, before the navigation (TaoShell puts one here). / Ссылка пропуска, первая в порядке табуляции, перед навигацией (TaoShell кладёт сюда свою). */
+    skip?(): unknown;
     /** Replaces the label of one item. / Заменяет подпись пункта. */
     label?(props: { item: TaoNavItem; active: boolean }): unknown;
     /**
@@ -209,6 +211,8 @@ function onMoreClose(reason: TaoCloseReason) {
 <template>
     <div ref="root" class="tao-nav" :class="[`tao-nav--${layout}`, `tao-nav--indicator-${indicator}`, { 'tao-nav--standalone': standalone, 'tao-nav--floating': floating, 'tao-nav--fill': fill && !standalone, 'tao-nav--badges-neutral': badgeTone === 'neutral' }]">
         <div class="tao-nav__shell">
+            <!-- first in the tab order and in the reading order, before the navigation: the skip link of a shell (see TaoShell) / первым в порядке табуляции и чтения, перед навигацией: ссылка пропуска у оболочки (см. TaoShell) -->
+            <slot v-if="has('skip')" name="skip" />
             <nav class="tao-nav__panel" :class="surfaceClass(surface)" :aria-label="label || l10n.ariaLabel">
                 <div class="tao-nav__column">
                     <!--

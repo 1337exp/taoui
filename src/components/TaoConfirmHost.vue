@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
+import { computed, nextTick, onActivated, onBeforeUnmount, onDeactivated, ref, watch } from 'vue';
 import TaoButton from './TaoButton.vue';
 import TaoIcon from './TaoIcon.vue';
-import { claimConfirmHost, currentConfirm, releaseConfirmHost, resolveConfirm } from '../confirm/store';
+import { claimConfirmHost, currentConfirm, isConfirmHostOwner, releaseConfirmHost, resolveConfirm } from '../confirm/store';
 import { useTaoLocale } from '../locale';
 import { trapTab } from '../focusTrap';
 import { toneClass } from '../tone';
@@ -17,7 +17,12 @@ const panelRef = ref<HTMLElement | null>(null);
 // one host asks; a second one in the tree draws nothing and takes no layer (the dialog would be on the screen twice)
 // спрашивает один хост; второй в дереве ничего не рисует и слой не занимает (диалог был бы на экране дважды)
 const me = Symbol('tao-confirm-host');
-const active = claimConfirmHost(me);
+// the owner is reactive: when the host that asks goes away (a route, a v-if, a KeepAlive) the next one asks the same question at once
+// владелец реактивен: когда хост, который спрашивает, уходит (маршрут, v-if, KeepAlive), следующий сразу задаёт тот же вопрос
+claimConfirmHost(me);
+const active = computed(() => isConfirmHostOwner(me));
+onDeactivated(() => releaseConfirmHost(me));
+onActivated(() => claimConfirmHost(me));
 
 onBeforeUnmount(() => {
     releaseConfirmHost(me);
@@ -30,14 +35,14 @@ const okLabel = computed(() => currentConfirm.value?.okLabel ?? locale.value.con
 const cancelLabel = computed(() => currentConfirm.value?.cancelLabel ?? locale.value.confirm.cancel);
 
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
-useLayer(() => active && Boolean(currentConfirm.value), { lockScroll: true, restoreFocus: true, onEscape: () => answer(false) });
+useLayer(() => active.value && Boolean(currentConfirm.value), { lockScroll: true, restoreFocus: true, onEscape: () => answer(false) });
 
 // the panel is centred: when the room left over is odd it starts on a half pixel, and its buttons jump when they are repainted
 // панель отцентрована: когда оставшееся место нечётное, она начинается с половины пикселя, и её кнопки прыгают при перерисовке
-useWholePixelPanel(panelRef, () => active && Boolean(currentConfirm.value));
+useWholePixelPanel(panelRef, () => active.value && Boolean(currentConfirm.value));
 
 watch(
-    () => currentConfirm.value?.id,
+    () => (active.value ? currentConfirm.value?.id : undefined),
     async (id) => {
         if (!id) {
             return;
@@ -46,6 +51,9 @@ watch(
         await nextTick();
         queryButton(currentConfirm.value?.danger ? 'cancel' : 'ok')?.focus();
     },
+    // a question that waited for the host (asked before it was mounted) takes the focus too
+    // вопрос, который ждал хост (задан до его монтирования), тоже забирает фокус
+    { immediate: true },
 );
 
 function queryButton(which: 'ok' | 'cancel') {
@@ -250,6 +258,19 @@ function onKeydown(event: KeyboardEvent) {
     to {
         opacity: 0;
         transform: translateY(10px);
+    }
+}
+
+/* reduced motion: no bounce, no fade of the scrim: the question appears and goes at once / уменьшенное движение: без отскока и без затухания подложки: вопрос появляется и уходит сразу */
+@media (prefers-reduced-motion: reduce) {
+    .tao-confirm-enter-active .tao-confirm__panel,
+    .tao-confirm-leave-active .tao-confirm__panel {
+        animation: none;
+    }
+
+    .tao-confirm-enter-active .tao-confirm__overlay,
+    .tao-confirm-leave-active .tao-confirm__overlay {
+        transition: none;
     }
 }
 </style>

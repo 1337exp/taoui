@@ -243,11 +243,12 @@ describe('component styles use tokens', () => {
 // 5.51.0: мягкие углы, которые NextUp, Axis и fin-view ставили поверх набора, стали значениями по умолчанию (были 4 / 8 / 12).
 describe('radii', () => {
     it('the scale is 6 / 10 / 14 / 18, a control takes md and a panel xl', () => {
-        // each step is `round(calc(var(--tao-radius-base) * k), 1px)`: count it as the browser does (see tests/radius.tokens.test.ts)
+        // each step is `round(base ± n px, 1px)`: count it as the browser does (see tests/radius.tokens.test.ts)
         const base = Number.parseFloat(primitives.get('--tao-radius-base')!);
         const count = (step: string) => {
-            const factor = /\*\s*([\d.]+)\)/.exec(primitives.get(`--tao-radius-${step}`)!)?.[1];
-            return `${Math.round(base * (factor ? Number(factor) : 1))}px`;
+            const offset = /([+-])\s*(\d+)px\)/.exec(primitives.get(`--tao-radius-${step}`)!);
+            const n = offset ? (offset[1] === '-' ? -1 : 1) * Number(offset[2]) : 0;
+            return `${Math.max(0, Math.round(base + n))}px`;
         };
         expect(['sm', 'md', 'lg', 'xl'].map(count)).toEqual(['6px', '10px', '14px', '18px']);
         expect(semantic.get('--tao-radius-control')).toBe('var(--tao-radius-md)');
