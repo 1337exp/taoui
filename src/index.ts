@@ -191,22 +191,21 @@ export {
 export type {
     TaoToastAction,
     TaoToastApi,
-    TaoToastBuilder,
+    TaoToastHandle,
     TaoToastDefaults,
     TaoToastDisplayMode,
     TaoToastPosition,
     TaoToastPromiseTexts,
     TaoToastRecord,
-    TaoToastShortcutOptions,
+    TaoToastOptions,
     TaoToastType,
 } from './toast';
 
 export type {
     TaoConfirmApi,
-    TaoConfirmBuilder,
     TaoConfirmDefaults,
     TaoConfirmRecord,
-    TaoConfirmShortcutOptions,
+    TaoConfirmOptions,
 } from './confirm';
 
 export {

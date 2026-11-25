@@ -134,7 +134,7 @@ function flashTableLoading() {
             clickable
             :empty-text="tr('No records yet', 'Пока нет записей')"
             @update:sort="onTableSort"
-            @row-click="(row) => toast().info().message(row.name)"
+            @row-click="(row) => toast.info(row.name)"
           >
             <template #empty>
               <TaoEmpty :title="tr('No records yet', 'Пока нет записей')">{{ tr('The list is empty — press “Show rows”.', 'Список пуст — нажмите «Показать строки».') }}</TaoEmpty>

@@ -148,8 +148,8 @@
 
 ### Обратная связь
 
-- **toast()** — fluent-уведомления: `toast().success().message('Сохранено')`
-- **confirm()** — вопрос с оверлеем: тот же fluent + `await`. Не тост — ждёт ответ, не исчезает сам.
+- **toast()** — уведомления одним объектом: `toast({ type: 'success', message: 'Сохранено' })` или `toast.success('Сохранено')`; возвращает ручку (`id`, `dismiss()`)
+- **confirm()** — вопрос с оверлеем одним объектом + `await`: `await confirm({ title, message, tone: 'danger' })`. Не тост — ждёт ответ, не исчезает сам.
 - **TaoToastViewport** / **TaoConfirmHost** — контейнеры; если их нет в разметке, первый вызов сам монтирует их в `body`
 
 ## Соглашения
@@ -416,13 +416,13 @@ import '@1337exp/taoui/styles.css'
 
 ## Toast
 
-Вызов — цепочка в одном тике, `setTimeout(0)` отправляет уведомление.
+Один объект, показ сразу. Возвращает ручку: `{ id, dismiss() }`.
 
 ```javascript
 import { toast } from '@1337exp/taoui'
 
-toast().success().message('Сохранено')
-toast().danger().title('Сеть').timeout(5000).message('Нет соединения')
+toast({ type: 'success', message: 'Сохранено' })
+toast({ type: 'danger', title: 'Сеть', timeout: 5000, message: 'Нет соединения' })
 toast.success('Сохранено')
 toast.warning('Черновик', { timeout: 1000 })
 ```
@@ -431,13 +431,13 @@ toast.warning('Черновик', { timeout: 1000 })
 
 ```javascript
 toast.defaults({ position: 'bottomRight' })
-toast.byBottomRight()
+toast.info('Здесь', { position: 'topLeft' }) // одно уведомление в другом месте
 ```
 
 `question` с оверлеем в kit нет — это confirm, не toast. Кнопки в тосте, если нужны:
 
 ```javascript
-toast().info().message('Удалить файл?').action('Удалить', onRemove)
+toast.info('Удалить файл?', { actions: [{ label: 'Удалить', onClick: onRemove }] })
 ```
 
 Идёт работа: кольцо, пока она идёт, потом результат на том же месте.
@@ -445,12 +445,13 @@ toast().info().message('Удалить файл?').action('Удалить', onRe
 ```javascript
 toast.promise(save(), { loading: 'Сохраняю…', success: 'Сохранено', error: (e) => `Не сохранено: ${e.message}` })
 
-// вручную: тот же id и replace() встают на его место
-toast().loading().id('sync').message('Синхронизирую…')
-toast().success().id('sync').replace().message('Синхронизировано')
+// вручную: тот же id и `replace` встают на его место
+const sync = toast({ id: 'sync', loading: true, message: 'Синхронизирую…' })
+toast.success('Синхронизировано', { id: 'sync', replace: true })
+sync.dismiss() // или закрыть вручную
 ```
 
-Viewport можно не вставлять: первый вызов сам создаст его. Если нужен явный контроль (тесты, свой layout):
+Viewport можно не вставлять: первый вызов создаст его на `document.body`, во втором приложении, которое читает глобальную локаль. Положите `<TaoToastViewport />` в своё приложение, и уведомления увидят его локаль и плагины (а также для явного контроля: тесты, свой layout):
 
 ```vue
 <TaoToastViewport />
@@ -463,7 +464,7 @@ Viewport можно не вставлять: первый вызов сам со
 ```javascript
 import { confirm } from '@1337exp/taoui'
 
-if (await confirm().title('Удалить файл?').message('Это нельзя отменить').danger()) {
+if (await confirm({ title: 'Удалить файл?', message: 'Это нельзя отменить', tone: 'danger' })) {
   remove()
 }
 

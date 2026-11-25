@@ -18,10 +18,13 @@ export interface TaoConfirmRecord {
     resolve: (value: boolean) => void;
 }
 
-export interface TaoConfirmShortcutOptions {
+/** What `confirm({...})` takes: one object. `title` or `message` is needed, or the answer is `false` at once. / Что берёт `confirm({...})`: один объект. Нужен `title` или `message`. */
+export interface TaoConfirmOptions {
+    title?: string;
     message?: string;
     ok?: string;
     cancel?: string;
-    danger?: boolean;
+    /** `danger` paints the ok button as a destructive one (a deletion). / `danger` красит кнопку подтверждения как разрушающую (удаление). */
+    tone?: 'accent' | 'danger';
     surface?: TaoSurface;
 }

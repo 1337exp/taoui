@@ -20,7 +20,7 @@ const quantityNotes = {
 
 function onShelfRemove() {
   quantityNote.value = 'dec'
-  toast().info().message(tr('Remove from the cart', 'Убрать из корзины'))
+  toast.info(tr('Remove from the cart', 'Убрать из корзины'))
 }
 
 function onStockCommit(value) {

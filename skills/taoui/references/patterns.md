@@ -250,7 +250,7 @@ Density is added on top of the size (the height and the padding, not the font), 
 
 **When.** Delete, discard, reset: something that cannot be taken back.
 
-**Rule.** `tone="danger"` on the button that destroys, the safe choice quiet (`secondary`). For a question in its own window use `await confirm().title(…).message(…).danger()`: it resolves to a boolean.
+**Rule.** `tone="danger"` on the button that destroys, the safe choice quiet (`secondary`). For a question in its own window use `await confirm({ title, message, tone: "danger" })`: it resolves to a boolean.
 
 **Do:**
 

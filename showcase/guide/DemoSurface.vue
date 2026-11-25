@@ -25,11 +25,7 @@ const modes = computed(() => [
 const tools = computed(() => [tr('Sections', 'Секции'), tr('Series', 'Серия'), tr('Salvo', 'Залп')])
 
 function showToast(surface) {
-  toast()
-    .success()
-    .title(tr('Saved', 'Сохранено'))
-    .message(tr('The level is written to disk', 'Уровень записан на диск'))
-    .surface(surface)
+  toast.success(tr('The level is written to disk', 'Уровень записан на диск'), { title: tr('Saved', 'Сохранено'), surface })
 }
 
 function showConfirm(surface) {

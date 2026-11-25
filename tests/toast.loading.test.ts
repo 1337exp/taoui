@@ -53,9 +53,8 @@ describe('replace by id', () => {
 });
 
 describe('the loading toast', () => {
-    it('loading() shows a spinner, says it is busy, and never times out', async () => {
-        toast().loading().message('Saving…');
-        vi.advanceTimersByTime(0);
+    it('loading shows a spinner, says it is busy, and never times out', async () => {
+        toast({ loading: true, message: 'Saving…' });
         const item = toasts.value[0]!;
         expect(item.loading).toBe(true);
         expect(item.timeout).toBe(0);
@@ -129,10 +128,10 @@ describe('a snackbar: no title and an action', () => {
 
 describe('a snackbar has no cross unless asked', () => {
     it('no title and an action: no cross; closable(true) brings it back; a titled toast keeps the default', () => {
-        toast().show().message('Note deleted').action('Undo', () => {});
-        toast().show().message('Note deleted').action('Undo', () => {}).closable(true);
-        toast().show().title('Upload').message('Done').action('Open', () => {});
-        vi.advanceTimersByTime(0);
+        const undo = [{ label: 'Undo', onClick: () => {} }];
+        toast.show('Note deleted', { actions: undo });
+        toast.show('Note deleted', { actions: undo, closable: true });
+        toast.show('Done', { title: 'Upload', actions: [{ label: 'Open', onClick: () => {} }] });
         expect(toasts.value.map((t) => t.closable)).toEqual([false, true, true]);
     });
 });

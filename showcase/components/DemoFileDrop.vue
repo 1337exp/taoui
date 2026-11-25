@@ -13,11 +13,12 @@ const filesConfirm = ref([])
 const filesJson = ref([])
 const refused = ref([])
 async function requestClearConfirm() {
-  const ok = await confirm()
-    .title(tr('Delete the files?', 'Удалить файлы?'))
-    .message(tr('The list of uploaded files will be cleared.', 'Список загруженных файлов будет очищен.'))
-    .ok(tr('Delete', 'Удалить'))
-    .danger()
+  const ok = await confirm({
+    title: tr('Delete the files?', 'Удалить файлы?'),
+    message: tr('The list of uploaded files will be cleared.', 'Список загруженных файлов будет очищен.'),
+    ok: tr('Delete', 'Удалить'),
+    tone: 'danger',
+  })
   if (ok) {
     filesConfirm.value = []
   }

@@ -322,8 +322,8 @@ export const patterns = [
       ru: 'Удалить, отбросить, сбросить: то, что не вернуть.',
     },
     rule: {
-      en: '`tone="danger"` on the button that destroys, the safe choice quiet (`secondary`). For a question in its own window use `await confirm().title(…).message(…).danger()`: it resolves to a boolean.',
-      ru: '`tone="danger"` на кнопке, которая разрушает, безопасный выбор тихий (`secondary`). Для вопроса в отдельном окне — `await confirm().title(…).message(…).danger()`: он возвращает boolean.',
+      en: '`tone="danger"` on the button that destroys, the safe choice quiet (`secondary`). For a question in its own window use `await confirm({ title, message, tone: "danger" })`: it resolves to a boolean.',
+      ru: '`tone="danger"` на кнопке, которая разрушает, безопасный выбор тихий (`secondary`). Для вопроса в отдельном окне — `await confirm({ title, message, tone: "danger" })`: он возвращает boolean.',
     },
     wrong: {
       en: 'Red on the safe button, the accent on the one that deletes.',

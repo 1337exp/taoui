@@ -66,12 +66,13 @@ export function addToast(record: TaoToastRecord) {
 }
 
 export function removeToast(id: string) {
-    const item = toasts.value.find((toast) => toast.id === id);
+    // a toast is found by its own id or by the `id` the app gave it (what `replace` and a handle use)
+    const item = toasts.value.find((toast) => toast.id === id || toast.dedupeId === id);
     if (!item) {
         return;
     }
 
-    toasts.value = toasts.value.filter((toast) => toast.id !== id);
+    toasts.value = toasts.value.filter((toast) => toast !== item);
     item.onClosed?.();
 }
 

@@ -7,19 +7,9 @@ import {
     hasConfirmHost,
     resolveConfirm,
 } from './store';
-import type { TaoConfirmDefaults, TaoConfirmShortcutOptions } from './types';
-import type { TaoSurface } from '../surface';
+import type { TaoConfirmDefaults, TaoConfirmOptions } from './types';
 
-export type { TaoConfirmDefaults, TaoConfirmRecord, TaoConfirmShortcutOptions } from './types';
-
-interface Draft {
-    title: string;
-    message: string;
-    okLabel: string;
-    cancelLabel: string;
-    danger: boolean;
-    surface: TaoSurface;
-}
+export type { TaoConfirmDefaults, TaoConfirmOptions, TaoConfirmRecord } from './types';
 
 function isClient() {
     return typeof window !== 'undefined' && typeof document !== 'undefined';
@@ -31,6 +21,12 @@ function nextConfirmId() {
 
 let hostedApp: ReturnType<typeof createApp> | null = null;
 
+/**
+ * An app that mounts `<TaoConfirmHost />` itself (in its own tree: the provided locale and plugins reach it) is the better way;
+ * without one the dialog gets a host of its own on `document.body`, in a second app that reads the global locale.
+ * Лучше, когда приложение само кладёт `<TaoConfirmHost />` в своё дерево; без этого у диалога свой хост на `document.body`,
+ * во втором приложении, которое читает глобальную локаль.
+ */
 function ensureConfirmHost() {
     if (!isClient() || hasConfirmHost()) {
         return;
@@ -43,129 +39,44 @@ function ensureConfirmHost() {
     hostedApp.mount(host);
 }
 
-function createDraft(): Draft {
-    return {
-        title: '',
-        message: '',
-        okLabel: confirmDefaults.ok,
-        cancelLabel: confirmDefaults.cancel,
-        danger: false,
-        surface: confirmDefaults.surface,
-    };
-}
+/** Asks now; the answer is `true` for the ok button and `false` for anything else (cancel, Escape, a second `dismiss`). Nothing to ask (no title and no message) or no `window`: `false`. */
+function ask(options: TaoConfirmOptions): Promise<boolean> {
+    const title = options.title ?? '';
+    const message = options.message === undefined ? '' : String(options.message);
+    if (!isClient() || (!title && !message)) {
+        return Promise.resolve(false);
+    }
 
-export interface TaoConfirmBuilder extends PromiseLike<boolean> {
-    title(value: string): TaoConfirmBuilder;
-    message(value: string): TaoConfirmBuilder;
-    ok(label: string): TaoConfirmBuilder;
-    cancel(label: string): TaoConfirmBuilder;
-    danger(value?: boolean): TaoConfirmBuilder;
-    /** `glass` (default) or `flat`. */
-    surface(value: TaoSurface): TaoConfirmBuilder;
-}
-
-function createBuilder(): TaoConfirmBuilder {
-    const draft = createDraft();
-    let settle: (value: boolean) => void = () => undefined;
-    const promise = new Promise<boolean>((resolve) => {
-        settle = resolve;
-    });
-
-    const ctx: TaoConfirmBuilder = {
-        title(value: string) {
-            draft.title = value;
-            return ctx;
-        },
-        message(value: string) {
-            draft.message = String(value);
-            return ctx;
-        },
-        ok(label: string) {
-            draft.okLabel = label;
-            return ctx;
-        },
-        cancel(label: string) {
-            draft.cancelLabel = label;
-            return ctx;
-        },
-        danger(value = true) {
-            draft.danger = value;
-            return ctx;
-        },
-        surface(value: TaoSurface) {
-            draft.surface = value;
-            return ctx;
-        },
-        then(onFulfilled, onRejected) {
-            return promise.then(onFulfilled, onRejected);
-        },
-    };
-
-    // Тот же flush, что у toast: цепочка собирает params, тик позже — показ.
-    setTimeout(() => {
-        if (!isClient() || (!draft.title && !draft.message)) {
-            settle(false);
-            return;
-        }
-
+    return new Promise<boolean>((resolve) => {
         ensureConfirmHost();
         enqueueConfirm({
             id: nextConfirmId(),
-            title: draft.title,
-            message: draft.message,
-            okLabel: draft.okLabel,
-            cancelLabel: draft.cancelLabel,
-            danger: draft.danger,
-            surface: draft.surface,
-            resolve: settle,
+            title,
+            message,
+            okLabel: options.ok ?? confirmDefaults.ok,
+            cancelLabel: options.cancel ?? confirmDefaults.cancel,
+            danger: options.tone === 'danger',
+            surface: options.surface ?? confirmDefaults.surface,
+            resolve,
         });
-    }, 0);
-
-    return ctx;
-}
-
-function applyOptions(builder: TaoConfirmBuilder, options?: TaoConfirmShortcutOptions) {
-    if (!options) {
-        return builder;
-    }
-
-    if (options.message) {
-        builder.message(options.message);
-    }
-    if (options.ok) {
-        builder.ok(options.ok);
-    }
-    if (options.cancel) {
-        builder.cancel(options.cancel);
-    }
-    if (options.danger) {
-        builder.danger(true);
-    }
-    if (options.surface) {
-        builder.surface(options.surface);
-    }
-
-    return builder;
+    });
 }
 
 export interface TaoConfirmApi {
-    (): TaoConfirmBuilder;
-    (title: string, options?: TaoConfirmShortcutOptions): TaoConfirmBuilder;
+    /** `await confirm({ title, message?, ok?, cancel?, tone?: 'danger', surface? })`. */
+    (options: TaoConfirmOptions): Promise<boolean>;
+    /** `await confirm('Delete it?', { message, tone: 'danger' })`. */
+    (title: string, options?: Omit<TaoConfirmOptions, 'title'>): Promise<boolean>;
     defaults(partial: Partial<TaoConfirmDefaults>): TaoConfirmApi;
+    /** Closes the dialog that is open with `false`. / Закрывает открытый диалог с `false`. */
     dismiss(): void;
 }
 
-function confirmFn(title?: string, options?: TaoConfirmShortcutOptions): TaoConfirmBuilder {
-    const builder = createBuilder();
-
-    if (title) {
-        builder.title(title);
-    }
-
-    return applyOptions(builder, options);
+function confirmFn(first: string | TaoConfirmOptions, options?: Omit<TaoConfirmOptions, 'title'>): Promise<boolean> {
+    return ask(typeof first === 'string' ? { ...options, title: first } : first);
 }
 
-export const confirm: TaoConfirmApi = Object.assign(confirmFn, {
+export const confirm: TaoConfirmApi = Object.assign(confirmFn as TaoConfirmApi, {
     defaults(partial: Partial<TaoConfirmDefaults>) {
         configureConfirmDefaults(partial);
         return confirm;

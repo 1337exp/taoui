@@ -39,7 +39,7 @@ createApp(App).mount('#app')
    point, `text` for body copy and every control at rest, `text-muted` for hints and captions; hover goes one step up.
    Never paint body copy `strong` to make it important.
 2. **Status is `tone`**, the same everywhere: `success | danger | warning | info | neutral` (the accent when omitted) on
-   TaoButton, TaoAlert, TaoTag, the stripe of TaoCard / TaoBlock (`stripeTone`), TaoTimeline markers; `toast().danger()`. Say the status in words
+   TaoButton, TaoAlert, TaoTag, the stripe of TaoCard / TaoBlock (`stripeTone`), TaoTimeline markers; `toast.danger()`. Say the status in words
    too: colour alone is not a message.
 3. **Size and density are contexts**, not props on every control: `class="tao-size-small"` (or `-medium`, `-large`) and
    `class="tao-density-compact | comfortable | auto"` on any container change every control inside. An explicit `size`
@@ -116,8 +116,8 @@ choose a text colour, WCAG 2 to promise a number.
 - `TaoToolbar` (one tab stop, arrows walk it) with `TaoToolbarGroup` and `TaoToolbarSeparator`; toggles are
   `TaoButton v-model:pressed`, a one-of-many choice inside it is `TaoSegmented`. A bar that must stay one row (an editor, a phone)
   is `<TaoToolbar overflow>`: the groups that do not fit go under a «⋮» button, a `TaoToolbarGroup pinned` never does.
-- `toast().success().message('Saved')`, `toast().danger().title('Network').timeout(5000).message('…')`,
-  `.action('Undo', fn)`. `await confirm().title('Delete?').message('…').danger()` resolves to a boolean.
+- `toast({ type: 'success', message: 'Saved' })` or `toast.success('Saved')`, `toast.danger('…', { title: 'Network', timeout: 5000 })`,
+  `{ actions: [{ label: 'Undo', onClick }] }`; it gives back `{ id, dismiss() }`. `await confirm({ title: 'Delete?', message: '…', tone: 'danger' })` resolves to a boolean.
   Their hosts `TaoToastViewport` / `TaoConfirmHost` mount themselves on the first call; place them yourself only to control
   where they render.
 - `TaoAlert` (`tone`, `title`, `closable`, `collapsible` + `v-model:collapsed`), `TaoEmpty`, `TaoLoader`, `TaoSkeleton`,

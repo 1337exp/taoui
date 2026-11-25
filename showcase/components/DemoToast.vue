@@ -8,15 +8,15 @@ defineOptions({ name: 'DemoToast' })
 
 function fireToast(kind) {
   if (kind === 'success') {
-    toast().success().message(tr('Saved', 'Сохранено'))
+    toast.success(tr('Saved', 'Сохранено'))
     return
   }
   if (kind === 'error') {
-    toast().danger().title(tr('Network', 'Сеть')).message(tr('No connection', 'Нет соединения'))
+    toast.danger(tr('No connection', 'Нет соединения'), { title: tr('Network', 'Сеть') })
     return
   }
   if (kind === 'warning') {
-    toast().warning().short().message(tr('The draft was not sent', 'Черновик не отправлен'))
+    toast.warning(tr('The draft was not sent', 'Черновик не отправлен'), { timeout: 1000 })
     return
   }
   if (kind === 'info') {
@@ -24,23 +24,26 @@ function fireToast(kind) {
     return
   }
   if (kind === 'action') {
-    toast()
-      .show()
-      .title(tr('File uploaded', 'Файл загружен'))
-      .message(tr('Open in a new tab?', 'Открыть в новой вкладке?'))
-      .action(tr('Got it', 'Понятно'), () => {})
+    toast.show(tr('Open in a new tab?', 'Открыть в новой вкладке?'), {
+      title: tr('File uploaded', 'Файл загружен'),
+      actions: [{ label: tr('Got it', 'Понятно'), onClick: () => {} }],
+    })
     return
   }
   if (kind === 'undo') {
     // a snackbar: what was just done, at the bottom, with one way back / snackbar: что сделано, внизу, с одним шагом назад
-    toast()
-      .byBottomCenter()
-      .show()
-      .message(tr('Note deleted', 'Заметка удалена'))
-      .action(tr('Undo', 'Отменить'), () => toast().byBottomCenter().show().short().message(tr('Note restored', 'Заметка восстановлена')))
+    toast.show(tr('Note deleted', 'Заметка удалена'), {
+      position: 'bottomCenter',
+      actions: [
+        {
+          label: tr('Undo', 'Отменить'),
+          onClick: () => toast.show(tr('Note restored', 'Заметка восстановлена'), { position: 'bottomCenter', timeout: 1000 }),
+        },
+      ],
+    })
     return
   }
-  toast().byBottomRight().success().message(tr('Bottom right', 'Справа снизу'))
+  toast.success(tr('Bottom right', 'Справа снизу'), { position: 'bottomRight' })
 }
 
 // a pretend save: 1.5 s of work, then done or failed / мнимое сохранение: 1,5 с работы, потом готово или ошибка
@@ -58,7 +61,7 @@ function fireLoading(fail) {
 <template>
   <ShowcaseSection id="toast" :tables="propTables['toast']">
     <h2>toast()</h2>
-          <p>{{ tr('Fluent notifications: the chain runs in a single tick, setTimeout(0) sends the display.', 'Fluent-уведомления: цепочка в одном тике, setTimeout(0) отправляет показ.') }}</p>
+          <p>{{ tr('Notifications from one object: it shows at once and gives back a handle (id, dismiss).', 'Уведомления одним объектом: показ сразу, в ответ ручка (id, dismiss).') }}</p>
 
           <div class="button-row">
             <TaoButton variant="primary" @click="fireToast('success')">success</TaoButton>
@@ -78,12 +81,15 @@ function fireLoading(fail) {
           </div>
 
           <div class="code-block">
-            <pre><code>toast().success().message('{{ tr('Saved', 'Сохранено') }}')
-toast().danger().title('{{ tr('Network', 'Сеть') }}').message('{{ tr('No connection', 'Нет соединения') }}')
+            <pre><code>toast({ type: 'success', message: '{{ tr('Saved', 'Сохранено') }}' })
+toast.danger('{{ tr('No connection', 'Нет соединения') }}', { title: '{{ tr('Network', 'Сеть') }}' })
 toast.success('{{ tr('Saved', 'Сохранено') }}')
 
 // {{ tr('a snackbar: at the bottom, with a way back', 'snackbar: внизу, с шагом назад') }}
-toast().byBottomCenter().show().message('{{ tr('Note deleted', 'Заметка удалена') }}').action('{{ tr('Undo', 'Отменить') }}', undo)
+toast.show('{{ tr('Note deleted', 'Заметка удалена') }}', {
+  position: 'bottomCenter',
+  actions: [{ label: '{{ tr('Undo', 'Отменить') }}', onClick: undo }],
+})
 
 toast.promise(save(), {
   loading: '{{ tr('Saving…', 'Сохраняю…') }}',
@@ -92,8 +98,9 @@ toast.promise(save(), {
 })
 
 // {{ tr('by hand', 'вручную') }}
-toast().loading().id('sync').message('{{ tr('Syncing…', 'Синхронизирую…') }}')
-toast().success().id('sync').replace().message('{{ tr('Synced', 'Синхронизировано') }}')
+const sync = toast({ id: 'sync', loading: true, message: '{{ tr('Syncing…', 'Синхронизирую…') }}' })
+toast.success('{{ tr('Synced', 'Синхронизировано') }}', { id: 'sync', replace: true })
+sync.dismiss() // {{ tr('closes it by hand', 'закрыть вручную') }}
 
 toast.defaults({ closeLabel: 'Dismiss notification' })</code></pre>
           </div>

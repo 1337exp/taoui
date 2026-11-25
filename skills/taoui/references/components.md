@@ -1110,12 +1110,13 @@ Showcase section: `#confirm`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `confirm()` | `() => Promise<boolean>` |  | A chain in a single tick. true — ok, false — cancel / Esc / backdrop |
-| `confirm(message)` | `(string) => Promise<boolean>` |  | A short call with a text |
-| `.title / .message` | `(string) => builder` |  | The title and text |
-| `.ok / .cancel` | `(label) => builder` |  | Button captions |
-| `.danger()` | `() => builder` |  | A red confirm button |
-| `confirm.defaults` | `({ ok, cancel })` |  | Default captions for the whole app |
+| `confirm(options)` | `({ title?, message?, ok?, cancel?, tone?, surface? }) => Promise<boolean>` |  | One object, asks at once. true — ok, false — cancel / Esc / backdrop / nothing to ask (a title or a message is needed) |
+| `confirm(title, options?)` | `(string, options?) => Promise<boolean>` |  | A short call with a title |
+| `title / message` | `string` |  | The title and text |
+| `ok / cancel` | `string` |  | Button captions |
+| `tone` | `'accent' \| 'danger'` | 'accent' | danger — a red confirm button (a deletion) |
+| `confirm.defaults` | `({ ok, cancel, surface })` |  | Default captions for the whole app |
+| `confirm.dismiss()` | `() => void` |  | Closes the open question with false |
 
 ## TaoTooltip
 
@@ -1363,16 +1364,19 @@ Showcase section: `#toast`
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `toast()` | `() => builder` |  | A chain in a single tick, shown on the next one |
-| `toast.success(msg)` | `(string, options?) => builder` |  | A short call. Also error / warning / info / show |
-| `.success() / .danger() / …` | `() => builder` |  | The type. show() is neutral |
-| `.title / .message` | `(string) => builder` |  | The title and text |
-| `.short() / .timeout(ms)` | `() => builder` |  | 1 s or your own time |
-| `.byBottomRight() / …` | `() => builder` |  | The corner: top/bottom + left/right/center |
-| `.action(label, fn)` | `(string, fn) => builder` |  | A button in the toast |
-| `.loading()` | `() => builder` |  | Work in progress: a spinner, no timeout, aria-busy. Finish it with a toast of the same id and replace(): it takes its place |
+| `toast(options)` | `({ message?, title?, type?, ... }) => { id, dismiss() }` |  | One object, shown at once. A message or a title is needed. Gives back a handle: id (the given one or its own) and dismiss() |
+| `toast.success(msg, options?)` | `(string, options?) => handle` |  | A short call with a type. Also danger / warning / info / show (neutral) |
+| `type` | `'success' \| 'danger' \| 'warning' \| 'info' \| 'neutral'` | 'info' | The type; it sets how long the toast lives (danger the longest). Without type the time comes from toast.defaults |
+| `title / message` | `string` |  | The title and text |
+| `timeout` | `number` | by type | Time in ms; 0 — does not close itself |
+| `position` | `'topRight' \| 'topLeft' \| 'topCenter' \| 'bottomRight' \| 'bottomLeft' \| 'bottomCenter' \| 'center'` | from defaults | Where the toast stands |
+| `actions` | `{ label, onClick }[]` | [] | Buttons in the toast; with no title there is no cross unless closable is asked |
+| `icon / closable / progress / surface` | `` |  | The icon, the cross, the time bar, the surface (glass \| flat) |
+| `loading` | `boolean` | false | Work in progress: a spinner, no timeout, aria-busy. Finish it with a toast of the same id and replace: it takes its place |
+| `id / replace / once` | `string / boolean / boolean` |  | id names the toast; replace swaps the toast with that id where it stands and restarts its time; once does not show a second one |
+| `onClosed` | `() => void` |  | The toast closed |
 | `toast.promise(p, texts)` | `(Promise, { loading, success, error }) => Promise` |  | Loading while the promise runs, then success or error in the same place; success / error can be functions of the result / the error |
-| `.id(x).replace()` | `() => builder` |  | Replaces the toast with that id where it stands, and restarts its time |
+| `toast.dismiss(id?)` | `(string?) => void` |  | Closes the toast with that id, or all of them |
 | `toast.defaults` | `(partial) => toast` |  | Position, timeout, closeLabel for the whole app |
 
 ## TaoAlert

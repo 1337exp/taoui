@@ -16,18 +16,20 @@ const confirmResultText = {
 }
 async function fireConfirm(kind) {
   if (kind === 'danger') {
-    const ok = await confirm()
-      .title(tr('Delete the file?', 'Удалить файл?'))
-      .message(tr('This cannot be undone.', 'Это нельзя отменить.'))
-      .ok(tr('Delete', 'Удалить'))
-      .danger()
+    const ok = await confirm({
+      title: tr('Delete the file?', 'Удалить файл?'),
+      message: tr('This cannot be undone.', 'Это нельзя отменить.'),
+      ok: tr('Delete', 'Удалить'),
+      tone: 'danger',
+    })
     confirmResult.value = ok ? 'deleted' : 'cancelled'
     return
   }
 
-  const ok = await confirm(tr('Save the changes?', 'Сохранить изменения?'))
-    .ok(tr('Save', 'Сохранить'))
-    .cancel(tr('Not now', 'Не сейчас'))
+  const ok = await confirm(tr('Save the changes?', 'Сохранить изменения?'), {
+    ok: tr('Save', 'Сохранить'),
+    cancel: tr('Not now', 'Не сейчас'),
+  })
   confirmResult.value = ok ? 'saved' : 'later'
 }
 </script>
@@ -44,7 +46,7 @@ async function fireConfirm(kind) {
           <p v-if="confirmResult" style="margin-top: 8px; font-size: 13px;">{{ tr('Answer', 'Ответ') }}: {{ confirmResultText[confirmResult]() }}</p>
     
           <div class="code-block">
-            <pre><code>if (await confirm().title('{{ tr('Delete the file?', 'Удалить файл?') }}').danger()) {
+            <pre><code>if (await confirm({ title: '{{ tr('Delete the file?', 'Удалить файл?') }}', tone: 'danger' })) {
   remove()
 }
 

@@ -36,7 +36,7 @@ function onDemoSubmit() {
   formSaving.value = true
   window.setTimeout(() => {
     formSaving.value = false
-    toast().success().message(tr('Saved', 'Сохранено'))
+    toast.success(tr('Saved', 'Сохранено'))
   }, 700)
 }
 
@@ -106,7 +106,7 @@ const plainText = ref(tr('Oat milk', 'Овсяное молоко'))
                 <template #before>https://</template>
                 <TaoInput v-model="siteHost" placeholder="example.com" />
                 <template #after>
-                  <TaoButton @click="toast().info().message(tr('Checking ', 'Проверяем ') + siteHost)">{{ tr('Check', 'Проверить') }}</TaoButton>
+                  <TaoButton @click="toast.info(tr('Checking ', 'Проверяем ') + siteHost)">{{ tr('Check', 'Проверить') }}</TaoButton>
                 </template>
               </TaoInputGroup>
             </TaoFormField>

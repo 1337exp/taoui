@@ -1,15 +1,15 @@
 import { createApp } from 'vue';
 import TaoToastViewport from '../components/TaoToastViewport.vue';
 import { addToast, configureToastDefaults, dismissToasts, hasToastViewport, toastDefaults } from './store';
-import type { TaoSurface } from '../surface';
 import type {
     TaoToastAction,
     TaoToastDefaults,
     TaoToastDisplayMode,
+    TaoToastHandle,
+    TaoToastOptions,
     TaoToastPosition,
     TaoToastPromiseTexts,
     TaoToastRecord,
-    TaoToastShortcutOptions,
     TaoToastType,
 } from './types';
 
@@ -18,12 +18,14 @@ export type {
     TaoToastAction,
     TaoToastDefaults,
     TaoToastDisplayMode,
+    TaoToastHandle,
+    TaoToastOptions,
     TaoToastPosition,
     TaoToastRecord,
-    TaoToastShortcutOptions,
     TaoToastType,
 };
 
+/** How long each kind stays, ms (an `error` that is not read in 3 s is lost, so danger is the longest). / Сколько живёт каждый вид, мс. */
 const TYPE_TIMEOUT: Record<TaoToastType, number> = {
     success: 3000,
     danger: 5000,
@@ -31,25 +33,6 @@ const TYPE_TIMEOUT: Record<TaoToastType, number> = {
     info: 3000,
     neutral: 2500,
 };
-
-interface Draft {
-    type: TaoToastType;
-    title: string;
-    message: string;
-    icon: string;
-    timeout: number;
-    position: TaoToastPosition;
-    closable: boolean;
-    progress: boolean;
-    surface: TaoSurface;
-    displayMode?: TaoToastDisplayMode;
-    dedupeId?: string;
-    actions: TaoToastAction[];
-    onClosed?: () => void;
-    loading?: boolean;
-    /** closable() was called: the app decided, not the default. / closable() вызван: решило приложение. */
-    closableSet?: boolean;
-}
 
 function isClient() {
     return typeof window !== 'undefined' && typeof document !== 'undefined';
@@ -61,6 +44,12 @@ function nextToastId() {
 
 let hostedApp: ReturnType<typeof createApp> | null = null;
 
+/**
+ * An app that mounts `<TaoToastViewport />` itself (in its own tree: it sees the provided locale and the app's plugins) is the better
+ * way; without one the toasts get a viewport of their own on `document.body`, in a second app that reads the global locale.
+ * Лучше, когда приложение само кладёт `<TaoToastViewport />` в своё дерево (оно видит выданную локаль и плагины); без этого у тостов
+ * свой viewport на `document.body`, во втором приложении, которое читает глобальную локаль.
+ */
 function ensureToastViewport() {
     if (!isClient() || hasToastViewport()) {
         return;
@@ -73,285 +62,59 @@ function ensureToastViewport() {
     hostedApp.mount(host);
 }
 
-function flushDraft(draft: Draft) {
-    if (!isClient()) {
-        return;
+/** Shows a toast now and gives back a handle. Nothing happens on the server (no `window`): the handle is inert. */
+function show(options: TaoToastOptions): TaoToastHandle {
+    const recordId = nextToastId();
+    const handle: TaoToastHandle = { id: options.id ?? recordId, dismiss: () => dismissToasts(handle.id) };
+    const title = options.title ?? '';
+    const message = options.message === undefined ? '' : String(options.message);
+    if (!isClient() || (!title && !message)) {
+        return handle;
     }
 
-    if (!draft.title && !draft.message) {
-        return;
-    }
-
-    const dedupeId =
-        draft.dedupeId ??
-        (draft.displayMode ? `${draft.type}:${draft.title}:${draft.message}` : undefined);
+    const type = options.type ?? (options.loading ? 'neutral' : 'info');
+    const actions = options.actions ?? [];
+    const displayMode: TaoToastDisplayMode | undefined = options.replace ? 'replace' : options.once ? 'once' : undefined;
+    const dedupeId = options.id ?? (displayMode ? `${type}:${title}:${message}` : undefined);
 
     ensureToastViewport();
 
-    addToast({
-        id: nextToastId(),
-        type: draft.type,
-        title: draft.title,
-        message: draft.message,
-        icon: draft.icon,
-        timeout: draft.timeout,
-        position: draft.position,
+    const record: TaoToastRecord = {
+        id: recordId,
+        type,
+        title,
+        message,
+        icon: options.icon ?? '',
+        // an untyped toast lives as long as the app's default; a typed one as long as its kind
+        timeout: options.loading ? 0 : (options.timeout ?? (options.type ? TYPE_TIMEOUT[type] : toastDefaults.timeout)),
+        position: options.position ?? toastDefaults.position,
         // a snackbar (no title, an action) has no cross unless asked: next to the action it is a mistap waiting to happen
         // у snackbar (без заголовка, с действием) крестика нет, если не попросили: рядом с действием по нему промахиваются
-        closable: draft.closableSet || draft.title || !draft.actions.length ? draft.closable : false,
-        progress: draft.progress,
-        surface: draft.surface,
-        displayMode: draft.displayMode,
+        closable: options.closable !== undefined ? options.closable : title || !actions.length ? toastDefaults.closable : false,
+        progress: options.progress ?? toastDefaults.progress,
+        surface: options.surface ?? toastDefaults.surface,
+        displayMode,
         dedupeId,
-        actions: draft.actions,
-        onClosed: draft.onClosed,
-        loading: draft.loading,
-    });
-}
-
-function createDraft(): Draft {
-    return {
-        type: 'info',
-        title: '',
-        message: '',
-        icon: '',
-        timeout: toastDefaults.timeout,
-        position: toastDefaults.position,
-        closable: toastDefaults.closable,
-        progress: toastDefaults.progress,
-        surface: toastDefaults.surface,
-        actions: [],
+        actions,
+        onClosed: options.onClosed,
+        loading: options.loading,
     };
+    addToast(record);
+    return handle;
 }
 
-export interface TaoToastBuilder {
-    success(): TaoToastBuilder;
-    danger(): TaoToastBuilder;
-    warning(): TaoToastBuilder;
-    info(): TaoToastBuilder;
-    show(): TaoToastBuilder;
-    short(): TaoToastBuilder;
-    timeout(ms: number): TaoToastBuilder;
-    title(value: string): TaoToastBuilder;
-    message(value: string): TaoToastBuilder;
-    icon(name: string): TaoToastBuilder;
-    position(value: TaoToastPosition): TaoToastBuilder;
-    byCenter(): TaoToastBuilder;
-    byTopLeft(): TaoToastBuilder;
-    byTopRight(): TaoToastBuilder;
-    byTopCenter(): TaoToastBuilder;
-    byBottomLeft(): TaoToastBuilder;
-    byBottomRight(): TaoToastBuilder;
-    byBottomCenter(): TaoToastBuilder;
-    closable(value?: boolean): TaoToastBuilder;
-    progress(value?: boolean): TaoToastBuilder;
-    /** `glass` (default) or `flat`. */
-    surface(value: TaoSurface): TaoToastBuilder;
-    id(value: string): TaoToastBuilder;
-    once(): TaoToastBuilder;
-    replace(): TaoToastBuilder;
-    action(label: string, onClick: () => void): TaoToastBuilder;
-    onClosed(fn: () => void): TaoToastBuilder;
-    /**
-     * Work in progress: a spinner, no timeout. Finish it with a toast of the same `id` and `replace()`, which takes its
-     * place, or use `toast.promise`.
-     * Идёт работа: кольцо, без таймаута. Завершите тостом с тем же `id` и `replace()`, он встанет на его место, или
-     * используйте `toast.promise`.
-     */
-    loading(): TaoToastBuilder;
-}
-
-function createBuilder(): TaoToastBuilder {
-    const draft = createDraft();
-
-    const ctx: TaoToastBuilder = {
-        success() {
-            draft.type = 'success';
-            draft.timeout = TYPE_TIMEOUT.success;
-            return ctx;
-        },
-        danger() {
-            draft.type = 'danger';
-            draft.timeout = TYPE_TIMEOUT.danger;
-            return ctx;
-        },
-        warning() {
-            draft.type = 'warning';
-            draft.timeout = TYPE_TIMEOUT.warning;
-            return ctx;
-        },
-        info() {
-            draft.type = 'info';
-            draft.timeout = TYPE_TIMEOUT.info;
-            return ctx;
-        },
-        show() {
-            draft.type = 'neutral';
-            draft.timeout = TYPE_TIMEOUT.neutral;
-            return ctx;
-        },
-        short() {
-            draft.timeout = 1000;
-            return ctx;
-        },
-        timeout(ms: number) {
-            draft.timeout = ms;
-            return ctx;
-        },
-        title(value: string) {
-            draft.title = value;
-            return ctx;
-        },
-        message(value: string) {
-            draft.message = String(value);
-            return ctx;
-        },
-        icon(name: string) {
-            draft.icon = name;
-            return ctx;
-        },
-        position(value: TaoToastPosition) {
-            draft.position = value;
-            return ctx;
-        },
-        byCenter() {
-            draft.position = 'center';
-            return ctx;
-        },
-        byTopLeft() {
-            draft.position = 'topLeft';
-            return ctx;
-        },
-        byTopRight() {
-            draft.position = 'topRight';
-            return ctx;
-        },
-        byTopCenter() {
-            draft.position = 'topCenter';
-            return ctx;
-        },
-        byBottomLeft() {
-            draft.position = 'bottomLeft';
-            return ctx;
-        },
-        byBottomRight() {
-            draft.position = 'bottomRight';
-            return ctx;
-        },
-        byBottomCenter() {
-            draft.position = 'bottomCenter';
-            return ctx;
-        },
-        closable(value = true) {
-            draft.closable = value;
-            draft.closableSet = true;
-            return ctx;
-        },
-        progress(value = true) {
-            draft.progress = value;
-            return ctx;
-        },
-        surface(value: TaoSurface) {
-            draft.surface = value;
-            return ctx;
-        },
-        id(value: string) {
-            draft.dedupeId = value;
-            return ctx;
-        },
-        once() {
-            draft.displayMode = 'once';
-            return ctx;
-        },
-        replace() {
-            draft.displayMode = 'replace';
-            return ctx;
-        },
-        action(label: string, onClick: () => void) {
-            draft.actions = [...draft.actions, { label, onClick }];
-            return ctx;
-        },
-        onClosed(fn: () => void) {
-            draft.onClosed = fn;
-            return ctx;
-        },
-        loading() {
-            draft.type = 'neutral';
-            draft.loading = true;
-            draft.timeout = 0;
-            return ctx;
-        },
-    };
-
-    // Тот самый flush: цепочка успевает собрать params в текущем тике.
-    setTimeout(() => flushDraft(draft), 0);
-
-    return ctx;
-}
-
-function shortcut(type: TaoToastType, message: string, options?: TaoToastShortcutOptions) {
-    const builder = createBuilder();
-
-    if (type === 'neutral') {
-        builder.show();
-    } else {
-        builder[type]();
-    }
-
-    builder.message(message);
-
-    if (options?.title) {
-        builder.title(options.title);
-    }
-    if (options?.timeout !== undefined) {
-        builder.timeout(options.timeout);
-    }
-    if (options?.position) {
-        builder.position(options.position);
-    }
-    if (options?.icon) {
-        builder.icon(options.icon);
-    }
-    if (options?.closable !== undefined) {
-        builder.closable(options.closable);
-    }
-    if (options?.progress !== undefined) {
-        builder.progress(options.progress);
-    }
-    if (options?.surface) {
-        builder.surface(options.surface);
-    }
-    if (options?.id) {
-        builder.id(options.id);
-    }
-    if (options?.once) {
-        builder.once();
-    }
-    if (options?.replace) {
-        builder.replace();
-    }
-    if (options?.actions) {
-        options.actions.forEach((action) => builder.action(action.label, action.onClick));
-    }
-    if (options?.onClosed) {
-        builder.onClosed(options.onClosed);
-    }
-
-    return builder;
-}
+type Shortcut = (message: string, options?: Omit<TaoToastOptions, 'message' | 'type'>) => TaoToastHandle;
 
 export interface TaoToastApi {
-    (): TaoToastBuilder;
-    success(message: string, options?: TaoToastShortcutOptions): TaoToastBuilder;
-    danger(message: string, options?: TaoToastShortcutOptions): TaoToastBuilder;
-    warning(message: string, options?: TaoToastShortcutOptions): TaoToastBuilder;
-    info(message: string, options?: TaoToastShortcutOptions): TaoToastBuilder;
-    show(message: string, options?: TaoToastShortcutOptions): TaoToastBuilder;
+    /** `toast({ message, title?, type?, timeout?, position?, icon?, closable?, progress?, surface?, id?, once?, replace?, actions?, onClosed?, loading? })`. */
+    (options: TaoToastOptions): TaoToastHandle;
+    success: Shortcut;
+    danger: Shortcut;
+    warning: Shortcut;
+    info: Shortcut;
+    show: Shortcut;
     defaults(partial: Partial<TaoToastDefaults>): TaoToastApi;
-    byTopCenter(): TaoToastApi;
-    byTopLeft(): TaoToastApi;
-    byBottomLeft(): TaoToastApi;
-    byBottomRight(): TaoToastApi;
+    /** Closes the toast with this `id` (the one you gave, or the one the handle holds), or all of them. / Закрывает тост с этим `id` или все. */
     dismiss(id?: string): void;
     /**
      * A toast that follows a promise: `loading` while it runs, then `success` or `error` in its place. Returns the same
@@ -359,60 +122,34 @@ export interface TaoToastApi {
      * Тост, который следует за промисом: `loading`, пока он идёт, потом `success` или `error` на его месте. Возвращает
      * тот же промис.
      */
-    promise<T>(promise: Promise<T>, texts: TaoToastPromiseTexts<T>, options?: Pick<TaoToastShortcutOptions, 'title' | 'position' | 'id'>): Promise<T>;
+    promise<T>(promise: Promise<T>, texts: TaoToastPromiseTexts<T>, options?: Pick<TaoToastOptions, 'title' | 'position' | 'id'>): Promise<T>;
 }
 
-export const toast: TaoToastApi = Object.assign(createBuilder, {
-    success(message: string, options?: TaoToastShortcutOptions) {
-        return shortcut('success', message, options);
-    },
-    danger(message: string, options?: TaoToastShortcutOptions) {
-        return shortcut('danger', message, options);
-    },
-    warning(message: string, options?: TaoToastShortcutOptions) {
-        return shortcut('warning', message, options);
-    },
-    info(message: string, options?: TaoToastShortcutOptions) {
-        return shortcut('info', message, options);
-    },
-    show(message: string, options?: TaoToastShortcutOptions) {
-        return shortcut('neutral', message, options);
-    },
+const kind =
+    (type: TaoToastType): Shortcut =>
+    (message, options) =>
+        show({ ...options, message, type });
+
+export const toast: TaoToastApi = Object.assign((options: TaoToastOptions) => show(options), {
+    success: kind('success'),
+    danger: kind('danger'),
+    warning: kind('warning'),
+    info: kind('info'),
+    show: kind('neutral'),
     defaults(partial: Partial<TaoToastDefaults>) {
         configureToastDefaults(partial);
-        return toast;
-    },
-    byTopCenter() {
-        configureToastDefaults({ position: 'topCenter' });
-        return toast;
-    },
-    byTopLeft() {
-        configureToastDefaults({ position: 'topLeft' });
-        return toast;
-    },
-    byBottomLeft() {
-        configureToastDefaults({ position: 'bottomLeft' });
-        return toast;
-    },
-    byBottomRight() {
-        configureToastDefaults({ position: 'bottomRight' });
         return toast;
     },
     dismiss(id?: string) {
         dismissToasts(id);
     },
-    promise<T>(promise: Promise<T>, texts: TaoToastPromiseTexts<T>, options?: Pick<TaoToastShortcutOptions, 'title' | 'position' | 'id'>) {
+    promise<T>(promise: Promise<T>, texts: TaoToastPromiseTexts<T>, options?: Pick<TaoToastOptions, 'title' | 'position' | 'id'>) {
         const id = options?.id ?? nextToastId();
-        const start = (builder: TaoToastBuilder) => {
-            builder.id(id).replace();
-            if (options?.title) builder.title(options.title);
-            if (options?.position) builder.position(options.position);
-            return builder;
-        };
-        start(createBuilder().loading()).message(texts.loading);
+        const base = { id, replace: true, title: options?.title, position: options?.position };
+        show({ ...base, loading: true, message: texts.loading });
         promise.then(
-            (value) => start(createBuilder().success()).message(typeof texts.success === 'function' ? texts.success(value) : texts.success),
-            (error: unknown) => start(createBuilder().danger()).message(typeof texts.error === 'function' ? texts.error(error) : texts.error),
+            (value) => show({ ...base, type: 'success', message: typeof texts.success === 'function' ? texts.success(value) : texts.success }),
+            (error: unknown) => show({ ...base, type: 'danger', message: typeof texts.error === 'function' ? texts.error(error) : texts.error }),
         );
         return promise;
     },

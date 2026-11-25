@@ -148,8 +148,8 @@
 
 ### Feedback
 
-- **toast()** — fluent toasts: `toast().success().message('Saved')`
-- **confirm()** — overlay question: the same fluent API plus `await`. Not a toast — it waits for an answer and does not dismiss itself.
+- **toast()** — toasts from one object: `toast({ type: 'success', message: 'Saved' })`, or `toast.success('Saved')`; it gives back a handle (`id`, `dismiss()`)
+- **confirm()** — overlay question from one object plus `await`: `await confirm({ title, message, tone: 'danger' })`. Not a toast — it waits for an answer and does not dismiss itself.
 - **TaoToastViewport** / **TaoConfirmHost** — hosts; if they are missing from the tree, the first call mounts them on `body`
 
 ## Conventions
@@ -418,13 +418,13 @@ The split fills the parent (`width` / `height: 100%`). Give the parent a bounded
 
 ## Toast
 
-The chain runs in the same tick; `setTimeout(0)` actually shows the toast.
+One object, shown at once. It gives back a handle: `{ id, dismiss() }`.
 
 ```javascript
 import { toast } from '@1337exp/taoui'
 
-toast().success().message('Saved')
-toast().danger().title('Network').timeout(5000).message('No connection')
+toast({ type: 'success', message: 'Saved' })
+toast({ type: 'danger', title: 'Network', timeout: 5000, message: 'No connection' })
 toast.success('Saved')
 toast.warning('Draft', { timeout: 1000 })
 ```
@@ -433,13 +433,13 @@ Default position is `topCenter`. Globally:
 
 ```javascript
 toast.defaults({ position: 'bottomRight' })
-toast.byBottomRight()
+toast.info('Here', { position: 'topLeft' }) // one toast elsewhere
 ```
 
 There is no overlay `question` in this kit — that is confirm, not toast. Buttons on a toast, if needed:
 
 ```javascript
-toast().info().message('Delete the file?').action('Delete', onRemove)
+toast.info('Delete the file?', { actions: [{ label: 'Delete', onClick: onRemove }] })
 ```
 
 Work in progress: a spinner while it runs, then the result in the same place.
@@ -447,12 +447,13 @@ Work in progress: a spinner while it runs, then the result in the same place.
 ```javascript
 toast.promise(save(), { loading: 'Saving…', success: 'Saved', error: (e) => `Not saved: ${e.message}` })
 
-// by hand: the same id and replace() take its place
-toast().loading().id('sync').message('Syncing…')
-toast().success().id('sync').replace().message('Synced')
+// by hand: the same id and `replace` take its place
+const sync = toast({ id: 'sync', loading: true, message: 'Syncing…' })
+toast.success('Synced', { id: 'sync', replace: true })
+sync.dismiss() // or close it by hand
 ```
 
-You can skip the viewport: the first call creates it. For explicit control (tests, a custom layout):
+You can skip the viewport: the first call creates one on `document.body`, in a second app that reads the global locale. Put `<TaoToastViewport />` in your own app instead and the toasts see its locale and plugins (and for explicit control: tests, a custom layout):
 
 ```vue
 <TaoToastViewport />
@@ -465,7 +466,7 @@ An overlay question in the center of the screen. This is not a toast: no progres
 ```javascript
 import { confirm } from '@1337exp/taoui'
 
-if (await confirm().title('Delete the file?').message('This cannot be undone').danger()) {
+if (await confirm({ title: 'Delete the file?', message: 'This cannot be undone', tone: 'danger' })) {
   remove()
 }
 

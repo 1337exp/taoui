@@ -54,7 +54,13 @@ export interface TaoToastDefaults {
     surface: TaoSurface;
 }
 
-export interface TaoToastShortcutOptions {
+/** What `toast({...})` takes: one object. `message` or `title` is needed, or nothing is shown. / Что берёт `toast({...})`: один объект. Нужен `message` или `title`, иначе ничего не покажется. */
+export interface TaoToastOptions {
+    message?: string;
+    /** `info` by default; `neutral` has no colour. / По умолчанию `info`; `neutral` без цвета. */
+    type?: TaoToastType;
+    /** Work in progress: a spinner instead of the icon, no timeout; finish it with a toast of the same `id` and `replace`. / Идёт работа: кольцо вместо иконки, без таймаута. */
+    loading?: boolean;
     title?: string;
     timeout?: number;
     position?: TaoToastPosition;
@@ -67,4 +73,10 @@ export interface TaoToastShortcutOptions {
     replace?: boolean;
     actions?: TaoToastAction[];
     onClosed?: () => void;
+}
+
+/** What `toast(...)` gives back: its id (the given one, else its own) and a way to close it. / Что отдаёт `toast(...)`: id и способ закрыть. */
+export interface TaoToastHandle {
+    id: string;
+    dismiss(): void;
 }
