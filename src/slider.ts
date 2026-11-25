@@ -143,6 +143,47 @@ export function stepMark(value: number, marks: readonly number[], dir: 1 | -1): 
 }
 
 /**
+ * The scale a thumb snaps to: the bounds, the step, and `stops` (the marks of a `discrete` slider; empty: a continuous scale).
+ * Шкала, к которой прижимается ручка: границы, шаг и `stops` (метки ступенчатого слайдера; пусто: шкала непрерывная).
+ */
+export interface TaoSliderScale {
+    min: number;
+    max: number;
+    step: number;
+    stops: readonly number[];
+}
+
+/** A value snapped to the scale: to the nearest stop, or to the step and the bounds. / Значение, прижатое к шкале: к ближайшей метке или к шагу и границам. */
+export function snapValue(raw: number, scale: TaoSliderScale): number {
+    return scale.stops.length > 0 ? nearestMark(raw, scale.stops) : valueAt(ratioOf(raw, scale.min, scale.max), scale.min, scale.max, scale.step);
+}
+
+/**
+ * Where a key sends a thumb standing at `at`: arrows go one step (or one stop), PageUp/PageDown ten steps (or one stop), Home and End to
+ * the bounds. The result is already snapped; null: the key does nothing to the value.
+ * Куда ручка, стоящая в `at`, идёт по клавише: стрелки на шаг (или метку), PageUp/PageDown на десять шагов (или метку), Home и End к
+ * границам. Результат уже прижат к шкале; null: клавиша значение не трогает.
+ */
+export function keyTarget(key: string, at: number, scale: TaoSliderScale): number | null {
+    const stepped = scale.stops.length > 0;
+    let next: number;
+    if (key === 'ArrowRight' || key === 'ArrowUp' || key === 'ArrowLeft' || key === 'ArrowDown') {
+        const dir = key === 'ArrowRight' || key === 'ArrowUp' ? 1 : -1;
+        next = stepped ? stepMark(at, scale.stops, dir) : at + dir * scale.step;
+    } else if (key === 'PageUp' || key === 'PageDown') {
+        const dir = key === 'PageUp' ? 1 : -1;
+        next = stepped ? stepMark(at, scale.stops, dir) : at + dir * scale.step * 10;
+    } else if (key === 'Home') {
+        next = scale.min;
+    } else if (key === 'End') {
+        next = scale.max;
+    } else {
+        return null;
+    }
+    return snapValue(next, scale);
+}
+
+/**
  * Какая ручка идёт к точке `target`: ближайшая. Если обе одинаково близко (стоят в одной точке), решает сторона:
  * правее точки берём верхнюю, левее нижнюю, а ровно в ней последнюю двигавшуюся.
  */

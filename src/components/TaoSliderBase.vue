@@ -1,12 +1,14 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, ref } from 'vue';
 import { usePointerDrag } from '../primitives/usePointerDrag';
 import { clamp } from '../primitives/number';
 import { useField } from '../formField';
 import { useLocaleText } from '../locale';
 import { sizeClass } from '../size';
+import { useSliderEditor } from '../sliderEditor';
 import {
     isMarkActive,
+    keyTarget,
     moveThumb,
     nearestMark,
     nearestThumb,
@@ -14,12 +16,12 @@ import {
     normalizeValue,
     normalizeZones,
     ratioOf,
-    stepMark,
     valueAt,
     zoneAt,
     zoneGradient,
     type TaoSliderBaseProps,
     type TaoSliderMark,
+    type TaoSliderScale,
     type TaoSliderValue,
 } from '../slider';
 
@@ -186,7 +188,7 @@ const drag = usePointerDrag({
         // loses focus and writes its text before the slider changes the value, not after (a stale text would overwrite it)
         // preventDefault, который жест делает после этого, гасит и фокус, поэтому берём его сами и первым делом: поле ввода, в котором
         // печатали, теряет фокус и записывает свой текст до того, как слайдер поменяет значение, а не после (иначе устаревший текст затёр бы его)
-        railRef.value?.querySelectorAll<HTMLElement>('.tao-slider__thumb')[activeThumb.value]?.focus({ preventScroll: true });
+        focusThumb(activeThumb.value);
         setThumb(activeThumb.value, target);
     },
     onMove(event) {
@@ -211,70 +213,28 @@ const endDrag = () => drag.end('abort');
 //--------------------------------------------------
 // Ввод значения (editable): поле поверх полосы, на месте цифры
 
-const editorRef = ref<HTMLInputElement | null>(null);
-/** Номер ручки, значение которой набирают; null: поле закрыто. */
-const editing = ref<number | null>(null);
-const draft = ref('');
-
-// Десятичная запись: «0x10» или «1e500» значением не считаем, хотя Number() их разберёт.
-const DECIMAL = /^[+-]?(\d+\.?\d*|\.\d+)(e[+-]?\d+)?$/i;
-
-function openEditor(index: number) {
-    if (!props.editable || props.disabled) return;
-    endDrag();
-    activeThumb.value = index;
-    draft.value = String(values.value[index]);
-    editing.value = index;
-    void nextTick(() => {
-        editorRef.value?.focus();
-        editorRef.value?.select();
-    });
+function focusThumb(index: number) {
+    railRef.value?.querySelectorAll<HTMLElement>('.tao-slider__thumb')[index]?.focus({ preventScroll: true });
 }
 
-/** Закрывает поле и возвращает номер ручки, которую правили (null, если поле уже закрыто). */
-function closeEditor(refocus: boolean): number | null {
-    const index = editing.value;
-    editing.value = null;
-    if (refocus && index !== null) {
-        void nextTick(() => railRef.value?.querySelectorAll<HTMLElement>('.tao-slider__thumb')[index]?.focus({ preventScroll: true }));
-    }
-    return index;
-}
+const scale = computed<TaoSliderScale>(() => ({
+    min: props.min,
+    max: props.max,
+    step: props.step,
+    stops: stepped.value ? markValues.value : [],
+}));
 
-/**
- * Ставит набранное: прижато к шагу (или к метке при discrete) и к границам, как значение под указателем. Не число значение не
- * меняет. Уход из поля (blur) ставит тоже, как у TaoInputNumber; Esc отменяет.
- */
-function commitEditor(refocus = false) {
-    const index = closeEditor(refocus);
-    if (index === null) return;
-    const typed = draft.value.trim().replace(/\s/g, '').replace(',', '.');
-    if (!DECIMAL.test(typed)) return;
-    const parsed = Number(typed);
-    if (!Number.isFinite(parsed)) return;
-    const target = stepped.value
-        ? nearestMark(parsed, markValues.value)
-        : valueAt(ratioOf(parsed, props.min, props.max), props.min, props.max, props.step);
-    setThumb(index, target, true);
-}
-
-function cancelEditor() {
-    closeEditor(true);
-}
-
-/** Правый клик (на сенсоре долгое нажатие) и двойной клик по полосе: правим ближайшую к указателю ручку. */
-function onEditGesture(event: MouseEvent) {
-    if (!props.editable || props.disabled) return;
-    event.preventDefault();
-    openEditor(nearestThumb(values.value, valueUnder(event), activeThumb.value));
-}
-
-watch(
-    () => props.disabled || !props.editable,
-    (off) => {
-        if (off) editing.value = null;
-    },
-);
+const editor = useSliderEditor({
+    enabled: () => props.editable && !props.disabled,
+    values: () => values.value,
+    scale: () => scale.value,
+    activeThumb,
+    set: setThumb,
+    stopDrag: endDrag,
+    focusThumb,
+    valueUnder,
+});
+const { editorRef, editing, draft } = editor;
 
 //--------------------------------------------------
 // Клавиатура и колёсико
@@ -283,30 +243,17 @@ function onKeydown(event: KeyboardEvent, index: number) {
     if (props.disabled) return;
     pointerFocus.value = false; // дальше слайдером управляют с клавиатуры: кольцо снова нужно
     activeThumb.value = index;
-    const at = values.value[index]!;
 
-    let next: number | null = null;
-    const forward = event.key === 'ArrowRight' || event.key === 'ArrowUp';
-    const backward = event.key === 'ArrowLeft' || event.key === 'ArrowDown';
-    if (forward || backward) {
-        const dir = forward ? 1 : -1;
-        next = stepped.value ? stepMark(at, markValues.value, dir) : at + dir * props.step;
-    } else if (event.key === 'PageUp' || event.key === 'PageDown') {
-        const dir = event.key === 'PageUp' ? 1 : -1;
-        next = stepped.value ? stepMark(at, markValues.value, dir) : at + dir * props.step * 10;
-    } else if (event.key === 'Home') {
-        next = props.min;
-    } else if (event.key === 'End') {
-        next = props.max;
-    } else if (props.editable && (event.key === 'Enter' || event.key === 'F2')) {
+    if (props.editable && (event.key === 'Enter' || event.key === 'F2')) {
         event.preventDefault();
-        openEditor(index);
+        editor.open(index);
         return;
     }
+    const next = keyTarget(event.key, values.value[index]!, scale.value);
     if (next === null) return;
 
     event.preventDefault();
-    setThumb(index, stepped.value ? nearestMark(next, markValues.value) : valueAt(ratioOf(next, props.min, props.max), props.min, props.max, props.step), true);
+    setThumb(index, next, true);
 }
 
 function onWheel(event: WheelEvent) {
@@ -356,8 +303,8 @@ function onMarkClick(mark: TaoSliderMark) {
             class="tao-slider__rail"
             :class="{ 'tao-slider__rail--dragging': isDragging }"
             v-on="drag.events"
-            @contextmenu="onEditGesture"
-            @dblclick="onEditGesture"
+            @contextmenu="editor.onGesture"
+            @dblclick="editor.onGesture"
         >
             <div class="tao-slider__track"></div>
             <template v-if="zoneList.length">
@@ -408,9 +355,9 @@ function onMarkClick(mark: TaoSliderMark) {
                 autocomplete="off"
                 spellcheck="false"
                 :aria-label="ariaLabel ?? l10n.editLabel"
-                @keydown.enter.prevent="commitEditor(true)"
-                @keydown.esc.prevent.stop="cancelEditor"
-                @blur="commitEditor()"
+                @keydown.enter.prevent="editor.commit(true)"
+                @keydown.esc.prevent.stop="editor.cancel"
+                @blur="editor.commit()"
                 @pointerdown.stop
                 @contextmenu.stop
                 @dblclick.stop
