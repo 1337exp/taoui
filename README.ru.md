@@ -103,6 +103,7 @@
 - **TaoDateRange** — период: `v-model` — `{ start, end }` или `null`. Первый клик — начало, второй — конец (если конец раньше — меняются местами). Неполный выбор в модель не пишется
 - **TaoCalendar** — сам календарь на месяц, встроенный (без всплывающего окна): `mode="single"` (`YYYY-MM-DD`) или `"range"` (`{ start, end }`), `min` / `max`, стрелки / PageUp / PageDown / Home / End. `TaoDate` и `TaoDateRange` — поле с этим календарём во всплывающем окне
 - **TaoFormField** — общие label / hint / error для полей формы
+- **TaoProp** — строка свойства, плотная форма поля для инспекторов: подпись слева (`labelWidth` или `--tao-prop-label-width`), контрол или несколько (`x y`) справа, под ними подсказка или ошибка; связывает подпись как `TaoFormField`, те же поля работают в ней
 - **TaoInputNumber** — число с min/max/step и кнопками ± справа. Пустое значение — `null`. `@commit` срабатывает один раз, когда правка закончена (blur, Enter, ±, стрелка), в отличие от `v-model`, который обновляется на каждую клавишу
 - **TaoQuantity** — количество в корзине: `− | поле | +`, целые штуки, сток, минус на минимуме может убрать строку
 - **TaoDragNumber** — числовое поле для панелей и редакторов, как в 3D-пакетах: подпись, число и единица в одной ячейке. Тяните вбок, как слайдер (`Shift` медленнее, `Ctrl` по сетке шага, `Esc` возвращает), кликните, чтобы набрать (`5`, `0,5`, `5 м`), или жмите кнопки − / + (зажатая повторяет) и стрелки (`PageUp` / `PageDown`, `Home` / `End`). `label`, `unit` (не входит в значение), `min` / `max` / `step` / `precision`, `variant="filled"` с `:controls="false"` для голого столбца значений; `@commit` срабатывает один раз на действие
@@ -661,6 +662,24 @@ const columns = [
   ...
 </TaoDrawer>
 ```
+
+## Настройки продукта
+
+Каждый продукт заводит одни и те же три вещи: режим страницы, палитру и язык текстов набора. `createKitPrefs` делает это одним вызовом: читает сохранённое, ставит его на страницу (`data-tao-mode`, `data-tao-theme`, `lang`, `setTaoLocale`), идёт за операционной системой, пока режим `system`, и сохраняет каждое изменение.
+
+```ts
+import { createKitPrefs } from '@1337exp/taoui'
+
+const prefs = createKitPrefs({ key: 'myapp' }) // сохраняет в myapp.mode, myapp.palette, myapp.locale
+// prefs.mode ('light' | 'dark' | 'system'), prefs.palette, prefs.locale — ref; prefs.resolvedMode — light или dark
+```
+
+```vue
+<TaoThemeToggle v-model="prefs.mode" system :apply="false" />
+<TaoLanguageSwitch v-model="prefs.locale" :languages="['en', 'ru']" />
+```
+
+Параметры: `mode` (по умолчанию `system`), `palette`, `locale` (иначе язык браузера среди `locales`), `locales` (код → локаль, по умолчанию `en` и `ru`: для других дайте свои), `storage` (`localStorage`; `null` — не сохранять), `root` (`<html>`). Хранилище, которое отказывает (приватное окно), — это страница, которая ничего не сохраняет, а не падение. `prefs.dispose()` останавливает.
 
 ## Дизайн-токены и темизация
 

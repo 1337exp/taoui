@@ -103,6 +103,7 @@
 - **TaoDateRange** — a period: `v-model` is `{ start, end }` or `null`. First click is start, second is end (they swap if end is earlier). An incomplete pick is not written to the model
 - **TaoCalendar** — the month calendar itself, inline (no popup): `mode="single"` (`YYYY-MM-DD`) or `"range"` (`{ start, end }`), `min` / `max`, arrows / PageUp / PageDown / Home / End. `TaoDate` and `TaoDateRange` are a field with this calendar in a popup
 - **TaoFormField** — shared label / hint / error for form controls
+- **TaoProp** — a property row, the dense form of a field for inspectors: the caption on the left (`labelWidth`, or `--tao-prop-label-width`), the control or several (`x y`) on the right, a hint or an error under them; it wires the label like `TaoFormField` and the same fields work in it
 - **TaoInputNumber** — number with min/max/step and ± on the right. Empty value is `null`. `@commit` fires once when an edit is finished (blur, Enter, ±, arrow), unlike `v-model`, which updates on every keystroke
 - **TaoQuantity** — cart quantity: `− | field | +`, integers, stock; minus at the minimum can remove the row
 - **TaoDragNumber** — a number field for panels and editors, the kind a 3D tool has: caption, number and unit in one cell. Drag it sideways like a slider (`Shift` slower, `Ctrl` snaps to the step, `Esc` puts it back), click to type (`5`, `0,5`, `5 m`), or use the − / + buttons (hold to repeat) and the arrow keys (`PageUp / `PageDown`, `Home` / `End`). `label`, `unit` (not part of the value), `min` / `max` / `step` / `precision`, `variant="filled"` with `:controls="false"` for a bare column of values; `@commit` fires once per action
@@ -663,6 +664,24 @@ The `cell-<id>` slot replaces a cell. `loading` shows an overlay; an empty list 
   ...
 </TaoDrawer>
 ```
+
+## Preferences of a product
+
+Every product sets up the same three things: the mode of the page, the palette and the language of the kit's texts. `createKitPrefs` does it in one call: it reads what was saved, puts it on the page (`data-tao-mode`, `data-tao-theme`, `lang`, `setTaoLocale`), follows the operating system while the mode is `system`, and saves every change.
+
+```ts
+import { createKitPrefs } from '@1337exp/taoui'
+
+const prefs = createKitPrefs({ key: 'myapp' }) // saved as myapp.mode, myapp.palette, myapp.locale
+// prefs.mode ('light' | 'dark' | 'system'), prefs.palette, prefs.locale are refs; prefs.resolvedMode is light or dark
+```
+
+```vue
+<TaoThemeToggle v-model="prefs.mode" system :apply="false" />
+<TaoLanguageSwitch v-model="prefs.locale" :languages="['en', 'ru']" />
+```
+
+Options: `mode` (the default, `system`), `palette`, `locale` (else the browser's among `locales`), `locales` (code → locale, `en` and `ru` by default: give your own for more), `storage` (`localStorage`; `null` saves nothing), `root` (`<html>`). A storage that refuses (a private window) is a page that saves nothing, not a crash. `prefs.dispose()` stops it.
 
 ## Design tokens and theming
 

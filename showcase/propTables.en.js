@@ -978,6 +978,19 @@ export const propTablesEn = {
       slots: '#start and #end — the two panes. Three columns = two nested splits.',
     },
   ],
+  prop: [
+    {
+      title: 'TaoProp',
+      rows: [
+        r('label', 'string', '—', 'The caption on the left. It names the control for a screen reader. Required'),
+        r('hint', 'string', '—', 'A quiet line under the control'),
+        r('error', 'string', '—', 'The message under the control; with it the control is invalid'),
+        r('labelWidth', 'number | string', "'7.5rem'", 'The width of the caption column: a number is px, a string any CSS length. For all rows at once: the variable --tao-prop-label-width'),
+        r('size', "'small' | 'medium' | 'large'", 'of ancestors', 'Size of the control inside'),
+      ],
+      slots: 'default — the control, or several in a row (x y w h). #caption — the caption itself instead of label (an icon, a mark); the name for a screen reader stays label. A long caption is cut with an ellipsis, the whole text is in the title: the rows of an inspector keep one height.',
+    },
+  ],
   fieldset: [
     {
       title: 'TaoFieldset',

@@ -63,6 +63,7 @@ export const navGroups = [
       { id: 'divider', label: 'TaoDivider' },
       { id: 'split', label: 'TaoSplit' },
       { id: 'fieldset', label: 'TaoFieldset' },
+      { id: 'prop', label: 'TaoProp', aliases: ['property', 'inspector', 'row', 'свойство', 'инспектор', 'строка'] },
       { id: 'animated-border', label: 'TaoAnimatedBorder' },
     ],
   },

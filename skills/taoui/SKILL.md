@@ -94,7 +94,10 @@ choose a text colour, WCAG 2 to promise a number.
 ## Forms
 
 - Every field takes `size`, `disabled`, `invalid` (a red frame); the text fields, switches and checkboxes also `id`, `name`, `required`, `autofocus` (and `readOnly` on `TaoInput`, `TaoTextarea`, `TaoInputNumber`, `TaoSelect`, `TaoCombobox`, `TaoDate`, `TaoDateRange`, `TaoColorInput`); a select, a date, a colour, a pin code and a slider submit through a hidden input (`name` → `FormData`, `required` → the native check). The message, the label and the hint go through
-  **`TaoFormField`** (`label`, `hint`, `error`), which also wires `id`, `aria-describedby` and `aria-invalid`.
+  **`TaoFormField`** (`label`, `hint`, `error`), which also wires `id`, `aria-describedby` and `aria-invalid`. The dense row of an
+  inspector (caption left, control right, `x y` in one row) is **`TaoProp`**, wired the same way. The mode, the palette and the language
+  of a product are one call, **`createKitPrefs({ key })`** (it reads, puts on `<html>`, follows the system, saves); bind its `mode` to
+  `TaoThemeToggle system :apply="false"` and its `locale` to `TaoLanguageSwitch`.
 - `TaoInput`, `TaoTextarea`, `TaoInputNumber`, `TaoQuantity`, `TaoDragNumber` (caption + number + unit in one cell: drag it sideways like a slider, click to type, ± buttons; `variant="filled"` + `:controls="false"` for a column of values in a panel), `TaoSelect`, `TaoCombobox`, `TaoPresetInput` (a field with presets and two arrows, e.g. font size or zoom: `options` with `default: true` for «Auto», `loop`, `custom`), `TaoDate` (`editable` to type `5`, `5.3`, `05.03.26`) / `TaoDateRange`
   (`YYYY-MM-DD` strings), `TaoCalendar` (the inline month calendar, `mode="single" | "range"`), `TaoCheckbox`,
   `TaoChecklist` (one model for a group), `TaoRadioGroup` + `TaoRadio`, `TaoSwitch`, `TaoSegmented`, `TaoSlider` /

@@ -58,6 +58,7 @@ import TaoPinCode from './components/TaoPinCode.vue';
 import TaoLink from './components/TaoLink.vue';
 import TaoStretchedLink from './components/TaoStretchedLink.vue';
 import TaoFormField from './components/TaoFormField.vue';
+import TaoProp from './components/TaoProp.vue';
 import TaoSelect from './components/TaoSelect.vue';
 import TaoColorInput from './components/TaoColorInput.vue';
 import TaoColorPicker from './components/TaoColorPicker.vue';
@@ -153,6 +154,7 @@ export {
     TaoLink,
     TaoStretchedLink,
     TaoFormField,
+    TaoProp,
     TaoSelect,
     TaoColorInput,
     TaoColorPicker,
@@ -220,6 +222,8 @@ export {
     taoDateOrder,
 } from './date';
 export { localeRu, localeEn, setTaoLocale, taoLocale, provideTaoLocale, formatText as formatTaoText, detectTaoLanguage, matchTaoLanguage, parseAcceptLanguage } from './locale';
+export { createKitPrefs } from './kitPrefs';
+export type { TaoKitPrefs, TaoKitPrefsOptions } from './kitPrefs';
 export type { TaoLocale, TaoLocaleOverrides, TaoPluralForms, TaoText } from './locale';
 export type { TaoSize } from './size';
 export type { TaoTone, TaoToneName } from './tone';

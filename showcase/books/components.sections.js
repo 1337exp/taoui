@@ -40,6 +40,7 @@ import DemoGrid from '../components/DemoGrid.vue'
 import DemoDivider from '../components/DemoDivider.vue'
 import DemoSplit from '../components/DemoSplit.vue'
 import DemoFieldset from '../components/DemoFieldset.vue'
+import DemoProp from '../components/DemoProp.vue'
 import DemoAnimatedBorder from '../components/DemoAnimatedBorder.vue'
 import DemoModal from '../components/DemoModal.vue'
 import DemoDrawer from '../components/DemoDrawer.vue'
@@ -107,6 +108,7 @@ export const demoById = {
   'divider': DemoDivider,
   'split': DemoSplit,
   'fieldset': DemoFieldset,
+  'prop': DemoProp,
   'animated-border': DemoAnimatedBorder,
   'modal': DemoModal,
   'command-palette': DemoCommandPalette,
