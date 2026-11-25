@@ -77,6 +77,7 @@ function onChange(event: Event) {
             class="tao-radio__input"
             type="radio"
             :name="inputName"
+            :required="required || group?.required?.value || undefined"
             :value="String(value)"
             :checked="isChecked"
             :disabled="isDisabled"

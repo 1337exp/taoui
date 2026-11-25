@@ -391,10 +391,10 @@ function onMarkClick(mark: TaoSliderMark) {
             </button>
         </div>
         <template v-if="name">
-            <TaoFormValue v-if="!isRange" :name="name" :value="values[0]" :disabled="disabled" />
+            <TaoFormValue v-if="!isRange" :name="name" :value="values[0]" :required="required" :disabled="disabled" />
             <template v-else>
-                <TaoFormValue :name="`${name}-from`" :value="values[0]" :disabled="disabled" />
-                <TaoFormValue :name="`${name}-to`" :value="values[1]" :disabled="disabled" />
+                <TaoFormValue :name="`${name}-from`" :value="values[0]" :required="required" :disabled="disabled" />
+                <TaoFormValue :name="`${name}-to`" :value="values[1]" :required="required" :disabled="disabled" />
             </template>
         </template>
     </div>

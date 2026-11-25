@@ -53,9 +53,11 @@ describe('without v-model the component keeps its own state', () => {
     });
 
     it('TaoTabs: the picked tab becomes active', async () => {
-        const w = mount(TaoTabs, { props: { items: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }], modelValue: 'a' } });
+        // no v-model at all: the component keeps its own state
+        const w = mount(TaoTabs, { props: { items: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }] } as never });
         await w.findAll('.tao-tabs__tab')[1]!.trigger('click');
         expect(w.findAll('.tao-tabs__tab')[1]!.attributes('aria-selected')).toBe('true');
+        expect(w.emitted('update:modelValue')?.at(-1)).toEqual(['b']);
     });
 
     it('TaoChecklist: a ticked box stays ticked', async () => {

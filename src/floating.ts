@@ -299,3 +299,16 @@ export function useFloating(
 
     return { style, side, anchorOffset, placed, update };
 }
+
+/**
+ * Where the arrow of a floating panel sits along its edge: under the anchor, kept `pad` px from the corners. For a panel above or below the
+ * anchor the arrow moves along x (`left`), for one at the side along y (`top`); the other coordinate is cleared.
+ * Где стрелка плавающей панели вдоль её края: под якорем, не ближе `pad` px к углам. Для панели над или под якорем стрелка идёт по x
+ * (`left`), для боковой по y (`top`); вторая координата сбрасывается.
+ */
+export function arrowInset(el: { offsetWidth: number; offsetHeight: number }, side: string, offset: { x: number; y: number }, pad: number) {
+    if (side === 'top' || side === 'bottom') {
+        return { left: `${Math.min(el.offsetWidth - pad, Math.max(pad, offset.x))}px`, top: '' };
+    }
+    return { top: `${Math.min(el.offsetHeight - pad, Math.max(pad, offset.y))}px`, left: '' };
+}

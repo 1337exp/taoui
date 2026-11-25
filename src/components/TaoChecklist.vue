@@ -17,6 +17,10 @@ defineOptions({ name: 'TaoChecklist' });
 const props = withDefaults(
     defineProps<{
         items: TaoChecklistItem[];
+        /** The name in a form: every checked item is sent under it, its `id` as the value. / Имя в форме: каждый отмеченный пункт уходит под ним, его `id` — значение. */
+        name?: string;
+        /** The id of the group (the fieldset), which the label of a `TaoFormField` points at. / id группы (fieldset): на него указывает подпись `TaoFormField`. */
+        id?: string;
         legend?: string;
         /** A «Select all» checkbox on top, mixed when some are checked. / «Выбрать всё» сверху. */
         selectAll?: boolean;
@@ -101,7 +105,7 @@ function setAll() {
 
 <template>
     <fieldset
-        :id="field?.id"
+        :id="id ?? field?.id"
         class="tao-checklist"
         :class="[sizeClass(size), { 'tao-checklist--strike': strike }]"
         :disabled="disabled"
@@ -135,6 +139,8 @@ function setAll() {
                 :class="{ 'tao-checklist__item--checked': checked.has(item.id) }"
             >
                 <TaoCheckbox
+                    :name="name"
+                    :value="name ? String(item.id) : undefined"
                     :model-value="checked.has(item.id)"
                     :disabled="disabled || item.disabled"
                     :invalid="isInvalid"

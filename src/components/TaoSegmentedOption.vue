@@ -100,6 +100,7 @@ function onChange() {
             class="tao-segmented-option__input"
             type="radio"
             :name="inputName"
+            :required="group?.required?.value || undefined"
             :value="String(value)"
             :checked="isChecked"
             :disabled="isDisabled"

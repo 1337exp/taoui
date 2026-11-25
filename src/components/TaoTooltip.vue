@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
-import { useFloating, type TaoPlacement } from '../floating';
+import { arrowInset, useFloating, type TaoPlacement } from '../floating';
 import { listenFocusLoss } from '../focusLoss';
 import TaoKbd from './TaoKbd.vue';
 
@@ -69,10 +69,7 @@ const arrowStyle = computed(() => {
     if (!el) {
         return {};
     }
-    if (side.value === 'top' || side.value === 'bottom') {
-        return { left: `${Math.min(el.offsetWidth - arrowPad, Math.max(arrowPad, anchorOffset.value.x))}px`, top: '' };
-    }
-    return { top: `${Math.min(el.offsetHeight - arrowPad, Math.max(arrowPad, anchorOffset.value.y))}px`, left: '' };
+    return arrowInset(el, side.value, anchorOffset.value, arrowPad);
 });
 
 function hide() {

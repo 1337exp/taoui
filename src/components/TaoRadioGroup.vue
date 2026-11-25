@@ -9,6 +9,10 @@ defineOptions({ name: 'TaoRadioGroup' });
 const props = withDefaults(
     defineProps<{
         name?: string;
+        /** The group must have a pick (native `required` on its radios). / В группе должен быть выбор (нативный `required` у её радио). */
+        required?: boolean;
+        /** The id of the group (the fieldset), which the label of a `TaoFormField` points at. / id группы (fieldset): на него указывает подпись `TaoFormField`. */
+        id?: string;
         legend?: string;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
@@ -41,13 +45,14 @@ provide(radioGroupKey, {
     name: groupName,
     model,
     disabled: groupDisabled,
+    required: computed(() => Boolean(props.required)),
     setValue,
 });
 </script>
 
 <template>
     <fieldset
-        :id="field?.id"
+        :id="id ?? field?.id"
         class="tao-radio-group"
         :class="[`tao-radio-group--${direction}`, sizeClass(size), { 'tao-radio-group--invalid': isInvalid }]"
         :disabled="disabled"

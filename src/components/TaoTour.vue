@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, ref, useId, watch } from 'vue';
 import TaoButton from './TaoButton.vue';
-import { useFloating, type TaoPlacement } from '../floating';
+import { arrowInset, useFloating, type TaoPlacement } from '../floating';
 import { getFocusable, trapTab } from '../focusTrap';
 import { useLayer } from '../layers';
 import { formatText, useLocaleText } from '../locale';
@@ -105,11 +105,7 @@ const arrowStyle = computed(() => {
         return {};
     }
     const pad = 14;
-    const { x, y } = floating.anchorOffset.value;
-    if (floating.side.value === 'top' || floating.side.value === 'bottom') {
-        return { left: `${Math.min(el.offsetWidth - pad, Math.max(pad, x))}px` };
-    }
-    return { top: `${Math.min(el.offsetHeight - pad, Math.max(pad, y))}px` };
+    return arrowInset(el, floating.side.value, floating.anchorOffset.value, pad);
 });
 
 const progress = computed(() => formatText(l10n.value.progressLabel, { n: props.index + 1, count: props.count }));

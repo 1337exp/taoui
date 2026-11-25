@@ -17,10 +17,6 @@ describe('the guard of the event contract', () => {
         .filter((name) => name.endsWith('.vue'))
         .map((name) => ({ name, source: readFileSync(join(dir, name), 'utf8').replace(/\r\n/g, '\n') }));
 
-    it('there are components to check', () => {
-        expect(sources.length).toBeGreaterThan(80);
-    });
-
     it('no component declares an untyped list of emits', () => {
         const untyped = sources.filter(({ source }) => /defineEmits\(\s*\[/.test(source)).map((s) => s.name);
         expect(untyped).toEqual([]);

@@ -305,6 +305,8 @@ Showcase section: `#checklist`
 | `items` | `TaoChecklistItem[]` | — | { id, label, description?, disabled? } |
 | `v-model` | `(string \| number)[]` | [] | The checked values, in the order of the items |
 | `legend` | `string` | — | The group caption (legend). In a TaoFormField the field gives it |
+| `name` | `string` | — | The name in a form: every checked item is sent under it, its id as the value |
+| `id` | `string` | — | The id of the group (the fieldset): the label of a TaoFormField points at it |
 | `selectAll` | `boolean` | false | «Select all» on top: mixed when some are checked; toggles every enabled item |
 | `counter` | `boolean` | false | «3 of 5» next to the caption, announced politely |
 | `strike` | `boolean` | false | Strike the checked items through (a to-do list). A look only: the checkbox tells the state |
@@ -372,6 +374,8 @@ Showcase section: `#select`
 | `value` | `string \| number \| boolean` | — | Radio: the value of this point. Required |
 | `v-model` | `the same` | — | Group holds the selection. A Radio without a group holds its own |
 | `legend` | `string` | — | Group: the group caption |
+| `required` | `boolean` | false | The group must have a pick: the native required on every radio |
+| `id` | `string` | — | The id of the group (the fieldset): the label of a TaoFormField points at it |
 | `direction` | `'row' \| 'column'` | 'row' | Group: in a row or in a column |
 | `disabled` | `boolean` | false | A single point or the whole group |
 | `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
@@ -405,6 +409,8 @@ Showcase section: `#segmented`
 | `disabled` | `boolean` | false | The whole group |
 | `invalid` | `boolean` | false | A red border. The error text is error on TaoFormField |
 | `name` | `string` | auto | name for the radio inputs inside |
+| `required` | `boolean` | false | The group must have a pick: the native required on every radio |
+| `id` | `string` | — | The id of the group (the fieldset): the label of a TaoFormField points at it |
 
 **Slots, events, notes.** default — a set of TaoSegmentedOption.
 
@@ -621,6 +627,7 @@ Showcase section: `#slider`
 | `disabled` | `boolean` | false | Disabled |
 | `invalid` | `boolean` | false | A red outline of the track. The error text is error on TaoFormField |
 | `name` | `string` | — | The name in a form: the number goes into FormData through a hidden input; a range sends <name>-from and <name>-to |
+| `id / required / autofocus` | `string / boolean / boolean` | — / false / false | The field contract (FieldProps): the id of the first thumb (the label of a TaoFormField points at it), required on the hidden value inputs (a slider always has a value, so it never holds a form back), autofocus |
 | `wheel` | `number` | 0 | The change step for the mouse wheel (a single handle). 0 — disabled |
 | `editable` | `boolean` | false | The value can be typed: a right click or a double click on the bar, or Enter / F2 on a handle, opens a field over the bar (for a range, for the nearest or the focused handle). Enter or leaving the field sets the value, snapped to the step (or to a mark with discrete) and kept in range; Esc drops the edit |
 | `editLabel` | `string` | from the locale | The accessible name of the field of editable (slider.editLabel, "Value") |

@@ -89,6 +89,12 @@ export interface TaoSliderBaseProps {
     invalid?: boolean;
     /** The name in a form: the value goes into `FormData` (a range as `<name>-from` and `<name>-to`, through hidden inputs). / Имя в форме: значение уходит в `FormData` (диапазон как `<name>-from` и `<name>-to`, через скрытые input). */
     name?: string;
+    /** The id of the first thumb, which the label of a `TaoFormField` points at. / id первой ручки: на него указывает подпись `TaoFormField`. */
+    id?: string;
+    /** Native `required` of the hidden value input (a slider always has a value, so it never holds a form back; it is here for the one contract). / Нативный `required` скрытого input значения (у слайдера значение есть всегда, форму он не держит; нужен для единого контракта). */
+    required?: boolean;
+    /** Takes the focus when it appears. / Берёт фокус, когда появляется. */
+    autofocus?: boolean;
     /** `bar` — thick track, a form control. `thin` — thin track (seek, volume). / `bar` — толстый трек, форм-контрол. `thin` — тонкий (seek, громкость). */
     variant?: 'bar' | 'thin';
     /** Size, same scale as TaoButton; without it — the size of ancestors. / Размер, шкала как у TaoButton; без него — размер предков. */

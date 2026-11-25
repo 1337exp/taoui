@@ -10,6 +10,10 @@ defineOptions({ name: 'TaoSegmented' });
 const props = withDefaults(
     defineProps<{
         name?: string;
+        /** The group must have a pick (native `required` on its radios). / В группе должен быть выбор (нативный `required` у её радио). */
+        required?: boolean;
+        /** The id of the group (the fieldset), which the label of a `TaoFormField` points at. / id группы (fieldset): на него указывает подпись `TaoFormField`. */
+        id?: string;
         legend?: string;
         disabled?: boolean;
         /** Red frame. The message goes to TaoFormField `error`. / Красная рамка. Текст ошибки — в `error` у TaoFormField. */
@@ -95,6 +99,7 @@ provide(segmentedKey, {
     name: groupName,
     model,
     disabled: groupDisabled,
+    required: computed(() => Boolean(props.required)),
     setValue,
 });
 
@@ -151,7 +156,7 @@ onBeforeUnmount(() => {
         :aria-describedby="describedBy"
         :aria-invalid="isInvalid || undefined"
         :aria-labelledby="legend ? undefined : (field ? `${field.id}-label` : undefined)"
-        :id="field?.id"
+        :id="id ?? field?.id"
     >
         <legend v-if="legend" class="tao-segmented__legend">{{ legend }}</legend>
         <div ref="trackRef" class="tao-segmented__track">

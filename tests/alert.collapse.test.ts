@@ -56,7 +56,10 @@ describe('TaoAlert collapsible', () => {
     });
 
     it('collapsed without collapsible means nothing', () => {
-        expect(alert({ collapsed: true }).find('.tao-alert__message').attributes('hidden')).toBeUndefined();
+        const w = alert({ collapsed: true });
+        expect(w.find('.tao-alert__message').attributes('hidden')).toBeUndefined();
+        expect(w.find('.tao-alert__message').isVisible()).toBe(true);
+        expect(w.find('.tao-alert__toggle').exists()).toBe(false);
     });
 
     it('without a title the toggle says «Details»; the tone and the live role stay', () => {

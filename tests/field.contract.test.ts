@@ -204,3 +204,45 @@ describe('TaoFileDrop: disabled', () => {
         expect(w.emitted('update:modelValue')).toBeUndefined();
     });
 });
+
+describe('the sliders and the groups join the field contract', () => {
+    it('TaoSlider / TaoRangeSlider: id on the thumb, required on the hidden inputs, autofocus on the thumb', async () => {
+        const { default: TaoSlider } = await import('../src/components/TaoSlider.vue');
+        const { default: TaoRangeSlider } = await import('../src/components/TaoRangeSlider.vue');
+        const w = mount(TaoSlider, { props: { modelValue: 5, name: 'v', required: true, id: 'mine', autofocus: true }, attachTo: document.body });
+        expect(w.find('[role="slider"]').attributes('id')).toBe('mine');
+        expect(w.find('input[name="v"]').attributes('required')).toBeDefined();
+        expect(document.activeElement).toBe(w.find('[role="slider"]').element);
+        w.unmount();
+        const r = mount(TaoRangeSlider, { props: { modelValue: [1, 2], name: 'r', required: true } });
+        expect(r.find('input[name="r-from"]').attributes('required')).toBeDefined();
+        expect(r.find('input[name="r-to"]').attributes('required')).toBeDefined();
+    });
+
+    it('TaoRadioGroup / TaoSegmented: required reaches every radio, id the fieldset', async () => {
+        const { default: TaoRadioGroup } = await import('../src/components/TaoRadioGroup.vue');
+        const { default: TaoSegmented } = await import('../src/components/TaoSegmented.vue');
+        const { default: TaoSegmentedOption } = await import('../src/components/TaoSegmentedOption.vue');
+        const g = mount(TaoRadioGroup, { props: { required: true, id: 'grp', name: 'g' }, slots: { default: () => [h(TaoRadio, { value: 'a' }), h(TaoRadio, { value: 'b' })] } });
+        expect(g.find('fieldset').attributes('id')).toBe('grp');
+        expect(g.findAll('input').every((i) => i.attributes('required') !== undefined)).toBe(true);
+        const s = mount(TaoSegmented, { props: { required: true, id: 'seg', name: 's' }, slots: { default: () => [h(TaoSegmentedOption, { value: 'a' }, () => 'A'), h(TaoSegmentedOption, { value: 'b' }, () => 'B')] } });
+        expect(s.find('fieldset').attributes('id')).toBe('seg');
+        expect(s.findAll('input').every((i) => i.attributes('required') !== undefined)).toBe(true);
+        // a group that is not required adds nothing
+        const free = mount(TaoRadioGroup, { props: { name: 'f' }, slots: { default: () => [h(TaoRadio, { value: 'a' })] } });
+        expect(free.find('input').attributes('required')).toBeUndefined();
+    });
+
+    it('TaoChecklist: a name sends every checked item under it, its id as the value', async () => {
+        const { default: TaoChecklist } = await import('../src/components/TaoChecklist.vue');
+        const w = mount(TaoChecklist, { props: { name: 'tags', id: 'cl', items: [{ id: 'a', label: 'A' }, { id: 'b', label: 'B' }], modelValue: ['b'] }, attachTo: document.body });
+        expect(w.find('fieldset').attributes('id')).toBe('cl');
+        const inputs = w.findAll('input[name="tags"]');
+        expect(inputs.map((i) => i.attributes('value'))).toEqual(['a', 'b']);
+        const form = document.createElement('form');
+        form.appendChild(w.element);
+        expect(new FormData(form).getAll('tags')).toEqual(['b']);
+        w.unmount();
+    });
+});

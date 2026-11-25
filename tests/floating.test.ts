@@ -77,3 +77,14 @@ describe('list navigation', () => {
         expect(findByPrefix(labels, on, 'z', 0)).toBe(-1);
     });
 });
+
+describe('arrowInset', () => {
+    it('slides the arrow along the edge, never closer than the pad to a corner; the other axis is cleared', async () => {
+        const { arrowInset } = await import('../src/floating');
+        const el = { offsetWidth: 200, offsetHeight: 80 };
+        expect(arrowInset(el, 'top', { x: 3, y: 0 }, 10)).toEqual({ left: '10px', top: '' });
+        expect(arrowInset(el, 'bottom', { x: 150, y: 0 }, 10)).toEqual({ left: '150px', top: '' });
+        expect(arrowInset(el, 'bottom', { x: 500, y: 0 }, 10)).toEqual({ left: '190px', top: '' });
+        expect(arrowInset(el, 'left', { x: 0, y: 500 }, 10)).toEqual({ top: '70px', left: '' });
+    });
+});
