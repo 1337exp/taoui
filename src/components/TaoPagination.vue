@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
 import TaoSelect from './TaoSelect.vue';
-import { localeEn } from '../locale/en';
 import { clamp } from '../primitives/number';
 import { computed, ref, watch } from 'vue';
 import { buildPaginationItems } from '../pagination';
@@ -148,7 +147,7 @@ function goTo(next: number) {
             </p>
             <!-- the label names the list button: a screen reader hears «Per page, 20» / подпись — имя кнопки списка -->
             <label v-if="sizeOptions.length" class="tao-pagination__sizes">
-                <span class="tao-pagination__sizes-text">{{ l10n.perPageText ?? localeEn.pagination.perPageText }}</span>
+                <span class="tao-pagination__sizes-text">{{ l10n.perPageText }}</span>
                 <TaoSelect
                     class="tao-pagination__sizes-select"
                     :model-value="pageSize"

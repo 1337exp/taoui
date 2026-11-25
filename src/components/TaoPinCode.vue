@@ -2,7 +2,6 @@
 import { computed, nextTick, ref, watch } from 'vue';
 import { useField } from '../formField';
 import { useLocaleText, formatText } from '../locale';
-import { localeEn } from '../locale/en';
 import { sizeClass, type TaoSize } from '../size';
 import { parsePinFormat, pinFromPaste, separatorAfter } from '../pinFormat';
 
@@ -338,7 +337,7 @@ watch(
                 :inputmode="numbersOnly ? 'numeric' : 'text'"
                 :pattern="numbersOnly ? '[0-9]' : undefined"
                 autocomplete="one-time-code"
-                :aria-label="formatText(l10n.cellLabel ?? localeEn.pinCode.cellLabel!, { n: index + 1, count: numbers.length })"
+                :aria-label="formatText(l10n.cellLabel, { n: index + 1, count: numbers.length })"
                 :maxlength="index === 0 ? count : 1"
                 @input="onChange($event, index)"
                 @paste="onPaste($event, index)"

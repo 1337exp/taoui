@@ -1,13 +1,11 @@
 <script lang="ts" setup>
-import { computed, nextTick, ref, shallowReactive, shallowRef, useId, watch } from 'vue';
-import type { TaoVirtualAnchor } from '../floating';
+import { computed, nextTick, ref, useId, watch } from 'vue';
 import { useRoving } from '../primitives/useRoving';
-import { formatText, localeEn, useLocaleText, useTaoLocale } from '../locale';
-import type { TaoMenuItem } from '../menu';
+import { formatText, useLocaleText, useTaoLocale } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import {
     checkState,
-    menuSelection,
+    indexNodes,
     sortTreeNodes,
     toggleCheck,
     visibleRows,
@@ -19,6 +17,8 @@ import {
     type TaoTreeSelection,
     type TaoTreeSort,
 } from '../tree';
+import { useTreeLoad } from '../treeLoad';
+import { useTreeMenu } from '../treeMenu';
 import { useTreeMove } from '../treeMove';
 import TaoIcon from './TaoIcon.vue';
 import TaoMenu from './TaoMenu.vue';
@@ -35,15 +35,9 @@ defineOptions({ name: 'TaoTree' });
 const props = withDefaults(
     defineProps<{
         nodes: TaoTreeNode[];
-        /** Ids of the expanded nodes (`v-model:expanded`); without it the tree keeps them itself. / id раскрытых узлов. */
-        expanded?: string[];
         selection?: TaoTreeSelection;
-        /** `v-model:selected`: an id (single) or a list of ids (multiple). / id или список id. */
-        selected?: string | string[] | null;
         /** Checkboxes; a parent is checked, unchecked or mixed by its leaves. / Чекбоксы; родитель по своим листьям. */
         checkable?: boolean;
-        /** `v-model:checked`: the ids of the checked nodes without children. / id отмеченных узлов без детей. */
-        checked?: string[];
         /** Loads the children of a node with `hasChildren`. / Подгружает детей узла с `hasChildren`. */
         load?: (node: TaoTreeNode) => Promise<TaoTreeNode[]>;
         /** Without it the size of ancestors. / Без него — размер предков. */
@@ -87,11 +81,8 @@ const props = withDefaults(
         menuLabel?: string;
     }>(),
     {
-        expanded: undefined,
         selection: 'single',
-        selected: undefined,
         checkable: false,
-        checked: undefined,
         load: undefined,
         size: undefined,
         menu: undefined,
@@ -106,13 +97,18 @@ const props = withDefaults(
 );
 const l10n = useLocaleText(props, 'tree');
 const locale = useTaoLocale();
-/** A text of the tree, English for a locale written before 5.51.0. / Текст дерева; английский для старой локали. */
-const text = <K extends keyof typeof localeEn.tree>(key: K) => (l10n.value[key] ?? localeEn.tree[key])!;
+const text = <K extends keyof typeof l10n.value>(key: K) => l10n.value[key];
+
+// ---------- models: with `v-model` the parent holds the state, without it the tree does ----------
+
+/** Ids of the expanded nodes (`v-model:expanded`). / id раскрытых узлов. */
+const expanded = defineModel<string[]>('expanded');
+/** `v-model:selected`: an id (single) or a list of ids (multiple). / id или список id. */
+const selected = defineModel<string | string[] | null>('selected');
+/** `v-model:checked`: the ids of the checked nodes without children. / id отмеченных узлов без детей. */
+const checked = defineModel<string[]>('checked');
 
 const emit = defineEmits<{
-    'update:expanded': [ids: string[]];
-    'update:selected': [value: string | string[] | null];
-    'update:checked': [ids: string[]];
     /** A node was picked (click, Enter, Space without checkboxes). / Узел выбран. */
     select: [node: TaoTreeNode];
     /**
@@ -151,41 +147,29 @@ defineSlots<{
     actions?(props: NodeSlot): unknown;
 }>();
 
-// ---------- models: controlled when the prop is given, otherwise kept here ----------
-
-const ownExpanded = ref<string[]>([]);
-const ownSelected = ref<string | string[] | null>(null);
-const ownChecked = ref<string[]>([]);
-
-const expandedSet = computed(() => new Set(props.expanded ?? ownExpanded.value));
+const expandedSet = computed(() => new Set(expanded.value ?? []));
 const selectedSet = computed(() => {
-    const value = props.selected !== undefined ? props.selected : ownSelected.value;
-    return new Set(value === null ? [] : Array.isArray(value) ? value : [value]);
+    const value = selected.value;
+    return new Set(value == null ? [] : Array.isArray(value) ? value : [value]);
 });
-const checkedSet = computed(() => new Set(props.checked ?? ownChecked.value));
+const checkedSet = computed(() => new Set(checked.value ?? []));
 
-function setExpanded(ids: Set<string>) {
-    const list = [...ids];
-    ownExpanded.value = list;
-    emit('update:expanded', list);
-}
+const setExpanded = (ids: Set<string>) => (expanded.value = [...ids]);
+const setChecked = (ids: Set<string>) => (checked.value = [...ids]);
+const setSelected = (value: string | string[] | null) => (selected.value = value);
 
-function setChecked(ids: Set<string>) {
-    const list = [...ids];
-    ownChecked.value = list;
-    emit('update:checked', list);
-}
+// ---------- lazy children (treeLoad.ts) ----------
 
-function setSelected(value: string | string[] | null) {
-    ownSelected.value = value;
-    emit('update:selected', value);
-}
-
-// ---------- lazy children ----------
-
-const loaded = shallowReactive(new Map<string, TaoTreeNode[]>());
-const loading = shallowReactive(new Set<string>());
-const raw = (node: TaoTreeNode) => node.children ?? loaded.get(node.id);
+const lazy = useTreeLoad({
+    load: () => props.load,
+    expanded: () => expandedSet.value,
+    setExpanded,
+    checked: () => checkedSet.value,
+    setChecked,
+    children: (node) => children(node),
+    failed: (node, error) => emit('load-error', node, error),
+});
+const { loading, raw, expand } = lazy;
 
 // the order the rows stand in: the data's, or the sort's; one sorted copy per list until the sort or the data change
 // порядок строк: как в данных или по сортировке; одна отсортированная копия на список, пока не сменились сортировка и данные
@@ -210,69 +194,7 @@ const children = (node: TaoTreeNode) => {
 const rows = computed(() => visibleRows(order.value(props.nodes), expandedSet.value, children));
 const rowIndex = computed(() => new Map(rows.value.map((row, index) => [row.node.id, index])));
 
-/** Loads the children of a lazy node; false when `load` failed (reported as `load-error`). / Подгружает детей. */
-async function loadChildren(node: TaoTreeNode): Promise<boolean> {
-    loading.add(node.id);
-    try {
-        const list = await props.load!(node);
-        loaded.set(node.id, list);
-        // a checked lazy node hands its check to the children it turned out to have
-        // отмеченный ленивый узел передаёт отметку детям, которые у него оказались
-        if (checkedSet.value.has(node.id) && list.length) {
-            const next = new Set(checkedSet.value);
-            next.delete(node.id);
-            list.filter((child) => !child.disabled).forEach((child) => next.add(child.id));
-            setChecked(next);
-        }
-        return true;
-    } catch (error) {
-        emit('load-error', node, error);
-        return false;
-    } finally {
-        loading.delete(node.id);
-    }
-}
-
-async function expand(row: TaoTreeRow) {
-    const { node } = row;
-    if (!row.branch || row.expanded || loading.has(node.id)) {
-        return;
-    }
-    if (children(node) === undefined && node.hasChildren) {
-        if (!props.load || !(await loadChildren(node))) {
-            return;
-        }
-    }
-    setExpanded(new Set([...expandedSet.value, node.id]));
-}
-
-// An `expanded` that came from outside (a saved view, the app) can hold lazy folders whose children are not loaded yet:
-// they are loaded here, the visible ones first; their own open children show up as rows and are loaded in turn, so a
-// saved chain (node_modules / vue / dist) opens level by level. A folder whose load fails is closed again.
-// `expanded`, пришедший снаружи (сохранённый вид, приложение), может держать ленивые папки без загруженных детей: они
-// подгружаются здесь, видимые; их раскрытые дети появляются строками и подгружаются следом, так сохранённая цепочка
-// (node_modules / vue / dist) раскрывается уровень за уровнем. Папка, у которой загрузка упала, снова закрывается.
-watch(
-    rows,
-    (list) => {
-        if (!props.load) {
-            return;
-        }
-        for (const row of list) {
-            const { node } = row;
-            if (row.expanded && node.hasChildren && raw(node) === undefined && !loading.has(node.id)) {
-                void loadChildren(node).then((ok) => {
-                    if (!ok && expandedSet.value.has(node.id)) {
-                        const next = new Set(expandedSet.value);
-                        next.delete(node.id);
-                        setExpanded(next);
-                    }
-                });
-            }
-        }
-    },
-    { immediate: true },
-);
+lazy.watchRows(rows);
 
 function collapse(row: TaoTreeRow) {
     // read before closing: the rows are recomputed as soon as the set changes
@@ -377,7 +299,7 @@ function onKeydown(event: KeyboardEvent, index: number) {
         return;
     }
     current.value = index;
-    if (onMenuKey(event, row, index) || moveRows.onKeydown(event, index)) {
+    if (menuControl.onKey(event, row, index) || moveRows.onKeydown(event, index)) {
         return;
     }
     if (event.key === '*') {
@@ -471,151 +393,25 @@ function onRowClick(row: TaoTreeRow, index: number) {
     pick(row);
 }
 
-// ---------- the context menu ----------
+// ---------- the context menu (treeMenu.ts) ----------
 
-const menuOpen = ref(false);
-const menuAnchor = ref<TaoVirtualAnchor | null>(null);
-const menuItems = shallowRef<TaoMenuItem[]>([]);
-const menuNode = shallowRef<TaoTreeNode | null>(null);
-const menuIds = ref<string[]>([]);
-// the Menu key opens the menu on keydown; the contextmenu event the browser sends after it is the same request
-// клавиша Menu открывает меню на keydown; событие contextmenu, которое браузер шлёт следом, — та же просьба
-let keyMenuAt = -Infinity;
-
-/** Under the row, from the start of its label: where a menu opened from the keyboard hangs. / Под строкой, от начала подписи. */
-function rowAnchor(index: number): TaoVirtualAnchor | null {
-    const el = rowRefs.value[index];
-    if (!el) {
-        return null;
-    }
-    const box = el.getBoundingClientRect();
-    const label = el.querySelector('.tao-tree__label')?.getBoundingClientRect();
-    return { x: label ? label.left : box.left, y: box.top, width: 0, height: box.height };
-}
-
-/** Opens `menu` for a row; false when there is nothing to show (no `menu`, an empty list). */
-function openMenu(row: TaoTreeRow, index: number, anchor: TaoVirtualAnchor | null): boolean {
-    if (!props.menu || !anchor) {
-        return false;
-    }
-    const change = menuSelection(props.selection, selectedSet.value, row.node);
-    const ids =
-        change !== undefined
-            ? [row.node.id]
-            : selectedSet.value.has(row.node.id)
-              ? [...selectedSet.value]
-              : [row.node.id];
-    const items = typeof props.menu === 'function' ? props.menu(row.node, ids) : props.menu;
-    if (!items.length) {
-        return false;
-    }
-    if (change !== undefined) {
-        setSelected(change);
-    }
-    current.value = index;
-    menuNode.value = row.node;
-    menuIds.value = ids;
-    menuItems.value = items;
-    menuAnchor.value = anchor;
-    // a second right click while the menu is open moves it: close, then open at the new point
-    // второй правый клик при открытом меню переносит его: закрыть и открыть в новой точке
-    menuOpen.value = false;
-    void nextTick(() => (menuOpen.value = true));
-    return true;
-}
-
-function onRowContextMenu(event: MouseEvent, row: TaoTreeRow, index: number) {
-    if (performance.now() - keyMenuAt < 500) {
-        event.preventDefault();
-        return;
-    }
-    emit('menu', row.node, event);
-    if (event.defaultPrevented) {
-        return;
-    }
-    // a contextmenu from the keyboard (where the keydown did not reach us) has no pointer: hang it from the row
-    // contextmenu с клавиатуры (когда keydown до нас не дошёл) без указателя: вешаем меню на строку
-    const fromKeyboard = event.clientX === 0 && event.clientY === 0;
-    const anchor = fromKeyboard ? rowAnchor(index) : { x: event.clientX, y: event.clientY };
-    if (openMenu(row, index, anchor)) {
-        event.preventDefault();
-    }
-}
-
-function onMenuKey(event: KeyboardEvent, row: TaoTreeRow, index: number): boolean {
-    if (!props.menu || !(event.key === 'ContextMenu' || (event.key === 'F10' && event.shiftKey))) {
-        return false;
-    }
-    emit('menu', row.node, event);
-    // the app took it (a menu of its own), or ours opened: either way the contextmenu that follows is not a new request
-    // приложение взяло его на себя (своё меню) или открылось наше: contextmenu следом — не новая просьба
-    if (!event.defaultPrevented && !openMenu(row, index, rowAnchor(index))) {
-        return false;
-    }
-    event.preventDefault();
-    keyMenuAt = performance.now();
-    return true;
-}
-
-function onMenuSelect(id: string) {
-    if (menuNode.value) {
-        emit('menu-select', id, menuNode.value, menuIds.value);
-    }
-}
-
-// TaoMenu gives the focus back to the row itself / TaoMenu сам возвращает фокус строке
-function onMenuClose() {
-    menuOpen.value = false;
-}
+const menuControl = useTreeMenu({
+    menu: () => props.menu,
+    selection: () => props.selection,
+    selected: () => selectedSet.value,
+    setSelected,
+    current,
+    rowEl: (index) => rowRefs.value[index],
+    ask: (node, event) => emit('menu', node, event),
+    pick: (id, node, ids) => emit('menu-select', id, node, ids),
+});
+const { menuOpen, menuAnchor, menuItems, menuNode, onRowContextMenu, onSelect: onMenuSelect, onClose: onMenuClose } = menuControl;
 
 // ---------- moving rows ----------
 
 // Every known node (closed branches and loaded children too): the parent, the children in order, the node by id.
 // Каждый известный узел (и в свёрнутых ветках, и подгруженные): родитель, дети по порядку, узел по id.
-const known = computed(() => {
-    const parent = new Map<string, string | null>();
-    const kids = new Map<string | null, string[]>();
-    const byId = new Map<string, TaoTreeNode>();
-    const walk = (list: readonly TaoTreeNode[], parentId: string | null) => {
-        kids.set(
-            parentId,
-            list.map((node) => node.id),
-        );
-        for (const node of list) {
-            if (byId.has(node.id)) {
-                continue; // a repeated id (a wrong load) is a leaf, as in visibleRows / повтор id — лист
-            }
-            byId.set(node.id, node);
-            parent.set(node.id, parentId);
-            const own = children(node);
-            if (own) {
-                walk(own, node.id);
-            }
-        }
-    };
-    walk(order.value(props.nodes), null);
-    return { parent, kids, byId };
-});
-
-/** Children loaded for a folder a move touched are stale: load them again if it is open. / Подгружает заново. */
-async function reload(id: string) {
-    const node = known.value.byId.get(id);
-    if (!node || node.children || !loaded.has(id)) {
-        return;
-    }
-    loaded.delete(id);
-    if (!expandedSet.value.has(id) || !props.load) {
-        return;
-    }
-    loading.add(id);
-    try {
-        loaded.set(id, await props.load(node));
-    } catch (error) {
-        emit('load-error', node, error);
-    } finally {
-        loading.delete(id);
-    }
-}
+const known = computed(() => indexNodes(order.value(props.nodes), children));
 
 const canMove = computed(() => Boolean(props.onMove));
 const liveText = ref('');
@@ -639,7 +435,7 @@ const moveRows = useTreeMove({
     sorted: () => props.sort !== 'none',
     expand: (row) => expand(row),
     move: (move) => props.onMove?.(move),
-    moved: (move, from) => new Set([move.parentId, ...from]).forEach((id) => id !== null && void reload(id)),
+    moved: (move, from) => new Set([move.parentId, ...from]).forEach((id) => id !== null && void lazy.reload(known.value.byId.get(id))),
     failed: (move, error) => emit('move-error', move, error),
     announce,
     texts: () => ({

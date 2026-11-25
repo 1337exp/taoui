@@ -33,8 +33,8 @@ export interface TaoLocale {
     pinCode: {
         successText: string;
         errorText: string;
-        /** `{n}` of `{count}`: the name of one cell (5.8.4; optional for locales written before). / имя одной клетки */
-        cellLabel?: string;
+        /** `{n}` of `{count}`: the name of one cell. / имя одной клетки */
+        cellLabel: string;
     };
     avatar: {
         fallbackLabel: string;
@@ -77,12 +77,8 @@ export interface TaoLocale {
         clearText: string;
         prevMonthLabel: string;
         nextMonthLabel: string;
-        /**
-         * The calendar button of an `editable` TaoDate (5.6). Optional, so a locale written before it still type-checks;
-         * without it the English text is used.
-         * Кнопка календаря у `editable` TaoDate (5.6). Необязательна, чтобы локаль, написанная раньше, проходила типы.
-         */
-        calendarLabel?: string;
+        /** The calendar button of an `editable` TaoDate. / Кнопка календаря у `editable` TaoDate. */
+        calendarLabel: string;
     };
     dateRange: {
         placeholder: string;
@@ -98,20 +94,20 @@ export interface TaoLocale {
     tree: {
         ariaLabel: string;
         loadingLabel: string;
-        /** The context menu (5.51.0; optional for locales written before, English then). / Контекстное меню. */
-        menuLabel?: string;
+        /** The context menu. / Контекстное меню. */
+        menuLabel: string;
         /**
-         * Moving rows (5.51.0, optional): `{item}` is the name of a row or `countLabel`, `{target}` the folder or `rootLabel`.
-         * Перенос строк (5.51.0, необязательно): `{item}` — имя строки или `countLabel`, `{target}` — папка или `rootLabel`.
+         * Moving rows: `{item}` is the name of a row or `countLabel`, `{target}` the folder or `rootLabel`.
+         * Перенос строк: `{item}` — имя строки или `countLabel`, `{target}` — папка или `rootLabel`.
          */
-        countLabel?: TaoText;
-        rootLabel?: string;
-        cutText?: string;
-        copyText?: string;
-        movedText?: string;
-        copiedText?: string;
-        canceledText?: string;
-        refusedText?: string;
+        countLabel: TaoText;
+        rootLabel: string;
+        cutText: string;
+        copyText: string;
+        movedText: string;
+        copiedText: string;
+        canceledText: string;
+        refusedText: string;
     };
     /** `counterText`: `{checked}`, `{total}`. */
     checklist: { selectAllLabel: string; counterText: string };
@@ -147,8 +143,8 @@ export interface TaoLocale {
         goToText: string;
         /** `{count}` — the number of pages. / число страниц. */
         goToLabel: string;
-        /** The caption of the page size choice (5.7); optional for locales written before. / Подпись выбора размера страницы. */
-        perPageText?: string;
+        /** The caption of the page size choice. / Подпись выбора размера страницы. */
+        perPageText: string;
         /** `{from}`, `{to}`, `{total}`. */
         totalText: string;
         /** When there are no rows. / Когда строк нет. */

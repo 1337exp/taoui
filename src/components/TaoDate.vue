@@ -10,7 +10,6 @@ import {
     parseTaoDateInput,
     todayTaoDate,
 } from '../date';
-import { localeEn } from '../locale/en';
 import { useDismiss } from '../dismiss';
 import { useFloating } from '../floating';
 import { useField } from '../formField';
@@ -243,7 +242,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
             <button
                 type="button"
                 class="tao-date__toggle"
-                :aria-label="l10n.calendarLabel ?? localeEn.date.calendarLabel"
+                :aria-label="l10n.calendarLabel"
                 aria-haspopup="dialog"
                 :aria-expanded="open"
                 :aria-controls="gridId"

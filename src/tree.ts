@@ -110,6 +110,37 @@ export function visibleRows(nodes: readonly TaoTreeNode[], expanded: ReadonlySet
 }
 
 /**
+ * Every known node, the closed branches and the loaded children too: the parent of each, the ids of the children of each in
+ * order (`null` is the top level), the node by id. A repeated id (a wrong `load`) is a leaf, as in `visibleRows`.
+ * Каждый известный узел (и в свёрнутых ветках, и подгруженные): родитель, id детей по порядку (`null` — верхний уровень), узел по id.
+ * Повтор id (неверный `load`) — лист, как в `visibleRows`.
+ */
+export function indexNodes(nodes: readonly TaoTreeNode[], children: TaoTreeChildren) {
+    const parent = new Map<string, string | null>();
+    const kids = new Map<string | null, string[]>();
+    const byId = new Map<string, TaoTreeNode>();
+    const walk = (list: readonly TaoTreeNode[], parentId: string | null) => {
+        kids.set(
+            parentId,
+            list.map((node) => node.id),
+        );
+        for (const node of list) {
+            if (byId.has(node.id)) {
+                continue;
+            }
+            byId.set(node.id, node);
+            parent.set(node.id, parentId);
+            const own = children(node);
+            if (own) {
+                walk(own, node.id);
+            }
+        }
+    };
+    walk(nodes, null);
+    return { parent, kids, byId };
+}
+
+/**
  * The checkable units under a node: the nodes without (loaded) children. A leaf is its own unit.
  * Отмечаемые единицы под узлом: узлы без (загруженных) детей. Лист — сам себе единица.
  */
