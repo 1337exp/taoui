@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue';
-import { glideDuration, glideTarget as snapTarget } from '../carousel';
+import { centerDistance, cycleTarget, nearestSlide, wantedCopies } from '../carousel';
+import { useCarouselGlide } from '../carouselGlide';
+import { useCarouselPause } from '../carouselPause';
 import { usePointerDrag } from '../primitives/usePointerDrag';
 import { clamp } from '../primitives/number';
 import { useLocaleText } from '../locale';
@@ -88,6 +90,7 @@ const index = ref(props.modelValue);
 const count = ref(0);
 /** How many times the slides are drawn: 1, or an odd number in a centered loop (the middle set is the real one). / Сколько раз нарисованы слайды. */
 const copies = ref(1);
+const reducedMotion = useReducedMotion();
 // The mouse drag: the press, the moves and every way it ends (release, cancel, lost focus or capture, unmount) are the shared gesture.
 // Перетаскивание мышью: нажатие, движения и любой конец (отпустили, отмена, потеря фокуса или захвата, размонтирование) — общий жест.
 const drag = usePointerDrag({
@@ -100,12 +103,12 @@ const drag = usePointerDrag({
             return false;
         }
         // grabbing a moving strip stops it where it is / схватить летящую полосу — остановить её на месте
-        cancelGlide();
+        glide.cancel();
         dragStartX = event.clientX;
         dragStartScroll = track.value.scrollLeft;
         dragMoved = 0;
-        samples = [];
-        recordSample(event.clientX);
+        glide.clearSamples();
+        glide.record(event.clientX);
     },
     onMove(event) {
         if (!track.value) {
@@ -113,7 +116,7 @@ const drag = usePointerDrag({
         }
         const dx = event.clientX - dragStartX;
         dragMoved = Math.max(dragMoved, Math.abs(dx));
-        recordSample(event.clientX);
+        glide.record(event.clientX);
         track.value.scrollLeft = dragStartScroll - dx;
     },
     // released: the click that follows the drag is still guarded; any other ending clears the guard
@@ -121,15 +124,23 @@ const drag = usePointerDrag({
     onEnd: (reason) => finishDrag(reason === 'up'),
 });
 const dragging = drag.dragging;
-/** Momentum after a mouse drag: scroll-snap stays off until the glide lands on a slide. / Инерция после перетаскивания мышью. */
-const gliding = ref(false);
-const hoverPaused = ref(false);
-const focusPaused = ref(false);
-/** The user pressed the pause button. / Нажата кнопка паузы. */
-const userPaused = ref(false);
-const pageHidden = ref(false);
+// the momentum after a drag (carouselGlide.ts) and what pauses the autoplay (carouselPause.ts)
+// инерция после протяжки (carouselGlide.ts) и то, что ставит автопрокрутку на паузу (carouselPause.ts)
+const glide = useCarouselGlide({
+    track,
+    pitch: () => {
+        const { width, gap } = metrics();
+        return width > 0 ? width + gap : 0;
+    },
+    reducedMotion,
+    nearest: (scrollLeft) => nearestIndex(scrollLeft),
+    setIndex: (next) => setIndex(next),
+    recenter: () => recenterCycle(),
+});
+const { gliding } = glide;
+const pause = useCarouselPause({ dragging, gliding, alive: () => track.value !== null });
+const { userPaused, paused, onMouseEnter, onMouseLeave, scheduleFocusPause } = pause;
 const mounted = ref(false);
-const reducedMotion = useReducedMotion();
 /** Restarts the fill: a new key for every slide. / Перезапускает заливку: новый ключ на каждый слайд. */
 const fillEpoch = ref(0);
 
@@ -137,11 +148,7 @@ let dragStartX = 0;
 let dragStartScroll = 0;
 let dragMoved = 0;
 let scrollFrame = 0;
-let glideFrame = 0;
 let settleTimer = 0;
-/** Recent pointer positions for the release speed. / Последние позиции указателя — для скорости при отпускании. */
-let samples: { x: number; t: number }[] = [];
-let focusFrame = 0;
 
 const view = computed(() => Math.max(1, Math.round(props.perView)));
 // centered: one slide is current, so a step is one slide however many are in view / по центру шаг — один слайд
@@ -163,9 +170,6 @@ const armed = computed(
         !reducedMotion.value &&
         count.value > step.value &&
         (props.loop || index.value < lastIndex.value),
-);
-const paused = computed(
-    () => hoverPaused.value || focusPaused.value || dragging.value || gliding.value || userPaused.value || pageHidden.value,
 );
 const showToggle = computed(() => props.pausable && mounted.value && props.autoplay > 0 && !reducedMotion.value && count.value > step.value);
 // the built-in indicator draws the fill; without one a hidden timer element keeps the time
@@ -197,15 +201,6 @@ function metrics() {
         }
     }
     return { width, gap, total: Math.round(el.children.length / copies.value) };
-}
-
-/** A cycle needs this many sets: on each side enough slides to fill the frame and a drag. / Сколько наборов нужно циклу. */
-function wantedCopies(real: number) {
-    if (!props.centered || !props.loop || real < 2) {
-        return 1;
-    }
-
-    return 2 * Math.ceil((view.value + 1) / real) + 1;
 }
 
 /** The copies of a cycle are not for reading or focusing. / Копии цикла не для чтения и фокуса. */
@@ -280,25 +275,19 @@ function updateFocus() {
     const at = el.scrollLeft / (width + gap);
     // every drawn slide, the copies of a cycle too / все нарисованные слайды, и копии цикла
     for (let i = 0; i < el.children.length; i++) {
-        const distance = Math.min(Math.abs(i - at), 2);
-        (el.children[i] as HTMLElement).style.setProperty('--tao-carousel-d', distance.toFixed(3));
+        (el.children[i] as HTMLElement).style.setProperty('--tao-carousel-d', centerDistance(i, at).toFixed(3));
     }
 }
 
 function nearestIndex(scrollLeft?: number) {
     const { width, gap, total } = metrics();
-    if (width <= 0 || total <= 0) {
-        return 0;
-    }
-
-    const left = scrollLeft ?? track.value?.scrollLeft ?? 0;
-    const slot = Math.round(left / (width + gap));
-    if (cyclic.value) {
-        return ((slot % total) + total) % total;
-    }
-
-    const last = Math.max(total - step.value, 0);
-    return clamp(slot, 0, last);
+    return nearestSlide({
+        left: scrollLeft ?? track.value?.scrollLeft ?? 0,
+        pitch: width > 0 ? width + gap : 0,
+        total,
+        step: step.value,
+        cyclic: cyclic.value,
+    });
 }
 
 function setIndex(next: number) {
@@ -315,7 +304,7 @@ function refreshCount() {
     // the children are what the last render drew: `copies.value` sets of the real slides
     // дети — то, что нарисовал последний рендер: `copies.value` наборов настоящих слайдов
     count.value = Math.round((track.value?.children.length ?? 0) / copies.value);
-    const wanted = wantedCopies(count.value);
+    const wanted = wantedCopies(count.value, view.value, props.centered, props.loop);
     if (wanted !== copies.value) {
         copies.value = wanted;
         // the sets before the real one moved it: stand on the current slide again / набор перед настоящим сдвинул его
@@ -336,7 +325,7 @@ function goNext() {
 }
 
 function goTo(next: number, instant = false) {
-    cancelGlide();
+    glide.cancel();
     const el = track.value;
     const { width, gap, total } = metrics();
     if (!el || width <= 0 || total <= 0) {
@@ -349,14 +338,9 @@ function goTo(next: number, instant = false) {
         const slot = width + gap;
         const at = el.scrollLeft / slot;
         const home = ((next % total) + total) % total;
-        let target = base.value + home;
         // an instant move (the start, a new width) stands in the real set; a smooth one takes the nearest copy
         // мгновенный ход (старт, новая ширина) — в настоящий набор; плавный — в ближайшую копию
-        for (let copy = home; !instant && copy < total * copies.value; copy += total) {
-            if (Math.abs(copy - at) < Math.abs(target - at)) {
-                target = copy;
-            }
-        }
+        const target = cycleTarget(at, home, base.value, total, copies.value, instant);
 
         el.scrollTo({ left: target * slot, behavior: reducedMotion.value || dragging.value || instant ? 'auto' : 'smooth' });
         setIndex(home);
@@ -390,39 +374,6 @@ function onFillEnd() {
     if (armed.value && !paused.value) {
         goTo(index.value + step.value);
     }
-}
-
-function onMouseEnter() {
-    hoverPaused.value = true;
-}
-
-function onMouseLeave() {
-    hoverPaused.value = false;
-}
-
-function hasKeyboardFocus(root: HTMLElement) {
-    const active = document.activeElement;
-    if (!(active instanceof HTMLElement) || !root.contains(active)) {
-        return false;
-    }
-
-    try {
-        return active.matches(':focus-visible');
-    } catch {
-        return true;
-    }
-}
-
-function scheduleFocusPause(event: FocusEvent) {
-    const root = event.currentTarget as HTMLElement;
-    cancelAnimationFrame(focusFrame);
-    focusFrame = requestAnimationFrame(() => {
-        if (!track.value) {
-            return;
-        }
-
-        focusPaused.value = hasKeyboardFocus(root);
-    });
 }
 
 function onScroll() {
@@ -465,100 +416,17 @@ function settle() {
         return;
     }
 
-    const target = glideTarget(el.scrollLeft, 0);
+    const target = glide.target(el.scrollLeft, 0);
     if (Math.abs(target - el.scrollLeft) >= 1) {
-        glideTo(target, 0);
+        glide.glide(target, 0);
     }
 }
 
 /** New wheel / touch input takes over from a settling glide. / Новый ввод колёсиком или пальцем перебивает доводку. */
 function onUserScrollInput() {
     if (!dragging.value) {
-        cancelGlide();
+        glide.cancel();
     }
-}
-
-function recordSample(x: number) {
-    const t = performance.now();
-    samples.push({ x, t });
-    while (samples.length > 2 && t - samples[0]!.t > 100) {
-        samples.shift();
-    }
-}
-
-/** Scroll speed at release, px/ms; 0 if the pointer stood still before letting go. / Скорость прокрутки при отпускании. */
-function releaseVelocity() {
-    const first = samples[0];
-    const last = samples[samples.length - 1];
-    if (!first || !last || last.t === first.t || performance.now() - last.t > 80) {
-        return 0;
-    }
-    // pointer moves right → content scrolls left / указатель вправо → прокрутка влево
-    return -(last.x - first.x) / (last.t - first.t);
-}
-
-function cancelGlide() {
-    if (!glideFrame) {
-        return;
-    }
-    cancelAnimationFrame(glideFrame);
-    glideFrame = 0;
-    gliding.value = false;
-}
-
-/** Where momentum would stop, rounded to a whole slide. / Где остановит инерция, с точностью до целого слайда. */
-function glideTarget(from: number, velocity: number) {
-    const el = track.value;
-    const { width, gap } = metrics();
-    if (!el || width <= 0) {
-        return from;
-    }
-
-    return snapTarget(from, velocity, width + gap, el.scrollWidth - el.clientWidth);
-}
-
-function finishGlide() {
-    glideFrame = 0;
-    gliding.value = false;
-    recenterCycle();
-    setIndex(nearestIndex());
-}
-
-/**
- * Ease-out from the current position to `target`. Its starting speed matches the release speed,
- * so the strip keeps moving the way it was thrown and settles on a slide.
- * Плавно к `target`; начальная скорость равна скорости броска — полоса не дёргается и встаёт на слайд.
- */
-function glideTo(target: number, velocity: number) {
-    const el = track.value;
-    if (!el) {
-        return;
-    }
-
-    cancelGlide();
-    const from = el.scrollLeft;
-    const distance = target - from;
-    setIndex(nearestIndex(target));
-
-    if (Math.abs(distance) < 1 || reducedMotion.value) {
-        el.scrollLeft = target;
-        return;
-    }
-
-    const duration = glideDuration(distance, velocity);
-    const start = performance.now();
-    gliding.value = true;
-
-    const frame = (now: number) => {
-        const t = Math.min((now - start) / duration, 1);
-        el.scrollLeft = from + distance * (1 - (1 - t) ** 3);
-        if (t < 1) {
-            glideFrame = requestAnimationFrame(frame);
-            return;
-        }
-        finishGlide();
-    };
-    glideFrame = requestAnimationFrame(frame);
 }
 
 /** After the drag: the strip glides on from the speed it was let go at. / После протяжки: полоса катится дальше с той скоростью, с какой её отпустили. */
@@ -568,21 +436,9 @@ function finishDrag(keepClickGuard: boolean) {
     }
 
     const el = track.value;
-    const velocity = releaseVelocity();
-    samples = [];
+    const velocity = glide.releaseVelocity();
     if (el) {
-        glideTo(glideTarget(el.scrollLeft, velocity), velocity);
-    }
-}
-
-function onWindowBlur() {
-    hoverPaused.value = false;
-}
-
-function onVisibilityChange() {
-    pageHidden.value = document.hidden;
-    if (document.hidden) {
-        hoverPaused.value = false;
+        glide.glide(glide.target(el.scrollLeft, velocity), velocity);
     }
 }
 
@@ -639,7 +495,6 @@ function onTrackResize() {
 onMounted(() => {
     refreshCount();
     mounted.value = true;
-    pageHidden.value = document.hidden;
     nextTick(() => {
         goTo(props.modelValue);
         updateFocus();
@@ -648,9 +503,6 @@ onMounted(() => {
         resizeObserver = new ResizeObserver(onTrackResize);
         resizeObserver.observe(track.value);
     }
-    document.addEventListener('visibilitychange', onVisibilityChange);
-    window.addEventListener('blur', onWindowBlur);
-    window.addEventListener('pagehide', onWindowBlur);
 });
 
 onUpdated(() => {
@@ -672,13 +524,9 @@ watch(
 
 onBeforeUnmount(() => {
     resizeObserver?.disconnect();
-    cancelGlide();
+    glide.cancel();
     window.clearTimeout(settleTimer);
     cancelAnimationFrame(scrollFrame);
-    cancelAnimationFrame(focusFrame);
-    document.removeEventListener('visibilitychange', onVisibilityChange);
-    window.removeEventListener('blur', onWindowBlur);
-    window.removeEventListener('pagehide', onWindowBlur);
 });
 </script>
 
