@@ -13,9 +13,12 @@ import { useReducedMotion } from '../primitives/useReducedMotion';
 // class, style и остальные атрибуты — панели, а не слою вокруг неё
 defineOptions({ name: 'TaoDrawer', inheritAttrs: false });
 
+// visible or not: the parent keeps it (`v-model`); closing sets it and says `close`
+// виден или нет: его держит родитель (`v-model`); закрытие меняет его и говорит `close`
+const open = defineModel<boolean>({ required: true });
+
 const props = withDefaults(
     defineProps<{
-        modelValue: boolean;
         title?: string;
         /**
          * `bottom` is a sheet: it rises from the bottom edge, as wide as the screen up to 640px, as tall as its content up
@@ -69,7 +72,7 @@ const props = withDefaults(
 );
 const l10n = useLocaleText(props, 'drawer');
 
-const emit = defineEmits(['update:modelValue', 'close']);
+const emit = defineEmits<{ close: [] }>();
 
 const panelRef = ref<HTMLElement | null>(null);
 const rootRef = ref<HTMLElement | null>(null);
@@ -80,7 +83,7 @@ function close() {
     if (!props.closable) {
         return;
     }
-    emit('update:modelValue', false);
+    open.value = false;
     emit('close');
 }
 
@@ -208,7 +211,7 @@ async function endDrag(released: boolean, pointerId: number) {
         close();
         await nextTick();
         // the parent kept it open (it refused to close): the sheet comes back / родитель оставил открытым: лист возвращается
-        if (props.modelValue) {
+        if (open.value) {
             settleSheet();
         }
     } else {
@@ -244,10 +247,10 @@ onBeforeUnmount(() => {
 });
 
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
-useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscape: close });
+useLayer(() => open.value, { lockScroll: true, restoreFocus: true, onEscape: close });
 
 watch(
-    () => props.modelValue,
+    () => open.value,
     (isOpen) => {
         if (isOpen) {
             void focusPanel();
@@ -264,7 +267,7 @@ const has = (name: string) => slotHas(slots, name);
 <template>
     <Teleport to="body">
         <Transition :name="`tao-drawer-${side}`">
-            <div v-if="modelValue" ref="rootRef" class="tao-drawer" :class="`tao-drawer--${side}`" @keydown="onKeydown">
+            <div v-if="open" ref="rootRef" class="tao-drawer" :class="`tao-drawer--${side}`" @keydown="onKeydown">
                 <div class="tao-drawer__overlay" @click="close"></div>
                 <aside
                     v-bind="$attrs"

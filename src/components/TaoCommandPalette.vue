@@ -15,9 +15,12 @@ import TaoCommandList from './TaoCommandList.vue';
 // class, style и остальные атрибуты — панели окна, а не подложке вокруг неё
 defineOptions({ name: 'TaoCommandPalette', inheritAttrs: false });
 
+// visible or not: the parent keeps it (`v-model`); closing sets it and says `close`
+// виден или нет: его держит родитель (`v-model`); закрытие меняет его и говорит `close`
+const open = defineModel<boolean>({ required: true });
+
 interface Props {
     /** Open or closed (`v-model`). / Открыта или закрыта. */
-    modelValue: boolean;
     /** The commands. The palette only searches and shows them: running one is `@select`. / Команды. */
     items: readonly TaoCommandItem[];
     /** The hint in the empty field. / Подсказка в пустом поле. */
@@ -50,14 +53,13 @@ const props = withDefaults(defineProps<Props>(), { limit: 50, surface: 'flat', m
 const l10n = useLocaleText(props, 'commandPalette');
 
 const emit = defineEmits<{
-    'update:modelValue': [open: boolean];
     /** The user picked a command (Enter or a click). The palette closes itself after it. / Выбрана команда. */
     select: [item: TaoCommandItem];
     close: [];
 }>();
 
 function close() {
-    emit('update:modelValue', false);
+    open.value = false;
     emit('close');
 }
 
@@ -78,7 +80,7 @@ const panelRef = ref<HTMLElement | null>(null);
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts); a panel that is not modal
 // leaves the page alone, so it does not lock the scroll
 // Escape, запрет прокрутки и возврат фокуса принадлежат стеку слоёв (см. layers.ts); не модальная панель страницу не трогает
-useLayer(() => props.modelValue, {
+useLayer(() => open.value, {
     get lockScroll() {
         return props.modal;
     },
@@ -88,7 +90,7 @@ useLayer(() => props.modelValue, {
 // without the dimming there is no backdrop to press, so a press anywhere outside the panel closes it
 // без затемнения нет подложки, которую можно нажать, поэтому закрывает нажатие в любом месте вне панели
 useDismiss(
-    () => props.modelValue && !props.modal,
+    () => open.value && !props.modal,
     () => [panelRef.value],
     close,
 );
@@ -98,7 +100,7 @@ useDismiss(
     <Teleport to="body">
         <Transition name="tao-command-palette-fade">
             <div
-                v-if="modelValue"
+                v-if="open"
                 class="tao-command-palette-overlay"
                 :class="{
                     'tao-command-palette-overlay--float': !modal,

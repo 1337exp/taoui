@@ -13,7 +13,7 @@ afterEach(() => {
 const $ = (selector: string) => document.body.querySelector<HTMLElement>(selector);
 
 function sheet(props: Record<string, unknown> = {}, slots: Record<string, unknown> = {}) {
-    return mount(TaoDrawer, { props: { modelValue: true, side: 'bottom', title: 'Comments', ...props }, slots: { default: '<p>text</p>', ...slots } as never, attachTo: document.body });
+    return mount(TaoDrawer, { props: { modelValue: true, 'onUpdate:modelValue': () => {}, side: 'bottom', title: 'Comments', ...props }, slots: { default: '<p>text</p>', ...slots } as never, attachTo: document.body });
 }
 
 function pointer(target: Element, type: string, y: number, init: Record<string, unknown> = {}) {

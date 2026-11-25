@@ -12,8 +12,11 @@ import { slotHas } from '../slots';
 // class, style и остальные атрибуты — панели окна, а не подложке вокруг неё
 defineOptions({ name: 'TaoModal', inheritAttrs: false });
 
+// visible or not: the parent keeps it (`v-model`); closing sets it and says `close`
+// виден или нет: его держит родитель (`v-model`); закрытие меняет его и говорит `close`
+const open = defineModel<boolean>({ required: true });
+
 interface Props {
-    modelValue: boolean;
     title?: string;
     closable?: boolean;
     closeLabel?: string;
@@ -41,7 +44,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const l10n = useLocaleText(props, 'modal');
 
-const emit = defineEmits(['update:modelValue', 'close']);
+const emit = defineEmits<{ close: [] }>();
 
 const panelRef = ref<HTMLElement | null>(null);
 const titleId = useId();
@@ -51,7 +54,7 @@ function close() {
     if (!props.closable) {
         return;
     }
-    emit('update:modelValue', false);
+    open.value = false;
     emit('close');
 }
 
@@ -84,13 +87,13 @@ function onOverlayPointerUp(event: PointerEvent) {
 }
 
 // a centred panel stands on whole pixels, or its text and buttons jump when they are repainted / отцентрованная панель стоит на целых пикселях, иначе её текст и кнопки прыгают при перерисовке
-useWholePixelPanel(panelRef, () => props.modelValue);
+useWholePixelPanel(panelRef, () => open.value);
 
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
-useLayer(() => props.modelValue, { lockScroll: true, restoreFocus: true, onEscape: close });
+useLayer(() => open.value, { lockScroll: true, restoreFocus: true, onEscape: close });
 
 watch(
-    () => props.modelValue,
+    () => open.value,
     (isOpen) => {
         if (isOpen) {
             void focusPanel();
@@ -108,7 +111,7 @@ const has = (name: string) => slotHas(slots, name);
     <Teleport to="body">
         <Transition name="tao-modal-fade">
             <div
-                v-if="modelValue"
+                v-if="open"
                 class="tao-modal-overlay"
                 :class="{
                     'tao-modal-overlay--fullscreen': fullscreen === true,
