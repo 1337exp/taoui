@@ -248,7 +248,7 @@ onBeforeUnmount(() => {
 });
 
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
-useLayer(() => open.value, { lockScroll: true, restoreFocus: true, onEscape: () => close('escape') });
+useLayer(() => open.value, { lockScroll: true, restoreFocus: true, modalRoot: () => rootRef.value, onEscape: () => close('escape') });
 
 watch(
     () => open.value,

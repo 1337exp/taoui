@@ -91,7 +91,7 @@ function onOverlayPointerUp(event: PointerEvent) {
 useWholePixelPanel(panelRef, () => open.value);
 
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
-useLayer(() => open.value, { lockScroll: true, restoreFocus: true, onEscape: () => close('escape') });
+useLayer(() => open.value, { lockScroll: true, restoreFocus: true, modalRoot: () => panelRef.value, onEscape: () => close('escape') });
 
 watch(
     () => open.value,
