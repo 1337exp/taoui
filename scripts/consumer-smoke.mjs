@@ -54,6 +54,14 @@ function checkTypes() {
     );
     const head = `<script setup lang="ts">\nimport { TaoTable, type TaoTableColumn } from '@1337exp/taoui';\ninterface Flag { flag: string; n: number }\nconst rows: readonly Flag[] = [{ flag: '--a', n: 1 }];\nconst columns: TaoTableColumn[] = [{ id: 'flag', label: 'Flag' }];\n`;
     writeFileSync(join(project, 'src/Good.vue'), `${head}const open = (row: Flag) => row.n;\n</script>\n<template><TaoTable :columns="columns" :rows="rows" row-key="flag" @row-click="open"><template #cell-flag="{ row }">{{ row.flag.toUpperCase() }}</template></TaoTable></template>\n`);
+    // The event of a model (`defineModel`) must reach the declarations: an inline handler gets its parameter typed from it. The old
+    // declaration emit (language-core 1.8) dropped `update:modelValue` of every model, and `(x) => …` was an implicit `any` in strict.
+    // Событие модели (`defineModel`) должно дойти до деклараций: параметр встроенного обработчика берёт тип из него. Старый вывод
+    // деклараций (language-core 1.8) терял `update:modelValue` у каждой модели, и `(x) => …` в strict был неявным `any`.
+    writeFileSync(
+        join(project, 'src/Model.vue'),
+        `<script setup lang="ts">\nimport { ref } from 'vue';\nimport { TaoInputNumber, TaoWorkbench } from '@1337exp/taoui';\nconst n = ref<number | null>(1);\nconst left = ref<string | null>(null);\n</script>\n<template><TaoInputNumber :model-value="n" @update:model-value="(x) => (n = x)" /><TaoWorkbench :left="left" @update:left="(x) => (left = x)" /></template>\n`,
+    );
     run(`npm install vue typescript vue-tsc ${join(dir, tgz)}`, project);
     run('npx vue-tsc --noEmit', project);
 
