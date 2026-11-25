@@ -1,4 +1,3 @@
-import type { Plugin } from 'vue';
 import TaoButton from './components/TaoButton.vue';
 import TaoBlock from './components/TaoBlock.vue';
 import TaoInput from './components/TaoInput.vue';
@@ -92,131 +91,6 @@ import TaoToastViewport from './components/TaoToastViewport.vue';
 import TaoConfirmHost from './components/TaoConfirmHost.vue';
 import { toast } from './toast';
 import { confirm } from './confirm';
-import { createTaoLocale, localeKey, setTaoLocale, type TaoLocale, type TaoLocaleOverrides } from './locale';
-
-// Импорт нужен только для того, чтобы Vite подхватил CSS в сборку
-// styles.css. Сам JS-бандл эти стили в рантайме НЕ применяет —
-// подключи '@1337exp/taoui/styles.css' самостоятельно (см. README), чтобы
-// иметь явный контроль над темизацией.
-import './styles/index.css';
-
-const components = [
-    TaoButton,
-    TaoBlock,
-    TaoInput,
-    TaoInputGroup,
-    TaoInputNumber,
-    TaoQuantity,
-    TaoDragNumber,
-    TaoCard,
-    TaoModal,
-    TaoTabs,
-    TaoScrubber,
-    TaoTooltip,
-    TaoKbd,
-    TaoPopover,
-    TaoSpoiler,
-    TaoSpoilerGroup,
-    TaoCopy,
-    TaoThemeToggle,
-    TaoLanguageSwitch,
-    TaoTour,
-    TaoContainer,
-    TaoFlex,
-    TaoSpace,
-    TaoGrid,
-    TaoGridItem,
-    TaoSplit,
-    TaoIcon,
-    TaoLoader,
-    TaoImage,
-    TaoCheckbox,
-    TaoTag,
-    TaoDivider,
-    TaoFieldset,
-    TaoAnimatedBorder,
-    TaoTextarea,
-    TaoScrollTop,
-    TaoProgress,
-    TaoSlider,
-    TaoRangeSlider,
-    TaoFileDrop,
-    TaoDropdownMenu,
-    TaoMenu,
-    TaoMenubar,
-    TaoToolbar,
-    TaoToolbarGroup,
-    TaoToolbarSeparator,
-    TaoSparkline,
-    TaoMeter,
-    TaoDonut,
-    TaoHeatmap,
-    TaoNav,
-    TaoTree,
-    TaoChecklist,
-    TaoTimeline,
-    TaoMarquee,
-    TaoContextMenu,
-    TaoPinCode,
-    TaoLink,
-    TaoStretchedLink,
-    TaoFormField,
-    TaoSelect,
-    TaoColorInput,
-    TaoColorPicker,
-    TaoCombobox,
-    TaoPresetInput,
-    TaoCommandList,
-    TaoCommandPalette,
-    TaoDocTabs,
-    TaoCalendar,
-    TaoDate,
-    TaoDateRange,
-    TaoSwitch,
-    TaoRadio,
-    TaoRadioGroup,
-    TaoSegmented,
-    TaoSegmentedOption,
-    TaoAlert,
-    TaoTable,
-    TaoPagination,
-    TaoEmpty,
-    TaoList,
-    TaoListItem,
-    TaoSkeleton,
-    TaoDrawer,
-    TaoAvatar,
-    TaoBreadcrumb,
-    TaoCounter,
-    TaoCarousel,
-    TaoStages,
-    TaoToastViewport,
-    TaoConfirmHost,
-];
-
-export interface TaoUIOptions {
-    /**
-     * Language of built-in texts: `localeRu` (or any other), or a few keys on top of English (the default).
-     * Язык встроенных текстов: `localeRu` (или любая другая) или несколько ключей поверх английской (по умолчанию).
-     */
-    locale?: TaoLocale | TaoLocaleOverrides;
-}
-
-export const TaoUI: Plugin<[TaoUIOptions?]> = {
-    install(app, options: TaoUIOptions = {}) {
-        if (options.locale) {
-            if (typeof window === 'undefined') {
-                // on the server the process is shared by every request: the language belongs to this app only
-                app.provide(localeKey, createTaoLocale(options.locale));
-            } else {
-                setTaoLocale(options.locale);
-            }
-        }
-        components.forEach(component => {
-            app.component(component.name!, component);
-        });
-    },
-};
 
 export {
     TaoButton,
@@ -409,4 +283,3 @@ export type { TaoSliderMark, TaoSliderValue, TaoSliderZone, TaoSliderZoneTone } 
 export { colorModel, type ColorModelOptions } from './colorModel';
 export { hslToRgb, hsvaToRgba, rgbToHsl, type ColorMode, linearToSrgb, normalizeHex, parseColor, rgbaToHsva, srgbToLinear, toHex, type Hsva, type Rgba } from './color';
 
-export default TaoUI;

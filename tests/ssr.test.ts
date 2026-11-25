@@ -3,6 +3,7 @@ import { createSSRApp, h } from 'vue';
 import { renderToString } from '@vue/server-renderer';
 import { describe, expect, it } from 'vitest';
 import * as lib from '../src/index';
+import { TaoUI } from '../src/plugin';
 import { localeRu, taoLocale } from '../src/locale';
 
 // Nuxt is a first-class target (README), so every component must render on the server
@@ -54,7 +55,7 @@ const props: Record<string, Record<string, unknown>> = {
 };
 
 const components = Object.entries(lib).filter(
-    ([name, value]) => /^Tao[A-Z]/.test(name) && name !== 'TaoUI' && typeof value === 'object' && value !== null && !skip.has(name),
+    ([name, value]) => /^Tao[A-Z]/.test(name) && typeof value === 'object' && value !== null && !skip.has(name),
 );
 
 describe('server-side rendering', () => {
@@ -75,7 +76,7 @@ describe('server-side rendering', () => {
 describe('language on the server', () => {
     const render = async (options?: { locale: typeof localeRu }) => {
         const app = createSSRApp({ render: () => h(lib.TaoSelect as never, { options: [] }) });
-        app.use(lib.TaoUI, options);
+        app.use(TaoUI, options);
         return renderToString(app);
     };
 

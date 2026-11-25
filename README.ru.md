@@ -272,20 +272,50 @@ npm install ../path-to-tao-ui
 
 ## Использование
 
+### Подключение в Vue 3 проекте
+
+Один раз подключите ядро стилей (токены, темы, контексты, типографика), а компоненты импортируйте те, что нужны. **CSS компонента приходит
+вместе с компонентом**: приложение, импортирующее `{ TaoButton }`, везёт кнопку и её CSS, а не весь набор (около 38 КБ CSS, 7 КБ в gzip, на
+один компонент против 232 КБ на всё).
+
+```javascript
+// main.js
+import { createApp } from 'vue'
+import App from './App.vue'
+import '@1337exp/taoui/styles.css'      // ядро, один раз
+
+createApp(App).mount('#app')
+```
+
+```vue
+<script setup>
+import { TaoButton, TaoInput } from '@1337exp/taoui'   // у каждого свой CSS
+</script>
+```
+
+### Глобальная регистрация (по желанию)
+
+Если нужны все теги `Tao*` без импорта, подключите плагин из его отдельного входа. Это цена глобальной регистрации: **в сборку
+идёт весь набор и весь его CSS** (около 380 КБ JS и 232 КБ CSS до gzip), поэтому лучше именованные импорты выше.
+
+```javascript
+import TaoUI from '@1337exp/taoui/plugin'
+app.use(TaoUI)
+```
+
 ### Подключение в Nuxt 3
 
-Создайте плагин `plugins/tao-ui.ts`:
+Подключите ядро стилей в `app.vue` или layout и импортируйте нужные компоненты. Для глобальной регистрации создайте
+плагин `plugins/tao-ui.ts`:
 
 ```typescript
 import { defineNuxtPlugin } from '#app'
-import TaoUI from '@1337exp/taoui'
+import TaoUI from '@1337exp/taoui/plugin'
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(TaoUI)
 })
 ```
-
-Импортируйте стили в `app.vue` или layout:
 
 ```vue
 <script setup>
@@ -293,35 +323,24 @@ import '@1337exp/taoui/styles.css'
 </script>
 ```
 
-### Подключение в Vue 3 проекте
-
-```javascript
-// main.js
-import { createApp } from 'vue'
-import App from './App.vue'
-import TaoUI from '@1337exp/taoui'
-import '@1337exp/taoui/styles.css'
-
-const app = createApp(App)
-app.use(TaoUI)
-app.mount('#app')
-```
-
 ### Язык
 
 Встроенные тексты (плейсхолдеры, «Очистить», aria-подписи, даты) по умолчанию английские. Русский идёт в комплекте:
 
 ```javascript
-import TaoUI, { localeRu } from '@1337exp/taoui'
+import { setTaoLocale, localeRu } from '@1337exp/taoui'
 
-app.use(TaoUI, { locale: localeRu })
+setTaoLocale(localeRu)
 ```
 
 Поменять отдельные тексты — остальное останется от локали по умолчанию:
 
 ```javascript
-app.use(TaoUI, { locale: { select: { placeholder: 'Выберите город' } } })
+setTaoLocale({ select: { placeholder: 'Выберите город' } })
 ```
+
+На сервере (Nuxt, SSR) процесс общий для всех запросов, поэтому язык отдают приложению:
+`app.use(TaoUI, { locale: localeRu })` с плагином из `@1337exp/taoui/plugin`.
 
 Другой язык: скопируйте `localeEn` (или `localeRu`), переведите и передайте так же (тип `TaoLocale`). Ключи повторяют имена пропсов —
 `locale.select.placeholder` — значение по умолчанию для `placeholder` у TaoSelect, а переданный руками проп всегда главнее.
@@ -352,7 +371,7 @@ function onLanguageChange(lang) {
 ### Переход с 3.x
 
 В 4.0 поменялся один умолчательный параметр: встроенные тексты теперь английские (раньше были русские). Чтобы остаться
-на русском, передайте локаль один раз: `app.use(TaoUI, { locale: localeRu })`, а без плагина — `setTaoLocale(localeRu)`.
+на русском, передайте локаль один раз: `setTaoLocale(localeRu)`, а на сервере — `app.use(TaoUI, { locale: localeRu })` с плагином из `@1337exp/taoui/plugin`.
 Хелперы дат и компоненты дат следуют локали и по умолчанию тоже `en-US`.
 
 ### Переход с 1.x

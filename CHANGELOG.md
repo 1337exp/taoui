@@ -1,5 +1,21 @@
 # Changelog
 
+## 6.0.0-alpha.0
+
+The start of 6.0, a major version with **no backward compatibility**: no deprecated names, no shims. This alpha is the packaging and the first foundations; the API vocabulary, the tokens and the overlays follow in the next alphas. Not published.
+
+**How to update from 5.x**
+
+1. `app.use(TaoUI)` comes from its own entry now: `import TaoUI from '@1337exp/taoui/plugin'`. The root entry has no default export. Better: drop the global registration and import the components you use, `import { TaoButton } from '@1337exp/taoui'`.
+2. Keep `import '@1337exp/taoui/styles.css'` once. It is the **core** only now (tokens, themes, contexts, typography, base); the CSS of a component comes with the component. You import no stylesheet per component.
+3. Vue 3.5 or newer, and a browser of the last two years: Chrome / Edge 130, Safari 18, Firefox 132.
+
+- **One package, unbundled: the CSS of a component comes with the component.** The package was one `index.js` and one 231 KB `styles.css` with the CSS of every component, so an app that used a button shipped the carousel's styles. Now every source module is a module of the package (`preserveModules`), every component has its own CSS file, and the component imports it: a bundler takes the CSS together with the component, and an unused component brings nothing. Measured on a throwaway Vite app, one `TaoButton`: CSS **38 KB (7 KB gzipped) instead of 231 KB (34 KB)**, JS 78 KB instead of 105 KB. Vite's library mode drops the `import` of a module's CSS from the JS, so `scripts/viteInjectCssImports.ts` puts it back (and `npm run smoke` fails if the carousel's CSS reaches an app that imports only the button, or if one component costs more than 80 KB of CSS).
+- **The root entry is named exports only.** No default export, no `TaoUI` plugin, no stylesheet import. Global registration is `@1337exp/taoui/plugin`, and it costs what it always cost: the whole kit and all its CSS (about 380 KB of JS and 232 KB of CSS before gzip), which is the reason it is no longer the default way to start. It registers every component the root entry exports, so a new component cannot be forgotten.
+- **Declarations are one file per module**, not one rolled-up `index.d.ts`. The patch that made the rolled-up file work for the generic `TaoTable` is kept per file (`npm run smoke` still checks that a wrong row, handler and slot fail to compile). The types resolve with `moduleResolution: bundler`, which every Vue / Vite / Nuxt app has; `node16` / `nodenext` cannot name a `.vue` file at all, so the rule «internal resolution error» is ignored in `lint:package` on purpose.
+- **Foundations, no change you can see.** One `src/primitives/number.ts` (`clamp`, `roundTo`, `decimalsOf`, `normalizeNumber`) replaces about fifteen copies, and the numeric helpers of `TaoDragNumber` left the public entry. One `usePointerDrag` is the gesture of the slider, the split, the colour square, the drag number and the carousel: the press takes the pointer, another pointer is ignored, and the gesture **ends by itself** when its `pointerup` never comes (the window loses the focus, the page is hidden, the capture is taken away, the component goes away), with the reason handed to the component. `TaoColorPicker` used to stay pressed after Alt-Tab; it does not. One live `useReducedMotion` replaces four private `matchMedia` reads, so a change of the setting after mount reaches the carousel, the drawer, the marquee and the tour.
+- **The browser floor moved to the last two years** (Chrome / Edge 130, Safari 18, Firefox 132): it is what lets the next alphas use the Popover API, `<dialog>`, `@layer`, native nesting, relative colours and `light-dark()` instead of our own code. The peer range of Vue is 3.5 (5.57.1 fixed the false 3.4).
+
 ## 5.57.2
 
 Five fixes, found by a Grok review of the repository and checked by hand. One look changes: in the light theme the placeholder of a field is darker (it was below the contrast the kit promises).

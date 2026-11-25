@@ -273,20 +273,51 @@ npm install ../path-to-tao-ui
 
 ## Usage
 
+### Vue 3
+
+Import the core stylesheet once (tokens, themes, contexts, typography), then import the components you use. **The CSS of a component
+comes with the component**: an app that imports `{ TaoButton }` ships the button and its CSS, not the whole kit (about 38 KB of CSS, 7 KB
+gzipped, for one component, against 232 KB for everything).
+
+```javascript
+// main.js
+import { createApp } from 'vue'
+import App from './App.vue'
+import '@1337exp/taoui/styles.css'      // the core, once
+
+createApp(App).mount('#app')
+```
+
+```vue
+<script setup>
+import { TaoButton, TaoInput } from '@1337exp/taoui'   // each brings its own CSS
+</script>
+```
+
+### Global registration (optional)
+
+If you want every `Tao*` tag available without importing it, install the plugin from its own entry. This is the price of global
+registration: **the whole kit and all its CSS** go into the bundle (about 380 KB of JS and 232 KB of CSS before gzip), so prefer the
+named imports above.
+
+```javascript
+import TaoUI from '@1337exp/taoui/plugin'
+app.use(TaoUI)
+```
+
 ### Nuxt 3
 
-Create `plugins/tao-ui.ts`:
+Import the core stylesheet in `app.vue` or a layout, and import the components you use. For global registration create
+`plugins/tao-ui.ts`:
 
 ```typescript
 import { defineNuxtPlugin } from '#app'
-import TaoUI from '@1337exp/taoui'
+import TaoUI from '@1337exp/taoui/plugin'
 
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.use(TaoUI)
 })
 ```
-
-Import styles in `app.vue` or a layout:
 
 ```vue
 <script setup>
@@ -294,35 +325,24 @@ import '@1337exp/taoui/styles.css'
 </script>
 ```
 
-### Vue 3
-
-```javascript
-// main.js
-import { createApp } from 'vue'
-import App from './App.vue'
-import TaoUI from '@1337exp/taoui'
-import '@1337exp/taoui/styles.css'
-
-const app = createApp(App)
-app.use(TaoUI)
-app.mount('#app')
-```
-
 ### Language
 
 Built-in texts (placeholders, “Clear”, aria labels, dates) are English by default. Russian ships with the library:
 
 ```javascript
-import TaoUI, { localeRu } from '@1337exp/taoui'
+import { setTaoLocale, localeRu } from '@1337exp/taoui'
 
-app.use(TaoUI, { locale: localeRu })
+setTaoLocale(localeRu)
 ```
 
 Change single texts — the rest stays from the default:
 
 ```javascript
-app.use(TaoUI, { locale: { select: { placeholder: 'Pick one' } } })
+setTaoLocale({ select: { placeholder: 'Pick one' } })
 ```
+
+On the server (Nuxt, SSR) the process is shared by every request, so give the language to the app instead:
+`app.use(TaoUI, { locale: localeRu })` with the plugin from `@1337exp/taoui/plugin`.
 
 Another language: copy `localeEn` (or `localeRu`), translate, pass it the same way (type `TaoLocale`). Keys repeat prop names —
 `locale.select.placeholder` is the default of TaoSelect `placeholder`, and a prop passed by hand always wins.
@@ -353,7 +373,7 @@ A text that depends on a number may be plural forms (`{ one, few, many, other }`
 ### Upgrading from 3.x
 
 4.0 changes one default: the built-in texts are now English (they were Russian). To stay on Russian, pass the locale
-once — `app.use(TaoUI, { locale: localeRu })`, or `setTaoLocale(localeRu)` without the plugin. The date helpers and
+once — `setTaoLocale(localeRu)`, or `app.use(TaoUI, { locale: localeRu })` with the plugin from `@1337exp/taoui/plugin` (on the server). The date helpers and
 the date components follow the locale and default to `en-US` as well.
 
 ### Upgrading from 1.x

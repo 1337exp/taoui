@@ -18,15 +18,17 @@ that fits instead of composing the shell from scratch.
 
 ```js
 import { createApp } from 'vue'
-import TaoUI, { localeRu } from '@1337exp/taoui'   // ESM-only; Vue 3.5+
-import '@1337exp/taoui/styles.css'                    // required: tokens, themes, contexts, typography
-import '@1337exp/taoui/palettes.css'                  // optional: the 7 ready palettes
+import { setTaoLocale, localeRu } from '@1337exp/taoui'   // ESM-only; Vue 3.5+; named exports only
+import '@1337exp/taoui/styles.css'                          // required, once: the core (tokens, themes, contexts, typography)
+import '@1337exp/taoui/palettes.css'                        // optional: the 7 ready palettes
 
-createApp(App).use(TaoUI, { locale: localeRu }).mount('#app')   // locale optional, English by default
+setTaoLocale(localeRu)                                      // optional, English by default
+createApp(App).mount('#app')
 ```
 
-- Nuxt 3: the same `app.use` in a plugin, the CSS in `app.vue`. Everything is SSR-safe.
-- Components can also be imported one by one: `import { TaoButton } from '@1337exp/taoui'`.
+- **Import the components you use**: `import { TaoButton } from '@1337exp/taoui'`. The CSS of a component comes with the component (about 38 KB of CSS for one, against 232 KB for the whole kit); do not import a stylesheet per component.
+- Global registration is optional and costs the whole kit: `import TaoUI from '@1337exp/taoui/plugin'`, `app.use(TaoUI, { locale: localeRu })`. Prefer named imports. On the server (Nuxt, SSR) give the language to the app through the plugin: the process is shared by requests.
+- Nuxt 3: the CSS in `app.vue`; the plugin only if you want global tags. Everything is SSR-safe.
 - Browser floor: Chrome / Edge 130, Safari 18, Firefox 132 (the last two years: Popover API, `<dialog>`, `@layer`, nesting, `color-mix()`, `light-dark()`, `@property`, container queries).
 
 ## Rules that keep an app consistent
@@ -144,7 +146,7 @@ only of straight lines through the middle (a plus), so they stay crisp when smal
 
 ## Language
 
-`app.use(TaoUI, { locale: localeRu })`; `setTaoLocale(localeEn)` switches at run time without a reload; a prop passed by
+`setTaoLocale(localeRu)` (or `app.use(TaoUI, { locale: localeRu })` from `@1337exp/taoui/plugin`, on the server); `setTaoLocale(localeEn)` switches at run time without a reload; a prop passed by
 hand (`placeholder`, `closeLabel`…) always wins. For SSR per request, `provideTaoLocale`.
 
 Scrollbars: thin (6px) by default; `--tao-scrollbar-size` / `-thumb` / `-track` / `-width` (Firefox) change them on the page or on a block, the class `tao-native-scrollbars` (on `<html>` or a block) gives the browser's own back.

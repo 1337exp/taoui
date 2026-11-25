@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import * as lib from '../src/index';
+import { TaoUI } from '../src/plugin';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const read = (path: string) => readFileSync(join(root, path), 'utf8');
@@ -29,32 +30,40 @@ describe('public entry', () => {
         expect(missing).toEqual([]);
     });
 
-    it('every exported component is also registered by the plugin', () => {
-        const registered = new Set([...indexSource.matchAll(/^\s+(Tao[A-Za-z]+),$/gm)].map((m) => m[1]));
-        const exported = Object.keys(lib).filter((k) => /^Tao[A-Z]/.test(k) && k !== 'TaoUI');
-        expect(exported.filter((name) => !registered.has(name))).toEqual([]);
+    it('the root entry is only named exports: no plugin, no default export, no stylesheet import', () => {
+        expect((lib as Record<string, unknown>).default).toBeUndefined();
+        expect((lib as Record<string, unknown>).TaoUI).toBeUndefined();
+        expect(indexSource).not.toMatch(/export default/);
+        expect(indexSource).not.toMatch(/import ['"]\.\/styles/);
+        expect(indexSource).not.toMatch(/app\.component|Plugin/);
     });
 
-    it('the plugin installs every component under its own name', () => {
+    it('the plugin entry installs every exported component under its own name', () => {
         const registered: string[] = [];
-        lib.TaoUI.install!({ component: (name: string) => registered.push(name) } as never);
+        TaoUI.install!({ component: (name: string) => registered.push(name) } as never);
+        const exported = Object.entries(lib)
+            .filter(([name, value]) => /^Tao[A-Z]/.test(name) && typeof value === 'object' && value !== null)
+            .map(([name]) => name);
+        expect(exported.filter((name) => !registered.includes(name))).toEqual([]);
         for (const name of ['TaoButton', 'TaoSelect', 'TaoModal']) expect(registered).toContain(name);
         expect(new Set(registered).size).toBe(registered.length);
     });
 });
 
 describe('package.json', () => {
-    it('is ESM only: one default entry, no CommonJS, no main / module', () => {
+    it('is ESM only: the root entry and the plugin entry, no CommonJS, no main / module', () => {
         expect(pkg.type).toBe('module');
         expect(pkg.exports['.']).toEqual({ types: './dist/index.d.ts', default: './dist/index.js' });
+        expect(pkg.exports['./plugin']).toEqual({ types: './dist/plugin.d.ts', default: './dist/plugin.js' });
         expect(pkg.main).toBeUndefined();
         expect(pkg.module).toBeUndefined();
         expect(JSON.stringify(pkg.exports)).not.toMatch(/require|\.cjs/);
         expect(read('vite.config.ts')).toMatch(/formats:\s*\['es'\]/);
     });
 
-    it('exports the stylesheet and the raw style files, and ships them', () => {
-        expect(pkg.exports['./styles.css']).toBe('./dist/styles.css');
+    it('exports the core stylesheet and the raw style files, and ships them', () => {
+        // the core only (tokens, themes, contexts, typography, base): the CSS of a component comes with the component
+        expect(pkg.exports['./styles.css']).toBe('./dist/styles/index.css');
         expect(pkg.exports['./styles/*']).toBe('./src/styles/*');
         expect(pkg.exports['./palettes.css']).toBe('./src/styles/palettes/index.css');
         expect(pkg.files).toEqual(expect.arrayContaining(['dist', 'src/styles', 'CHANGELOG.md']));

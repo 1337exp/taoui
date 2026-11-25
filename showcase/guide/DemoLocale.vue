@@ -51,10 +51,11 @@ console.log(localeEn)                 // the whole object
 console.table(localeEn.select)        // one section: placeholder, clearText
 // in an editor: type a locale as TaoLocale and the keys complete themselves`
 
-const codeApp = `import TaoUI, { localeRu } from '@1337exp/taoui'
+const codeApp = `import { setTaoLocale, localeRu } from '@1337exp/taoui'
 
-app.use(TaoUI, { locale: localeRu })                      // a whole language
-app.use(TaoUI, { locale: { select: { placeholder: 'Pick one' } } })   // a few texts on top of English`
+setTaoLocale(localeRu)                                    // a whole language
+setTaoLocale({ select: { placeholder: 'Pick one' } })     // a few texts on top of English
+// on the server (SSR): import TaoUI from '@1337exp/taoui/plugin'; app.use(TaoUI, { locale: localeRu })`
 
 const codeLive = `import { setTaoLocale, localeEn, localeRu } from '@1337exp/taoui'
 

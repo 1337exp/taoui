@@ -21,13 +21,13 @@ const dir = mkdtempSync(join(tmpdir(), 'taoui-smoke-'));
 const run = (cmd, cwd = dir) => execSync(cmd, { cwd, stdio: ['ignore', 'pipe', 'inherit'], encoding: 'utf8' });
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
 
-function build(name, appSource) {
+function build(name, appSource, mainSource) {
     const project = join(dir, name);
     mkdirSync(join(project, 'src'), { recursive: true });
     writeFileSync(join(project, 'package.json'), JSON.stringify({ name, private: true, type: 'module' }));
     writeFileSync(join(project, 'vite.config.js'), "import vue from '@vitejs/plugin-vue';\nexport default { plugins: [vue()], build: { minify: true } };\n");
     writeFileSync(join(project, 'index.html'), '<div id="app"></div><script type="module" src="/src/main.js"></script>');
-    writeFileSync(join(project, 'src/main.js'), "import { createApp } from 'vue';\nimport App from './App.vue';\nimport '@1337exp/taoui/styles.css';\ncreateApp(App).mount('#app');\n");
+    writeFileSync(join(project, 'src/main.js'), mainSource ?? "import { createApp } from 'vue';\nimport App from './App.vue';\nimport '@1337exp/taoui/styles.css';\ncreateApp(App).mount('#app');\n");
     writeFileSync(join(project, 'src/App.vue'), appSource);
     run(`npm install vue vite @vitejs/plugin-vue ${join(dir, tgz)}`, project);
     run('npx vite build', project);
@@ -80,9 +80,23 @@ try {
     const one = build('one', `<script setup>\nimport { TaoButton } from '@1337exp/taoui';\n</script>\n<template><TaoButton>Hi</TaoButton></template>\n`);
     const all = build('all', `<script setup>\nimport * as lib from '@1337exp/taoui';\nconst names = Object.keys(lib);\n</script>\n<template><p>{{ names.length }}</p></template>\n`);
 
-    if (!one.cssText.includes('.tao-button')) throw new Error('built CSS lacks the button styles: styles.css did not ship');
+    // the plugin entry: global registration, the price of the whole kit / плагин: глобальная регистрация, цена всего набора
+    const plugin = build(
+        'plugin',
+        '<script setup>\n</script>\n<template><p>everything is registered</p></template>\n',
+        "import { createApp } from 'vue';\nimport App from './App.vue';\nimport TaoUI from '@1337exp/taoui/plugin';\nimport '@1337exp/taoui/styles.css';\ncreateApp(App).use(TaoUI).mount('#app');\n",
+    );
+
+    // the core stylesheet ships, the button brings its own CSS, and a component nobody imported brings nothing
+    // ядро стилей приходит, кнопка приносит свой CSS, а компонент, который никто не импортировал, не приносит ничего
+    if (!one.cssText.includes('--tao-color-accent')) throw new Error('built CSS lacks the tokens: styles.css (the core) did not ship');
+    if (!one.cssText.includes('.tao-button')) throw new Error('built CSS lacks the button styles: the CSS of a component did not come with it');
+    if (one.cssText.includes('.tao-carousel')) throw new Error('built CSS has the carousel styles in an app that imports only the button: the CSS is not split by component');
+    if (one.css.raw > 80 * 1024) throw new Error(`one component costs ${kb(one.css.raw)} of CSS: the CSS is no longer split by component`);
+    if (!plugin.cssText.includes('.tao-carousel')) throw new Error('the plugin entry did not register the whole kit: no carousel styles');
     console.log(`one component : JS ${kb(one.js.raw)} (${kb(one.js.gz)} gzip), CSS ${kb(one.css.raw)} (${kb(one.css.gz)} gzip)`);
     console.log(`whole entry   : JS ${kb(all.js.raw)} (${kb(all.js.gz)} gzip), CSS ${kb(all.css.raw)} (${kb(all.css.gz)} gzip)`);
+    console.log(`app.use(TaoUI): JS ${kb(plugin.js.raw)} (${kb(plugin.js.gz)} gzip), CSS ${kb(plugin.css.raw)} (${kb(plugin.css.gz)} gzip)`);
     console.log(`tarball       : ${kb(statSync(join(dir, tgz)).size)}`);
     checkTypes();
     console.log('smoke ok: tarball installed, public paths resolved, app built, CSS shipped, types of TaoTable checked');

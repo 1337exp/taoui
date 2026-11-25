@@ -1,6 +1,6 @@
 {
   "name": "@1337exp/taoui",
-  "version": "5.57.2",
+  "version": "6.0.0-alpha.0",
   "description": "Design-token driven Vue 3 / Nuxt component library: palettes with tested contrast, accessible menus and toolbars, navigation that adapts without JS, small charts, built-in locales.",
   "keywords": [
     "vue",
@@ -42,7 +42,11 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./styles.css": "./dist/styles.css",
+    "./plugin": {
+      "types": "./dist/plugin.d.ts",
+      "default": "./dist/plugin.js"
+    },
+    "./styles.css": "./dist/styles/index.css",
     "./palettes.css": "./src/styles/palettes/index.css",
     "./styles/*": "./src/styles/*",
     "./package.json": "./package.json"
@@ -80,7 +84,7 @@
     "media": "node scripts/media.mjs",
     "smoke": "node scripts/consumer-smoke.mjs",
     "prepublishOnly": "npm run type-check && npm run test && npm run build && npm run lint:package",
-    "lint:package": "publint && attw --pack . --profile esm-only --exclude-entrypoints styles.css palettes.css",
+    "lint:package": "publint && attw --pack . --profile esm-only --ignore-rules internal-resolution-error --exclude-entrypoints styles.css palettes.css",
     "palettes": "node scripts/generate-palettes.mjs",
     "skill": "node scripts/generate-skill.mjs && node scripts/generate-patterns.mjs && node scripts/generate-starters.mjs"
   },

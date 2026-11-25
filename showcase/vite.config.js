@@ -11,6 +11,7 @@ export default defineConfig({
     alias: {
       // The showcase reads the library straight from src/ and imports it
       // under its published name, so every example can be copied as is.
+      '@1337exp/taoui/plugin': path.resolve(__dirname, '../src/plugin.ts'),
       '@1337exp/taoui': path.resolve(__dirname, '../src/index.ts'),
       vue: path.resolve(__dirname, 'node_modules/vue'),
     },
