@@ -126,7 +126,7 @@ describe('TaoSlider editable: setting the value', () => {
         await nextTick();
         await type(w, '75');
         expect(w.emitted('update:modelValue')).toEqual([[75]]);
-        expect(w.emitted('change')).toEqual([[75]]);
+        expect(w.emitted('commit')).toEqual([[75]]);
         expect(editor(w).exists()).toBe(false);
         expect(document.activeElement).toBe(w.find('[role=slider]').element);
     });
@@ -177,7 +177,7 @@ describe('TaoSlider editable: setting the value', () => {
         await nextTick();
         await type(w, '99', 'Escape');
         expect(w.emitted('update:modelValue')).toBeUndefined();
-        expect(w.emitted('change')).toBeUndefined();
+        expect(w.emitted('commit')).toBeUndefined();
         expect(editor(w).exists()).toBe(false);
         expect(document.activeElement).toBe(w.find('[role=slider]').element);
     });
@@ -196,7 +196,7 @@ describe('TaoSlider editable: setting the value', () => {
         rightClick(w);
         await nextTick();
         await type(w, '40');
-        expect(w.emitted('change')).toBeUndefined();
+        expect(w.emitted('commit')).toBeUndefined();
     });
 });
 

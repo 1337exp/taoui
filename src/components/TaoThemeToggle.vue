@@ -42,7 +42,6 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     'update:modelValue': [mode: TaoModeChoice];
-    change: [mode: TaoModeChoice];
 }>();
 
 const l10n = useLocaleText(props, 'themeToggle');
@@ -149,7 +148,6 @@ function toggle() {
     own.value = value;
     write(value);
     emit('update:modelValue', value);
-    emit('change', value);
 }
 
 // two states: the icon is the theme the click leads to; with `system` it is the state the toggle is in

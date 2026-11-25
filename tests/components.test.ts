@@ -79,7 +79,8 @@ describe('names removed in 5.0 stay removed', () => {
         const table = mount(TaoTable, { props: { columns: [{ key: 'name', label: 'Name', sortable: true }], rows: [] } });
         await table.find('.tao-table__sort-btn').trigger('click');
         expect(table.emitted('sort')).toBeUndefined();
-        expect(table.emitted('change')).toHaveLength(1);
+        expect(table.emitted('change')).toBeUndefined();
+        expect(table.emitted('update:sort')).toHaveLength(1);
     });
 });
 
@@ -107,29 +108,30 @@ describe('deprecation machinery', () => {
 });
 
 describe('events', () => {
-    it('Tabs: change only when another tab is picked', async () => {
+    it('Tabs: update:modelValue when a tab is picked', async () => {
         const w = mount(TaoTabs, {
             props: { items: [{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }], modelValue: 'a' },
         });
         const tabs = w.findAll('.tao-tabs__tab');
-        await tabs[0]!.trigger('click');
-        expect(w.emitted('change')).toBeUndefined();
         await tabs[1]!.trigger('click');
-        expect(w.emitted('change')).toEqual([['b']]);
+        expect(w.emitted('update:modelValue')?.slice(-1)).toEqual([['b']]);
+        expect(w.emitted('change')).toBeUndefined();
     });
 
-    it('Spoiler: change on toggle', async () => {
+    it('Spoiler: update:modelValue on toggle', async () => {
         const w = mount(TaoSpoiler, { props: { title: 'T' } });
         await w.find('.tao-spoiler__header').trigger('click');
-        expect(w.emitted('change')).toEqual([[true]]);
+        expect(w.emitted('update:modelValue')).toEqual([[true]]);
+        expect(w.emitted('change')).toBeUndefined();
     });
 
-    it('Table: change and update:sort on header click', async () => {
+    it('Table: update:sort on header click', async () => {
         const w = mount(TaoTable, {
             props: { columns: [{ key: 'name', label: 'Name', sortable: true }], rows: [] },
         });
         await w.find('.tao-table__sort-btn').trigger('click');
-        expect(w.emitted('change')?.[0]).toEqual(w.emitted('update:sort')?.[0]);
+        expect(w.emitted('update:sort')?.[0]).toEqual([{ key: 'name', dir: 'asc' }]);
+        expect(w.emitted('change')).toBeUndefined();
     });
 
     it('DropdownMenu: select', async () => {
@@ -142,14 +144,14 @@ describe('events', () => {
         w.unmount();
     });
 
-    it('Slider: change after a key press, not when the value stays', async () => {
+    it('Slider: commit after a key press, not when the value stays', async () => {
         const w = mount(TaoSlider, { props: { modelValue: 0, min: 0, max: 10 } });
         const thumb = w.find('.tao-slider__thumb');
         await thumb.trigger('keydown', { key: 'ArrowRight' });
-        expect(w.emitted('change')).toEqual([[1]]);
+        expect(w.emitted('commit')).toEqual([[1]]);
         await w.setProps({ modelValue: 0 });
         await thumb.trigger('keydown', { key: 'Home' });
-        expect(w.emitted('change')).toHaveLength(1);
+        expect(w.emitted('commit')).toHaveLength(1);
     });
 
     it('Slider: a range has two thumbs, each moves on its own and they keep the gap', async () => {
@@ -172,7 +174,7 @@ describe('events', () => {
 
         await w.findAll('.tao-slider__mark')[2]!.trigger('click');
         expect(last(w.emitted('update:modelValue')!)).toEqual([10]);
-        expect(last(w.emitted('change')!)).toEqual([10]);
+        expect(last(w.emitted('commit')!)).toEqual([10]);
 
         await w.setProps({ modelValue: 5 });
         await w.find('.tao-slider__thumb').trigger('keydown', { key: 'ArrowRight' });
@@ -349,7 +351,7 @@ describe('Scrubber', () => {
         await w.find('.tao-slider__thumb').trigger('keydown', { key: 'ArrowRight' });
         expect(last(w.emitted('update:modelValue')!)).toEqual([1.26]);
         expect(last(w.emitted('update:playing')!)).toEqual([false]);
-        expect(last(w.emitted('seek')!)).toEqual([1.26]);
+        expect(last(w.emitted('commit')!)).toEqual([1.26]);
 
         const still = mountScrubber({ playing: true, pauseOnScrub: false });
         await still.find('.tao-slider__thumb').trigger('keydown', { key: 'ArrowRight' });

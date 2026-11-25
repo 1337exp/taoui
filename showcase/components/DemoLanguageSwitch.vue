@@ -60,7 +60,7 @@ const three = ref('de')
 &lt;TaoLanguageSwitch v-model="lang" :languages="['en', { code: 'pt-BR', label: 'Português' }]" /&gt;
 
 &lt;!-- the app owns the texts and the storage --&gt;
-&lt;TaoLanguageSwitch v-model="lang" :languages="['ru', 'en']" @change="(code) =&gt; { localStorage.lang = code; setTaoLocale(code === 'ru' ? localeRu : localeEn) }" /&gt;</code></pre>
+&lt;TaoLanguageSwitch v-model="lang" :languages="['ru', 'en']" @update:model-value="(code) =&gt; { localStorage.lang = code; setTaoLocale(code === 'ru' ? localeRu : localeEn) }" /&gt;</code></pre>
     </div>
   </ShowcaseSection>
 </template>

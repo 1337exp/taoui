@@ -145,7 +145,7 @@ export const propTables = {
         r('toDarkLabel', 'string', "'Включить тёмную тему'", 'aria-label, пока клик ведёт к тёмной теме'),
         r('toSystemLabel', 'string', "'Включить системную тему'", 'aria-label, пока клик ведёт к системной теме (system)'),
       ],
-      slots: 'icon — свой значок: { mode, choice, next } (режим на странице, выбор — включая "system" — и выбор, к которому ведёт клик); кнопка остаётся квадратом и сохраняет подпись. update:modelValue и change — новый выбор ("dark" | "light", с system ещё "system"). Без system иконка — тема, к которой ведёт клик (солнце в тёмной, луна в светлой).',
+      slots: 'icon — свой значок: { mode, choice, next } (режим на странице, выбор — включая "system" — и выбор, к которому ведёт клик); кнопка остаётся квадратом и сохраняет подпись. update:modelValue — новый выбор ("dark" | "light", с system ещё "system"). Без system иконка — тема, к которой ведёт клик (солнце в тёмной, луна в светлой).',
     },
   ],
   'language-switch': [
@@ -160,7 +160,7 @@ export const propTables = {
         r('placement', 'TaoPlacement', "'bottom-end'", 'Где открывается список; при нехватке места переворачивается (в подвале панели — top-start)'),
         r('label', 'string', "'Язык'", 'Имя переключателя: подпись кнопки и списка (из локали)'),
       ],
-      slots: 'update:modelValue и change — код выбранного языка (не приходят, если выбран тот, что уже включён). Переключатель не знает ваших текстов и не хранит выбор: тексты приложения, хранилище и setTaoLocale для встроенных текстов — ваши. Имя кнопки для скринридера — «Язык: Русский» (видимое слово внутри него). Хелпер taoLanguageName(code) даёт автоним для своих списков.',
+      slots: 'update:modelValue — код выбранного языка (не приходят, если выбран тот, что уже включён). Переключатель не знает ваших текстов и не хранит выбор: тексты приложения, хранилище и setTaoLocale для встроенных текстов — ваши. Имя кнопки для скринридера — «Язык: Русский» (видимое слово внутри него). Хелпер taoLanguageName(code) даёт автоним для своих списков.',
     },
   ],
   input: [
@@ -175,6 +175,7 @@ export const propTables = {
         r('invalid', 'boolean', 'false', 'Красная рамка. Текст ошибки — error у TaoFormField'),
         r('id / name / required / autofocus', 'string / string / boolean / boolean', '— / — / false / false', 'Контракт поля (FieldProps). id — на него указывает подпись TaoFormField, иначе из FormField или useId; name — имя в форме (FormData, нативная отправка); required — нативный required; autofocus — фокус, когда поле появилось'),
         r('readOnly', 'boolean', 'false', 'Значение видно, выделяется и уходит с формой, но не меняется: набор, стрелки, степперы, Enter и blur его не трогают; в отличие от disabled, фокус остаётся'),
+        r('@commit', 'string', '—', 'Правка закончена: поле потеряло фокус или нажат Enter с изменённым текстом (нативный change); v-model — на каждый символ'),
         r('variant', "'outline' | 'filled' | 'plain'", "'outline'", 'Рамка / только заливка / ничего: plain читается как текст (пункт списка в правке): без отступа, фокус показывает каретка, ошибка — красная черта под текстом. Высота не меняется'),
         r('id', 'string', 'auto', 'id инпута; иначе из FormField или useId'),
       ],
@@ -215,7 +216,9 @@ export const propTables = {
         r('v-model', 'number', '1', 'Целое количество. Пустым не бывает'),
         r('min', 'number', '1', 'Нижняя граница'),
         r('max', 'number', '—', 'Сток. Не задан — без потолка'),
-        r('allowRemove', 'boolean', 'true', 'Минус на min живой и шлёт dec — родитель может убрать строку'),
+        r('allowRemove', 'boolean', 'true', 'Минус на min живой и шлёт remove — родитель может убрать строку'),
+        r('@commit', 'number', '—', 'Правка закончена: плюс или минус, либо уход из поля после набора (раз за действие; v-model — на каждое изменение)'),
+        r('@remove', '—', '—', 'Минус нажат на минимуме при allowRemove: приложение убирает позицию'),
         r('forceMaxLimit', 'boolean', 'true', 'Прижать ввод к max на blur и если пришло больше стока'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер, шкала как у TaoButton. Без него — размер предков (tao-size-* или size у FormField / InputGroup), иначе medium'),
         r('disabled', 'boolean', 'false', 'Неактивно'),
@@ -270,6 +273,7 @@ export const propTables = {
         r('invalid', 'boolean', 'false', 'Красная рамка'),
         r('id / name / required / autofocus', 'string / string / boolean / boolean', '— / — / false / false', 'Контракт поля (FieldProps). id — на него указывает подпись TaoFormField, иначе из FormField или useId; name — имя в форме (FormData, нативная отправка); required — нативный required; autofocus — фокус, когда поле появилось'),
         r('readOnly', 'boolean', 'false', 'Значение видно, выделяется и уходит с формой, но не меняется: набор, стрелки, степперы, Enter и blur его не трогают; в отличие от disabled, фокус остаётся'),
+        r('@commit', 'string', '—', 'Правка закончена: поле потеряло фокус или нажат Enter с изменённым текстом (нативный change); v-model — на каждый символ'),
       ],
     },
   ],
@@ -289,7 +293,7 @@ export const propTables = {
         r('selectAllLabel', 'string', "'Выбрать всё'", 'Подпись «Выбрать всё»'),
         r('counterText', 'string', "'{checked} из {total}'", 'Текст счётчика'),
       ],
-      slots: '#item — { item, checked }: свой текст пункта. События update:modelValue, change. Недоступный пункт «Выбрать всё» не трогает. Это fieldset: в TaoFormField группа берёт id, подпись и ошибку поля, а чекбоксы внутри — свои id.',
+      slots: '#item — { item, checked }: свой текст пункта. Событие update:modelValue. Недоступный пункт «Выбрать всё» не трогает. Это fieldset: в TaoFormField группа берёт id, подпись и ошибку поля, а чекбоксы внутри — свои id.',
     },
   ],
   checkbox: [
@@ -415,7 +419,7 @@ export const propTables = {
         r('dirtyLabel', 'string', "'есть несохранённые изменения'", 'Что читают вместо точки'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер, шкала как у TaoButton'),
       ],
-      slots: '#label="{ tab }" — своё содержимое вкладки вместо подписи. update:modelValue и change — выбрана вкладка (клик, стрелки, Home, End). close(value) — просят закрыть (крестик, средняя кнопка, Delete): закрывает приложение. pin(value) — закрепили предпросмотр (двойной клик, Enter). reorder(from, to) — вкладку переставили (перетаскиванием или Alt + стрелки; вкладки таскают, только если вы слушаете reorder и вкладок больше одной; на сенсорном экране перетаскивания нет, там меню приложения): to — место после того, как вкладку вынули и вставили (spliсe(to, 0, ...splice(from, 1))). menu(value, event) — правый клик или клавиша меню: меню рисует приложение. Что не влезло, прокручивается вбок, колесо тоже; активная вкладка всегда на виду. Крестик только для указателя (aria-hidden), с клавиатуры закрывает Delete.',
+      slots: '#label="{ tab }" — своё содержимое вкладки вместо подписи. update:modelValue — выбрана вкладка (клик, стрелки, Home, End). close(value) — просят закрыть (крестик, средняя кнопка, Delete): закрывает приложение. pin(value) — закрепили предпросмотр (двойной клик, Enter). reorder(from, to) — вкладку переставили (перетаскиванием или Alt + стрелки; вкладки таскают, только если вы слушаете reorder и вкладок больше одной; на сенсорном экране перетаскивания нет, там меню приложения): to — место после того, как вкладку вынули и вставили (spliсe(to, 0, ...splice(from, 1))). menu(value, event) — правый клик или клавиша меню: меню рисует приложение. Что не влезло, прокручивается вбок, колесо тоже; активная вкладка всегда на виду. Крестик только для указателя (aria-hidden), с клавиатуры закрывает Delete.',
     },
   ],
   'command-palette': [
@@ -462,10 +466,11 @@ export const propTables = {
         r('disabled', 'boolean', 'false', 'Неактивно'),
         r('invalid', 'boolean', 'false', 'Красная рамка. Текст ошибки — error у TaoFormField'),
         r('id / name / required / autofocus', 'string / string / boolean / boolean', '— / — / false / false', 'Контракт поля (FieldProps). id — на него указывает подпись TaoFormField, иначе из FormField или useId; name — имя в форме (FormData, нативная отправка); required — нативный required; autofocus — фокус, когда поле появилось'),
+        r('@commit', 'value', '—', 'Правка закончена: поле потеряло фокус или нажат Enter с изменённым текстом (нативный change); v-model — на каждый символ'),
         r('nextLabel', 'string', "'Следующее значение'", 'aria-label стрелки вверх'),
         r('prevLabel', 'string', "'Предыдущее значение'", 'aria-label стрелки вниз'),
       ],
-      slots: 'aria-label, name, autocomplete и слушатели доходят до поля ввода, class и style — до обёртки. Ширина поля — переменная --tao-preset-input-width (4.5rem). update:modelValue и change — новое значение. Клавиши: ↑ ↓ шагают, Home End — на концы, Enter применяет, Esc выбрасывает текст; Tab применяет и идёт дальше. Стрелки в Tab не попадают.',
+      slots: 'aria-label, name, autocomplete и слушатели доходят до поля ввода, class и style — до обёртки. Ширина поля — переменная --tao-preset-input-width (4.5rem). update:modelValue — новое значение. Клавиши: ↑ ↓ шагают, Home End — на концы, Enter применяет, Esc выбрасывает текст; Tab применяет и идёт дальше. Стрелки в Tab не попадают.',
     },
   ],
   typeahead: [
@@ -561,7 +566,7 @@ export const propTables = {
         r('wheel', 'number', '0', 'Шаг изменения при прокрутке колёсика (одна ручка). 0 — отключено'),
         r('editable', 'boolean', 'false', 'Значение можно набрать: правый клик или двойной клик по полосе либо Enter / F2 на ручке открывают поле поверх полосы (у диапазона для ближайшей или сфокусированной ручки). Enter или уход из поля ставит значение, прижатое к шагу (или к метке при discrete) и в границах; Esc отменяет правку'),
         r('editLabel', 'string', 'из локали', 'Имя поля у editable для скринридеров (slider.editLabel, «Значение»)'),
-        r('@change', 'value', '—', 'Закончили менять: отпустили, клавиша, колёсико, клик по метке. v-model — на каждое движение'),
+        r('@commit', 'value', '—', 'Закончили менять: отпустили, клавиша, колёсико, клик по метке. v-model — на каждое движение'),
         r('#mark', '{ mark, active }', '—', 'Своя подпись метки'),
 
       ],
@@ -591,7 +596,7 @@ export const propTables = {
         r('disabled', 'boolean', 'false', 'Неактивен'),
         r('playLabel / pauseLabel / restartLabel', 'string', 'из локали', 'Подписи кнопок для скринридеров'),
         r('@restart', '—', '—', 'Кнопка «в начало» (время уже поставлено в 0)'),
-        r('@seek', 'time', '—', 'Закончили перемотку: отпустили слайдер или клавиша'),
+        r('@commit', 'time', '—', 'Закончили перемотку: отпустили слайдер или клавиша'),
         r('#mark / #time', '{ mark, active } / { time, length, text }', '—', 'Своя подпись метки; своя подпись времени'),
       ],
     },
@@ -609,7 +614,7 @@ export const propTables = {
         r('disabled', 'boolean', 'false', 'Неактивна'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Размер полей; без него — размер предков'),
         r('areaLabel / hueLabel / alphaLabel / hexLabel / swatchesLabel / eyedropperLabel', 'string', 'из локали', 'Подписи для скринридеров (локаль colorPicker)'),
-        r('@change', 'hex', '—', 'Закончили правку: отпустили квадрат или полосу, клавиша, поле hex, образец. v-model — на каждое движение'),
+        r('@commit', 'hex', '—', 'Закончили правку: отпустили квадрат или полосу, клавиша, поле hex, образец. v-model — на каждое движение'),
       ],
     },
     {
@@ -647,7 +652,7 @@ export const propTables = {
         r('list', 'boolean', 'true', 'Имена под зоной. Снять файл — сразу в v-model'),
         r('showClear', 'boolean', 'false', 'Кнопка «очистить всё». Сама не чистит — шлёт clear-request'),
       ],
-      slots: 'default — текст зоны. Событие change — добавили или убрали файлы. reject — файлы, не прошедшие accept (массив File[]): их нет в v-model, скажите пользователю, почему. clear-request: родитель решает, обнулить сразу или после confirm().',
+      slots: 'default — текст зоны. Событие update:modelValue — добавили или убрали файлы. reject — файлы, не прошедшие accept (массив File[]): их нет в v-model, скажите пользователю, почему. clear-request: родитель решает, обнулить сразу или после confirm().',
     },
   ],
   charts: [
@@ -730,7 +735,7 @@ export const propTables = {
         r('clickable', 'boolean', 'false', 'Строки нажимаются: курсор-рука и событие row-click. С клавиатуры таблица одна остановка Tab: стрелки и Home / End ходят по строкам, Enter и Space делают то же, что клик (клавиша внутри кнопки или поля строки остаётся ей). Фокус строки — заливка акцента и полоса 2px в её начале (не кольцо: рамка таблицы со скруглением резала бы его углы)'),
         r('stack', 'boolean', 'false', 'Уже 600px (ширина самой таблицы, не окна) строка становится карточкой: ячейка под подписью колонки. Контейнерный запрос, без JavaScript. Шапка остаётся для скринридера'),
       ],
-      slots: 'Ячейка: #cell-{key}="{ row, value }" (row типа T, value unknown). События: change — сменили сортировку, row-click, если clickable.',
+      slots: 'Ячейка: #cell-{key}="{ row, value }" (row типа T, value unknown). События: update:sort — сменили сортировку, row-click, если clickable.',
     },
   ],
   pagination: [
@@ -950,7 +955,7 @@ export const propTables = {
         r('minEnd', 'number', '0', 'Минимум второй панели'),
         r('resizable', 'boolean', 'true', 'false — полоса есть, тянуть нельзя'),
         r('step', 'number', '1% или 8px', 'Шаг стрелок, когда полоса в фокусе'),
-        r('@change', 'value', '—', 'Закончили тянуть или нажали стрелку. v-model — на каждое движение'),
+        r('@commit', 'value', '—', 'Закончили тянуть или нажали стрелку. v-model — на каждое движение'),
 
       ],
       slots: '#start и #end — две панели. Три колонки = два вложенных сплита.',
@@ -1150,7 +1155,6 @@ export const propTables = {
         r('title', 'string', "''", 'Заголовок кнопки'),
         r('name', 'string | number', '—', 'Ключ панели внутри TaoSpoilerGroup'),
         r('bordered', 'boolean', 'по контексту', 'Внешняя рамка. Не задан — идёт за контекстом рамок; false: панель держит заливка шапки'),
-        r('@change', 'value', '—', 'Пользователь открыл или закрыл'),
 
       ],
       slots: 'default — тело. Соседи сами друг друга не закрывают.',
@@ -1188,7 +1192,6 @@ export const propTables = {
       rows: [
         r('v-model', 'string', '—', 'value активной вкладки. Обязательный'),
         r('items', 'TaoTabItem[]', '—', '{ value, label, disabled? } — как опции Select'),
-        r('@change', 'value', '—', 'Пользователь выбрал другую вкладку'),
 
         r('justify', 'TaoJustify', '—', 'Где вкладки в ряду, как у TaoFlex: flex-start, center, flex-end, space-between, space-around, space-evenly. Без него слева'),
         r('size', "'small' | 'medium' | 'large'", 'от предков', 'Высота вкладки как у TaoButton (26 / 36 / 44). Без него — размер предков'),

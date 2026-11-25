@@ -71,7 +71,6 @@ const l10n = useLocaleText(props, 'carousel');
 
 const emit = defineEmits<{
     'update:modelValue': [value: number];
-    change: [value: number];
 }>();
 
 defineSlots<{
@@ -297,7 +296,6 @@ function setIndex(next: number) {
 
     index.value = next;
     emit('update:modelValue', next);
-    emit('change', next);
 }
 
 function refreshCount() {

@@ -66,7 +66,6 @@ const l10n = useLocaleText(props, 'pinCode');
 
 const emit = defineEmits<{
     'update:modelValue': [value: string];
-    change: [value: string];
     complete: [value: string];
     active: [el: HTMLInputElement | null, index: number];
     blur: [];
@@ -133,7 +132,6 @@ function emitChange() {
     const next = serialize();
     if (next !== (props.modelValue ?? '')) {
         emit('update:modelValue', next);
-        emit('change', next);
     }
 }
 

@@ -72,7 +72,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     'update:modelValue': [value: TaoPresetValue];
-    change: [value: TaoPresetValue];
+    commit: [value: TaoPresetValue];
 }>();
 
 const l10n = useLocaleText(props, 'presetInput');
@@ -124,7 +124,7 @@ useLayer(open, { onEscape: () => closeAndRevert() });
 function setValue(next: TaoPresetValue) {
     if (next !== props.modelValue) {
         emit('update:modelValue', next);
-        emit('change', next);
+        emit('commit', next);
     }
     text.value = labelOf(next);
     typed.value = false;

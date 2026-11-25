@@ -34,7 +34,7 @@ scripts/        repo tooling (media capture)
 ## Rules the code follows
 
 The API rules are listed in the README under **Conventions** — one size scale
-(`small` / `medium` / `large`), tones, `v-model` + `change`, `*Text` for visible
+(`small` / `medium` / `large`), tones, `v-model` + `commit` (the end of an edit; a plain pick has `v-model` only), `*Text` for visible
 strings and `*Label` for screen readers, booleans without `is`/`has`. A new
 component should look like its neighbours.
 

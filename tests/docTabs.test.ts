@@ -69,7 +69,6 @@ function make(props: Record<string, unknown> = {}) {
                 events.push({ name: 'update', args: [v] });
                 void w.setProps({ modelValue: v });
             },
-            onChange: log('change'),
             onClose: log('close'),
             onPin: log('pin'),
             onReorder: log('reorder'),
@@ -111,14 +110,11 @@ describe('TaoDocTabs', () => {
         expect(tabEls().every((t) => t.getAttribute('aria-selected') === 'false')).toBe(true);
     });
 
-    it('a click selects: update and change; a click on the active one says only update', async () => {
+    it('a click selects (update); a click on the active one says nothing new', async () => {
         const { events } = make();
         tabEls()[1]!.click();
         await nextTick();
-        expect(events).toEqual([
-            { name: 'update', args: ['b'] },
-            { name: 'change', args: ['b'] },
-        ]);
+        expect(events).toEqual([{ name: 'update', args: ['b'] }]);
         events.length = 0;
         tabEls()[1]!.click();
         await nextTick();
@@ -128,7 +124,7 @@ describe('TaoDocTabs', () => {
     it('the arrows walk the tabs round, Home and End go to the ends, and the focus follows', async () => {
         const { events } = make();
         await key(tabEls()[0]!, 'ArrowRight');
-        expect(events.at(-2)).toEqual({ name: 'update', args: ['b'] });
+        expect(events.at(-1)).toEqual({ name: 'update', args: ['b'] });
         await nextTick();
         expect(document.activeElement).toBe(tabEls()[1]);
         await key(tabEls()[1]!, 'ArrowLeft');

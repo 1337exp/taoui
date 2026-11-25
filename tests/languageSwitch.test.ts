@@ -71,7 +71,7 @@ describe('TaoLanguageSwitch', () => {
         (radios[1] as HTMLElement).click();
         await nextTick();
         expect(w.emitted('update:modelValue')).toEqual([['en']]);
-        expect(w.emitted('change')).toEqual([['en']]);
+        expect(w.emitted('update:modelValue')).toEqual([['en']]);
         w.unmount();
     });
 

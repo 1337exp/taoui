@@ -33,7 +33,7 @@ describe('TaoChecklist', () => {
         await w.setProps({ modelValue: ['milk', 'eggs'] });
         await boxes(w)[2]!.setValue(false);
         expect(w.emitted('update:modelValue')!.at(-1)).toEqual([['milk']]);
-        expect(w.emitted('change')).toHaveLength(2);
+        expect(w.emitted('update:modelValue')).toHaveLength(2);
     });
 
     it('select all: mixed when some are checked; it checks every enabled item, then clears them', async () => {

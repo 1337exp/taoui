@@ -29,7 +29,6 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    change: [value: boolean];
 }>();
 
 const triggerRef = ref<HTMLElement | null>(null);
@@ -50,7 +49,6 @@ function setOpen(next: boolean) {
     }
 
     open.value = next;
-    emit('change', next);
 }
 
 function toggle() {

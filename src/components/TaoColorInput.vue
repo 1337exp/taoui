@@ -50,7 +50,7 @@ const props = withDefaults(
 const emit = defineEmits<{
     'update:modelValue': [hex: string];
     'update:mode': [mode: ColorMode];
-    change: [hex: string];
+    commit: [hex: string];
 }>();
 
 // a TaoFormField around it reaches the button too: its label, its error and its description
@@ -66,7 +66,7 @@ const empty = computed(() => props.modelValue === '');
 const text = computed(() => (empty.value ? l10n.value.placeholder : shown.value));
 function clear() {
     emit('update:modelValue', '');
-    emit('change', '');
+    emit('commit', '');
 }
 
 function onKeydown(event: KeyboardEvent) {
@@ -111,7 +111,7 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
             :size="size"
             @update:model-value="emit('update:modelValue', $event)"
             @update:mode="emit('update:mode', $event)"
-            @change="emit('change', $event)"
+            @commit="emit('commit', $event)"
         />
         <button v-if="clearable" type="button" class="tao-color-input__clear" :disabled="empty" @click="clear">{{ l10n.clearText }}</button>
     </TaoPopover>

@@ -4,7 +4,6 @@ import { useControlAttrs } from '../controlAttrs';
 import { computed, ref, watch } from 'vue';
 import { nativeFieldAttrs, useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
-import type { TaoQuantityChangeSource } from '../quantity';
 import { useLocaleText } from '../locale';
 import { clamp } from '../primitives/number';
 
@@ -53,10 +52,11 @@ const l10n = useLocaleText(props, 'quantity');
 
 const emit = defineEmits<{
     'update:modelValue': [value: number];
-    change: [value: number, source: TaoQuantityChangeSource];
-    dec: [value: number];
-    inc: [value: number];
-    blur: [value: number];
+    /** An edit is finished: a button, or leaving the field after typing. / Правка закончена: кнопка или уход из поля после набора. */
+    commit: [value: number];
+    /** The minus button was pressed at the minimum, with `allowRemove`: the app takes the item away. / Минус нажат на минимуме при `allowRemove`: приложение убирает позицию. */
+    remove: [];
+    blur: [event: FocusEvent];
     focus: [event: FocusEvent];
 }>();
 
@@ -79,11 +79,10 @@ function clampQty(value: number) {
     return clamp(value, props.min, props.forceMaxLimit ? props.max : undefined);
 }
 
-function commit(value: number, source: TaoQuantityChangeSource) {
+function apply(value: number) {
     const next = clampQty(value);
     if (next !== props.modelValue) {
         emit('update:modelValue', next);
-        emit('change', next, source);
     }
     draft.value = String(next);
     return next;
@@ -95,7 +94,6 @@ watch(
         const next = clampQty(toInt(props.modelValue));
         if (next !== props.modelValue) {
             emit('update:modelValue', next);
-            emit('change', next, 'input');
         }
         if (!focused.value) {
             draft.value = String(next);
@@ -108,24 +106,22 @@ function onDec() {
     if (props.disabled) {
         return;
     }
-    let next = props.modelValue;
     if (props.modelValue > props.min) {
-        next = props.modelValue > ceiling.value ? ceiling.value : clampQty(props.modelValue - 1);
-        commit(next, 'dec');
+        const next = apply(props.modelValue > ceiling.value ? ceiling.value : clampQty(props.modelValue - 1));
+        emit('commit', next);
+    } else if (props.allowRemove) {
+        emit('remove');
     }
-    emit('dec', next);
 }
 
 function onInc() {
     if (props.disabled) {
         return;
     }
-    let next = props.modelValue;
     if (props.modelValue < ceiling.value) {
-        next = clampQty(props.modelValue + 1);
-        commit(next, 'inc');
+        const next = apply(clampQty(props.modelValue + 1));
+        emit('commit', next);
     }
-    emit('inc', next);
 }
 
 function onInput(event: Event) {
@@ -137,19 +133,26 @@ function onInput(event: Event) {
     if (text === '') {
         return;
     }
-    commit(toInt(text), 'input');
+    apply(toInt(text));
 }
+
+/** The value the field had when it took the focus: a blur commits only a change. / Значение при входе в поле: уход фиксирует только изменение. */
+let atFocus = props.modelValue;
 
 function onFocus(event: FocusEvent) {
     focused.value = true;
+    atFocus = props.modelValue;
     emit('focus', event);
 }
 
-function onBlur() {
+function onBlur(event: FocusEvent) {
     focused.value = false;
-    const next = commit(draft.value === '' ? props.min : toInt(draft.value), 'input');
+    const next = apply(draft.value === '' ? props.min : toInt(draft.value));
     draft.value = String(next);
-    emit('blur', next);
+    if (next !== atFocus) {
+        emit('commit', next);
+    }
+    emit('blur', event);
 }
 
 function onKeydown(event: KeyboardEvent) {

@@ -38,7 +38,6 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     'update:modelValue': [code: string];
-    change: [code: string];
 }>();
 
 const l10n = useLocaleText(props, 'languageSwitch');
@@ -74,7 +73,6 @@ function pick(code: string) {
     own.value = code;
     write(code);
     emit('update:modelValue', code);
-    emit('change', code);
 }
 
 // the page learns the language on mount (not on the server, where there is no `<html>` to write to) and when it changes from outside

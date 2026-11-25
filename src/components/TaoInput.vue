@@ -50,11 +50,21 @@ const props = withDefaults(defineProps<Props>(), {
 const { field, controlId, isInvalid, describedBy } = useField(props);
 const focused = ref(false);
 
-const emit = defineEmits(['update:modelValue', 'blur', 'focus']);
+const emit = defineEmits<{
+    'update:modelValue': [value: string];
+    /** The edit is finished: the field lost the focus, or Enter was pressed, with a text that changed (the native `change`). / Правка закончена: поле потеряло фокус или нажат Enter с изменённым текстом (нативный `change`). */
+    commit: [value: string];
+    blur: [event: FocusEvent];
+    focus: [event: FocusEvent];
+}>();
 
 function handleInput(event: Event) {
     const target = event.target as HTMLInputElement;
     emit('update:modelValue', target.value);
+}
+
+function handleChange(event: Event) {
+    emit('commit', (event.target as HTMLInputElement).value);
 }
 
 function handleBlur(event: FocusEvent) {
@@ -100,6 +110,7 @@ const has = (name: string) => slotHas(slots, name);
                 :aria-invalid="isInvalid || undefined"
                 :aria-describedby="describedBy"
                 @input="handleInput"
+                @change="handleChange"
                 @blur="handleBlur"
                 @focus="handleFocus"
             />

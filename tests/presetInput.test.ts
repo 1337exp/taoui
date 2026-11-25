@@ -68,7 +68,7 @@ describe('TaoPresetInput', () => {
         $$('[role="option"]')[3]!.click();
         await nextTick();
         expect(w.emitted('update:modelValue')?.slice(-1)[0]).toEqual([12]);
-        expect(w.emitted('change')?.slice(-1)[0]).toEqual([12]);
+        expect(w.emitted('commit')?.slice(-1)[0]).toEqual([12]);
         expect($$('[role="option"]')).toHaveLength(0);
         expect(value(w)).toBe('12');
     });

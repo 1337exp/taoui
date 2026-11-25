@@ -49,7 +49,6 @@ const dateLocale = computed(() => props.locale ?? appLocale.value.code);
 
 const emit = defineEmits<{
     'update:modelValue': [value: TaoDateRangeValue | null];
-    change: [value: TaoDateRangeValue | null];
 }>();
 
 const { controlId, isInvalid, describedBy, localId } = useField(props);
@@ -100,7 +99,6 @@ function close() {
 function onChange(value: unknown) {
     const next = (value as TaoDateRangeValue | null) ?? null;
     emit('update:modelValue', next);
-    emit('change', next);
     close();
     triggerRef.value?.focus();
 }
@@ -165,7 +163,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
                     :clear-text="l10n.clearText"
                     :prev-month-label="l10n.prevMonthLabel"
                     :next-month-label="l10n.nextMonthLabel"
-                    @change="onChange"
+                    @update:model-value="onChange"
                     @view="nextTick(updatePosition)"
                 >
                     <template v-if="$slots['prev-icon']" #prev-icon><slot name="prev-icon" /></template>

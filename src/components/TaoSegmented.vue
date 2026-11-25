@@ -30,7 +30,6 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     'update:modelValue': [value: TaoRadioValue];
-    change: [value: TaoRadioValue];
 }>();
 
 const { field, isInvalid, describedBy } = useField(props);
@@ -51,7 +50,6 @@ let mutationObserver: MutationObserver | null = null;
 
 function setValue(value: TaoRadioValue) {
     emit('update:modelValue', value);
-    emit('change', value);
 }
 
 function updateThumb() {

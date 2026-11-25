@@ -48,7 +48,6 @@ const l10n = useLocaleText(props, 'select');
 
 const emit = defineEmits<{
     'update:modelValue': [value: string | number | null];
-    change: [value: string | number | null];
 }>();
 
 const { field, controlId, isInvalid, describedBy, localId } = useField(props);
@@ -118,14 +117,12 @@ function selectOption(option: TaoSelectOption) {
     }
 
     emit('update:modelValue', option.value);
-    emit('change', option.value);
     close();
     triggerRef.value?.focus();
 }
 
 function clear() {
     emit('update:modelValue', null);
-    emit('change', null);
     close();
     triggerRef.value?.focus();
 }

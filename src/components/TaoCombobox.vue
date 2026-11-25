@@ -66,7 +66,6 @@ const l10n = useLocaleText(props, 'combobox');
 
 const emit = defineEmits<{
     'update:modelValue': [value: string | number | null];
-    change: [value: string | number | null];
     /** Новое значение, которого не было в `options`. Список сам не трогаем — его дополняет родитель. */
     create: [value: string];
 }>();
@@ -185,7 +184,6 @@ async function setOpen(next: boolean) {
 
 function emitValue(value: string | number | null) {
     emit('update:modelValue', value);
-    emit('change', value);
 }
 
 function keepFocusQuiet() {

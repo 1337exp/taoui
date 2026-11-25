@@ -5,7 +5,6 @@ import { spoilerGroupKey, type TaoSpoilerName } from '../spoiler';
 defineOptions({ name: 'TaoSpoilerGroup' });
 
 const emit = defineEmits<{
-    change: [value: TaoSpoilerName | null];
 }>();
 
 // the open panel: `v-model` when the parent keeps it, a state of its own when it does not
@@ -14,7 +13,6 @@ const model = defineModel<TaoSpoilerName | null>({ default: null });
 
 function setOpen(name: TaoSpoilerName | null) {
     model.value = name;
-    emit('change', name);
 }
 
 provide(spoilerGroupKey, {

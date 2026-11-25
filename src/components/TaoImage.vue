@@ -20,7 +20,10 @@ const props = withDefaults(defineProps<Props>(), {
     placeholderText: 'No image available',
 });
 
-const emit = defineEmits(['load', 'error']);
+const emit = defineEmits<{
+    load: [];
+    error: [];
+}>();
 
 const isLoaded = ref(false);
 const hasError = ref(false);

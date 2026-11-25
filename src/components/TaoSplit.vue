@@ -30,7 +30,7 @@ const props = withDefaults(
 const emit = defineEmits<{
     'update:modelValue': [value: number];
     /** The user finished changing: drag released or key. / Пользователь закончил менять: отпустил ручку или нажал клавишу. */
-    change: [value: number];
+    commit: [value: number];
 }>();
 
 const rootRef = ref<HTMLElement | null>(null);
@@ -180,7 +180,7 @@ const drag = usePointerDrag({
         restoreDragCursor();
         applyLayout(true);
         if (!valuesEqual(size.value, dragStartValue)) {
-            emit('change', size.value);
+            emit('commit', size.value);
         }
     },
 });
@@ -207,7 +207,7 @@ function onKeydown(event: KeyboardEvent) {
     const before = size.value;
     moveByKey(event);
     if (!valuesEqual(before, size.value)) {
-        emit('change', size.value);
+        emit('commit', size.value);
     }
 }
 

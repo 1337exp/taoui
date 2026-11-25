@@ -133,7 +133,7 @@ function flashTableLoading() {
             :striped="tableStriped"
             clickable
             :empty-text="tr('No records yet', 'Пока нет записей')"
-            @change="onTableSort"
+            @update:sort="onTableSort"
             @row-click="(row) => toast().info().message(row.name)"
           >
             <template #empty>

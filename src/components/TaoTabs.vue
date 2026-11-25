@@ -26,7 +26,6 @@ const props = withDefaults(
 const emit = defineEmits<{
     'update:modelValue': [value: string];
     /** The user picked another tab. / Пользователь выбрал другую вкладку. */
-    change: [value: string];
 }>();
 const uid = useId();
 
@@ -45,9 +44,6 @@ function selectTab(key: string, focus = false) {
     const tab = list.value.find((item) => item.value === key);
     if (tab && !tab.disabled) {
         emit('update:modelValue', key);
-        if (key !== props.modelValue) {
-            emit('change', key);
-        }
         if (focus) {
             void nextTick(() => document.getElementById(tabId(key))?.focus());
         }

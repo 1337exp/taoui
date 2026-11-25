@@ -27,7 +27,6 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     'update:modelValue': [value: TaoRadioValue];
-    change: [value: TaoRadioValue];
 }>();
 
 const group = inject(segmentedKey, null);
@@ -83,7 +82,6 @@ function onChange() {
     }
 
     emit('update:modelValue', props.value);
-    emit('change', props.value);
 }
 </script>
 

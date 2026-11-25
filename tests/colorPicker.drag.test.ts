@@ -29,7 +29,7 @@ function make(props: Record<string, unknown> = {}) {
                 updates.push(v);
                 void w.setProps({ modelValue: v });
             },
-            onChange: (v: string) => changes.push(v),
+            onCommit: (v: string) => changes.push(v),
         },
     });
     const area = () => w.find('.tao-color-picker__area');

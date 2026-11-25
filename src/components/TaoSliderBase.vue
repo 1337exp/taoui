@@ -49,7 +49,7 @@ const props = withDefaults(defineProps<TaoSliderBaseProps & { modelValue: TaoSli
 
 const emit = defineEmits<{
     'update:modelValue': [value: TaoSliderValue];
-    change: [value: TaoSliderValue];
+    commit: [value: TaoSliderValue];
 }>();
 
 defineSlots<{
@@ -133,7 +133,7 @@ function write(next: number[], final = false) {
     const value: TaoSliderValue = isRange.value ? [next[0]!, next[1]!] : next[0]!;
     const changed = next.some((v, i) => v !== before[i]);
     emit('update:modelValue', value);
-    if (final && changed) emit('change', value);
+    if (final && changed) emit('commit', value);
 }
 
 /** Ставит ручку `index` в значение `target` (оно уже прижато к шагу или метке). */
@@ -203,7 +203,7 @@ const drag = usePointerDrag({
     onEnd() {
         tieAt = null;
         if (values.value.some((v, i) => v !== dragStart[i])) {
-            emit('change', isRange.value ? [values.value[0]!, values.value[1]!] : values.value[0]!);
+            emit('commit', isRange.value ? [values.value[0]!, values.value[1]!] : values.value[0]!);
         }
     },
 });

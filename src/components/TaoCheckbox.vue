@@ -43,7 +43,6 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     'update:modelValue': [value: boolean];
-    change: [value: boolean];
 }>();
 
 const { field, controlId, isInvalid, describedBy } = useField(props);
@@ -60,7 +59,6 @@ const isChecked = computed({
     },
     set: (next) => {
         emit('update:modelValue', next);
-        emit('change', next);
     },
 });
 

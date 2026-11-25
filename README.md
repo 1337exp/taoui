@@ -194,7 +194,7 @@ There is no heading component — use `h1 { font-size: var(--tao-font-size-3xl) 
 API rules — every component follows them:
 
 - **Fields** take `v-model` and one contract (`FieldProps`): `id`, `name`, `invalid` (red frame), `disabled`, `size`, `required`, `autofocus`; the text fields add `readOnly`. Label, hint and error text come from `TaoFormField`.
-- **Events**: `update:X` for v-model plus `change` when the user finished a change (Slider, Split — on release). Other events are verbs in the present tense: `select`, `close`, `create`.
+- **Events**: `update:X` for v-model while a value is being edited, plus **`commit`** when the user finished the edit (a field loses the focus, Slider and Split on release, ±, Enter). A control that picks one of a few (a checkbox, tabs, a select) has `update:X` only: the pick is the end of the edit. There is no `change` (on a text field it would be the native event, which still reaches the input). Other events are verbs in the present tense: `select`, `close`, `create`, `remove`. Every `defineEmits` is typed.
 - **Texts**: visible ones are `*Text` (`clearText`, `successText`), screen-reader ones are `*Label` (`closeLabel`).
 - **Lists**: data arrays are `items`; selectable items carry `value` + `label` (`TaoSelectOption`, `TaoTabItem`). Identifiers of plain data (table columns, stages) stay `key`.
 - **Booleans** are adjectives without `is` / `has` / `as`: `closable`, `clickable`, `masked`, `newTab`. Layout axis is `direction: 'row' | 'column'`, not `vertical`.

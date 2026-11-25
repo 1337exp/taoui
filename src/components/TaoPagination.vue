@@ -65,7 +65,6 @@ const l10n = useLocaleText(props, 'pagination');
 
 const emit = defineEmits<{
     'update:page': [value: number];
-    change: [value: number];
     'update:pageSize': [value: number];
 }>();
 
@@ -81,7 +80,6 @@ function onPageSize(value: unknown) {
     emit('update:pageSize', size);
     if (page !== props.page) {
         emit('update:page', page);
-        emit('change', page);
     }
 }
 
@@ -132,7 +130,6 @@ function goTo(next: number) {
     }
 
     emit('update:page', page);
-    emit('change', page);
 }
 </script>
 

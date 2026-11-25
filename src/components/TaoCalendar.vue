@@ -54,7 +54,6 @@ const dateLocale = computed(() => props.locale ?? appLocale.value.code);
 const emit = defineEmits<{
     'update:modelValue': [value: string | TaoDateRangeValue | null];
     /** The user finished a choice: a date, a complete range, or a clear. / Выбор завершён: дата, полный диапазон или сброс. */
-    change: [value: string | TaoDateRangeValue | null];
     /** The visible month changed, so the calendar may have changed its height. / Сменился месяц, высота могла измениться. */
     view: [];
 }>();
@@ -117,7 +116,6 @@ function commit(value: string | TaoDateRangeValue | null) {
     draftStart.value = null;
     hoverIso.value = null;
     emit('update:modelValue', value);
-    emit('change', value);
 }
 
 function selectDay(iso: string) {

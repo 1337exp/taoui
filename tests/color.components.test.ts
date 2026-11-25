@@ -27,14 +27,14 @@ describe('ColorPicker', () => {
         const w = mountPicker({ modelValue: '#808080' });
         await area(w).trigger('keydown', { key: 'ArrowRight' });
         expect(last(w.emitted('update:modelValue')!)[0]).not.toBe('#808080');
-        expect(w.emitted('change')).toHaveLength(1);
+        expect(w.emitted('commit')).toHaveLength(1);
 
         const before = last(w.emitted('update:modelValue')!)[0] as string;
         await area(w).trigger('keydown', { key: 'ArrowUp', shiftKey: true });
         const after = last(w.emitted('update:modelValue')!)[0] as string;
         expect(parseInt(after.slice(1, 3), 16)).toBeGreaterThan(parseInt(before.slice(1, 3), 16) + 15);
         await area(w).trigger('keydown', { key: 'a' });
-        expect(w.emitted('change')).toHaveLength(2);
+        expect(w.emitted('commit')).toHaveLength(2);
     });
 
     it('a press on the square sets saturation and brightness by position', async () => {
@@ -42,9 +42,9 @@ describe('ColorPicker', () => {
         area(w).element.getBoundingClientRect = () => ({ left: 0, top: 0, width: 100, height: 100, right: 100, bottom: 100, x: 0, y: 0, toJSON: () => ({}) });
         await area(w).trigger('pointerdown', { button: 0, clientX: 100, clientY: 0, pointerId: 1 });
         expect(last(w.emitted('update:modelValue')!)[0]).toBe('#ff0000');
-        expect(w.emitted('change')).toBeUndefined();
+        expect(w.emitted('commit')).toBeUndefined();
         await area(w).trigger('pointerup', { pointerId: 1 });
-        expect(w.emitted('change')).toEqual([['#ff0000']]);
+        expect(w.emitted('commit')).toEqual([['#ff0000']]);
     });
 
     it('the hex field commits on blur (short forms are expanded), garbage turns the field red and changes nothing', async () => {
@@ -52,7 +52,7 @@ describe('ColorPicker', () => {
         await hexField(w).setValue('#0f0');
         await hexField(w).trigger('blur');
         expect(last(w.emitted('update:modelValue')!)[0]).toBe('#00ff00');
-        expect(last(w.emitted('change')!)[0]).toBe('#00ff00');
+        expect(last(w.emitted('commit')!)[0]).toBe('#00ff00');
 
         const count = w.emitted('update:modelValue')!.length;
         await hexField(w).setValue('nope');
@@ -66,7 +66,7 @@ describe('ColorPicker', () => {
         expect(w.findAll('.tao-color-picker__swatch--on')).toHaveLength(1);
         await w.findAll('.tao-color-picker__swatch')[1]!.trigger('click');
         expect(last(w.emitted('update:modelValue')!)[0]).toBe('#00ff00');
-        expect(last(w.emitted('change')!)[0]).toBe('#00ff00');
+        expect(last(w.emitted('commit')!)[0]).toBe('#00ff00');
     });
 
     it('a value from outside is picked up, grey keeps the hue', async () => {
@@ -107,7 +107,7 @@ describe('ColorInput', () => {
         const clear = [...document.querySelectorAll<HTMLButtonElement>('.tao-popover__panel button')].find((b) => b.textContent?.trim() === 'Clear');
         clear!.click();
         expect(w.emitted('update:modelValue')?.[1]).toEqual(['']);
-        expect(w.emitted('change')?.[0]).toEqual(['']);
+        expect(w.emitted('commit')?.[0]).toEqual(['']);
         w.unmount();
         // the row is always there when clearable, and disabled while there is nothing to clear / строка есть всегда, а очищать нечего — неактивна
         const none = mount(TaoColorInput, { props: { modelValue: '', clearable: true }, attachTo: document.body });
@@ -149,7 +149,7 @@ describe('ColorInput', () => {
         area.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true }));
         await nextTick();
         expect(w.emitted('update:modelValue')).toBeTruthy();
-        expect(w.emitted('change')).toBeTruthy();
+        expect(w.emitted('commit')).toBeTruthy();
         w.unmount();
     });
 
@@ -205,7 +205,7 @@ describe('ColorPicker: input modes', () => {
         await g.setValue('0');
         await g.trigger('blur');
         expect(last(w.emitted('update:modelValue')!)[0]).toBe('#ff0000');
-        expect(last(w.emitted('change')!)[0]).toBe('#ff0000');
+        expect(last(w.emitted('commit')!)[0]).toBe('#ff0000');
     });
 
     it('HSL mode: H, S, L in degrees and percent, an edit converts back to hex', async () => {

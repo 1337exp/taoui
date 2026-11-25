@@ -51,7 +51,6 @@ const l10n = useLocaleText(props, 'checklist');
 
 const emit = defineEmits<{
     'update:modelValue': [values: (string | number)[]];
-    change: [values: (string | number)[]];
 }>();
 
 defineSlots<{
@@ -76,7 +75,6 @@ function commit(next: Set<string | number>) {
     // keep the order of the items / сохраняем порядок пунктов
     const values = props.items.filter((item) => next.has(item.value)).map((item) => item.value);
     emit('update:modelValue', values);
-    emit('change', values);
 }
 
 function setItem(item: TaoChecklistItem, on: boolean) {

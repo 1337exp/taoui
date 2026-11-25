@@ -48,7 +48,7 @@ const emit = defineEmits<{
     'update:modelValue': [hex: string];
     'update:mode': [mode: ColorMode];
     /** The user finished a change: released the area or a strip, a key, the hex field, a swatch. / Пользователь закончил правку. */
-    change: [hex: string];
+    commit: [hex: string];
 }>();
 
 const l10n = useLocaleText(props, 'colorPicker');
@@ -166,7 +166,7 @@ watch(hex, (h) => {
 
 function push(final = false) {
     emit('update:modelValue', hex.value);
-    if (final) emit('change', hex.value);
+    if (final) emit('commit', hex.value);
 }
 
 //--------------------------------------------------
@@ -194,7 +194,7 @@ const areaDrag = usePointerDrag({
     },
     onMove: fromPointer,
     onEnd() {
-        emit('change', hex.value);
+        emit('commit', hex.value);
     },
 });
 
@@ -282,7 +282,7 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
                 :step="1"
                 :disabled="disabled"
                 :aria-label="l10n.hueLabel"
-                @change="emit('change', hex)"
+                @commit="emit('commit', hex)"
             />
             <TaoSlider
                 v-if="alpha"
@@ -295,7 +295,7 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
                 :disabled="disabled"
                 :aria-label="l10n.alphaLabel"
                 :style="{ '--tao-color-picker-solid': solidCss }"
-                @change="emit('change', hex)"
+                @commit="emit('commit', hex)"
             />
         </div>
 

@@ -19,20 +19,20 @@ describe('TaoFileDrop reject', () => {
         const wrapper = mount(TaoFileDrop, { props: { accept: '.json' } });
         await choose(wrapper, [text]);
         expect(wrapper.emitted('reject')?.[0]).toEqual([[text]]);
-        expect(wrapper.emitted('change')).toBeUndefined();
+        expect(wrapper.emitted('update:modelValue')).toBeUndefined();
     });
 
     it('in a mixed batch keeps the good file and reports the bad one', async () => {
         const wrapper = mount(TaoFileDrop, { props: { accept: '.json', multiple: true } });
         await choose(wrapper, [json, text]);
         expect(wrapper.emitted('reject')?.[0]).toEqual([[text]]);
-        expect(wrapper.emitted('change')?.[0]).toEqual([[json]]);
+        expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[json]]);
     });
 
     it('says nothing when every file passes', async () => {
         const wrapper = mount(TaoFileDrop, { props: { accept: '.json' } });
         await choose(wrapper, [json]);
         expect(wrapper.emitted('reject')).toBeUndefined();
-        expect(wrapper.emitted('change')?.[0]).toEqual([[json]]);
+        expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([[json]]);
     });
 });

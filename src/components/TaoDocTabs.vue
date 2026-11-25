@@ -29,7 +29,6 @@ const l10n = useLocaleText(props, 'docTabs');
 const emit = defineEmits<{
     'update:modelValue': [value: string];
     /** The user picked another tab. / Пользователь выбрал другую вкладку. */
-    change: [value: string];
     /** The user asked to close a tab (the cross, the middle button, Delete); the app closes it. / Просят закрыть вкладку. */
     close: [value: string];
     /** A preview tab was pinned (a double click, Enter on it). / Вкладку-предпросмотр закрепили. */
@@ -55,7 +54,6 @@ const reorderable = () => Boolean(instance?.vnode.props?.onReorder) && props.ite
 
 function select(value: string, focus = false) {
     emit('update:modelValue', value);
-    if (value !== props.modelValue) emit('change', value);
     if (focus) void nextTick(() => document.getElementById(tabId(value))?.focus());
 }
 

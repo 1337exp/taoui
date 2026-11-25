@@ -34,7 +34,7 @@ function make(props: Record<string, unknown> = {}) {
                 updates.push(value);
                 void w.setProps({ modelValue: value });
             },
-            onChange: (value: number) => changes.push(value),
+            onCommit: (value: number) => changes.push(value),
         },
     });
     const rail = () => w.find('.tao-slider__rail');

@@ -152,7 +152,7 @@ export const propTablesEn = {
         r('toDarkLabel', 'string', "'Switch to the dark theme'", 'aria-label while a click leads to the dark theme'),
         r('toSystemLabel', 'string', "'Switch to the system theme'", 'aria-label while a click leads to the system theme (system)'),
       ],
-      slots: 'icon: your own glyph, { mode, choice, next } (the mode on the page, the pick — "system" included —, and the pick a click leads to); the button stays a square and keeps its label. update:modelValue and change: the new pick ("dark" | "light", and "system" with system). Without system the icon is the theme a click leads to (a sun while dark, a moon while light).',
+      slots: 'icon: your own glyph, { mode, choice, next } (the mode on the page, the pick — "system" included —, and the pick a click leads to); the button stays a square and keeps its label. update:modelValue: the new pick ("dark" | "light", and "system" with system). Without system the icon is the theme a click leads to (a sun while dark, a moon while light).',
     },
   ],
   'language-switch': [
@@ -167,7 +167,7 @@ export const propTablesEn = {
         r('placement', 'TaoPlacement', "'bottom-end'", 'Where the list opens; flips when there is no room (top-start in the footer of a panel)'),
         r('label', 'string', "'Language'", 'The name of the switch: the label of the button and of the list (from the locale)'),
       ],
-      slots: 'update:modelValue and change: the code of the picked language (not sent when the one in use is picked). The switch knows none of your texts and stores nothing: the texts of the app, the storage and setTaoLocale for the built-in texts are yours. The accessible name of the button is «Language: English» (the visible word is inside it). The helper taoLanguageName(code) gives the autonym for your own lists.',
+      slots: 'update:modelValue: the code of the picked language (not sent when the one in use is picked). The switch knows none of your texts and stores nothing: the texts of the app, the storage and setTaoLocale for the built-in texts are yours. The accessible name of the button is «Language: English» (the visible word is inside it). The helper taoLanguageName(code) gives the autonym for your own lists.',
     },
   ],
   input: [
@@ -182,6 +182,7 @@ export const propTablesEn = {
         r('invalid', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
         r('id / name / required / autofocus', 'string / string / boolean / boolean', '— / — / false / false', 'The field contract (FieldProps). id is what the label of TaoFormField points at (otherwise the FormField\'s or useId); name is the name in a form (FormData, a native submit); required is the native required; autofocus takes the focus when the field appears'),
         r('readOnly', 'boolean', 'false', 'The value can be looked at, selected and is sent with the form, but not changed: typing, the arrows, the steppers, Enter and blur leave it alone; unlike disabled, the focus stays'),
+        r('@commit', 'string', '—', 'The edit is finished: the field lost the focus or Enter was pressed with a changed text (the native change); v-model fires on every character'),
         r('variant', "'outline' | 'filled' | 'plain'", "'outline'", 'A frame / a fill only / nothing: plain reads as text (an item of a list being edited): no inset, the caret shows the focus, an error is a red line under the text. The height does not change'),
         r('id', 'string', 'auto', 'The input id; otherwise taken from FormField or useId'),
       ],
@@ -222,7 +223,9 @@ export const propTablesEn = {
         r('v-model', 'number', '1', 'A whole quantity. Never empty'),
         r('min', 'number', '1', 'The lower bound'),
         r('max', 'number', '—', 'Stock. If not set — no ceiling'),
-        r('allowRemove', 'boolean', 'true', 'The minus at min stays alive and fires dec — the parent may remove the row'),
+        r('allowRemove', 'boolean', 'true', 'The minus at min stays alive and fires remove — the parent may remove the row'),
+        r('@commit', 'number', '—', 'The edit is finished: plus or minus, or leaving the field after typing (once per action; v-model fires on every change)'),
+        r('@remove', '—', '—', 'The minus was pressed at the minimum with allowRemove: the app takes the item away'),
         r('forceMaxLimit', 'boolean', 'true', 'Clamp the input to max on blur and when more than the stock arrives'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, the same scale as TaoButton. Without it — the size of the ancestors (tao-size-* or size on FormField / InputGroup), otherwise medium'),
         r('disabled', 'boolean', 'false', 'Disabled'),
@@ -277,6 +280,7 @@ export const propTablesEn = {
         r('invalid', 'boolean', 'false', 'A red border'),
         r('id / name / required / autofocus', 'string / string / boolean / boolean', '— / — / false / false', 'The field contract (FieldProps). id is what the label of TaoFormField points at (otherwise the FormField\'s or useId); name is the name in a form (FormData, a native submit); required is the native required; autofocus takes the focus when the field appears'),
         r('readOnly', 'boolean', 'false', 'The value can be looked at, selected and is sent with the form, but not changed: typing, the arrows, the steppers, Enter and blur leave it alone; unlike disabled, the focus stays'),
+        r('@commit', 'string', '—', 'The edit is finished: the field lost the focus or Enter was pressed with a changed text (the native change); v-model fires on every character'),
       ],
     },
   ],
@@ -296,7 +300,7 @@ export const propTablesEn = {
         r('selectAllLabel', 'string', "'Select all'", 'The «Select all» label'),
         r('counterText', 'string', "'{checked} of {total}'", 'The counter text'),
       ],
-      slots: '#item — { item, checked }: your own item text. Events update:modelValue, change. «Select all» leaves a disabled item alone. A fieldset: in a TaoFormField the group takes the id, the label and the error of the field, the checkboxes inside keep ids of their own.',
+      slots: '#item — { item, checked }: your own item text. Event update:modelValue. «Select all» leaves a disabled item alone. A fieldset: in a TaoFormField the group takes the id, the label and the error of the field, the checkboxes inside keep ids of their own.',
     },
   ],
   checkbox: [
@@ -422,7 +426,7 @@ export const propTablesEn = {
         r('dirtyLabel', 'string', "'unsaved changes'", 'What is read instead of the dot'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'Size, same scale as TaoButton'),
       ],
-      slots: '#label="{ tab }" — your own content of a tab instead of the label. update:modelValue and change — a tab was picked (a click, the arrows, Home, End). close(value) — a request to close (the cross, the middle button, Delete): the app closes it. pin(value) — a preview was pinned (a double click, Enter). reorder(from, to) — a tab was moved (by dragging or Alt + arrows; the tabs can be dragged only when you listen to reorder and there is more than one tab; there is no dragging on a touch screen, use the menu of your app there): to is the place once the tab is taken out and put back (splice(to, 0, ...splice(from, 1))). menu(value, event) — a right click or the menu key: the app draws the menu. Tabs that do not fit scroll sideways, the wheel too; the active one is always in view. The cross is for the pointer only (aria-hidden), a keyboard user closes with Delete.',
+      slots: '#label="{ tab }" — your own content of a tab instead of the label. update:modelValue — a tab was picked (a click, the arrows, Home, End). close(value) — a request to close (the cross, the middle button, Delete): the app closes it. pin(value) — a preview was pinned (a double click, Enter). reorder(from, to) — a tab was moved (by dragging or Alt + arrows; the tabs can be dragged only when you listen to reorder and there is more than one tab; there is no dragging on a touch screen, use the menu of your app there): to is the place once the tab is taken out and put back (splice(to, 0, ...splice(from, 1))). menu(value, event) — a right click or the menu key: the app draws the menu. Tabs that do not fit scroll sideways, the wheel too; the active one is always in view. The cross is for the pointer only (aria-hidden), a keyboard user closes with Delete.',
     },
   ],
   'command-palette': [
@@ -469,10 +473,11 @@ export const propTablesEn = {
         r('disabled', 'boolean', 'false', 'Disabled'),
         r('invalid', 'boolean', 'false', 'A red border. The error text is error on TaoFormField'),
         r('id / name / required / autofocus', 'string / string / boolean / boolean', '— / — / false / false', 'The field contract (FieldProps). id is what the label of TaoFormField points at (otherwise the FormField\'s or useId); name is the name in a form (FormData, a native submit); required is the native required; autofocus takes the focus when the field appears'),
+        r('@commit', 'value', '—', 'The edit is finished: the field lost the focus or Enter was pressed with a changed text (the native change); v-model fires on every character'),
         r('nextLabel', 'string', "'Next value'", 'aria-label of the up arrow'),
         r('prevLabel', 'string', "'Previous value'", 'aria-label of the down arrow'),
       ],
-      slots: 'aria-label, name, autocomplete and listeners reach the input, class and style the wrapper. The width of the input is the variable --tao-preset-input-width (4.5rem). update:modelValue and change: the new value. Keys: ↑ ↓ step, Home End go to the ends, Enter applies, Esc throws the text away; Tab applies and goes on. The arrows are not tab stops.',
+      slots: 'aria-label, name, autocomplete and listeners reach the input, class and style the wrapper. The width of the input is the variable --tao-preset-input-width (4.5rem). update:modelValue: the new value. Keys: ↑ ↓ step, Home End go to the ends, Enter applies, Esc throws the text away; Tab applies and goes on. The arrows are not tab stops.',
     },
   ],
   typeahead: [
@@ -568,7 +573,7 @@ export const propTablesEn = {
         r('wheel', 'number', '0', 'The change step for the mouse wheel (a single handle). 0 — disabled'),
         r('editable', 'boolean', 'false', 'The value can be typed: a right click or a double click on the bar, or Enter / F2 on a handle, opens a field over the bar (for a range, for the nearest or the focused handle). Enter or leaving the field sets the value, snapped to the step (or to a mark with discrete) and kept in range; Esc drops the edit'),
         r('editLabel', 'string', 'from the locale', 'The accessible name of the field of editable (slider.editLabel, "Value")'),
-        r('@change', 'value', '—', 'Finished changing: released, a key, the wheel, a click on a mark. v-model fires on every move'),
+        r('@commit', 'value', '—', 'Finished changing: released, a key, the wheel, a click on a mark. v-model fires on every move'),
         r('#mark', '{ mark, active }', '—', 'A custom mark caption'),
 
       ],
@@ -598,7 +603,7 @@ export const propTablesEn = {
         r('disabled', 'boolean', 'false', 'Disabled'),
         r('playLabel / pauseLabel / restartLabel', 'string', 'from the locale', 'Button captions for screen readers'),
         r('@restart', '—', '—', 'The “to the start” button (the time is already set to 0)'),
-        r('@seek', 'time', '—', 'Finished seeking: the slider was released or a key was pressed'),
+        r('@commit', 'time', '—', 'Finished seeking: the slider was released or a key was pressed'),
         r('#mark / #time', '{ mark, active } / { time, length, text }', '—', 'A custom mark caption; a custom time caption'),
       ],
     },
@@ -616,7 +621,7 @@ export const propTablesEn = {
         r('disabled', 'boolean', 'false', 'Disabled'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'The field size; without it — the size of the ancestors'),
         r('areaLabel / hueLabel / alphaLabel / hexLabel / swatchesLabel / eyedropperLabel', 'string', 'from the locale', 'Captions for screen readers (the colorPicker locale)'),
-        r('@change', 'hex', '—', 'Finished editing: the square or a bar was released, a key, the hex field, a swatch. v-model fires on every move'),
+        r('@commit', 'hex', '—', 'Finished editing: the square or a bar was released, a key, the hex field, a swatch. v-model fires on every move'),
       ],
     },
     {
@@ -654,7 +659,7 @@ export const propTablesEn = {
         r('list', 'boolean', 'true', 'Names under the zone. Removing a file goes straight to v-model'),
         r('showClear', 'boolean', 'false', 'The “clear all” button. It does not clear by itself — it fires clear-request'),
       ],
-      slots: 'default — the zone text. The change event — files were added or removed. reject — the files that did not pass accept (File[]): they are not in v-model, tell the user why. clear-request: the parent decides whether to reset at once or after confirm().',
+      slots: 'default — the zone text. The update:modelValue event — files were added or removed. reject — the files that did not pass accept (File[]): they are not in v-model, tell the user why. clear-request: the parent decides whether to reset at once or after confirm().',
     },
   ],
   charts: [
@@ -737,7 +742,7 @@ export const propTablesEn = {
         r('clickable', 'boolean', 'false', 'The rows can be clicked: a pointer cursor and the row-click event. From the keyboard the table is one Tab stop: the arrows and Home / End walk the rows, Enter and Space do what a click does (a key inside a button or a field of the row stays with it). The focus of a row is a tint of the accent and a 2px bar at its start (not a ring: the rounded frame of the table would cut its corners)'),
         r('stack', 'boolean', 'false', 'Under 600px (the width of the table itself, not of the window) a row turns into a card: each cell under its column label. A container query, no JavaScript. The header stays for a screen reader'),
       ],
-      slots: 'Cell: #cell-{key}="{ row, value }" (row is a T, value is unknown). Events: change — the sorting changed, row-click, if clickable.',
+      slots: 'Cell: #cell-{key}="{ row, value }" (row is a T, value is unknown). Events: update:sort — the sorting changed, row-click, if clickable.',
     },
   ],
   pagination: [
@@ -957,7 +962,7 @@ export const propTablesEn = {
         r('minEnd', 'number', '0', 'The minimum of the second pane'),
         r('resizable', 'boolean', 'true', 'false — the bar is there, but cannot be dragged'),
         r('step', 'number', '1% or 8px', 'The arrow step when the bar is focused'),
-        r('@change', 'value', '—', 'Finished dragging or an arrow was pressed. v-model fires on every move'),
+        r('@commit', 'value', '—', 'Finished dragging or an arrow was pressed. v-model fires on every move'),
 
       ],
       slots: '#start and #end — the two panes. Three columns = two nested splits.',
@@ -1157,7 +1162,6 @@ export const propTablesEn = {
         r('title', 'string', "''", 'The button title'),
         r('name', 'string | number', '—', 'The panel key inside TaoSpoilerGroup'),
         r('bordered', 'boolean', 'by context', 'The outer frame. Not set, it follows the frames context; false: the header fill holds the panel'),
-        r('@change', 'value', '—', 'The user opened or closed it'),
 
       ],
       slots: 'default — the body. Neighbours do not close each other.',
@@ -1195,7 +1199,6 @@ export const propTablesEn = {
       rows: [
         r('v-model', 'string', '—', 'value of the active tab. Required'),
         r('items', 'TaoTabItem[]', '—', '{ value, label, disabled? } — like Select options'),
-        r('@change', 'value', '—', 'The user picked another tab'),
 
         r('justify', 'TaoJustify', '—', 'Where the tabs sit in the row, as in TaoFlex: flex-start, center, flex-end, space-between, space-around, space-evenly. Without it, at the left'),
         r('size', "'small' | 'medium' | 'large'", 'inherited', 'The tab height as TaoButton (26 / 36 / 44). Without it — the size of the ancestors'),

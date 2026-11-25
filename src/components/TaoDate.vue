@@ -74,7 +74,6 @@ const dateLocale = computed(() => props.locale ?? appLocale.value.code);
 
 const emit = defineEmits<{
     'update:modelValue': [value: string | null];
-    change: [value: string | null];
 }>();
 
 const { controlId, isInvalid, describedBy, localId } = useField(props);
@@ -127,7 +126,6 @@ watch([valueIso, dateLocale], () => {
 function emitValue(next: string | null) {
     if (next === valueIso.value) return;
     emit('update:modelValue', next);
-    emit('change', next);
 }
 
 function commitText() {
@@ -201,7 +199,6 @@ function onChange(value: unknown) {
         text.value = shortText(next);
     } else {
         emit('update:modelValue', next);
-        emit('change', next);
     }
     close();
     focusBack();
@@ -301,7 +298,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
                     :clear-text="l10n.clearText"
                     :prev-month-label="l10n.prevMonthLabel"
                     :next-month-label="l10n.nextMonthLabel"
-                    @change="onChange"
+                    @update:model-value="onChange"
                     @view="nextTick(updatePosition)"
                 >
                     <template v-if="$slots['prev-icon']" #prev-icon><slot name="prev-icon" /></template>

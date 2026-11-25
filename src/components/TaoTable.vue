@@ -72,7 +72,6 @@ const l10n = useLocaleText(props, 'table');
 const emit = defineEmits<{
     'update:sort': [value: TaoTableSort | null];
     /** The user changed the sort. / Пользователь сменил сортировку. */
-    change: [value: TaoTableSort | null];
     'row-click': [row: T, index: number];
 }>();
 
@@ -125,7 +124,6 @@ function toggleSort(column: TaoTableColumn<T>) {
         current == null ? { key: column.key, dir: 'asc' } : current === 'asc' ? { key: column.key, dir: 'desc' } : null;
 
     emit('update:sort', next);
-    emit('change', next);
 }
 
 function onRowClick(row: T, index: number) {

@@ -83,7 +83,7 @@ describe('TaoDate editable', () => {
         await input.setValue('5.3');
         await input.trigger('keydown', { key: 'Enter' });
         expect(w.emitted('update:modelValue')?.[0]).toEqual(['2026-03-05']);
-        expect(w.emitted('change')?.[0]).toEqual(['2026-03-05']);
+        expect(w.emitted('update:modelValue')?.[0]).toEqual(['2026-03-05']);
         await w.setProps({ modelValue: '2026-03-05' });
         expect(value(w)).toBe('05.03.2026');
 

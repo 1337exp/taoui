@@ -46,7 +46,6 @@ const l10n = useLocaleText(props, 'fileDrop');
 const emit = defineEmits<{
     'update:modelValue': [files: File[]];
     /** The user added or removed files. / Пользователь добавил или убрал файлы. */
-    change: [files: File[]];
     /** Files that did not pass `accept` were left out: the list is what the user chose that fits. / Файлы, не прошедшие `accept`, отброшены. */
     reject: [files: File[]];
     /** Запрос на очистку — компонент НЕ очищает себя сам. Родитель решает:
@@ -64,7 +63,6 @@ function sameFile(a: File, b: File) {
 
 function commit(files: File[]) {
     emit('update:modelValue', files);
-    emit('change', files);
 }
 
 function handleDragOver(event: DragEvent) {

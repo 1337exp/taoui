@@ -98,7 +98,7 @@ describe('TaoSelect', () => {
         await key($('[role="listbox"]'), 'ArrowDown');
         await key($('[role="listbox"]'), 'Enter');
         expect(w.emitted('update:modelValue')).toEqual([['c']]);
-        expect(w.emitted('change')).toEqual([['c']]);
+        expect(w.emitted('update:modelValue')).toEqual([['c']]);
         expect($('[role="listbox"]')).toBeNull();
     });
 

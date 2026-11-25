@@ -61,7 +61,7 @@ describe('TaoThemeToggle', () => {
         await wrapper.trigger('click');
         expect(root.getAttribute('data-tao-mode')).toBe('dark');
         expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['dark']);
-        expect(wrapper.emitted('change')?.[0]).toEqual(['dark']);
+        expect(wrapper.emitted('update:modelValue')?.[0]).toEqual(['dark']);
         wrapper.unmount();
     });
 

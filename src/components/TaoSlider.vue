@@ -10,7 +10,7 @@ const props = defineProps<TaoSliderBaseProps & { modelValue: number }>();
 const emit = defineEmits<{
     'update:modelValue': [value: number];
     /** The user finished changing: drag released, key, wheel, a click on a mark. / Пользователь закончил менять: отпустил, клавиша, колёсико, клик по метке. */
-    change: [value: number];
+    commit: [value: number];
 }>();
 
 defineSlots<{
@@ -24,7 +24,7 @@ defineSlots<{
 </script>
 
 <template>
-    <TaoSliderBase v-bind="props" @update:model-value="emit('update:modelValue', $event as number)" @change="emit('change', $event as number)">
+    <TaoSliderBase v-bind="props" @update:model-value="emit('update:modelValue', $event as number)" @commit="emit('commit', $event as number)">
         <template v-if="$slots.mark" #mark="slot"><slot name="mark" v-bind="slot" /></template>
         <template v-if="$slots.bubble" #bubble="slot"><slot name="bubble" v-bind="slot" /></template>
         <template v-if="$slots['pre-value']" #pre-value><slot name="pre-value" /></template>

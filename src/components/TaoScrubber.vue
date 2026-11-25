@@ -62,7 +62,7 @@ const emit = defineEmits<{
     /** The «to start» button: the time is set to 0 as well. / Кнопка «в начало»: время тоже ставится в 0. */
     restart: [];
     /** The user finished scrubbing. / Пользователь закончил перемотку. */
-    seek: [time: number];
+    commit: [time: number];
 }>();
 
 defineSlots<{
@@ -119,7 +119,7 @@ function onRestart() {
                 :size="size"
                 :disabled="disabled"
                 @update:model-value="onScrub"
-                @change="emit('seek', $event)"
+                @commit="emit('commit', $event)"
             >
                 <template v-if="$slots.mark" #mark="slot"><slot name="mark" v-bind="slot" /></template>
             </TaoSlider>

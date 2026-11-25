@@ -17,7 +17,7 @@ describe('TaoCalendar: single', () => {
         expect(cell(w, '10').attributes('aria-selected')).toBe('true');
         await cell(w, '15').trigger('click');
         expect(w.emitted('update:modelValue')).toEqual([['2026-03-15']]);
-        expect(w.emitted('change')).toEqual([['2026-03-15']]);
+        expect(w.emitted('update:modelValue')).toEqual([['2026-03-15']]);
     });
 
     it('min / max disable the days outside', async () => {
@@ -25,7 +25,7 @@ describe('TaoCalendar: single', () => {
         expect(cell(w, '25').attributes('disabled')).toBeDefined();
         expect(cell(w, '2').attributes('disabled')).toBeDefined();
         await cell(w, '25').trigger('click');
-        expect(w.emitted('change')).toBeUndefined();
+        expect(w.emitted('update:modelValue')).toBeUndefined();
     });
 
     it('arrows move the cursor, PageDown / PageUp change the month, Enter picks the cursor day', async () => {
@@ -34,7 +34,7 @@ describe('TaoCalendar: single', () => {
         await root.trigger('keydown', { key: 'ArrowRight' });
         await root.trigger('keydown', { key: 'ArrowDown' });
         await root.trigger('keydown', { key: 'Enter' });
-        expect(w.emitted('change')).toEqual([['2026-03-18']]); // 10 + 1 + 7
+        expect(w.emitted('update:modelValue')).toEqual([['2026-03-18']]); // 10 + 1 + 7
 
         await root.trigger('keydown', { key: 'PageDown' });
         expect(month(w)).toContain('April');
@@ -49,14 +49,14 @@ describe('TaoCalendar: single', () => {
         await w.findAll('.tao-date__nav')[1]!.trigger('click');
         expect(month(w)).toContain('April');
         await w.findAll('.tao-date__link')[1]!.trigger('click');
-        expect(w.emitted('change')).toEqual([[null]]);
+        expect(w.emitted('update:modelValue')).toEqual([[null]]);
         expect(make({ modelValue: null }).findAll('.tao-date__link')).toHaveLength(1); // only "today"
     });
 
     it('"today" picks today', async () => {
         const w = make({ modelValue: null });
         await w.findAll('.tao-date__link')[0]!.trigger('click');
-        const today = w.emitted('change')![0]![0] as string;
+        const today = w.emitted('update:modelValue')![0]![0] as string;
         expect(today).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     });
 });
@@ -68,9 +68,9 @@ describe('TaoCalendar: range', () => {
     it('the first click starts a range and emits nothing, the second completes it, in order', async () => {
         const w = make({ modelValue: { start: '2026-03-01', end: '2026-03-02' } });
         await cell(w, '14').trigger('click');
-        expect(w.emitted('change')).toBeUndefined();
+        expect(w.emitted('update:modelValue')).toBeUndefined();
         await cell(w, '10').trigger('click'); // backwards: sorted
-        expect(w.emitted('change')).toEqual([[{ start: '2026-03-10', end: '2026-03-14' }]]);
+        expect(w.emitted('update:modelValue')).toEqual([[{ start: '2026-03-10', end: '2026-03-14' }]]);
     });
 
     it('while drawing, the days between follow the pointer', async () => {
@@ -87,7 +87,7 @@ describe('TaoCalendar: range', () => {
         const w = make({ modelValue: { start: '2026-03-10', end: '2026-03-12' } });
         expect(w.findAll('.tao-date__day--selected').map((el) => el.text())).toEqual(['10', '12']);
         await w.findAll('.tao-date__link')[0]!.trigger('click');
-        const range = w.emitted('change')![0]![0] as { start: string; end: string };
+        const range = w.emitted('update:modelValue')![0]![0] as { start: string; end: string };
         expect(range.start).toBe(range.end);
     });
 

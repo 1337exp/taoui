@@ -82,7 +82,14 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits(['update:modelValue', 'change', 'focus', 'blur', 'keydown']);
+const emit = defineEmits<{
+    'update:modelValue': [value: string];
+    /** The edit is finished: the field lost the focus with a text that changed (the native `change`). / Правка закончена: поле потеряло фокус с изменённым текстом (нативный `change`). */
+    commit: [value: string];
+    focus: [event: FocusEvent];
+    blur: [event: FocusEvent];
+    keydown: [event: KeyboardEvent];
+}>();
 
 const { field, controlId, isInvalid } = useField(props);
 const counterId = computed(() => `${controlId.value}-count`);
@@ -124,7 +131,7 @@ function onInput(e: Event) {
 }
 
 function onChange(e: Event) {
-    emit('change', (e.target as HTMLTextAreaElement).value);
+    emit('commit', (e.target as HTMLTextAreaElement).value);
 }
 
 function onFocus(e: FocusEvent) {

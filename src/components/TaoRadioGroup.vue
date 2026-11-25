@@ -27,7 +27,6 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     'update:modelValue': [value: TaoRadioValue];
-    change: [value: TaoRadioValue];
 }>();
 
 const { field, isInvalid, describedBy } = useField(props);
@@ -39,7 +38,6 @@ const labelledBy = computed(() => (props.legend || !field ? undefined : `${field
 
 function setValue(value: TaoRadioValue) {
     emit('update:modelValue', value);
-    emit('change', value);
 }
 
 provide(radioGroupKey, {

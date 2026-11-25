@@ -47,7 +47,6 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     'update:modelValue': [value: boolean];
-    change: [value: boolean];
 }>();
 
 const { field, controlId, isInvalid, describedBy } = useField(props);
@@ -63,7 +62,6 @@ function toggle(event?: Event) {
 
     const next = !props.modelValue;
     emit('update:modelValue', next);
-    emit('change', next);
 }
 
 const slots = useSlots();
