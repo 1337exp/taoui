@@ -230,8 +230,11 @@ onBeforeUnmount(() => {
         <TaoPopover placement="bottom-end">
           <template #trigger>
             <TaoButton variant="secondary" icon="tao-settings" :aria-label="narrow ? tr('View', 'Вид') : undefined">
-              <template v-if="!narrow">{{ tr('View', 'Вид') }}</template>
-              <i v-if="viewChanged" class="showcase-bar__dot" :title="tr('Not the defaults', 'Не по умолчанию')" />
+              <!-- the label and the dot in one flex row: an inline dot sits on the text baseline, 2.5px under the middle of the button / подпись и точка в одной flex-строке: строчная точка садится на базовую линию текста, на 2.5px ниже середины кнопки -->
+              <span class="showcase-bar__view">
+                <template v-if="!narrow">{{ tr('View', 'Вид') }}</template>
+                <i v-if="viewChanged" class="showcase-bar__dot" :title="tr('Not the defaults', 'Не по умолчанию')" />
+              </span>
             </TaoButton>
           </template>
           <div class="showcase-view">

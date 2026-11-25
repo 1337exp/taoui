@@ -470,11 +470,15 @@
 }
 
 /* the dot on the View button: one of the rare options is off the default / точка на кнопке «Вид»: одна из редких опций не по умолчанию */
+.showcase-bar__view {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
 .showcase-bar__dot {
-  display: inline-block;
+  flex: none;
   width: 6px;
   height: 6px;
-  margin-inline-start: 6px;
   border-radius: 50%;
   background: var(--tao-color-accent);
 }
