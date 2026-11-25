@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { TaoButton, TaoLanguageSwitch, TaoPopover, TaoScrollTop, TaoSegmented, TaoSegmentedOption, TaoSelect, TaoTag, TaoThemeToggle, readTaoMode, resolveTaoMode, taoPalettes } from '@1337exp/taoui'
+import { TaoButton, TaoHosts, TaoLanguageSwitch, TaoPopover, TaoScrollTop, TaoSegmented, TaoSegmentedOption, TaoSelect, TaoTag, TaoThemeToggle, readTaoMode, resolveTaoMode, taoPalettes } from '@1337exp/taoui'
 import { bookById, bookOfSection, books } from './books/index.js'
 import BookView from './books/BookView.vue'
 import { lang, LANGS, tr } from './i18n.js'
@@ -291,5 +291,7 @@ onBeforeUnmount(() => {
       :side="scrollTopDemo.side"
       :label="scrollTopDemo.label === 'on' ? tr('Back to top', 'Наверх') : ''"
     />
+    <!-- where toast() and confirm() draw / где рисуют toast() и confirm() -->
+    <TaoHosts />
   </div>
 </template>

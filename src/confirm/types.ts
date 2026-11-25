@@ -1,8 +1,9 @@
 import type { TaoSurface } from '../surface';
 
 export interface TaoConfirmDefaults {
-    ok: string;
-    cancel: string;
+    /** Not set: the text of the locale in effect. / Не задан: текст действующей локали. */
+    ok?: string | undefined;
+    cancel?: string | undefined;
     /** `glass` by default; `flat` turns it off. / По умолчанию `glass`; `flat` выключает. */
     surface: TaoSurface;
 }
@@ -11,8 +12,9 @@ export interface TaoConfirmRecord {
     id: string;
     title: string;
     message: string;
-    okLabel: string;
-    cancelLabel: string;
+    /** Given by the call or by `confirm.defaults`; empty: the host says it in the locale in effect. / Дано вызовом или `confirm.defaults`; пусто: хост говорит на действующей локали. */
+    okLabel?: string | undefined;
+    cancelLabel?: string | undefined;
     danger: boolean;
     surface: TaoSurface;
     resolve: (value: boolean) => void;

@@ -152,7 +152,7 @@
 
 - **toast()** — toasts from one object: `toast({ type: 'success', message: 'Saved' })`, or `toast.success('Saved')`; it gives back a handle (`id`, `dismiss()`)
 - **confirm()** — overlay question from one object plus `await`: `await confirm({ title, message, tone: 'danger' })`. Not a toast — it waits for an answer and does not dismiss itself.
-- **TaoToastViewport** / **TaoConfirmHost** — hosts; if they are missing from the tree, the first call mounts them on `body`
+- **TaoHosts** — the one place where `toast()` and `confirm()` draw (= **TaoToastViewport** + **TaoConfirmHost**, which can stand alone); put it once into the root of the app
 
 ## Conventions
 
@@ -455,10 +455,10 @@ toast.success('Synced', { id: 'sync', replace: true })
 sync.dismiss() // or close it by hand
 ```
 
-You can skip the viewport: the first call creates one on `document.body`, in a second app that reads the global locale. Put `<TaoToastViewport />` in your own app instead and the toasts see its locale and plugins (and for explicit control: tests, a custom layout):
+`toast()` and `confirm()` draw in **`<TaoHosts />`**: put it once into the root of the app (`TaoShell` has it inside). It stands in the tree of your app, so it reads the locale you give with `provideTaoLocale` (the cross and the OK / Cancel buttons follow it; `toast.defaults({ closeLabel })` and `confirm.defaults({ ok, cancel })` set your own text) and sees your plugins. A second `<TaoHosts />` draws nothing, so a toast is never on the screen twice. Without a host nothing is shown and a dev warning says so; a toast shown before the host is mounted waits and appears with it. On the server both calls do nothing (`confirm()` answers `false`).
 
 ```vue
-<TaoToastViewport />
+<TaoHosts />
 ```
 
 ## Confirm

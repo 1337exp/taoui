@@ -92,12 +92,12 @@ describe('locale', () => {
         expect(taoLocale().code).toBe('en-US');
     });
 
-    it('switches to a whole locale and to toast / confirm defaults', () => {
+    it('switches to a whole locale; toast / confirm keep no texts of their own (the host reads the locale, see hosts.test.ts)', () => {
         setTaoLocale(localeRu);
         expect(taoLocale().select.placeholder).toBe('Выберите');
         expect(taoLocale().code).toBe('ru-RU');
-        expect(toastDefaults.closeLabel).toBe(localeRu.toast.closeLabel);
-        expect(confirmDefaults.ok).toBe(localeRu.confirm.ok);
+        expect(toastDefaults.closeLabel).toBeUndefined();
+        expect(confirmDefaults.ok).toBeUndefined();
     });
 
     it('merges a few keys on top of the base', () => {

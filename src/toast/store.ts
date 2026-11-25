@@ -1,5 +1,4 @@
 import { computed, ref } from 'vue';
-import { localeEn } from '../locale/en';
 import type { TaoToastDefaults, TaoToastPosition, TaoToastRecord } from './types';
 
 export const TOAST_POSITIONS: TaoToastPosition[] = [
@@ -17,7 +16,9 @@ export const toastDefaults: TaoToastDefaults = {
     timeout: 3000,
     closable: true,
     progress: true,
-    closeLabel: localeEn.toast.closeLabel,
+    // no text of its own: the label of the close button comes from the locale in effect where the viewport stands (`toast.defaults({ closeLabel })` sets one)
+    // своего текста нет: подпись кнопки закрытия берётся из локали там, где стоит viewport (`toast.defaults({ closeLabel })` задаёт свою)
+    closeLabel: undefined,
     surface: 'glass',
 };
 
@@ -87,24 +88,30 @@ export function dismissToasts(id?: string) {
     items.forEach((item) => item.onClosed?.());
 }
 
-let viewportMounts = 0;
+// The one viewport that draws the toasts: the first to claim it. A second one (a tag written by hand next to `<TaoHosts />`) draws
+// nothing, or every toast would be on the screen twice.
+// Единственный viewport, который рисует тосты: тот, кто первым его занял. Второй (тег, написанный руками рядом с `<TaoHosts />`)
+// ничего не рисует, иначе каждый тост был бы на экране дважды.
+let owner: symbol | null = null;
 
-export function registerToastViewport() {
-    viewportMounts += 1;
+/** Takes the place of the viewport; `false` when another one has it. On the server nothing is held (one module serves every request). / Занять место viewport; `false`, если оно занято. */
+export function claimToastViewport(who: symbol): boolean {
+    if (typeof window === 'undefined') {
+        return true;
+    }
+    if (owner === null || owner === who) {
+        owner = who;
+        return true;
+    }
+    return false;
 }
 
-export function unregisterToastViewport() {
-    viewportMounts = Math.max(0, viewportMounts - 1);
+export function releaseToastViewport(who: symbol) {
+    if (owner === who) {
+        owner = null;
+    }
 }
 
 export function hasToastViewport() {
-    if (viewportMounts > 0) {
-        return true;
-    }
-
-    if (typeof document === 'undefined') {
-        return false;
-    }
-
-    return Boolean(document.querySelector('[data-tao-toast-viewport]'));
+    return owner !== null;
 }

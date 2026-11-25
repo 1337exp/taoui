@@ -49,7 +49,8 @@ export interface TaoToastDefaults {
     timeout: number;
     closable: boolean;
     progress: boolean;
-    closeLabel: string;
+    /** Not set: the text of the locale in effect. / Не задан: текст действующей локали. */
+    closeLabel?: string | undefined;
     /** `glass` by default; `flat` turns it off. / По умолчанию `glass`; `flat` выключает. */
     surface: TaoSurface;
 }

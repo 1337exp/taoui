@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import TaoButton from './TaoButton.vue';
 import TaoIcon from './TaoIcon.vue';
-import { currentConfirm, registerConfirmHost, resolveConfirm, unregisterConfirmHost } from '../confirm/store';
+import { claimConfirmHost, currentConfirm, releaseConfirmHost, resolveConfirm } from '../confirm/store';
+import { useTaoLocale } from '../locale';
 import { trapTab } from '../focusTrap';
 import { toneClass } from '../tone';
 import { useLayer } from '../layers';
@@ -13,20 +14,27 @@ defineOptions({ name: 'TaoConfirmHost' });
 
 const panelRef = ref<HTMLElement | null>(null);
 
-onMounted(() => {
-    registerConfirmHost();
-});
+// one host asks; a second one in the tree draws nothing and takes no layer (the dialog would be on the screen twice)
+// спрашивает один хост; второй в дереве ничего не рисует и слой не занимает (диалог был бы на экране дважды)
+const me = Symbol('tao-confirm-host');
+const active = claimConfirmHost(me);
 
 onBeforeUnmount(() => {
-    unregisterConfirmHost();
+    releaseConfirmHost(me);
 });
 
+// the texts of the buttons: given by the call (or `confirm.defaults`), otherwise the locale in effect where this host stands
+// тексты кнопок: заданные вызовом (или `confirm.defaults`), иначе локаль, действующая там, где стоит этот хост
+const locale = useTaoLocale();
+const okLabel = computed(() => currentConfirm.value?.okLabel ?? locale.value.confirm.ok);
+const cancelLabel = computed(() => currentConfirm.value?.cancelLabel ?? locale.value.confirm.cancel);
+
 // Escape, the page scroll lock and the focus return belong to the layer stack (see layers.ts)
-useLayer(() => Boolean(currentConfirm.value), { lockScroll: true, restoreFocus: true, onEscape: () => answer(false) });
+useLayer(() => active && Boolean(currentConfirm.value), { lockScroll: true, restoreFocus: true, onEscape: () => answer(false) });
 
 // the panel is centred: when the room left over is odd it starts on a half pixel, and its buttons jump when they are repainted
 // панель отцентрована: когда оставшееся место нечётное, она начинается с половины пикселя, и её кнопки прыгают при перерисовке
-useWholePixelPanel(panelRef, () => Boolean(currentConfirm.value));
+useWholePixelPanel(panelRef, () => active && Boolean(currentConfirm.value));
 
 watch(
     () => currentConfirm.value?.id,
@@ -60,7 +68,7 @@ function onKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-    <Teleport to="body">
+    <Teleport v-if="active" to="body">
         <Transition name="tao-confirm">
             <div
                 v-if="currentConfirm"
@@ -97,14 +105,14 @@ function onKeydown(event: KeyboardEvent) {
 
                     <div class="tao-confirm__actions">
                         <TaoButton data-tao-confirm-cancel variant="ghost" tone="neutral" @click="answer(false)">
-                            {{ currentConfirm.cancelLabel }}
+                            {{ cancelLabel }}
                         </TaoButton>
                         <TaoButton
                             data-tao-confirm-ok
                             :tone="currentConfirm.danger ? 'danger' : undefined"
                             @click="answer(true)"
                         >
-                            {{ currentConfirm.okLabel }}
+                            {{ okLabel }}
                         </TaoButton>
                     </div>
                 </div>

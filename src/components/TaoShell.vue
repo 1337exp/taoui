@@ -6,6 +6,7 @@ import type { TaoMenuItem, TaoMenuPick } from '../menu';
 import type { TaoNavItem, TaoNavLayout, TaoNavLook } from '../nav';
 import TaoButton from './TaoButton.vue';
 import TaoDropdownMenu from './TaoDropdownMenu.vue';
+import TaoHosts from './TaoHosts.vue';
 import TaoIcon from './TaoIcon.vue';
 import TaoLanguageSwitch from './TaoLanguageSwitch.vue';
 import TaoNav from './TaoNav.vue';
@@ -153,6 +154,8 @@ const locale = computed({
                 </div>
             </header>
             <div class="tao-shell__main"><slot /></div>
+            <!-- where toast() and confirm() draw: the shell is the root of the app, so they stand here (they teleport to the body) / где рисуют toast() и confirm(): оболочка корень приложения, значит они стоят здесь (телепорт в body) -->
+            <TaoHosts />
         </div>
     </TaoNav>
 </template>

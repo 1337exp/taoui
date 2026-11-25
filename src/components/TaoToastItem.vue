@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import TaoButton from './TaoButton.vue';
 import TaoIcon from './TaoIcon.vue';
 import { listenFocusLoss } from '../focusLoss';
+import { useTaoLocale } from '../locale';
 import { removeToast, toastDefaults } from '../toast/store';
 import type { TaoToastRecord } from '../toast/types';
 import { surfaceClass } from '../surface';
@@ -13,6 +14,11 @@ defineOptions({ name: 'TaoToastItem' });
 const props = defineProps<{
     toast: TaoToastRecord;
 }>();
+
+// the label of the cross: `toast.defaults({ closeLabel })`, otherwise the locale in effect where the viewport stands
+// подпись крестика: `toast.defaults({ closeLabel })`, иначе локаль, действующая там, где стоит viewport
+const locale = useTaoLocale();
+const closeLabel = computed(() => toastDefaults.closeLabel ?? locale.value.toast.closeLabel);
 
 const paused = ref(false);
 let remaining = props.toast.timeout;
@@ -138,7 +144,7 @@ onBeforeUnmount(() => {
             v-if="toast.closable"
             type="button"
             class="tao-toast__close"
-            :aria-label="toastDefaults.closeLabel"
+            :aria-label="closeLabel"
             @click="close"
         >
             <TaoIcon name="tao-close" />

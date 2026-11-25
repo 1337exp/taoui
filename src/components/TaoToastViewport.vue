@@ -1,17 +1,18 @@
 <script lang="ts" setup>
-import { onBeforeUnmount, onMounted } from 'vue';
+import { onBeforeUnmount } from 'vue';
 import TaoToastItem from './TaoToastItem.vue';
-import { registerToastViewport, toastsByPosition, TOAST_POSITIONS, unregisterToastViewport } from '../toast/store';
+import { claimToastViewport, releaseToastViewport, toastsByPosition, TOAST_POSITIONS } from '../toast/store';
 import type { TaoToastPosition } from '../toast/types';
 
 defineOptions({ name: 'TaoToastViewport' });
 
-onMounted(() => {
-    registerToastViewport();
-});
+// one viewport draws the toasts; a second one in the tree draws nothing (otherwise each toast is on the screen twice)
+// тосты рисует один viewport; второй в дереве ничего не рисует (иначе каждый тост на экране дважды)
+const me = Symbol('tao-toast-viewport');
+const active = claimToastViewport(me);
 
 onBeforeUnmount(() => {
-    unregisterToastViewport();
+    releaseToastViewport(me);
 });
 
 function enterName(position: TaoToastPosition) {
@@ -28,7 +29,7 @@ function enterName(position: TaoToastPosition) {
 </script>
 
 <template>
-    <Teleport to="body">
+    <Teleport v-if="active" to="body">
         <div
             v-for="position in TOAST_POSITIONS"
             :key="position"

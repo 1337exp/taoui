@@ -1,6 +1,4 @@
 import { computed, inject, provide, shallowRef, type ComputedRef, type InjectionKey, type Ref } from 'vue';
-import { configureConfirmDefaults } from '../confirm/store';
-import { configureToastDefaults } from '../toast/store';
 import { localeEn } from './en';
 import type { TaoLocale, TaoLocaleOverrides, TaoText } from './types';
 
@@ -48,8 +46,6 @@ function merge<T>(base: T, overrides: unknown): T {
  */
 export function setTaoLocale(locale: TaoLocaleOverrides, base: TaoLocale = localeEn) {
     current.value = merge(base, locale);
-    configureToastDefaults({ closeLabel: current.value.toast.closeLabel });
-    configureConfirmDefaults({ ok: current.value.confirm.ok, cancel: current.value.confirm.cancel });
 }
 
 /** A locale value made of a whole locale or a few keys on top of `base`. / Значение локали: целая или несколько ключей поверх `base`. */

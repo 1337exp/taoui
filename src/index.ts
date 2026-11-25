@@ -90,6 +90,7 @@ import TaoCounter from './components/TaoCounter.vue';
 import TaoCarousel from './components/TaoCarousel.vue';
 import TaoStages from './components/TaoStages.vue';
 import TaoToastViewport from './components/TaoToastViewport.vue';
+import TaoHosts from './components/TaoHosts.vue';
 import TaoConfirmHost from './components/TaoConfirmHost.vue';
 import { toast } from './toast';
 import { confirm } from './confirm';
@@ -187,6 +188,7 @@ export {
     TaoCarousel,
     TaoStages,
     TaoToastViewport,
+    TaoHosts,
     TaoConfirmHost,
     toast,
     confirm,

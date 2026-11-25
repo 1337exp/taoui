@@ -1,10 +1,11 @@
 import { ref } from 'vue';
-import { localeEn } from '../locale/en';
 import type { TaoConfirmDefaults, TaoConfirmRecord } from './types';
 
+// no texts of their own: the buttons say what the locale in effect where the host stands says (`confirm.defaults({ ok })` sets one)
+// своих текстов нет: кнопки говорят то, что говорит локаль там, где стоит хост (`confirm.defaults({ ok })` задаёт свой)
 export const confirmDefaults: TaoConfirmDefaults = {
-    ok: localeEn.confirm.ok,
-    cancel: localeEn.confirm.cancel,
+    ok: undefined,
+    cancel: undefined,
     surface: 'glass',
 };
 
@@ -40,24 +41,26 @@ export function resolveConfirm(value: boolean) {
     pump();
 }
 
-let viewportMounts = 0;
+// The one host that asks: the first to claim it (a second one draws nothing). / Единственный хост, который спрашивает: первый занявший (второй ничего не рисует).
+let owner: symbol | null = null;
 
-export function registerConfirmHost() {
-    viewportMounts += 1;
+export function claimConfirmHost(who: symbol): boolean {
+    if (typeof window === 'undefined') {
+        return true;
+    }
+    if (owner === null || owner === who) {
+        owner = who;
+        return true;
+    }
+    return false;
 }
 
-export function unregisterConfirmHost() {
-    viewportMounts = Math.max(0, viewportMounts - 1);
+export function releaseConfirmHost(who: symbol) {
+    if (owner === who) {
+        owner = null;
+    }
 }
 
 export function hasConfirmHost() {
-    if (viewportMounts > 0) {
-        return true;
-    }
-
-    if (typeof document === 'undefined') {
-        return false;
-    }
-
-    return Boolean(document.querySelector('[data-tao-confirm-host]'));
+    return owner !== null;
 }

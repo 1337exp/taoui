@@ -1,5 +1,4 @@
-import { createApp } from 'vue';
-import TaoToastViewport from '../components/TaoToastViewport.vue';
+import { devWarning } from '../deprecate';
 import { addToast, configureToastDefaults, dismissToasts, hasToastViewport, toastDefaults } from './store';
 import type {
     TaoToastAction,
@@ -42,24 +41,26 @@ function nextToastId() {
     return `tao-toast-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-let hostedApp: ReturnType<typeof createApp> | null = null;
+let warned = false;
 
 /**
- * An app that mounts `<TaoToastViewport />` itself (in its own tree: it sees the provided locale and the app's plugins) is the better
- * way; without one the toasts get a viewport of their own on `document.body`, in a second app that reads the global locale.
- * Лучше, когда приложение само кладёт `<TaoToastViewport />` в своё дерево (оно видит выданную локаль и плагины); без этого у тостов
- * свой viewport на `document.body`, во втором приложении, которое читает глобальную локаль.
+ * The toasts are drawn by the viewport in the tree of the app (`<TaoHosts />`, or `<TaoToastViewport />`): there it sees the locale
+ * the app provides and the app's plugins. There is no second app on `document.body` any more. A toast shown before the viewport is
+ * mounted waits in the store and appears with it; if none turns up in a second, a warning says where it is missing.
+ * Тосты рисует viewport в дереве приложения (`<TaoHosts />` или `<TaoToastViewport />`): там он видит выданную приложением локаль и
+ * плагины. Второго приложения на `document.body` больше нет. Тост, показанный до монтирования viewport, ждёт в хранилище и появится
+ * вместе с ним; если за секунду viewport так и не появился, предупреждение говорит, чего не хватает.
  */
-function ensureToastViewport() {
-    if (!isClient() || hasToastViewport()) {
+function expectToastViewport() {
+    if (warned || hasToastViewport() || !isClient()) {
         return;
     }
-
-    const host = document.createElement('div');
-    host.setAttribute('data-tao-toast-host', '');
-    document.body.appendChild(host);
-    hostedApp = createApp(TaoToastViewport);
-    hostedApp.mount(host);
+    warned = true;
+    setTimeout(() => {
+        if (!hasToastViewport()) {
+            devWarning('toast-no-host', 'toast(): no <TaoHosts /> (or <TaoToastViewport />) is mounted, so the toast is not shown. Put <TaoHosts /> once into the root of the app.');
+        }
+    }, 1000);
 }
 
 /** Shows a toast now and gives back a handle. Nothing happens on the server (no `window`): the handle is inert. */
@@ -77,7 +78,7 @@ function show(options: TaoToastOptions): TaoToastHandle {
     const displayMode: TaoToastDisplayMode | undefined = options.replace ? 'replace' : options.once ? 'once' : undefined;
     const dedupeId = options.id ?? (displayMode ? `${type}:${title}:${message}` : undefined);
 
-    ensureToastViewport();
+    expectToastViewport();
 
     const record: TaoToastRecord = {
         id: recordId,

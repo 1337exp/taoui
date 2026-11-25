@@ -121,7 +121,9 @@ choose a text colour, WCAG 2 to promise a number.
   `TaoButton v-model:pressed`, a one-of-many choice inside it is `TaoSegmented`. A bar that must stay one row (an editor, a phone)
   is `<TaoToolbar overflow>`: the groups that do not fit go under a «⋮» button, a `TaoToolbarGroup pinned` never does.
 - `toast({ type: 'success', message: 'Saved' })` or `toast.success('Saved')`, `toast.danger('…', { title: 'Network', timeout: 5000 })`,
-  `{ actions: [{ label: 'Undo', onClick }] }`; it gives back `{ id, dismiss() }`. `await confirm({ title: 'Delete?', message: '…', tone: 'danger' })` resolves to a boolean.
+  `{ actions: [{ label: 'Undo', onClick }] }`; it gives back `{ id, dismiss() }`. `await confirm({ title: 'Delete?', message: '…', tone: 'danger' })` resolves to a boolean. Both draw in **`<TaoHosts />`**: put it once into the root of the app (`TaoShell` has it inside); it stands in the
+  app's own tree, so it reads the locale you `provideTaoLocale` (the button texts follow it), and a second one draws nothing.
+  Without a host nothing is shown and a dev warning says so.
   Their hosts `TaoToastViewport` / `TaoConfirmHost` mount themselves on the first call; place them yourself only to control
   where they render.
 - `TaoAlert` (`tone`, `title`, `closable`, `collapsible` + `v-model:collapsed`), `TaoEmpty`, `TaoLoader`, `TaoSkeleton`,
