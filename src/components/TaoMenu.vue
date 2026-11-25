@@ -4,7 +4,7 @@ import { densityClass, resolveDensity, type TaoResolvedDensity } from '../densit
 import { useDismiss } from '../dismiss';
 import { isVirtualAnchor, useFloating, type TaoAnchor, type TaoPlacement } from '../floating';
 import { useLayer } from '../layers';
-import { useListNav } from '../listNav';
+import { useRoving } from '../primitives/useRoving';
 import TaoKbd from './TaoKbd.vue';
 import {
     isMenuSelectable,
@@ -130,7 +130,7 @@ useLayer(() => props.open, {
     onEscape: () => (isSub ? emit('close', 'escape') : tree.closeAll('escape')),
 });
 
-const nav = useListNav({
+const nav = useRoving({
     enabled: () => enabled.value,
     active: activeIndex,
     labels: () => props.items.map(menuItemLabel),

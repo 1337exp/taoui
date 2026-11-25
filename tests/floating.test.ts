@@ -1,7 +1,7 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest';
 import { computePosition } from '../src/floating';
-import { findByPrefix, firstEnabled, lastEnabled, stepEnabled } from '../src/listNav';
+import { findByPrefix, firstEnabled, lastEnabled, stepEnabled } from '../src/primitives/useRoving';
 
 const viewport = { width: 1000, height: 800 };
 const size = { width: 200, height: 100 };

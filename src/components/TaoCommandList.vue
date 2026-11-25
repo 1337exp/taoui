@@ -4,6 +4,7 @@ import { matchCommands, splitByRanges, type TaoCommandItem, type TaoCommandMatch
 import { useLocaleText } from '../locale';
 import TaoIcon from './TaoIcon.vue';
 import TaoKbd from './TaoKbd.vue';
+import { useRoving } from '../primitives/useRoving';
 
 // The search field and the list of commands, with no window around them: lay it in a page, a panel or a TaoPopover.
 // TaoCommandPalette is this inside a dialog.
@@ -68,24 +69,9 @@ const hasIcons = computed(() => results.value.some((m) => m.item.icon));
 const enabled = (index: number) => results.value[index] !== undefined && !results.value[index]!.item.disabled;
 const firstEnabled = () => results.value.findIndex((m) => !m.item.disabled);
 
-/** Moves the active row to the next one that can be picked, wrapping round. */
-function step(delta: 1 | -1) {
-    const n = results.value.length;
-    if (!n || firstEnabled() < 0) return;
-    let index = active.value;
-    for (let i = 0; i < n; i++) {
-        index = (index + delta + n) % n;
-        if (enabled(index)) {
-            active.value = index;
-            return;
-        }
-    }
-}
-
-function edge(last: boolean) {
-    const indexes = results.value.map((_, i) => i).filter(enabled);
-    if (indexes.length) active.value = last ? indexes[indexes.length - 1]! : indexes[0]!;
-}
+// the arrows and Home / End walk the rows that can be picked, wrapping round; the field keeps the focus
+// стрелки и Home / End ходят по строкам, которые можно выбрать, по кругу; фокус остаётся в поле
+const nav = useRoving({ enabled: () => results.value.map((_, i) => enabled(i)), active, orientation: 'vertical' });
 
 function choose(index: number) {
     const match = results.value[index];
@@ -95,23 +81,8 @@ function choose(index: number) {
 
 function onKeydown(event: KeyboardEvent) {
     if (event.isComposing) return;
+    if (nav.onKeydown(event)) return;
     switch (event.key) {
-        case 'ArrowDown':
-            event.preventDefault();
-            step(1);
-            break;
-        case 'ArrowUp':
-            event.preventDefault();
-            step(-1);
-            break;
-        case 'Home':
-            event.preventDefault();
-            edge(false);
-            break;
-        case 'End':
-            event.preventDefault();
-            edge(true);
-            break;
         case 'Enter':
             event.preventDefault();
             choose(active.value);

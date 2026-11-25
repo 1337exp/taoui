@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { computed, nextTick, ref, shallowReactive, shallowRef, useId, watch } from 'vue';
 import type { TaoVirtualAnchor } from '../floating';
-import { useListNav } from '../listNav';
+import { useRoving } from '../primitives/useRoving';
 import { formatText, localeEn, useLocaleText, useTaoLocale } from '../locale';
 import type { TaoMenuItem } from '../menu';
 import { sizeClass, type TaoSize } from '../size';
@@ -363,7 +363,7 @@ function focusRow(index: number) {
     rowRefs.value[index]?.focus();
 }
 
-const nav = useListNav({
+const nav = useRoving({
     enabled: () => rows.value.map(() => true),
     active: current,
     labels: () => rows.value.map((row) => row.node.label),

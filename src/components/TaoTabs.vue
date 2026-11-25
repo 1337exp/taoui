@@ -3,6 +3,7 @@ import { computed, nextTick, useId } from 'vue';
 import type { TaoJustify } from '../layout';
 import { sizeClass, type TaoSize } from '../size';
 import type { TaoTabItem } from '../tabs';
+import { useRoving } from '../primitives/useRoving';
 
 defineOptions({ name: 'TaoTabs' });
 
@@ -53,39 +54,17 @@ function selectTab(key: string, focus = false) {
     }
 }
 
-function move(delta: number) {
-    const enabled = enabledTabs.value;
-    if (!enabled.length) {
-        return;
-    }
-    const current = enabled.findIndex((tab) => tab.value === props.modelValue);
-    const next = enabled[(current + delta + enabled.length) % enabled.length];
-    selectTab(next.value, true);
-}
-
-function onKeydown(event: KeyboardEvent) {
-    if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
-        event.preventDefault();
-        move(1);
-        return;
-    }
-    if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') {
-        event.preventDefault();
-        move(-1);
-        return;
-    }
-    if (event.key === 'Home') {
-        event.preventDefault();
-        const first = enabledTabs.value[0];
-        selectTab(first ? first.value : props.modelValue, true);
-        return;
-    }
-    if (event.key === 'End') {
-        event.preventDefault();
-        const last = enabledTabs.value[enabledTabs.value.length - 1];
-        selectTab(last ? last.value : props.modelValue, true);
-    }
-}
+// One tab stop, the arrows (all four), Home and End walk the tabs that are not disabled and select the one they land on.
+// Одна точка табуляции, стрелки (все четыре), Home и End ходят по вкладкам, которые не отключены, и выбирают ту, на которую пришли.
+const activeIndex = computed({
+    get: () => list.value.findIndex((tab) => tab.value === props.modelValue),
+    set: (index: number) => {
+        const tab = list.value[index];
+        if (tab) selectTab(tab.value, true);
+    },
+});
+const nav = useRoving({ enabled: () => list.value.map((tab) => !tab.disabled), active: activeIndex, orientation: 'both' });
+const onKeydown = (event: KeyboardEvent) => void nav.onKeydown(event);
 </script>
 
 <template>

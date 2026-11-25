@@ -1,3 +1,9 @@
+// Roving keyboard navigation: one tab stop, the arrows walk the items, Home / End jump to the ends, a printable key finds an item by its label.
+// Disabled items are skipped. It is the one contract of the kit for a list, a menu, a tree, tabs, a command list: they used to have a private
+// switch each, and they disagreed about wrapping and about Home / End. What differs per widget is a flag at the call site, not a copy.
+// Блуждающая клавиатурная навигация: одна точка табуляции, стрелки ходят по пунктам, Home / End прыгают на края, печатная клавиша ищет пункт
+// по подписи. Недоступные пропускаются. Это единый контракт набора для списка, меню, дерева, вкладок, командного списка: у каждого был свой
+// switch, и они расходились в зацикливании и в Home / End. Чем виджеты различаются, задаётся флагом в месте вызова, а не копией.
 import { type Ref } from 'vue';
 
 /** Index of the next enabled item from `from` in `delta` direction; -1 when nothing is enabled. / Индекс следующего доступного пункта. */
@@ -37,15 +43,15 @@ export function findByPrefix(labels: readonly string[], enabled: readonly boolea
     return -1;
 }
 
-export interface UseListNavOptions {
+export interface UseRovingOptions {
     /** Which items can be reached. / Какие пункты доступны. */
     enabled: () => readonly boolean[];
     /** The active index (-1 = none); the composable moves it. / Активный индекс; composable двигает его. */
     active: Ref<number>;
     /** Item texts: turns on type-ahead (a printable key jumps to a matching item). / Подписи: включают быстрый поиск по набору. */
     labels?: () => readonly string[];
-    /** `vertical` listens to ArrowUp / ArrowDown, `horizontal` to ArrowLeft / ArrowRight. */
-    orientation?: 'vertical' | 'horizontal';
+    /** `vertical` listens to ArrowUp / ArrowDown, `horizontal` to ArrowLeft / ArrowRight, `both` to all four (tabs). / `both` слушает все четыре стрелки (вкладки). */
+    orientation?: 'vertical' | 'horizontal' | 'both';
     loop?: boolean;
     /** Called after the active index changed by a key. / После смены активного индекса клавишей. */
     onMove?: (index: number) => void;
@@ -56,7 +62,7 @@ export interface UseListNavOptions {
  * `onKeydown` returns true when it handled the key (and has already called preventDefault).
  * Клавиатурная навигация списка: стрелки, Home / End, быстрый поиск. Недоступные пропускаются.
  */
-export function useListNav(options: UseListNavOptions) {
+export function useRoving(options: UseRovingOptions) {
     const { active, orientation = 'vertical', loop = true } = options;
     let buffer = '';
     let timer: ReturnType<typeof setTimeout> | undefined;
@@ -70,12 +76,12 @@ export function useListNav(options: UseListNavOptions) {
 
     function onKeydown(event: KeyboardEvent): boolean {
         const enabled = options.enabled();
-        const next = orientation === 'vertical' ? 'ArrowDown' : 'ArrowRight';
-        const prev = orientation === 'vertical' ? 'ArrowUp' : 'ArrowLeft';
+        const forward = (orientation !== 'horizontal' ? ['ArrowDown'] : []).concat(orientation !== 'vertical' ? ['ArrowRight'] : []);
+        const backward = (orientation !== 'horizontal' ? ['ArrowUp'] : []).concat(orientation !== 'vertical' ? ['ArrowLeft'] : []);
 
-        if (event.key === next || event.key === prev) {
+        if (forward.includes(event.key) || backward.includes(event.key)) {
             event.preventDefault();
-            move(stepEnabled(enabled, active.value, event.key === next ? 1 : -1, loop));
+            move(stepEnabled(enabled, active.value, forward.includes(event.key) ? 1 : -1, loop));
             return true;
         }
         if (event.key === 'Home' || event.key === 'End') {

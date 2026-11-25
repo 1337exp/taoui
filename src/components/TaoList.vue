@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
-import { firstEnabled, lastEnabled, stepEnabled } from '../listNav';
+import { useRoving } from '../primitives/useRoving';
 import { sizeClass, type TaoSize } from '../size';
 import { toCssLength, type TaoLength } from '../length';
 import { useTaoLocale } from '../locale';
@@ -97,6 +97,18 @@ function release() {
     }
 }
 
+const nav = useRoving({
+    enabled: () => rows().map((row) => row.enabled),
+    active: current,
+    orientation: 'vertical',
+    loop: false,
+    onMove: (index) => {
+        const all = rows();
+        sync();
+        all[index]?.target.focus();
+    },
+});
+
 function onKeydown(event: KeyboardEvent) {
     if (!props.roving || event.altKey || event.metaKey) {
         return;
@@ -107,22 +119,10 @@ function onKeydown(event: KeyboardEvent) {
     if (from < 0) {
         return;
     }
-    const enabled = all.map((row) => row.enabled);
-    const to =
-        event.key === 'ArrowDown' ? stepEnabled(enabled, from, 1, false)
-        : event.key === 'ArrowUp' ? stepEnabled(enabled, from, -1, false)
-        : event.key === 'Home' ? firstEnabled(enabled)
-        : event.key === 'End' ? lastEnabled(enabled)
-        : -2;
-    if (to === -2) {
-        return;
-    }
-    event.preventDefault();
-    if (to >= 0 && to !== from) {
-        current.value = to;
-        sync();
-        all[to]!.target.focus();
-    }
+    // the row that has the focus is the start; the list does not wrap, and the key is always taken (no scroll of the page)
+    // строка в фокусе — старт; список не зацикливается, а клавиша забирается всегда (страница не прокручивается)
+    current.value = from;
+    nav.onKeydown(event);
 }
 
 function onFocusIn(event: FocusEvent) {

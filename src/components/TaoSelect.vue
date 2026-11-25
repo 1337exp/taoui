@@ -4,7 +4,7 @@ import { useControlAttrs } from '../controlAttrs';
 import { useDismiss } from '../dismiss';
 import { useFloating } from '../floating';
 import { useLayer } from '../layers';
-import { useListNav } from '../listNav';
+import { useRoving } from '../primitives/useRoving';
 import { useField } from '../formField';
 import type { TaoSelectOption } from '../select';
 import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';
@@ -75,7 +75,7 @@ useLayer(open, {
         triggerRef.value?.focus();
     },
 });
-const nav = useListNav({
+const nav = useRoving({
     enabled: () => enabled.value,
     active: activeIndex,
     labels: () => props.options.map((option) => option.label),

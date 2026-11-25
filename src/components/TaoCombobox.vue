@@ -5,7 +5,7 @@ import { useDismiss } from '../dismiss';
 import { useFloating } from '../floating';
 import { useField } from '../formField';
 import { useLayer } from '../layers';
-import { stepEnabled } from '../listNav';
+import { stepEnabled } from '../primitives/useRoving';
 import { listenFocusLoss } from '../focusLoss';
 import type { TaoSelectOption } from '../select';
 import { densityClass, resolveDensity, type TaoResolvedDensity } from '../density';

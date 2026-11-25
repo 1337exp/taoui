@@ -4,6 +4,7 @@ import { moveTarget, type TaoDocTab } from '../docTabs';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
 import TaoIcon from './TaoIcon.vue';
+import { useRoving } from '../primitives/useRoving';
 
 defineOptions({ name: 'TaoDocTabs' });
 
@@ -62,12 +63,16 @@ function indexOf(value: string) {
     return props.items.findIndex((t) => t.value === value);
 }
 
-function move(delta: number, from: string) {
-    const n = props.items.length;
-    if (!n) return;
-    const here = indexOf(from);
-    select(props.items[(here + delta + n) % n]!.value, true);
-}
+// The arrows (left / right), Home and End walk the tabs and select the one they land on.
+// Стрелки (влево / вправо), Home и End ходят по вкладкам и выбирают ту, на которую пришли.
+const activeIndex = computed({
+    get: () => indexOf(props.modelValue),
+    set: (index: number) => {
+        const tab = props.items[index];
+        if (tab) select(tab.value, true);
+    },
+});
+const nav = useRoving({ enabled: () => props.items.map(() => true), active: activeIndex, orientation: 'horizontal' });
 
 function onKeydown(event: KeyboardEvent, tab: TaoDocTab) {
     const key = event.key;
@@ -84,19 +89,11 @@ function onKeydown(event: KeyboardEvent, tab: TaoDocTab) {
         }
         return;
     }
-    if (key === 'ArrowRight') {
-        event.preventDefault();
-        move(1, tab.value);
-    } else if (key === 'ArrowLeft') {
-        event.preventDefault();
-        move(-1, tab.value);
-    } else if (key === 'Home') {
-        event.preventDefault();
-        select(props.items[0]!.value, true);
-    } else if (key === 'End') {
-        event.preventDefault();
-        select(props.items[props.items.length - 1]!.value, true);
-    } else if (key === 'Delete' && closable(tab)) {
+    // the focused tab is the selected one (one tab stop), so the walk starts from it
+    if (nav.onKeydown(event)) {
+        return;
+    }
+    if (key === 'Delete' && closable(tab)) {
         event.preventDefault();
         emit('close', tab.value);
     } else if (key === 'Enter' && tab.preview) {
