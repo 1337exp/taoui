@@ -5,6 +5,8 @@ export interface TaoFormFieldContext {
     id: string;
     invalid: ComputedRef<boolean>;
     describedBy: ComputedRef<string | undefined>;
+    /** The id of the visible label, when there is one (what `aria-labelledby` can name). / id видимой подписи, если она есть. */
+    labelId: ComputedRef<string | undefined>;
 }
 
 export const formFieldKey: InjectionKey<TaoFormFieldContext> = Symbol('taoFormField');
@@ -42,10 +44,12 @@ export interface ReadableFieldProps extends FieldProps {
  * Что нужно каждому контролу формы от окружающего TaoFormField: id для подписи, состояние ошибки и `aria-describedby`.
  * `autofocus` тоже здесь.
  */
-export function useField(props: { invalid?: boolean; id?: string; autofocus?: boolean }) {
+export function useField(props: { invalid?: boolean; id?: string; autofocus?: boolean }, options: { detached?: boolean } = {}) {
     const field = inject(formFieldKey, null);
     const localId = useId();
-    const controlId = computed(() => props.id || field?.id || localId);
+    // detached: the id of the field belongs to something else (the group of a radio), the control has its own
+    // detached: id поля принадлежит другому (группе радио), у элемента свой
+    const controlId = computed(() => props.id || (options.detached ? undefined : field?.id) || localId);
     const isInvalid = computed(() => Boolean(props.invalid) || Boolean(field?.invalid.value));
     const describedBy = computed(() => field?.describedBy.value);
     // the native `autofocus` is only honoured by a page that loads, not by a control a component draws later
@@ -68,6 +72,8 @@ export function nativeFieldAttrs(props: { name?: string; required?: boolean; rea
     return {
         name: props.name,
         required: props.required || undefined,
-        readonly: props.readOnly || undefined,
+        // a control without the prop keeps a `readonly` that falls through to it
+        // у контрола без этого пропа остаётся `readonly`, пришедший атрибутом
+        ...(props.readOnly === undefined ? {} : { readonly: props.readOnly || undefined }),
     };
 }

@@ -250,7 +250,10 @@ describe('input and slider together', () => {
         await w.setProps({ modelValue: 40 });
         expect((input.element as HTMLInputElement).value).toBe('40');
         await input.trigger('blur');
-        expect(last(w.emitted('commit')!)).toEqual([40]);
+        // the value came from outside and the user did not edit it: nothing to commit, and the old text did not come back
+        // значение пришло снаружи, пользователь его не правил: фиксировать нечего, старый текст не вернулся
+        expect(w.emitted('commit')).toBeUndefined();
+        expect((input.element as HTMLInputElement).value).toBe('40');
         w.unmount();
     });
 
@@ -284,7 +287,7 @@ describe('range collapsed into one point', () => {
 
         await rail(w).trigger('pointerdown', { button: 0, clientX: 40, clientY: 8, pointerId: 1 });
         await rail(w).trigger('pointermove', { clientX: 40, clientY: 8, pointerId: 1 });
-        expect(last(w.emitted('update:modelValue')!)).toEqual([[40, 40]]); // пока на точке, значение не меняется
+        expect(w.emitted('update:modelValue')).toBeUndefined(); // пока на точке, значение не меняется и ничего не уходит
         await rail(w).trigger('pointermove', { clientX: 70, clientY: 8, pointerId: 1 });
         expect(last(w.emitted('update:modelValue')!)).toEqual([[40, 70]]);
         await rail(w).trigger('pointerup', { pointerId: 1 });

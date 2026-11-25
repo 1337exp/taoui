@@ -67,6 +67,7 @@ export function useTreeLoad(o: TreeLoadOptions) {
         if (!node || node.children || !loaded.has(node.id)) {
             return;
         }
+        const previous = loaded.get(node.id)!;
         loaded.delete(node.id);
         const load = o.load();
         if (!o.expanded().has(node.id) || !load) {
@@ -76,6 +77,9 @@ export function useTreeLoad(o: TreeLoadOptions) {
         try {
             loaded.set(node.id, await load(node));
         } catch (error) {
+            // the folder stays open with what it had, not open and empty
+            // папка остаётся открытой с тем, что было, а не открытой и пустой
+            loaded.set(node.id, previous);
             o.failed(node, error);
         } finally {
             loading.delete(node.id);

@@ -30,10 +30,13 @@ const describedBy = computed(() => {
     return undefined;
 });
 
+const labelledBy = computed(() => (props.label ? labelId : undefined));
+
 provide(formFieldKey, {
     id,
     invalid,
     describedBy,
+    labelId: labelledBy,
 });
 
 function onLabelClick() {

@@ -96,6 +96,7 @@ export function useCarouselGlide(o: CarouselGlideOptions) {
 
         if (Math.abs(distance) < 1 || o.reducedMotion.value) {
             el.scrollLeft = to;
+            finish();
             return;
         }
 

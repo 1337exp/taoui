@@ -160,7 +160,7 @@ function onTriggerKeydown(event: KeyboardEvent) {
                     :clear-text="l10n.clearText"
                     :prev-month-label="l10n.prevMonthLabel"
                     :next-month-label="l10n.nextMonthLabel"
-                    @update:model-value="onChange"
+                    @select="onChange"
                     @view="nextTick(updatePosition)"
                 >
                     <template v-if="$slots['prev-icon']" #prev-icon><slot name="prev-icon" /></template>

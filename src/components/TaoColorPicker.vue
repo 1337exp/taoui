@@ -193,8 +193,8 @@ const areaDrag = usePointerDrag({
         areaRef.value?.focus({ preventScroll: true });
     },
     onMove: fromPointer,
-    onEnd() {
-        emit('commit', hex.value);
+    onEnd(reason) {
+        if (reason !== 'unmount') emit('commit', hex.value);
     },
 });
 

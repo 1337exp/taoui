@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useSlots } from 'vue';
+import { nextTick, useSlots } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
 import { nativeFieldAttrs, useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
@@ -59,6 +59,12 @@ function toggle(event?: Event) {
 
     const next = !model.value;
     model.value = next;
+    // a parent that did not take it: the native checkbox has flipped, so it is put back to what the model says
+    // родитель не принял: нативный чекбокс уже переключился, возвращаем его к тому, что говорит модель
+    const input = event?.target;
+    if (input instanceof HTMLInputElement) {
+        void nextTick(() => (input.checked = model.value));
+    }
 }
 
 const slots = useSlots();

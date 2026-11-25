@@ -133,7 +133,7 @@ function write(next: number[], final = false) {
     const before = values.value;
     const value: TaoSliderValue = isRange.value ? [next[0]!, next[1]!] : next[0]!;
     const changed = next.some((v, i) => v !== before[i]);
-    model.value = value;
+    if (changed) model.value = value;
     if (final && changed) emit('commit', value);
 }
 
@@ -201,8 +201,9 @@ const drag = usePointerDrag({
         }
         setThumb(activeThumb.value, target);
     },
-    onEnd() {
+    onEnd(reason) {
         tieAt = null;
+        if (reason === 'unmount') return;
         if (values.value.some((v, i) => v !== dragStart[i])) {
             emit('commit', isRange.value ? [values.value[0]!, values.value[1]!] : values.value[0]!);
         }

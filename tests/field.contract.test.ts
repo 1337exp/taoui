@@ -113,6 +113,27 @@ describe('a TaoFormField reaches the controls', () => {
         expect(button.attributes('aria-describedby')).toBeTruthy();
     });
 
+    it('TaoColorInput: the label names the button together with its own text, an aria-label of the app still wins', () => {
+        const inField = mount(TaoFormField, {
+            props: { label: 'Accent' },
+            slots: { default: () => h(TaoColorInput, { modelValue: '#ff8800' }) },
+            attachTo: document.body,
+        });
+        const button = inField.find('button.tao-color-input');
+        expect(button.attributes('aria-label')).toBeUndefined();
+        const ids = button.attributes('aria-labelledby')!.split(' ');
+        expect(ids[0]).toBe(inField.find('label').attributes('id'));
+        expect(ids[1]).toBe(button.attributes('id'));
+        inField.unmount();
+
+        const named = mount(TaoFormField, {
+            props: { label: 'Accent' },
+            slots: { default: () => h(TaoColorInput, { modelValue: '#ff8800', 'aria-label': 'Background' }) },
+        });
+        expect(named.find('button.tao-color-input').attributes('aria-label')).toBe('Background: #ff8800');
+        expect(named.find('button.tao-color-input').attributes('aria-labelledby')).toBeUndefined();
+    });
+
     it('TaoColorInput: its own invalid is the red frame', () => {
         const w = mount(TaoColorInput, { props: { modelValue: '#ff8800', invalid: true } });
         expect(w.find('button.tao-color-input').classes()).toContain('tao-color-input--invalid');

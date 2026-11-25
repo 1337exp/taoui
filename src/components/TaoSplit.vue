@@ -175,10 +175,10 @@ const drag = usePointerDrag({
         }
         setStartFromDelta(delta);
     },
-    onEnd() {
+    onEnd(reason) {
         restoreDragCursor();
         applyLayout(true);
-        if (!valuesEqual(size.value, dragStartValue)) {
+        if (reason !== 'unmount' && !valuesEqual(size.value, dragStartValue)) {
             emit('commit', size.value);
         }
     },

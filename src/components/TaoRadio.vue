@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, inject } from 'vue';
+import { computed, inject, nextTick } from 'vue';
 import { useControlAttrs } from '../controlAttrs';
 import { nativeFieldAttrs, useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
@@ -39,9 +39,8 @@ const model = defineModel<TaoRadioValue>();
 
 
 const group = inject(radioGroupKey, null);
-const { field, isInvalid, controlId: fieldId, localId } = useField(props);
 // a radio in a group has an id of its own (the field's id belongs to the group), unless it is given one
-const controlId = computed(() => (group ? props.id || localId : fieldId.value));
+const { field, isInvalid, controlId } = useField(props, { detached: Boolean(group) });
 const describedBy = computed(() => (group ? undefined : field?.describedBy.value));
 
 const isDisabled = computed(() => props.disabled || Boolean(group?.disabled.value));
@@ -51,17 +50,22 @@ const isChecked = computed(() => {
     return current === props.value;
 });
 
-function onChange() {
+function onChange(event: Event) {
     if (isDisabled.value) {
         return;
     }
 
     if (group) {
         group.setValue(props.value);
-        return;
+    } else {
+        model.value = props.value;
     }
-
-    model.value = props.value;
+    // a parent that did not take it: the native radio has been checked, so it is put back to what the model says
+    // родитель не принял: нативный radio уже отмечен, возвращаем его к тому, что говорит модель
+    const input = event.target;
+    if (input instanceof HTMLInputElement) {
+        void nextTick(() => (input.checked = isChecked.value));
+    }
 }
 </script>
 

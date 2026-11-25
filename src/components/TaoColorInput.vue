@@ -55,7 +55,7 @@ const emit = defineEmits<{
 
 // a TaoFormField around it reaches the button too: its label, its error and its description
 // TaoFormField вокруг доходит и до кнопки: подпись, ошибка и описание
-const { controlId, isInvalid, describedBy } = useField(props);
+const { field, controlId, isInvalid, describedBy } = useField(props);
 const l10n = useLocaleText(props, 'colorPicker');
 const shown = computed(() => normalizeHex(model.value, props.alpha) ?? model.value);
 // «Background: #ff8800» when the app names the field, «Choose a colour: #ff8800» when it does not
@@ -76,6 +76,10 @@ function onKeydown(event: KeyboardEvent) {
     }
 }
 
+// inside a `TaoFormField` with a label the button is named by that label and its own text («Accent #ff8800»); an `aria-label`
+// would replace the label. A name the app gave stays the app's.
+// внутри `TaoFormField` с подписью кнопку называют подпись и её собственный текст; `aria-label` заменил бы подпись.
+const labelledBy = computed(() => field?.labelId.value);
 const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? given : l10n.value.chooseLabel}: ${text.value}`;
 </script>
 
@@ -91,7 +95,8 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
                 :disabled="disabled"
                 :aria-invalid="isInvalid || undefined"
                 :aria-describedby="describedBy"
-                :aria-label="buttonLabel($attrs['aria-label'])"
+                :aria-label="labelledBy && !$attrs['aria-label'] ? undefined : buttonLabel($attrs['aria-label'])"
+                :aria-labelledby="labelledBy && !$attrs['aria-label'] ? `${labelledBy} ${controlId}` : undefined"
                 aria-haspopup="dialog"
                 :aria-expanded="open"
                 @keydown="onKeydown"

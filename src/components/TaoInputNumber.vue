@@ -77,6 +77,8 @@ const draft = ref(toDraft(model.value));
 
 /** Last value this field emitted itself: tells typing apart from a change made elsewhere. / Последнее значение, которое поле отдало само: так отличаем набор от правки снаружи. */
 let emitted: number | null | undefined;
+/** The value last committed, or the one that came from outside: a blur that finds the same commits nothing. / Последнее зафиксированное значение или пришедшее снаружи. */
+let committed: number | null | undefined = model.value;
 
 // While the field is focused its text is the user's draft and survives the echo of its own value. A value that came from
 // elsewhere (a slider, another field) replaces the draft, otherwise blur would commit the stale text over it.
@@ -85,6 +87,9 @@ let emitted: number | null | undefined;
 watch(
     () => model.value,
     (value) => {
+        if (value !== emitted) {
+            committed = value;
+        }
         if (!focused.value || value !== emitted) {
             draft.value = toDraft(value);
         }
@@ -129,7 +134,12 @@ function commit(value: number | null) {
     emitted = next;
     model.value = next;
     draft.value = toDraft(next);
-    emit('commit', next);
+    // once per finished edit, and only for a number that is not the one last committed (Enter, then the blur that follows)
+    // раз за законченную правку и только для числа, не равного последнему зафиксированному (Enter, потом уход из поля)
+    if (next !== committed) {
+        committed = next;
+        emit('commit', next);
+    }
 }
 
 function bump(direction: 1 | -1) {
