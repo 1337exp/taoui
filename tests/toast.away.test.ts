@@ -25,6 +25,7 @@ afterEach(async () => {
         }
     });
     toast.dismiss();
+    restoreDocument();
     await wait(60); // timers of the removed toasts run out before the next test
     vi.restoreAllMocks();
     document.body.innerHTML = '';

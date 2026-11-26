@@ -56,11 +56,15 @@ function onLabelClick() {
         return;
     }
 
-    const scope = target ?? document.getElementById(labelId)?.parentElement;
-    scope
-        ?.querySelector<HTMLElement>(
+    // the control, not what stands beside the label (a «?» button of `#label-end` is not the field)
+    // сам контрол, а не то, что стоит рядом с подписью (кнопка «?» из `#label-end` — не поле)
+    const scope = target ?? document.getElementById(labelId)?.closest('.tao-form-field');
+    [
+        ...(scope?.querySelectorAll<HTMLElement>(
             'input:not([disabled]), button:not([disabled]), textarea:not([disabled]), select:not([disabled])',
-        )
+        ) ?? []),
+    ]
+        .find((el) => !el.closest('.tao-form-field__head'))
         ?.focus();
 }
 </script>

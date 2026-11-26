@@ -6,7 +6,9 @@ import { Comment, Fragment, Text, type VNode } from 'vue';
  * Слоты компонента в том виде, что нужен этому файлу: имя и функция. Не `Slots` из Vue: тип слота менялся между релизами 3.5.x (слот, который
  * надо звать с одним аргументом), и типизированный `defineSlots` ему не присваивается. Подходит всё, где есть именованные функции.
  */
-export type SlotMap = { readonly [name: string]: ((...args: never[]) => unknown) | undefined };
+// `any[]`: a slot that takes its props (`(props: T) => …`) is a slot too; the helper below calls a plain slot, with none
+// `any[]`: слот, берущий свои пропсы (`(props: T) => …`), тоже слот; помощник ниже зовёт простой слот, без них
+export type SlotMap = { readonly [name: string]: ((...args: any[]) => unknown) | undefined };
 
 /**
  * Whether a named slot of a component draws anything: the check for `v-if` on a wrapper. Plain slots only (no slot props):

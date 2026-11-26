@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { slotHas } from '../slots';
 import TaoIcon from './TaoIcon.vue';
 import { computed, nextTick, onBeforeUnmount, onMounted, onUpdated, ref, watch } from 'vue';
 import { centerDistance, cycleTarget, nearestSlide, wantedCopies } from '../carousel';
@@ -649,7 +648,7 @@ onBeforeUnmount(() => {
             </button>
 
             <!-- no built-in indicator to fill (none, or your own `dots` slot): an invisible one keeps the time -->
-            <span v-if="armed && (!fillVisible || slotHas($slots, 'dots'))" class="tao-carousel__timer" aria-hidden="true">
+            <span v-if="armed && (!fillVisible || $slots.dots !== undefined)" class="tao-carousel__timer" aria-hidden="true">
                 <span
                     :key="fillEpoch"
                     class="tao-carousel__fill"

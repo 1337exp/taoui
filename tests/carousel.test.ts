@@ -320,3 +320,19 @@ describe('TaoCarousel cursor', () => {
         expect(carouselSource as string).not.toMatch(/cursor:\s*grab/);
     });
 });
+
+describe('a custom #dots slot (fourth round)', () => {
+    it('a slot that takes the props renders, and the invisible timer stays (the check must not call the slot without them)', async () => {
+        const w = await make(
+            { indicator: 'dots', autoplay: 1000 },
+            { dots: ({ index, count }: { index: number; count: number }) => h('span', { class: 'mine' }, `${index + 1}/${count}`) },
+        );
+        expect(w.find('.mine').text()).toBe('1/3');
+        expect(w.find('.tao-carousel__timer').exists()).toBe(true);
+    });
+
+    it('a slot that draws nothing still counts as given: the clock is kept', async () => {
+        const w = await make({ indicator: 'dots', autoplay: 1000 }, { dots: () => [] });
+        expect(w.find('.tao-carousel__timer').exists()).toBe(true);
+    });
+});

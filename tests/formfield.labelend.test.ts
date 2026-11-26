@@ -15,9 +15,15 @@ describe('TaoFormField #label-end', () => {
         expect(w.find('label').text()).toBe('Code');
     });
 
-    it('the label still names the control, and a click on the extra does not belong to it', () => {
-        const w = mount(TaoFormField, { props: { label: 'Code' }, slots: { 'label-end': () => h('button', '?'), default: () => h('input') } });
-        expect(w.find('label').attributes('for')).toBeTruthy();
+    it('a click on the label focuses the control, not the «?» beside it (a field whose control carries no id)', async () => {
+        const w = mount(TaoFormField, {
+            props: { label: 'Code' },
+            slots: { 'label-end': () => h('button', { class: 'help' }, '?'), default: () => h('div', [h('input', { class: 'control' })]) },
+            attachTo: document.body,
+        });
+        await w.find('label').trigger('click');
+        expect(document.activeElement).toBe(w.find('.control').element);
+        w.unmount();
     });
 
     it('with no slot (or one that draws nothing) the markup is the one it was', () => {
