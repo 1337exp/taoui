@@ -1,5 +1,5 @@
 import { mount, type VueWrapper } from '@vue/test-utils';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defineComponent, h, nextTick, ref } from 'vue';
 import TaoCombobox from '../src/components/TaoCombobox.vue';
 import TaoDate from '../src/components/TaoDate.vue';
@@ -284,7 +284,13 @@ describe('TaoTooltip', () => {
         expect($('[role="tooltip"]')?.textContent).toContain('Hint');
         await w.trigger('mouseleave');
         expect($('[role="tooltip"]')).toBeNull();
+        // happy-dom has no focus ring: say that this focus is the keyboard's (`:focus-visible`), as a Tab would be
+        const real = Element.prototype.matches;
+        const ring = vi.spyOn(Element.prototype, 'matches').mockImplementation(function (this: Element, selector: string) {
+            return selector === ':focus-visible' ? true : real.call(this, selector);
+        });
         await w.trigger('focusin');
+        ring.mockRestore();
         expect($('[role="tooltip"]')).not.toBeNull();
         await w.trigger('focusout');
         expect($('[role="tooltip"]')).toBeNull();
