@@ -76,6 +76,8 @@ const builtin: Record<string, TaoIconDef> = {
     repeat: { body: '<path d="M4 12V9.5A3.5 3.5 0 017.5 6H20M17 3l3 3-3 3"/><path d="M20 12v2.5a3.5 3.5 0 01-3.5 3.5H4M7 21l-3-3 3-3"/>' },
     undo: { body: '<path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 010 11H11"/>' },
     redo: { body: '<path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 000 11H13"/>' },
+    // an eyedropper: the tip at the lower left, the bulb at the upper right / пипетка: кончик внизу слева, колба вверху справа
+    pipette: { body: '<path d="M11.5 8.5L6 14l-2.5 6.5L10 18l5.5-5.5z"/><path d="M10 7l7 7"/><circle cx="16.5" cy="7.5" r="3.5" fill="currentColor"/>' },
     file: { body: '<path d="M14 3.5H7.5A1.5 1.5 0 006 5v14a1.5 1.5 0 001.5 1.5h9A1.5 1.5 0 0018 19V7.5z"/><path d="M14 3.5v4h4"/>' },
 };
 

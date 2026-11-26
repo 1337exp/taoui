@@ -1,5 +1,12 @@
 # Changelog
 
+## 6.1.0
+
+A minor: one icon is added, nothing to migrate.
+
+- **`TaoColorPicker`: the eyedropper button has a real icon that follows its size.** The button drew the text character «✎» (a pencil, not an eyedropper) at the font size of the page, so on the small row it floated lost in a 26px box and did not shrink or grow with the control. It now holds `<TaoIcon name="tao-pipette" />` at 60% of `--tao-control-height`. Reported by the owner on a small `TaoColorInput`.
+- **Icon `tao-pipette`**: an eyedropper (a solid bulb, a cone with a point), 45 built-in icons now. `tests/phone.test.ts`.
+
 ## 6.0.4
 
 A patch: nothing to migrate.

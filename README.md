@@ -137,7 +137,7 @@
 - **TaoScrubber** — play / pause, a slider over time with event marks, a “time / length” label. Does not advance time by itself: drive `v-model` with your own clock
 - **TaoLoader** — the wait whose end is unknown: `variant` `dots` (default) / `ring` / `pulse` / `diamonds`, `tone`, `size` (a number or small / medium / large), says "Loading" to a screen reader (`label`), breathes under reduced motion; `TaoButton loading` wears the same ring
 - **TaoImage** — `<img>` wrapper: fade-in and placeholder. `lazy` turns on native `loading="lazy"`
-- **TaoIcon** — SVG icons (44 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)
+- **TaoIcon** — SVG icons (45 built in, your own via `registerTaoIcons`) or an icon font (see Icons below)
 
 ### Navigation
 
@@ -230,8 +230,8 @@ The package ships a skill, `skills/taoui/SKILL.md` with `references/components.m
 
 ## Icons
 
-The library ships **44 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,
-skip-back, copy, calendar, info, alert, circles, folder, file, alignment, and the app actions settings, edit, trash, bell, tag,
+The library ships **45 SVG icons** (check, close, plus, minus, chevrons, arrows, search, eye, more, grip, play, pause,
+skip-back, copy, calendar, info, alert, circles, folder, file, alignment, pipette, and the app actions settings, edit, trash, bell, tag,
 repeat, undo, redo, sun, moon, monitor). They draw on `currentColor`, so an icon takes the text colour and the
 font size, and live under the reserved prefix `tao-`: `<TaoIcon name="tao-check" />`, the list is `taoIconNames`.
 

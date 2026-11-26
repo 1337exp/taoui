@@ -4,6 +4,7 @@ import { hslToRgb, hsvaToRgba, normalizeHex, parseColor, rgbaToHsva, rgbToHsl, t
 import { usePointerDrag } from '../primitives/usePointerDrag';
 import { useLocaleText } from '../locale';
 import { sizeClass, type TaoSize } from '../size';
+import TaoIcon from './TaoIcon.vue';
 import TaoInput from './TaoInput.vue';
 import TaoInputNumber from './TaoInputNumber.vue';
 import TaoSegmented from './TaoSegmented.vue';
@@ -333,7 +334,7 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
                 </label>
             </div>
             <button v-if="canEyedrop" type="button" class="tao-color-picker__eyedropper" :disabled="disabled" :aria-label="l10n.eyedropperLabel" :title="l10n.eyedropperLabel" @click="eyedrop">
-                ✎
+                <TaoIcon name="tao-pipette" />
             </button>
         </div>
 
@@ -482,9 +483,15 @@ const areaText = computed(() => `${Math.round(state.s * 100)}%, ${Math.round(sta
 }
 
 .tao-color-picker__eyedropper {
+    display: inline-flex;
     flex: none;
+    align-items: center;
+    justify-content: center;
     width: var(--tao-control-height);
     height: var(--tao-control-height);
+    padding: 0;
+    /* the icon is 1em: 60% of the button, so it shrinks and grows with the size, not with the font of the page / иконка 1em: 60% кнопки, она следует размеру, а не шрифту страницы */
+    font-size: calc(var(--tao-control-height) * 0.6);
     border: 1px solid var(--tao-color-border-strong);
     border-radius: var(--tao-radius-control);
     background: transparent;
