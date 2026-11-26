@@ -179,4 +179,20 @@ describe('TaoWorkbench', () => {
         expect(make({ glow: false }).classes()).not.toContain('tao-workbench--glow');
         expect(make().classes()).toContain('tao-workbench--glow');
     });
+    it('draws a thin line before a tool marked `separator` (a new group), on the rails and in the bottom bar, and keeps the buttons the same', () => {
+        const w = make({
+            leftTools: [{ id: 'a', label: 'A', icon: 'tao-folder' }, { id: 'b', label: 'B', icon: 'tao-search', separator: true }, { id: 'c', label: 'C', icon: 'tao-file' }],
+            bottomTools: [{ id: 'p', label: 'P', icon: 'tao-alert-triangle' }, { id: 'q', label: 'Q', icon: 'tao-file', separator: true }],
+        });
+        const seps = w.findAll('.tao-workbench__rail--left .tao-workbench__sep');
+        expect(seps).toHaveLength(1);
+        expect(seps[0]!.attributes('role')).toBe('separator');
+        expect(seps[0]!.attributes('aria-orientation')).toBe('horizontal');
+        // the line stands between the first button and the second
+        const kids = [...w.find('.tao-workbench__rail--left .tao-workbench__start').element.children].map((e) => (e.classList.contains('tao-workbench__sep') ? '|' : 'b'));
+        expect(kids.slice(0, 4)).toEqual(['b', '|', 'b', 'b']);
+        expect(w.findAll('.tao-workbench__rail--left .tao-workbench__tool')).toHaveLength(3);
+        expect(w.findAll('.tao-workbench__bar--bottom .tao-workbench__sep')[0]!.attributes('aria-orientation')).toBe('vertical');
+        expect(w.findAll('.tao-workbench__rail--right .tao-workbench__sep')).toHaveLength(0);
+    });
 });

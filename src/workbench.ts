@@ -17,6 +17,8 @@ export interface TaoWorkbenchTool {
     /** What a screen reader says about the badge. / Что о значке говорит скринридер. */
     badgeLabel?: string;
     disabled?: boolean;
+    /** A thin line before this button: a new group of tools starts here (WebStorm and VS Code divide their rails like this). / Тонкая линия перед этой кнопкой: здесь начинается новая группа инструментов (так делят рейки WebStorm и VS Code). */
+    separator?: boolean;
 }
 
 /** The side of a rail. / Сторона рейки. */

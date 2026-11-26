@@ -990,7 +990,7 @@ export const propTables = {
     {
       title: 'TaoWorkbench',
       rows: [
-        r('leftTools / rightTools / bottomTools', 'TaoWorkbenchTool[]', '[]', '{ id, label, icon?, shortcut?, badge?, badgeLabel?, disabled? }. Кнопки рейки: у каждой подсказка (с клавишей), нажатие открывает или закрывает панель. Нижние инструменты стоят в нижней полосе'),
+        r('leftTools / rightTools / bottomTools', 'TaoWorkbenchTool[]', '[]', '{ id, label, icon?, shortcut?, badge?, badgeLabel?, disabled?, separator? }. Кнопки рейки: у каждой подсказка (с клавишей), нажатие открывает или закрывает панель. Нижние инструменты стоят в нижней полосе'),
         r('v-model:left / right / bottom', 'string | null', 'null', 'id инструмента, чья панель открыта. Нажатие на открытый закрывает его, на другой открывает тот. null — панель закрыта (её нет, и разделитель ушёл)'),
         r('v-model:leftSize / rightSize / bottomSize', 'number', '280 / 280 / 220', 'Ширина левой и правой панели и высота нижней, px. Сохраняйте их сами, если нужно (localStorage)'),
         r('panelMin / centerMin', 'number', '160 / 240', 'Наименьший размер панели и до чего сжимается рабочая область, px'),

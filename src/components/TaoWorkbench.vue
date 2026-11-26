@@ -198,7 +198,7 @@ const mainRef = ref<HTMLElement | null>(null);
 
         <nav class="tao-workbench__rail tao-workbench__rail--left" data-tao-region tabindex="-1" :aria-label="leftLabel ?? l10n.leftLabel">
             <div class="tao-workbench__start">
-                <TaoTooltip v-for="tool in leftTools" :key="tool.id" :content="tool.label" :shortcut="tool.shortcut" placement="right" variant="raised">
+                <template v-for="tool in leftTools" :key="tool.id"><span v-if="tool.separator" class="tao-workbench__sep tao-workbench__sep--horizontal" role="separator" aria-orientation="horizontal" /><TaoTooltip :content="tool.label" :shortcut="tool.shortcut" placement="right" variant="raised">
                     <button
                         type="button"
                         class="tao-workbench__tool"
@@ -215,7 +215,7 @@ const mainRef = ref<HTMLElement | null>(null);
                             <span aria-hidden="true">{{ tool.badge === true ? '' : tool.badge }}</span>
                         </span>
                     </button>
-                </TaoTooltip>
+                </TaoTooltip></template>
                 <slot name="left-start" />
             </div>
             <div class="tao-workbench__end"><slot name="left-end" /></div>
@@ -304,7 +304,7 @@ const mainRef = ref<HTMLElement | null>(null);
 
         <nav class="tao-workbench__rail tao-workbench__rail--right" data-tao-region tabindex="-1" :aria-label="rightLabel ?? l10n.rightLabel">
             <div class="tao-workbench__start">
-                <TaoTooltip v-for="tool in rightTools" :key="tool.id" :content="tool.label" :shortcut="tool.shortcut" placement="left" variant="raised">
+                <template v-for="tool in rightTools" :key="tool.id"><span v-if="tool.separator" class="tao-workbench__sep tao-workbench__sep--horizontal" role="separator" aria-orientation="horizontal" /><TaoTooltip :content="tool.label" :shortcut="tool.shortcut" placement="left" variant="raised">
                     <button
                         type="button"
                         class="tao-workbench__tool"
@@ -321,7 +321,7 @@ const mainRef = ref<HTMLElement | null>(null);
                             <span aria-hidden="true">{{ tool.badge === true ? '' : tool.badge }}</span>
                         </span>
                     </button>
-                </TaoTooltip>
+                </TaoTooltip></template>
                 <slot name="right-start" />
             </div>
             <div class="tao-workbench__end"><slot name="right-end" /></div>
@@ -329,7 +329,7 @@ const mainRef = ref<HTMLElement | null>(null);
 
         <footer class="tao-workbench__bar tao-workbench__bar--bottom" data-tao-region tabindex="-1" role="region" :aria-label="bottomLabel ?? l10n.bottomLabel">
             <div class="tao-workbench__start">
-                <TaoTooltip v-for="tool in bottomTools" :key="tool.id" :content="tool.label" :shortcut="tool.shortcut" placement="top" variant="raised">
+                <template v-for="tool in bottomTools" :key="tool.id"><span v-if="tool.separator" class="tao-workbench__sep tao-workbench__sep--vertical" role="separator" aria-orientation="vertical" /><TaoTooltip :content="tool.label" :shortcut="tool.shortcut" placement="top" variant="raised">
                     <button
                         type="button"
                         class="tao-workbench__tool tao-workbench__tool--bar"
@@ -346,7 +346,7 @@ const mainRef = ref<HTMLElement | null>(null);
                             <span aria-hidden="true">{{ tool.badge === true ? '' : tool.badge }}</span>
                         </span>
                     </button>
-                </TaoTooltip>
+                </TaoTooltip></template>
                 <slot name="bottom-start" />
             </div>
             <div class="tao-workbench__end"><slot name="bottom-end" /></div>
@@ -438,6 +438,25 @@ const mainRef = ref<HTMLElement | null>(null);
 .tao-workbench__rail > .tao-workbench__start,
 .tao-workbench__rail > .tao-workbench__end {
     flex-direction: column;
+}
+
+/* a line before a tool that starts a new group of buttons (`separator`): across a rail, upright in the bottom bar / линия перед инструментом, с которого начинается новая группа кнопок (`separator`): поперёк рейки, стоймя в нижней полосе */
+.tao-workbench__sep {
+    flex: none;
+    background: var(--tao-color-border-strong);
+}
+
+.tao-workbench__sep--horizontal {
+    align-self: stretch;
+    height: 1px;
+    margin: var(--tao-space-1) var(--tao-space-2);
+}
+
+.tao-workbench__sep--vertical {
+    align-self: center;
+    width: 1px;
+    height: 1em;
+    margin: 0 var(--tao-space-1);
 }
 
 /* a tool: an icon button; lit while its panel is open / инструмент: кнопка-иконка; подсвечена, пока открыта его панель */

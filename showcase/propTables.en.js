@@ -997,7 +997,7 @@ export const propTablesEn = {
     {
       title: 'TaoWorkbench',
       rows: [
-        r('leftTools / rightTools / bottomTools', 'TaoWorkbenchTool[]', '[]', '{ id, label, icon?, shortcut?, badge?, badgeLabel?, disabled? }. The buttons of a rail: each has a hint (with its key), a press opens or closes a panel. The bottom tools stand in the bottom bar'),
+        r('leftTools / rightTools / bottomTools', 'TaoWorkbenchTool[]', '[]', '{ id, label, icon?, shortcut?, badge?, badgeLabel?, disabled?, separator? }. The buttons of a rail: each has a hint (with its key), a press opens or closes a panel. The bottom tools stand in the bottom bar'),
         r('v-model:left / right / bottom', 'string | null', 'null', 'The id of the tool whose panel is open. A press on the open one closes it, on another opens that one. null: no panel (it is not drawn, and the divider is gone)'),
         r('v-model:leftSize / rightSize / bottomSize', 'number', '280 / 280 / 220', 'The width of the left and the right panel and the height of the bottom one, px. Save them yourself if you want (localStorage)'),
         r('panelMin / centerMin', 'number', '160 / 240', 'The least size of a panel and what the workspace is squeezed to, px'),
