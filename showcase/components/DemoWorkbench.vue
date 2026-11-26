@@ -17,7 +17,7 @@ const bottomSize = ref(180)
 
 const leftTools = computed(() => [
   { id: 'files', label: tr('Files', 'Файлы'), icon: 'tao-folder', shortcut: 'Alt+1' },
-  { id: 'search', label: tr('Search', 'Поиск'), icon: 'tao-search', shortcut: 'Alt+2' },
+  { id: 'search', label: tr('Search', 'Поиск'), icon: 'tao-search', shortcut: 'Alt+2', separator: true },
 ])
 const rightTools = computed(() => [
   { id: 'inspector', label: tr('Inspector', 'Инспектор'), icon: 'tao-settings', shortcut: 'Alt+3' },
@@ -25,7 +25,7 @@ const rightTools = computed(() => [
 ])
 const bottomTools = computed(() => [
   { id: 'terminal', label: tr('Terminal', 'Терминал'), icon: 'tao-monitor', shortcut: 'Alt+4' },
-  { id: 'problems', label: tr('Problems', 'Проблемы'), icon: 'tao-alert-triangle', badge: 2, badgeLabel: tr('2 problems', '2 проблемы') },
+  { id: 'problems', label: tr('Problems', 'Проблемы'), icon: 'tao-alert-triangle', separator: true, badge: 2, badgeLabel: tr('2 problems', '2 проблемы') },
 ])
 
 const menu = computed(() => [

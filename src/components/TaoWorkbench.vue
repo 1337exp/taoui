@@ -198,24 +198,28 @@ const mainRef = ref<HTMLElement | null>(null);
 
         <nav class="tao-workbench__rail tao-workbench__rail--left" data-tao-region tabindex="-1" :aria-label="leftLabel ?? l10n.leftLabel">
             <div class="tao-workbench__start">
-                <template v-for="tool in leftTools" :key="tool.id"><span v-if="tool.separator" class="tao-workbench__sep tao-workbench__sep--horizontal" role="separator" aria-orientation="horizontal" /><TaoTooltip :content="tool.label" :shortcut="tool.shortcut" placement="right" variant="raised">
-                    <button
-                        type="button"
-                        class="tao-workbench__tool"
-                        :class="{ 'tao-workbench__tool--on': left === tool.id }"
-                        :aria-pressed="left === tool.id"
-                        :aria-label="toolName(tool)"
-                        :aria-keyshortcuts="tool.shortcut"
-                        :disabled="tool.disabled"
-                        :data-tao-tool="`left:${tool.id}`"
-                        @click="press('left', tool)"
-                    >
-                        <TaoIcon v-if="tool.icon" :name="tool.icon" :size="20" />
-                        <span v-if="tool.badge !== undefined && tool.badge !== false" class="tao-workbench__badge" :class="{ 'tao-workbench__badge--dot': tool.badge === true }">
-                            <span aria-hidden="true">{{ tool.badge === true ? '' : tool.badge }}</span>
-                        </span>
-                    </button>
-                </TaoTooltip></template>
+                <template v-for="(tool, index) in leftTools" :key="tool.id">
+                    <!-- the first tool has nothing before it to divide from / у первого инструмента перед ним нечего отделять -->
+                    <span v-if="tool.separator && index > 0" class="tao-workbench__sep tao-workbench__sep--horizontal" role="separator" />
+                    <TaoTooltip :content="tool.label" :shortcut="tool.shortcut" placement="right" variant="raised">
+                        <button
+                            type="button"
+                            class="tao-workbench__tool"
+                            :class="{ 'tao-workbench__tool--on': left === tool.id }"
+                            :aria-pressed="left === tool.id"
+                            :aria-label="toolName(tool)"
+                            :aria-keyshortcuts="tool.shortcut"
+                            :disabled="tool.disabled"
+                            :data-tao-tool="`left:${tool.id}`"
+                            @click="press('left', tool)"
+                        >
+                            <TaoIcon v-if="tool.icon" :name="tool.icon" :size="20" />
+                            <span v-if="tool.badge !== undefined && tool.badge !== false" class="tao-workbench__badge" :class="{ 'tao-workbench__badge--dot': tool.badge === true }">
+                                <span aria-hidden="true">{{ tool.badge === true ? '' : tool.badge }}</span>
+                            </span>
+                        </button>
+                    </TaoTooltip>
+                </template>
                 <slot name="left-start" />
             </div>
             <div class="tao-workbench__end"><slot name="left-end" /></div>
@@ -304,24 +308,28 @@ const mainRef = ref<HTMLElement | null>(null);
 
         <nav class="tao-workbench__rail tao-workbench__rail--right" data-tao-region tabindex="-1" :aria-label="rightLabel ?? l10n.rightLabel">
             <div class="tao-workbench__start">
-                <template v-for="tool in rightTools" :key="tool.id"><span v-if="tool.separator" class="tao-workbench__sep tao-workbench__sep--horizontal" role="separator" aria-orientation="horizontal" /><TaoTooltip :content="tool.label" :shortcut="tool.shortcut" placement="left" variant="raised">
-                    <button
-                        type="button"
-                        class="tao-workbench__tool"
-                        :class="{ 'tao-workbench__tool--on': right === tool.id }"
-                        :aria-pressed="right === tool.id"
-                        :aria-label="toolName(tool)"
-                        :aria-keyshortcuts="tool.shortcut"
-                        :disabled="tool.disabled"
-                        :data-tao-tool="`right:${tool.id}`"
-                        @click="press('right', tool)"
-                    >
-                        <TaoIcon v-if="tool.icon" :name="tool.icon" :size="20" />
-                        <span v-if="tool.badge !== undefined && tool.badge !== false" class="tao-workbench__badge" :class="{ 'tao-workbench__badge--dot': tool.badge === true }">
-                            <span aria-hidden="true">{{ tool.badge === true ? '' : tool.badge }}</span>
-                        </span>
-                    </button>
-                </TaoTooltip></template>
+                <template v-for="(tool, index) in rightTools" :key="tool.id">
+                    <!-- the first tool has nothing before it to divide from / у первого инструмента перед ним нечего отделять -->
+                    <span v-if="tool.separator && index > 0" class="tao-workbench__sep tao-workbench__sep--horizontal" role="separator" />
+                    <TaoTooltip :content="tool.label" :shortcut="tool.shortcut" placement="left" variant="raised">
+                        <button
+                            type="button"
+                            class="tao-workbench__tool"
+                            :class="{ 'tao-workbench__tool--on': right === tool.id }"
+                            :aria-pressed="right === tool.id"
+                            :aria-label="toolName(tool)"
+                            :aria-keyshortcuts="tool.shortcut"
+                            :disabled="tool.disabled"
+                            :data-tao-tool="`right:${tool.id}`"
+                            @click="press('right', tool)"
+                        >
+                            <TaoIcon v-if="tool.icon" :name="tool.icon" :size="20" />
+                            <span v-if="tool.badge !== undefined && tool.badge !== false" class="tao-workbench__badge" :class="{ 'tao-workbench__badge--dot': tool.badge === true }">
+                                <span aria-hidden="true">{{ tool.badge === true ? '' : tool.badge }}</span>
+                            </span>
+                        </button>
+                    </TaoTooltip>
+                </template>
                 <slot name="right-start" />
             </div>
             <div class="tao-workbench__end"><slot name="right-end" /></div>
@@ -329,24 +337,28 @@ const mainRef = ref<HTMLElement | null>(null);
 
         <footer class="tao-workbench__bar tao-workbench__bar--bottom" data-tao-region tabindex="-1" role="region" :aria-label="bottomLabel ?? l10n.bottomLabel">
             <div class="tao-workbench__start">
-                <template v-for="tool in bottomTools" :key="tool.id"><span v-if="tool.separator" class="tao-workbench__sep tao-workbench__sep--vertical" role="separator" aria-orientation="vertical" /><TaoTooltip :content="tool.label" :shortcut="tool.shortcut" placement="top" variant="raised">
-                    <button
-                        type="button"
-                        class="tao-workbench__tool tao-workbench__tool--bar"
-                        :class="{ 'tao-workbench__tool--on': bottom === tool.id }"
-                        :aria-pressed="bottom === tool.id"
-                        :aria-label="toolName(tool)"
-                        :aria-keyshortcuts="tool.shortcut"
-                        :disabled="tool.disabled"
-                        :data-tao-tool="`bottom:${tool.id}`"
-                        @click="press('bottom', tool)"
-                    >
-                        <TaoIcon v-if="tool.icon" :name="tool.icon" :size="16" />
-                        <span v-if="tool.badge !== undefined && tool.badge !== false" class="tao-workbench__badge tao-workbench__badge--inline" :class="{ 'tao-workbench__badge--dot': tool.badge === true }">
-                            <span aria-hidden="true">{{ tool.badge === true ? '' : tool.badge }}</span>
-                        </span>
-                    </button>
-                </TaoTooltip></template>
+                <template v-for="(tool, index) in bottomTools" :key="tool.id">
+                    <!-- the first tool has nothing before it to divide from / у первого инструмента перед ним нечего отделять -->
+                    <span v-if="tool.separator && index > 0" class="tao-workbench__sep tao-workbench__sep--vertical" role="separator" aria-orientation="vertical" />
+                    <TaoTooltip :content="tool.label" :shortcut="tool.shortcut" placement="top" variant="raised">
+                        <button
+                            type="button"
+                            class="tao-workbench__tool tao-workbench__tool--bar"
+                            :class="{ 'tao-workbench__tool--on': bottom === tool.id }"
+                            :aria-pressed="bottom === tool.id"
+                            :aria-label="toolName(tool)"
+                            :aria-keyshortcuts="tool.shortcut"
+                            :disabled="tool.disabled"
+                            :data-tao-tool="`bottom:${tool.id}`"
+                            @click="press('bottom', tool)"
+                        >
+                            <TaoIcon v-if="tool.icon" :name="tool.icon" :size="16" />
+                            <span v-if="tool.badge !== undefined && tool.badge !== false" class="tao-workbench__badge tao-workbench__badge--inline" :class="{ 'tao-workbench__badge--dot': tool.badge === true }">
+                                <span aria-hidden="true">{{ tool.badge === true ? '' : tool.badge }}</span>
+                            </span>
+                        </button>
+                    </TaoTooltip>
+                </template>
                 <slot name="bottom-start" />
             </div>
             <div class="tao-workbench__end"><slot name="bottom-end" /></div>

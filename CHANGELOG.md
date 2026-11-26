@@ -4,7 +4,7 @@
 
 A minor: one optional field, nothing to migrate.
 
-- **`TaoWorkbenchTool.separator`: a thin line before a tool.** WebStorm and VS Code divide the tools of a rail into groups with a line; a rail of ours could not. `separator: true` on a tool draws a line before its button (across a rail, upright in the bottom bar; `role="separator"`, the colour `--tao-color-border-strong`), the buttons stay as they were. `tests/workbench.test.ts`.
+- **`TaoWorkbenchTool.separator`: a thin line before a tool.** WebStorm and VS Code divide the tools of a rail into groups with a line; a rail of ours could not. `separator: true` on a tool draws a line before its button (across a rail, upright in the bottom bar; `role="separator"`, the colour `--tao-color-border-strong`), the buttons stay as they were; on the first tool of a rail it draws nothing (there is nothing before it to divide from). The showcase section of `TaoWorkbench` shows it. `tests/workbench.test.ts`.
 
 ## 6.1.0
 
