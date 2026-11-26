@@ -59,6 +59,16 @@ const leftSize = defineModel<number>('leftSize', { default: 280 });
 const rightSize = defineModel<number>('rightSize', { default: 280 });
 const bottomSize = defineModel<number>('bottomSize', { default: 220 });
 
+const emit = defineEmits<{
+    /**
+     * The user finished changing the size of a panel (the end of a drag, a key): the name of the size, as `v-model` has it, and its value. The
+     * `v-model` follows the pointer all the time; this is the one moment to write the layout to storage.
+     * Пользователь закончил менять размер панели (конец протяжки, клавиша): имя размера, как у `v-model`, и его значение. `v-model` идёт за
+     * указателем всё время; это единственный момент, чтобы записать раскладку в хранилище.
+     */
+    commit: [part: 'leftSize' | 'rightSize' | 'bottomSize', value: number];
+}>();
+
 defineSlots<{
     /** The workspace: your editor, a scene, a canvas. / Рабочая область: ваш редактор, сцена, холст. */
     default?(): unknown;
@@ -214,6 +224,7 @@ const mainRef = ref<HTMLElement | null>(null);
         <div class="tao-workbench__body">
             <TaoSplit
                 v-model="leftSize"
+                @commit="(value: number) => emit('commit', 'leftSize', value)"
                 unit="px"
                 :min="panelMin"
                 :min-end="centerMin + (openRight ? panelMin + GUTTER : 0)"
@@ -235,6 +246,7 @@ const mainRef = ref<HTMLElement | null>(null);
                 <template #end>
                     <TaoSplit
                         v-model="rightSize"
+                        @commit="(value: number) => emit('commit', 'rightSize', value)"
                         unit="px"
                         anchor="end"
                         :min="panelMin"
@@ -246,6 +258,7 @@ const mainRef = ref<HTMLElement | null>(null);
                         <template #start>
                             <TaoSplit
                                 v-model="bottomSize"
+                                @commit="(value: number) => emit('commit', 'bottomSize', value)"
                                 unit="px"
                                 direction="column"
                                 anchor="end"

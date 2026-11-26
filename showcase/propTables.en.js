@@ -1004,7 +1004,7 @@ export const propTablesEn = {
         r('glow', 'boolean', 'true', 'The glow in the top left corner, the colour of the palette (the token --tao-workbench-glow, --tao-glow by default). false: a plain background'),
         r('topLabel / leftLabel / rightLabel / bottomLabel / mainLabel / skipLabel / closePanelLabel', 'string', 'from the locale', 'The names of the regions for a screen reader, the skip link and the label of the close button of a panel (with {name})'),
       ],
-      slots: 'default — the workspace. The bars: #top-start / #top-end, #left-start / #left-end, #right-start / #right-end, #bottom-start / #bottom-end (start is the first end, end the other; a rail puts its tools before start). #left-panel, #right-panel, #bottom-panel ({ tool }) — the content of the open tool; #panel-actions ({ tool, side }) — beside the title of a panel. Regions: header, nav on the left and the right, main, footer; F6 / Shift+F6 go round them, and the first tab stop is a link to the workspace.',
+      slots: 'default — the workspace. The bars: #top-start / #top-end, #left-start / #left-end, #right-start / #right-end, #bottom-start / #bottom-end (start is the first end, end the other; a rail puts its tools before start). #left-panel, #right-panel, #bottom-panel ({ tool }) — the content of the open tool; #panel-actions ({ tool, side }) — beside the title of a panel. The `commit` event (the name of the size: leftSize / rightSize / bottomSize, and its value): the size is chosen, the gesture is over, the moment to write the layout to storage. Regions: header, nav on the left and the right, main, footer; F6 / Shift+F6 go round them, and the first tab stop is a link to the workspace.',
     },
   ],
   shell: [

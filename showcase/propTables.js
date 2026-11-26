@@ -997,7 +997,7 @@ export const propTables = {
         r('glow', 'boolean', 'true', 'Свечение в левом верхнем углу цвета палитры (токен --tao-workbench-glow, по умолчанию --tao-glow). false — ровный фон'),
         r('topLabel / leftLabel / rightLabel / bottomLabel / mainLabel / skipLabel / closePanelLabel', 'string', 'из локали', 'Имена областей для скринридера, ссылка пропуска и подпись кнопки закрытия панели (с {name})'),
       ],
-      slots: 'default — рабочая область. Полосы: #top-start / #top-end, #left-start / #left-end, #right-start / #right-end, #bottom-start / #bottom-end (start — первый конец, end — другой; рейка ставит свои инструменты перед start). #left-panel, #right-panel, #bottom-panel ({ tool }) — содержимое открытого инструмента; #panel-actions ({ tool, side }) — рядом с заголовком панели. Области: header, nav слева и справа, main, footer; F6 / Shift+F6 идут по ним по кругу, первая точка табуляции — ссылка к рабочей области.',
+      slots: 'default — рабочая область. Полосы: #top-start / #top-end, #left-start / #left-end, #right-start / #right-end, #bottom-start / #bottom-end (start — первый конец, end — другой; рейка ставит свои инструменты перед start). #left-panel, #right-panel, #bottom-panel ({ tool }) — содержимое открытого инструмента; #panel-actions ({ tool, side }) — рядом с заголовком панели. Событие commit (имя размера: leftSize / rightSize / bottomSize, значение) — размер панели выбран, жест закончен: момент записать раскладку в хранилище. Области: header, nav слева и справа, main, footer; F6 / Shift+F6 идут по ним по кругу, первая точка табуляции — ссылка к рабочей области.',
     },
   ],
   shell: [

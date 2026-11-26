@@ -1,8 +1,11 @@
 # Changelog
 
-## Unreleased
+## 6.0.4
 
-- **`TaoWorkbenchTool` and `TaoWorkbenchSide` are exported from the root entry.** The tools of a rail are an array that an app builds from its own data (Deck of Bones makes its sections into tools), and a TypeScript app could not name the type of one: `import type { TaoWorkbenchTool } from '@1337exp/taoui'` failed with TS2724 (the starter is plain JS, so nobody met it). Found moving the editor of Deck of Bones (stage 2) onto `TaoWorkbench`. `tests/exports.test.ts`.
+A patch: nothing to migrate.
+
+- **`TaoWorkbench` `commit`: the size of a panel is chosen.** `v-model:left-size` / `right-size` / `bottom-size` follow the pointer all the time, and an app that kept the layout in storage wrote it on every move. The frame now says when the gesture is over: `commit(part, value)` with the name of the size as `v-model` has it (`'leftSize' | 'rightSize' | 'bottomSize'`) and the number, once per drag or key. It is the same pair as everywhere in the kit (`update:X` while it changes, `commit` when it is done), and what Ant Design `Splitter` (`onResize` / `onResizeEnd`) and Allotment do. `tests/workbench.review4.test.ts`.
+- **`TaoWorkbenchTool` and `TaoWorkbenchSide` are exported from the root entry.** A TypeScript app could not name the type of its tools (`const tools: TaoWorkbenchTool[]`). Found and fixed by the session of the Deck of Bones editor. `tests/exports.test.ts`.
 
 ## 6.0.3
 

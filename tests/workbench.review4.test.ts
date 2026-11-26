@@ -112,3 +112,18 @@ describe('the status bar and the separators', () => {
         expect(w.findAllComponents(TaoSplit)[0]!.props('label')).toBe('Files');
     });
 });
+
+describe('commit of a panel size', () => {
+    it('says which size was chosen and its value once the gesture is over (to write to storage once)', () => {
+        const w = make({ left: 'files', right: 'files', bottom: 'files' });
+        const splits = w.findAllComponents(TaoSplit);
+        splits[0]!.vm.$emit('commit', 310);
+        splits[1]!.vm.$emit('commit', 270);
+        splits[2]!.vm.$emit('commit', 190);
+        expect(w.emitted('commit')).toEqual([
+            ['leftSize', 310],
+            ['rightSize', 270],
+            ['bottomSize', 190],
+        ]);
+    });
+});
