@@ -1,10 +1,19 @@
 # Changelog
 
+## 6.0.2
+
+A patch: nothing to migrate. **Update from 6.0.1 if you use `TaoCarousel` with your own `#dots`.**
+
+- **`TaoCarousel`: a `#dots` slot that takes its props renders again** (the regression of 6.0.1). The carousel asks whether the slot was GIVEN (`$slots.dots !== undefined`), not whether it draws: a slot with props must not be called without them, and a custom `#dots` keeps the clock of the autoplay as it did in 6.0.0. `tests/carousel.test.ts`.
+- **`SlotMap` takes a function with any arguments** (`(...args: any[]) => unknown`), so a slot typed with its props, as a typed `defineSlots` gives, is a slot of it too.
+- **A click on the label of a `TaoFormField` goes to the control**, not to the «?» of `#label-end` when the control carries no id of the field. `tests/formfield.labelend.test.ts`.
+- Found by the last Grok review of 6.0.1 (`high`), which also corrected the notes and two tests (`toast.away` restores `document` after each test).
+
 ## 6.0.1
 
 A patch: nothing to migrate.
 
-- **The slot helpers no longer depend on the type of a slot in Vue.** A build in another environment printed `TS2554` / `TS2345` / `TS2774` from `slotHasContent(slots.default?.())`, `slotHas(slots, …)` and `$slots.dots` (a slot typed as a function that needs one argument). Nothing was broken in the package (the declarations and the JS were written), but the log was alarming: `slotHas` takes any object of functions (`SlotMap`, `(...args: any[]) => unknown`), `slotHasContent` takes `unknown`, and `TaoButton` asks through `slotHas`. `TaoCarousel` keeps asking whether a `#dots` slot was GIVEN (`$slots.dots !== undefined`), not whether it draws: a slot that takes its props must not be called without them, and a custom `#dots` keeps the clock of the autoplay as it did.
+- **The slot helpers no longer depend on the type of a slot in Vue.** A build in another environment printed `TS2554` / `TS2345` / `TS2774` from `slotHasContent(slots.default?.())`, `slotHas(slots, …)` and `$slots.dots` (a slot typed as a function that needs one argument). Nothing was broken in the package (the declarations and the JS were written), but the log was alarming: `slotHas` took any object of named functions (`SlotMap`), `slotHasContent` took `unknown`, and `TaoButton` and `TaoCarousel` asked through `slotHas`. **A mistake in this patch, fixed in 6.0.2:** `TaoCarousel` then called a `#dots` slot without its props, so a slot that takes them (`#dots="{ index, count, go }"`) threw at render when `autoplay` was set, and a `#dots` that drew nothing lost the clock of the autoplay. Stay on 6.0.2 or newer.
 
 ## 6.0.0
 
