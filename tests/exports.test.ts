@@ -30,6 +30,11 @@ describe('public entry', () => {
         expect(missing).toEqual([]);
     });
 
+    it('the types of the props a consumer must fill are exported (the tools of a workbench are typed in the code of the app)', () => {
+        expect(indexSource).toMatch(/export type \{[^}]*\bTaoWorkbenchTool\b[^}]*\} from '\.\/workbench'/);
+        expect(indexSource).toMatch(/export type \{[^}]*\bTaoWorkbenchSide\b[^}]*\} from '\.\/workbench'/);
+    });
+
     it('the root entry is only named exports: no plugin, no default export, no stylesheet import', () => {
         expect((lib as Record<string, unknown>).default).toBeUndefined();
         expect((lib as Record<string, unknown>).TaoUI).toBeUndefined();

@@ -278,6 +278,7 @@ export type {
 export { menuReturnsFocus } from './menu';
 export type { TaoNavItem, TaoNavLayout, TaoNavLook } from './nav';
 export { navCompact, navLook } from './nav';
+export type { TaoWorkbenchSide, TaoWorkbenchTool } from './workbench';
 export type { TaoToolbarOrientation } from './toolbar';
 export { taoChartTheme, watchTaoChartTheme, TAO_CHART_COLORS } from './chart';
 export type { TaoChartTheme, TaoDonutSegment, TaoMeterTone } from './chart';

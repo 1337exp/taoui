@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **`TaoWorkbenchTool` and `TaoWorkbenchSide` are exported from the root entry.** The tools of a rail are an array that an app builds from its own data (Deck of Bones makes its sections into tools), and a TypeScript app could not name the type of one: `import type { TaoWorkbenchTool } from '@1337exp/taoui'` failed with TS2724 (the starter is plain JS, so nobody met it). Found moving the editor of Deck of Bones (stage 2) onto `TaoWorkbench`. `tests/exports.test.ts`.
+
 ## 6.0.3
 
 A patch: nothing to migrate.
