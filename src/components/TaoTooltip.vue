@@ -88,6 +88,22 @@ function show() {
     showTooltip.value = true;
 }
 
+// A hint comes up for the focus of a KEYBOARD (`:focus-visible`), not for a focus that the page moved after a click (a panel that closes gives
+// the focus back to its button: the hint would light up under a pointer that is elsewhere).
+// Подсказка выходит на фокус КЛАВИАТУРЫ (`:focus-visible`), а не на фокус, который страница переставила после клика (закрывшаяся панель
+// возвращает фокус своей кнопке: подсказка загоралась бы там, где указателя нет).
+function onFocusIn(event: FocusEvent) {
+    let visible = true;
+    try {
+        visible = (event.target as Element).matches(':focus-visible');
+    } catch {
+        // a browser that does not know the selector: as before, any focus
+    }
+    if (visible) {
+        show();
+    }
+}
+
 // Escape dismisses the hint wherever the focus is (WCAG 1.4.13): one that came up under the pointer has no focus on its trigger. The key is not
 // stopped, so a dialog around it still closes.
 // Escape убирает подсказку, где бы ни был фокус (WCAG 1.4.13): подсказка, возникшая под указателем, не имеет фокуса на своей цели. Клавиша не
@@ -122,7 +138,7 @@ onBeforeUnmount(() => {
         class="tao-tooltip-wrapper"
         @mouseenter="show"
         @mouseleave="hide"
-        @focusin="show"
+        @focusin="onFocusIn"
         @focusout="hide"
     >
         <slot />

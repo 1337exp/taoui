@@ -219,6 +219,23 @@ describe('the kit in a real browser', () => {
         await close();
     });
 
+    it('TaoWorkbench: closing a panel with the mouse gives the focus back to its tool without lighting the hint; the keyboard still shows it', async () => {
+        const { page, close } = await open();
+        await section(page, 'workbench');
+        const box = page.locator('.demo-workbench-box');
+        await box.scrollIntoViewIfNeeded();
+        await box.locator('.tao-workbench__panel .tao-workbench__close').first().click();
+        await page.waitForTimeout(300);
+        expect(await page.evaluate(() => document.activeElement?.getAttribute('data-tao-tool'))).toMatch(/^left:/);
+        expect(await page.locator('.tao-tooltip').count()).toBe(0);
+        // the keyboard: leave the rail and come back to a tool with Tab
+        await page.keyboard.press('Shift+Tab');
+        await page.keyboard.press('Tab');
+        await page.waitForTimeout(300);
+        expect(await page.locator('.tao-tooltip').count()).toBeGreaterThan(0);
+        await close();
+    });
+
     it('contrast: every rated pair of the page passes (no danger badge outside of the teaching table)', async () => {
         const { page, close } = await open();
         await section(page, 'a11y');

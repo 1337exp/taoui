@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { readFileSync } from 'node:fs';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { h } from 'vue';
 import TaoMenubar from '../src/components/TaoMenubar.vue';
 import TaoTooltip from '../src/components/TaoTooltip.vue';
@@ -57,10 +57,35 @@ describe('TaoTooltip variant', () => {
     });
 });
 
+// happy-dom has no real focus ring: say what `:focus-visible` answers, and leave every other selector to the real `matches`
+// у happy-dom нет настоящего кольца фокуса: говорим, что отвечает `:focus-visible`, остальные селекторы оставляем настоящему `matches`
+function focusVisible(initial: boolean) {
+    let answer = initial;
+    const real = Element.prototype.matches;
+    const spy = vi.spyOn(Element.prototype, 'matches').mockImplementation(function (this: Element, selector: string) {
+        return selector === ':focus-visible' ? answer : real.call(this, selector);
+    });
+    return { set: (value: boolean) => (answer = value), restore: () => spy.mockRestore() };
+}
+
 describe('TaoTooltip dismiss and frame (fourth review)', () => {
+    it('a focus the page moved after a click (not :focus-visible) does not light the hint; a keyboard focus does', async () => {
+        const w = mount(TaoTooltip, { props: { content: 'Hint' }, slots: { default: () => h('button', 'x') }, attachTo: document.body });
+        const focus = focusVisible(false);
+        await w.find('.tao-tooltip-wrapper').trigger('focusin');
+        expect(document.querySelector('.tao-tooltip')).toBeNull();
+        focus.set(true);
+        await w.find('.tao-tooltip-wrapper').trigger('focusin');
+        expect(document.querySelector('.tao-tooltip')).not.toBeNull();
+        focus.restore();
+        w.unmount();
+    });
+
     it('Escape on the trigger hides the hint without moving the focus (WCAG 1.4.13: dismissable)', async () => {
         const w = mount(TaoTooltip, { props: { content: 'Hint' }, slots: { default: () => h('button', 'x') }, attachTo: document.body });
+        const visible = focusVisible(true);
         await w.find('.tao-tooltip-wrapper').trigger('focusin');
+        visible.restore();
         expect(document.querySelector('.tao-tooltip')).not.toBeNull();
         await w.find('button').trigger('keydown', { key: 'Escape' });
         expect(document.querySelector('.tao-tooltip')).toBeNull();

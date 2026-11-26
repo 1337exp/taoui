@@ -1,5 +1,11 @@
 # Changelog
 
+## 6.0.3
+
+A patch: nothing to migrate.
+
+- **`TaoTooltip` comes up for the focus of the keyboard, not for any focus.** Closing a panel of `TaoWorkbench` with the mouse gives the focus back to the tool that opened it (6.0.0 and later), and the hint of that tool lit up under a pointer that was elsewhere. A hint now shows on `focusin` only when the target is `:focus-visible` (a keyboard, or a focus that follows one); a focus the page moved after a click shows nothing, and a hover still does. A browser that does not know the selector behaves as before. Seen by the owner in the showcase, reproduced in a real Chrome (`e2e/showcase.e2e.ts`), pinned in `tests/polish.workbench.test.ts`.
+
 ## 6.0.2
 
 A patch: nothing to migrate. **Update from 6.0.1 if you use `TaoCarousel` with your own `#dots`.**
