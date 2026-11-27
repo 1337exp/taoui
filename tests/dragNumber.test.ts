@@ -413,3 +413,69 @@ describe('the drag', () => {
         expect(w.classes()).not.toContain('tao-drag-number--dragging');
     });
 });
+
+// Unreleased: a model changed from outside is shown while the field is focused (an undo of the app used to be lost at blur).
+// Unreleased: модель, изменённая снаружи, видна при фокусе в поле (отмена в приложении терялась на blur).
+describe('the model changes from outside', () => {
+    it('a focused field shows it, and blur does not write the old draft back (the undo stays)', async () => {
+        const { w, updates, commits } = make({ modelValue: 1.45, step: 0.01 });
+        const input = w.find('input');
+        await input.trigger('focus');
+        await input.trigger('keydown', { key: 'ArrowUp' });
+        expect(input.element.value).toBe('1.46');
+        expect(commits).toEqual([1.46]);
+        // the app undoes it
+        await w.setProps({ modelValue: 1.45 });
+        await nextTick();
+        expect(input.element.value).toBe('1.45');
+        await input.trigger('blur');
+        expect(updates).toEqual([1.46]);
+        expect(w.props('modelValue')).toBe(1.45);
+        expect(commits).toEqual([1.46]);
+    });
+
+    it('a typed text that was not taken is replaced too', async () => {
+        const { w, commits } = make({ modelValue: 1.45, step: 0.01 });
+        const input = w.find('input');
+        await input.trigger('focus');
+        await input.setValue('2.2');
+        await w.setProps({ modelValue: 3 });
+        await nextTick();
+        expect(input.element.value).toBe('3');
+        await input.trigger('blur');
+        expect(w.props('modelValue')).toBe(3);
+        expect(commits).toEqual([]);
+    });
+
+    it('its own change leaves the text alone: a draft that reads as the value is not rewritten', async () => {
+        const { w } = make({ modelValue: 1, step: 0.01 });
+        const input = w.find('input');
+        await input.trigger('focus');
+        await input.setValue('1.50');
+        await input.trigger('keydown', { key: 'Enter' });
+        // the model is 1.5 now; the user goes on typing «1.50» → the draft reads as 1.5 and stays
+        await input.setValue('1.500');
+        await w.setProps({ modelValue: 1.5 });
+        await nextTick();
+        expect(input.element.value).toBe('1.500');
+    });
+
+    it('an unfocused field just shows the model', async () => {
+        const { w } = make({ modelValue: 1 });
+        await w.setProps({ modelValue: 4 });
+        expect(w.find('input').element.value).toBe('4');
+    });
+
+    it('during a drag the model changed from outside is where the drag goes on from, and what it commits', async () => {
+        const { w, commits } = make({ modelValue: 5, step: 1 });
+        await press(w, 100);
+        await move(w, 110);
+        await move(w, 130);
+        await w.setProps({ modelValue: 40 });
+        await nextTick();
+        await release(w, 130);
+        expect(w.props('modelValue')).toBe(40);
+        expect(commits.at(-1)).toBe(40);
+        expect(w.find('input').element.value).toBe('40');
+    });
+});

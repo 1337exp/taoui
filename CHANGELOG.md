@@ -2,7 +2,9 @@
 
 ## Unreleased
 
-A minor: one optional field, nothing to migrate.
+A minor: one optional field and a fix, nothing to migrate.
+
+- **`TaoDragNumber` shows a model that changed from outside while it is focused.** The focused field showed its own draft, so an undo of the app (the model 1.46 → 1.45 under the cursor) was not drawn, and blur wrote the stale draft back and undid the undo; a typed number not yet taken by Enter was stale in the same way. The field now replaces the draft with the new value (and selects it, as after a step); a change the field made itself already agrees with the draft, so the text, the caret and the selection stay. A drag whose model is changed from outside goes on from the new value and commits what the model holds. An app that blurred the field before Ctrl+Z / Ctrl+Y to flush the draft can drop that. Found by the session of the Deck of Bones editor (stage-3). `tests/dragNumber.test.ts`.
 
 - **`TaoWorkbenchTool.separator`: a thin line before a tool.** WebStorm and VS Code divide the tools of a rail into groups with a line; a rail of ours could not. `separator: true` on a tool draws a line before its button (across a rail, upright in the bottom bar; `role="separator"`, the colour `--tao-color-border-strong`), the buttons stay as they were; on the first tool of a rail it draws nothing (there is nothing before it to divide from). The showcase section of `TaoWorkbench` shows it. `tests/workbench.test.ts`.
 

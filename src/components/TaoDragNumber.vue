@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
 import { useControlAttrs } from '../controlAttrs';
-import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { listenFocusLoss } from '../focusLoss';
 import { usePointerDrag, type PointerDragEnd } from '../primitives/usePointerDrag';
 import { nativeFieldAttrs, useField } from '../formField';
@@ -171,6 +171,31 @@ function commitDraft() {
         emit('commit', next);
     }
 }
+
+// The model changed from outside (an undo, a reset, a load) while the field is being typed in or dragged: the field shows the new value, not
+// its own draft, and the draft is not written back at blur. A change the field made itself already agrees with the draft (the same number), so the
+// text, the caret and the selection stay as they are.
+// Модель изменили снаружи (отмена, сброс, загрузка), пока поле набирают или тянут: поле показывает новое значение, а не свой черновик, и
+// черновик на blur не пишется обратно. Своё изменение с черновиком уже согласовано (то же число): текст, каретка и выделение остаются.
+watch(model, (value) => {
+    if (drag?.moved) {
+        // a drag goes on from the new value; what it commits is what the model holds
+        // протяжка продолжается от нового значения; фиксирует она то, что в модели
+        if (value !== drag.last) {
+            drag.raw = value;
+            drag.last = value;
+        }
+        return;
+    }
+    if (!focused.value || dragging.value) {
+        return;
+    }
+    if (parseDragNumber(draft.value, props.unit) === value || draft.value === plain(value)) {
+        return;
+    }
+    draft.value = plain(value);
+    void nextTick(() => inputEl.value?.select());
+});
 
 function onInput(event: Event) {
     if (props.readOnly) {
