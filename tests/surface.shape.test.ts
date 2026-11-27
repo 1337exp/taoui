@@ -39,19 +39,29 @@ describe('a component whose root is the silhouette carries the radius itself', (
         expect(rule(style, '.tao-segmented__track')).toContain('border-radius: var(--tao-radius-control)');
     });
 
-    // The roots that hold only the field (the trigger, the input with its buttons): the root box is what the eye sees. A root that also holds
-    // a label, a message or a file list (TaoInput's wrapper, TaoFileDrop) is not the silhouette and stays square.
-    // Корни, в которых только само поле (кнопка-триггер, поле с кнопками): коробка корня это то, что видит глаз. Корень, где ещё подпись,
-    // сообщение или список файлов (обёртка TaoInput, TaoFileDrop), не силуэт и остаётся прямым.
+    // The roots whose box is the field (a trigger, an input with its buttons, a drop zone, a face): the root box is what the eye sees, so it has
+    // the radius of the field. A root that holds a bit more (a counter under a textarea, a file list under the zone) is still the component's
+    // box and keeps the same corners. A root that is no single field (a checkbox with its label, a row of buttons, the cells of a pin code)
+    // is not on this list.
+    // Корни, чья коробка это поле (триггер, поле с кнопками, зона, лицо): коробка корня это то, что видит глаз, поэтому у корня радиус поля.
+    // Корень, где чуть больше (счётчик под textarea, список под зоной), всё равно коробка компонента и держит те же углы. Корня, который не
+    // одно поле (чекбокс с подписью, ряд кнопок, ячейки пин-кода), в списке нет.
     it.each([
-        ['TaoSelect', '.tao-select'],
-        ['TaoInputNumber', '.tao-input-number'],
-        ['TaoCombobox', '.tao-combobox'],
-        ['TaoDate', '.tao-date'],
-        ['TaoDateRange', '.tao-date-range'],
-        ['TaoQuantity', '.tao-quantity'],
-    ])('the root of %s has the control radius', (name, selector) => {
+        ['TaoSelect', '.tao-select', 'control'],
+        ['TaoInputNumber', '.tao-input-number', 'control'],
+        ['TaoCombobox', '.tao-combobox', 'control'],
+        ['TaoDate', '.tao-date', 'control'],
+        ['TaoDateRange', '.tao-date-range', 'control'],
+        ['TaoQuantity', '.tao-quantity', 'control'],
+        ['TaoInput', '.tao-input-wrapper', 'control'],
+        ['TaoPresetInput', '.tao-preset-input', 'control'],
+        ['TaoColorInput', '.tao-color-input-root', 'control'],
+        ['TaoTextarea', '.tao-textarea-wrap', 'sm'],
+        ['TaoTextarea', '.tao-textarea-wrap--outline', 'control'],
+        ['TaoFileDrop', '.tao-file-drop', 'panel'],
+        ['TaoAvatar', '.tao-avatar', 'full'],
+    ])('the root of %s (%s) has the %s radius', (name, selector, token) => {
         const source = sources[`../src/components/${name}.vue`]!;
-        expect(rule(source.slice(source.indexOf('<style')), selector)).toContain('border-radius: var(--tao-radius-control)');
+        expect(rule(source.slice(source.indexOf('<style')), selector)).toContain(`border-radius: var(--tao-radius-${token})`);
     });
 });

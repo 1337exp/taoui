@@ -140,6 +140,11 @@ const buttonLabel = (given: unknown) => `${typeof given === 'string' && given ? 
 </template>
 
 <style scoped>
+/* the popover root around the button has the shape of the button: a surface on the field follows it / корень поповера вокруг кнопки той же формы, что кнопка */
+.tao-color-input-root {
+    border-radius: var(--tao-radius-control);
+}
+
 .tao-color-input {
     display: inline-flex;
     align-items: center;

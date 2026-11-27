@@ -49,7 +49,7 @@ createApp(App).mount('#app')
 4. **A surface is a material**: `surface="flat | grain | glass"` on TaoCard / TaoBlock or `class="tao-surface-glass"` on any
    element. Glass needs something behind it (popovers, a header over a scroll). A surface paints the fill, the ring and the blur and has
    no shape: the corners are the element's own `border-radius` (TaoCard / TaoBlock have it; on your own element add
-   `tao-panel` or a radius), otherwise the glass is a square.
+   `tao-panel` or a radius), otherwise the glass is a square. A field with an opaque inner part (the track of TaoSegmented, the trigger of TaoSelect / TaoDate) hides a surface on its root.
    **Frames are a context too**: `class="tao-frames-soft"` on `<html>` or a container lets the decorative frames of Alert, Spoiler,
    Table, List, Toolbar and Menubar go clear (the fill holds the panel); `bordered` on one of them overrides it. Field frames and
    focus rings never follow it.

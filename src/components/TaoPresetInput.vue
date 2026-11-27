@@ -373,6 +373,9 @@ function onKeydown(event: KeyboardEvent) {
     display: inline-flex;
     align-items: center;
     vertical-align: middle;
+    /* the root box is the silhouette of the field with its arrows: a surface, a shadow or an outline put on it follows the corners
+       коробка корня это силуэт поля со стрелками: поверхность, тень или контур на нём идут за углами */
+    border-radius: var(--tao-radius-control);
 }
 
 /* the field and the block of arrows read as one piece: the same fill, and the frame only while the field is edited

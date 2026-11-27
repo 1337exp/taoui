@@ -257,6 +257,9 @@ onBeforeUnmount(() => stopFocusLoss?.());
     flex-direction: column;
     gap: var(--tao-space-2);
     user-select: none;
+    /* the root box is the silhouette of the drop zone: a surface, a shadow or an outline put on it follows the corners
+       коробка корня это силуэт зоны: поверхность, тень или контур на нём идут за углами */
+    border-radius: var(--tao-radius-panel);
 }
 
 .tao-file-drop__row {

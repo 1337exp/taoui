@@ -137,6 +137,9 @@ function onImgError() {
     display: inline-flex;
     flex-shrink: 0;
     user-select: none;
+    /* the root box is the silhouette of the face: a surface, a shadow or an outline put on it follows the corners
+       коробка корня это силуэт лица: поверхность, тень или контур на нём идут за углами */
+    border-radius: var(--tao-radius-full);
 }
 
 .tao-avatar__face {

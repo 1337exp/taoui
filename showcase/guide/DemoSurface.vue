@@ -50,7 +50,7 @@ function showConfirm(surface) {
         <p>
           A surface is a material, not a shape: it paints the fill, the ring and the blur, and the corners are the <code>border-radius</code>
           of the element itself. TaoCard / TaoBlock have theirs; on your own element add <code>tao-panel</code> (the panel
-          radius) or a <code>border-radius</code> of your own, otherwise the glass is a square.
+          radius) or a <code>border-radius</code> of your own, otherwise the glass is a square. A field whose inner part is opaque (the track of TaoSegmented, the trigger of TaoSelect / TaoDate) covers a surface put on its root: the corners are right, but the glass is not seen.
         </p>
         <p class="carousel-note">
           Expressiveness comes first from structure: fewer borders, one bright spot (the active item), group captions, hotkeys
@@ -67,7 +67,7 @@ function showConfirm(surface) {
         <p>
           Поверхность это материал, а не форма: она рисует заливку, кольцо и размытие, а углы это <code>border-radius</code> самого
           элемента. У TaoCard / TaoBlock он свой; на вашем элементе добавьте <code>tao-panel</code> (радиус панели) или
-          свой <code>border-radius</code>, иначе стекло будет квадратным.
+          свой <code>border-radius</code>, иначе стекло будет квадратным. Поле, у которого внутренняя часть непрозрачна (дорожка TaoSegmented, триггер TaoSelect / TaoDate), закрывает поверхность на своём корне: углы верные, но стекла не видно.
         </p>
         <p class="carousel-note">
           Выразительность сначала даёт структура: меньше рамок, одно яркое пятно (активный пункт), подписи групп, хоткеи

@@ -219,7 +219,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div v-bind="rootAttrs()" class="tao-textarea-wrap" :class="sizeClass(size)">
+    <div v-bind="rootAttrs()" class="tao-textarea-wrap" :class="[sizeClass(size), { 'tao-textarea-wrap--outline': variant === 'outline' }]">
         <textarea
             v-bind="{ ...controlAttrs(), ...nativeFieldAttrs(props) }"
             :id="controlId"
@@ -267,6 +267,14 @@ onBeforeUnmount(() => {
     flex-direction: column;
     gap: var(--tao-space-1);
     width: 100%;
+    /* the root box is the silhouette of the field: a surface, a shadow or an outline put on it follows the corners
+       коробка корня это силуэт поля: поверхность, тень или контур на нём идут за углами */
+    border-radius: var(--tao-radius-sm);
+}
+
+/* the outline field is rounded as a control, the root follows / поле outline скруглено как контрол, корень идёт за ним */
+.tao-textarea-wrap--outline {
+    border-radius: var(--tao-radius-control);
 }
 
 .tao-textarea {
