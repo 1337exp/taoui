@@ -47,6 +47,11 @@ function showConfirm(surface) {
           element (an in-game HUD, a landing section, a sidebar) or the <code>surface</code> prop of TaoCard / TaoBlock.
           The look is tuned with theme tokens once for the whole app.
         </p>
+        <p>
+          A surface is a material, not a shape: it paints the fill, the ring and the blur, and the corners are the <code>border-radius</code>
+          of the element itself. TaoCard / TaoBlock have theirs; on your own element add <code>tao-panel</code> (the panel
+          radius) or a <code>border-radius</code> of your own, otherwise the glass is a square.
+        </p>
         <p class="carousel-note">
           Expressiveness comes first from structure: fewer borders, one bright spot (the active item), group captions, hotkeys
           as keys. Grain comes after. Glass is only for what lies over content:
@@ -58,6 +63,11 @@ function showConfirm(surface) {
           Из чего «сделана» панель. Класс <code>tao-surface-grain</code> / <code>-glass</code> на любом
           элементе (HUD в игре, секция лендинга, сайдбар) или проп <code>surface</code> у TaoCard / TaoBlock.
           Вид настраивается токенами темы один раз на всё приложение.
+        </p>
+        <p>
+          Поверхность это материал, а не форма: она рисует заливку, кольцо и размытие, а углы это <code>border-radius</code> самого
+          элемента. У TaoCard / TaoBlock он свой; на вашем элементе добавьте <code>tao-panel</code> (радиус панели) или
+          свой <code>border-radius</code>, иначе стекло будет квадратным.
         </p>
         <p class="carousel-note">
           Выразительность сначала даёт структура: меньше рамок, одно яркое пятно (активный пункт), подписи групп, хоткеи

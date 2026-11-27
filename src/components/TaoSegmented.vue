@@ -177,6 +177,11 @@ onBeforeUnmount(() => {
     margin: 0;
     padding: 0;
     border: none;
+    /* the box of the root is the silhouette of the switch: whatever is put on the root (a surface, a shadow, an outline) follows the rounded track
+       and does not stand out of it as a square. Like the root of TaoDragNumber.
+       коробка корня это силуэт переключателя: всё, что кладут на корень (поверхность, тень, контур), идёт за скруглённой дорожкой
+       и не торчит из-под неё квадратом. Как у корня TaoDragNumber. */
+    border-radius: var(--tao-radius-control);
     min-width: 0;
     vertical-align: top;
     /* a switch keeps the width of its options: beside a field that takes the room (a select is 100% wide) in a flex row it must
