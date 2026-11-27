@@ -429,6 +429,9 @@ function onListKeydown(event: KeyboardEvent) {
 <style scoped>
 .tao-select {
     width: 100%;
+    /* the root box is the silhouette of the field: a surface, a shadow or an outline put on it follows the corners
+       коробка корня это силуэт поля: поверхность, тень или контур на нём идут за углами */
+    border-radius: var(--tao-radius-control);
 }
 
 .tao-select__trigger {

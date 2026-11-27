@@ -4,6 +4,9 @@ import surfaceCss from '../src/styles/contexts/surface.css?raw';
 // @ts-expect-error Vite `?raw` import: the component source as text
 import segmentedSource from '../src/components/TaoSegmented.vue?raw';
 
+// @ts-expect-error Vite `import.meta.glob`: the sources of the components as text
+const sources: Record<string, string> = import.meta.glob('../src/components/*.vue', { query: '?raw', import: 'default', eager: true });
+
 // A surface is a material, not a shape: `.tao-surface-*` paints the fill, the ring and the blur, and the corners are the `border-radius` of the
 // element it is put on. A radius in the surface would be wrong twice: it is not the job of a material, and it comes after `.tao-panel` in the same
 // file with the same weight, so it would take the radius of every TaoCard / TaoBlock with glass away. A component whose root IS the silhouette
@@ -34,5 +37,21 @@ describe('a component whose root is the silhouette carries the radius itself', (
         const style = segmentedSource.slice(segmentedSource.indexOf('<style'));
         expect(rule(style, '.tao-segmented')).toContain('border-radius: var(--tao-radius-control)');
         expect(rule(style, '.tao-segmented__track')).toContain('border-radius: var(--tao-radius-control)');
+    });
+
+    // The roots that hold only the field (the trigger, the input with its buttons): the root box is what the eye sees. A root that also holds
+    // a label, a message or a file list (TaoInput's wrapper, TaoFileDrop) is not the silhouette and stays square.
+    // Корни, в которых только само поле (кнопка-триггер, поле с кнопками): коробка корня это то, что видит глаз. Корень, где ещё подпись,
+    // сообщение или список файлов (обёртка TaoInput, TaoFileDrop), не силуэт и остаётся прямым.
+    it.each([
+        ['TaoSelect', '.tao-select'],
+        ['TaoInputNumber', '.tao-input-number'],
+        ['TaoCombobox', '.tao-combobox'],
+        ['TaoDate', '.tao-date'],
+        ['TaoDateRange', '.tao-date-range'],
+        ['TaoQuantity', '.tao-quantity'],
+    ])('the root of %s has the control radius', (name, selector) => {
+        const source = sources[`../src/components/${name}.vue`]!;
+        expect(rule(source.slice(source.indexOf('<style')), selector)).toContain('border-radius: var(--tao-radius-control)');
     });
 });

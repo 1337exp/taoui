@@ -260,6 +260,9 @@ const atMax = computed(() => props.max !== undefined && (model.value ?? 0) >= pr
     position: relative;
     display: flex;
     width: 100%;
+    /* the root box is the silhouette of the field: a surface, a shadow or an outline put on it follows the corners
+       коробка корня это силуэт поля: поверхность, тень или контур на нём идут за углами */
+    border-radius: var(--tao-radius-control);
 }
 
 .tao-input-number__input {

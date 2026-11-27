@@ -268,6 +268,9 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value
     /* 148px at medium / 148px в medium */
     min-width: calc(var(--tao-control-height) * 4 + 4px);
     isolation: isolate;
+    /* the root box is the silhouette of the field: a surface, a shadow or an outline put on it follows the corners
+       коробка корня это силуэт поля: поверхность, тень или контур на нём идут за углами */
+    border-radius: var(--tao-radius-control);
 }
 
 .tao-quantity__btn,
