@@ -175,8 +175,8 @@ describe('the kit in a real browser', () => {
         const before = (await panel.boundingBox())!.width;
         expect(before).toBeGreaterThan(200);
         expect(before).toBeLessThan(280);
-        // the divider next to the left panel: drag it 60px to the right
-        const handle = box.locator('[role="separator"]').first();
+        // the divider next to the left panel: drag it 60px to the right (the lines between the groups of tools are separators too, so ask for the handle)
+        const handle = box.locator('.tao-split__handle').first();
         const at = (await handle.boundingBox())!;
         await page.mouse.move(at.x + at.width / 2, at.y + at.height / 2);
         await page.mouse.down();
