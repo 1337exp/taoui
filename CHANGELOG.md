@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 6.2.0
 
 A minor: one optional field, and the number fields show their model. Nothing to migrate; one thing to check: `TaoDragNumber` now emits `update:modelValue` while a number is typed (see below).
 
