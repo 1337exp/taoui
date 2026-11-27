@@ -90,14 +90,28 @@ let committed: number | null | undefined = model.value;
 watch(
     () => model.value,
     (value) => {
-        if (value !== emitted) {
+        // the echo of our own write is taken once: a later value that equals it (a redo after an undo) is a change from outside
+        // эхо собственной записи забирается один раз: позднее такое же значение (возврат после отмены) это правка снаружи
+        const own = value === emitted;
+        emitted = undefined;
+        if (!own) {
             committed = value;
         }
-        if (!focused.value || value !== emitted) {
+        if (!focused.value || !own) {
             draft.value = toDraft(value);
         }
     },
 );
+
+/** Remembers what this field wrote, and forgets it after a macrotask: a value the parent refused never comes back as an echo. / Запоминает, что поле записало, и забывает через макрозадачу: отвергнутое родителем эхом не вернётся. */
+function markEmitted(value: number | null) {
+    emitted = value;
+    setTimeout(() => {
+        if (emitted === value) {
+            emitted = undefined;
+        }
+    });
+}
 
 // round to the precision (the decimals of the step by default), clamp to the bounds, round again
 // округлить до точности (по умолчанию знаков у шага), зажать границами, округлить ещё раз
@@ -132,11 +146,17 @@ function isAllowed(text: string) {
 }
 
 /** Applies a finished value: normalises, emits update:modelValue and commit. / Применяет готовое значение. */
-function commit(value: number | null) {
+function commit(value: number | null, fromKey = false) {
     const next = value === null ? null : clamp(value);
-    emitted = next;
+    markEmitted(next);
     model.value = next;
     draft.value = toDraft(next);
+    // a held arrow is one action: its steps are written at once and the commit comes with the keyup
+    // зажатая стрелка это одно действие: шаги пишутся сразу, а commit приходит с keyup
+    if (fromKey) {
+        keyRun = next;
+        return;
+    }
     // once per finished edit, and only for a number that is not the one last committed (Enter, then the blur that follows)
     // раз за законченную правку и только для числа, не равного последнему зафиксированному (Enter, потом уход из поля)
     if (next !== committed) {
@@ -145,12 +165,23 @@ function commit(value: number | null) {
     }
 }
 
-function bump(direction: 1 | -1) {
+/** The value written by an arrow that is still down; its keyup (or the blur) commits it. / Значение от стрелки, пока она нажата: commit даёт её keyup (или blur). */
+let keyRun: number | null | undefined;
+
+function onKeyup(event: KeyboardEvent) {
+    if (keyRun !== undefined && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
+        const value = keyRun;
+        keyRun = undefined;
+        commit(value);
+    }
+}
+
+function bump(direction: 1 | -1, fromKey = false) {
     if (props.disabled || props.readOnly) {
         return;
     }
     const base = model.value ?? 0;
-    commit(base + direction * props.step);
+    commit(base + direction * props.step, fromKey);
 }
 
 function onInput(event: Event) {
@@ -161,8 +192,9 @@ function onInput(event: Event) {
     draft.value = text;
     const parsed = parseDraft(text);
     if (parsed !== 'incomplete') {
-        emitted = parsed === null ? null : clamp(parsed);
-        model.value = emitted;
+        const typed = parsed === null ? null : clamp(parsed);
+        markEmitted(typed);
+        model.value = typed;
     }
 }
 
@@ -172,6 +204,7 @@ function onFocus(event: FocusEvent) {
 }
 
 function onBlur(event: FocusEvent) {
+    keyRun = undefined;
     focused.value = false;
     if (!props.readOnly) {
         const parsed = parseDraft(draft.value);
@@ -190,12 +223,12 @@ function onKeydown(event: KeyboardEvent) {
     }
     if (event.key === 'ArrowUp') {
         event.preventDefault();
-        bump(1);
+        bump(1, true);
         return;
     }
     if (event.key === 'ArrowDown') {
         event.preventDefault();
-        bump(-1);
+        bump(-1, true);
     }
 }
 
@@ -225,6 +258,7 @@ const atMax = computed(() => props.max !== undefined && (model.value ?? 0) >= pr
             @focus="onFocus"
             @blur="onBlur"
             @keydown="onKeydown"
+            @keyup="onKeyup"
         />
         <div v-if="controls" class="tao-input-number__steppers">
             <button

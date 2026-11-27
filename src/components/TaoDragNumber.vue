@@ -90,9 +90,13 @@ const l10n = useLocaleText(props, 'dragNumber');
 const emit = defineEmits<{
     /**
      * An action ended and changed the value: the end of a drag, ±, an arrow key, Enter or blur of a typed number. Once per
-     * action (a drag emits update:modelValue on every move), so a form can save or push an undo step here.
+     * action (a drag emits update:modelValue on every move, a held arrow on every repeat and commits on the keyup), so a form can save or push an
+     * undo step here. Esc gives an action up: the model goes back through update:modelValue and there is no commit; an app that opens a history
+     * step on the first update drops it when the model is back at where the action began.
      * Действие закончено и изменило значение: конец протяжки, ±, стрелка, Enter или blur набранного числа. Один раз на
-     * действие (протяжка шлёт update:modelValue на каждом движении): здесь удобно сохранять или делать шаг отмены.
+     * действие (протяжка шлёт update:modelValue на каждом движении, зажатая стрелка на каждом повторе, а commit даёт на keyup): здесь удобно
+     * сохранять или делать шаг отмены. Esc отказывается от действия: модель возвращается через update:modelValue, commit нет; приложение,
+     * открывшее шаг истории на первом update, закрывает его без записи, когда модель вернулась к началу действия.
      */
     commit: [value: number];
     blur: [event: FocusEvent];
@@ -134,10 +138,14 @@ let composing = false;
 /** Writes a value and remembers it as ours. / Записывает значение и помнит, что оно наше. */
 function write(value: number) {
     emitted = value;
-    // the echo comes in the same flush; a value the parent refused never comes back, so it is forgotten after it
-    // эхо приходит в том же цикле; значение, которое родитель отверг, не вернётся, поэтому после него оно забывается
-    void nextTick(() => {
-        emitted = undefined;
+    // the echo is taken by the watcher; a value the parent refused never comes back, so it is forgotten after a macrotask (a microtask can come
+    // before the flush that brings the echo, and the echo would look like a change from outside)
+    // эхо забирает наблюдатель; значение, которое родитель отверг, не вернётся, поэтому оно забывается через макрозадачу (микрозадача может
+    // прийти раньше цикла, который приносит эхо, и эхо сошло бы за правку снаружи)
+    setTimeout(() => {
+        if (emitted === value) {
+            emitted = undefined;
+        }
     });
     if (value !== model.value) {
         model.value = value;
@@ -177,12 +185,34 @@ function nudge(direction: 1 | -1, steps = 1) {
     return result;
 }
 
-function bump(direction: 1 | -1, steps = 1) {
+/**
+ * A step. The key of a step is an action that lasts: a held arrow repeats, and the whole run is one `commit` when the key goes up (as a held ±
+ * button is), not one per repeat. A button click or a single call commits at once.
+ * Шаг. Клавиша шага это действие, которое длится: зажатая стрелка повторяется, и вся серия это один `commit` на keyup (как у зажатой
+ * кнопки ±), а не по одному на повтор. Клик по кнопке и одиночный вызов фиксируют сразу.
+ */
+function bump(direction: 1 | -1, steps = 1, fromKey = false) {
     if (props.disabled || props.readOnly) {
         return;
     }
     const { next } = nudge(direction, steps);
-    commitValue(next);
+    if (fromKey) {
+        keyRun = next;
+    } else {
+        commitValue(next);
+    }
+}
+
+/** The value written by a step key that is still down; its keyup (or the blur) commits it. / Значение от клавиши шага, пока она нажата: commit даёт её keyup (или blur). */
+let keyRun: number | undefined;
+const STEP_KEYS = ['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'];
+
+function onKeyup(event: KeyboardEvent) {
+    if (keyRun !== undefined && STEP_KEYS.includes(event.key)) {
+        const value = keyRun;
+        keyRun = undefined;
+        commitValue(value);
+    }
 }
 
 /** Enter and blur: the typed text is already the model, this makes it tidy and ends the action. / Enter и blur: набранное уже в модели, здесь оно приводится в порядок и действие кончается. */
@@ -281,6 +311,7 @@ function onFocus(event: FocusEvent) {
 }
 
 function onBlur(event: FocusEvent) {
+    keyRun = undefined;
     if (focused.value && !dragging.value) {
         commitDraft();
     }
@@ -306,30 +337,30 @@ function onKeydown(event: KeyboardEvent) {
             break;
         case 'ArrowUp':
             event.preventDefault();
-            bump(1);
+            bump(1, 1, true);
             break;
         case 'ArrowDown':
             event.preventDefault();
-            bump(-1);
+            bump(-1, 1, true);
             break;
         case 'PageUp':
             event.preventDefault();
-            bump(1, DRAG_NUMBER_PAGE);
+            bump(1, DRAG_NUMBER_PAGE, true);
             break;
         case 'PageDown':
             event.preventDefault();
-            bump(-1, DRAG_NUMBER_PAGE);
+            bump(-1, DRAG_NUMBER_PAGE, true);
             break;
         case 'Home':
             if (props.min !== undefined && !event.shiftKey) {
                 event.preventDefault();
-                bump(-1, (typedValue() - props.min) / props.step);
+                bump(-1, (typedValue() - props.min) / props.step, true);
             }
             break;
         case 'End':
             if (props.max !== undefined && !event.shiftKey) {
                 event.preventDefault();
-                bump(1, (props.max - typedValue()) / props.step);
+                bump(1, (props.max - typedValue()) / props.step, true);
             }
             break;
     }
@@ -656,6 +687,7 @@ const atMax = computed(() => props.max !== undefined && model.value >= props.max
                 @focus="onFocus"
                 @blur="onBlur"
                 @keydown="onKeydown"
+                @keyup="onKeyup"
             />
             <span v-if="unit" class="tao-drag-number__unit" aria-hidden="true">{{ unit }}</span>
         </div>

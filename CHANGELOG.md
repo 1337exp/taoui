@@ -1,5 +1,14 @@
 # Changelog
 
+## 6.2.1
+
+A patch: nothing to migrate.
+
+- **A held arrow key is one action: `commit` on the keyup, not on every repeat** (`TaoDragNumber`, `TaoInputNumber`, `TaoQuantity`). A held ArrowUp (also PageUp / PageDown / Home / End in `TaoDragNumber`) emitted `commit` on each autorepeat, so an app that closes a history step on `commit` got about twenty steps for two seconds of holding (a held ± button already behaved as one action). Every repeat still writes `update:modelValue`; the one `commit` comes with the keyup, or with the blur if the field loses the focus while the key is down (the keyup never comes). A single press is one step, now committed on the keyup. `tests/keyrun.test.ts`. Reported by the session of the Deck of Bones editor.
+- **`TaoQuantity` no longer commits the same number twice** (a step, then the blur that follows).
+- **A field took its own echo for a change from outside** in some orders of the update (the forgetting of `emitted` ran before the flush that brings the echo), so a deferred `commit` could be lost; and in `TaoInputNumber` an undo followed by a redo to the number the field wrote itself did not show. The echo is now taken once, and a value the parent refused is forgotten after a macrotask.
+- **Esc gives an action up and sends no `commit`: said in the docs of the event.** The model goes back through `update:modelValue`; an app that opens a history step on the first update drops it when the model is back where the action began (a `cancel` event was considered and not added: it would be needed in a drag, a held ± and a typed number alike, and the model coming back to the start already tells it).
+
 ## 6.2.0
 
 A minor: one optional field, and the number fields show their model. Nothing to migrate; one thing to check: `TaoDragNumber` now emits `update:modelValue` while a number is typed (see below).

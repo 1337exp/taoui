@@ -1,6 +1,7 @@
 import { mount, type VueWrapper } from '@vue/test-utils';
 import { afterEach, describe, expect, it } from 'vitest';
 import { nextTick } from 'vue';
+import TaoInputNumber from '../src/components/TaoInputNumber.vue';
 import TaoQuantity from '../src/components/TaoQuantity.vue';
 import TaoSlider from '../src/components/TaoSlider.vue';
 
@@ -70,6 +71,29 @@ describe('TaoQuantity', () => {
         await w.setProps({ modelValue: 3 });
         await nextTick();
         await w.setProps({ modelValue: 7 });
+        await nextTick();
+        expect(input.element.value).toBe('7');
+    });
+});
+
+describe('TaoInputNumber', () => {
+    it('an undo and then a redo to the number the field wrote itself both show (its own echo is taken once)', async () => {
+        const w = mount(TaoInputNumber, {
+            attachTo: document.body,
+            props: {
+                modelValue: 3,
+                'onUpdate:modelValue': (value: number | null) => void w.setProps({ modelValue: value }),
+            },
+        });
+        mounted.push(w);
+        const input = w.find('input');
+        await input.trigger('focus');
+        await input.setValue('7');
+        await nextTick();
+        await w.setProps({ modelValue: 3 }); // Ctrl+Z
+        await nextTick();
+        expect(input.element.value).toBe('3');
+        await w.setProps({ modelValue: 7 }); // Ctrl+Y: the number the field wrote before
         await nextTick();
         expect(input.element.value).toBe('7');
     });

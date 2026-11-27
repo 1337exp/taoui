@@ -425,6 +425,7 @@ describe('the model changes from outside', () => {
         const input = w.find('input');
         await input.trigger('focus');
         await input.trigger('keydown', { key: 'ArrowUp' });
+        await input.trigger('keyup', { key: 'ArrowUp' });
         expect(input.element.value).toBe('1.46');
         expect(commits).toEqual([1.46]);
         // the app undoes it

@@ -115,6 +115,7 @@ describe('a value from outside', () => {
         const input = w.find('input');
         await input.trigger('focus');
         await input.trigger('keydown', { key: 'ArrowUp' });
+        await input.trigger('keyup', { key: 'ArrowUp' });
         await nextTick();
         expect(input.element.value).toBe('1.46');
         await w.setProps({ modelValue: 1.45 }); // Ctrl+Z

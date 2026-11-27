@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
 import { useControlAttrs } from '../controlAttrs';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { nativeFieldAttrs, useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
@@ -93,9 +93,12 @@ function apply(value: number) {
     const next = clampQty(value);
     if (next !== model.value) {
         emitted = next;
-        // the echo comes in the same flush; a value the parent refused never comes back / эхо приходит в том же цикле; отвергнутое родителем не вернётся
-        void nextTick(() => {
-            emitted = undefined;
+        // the echo is taken by the watcher; a value the parent refused never comes back, so it is forgotten after a macrotask (a microtask can
+        // come before the flush that brings the echo) / эхо забирает наблюдатель; отвергнутое родителем не вернётся и забывается через макрозадачу
+        setTimeout(() => {
+            if (emitted === next) {
+                emitted = undefined;
+            }
         });
         model.value = next;
     }
@@ -126,27 +129,43 @@ watch(
     { immediate: true },
 );
 
-function onDec() {
+/** One commit per action, and never the same number twice (a step, then the blur that follows). / Один commit за действие и никогда одно число дважды (шаг, потом blur). */
+function commitStep(next: number) {
+    if (next !== atFocus) {
+        atFocus = next;
+        emit('commit', next);
+    }
+}
+
+/** The value written by an arrow that is still down; its keyup (or the blur) commits it. A held arrow is one action. / Значение от стрелки, пока она нажата. Зажатая стрелка это одно действие. */
+let keyRun: number | undefined;
+
+function onKeyup(event: KeyboardEvent) {
+    if (keyRun !== undefined && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
+        const value = keyRun;
+        keyRun = undefined;
+        commitStep(value);
+    }
+}
+
+function step(direction: 1 | -1, fromKey: boolean) {
     if (props.disabled || props.readOnly) {
         return;
     }
-    if (model.value > props.min) {
-        const next = apply(model.value > ceiling.value ? ceiling.value : clampQty(model.value - 1));
-        emit('commit', next);
-    } else if (props.allowRemove) {
+    if (direction < 0 ? model.value > props.min : model.value < ceiling.value) {
+        const next = direction < 0 ? apply(model.value > ceiling.value ? ceiling.value : clampQty(model.value - 1)) : apply(clampQty(model.value + 1));
+        if (fromKey) {
+            keyRun = next;
+        } else {
+            commitStep(next);
+        }
+    } else if (direction < 0 && props.allowRemove) {
         emit('remove');
     }
 }
 
-function onInc() {
-    if (props.disabled || props.readOnly) {
-        return;
-    }
-    if (model.value < ceiling.value) {
-        const next = apply(clampQty(model.value + 1));
-        emit('commit', next);
-    }
-}
+const onDec = () => step(-1, false);
+const onInc = () => step(1, false);
 
 function onInput(event: Event) {
     if (props.readOnly) {
@@ -175,23 +194,22 @@ function onBlur(event: FocusEvent) {
         emit('blur', event);
         return;
     }
+    keyRun = undefined;
     const next = apply(draft.value === '' ? props.min : toInt(draft.value));
     draft.value = String(next);
-    if (next !== atFocus) {
-        emit('commit', next);
-    }
+    commitStep(next);
     emit('blur', event);
 }
 
 function onKeydown(event: KeyboardEvent) {
     if (event.key === 'ArrowUp') {
         event.preventDefault();
-        onInc();
+        step(1, true);
         return;
     }
     if (event.key === 'ArrowDown') {
         event.preventDefault();
-        onDec();
+        step(-1, true);
     }
 }
 
@@ -246,6 +264,7 @@ const minusLabel = computed(() => (atMin.value && props.allowRemove ? l10n.value
             @focus="onFocus"
             @blur="onBlur"
             @keydown="onKeydown"
+            @keyup="onKeyup"
         />
         <button
             type="button"
