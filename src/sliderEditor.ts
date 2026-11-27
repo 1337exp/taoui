@@ -81,6 +81,19 @@ export function useSliderEditor(o: SliderEditorOptions) {
         open(nearestThumb(o.values(), o.valueUnder(event), o.activeThumb.value));
     }
 
+    // The editor writes the thumb only when it closes, so a change of the thumb being edited while the field is open comes from elsewhere (an
+    // undo, a reset): the field shows it, and leaving it does not put the stale text back.
+    // Редактор ставит ручку только при закрытии, поэтому изменение правимой ручки при открытом поле пришло снаружи (отмена, сброс): поле
+    // показывает его, а уход из поля не вернёт устаревший текст.
+    watch(
+        () => (editing.value === null ? null : o.values()[editing.value]),
+        (value) => {
+            if (value !== null && value !== undefined) {
+                draft.value = String(value);
+            }
+        },
+    );
+
     watch(
         () => !o.enabled(),
         (off) => {

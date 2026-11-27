@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import TaoIcon from './TaoIcon.vue';
 import { useControlAttrs } from '../controlAttrs';
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { nativeFieldAttrs, useField } from '../formField';
 import { sizeClass, type TaoSize } from '../size';
 import { useLocaleText } from '../locale';
@@ -83,24 +83,44 @@ function clampQty(value: number) {
     return clamp(value, props.min, props.forceMaxLimit ? props.max : undefined);
 }
 
+/** The value the field had when it took the focus: a blur commits only a change. / Значение при входе в поле: уход фиксирует только изменение. */
+let atFocus = model.value;
+
+/** What this field wrote last: tells its own echo from a value that came from elsewhere. / Что поле записало последним: так отличаем своё эхо от значения снаружи. */
+let emitted: number | undefined;
+
 function apply(value: number) {
     const next = clampQty(value);
     if (next !== model.value) {
+        emitted = next;
+        // the echo comes in the same flush; a value the parent refused never comes back / эхо приходит в том же цикле; отвергнутое родителем не вернётся
+        void nextTick(() => {
+            emitted = undefined;
+        });
         model.value = next;
     }
     draft.value = String(next);
     return next;
 }
 
+// A value from outside (an undo, a reset, a load) replaces the text of a focused field too, and becomes what a blur compares with: the stale
+// text must not be written back over it. The field's own echo leaves the text as it is.
+// Значение снаружи (отмена, сброс, загрузка) заменяет текст и у поля в фокусе и становится тем, с чем сравнивает blur: устаревший текст
+// не должен записаться поверх него. Своё эхо текст не трогает.
 watch(
     () => [model.value, props.min, props.max, props.forceMaxLimit] as const,
     () => {
+        const own = model.value === emitted;
+        emitted = undefined;
         const next = clampQty(toInt(model.value));
         if (next !== model.value) {
             model.value = next;
         }
-        if (!focused.value) {
+        if (!focused.value || !own) {
             draft.value = String(next);
+        }
+        if (!own) {
+            atFocus = next;
         }
     },
     { immediate: true },
@@ -142,9 +162,6 @@ function onInput(event: Event) {
     }
     apply(toInt(text));
 }
-
-/** The value the field had when it took the focus: a blur commits only a change. / Значение при входе в поле: уход фиксирует только изменение. */
-let atFocus = model.value;
 
 function onFocus(event: FocusEvent) {
     focused.value = true;

@@ -271,13 +271,16 @@ describe('typing', () => {
         expect(input.element.value).toBe('5');
     });
 
-    it('Escape gives the typed text up', async () => {
-        const { w, updates } = make();
+    it('Escape gives the typed text up: the model goes back to what it was, nothing is committed', async () => {
+        const { w, updates, commits } = make();
         const input = w.find('input');
         await input.trigger('focus');
         await input.setValue('8');
+        expect(updates).toEqual([8]);
         await input.trigger('keydown', { key: 'Escape' });
-        expect(updates).toEqual([]);
+        expect(updates).toEqual([8, 5]);
+        expect(w.props('modelValue')).toBe(5);
+        expect(commits).toEqual([]);
     });
 });
 
@@ -445,19 +448,6 @@ describe('the model changes from outside', () => {
         await input.trigger('blur');
         expect(w.props('modelValue')).toBe(3);
         expect(commits).toEqual([]);
-    });
-
-    it('its own change leaves the text alone: a draft that reads as the value is not rewritten', async () => {
-        const { w } = make({ modelValue: 1, step: 0.01 });
-        const input = w.find('input');
-        await input.trigger('focus');
-        await input.setValue('1.50');
-        await input.trigger('keydown', { key: 'Enter' });
-        // the model is 1.5 now; the user goes on typing «1.50» → the draft reads as 1.5 and stays
-        await input.setValue('1.500');
-        await w.setProps({ modelValue: 1.5 });
-        await nextTick();
-        expect(input.element.value).toBe('1.500');
     });
 
     it('an unfocused field just shows the model', async () => {

@@ -120,12 +120,44 @@ const valueText = computed(() => (props.unit ? `${shown.value} ${props.unit}` : 
 // читается в шаблоне, без кэша (`useAttrs()` не реактивен)
 const named = () => props.label && controlAttrs()['aria-label'] === undefined;
 
+// The rule of the field: what it shows is the model. A number that can be read is written at once (typing, a step, a drag), a value that comes
+// from elsewhere (an undo, a reset, a load) replaces the text, and `commit` is the edge of an action (Enter, blur, a step, the end of a drag).
+// Правило поля: то, что оно показывает, это модель. Число, которое можно прочесть, пишется сразу (набор, шаг, протяжка), значение
+// «снаружи» (отмена, сброс, загрузка) заменяет текст, а `commit` это край действия (Enter, blur, шаг, конец протяжки).
+/** What this field wrote last: tells its own echo from a change made elsewhere. / Что поле записало последним: так отличаем своё эхо от чужой правки. */
+let emitted: number | undefined;
+/** The value last committed, or the one that came from outside: what Enter, blur and Escape compare with. / Последнее зафиксированное значение или пришедшее снаружи. */
+let committed = model.value;
+/** An IME composition is open: the characters are not a number yet. / Идёт ввод через IME: символы ещё не число. */
+let composing = false;
+
+/** Writes a value and remembers it as ours. / Записывает значение и помнит, что оно наше. */
+function write(value: number) {
+    emitted = value;
+    // the echo comes in the same flush; a value the parent refused never comes back, so it is forgotten after it
+    // эхо приходит в том же цикле; значение, которое родитель отверг, не вернётся, поэтому после него оно забывается
+    void nextTick(() => {
+        emitted = undefined;
+    });
+    if (value !== model.value) {
+        model.value = value;
+    }
+}
+
+/** An action ended on this value: one `commit` if it is not the committed one. / Действие кончилось на этом значении: один `commit`, если оно не зафиксированное. */
+function commitValue(value: number) {
+    if (value !== committed) {
+        committed = value;
+        emit('commit', value);
+    }
+}
+
 /** Writes a value; says whether it changed. / Записывает значение; говорит, изменилось ли оно. */
 function apply(value: number) {
     const next = normalizeNumber(value, limits.value);
     const changed = next !== model.value;
     if (changed) {
-        model.value = next;
+        write(next);
     }
     return { next, changed };
 }
@@ -149,12 +181,11 @@ function bump(direction: 1 | -1, steps = 1) {
     if (props.disabled || props.readOnly) {
         return;
     }
-    const { next, changed } = nudge(direction, steps);
-    if (changed) {
-        emit('commit', next);
-    }
+    const { next } = nudge(direction, steps);
+    commitValue(next);
 }
 
+/** Enter and blur: the typed text is already the model, this makes it tidy and ends the action. / Enter и blur: набранное уже в модели, здесь оно приводится в порядок и действие кончается. */
 function commitDraft() {
     if (props.readOnly) {
         draft.value = plain(model.value);
@@ -162,50 +193,86 @@ function commitDraft() {
     }
     const parsed = parseDragNumber(draft.value, props.unit);
     if (parsed === null) {
+        // not a number: the model keeps the last number that could be read, and the text goes back to it
+        // не число: в модели последнее число, которое удалось прочесть, и текст возвращается к нему
         draft.value = plain(model.value);
+        commitValue(model.value);
         return;
     }
-    const { next, changed } = apply(parsed);
+    const { next } = apply(parsed);
     draft.value = plain(next);
-    if (changed) {
-        emit('commit', next);
-    }
+    commitValue(next);
 }
 
-// The model changed from outside (an undo, a reset, a load) while the field is being typed in or dragged: the field shows the new value, not
-// its own draft, and the draft is not written back at blur. A change the field made itself already agrees with the draft (the same number), so the
-// text, the caret and the selection stay as they are.
-// Модель изменили снаружи (отмена, сброс, загрузка), пока поле набирают или тянут: поле показывает новое значение, а не свой черновик, и
-// черновик на blur не пишется обратно. Своё изменение с черновиком уже согласовано (то же число): текст, каретка и выделение остаются.
+// A value that came from elsewhere while the field is focused or pressed: the text follows it, and the gesture goes on from it. The caret goes
+// to the end and nothing is selected (a step selects, because the user works on this number; an outside write only assigns it).
+// Значение пришло снаружи, пока поле в фокусе или нажато: текст идёт за ним, а жест продолжается от него. Каретка в конце, ничего не
+// выделяется (шаг выделяет, потому что пользователь правит это число; запись снаружи только присваивает).
 watch(model, (value) => {
-    if (drag?.moved) {
-        // a drag goes on from the new value; what it commits is what the model holds
-        // протяжка продолжается от нового значения; фиксирует она то, что в модели
+    const own = value === emitted;
+    emitted = undefined;
+    if (drag) {
+        if (!drag.moved) {
+            drag.startValue = value;
+        }
         if (value !== drag.last) {
             drag.raw = value;
             drag.last = value;
         }
         return;
     }
-    if (!focused.value || dragging.value) {
+    if (hold) {
+        hold.last = value;
         return;
     }
-    if (parseDragNumber(draft.value, props.unit) === value || draft.value === plain(value)) {
+    if (!own) {
+        committed = value;
+    }
+    if (composing) {
         return;
     }
-    draft.value = plain(value);
-    void nextTick(() => inputEl.value?.select());
+    if (!own || !focused.value) {
+        draft.value = plain(value);
+    }
 });
+
+/** A number that can be read goes to the model at once; `2.`, `-` or a word wait, the model keeps the last number. / Читаемое число сразу идёт в модель; `2.`, `-` или слово ждут, в модели остаётся последнее число. */
+function writeTyped(text: string) {
+    const parsed = parseDragNumber(text, props.unit);
+    if (parsed !== null) {
+        write(normalizeNumber(parsed, limits.value));
+    }
+}
 
 function onInput(event: Event) {
     if (props.readOnly) {
         return;
     }
-    draft.value = (event.target as HTMLInputElement).value;
+    const text = (event.target as HTMLInputElement).value;
+    draft.value = text;
+    if (!composing && !(event as InputEvent).isComposing) {
+        writeTyped(text);
+    }
+}
+
+// the characters of an IME are not a number until the composition ends: the text that comes out then is the one that counts
+// символы IME не число, пока ввод не закончен: считается текст, который получился в конце
+function onCompositionStart() {
+    composing = true;
+}
+
+function onCompositionEnd(event: CompositionEvent) {
+    composing = false;
+    if (!props.readOnly) {
+        const text = (event.target as HTMLInputElement).value;
+        draft.value = text;
+        writeTyped(text);
+    }
 }
 
 function onFocus(event: FocusEvent) {
     focused.value = true;
+    committed = model.value;
     draft.value = plain(model.value);
     emit('focus', event);
     // the text switches from the formatted to the plain number: select it once that is drawn
@@ -231,9 +298,10 @@ function onKeydown(event: KeyboardEvent) {
             void nextTick(() => inputEl.value?.select());
             break;
         case 'Escape':
-            // give the typed text up and keep the value
-            // отказаться от набранного, значение остаётся
-            draft.value = plain(model.value);
+            // give the typed text up: the model goes back to what it was when the field was entered (or last committed), no commit
+            // отказаться от набранного: модель возвращается к тому, что было при входе в поле (или к последнему commit), без commit
+            write(committed);
+            draft.value = plain(committed);
             inputEl.value?.blur();
             break;
         case 'ArrowUp':
@@ -332,7 +400,7 @@ const gesture = usePointerDrag({
         const next = dragNumberResolve(drag.raw, limits.value, props.step, event.ctrlKey || event.metaKey);
         if (next !== drag.last) {
             drag.last = next;
-            model.value = next;
+            write(next);
         }
     },
     onEnd: (reason) => finishDrag(reason),
@@ -356,7 +424,7 @@ function finishDrag(reason: PointerDragEnd) {
     }
     if (reason === 'abort') {
         if (done.moved && done.last !== done.startValue) {
-            model.value = done.startValue;
+            write(done.startValue);
         }
         return;
     }
@@ -376,7 +444,7 @@ function finishDrag(reason: PointerDragEnd) {
         draft.value = plain(done.last);
     }
     if (done.last !== done.startValue) {
-        emit('commit', done.last);
+        commitValue(done.last);
     }
 }
 
@@ -469,12 +537,12 @@ function stopHold(revert = false) {
     });
     if (revert) {
         if (done.last !== done.startValue) {
-            model.value = done.startValue;
+            write(done.startValue);
         }
         return;
     }
     if (done.last !== done.startValue) {
-        emit('commit', done.last);
+        commitValue(done.last);
     }
 }
 
@@ -583,6 +651,8 @@ const atMax = computed(() => props.max !== undefined && model.value >= props.max
                 :aria-valuemax="max"
                 :aria-valuetext="valueText"
                 @input="onInput"
+                @compositionstart="onCompositionStart"
+                @compositionend="onCompositionEnd"
                 @focus="onFocus"
                 @blur="onBlur"
                 @keydown="onKeydown"
